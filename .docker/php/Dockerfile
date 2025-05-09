@@ -17,6 +17,7 @@ RUN --mount=type=bind,target=/context \
 
 RUN --mount=type=bind,target=/context \
     mkdir ./bin/ && \
+    cp -a /context/assets/ . && \
     cp -a /context/bin/ . && \
     cp -a /context/config/ . && \
     cp -a /context/migrations/ . && \
