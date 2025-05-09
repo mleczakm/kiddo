@@ -31,12 +31,12 @@ jobs:
             --file .docker/php/Dockerfile \
             --target dev .
 
-      # Run Composer QA script
-      - name: Run Composer QA
-        run: docker run --rm $GHCR_IMAGE composer qa
-
       # Push Docker image and cache to GHCR
       - name: Push Docker image to GHCR
         run: |
           docker push $GHCR_IMAGE:latest
           docker push $GHCR_IMAGE:cache
+
+      # Run Composer QA script
+      - name: Run Composer QA
+        run: docker run --rm $GHCR_IMAGE composer qa

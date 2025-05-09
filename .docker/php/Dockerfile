@@ -23,6 +23,7 @@ RUN --mount=type=bind,target=/context \
     cp -a /context/public/ . && \
     cp -a /context/src/ . && \
     cp -a /context/templates/ . && \
+    cp -a /context/tests/ . && \
     cp -a /context/translations/ . && \
     cp -f /context/.env . && \
     cp -f /context/.env.test . && \
