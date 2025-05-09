@@ -89,7 +89,7 @@
             "@auto-scripts"
         ],
         "qa": {
-            "Phpstan": "phpstan --memory-limit=-1 analyse",
+            "Phpstan": "vendor/bin/phpstan analyse",
             "Rector": "rector --dry-run",
             "ECS": "ecs check"
         },
