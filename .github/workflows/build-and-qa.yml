@@ -15,10 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Build Docker container
-      - name: Build Docker container
-        run: docker build -t kiddo-qa .docker/php
-
       # Run Composer QA script
       - name: Run Composer QA
-        run: docker run -v ./:/app --rm kiddo-qa composer qa
+        run: docker compose run --rm php composer qa
