@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - master
-  pull_request:
+
+env:
+  GHCR_IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
   build-and-qa:
@@ -15,6 +17,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Log in to GHCR
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # Build and tag Docker image with cache
+      - name: Build and tag Docker image
+        run: |
+          docker build \
+            --cache-from=type=registry,ref=$GHCR_IMAGE:cache \
+            --cache-to=type=inline \
+            -t $GHCR_IMAGE:latest \
+            --dockerfile .docker/php/Dockerfile \
+            --target dev .
+
       # Run Composer QA script
       - name: Run Composer QA
-        run: docker compose run --rm php composer qa
+        run: docker run --rm $GHCR_IMAGE composer qa
+
+      # Push Docker image and cache to GHCR
+      - name: Push Docker image to GHCR
+        run: |
+          docker push $GHCR_IMAGE:latest
+          docker push $GHCR_IMAGE:cache
