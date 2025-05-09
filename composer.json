@@ -49,6 +49,7 @@
     "config": {
         "allow-plugins": {
             "php-http/discovery": true,
+            "phpstan/extension-installer": true,
             "symfony/flex": true,
             "symfony/runtime": true
         },
@@ -86,7 +87,17 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "qa": {
+            "Phpstan": "phpstan --memory-limit=-1 analyse",
+            "Rector": "rector --dry-run",
+            "ECS": "ecs check"
+        },
+        "qa:fix": {
+            "Disable timeout": "Composer\\Config::disableProcessTimeout",
+            "Rector": "rector",
+            "ECS fix": "ecs check --fix"
+        }
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -98,15 +109,19 @@
         }
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
-        ,
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
         "phpunit/phpunit": "^9.5",
+        "rector/rector": "^2.0",
+        "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "7.2.*",
         "symfony/css-selector": "7.2.*",
         "symfony/debug-bundle": "7.2.*",
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^7.2",
         "symfony/stopwatch": "7.2.*",
-        "symfony/web-profiler-bundle": "7.2.*"
+        "symfony/web-profiler-bundle": "7.2.*",
+        "symplify/easy-coding-standard": "^12.5"
     }
 }

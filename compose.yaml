@@ -4,6 +4,7 @@ services:
       dockerfile: .docker/php/Dockerfile
     environment:
       COMPOSER_HOME: /.composer
+      PHP_CS_FIXER_IGNORE_ENV: true
     volumes:
       - .:/app
       - ~/.composer:/.composer
