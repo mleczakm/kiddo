@@ -50,4 +50,4 @@ jobs:
 
       # Run Composer QA script
       - name: Run Composer QA
-        run: docker run --rm ${{ steps.meta.outputs.tags[0] }} composer qa
+        run: docker run --rm ${{ steps.meta.outputs.tags }} composer qa
