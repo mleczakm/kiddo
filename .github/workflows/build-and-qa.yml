@@ -6,37 +6,42 @@ on:
       - master
 
 env:
-  GHCR_IMAGE: ghcr.io/${{ github.repository }}
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-qa:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
       # Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Log in to GHCR
-      - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and tag Docker image with cache
-      - name: Build and tag Docker image
-        run: |
-          docker build \
-            --cache-from=type=registry,ref=$GHCR_IMAGE:cache \
-            --cache-to=type=inline \
-            -t $GHCR_IMAGE:latest \
-            --file .docker/php/Dockerfile \
-            --target dev .
-
-      # Push Docker image and cache to GHCR
-      - name: Push Docker image to GHCR
-        run: |
-          docker push $GHCR_IMAGE:latest
-          docker push $GHCR_IMAGE:cache
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: .docker/php/Dockerfile
+          push: true
+          cache-from: type=registry,ref=${{ env.REGISTRY }}:cache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}:cache,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       # Run Composer QA script
       - name: Run Composer QA
-        run: docker run --rm $GHCR_IMAGE composer qa
+        run: docker run --rm ${{ steps.meta.outputs.tags[0] }} composer qa
