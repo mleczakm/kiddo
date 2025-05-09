@@ -89,7 +89,7 @@
             "@auto-scripts"
         ],
         "qa": {
-            "Phpstan": "vendor/bin/phpstan analyse",
+            "Phpstan": "phpstan analyse",
             "Rector": "rector --dry-run",
             "ECS": "ecs check"
         },
