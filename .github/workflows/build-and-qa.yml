@@ -28,7 +28,7 @@ jobs:
             --cache-from=type=registry,ref=$GHCR_IMAGE:cache \
             --cache-to=type=inline \
             -t $GHCR_IMAGE:latest \
-            --dockerfile .docker/php/Dockerfile \
+            --file .docker/php/Dockerfile \
             --target dev .
 
       # Run Composer QA script
