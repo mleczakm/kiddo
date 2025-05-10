@@ -3,6 +3,8 @@
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "name": "mleczakm/kiddo",
+    "description": "App for bookings",
     "require": {
         "php": ">=8.4",
         "ext-ctype": "*",
@@ -20,7 +22,7 @@
         "symfony/doctrine-messenger": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/expression-language": "7.2.*",
-        "symfony/flex": "*",
+        "symfony/flex": "^2",
         "symfony/form": "7.2.*",
         "symfony/framework-bundle": "7.2.*",
         "symfony/http-client": "7.2.*",
@@ -89,9 +91,18 @@
             "@auto-scripts"
         ],
         "qa": {
+            "Static analysis": "@sa",
+            "Functional tests": "@tests:functional"
+        },
+        "sa": {
+            "Validate composer.json": "@composer validate",
+            "Security audit": "@composer audit",
             "Phpstan": "phpstan analyse",
             "Rector": "rector --dry-run",
             "ECS": "ecs check"
+        },
+        "tests:functional": {
+            "Smoke tests": "bin/phpunit --testsuite \"Smoke tests\""
         },
         "qa:fix": {
             "Disable timeout": "Composer\\Config::disableProcessTimeout",

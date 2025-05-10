@@ -10,7 +10,9 @@ class HomepageTest extends WebTestCase
 {
     public function testHomepage(): void
     {
-        $client = static::createClient();
+        $client = static::createClient([
+            'environment' => 'test',
+        ]);
         $crawler = $client->request('GET', '/');
 
         self::assertResponseStatusCodeSame(404);
