@@ -4,3 +4,4 @@ symfonycasts_tailwind:
 
     # Alternatively, you can specify the path to the binary that you manage yourself
     #binary: 'node_modules/.bin/tailwindcss'
+    input_css: /app/assets/styles/app.css

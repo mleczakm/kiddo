@@ -34,5 +34,3 @@ RUN --mount=type=bind,target=/context \
     cp -f /context/phpunit.xml.dist . && \
     cp -f /context/rector.php . && \
     bin/console cache:warmup
-
-VOLUME /app/var
