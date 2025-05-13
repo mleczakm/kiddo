@@ -5,20 +5,22 @@ declare(strict_types=1);
 namespace App\UserInterface\Http;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use function Symfony\Component\Translation\t;
 
-class HomepageAction extends AbstractController
+class WorkshopsAction extends AbstractController
 {
-    #[Route(path: '/', name: 'homepage')]
-    public function __invoke(): Response
+    #[Route(path: [
+        'pl' => '/warsztaty',
+        'en' => 'workshops',
+    ], name: 'workshops')]
+    public function __invoke()
     {
-        // This is a placeholder for the homepage action.
         return $this->render(
-            'homepage.html.twig',
+            'workshops.html.twig',
             [
                 'page' => [
-                    'title' => 'Homepage',
+                    'title' => t('Workshops'),
                     'description' => 'Welcome to the homepage.',
                 ],
             ]

@@ -8,14 +8,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class HomepageAction extends AbstractController
+class DashboardAction extends AbstractController
 {
-    #[Route(path: '/', name: 'homepage')]
+    #[Route(path: '/panel', name: 'dashboard')]
     public function __invoke(): Response
     {
-        // This is a placeholder for the homepage action.
         return $this->render(
-            'homepage.html.twig',
+            'dashboard.html.twig',
             [
                 'page' => [
                     'title' => 'Homepage',

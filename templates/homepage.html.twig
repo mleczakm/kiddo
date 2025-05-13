@@ -1,0 +1,314 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main class="flex-grow">
+        <div>
+            <section class="relative py-16 md:py-24 overflow-hidden">
+                <div class="absolute top-10 left-10 w-24 h-24 rounded-full bg-workshop-blue/20 animate-bounce-slight"
+                     style="animation-delay: 0s;"></div>
+                <div class="absolute bottom-10 right-10 w-16 h-16 rounded-full bg-workshop-pink/20 animate-bounce-slight"
+                     style="animation-delay: 0.5s;"></div>
+                <div class="absolute top-1/3 right-1/4 w-10 h-10 rounded-full bg-workshop-yellow/20 animate-bounce-slight"
+                     style="animation-delay: 1s;"></div>
+                <div class="absolute bottom-1/3 left-1/4 w-12 h-12 rounded-full bg-workshop-green/20 animate-bounce-slight"
+                     style="animation-delay: 1.5s;"></div>
+                <div class="container mx-auto px-4">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+                        <div class="md:w-1/2"><h1
+                                    class="font-display text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-workshop-brown">
+                                <span class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span
+                                        class="text-workshop-yellow">n</span><span
+                                        class="text-workshop-blue">s</span><span
+                                        class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span
+                                        class="text-workshop-green">y</span><span
+                                        class="text-workshop-blue"> </span><span
+                                        class="text-workshop-yellow">W</span><span
+                                        class="text-workshop-pink">o</span><span
+                                        class="text-workshop-red">r</span><span
+                                        class="text-workshop-green">k</span><span
+                                        class="text-workshop-blue">s</span><span
+                                        class="text-workshop-pink">h</span><span
+                                        class="text-workshop-yellow">o</span><span
+                                        class="text-workshop-red">p</span><span
+                                        class="text-workshop-green">s</span></h1>
+                            <p class="text-lg md:text-xl mb-8 text-muted-foreground">Creative, fun, and educational
+                                workshops for children to explore their senses and develop their skills through play and
+                                imagination.</p>
+                            <div class="flex flex-wrap gap-4"><a class="btn-primary" href="/workshops">Explore
+                                    Workshops</a><a
+                                        class="btn-outline" href="/register">Register Now</a></div>
+                        </div>
+                        <div class="md:w-1/2 bg-white p-6 rounded-2xl shadow-workshop"><img
+                                    src="{{ asset('images/header.jpg') }}"
+                                    alt="Sensoryczna Workshop" class="w-full h-auto rounded-xl"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-16 bg-dot-pattern">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-12"><h2 class="section-title">Popular Workshops</h2>
+                        <p class="text-lg text-muted-foreground max-w-2xl mx-auto">Join our most beloved creative
+                            sessions
+                            where children can explore, learn, and have fun.</p></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="workshop-card">
+                            <div class="spot-badge spot-badge-low">Only 3 spots left!</div>
+                            <div class="rounded-lg bg-card text-card-foreground shadow-sm h-full flex flex-col overflow-hidden border-0">
+                                <div class="h-48 bg-cover bg-center"
+                                     style="background-color: rgb(113, 195, 219); background-image: none;"></div>
+                                <div class="p-6 flex flex-col flex-grow"><h3
+                                            class="text-xl font-bold mb-2 font-display">
+                                        Sensory Play with Colors</h3>
+                                    <p class="text-sm text-muted-foreground mb-4">Explore colors and textures in this
+                                        hands-on sensory workshop</p>
+                                    <div class="mt-auto space-y-3">
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-calendar w-4 h-4 mr-2 text-workshop-red">
+                                                <path d="M8 2v4"></path>
+                                                <path d="M16 2v4"></path>
+                                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                                <path d="M3 10h18"></path>
+                                            </svg>
+                                            <span>Every Monday, 17:00-18:00</span></div>
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-clock w-4 h-4 mr-2 text-workshop-blue">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            <span>60 minutes</span></div>
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-users w-4 h-4 mr-2 text-workshop-green">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9" cy="7" r="4"></circle>
+                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                            <span>Ages 3-6</span></div>
+                                        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10"
+                                                type="button">View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="workshop-card">
+                            <div class="spot-badge">8 spots available</div>
+                            <div class="rounded-lg bg-card text-card-foreground shadow-sm h-full flex flex-col overflow-hidden border-0">
+                                <div class="h-48 bg-cover bg-center"
+                                     style="background-color: rgb(247, 195, 67); background-image: none;"></div>
+                                <div class="p-6 flex flex-col flex-grow"><h3
+                                            class="text-xl font-bold mb-2 font-display">
+                                        Music &amp; Movement</h3>
+                                    <p class="text-sm text-muted-foreground mb-4">Rhythmic activities combining music,
+                                        dance
+                                        and coordination exercises</p>
+                                    <div class="mt-auto space-y-3">
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-calendar w-4 h-4 mr-2 text-workshop-red">
+                                                <path d="M8 2v4"></path>
+                                                <path d="M16 2v4"></path>
+                                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                                <path d="M3 10h18"></path>
+                                            </svg>
+                                            <span>Every Wednesday, 16:00-17:00</span></div>
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-clock w-4 h-4 mr-2 text-workshop-blue">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            <span>60 minutes</span></div>
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-users w-4 h-4 mr-2 text-workshop-green">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9" cy="7" r="4"></circle>
+                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                            <span>Ages 4-7</span></div>
+                                        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10"
+                                                type="button">View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="workshop-card">
+                            <div class="spot-badge spot-badge-critical">Fully booked</div>
+                            <div class="rounded-lg bg-card text-card-foreground shadow-sm h-full flex flex-col overflow-hidden border-0">
+                                <div class="h-48 bg-cover bg-center"
+                                     style="background-color: rgb(238, 203, 233); background-image: none;"></div>
+                                <div class="p-6 flex flex-col flex-grow"><h3
+                                            class="text-xl font-bold mb-2 font-display">
+                                        Science Explorers</h3>
+                                    <p class="text-sm text-muted-foreground mb-4">Fun experiments and discoveries for
+                                        curious young minds</p>
+                                    <div class="mt-auto space-y-3">
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-calendar w-4 h-4 mr-2 text-workshop-red">
+                                                <path d="M8 2v4"></path>
+                                                <path d="M16 2v4"></path>
+                                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                                <path d="M3 10h18"></path>
+                                            </svg>
+                                            <span>Every Friday, 15:30-16:30</span></div>
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-clock w-4 h-4 mr-2 text-workshop-blue">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            <span>60 minutes</span></div>
+                                        <div class="flex items-center text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-users w-4 h-4 mr-2 text-workshop-green">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9" cy="7" r="4"></circle>
+                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                            <span>Ages 5-8</span></div>
+                                        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10"
+                                                type="button">View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-12"><a href="/workshops">
+                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-11 rounded-md px-8 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
+                                View All Workshops
+                            </button>
+                        </a></div>
+                </div>
+            </section>
+            <section class="py-16 bg-white">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-12"><h2 class="section-title">How It Works</h2>
+                        <p class="text-lg text-muted-foreground max-w-2xl mx-auto">Booking a workshop is easy! Follow
+                            these
+                            simple steps to get your child started on a creative journey.</p></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div class="relative group">
+                            <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-beige to-white blur-xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative bg-white rounded-2xl p-8 shadow-workshop h-full flex flex-col items-center text-center border border-muted">
+                                <div class="bg-workshop-blue text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mb-4">
+                                    1
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 font-display text-workshop-brown">Browse
+                                    Workshops</h3>
+                                <p class="text-muted-foreground">Explore our variety of creative workshops designed for
+                                    different age groups and interests.</p></div>
+                        </div>
+                        <div class="relative group">
+                            <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-beige to-white blur-xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative bg-white rounded-2xl p-8 shadow-workshop h-full flex flex-col items-center text-center border border-muted">
+                                <div class="bg-workshop-pink text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mb-4">
+                                    2
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 font-display text-workshop-brown">Choose Your
+                                    Plan</h3>
+                                <p class="text-muted-foreground">Select a one-time session or a monthly carnet for
+                                    regular
+                                    attendance.</p></div>
+                        </div>
+                        <div class="relative group">
+                            <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-beige to-white blur-xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative bg-white rounded-2xl p-8 shadow-workshop h-full flex flex-col items-center text-center border border-muted">
+                                <div class="bg-workshop-yellow text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mb-4">
+                                    3
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 font-display text-workshop-brown">Book &amp; Pay</h3>
+                                <p class="text-muted-foreground">Secure your child's spot by completing the booking and
+                                    payment process.</p></div>
+                        </div>
+                        <div class="relative group">
+                            <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-beige to-white blur-xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative bg-white rounded-2xl p-8 shadow-workshop h-full flex flex-col items-center text-center border border-muted">
+                                <div class="bg-workshop-green text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mb-4">
+                                    4
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 font-display text-workshop-brown">Enjoy the
+                                    Workshop</h3>
+                                <p class="text-muted-foreground">Bring your child to experience creative learning and
+                                    sensory play!</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-16">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-12"><h2 class="section-title">What Parents Say</h2>
+                        <p class="text-lg text-muted-foreground max-w-2xl mx-auto">Hear from families who have
+                            experienced
+                            our workshops</p></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-workshop-blue/10 border-workshop-blue/30 p-6 rounded-2xl border shadow-sm"><p
+                                    class="mb-6 text-lg italic">"My daughter absolutely loves the sensory arts workshop.
+                                It's been wonderful watching her creativity bloom each week!"</p>
+                            <div><p class="font-bold">Anna K.</p>
+                                <p class="text-sm text-muted-foreground">Parent of a 5-year-old</p></div>
+                        </div>
+                        <div class="bg-workshop-pink/10 border-workshop-pink/30 p-6 rounded-2xl border shadow-sm"><p
+                                    class="mb-6 text-lg italic">"The monthly carnet is such great value. My son looks
+                                forward to his Saturday morning workshop every week."</p>
+                            <div><p class="font-bold">Michael P.</p>
+                                <p class="text-sm text-muted-foreground">Parent of a 7-year-old</p></div>
+                        </div>
+                        <div class="bg-workshop-yellow/10 border-workshop-yellow/30 p-6 rounded-2xl border shadow-sm"><p
+                                    class="mb-6 text-lg italic">"The booking system is so easy to use, and I love that I
+                                can
+                                manage all our classes in one place."</p>
+                            <div><p class="font-bold">Sophie L.</p>
+                                <p class="text-sm text-muted-foreground">Parent of twins</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-16 bg-gradient-to-br from-workshop-blue/20 to-workshop-pink/20">
+                <div class="container mx-auto px-4">
+                    <div class="max-w-2xl mx-auto text-center"><h2
+                                class="text-3xl font-bold mb-4 font-display text-workshop-brown">Stay Updated</h2>
+                        <p class="text-lg mb-8 text-muted-foreground">Subscribe to our newsletter to get updates about
+                            new
+                            workshops, special offers, and creative activities for kids.</p>
+                        <form class="flex flex-col sm:flex-row gap-3"><input type="email"
+                                                                             class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm flex-grow input-styled"
+                                                                             placeholder="Your email address"
+                                                                             required=""
+                                                                             value="">
+                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90"
+                                    type="submit">Subscribe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+{% endblock %}

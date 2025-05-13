@@ -10,6 +10,10 @@ import { Controller } from '@hotwired/stimulus';
  * Delete this file or adapt it for your use!
  */
 export default class extends Controller {
+
+    abc() {
+        alert('Hello Stimulus! This is a log from the hello_controller.js file.');
+    }
     connect() {
         this.element.textContent = 'Hello Stimulus! Edit me in assets/controllers/hello_controller.js';
     }

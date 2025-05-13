@@ -1,0 +1,41 @@
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center"><a class="flex items-center gap-2" href="/"><span
+                        class="font-display text-2xl font-bold text-workshop-brown"><span
+                            class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span
+                            class="text-workshop-yellow">n</span><span class="text-workshop-blue">s</span><span
+                            class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span
+                            class="text-workshop-green">y</span><span class="text-workshop-yellow">c</span><span
+                            class="text-workshop-blue">z</span><span class="text-workshop-pink">n</span><span
+                            class="text-workshop-red">a</span></span></a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a
+                        class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                        href="{{ path('homepage') }}">Home</a>
+                <a
+                        class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                        href="{{ path('workshops') }}">Workshops</a>
+                {% if app.user %}
+                <a href="/dashboard"
+                                                          class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">My
+                    Bookings</a>
+                <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
+                    Logout
+                </button>
+                {% else %}
+                <a href="/login"
+                   class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">Login</a>
+                {% endif %}
+            </nav>
+            <button class="md:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="lucide lucide-menu">
+                    <line x1="4" x2="20" y1="12" y2="12"></line>
+                    <line x1="4" x2="20" y1="6" y2="6"></line>
+                    <line x1="4" x2="20" y1="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
