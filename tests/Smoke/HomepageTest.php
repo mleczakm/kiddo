@@ -15,6 +15,6 @@ class HomepageTest extends WebTestCase
         ]);
         $crawler = $client->request('GET', '/');
 
-        self::assertResponseStatusCodeSame(404);
+        self::assertResponseStatusCodeSame(200);
     }
 }

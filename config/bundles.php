@@ -43,4 +43,7 @@ return [
     SwooleBundle\SwooleBundle\Bridge\Symfony\Bundle\SwooleBundle::class => [
         'all' => true,
     ],
+    Symfonycasts\TailwindBundle\SymfonycastsTailwindBundle::class => [
+        'all' => true,
+    ],
 ];
