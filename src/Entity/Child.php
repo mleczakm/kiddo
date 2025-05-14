@@ -16,7 +16,7 @@ class Child
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'children')]
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
@@ -31,7 +31,7 @@ class Child
         $this->id = new Ulid();
     }
 
-    public function getId(): ?int
+    public function getId(): Ulid
     {
         return $this->id;
     }

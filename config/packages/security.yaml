@@ -8,14 +8,15 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: username
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            lazy: true
-            provider: app_user_provider
+            login_link:
+                check_route: login_check
+                signature_properties: [ 'id' ]
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
