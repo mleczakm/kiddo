@@ -1,0 +1,7 @@
+swoole:
+  http_server:
+  task_worker:
+    services:
+      reset_handler: true
+    settings:
+      worker_count: auto

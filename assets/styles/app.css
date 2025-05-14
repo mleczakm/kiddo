@@ -5,7 +5,7 @@
 @source "templates/partials/";
 @source "templates/components/";
 @source "vendor/tales-from-a-dev/flowbite-bundle/templates/**/*.html.twig";
-
+@source "vendor/symfony/twig-bridge/Resources/views/Form/*.html.twig";
 
 :root {
     --background: 44 86% 93%;

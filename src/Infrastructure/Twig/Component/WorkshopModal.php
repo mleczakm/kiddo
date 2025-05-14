@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Twig\Component;
 
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

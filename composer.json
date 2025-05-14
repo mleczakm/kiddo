@@ -103,7 +103,7 @@
             "Validate composer.json": "@composer validate",
             "Security audit": "@composer audit",
             "lint:twig": "bin/console lint:twig templates",
-            "Phpstan": "phpstan analyse",
+            "Phpstan": "phpstan analyse --memory-limit=-1",
             "Rector": "rector --dry-run",
             "ECS": "ecs check"
         },
@@ -139,6 +139,7 @@
         "symfony/phpunit-bridge": "^7.2",
         "symfony/stopwatch": "7.2.*",
         "symfony/web-profiler-bundle": "7.2.*",
-        "symplify/easy-coding-standard": "^12.5"
+        "symplify/easy-coding-standard": "^12.5",
+        "zenstruck/foundry": "^2.5"
     }
 }

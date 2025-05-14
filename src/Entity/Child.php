@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ChildRepository;
@@ -23,6 +25,7 @@ class Child
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $age = null;
+
     public function __construct()
     {
         $this->id = new Ulid();
@@ -55,5 +58,15 @@ class Child
         $this->age = $age;
 
         return $this;
+    }
+
+    public function setUser(User $param)
+    {
+        $this->user = $param;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
     }
 }
