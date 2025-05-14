@@ -1,6 +1,9 @@
-<div data-state="closed" class="data-[state=open]:fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 mt-0" style="pointer-events: auto;" data-aria-hidden="true" aria-hidden="true"></div>
+<div
+        data-action="click->modal#clickOutside"
+        data-state="closed"
+        class="data-[state=open]:fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 mt-0" style="pointer-events: auto;" data-aria-hidden="true" aria-hidden="true"></div>
 <dialog data-modal-target="dialog"
-        data-action="close->modal#close close->model#clickOutside"
+        data-action="close->modal#close"
         class="open:flex open:fixed left-[70%] top-[80%] z-50 w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 [open]:slide-in-from-left-1/2 [open]:slide-in-from-top-[48%] sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
     <div class="grid">
     <div class="flex flex-col space-y-1.5 text-center sm:text-left">

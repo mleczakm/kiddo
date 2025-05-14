@@ -8,7 +8,6 @@ export default class extends Controller {
         const previousDiv = this.dialogTarget.previousElementSibling;
         if (previousDiv) {
             previousDiv.dataset.state = 'open';
-            previousDiv.classList.add('fixed')
         }
     }
 
@@ -24,14 +23,10 @@ export default class extends Controller {
         const previousDiv = this.dialogTarget.previousElementSibling;
         if (previousDiv) {
             previousDiv.dataset.state = 'closed';
-            previousDiv.classList.remove('fixed')
-            console.log('background fixed')
         }
     }
 
-    clickOutside(event) {
-        if (event.target === this.dialogTarget) {
-            this.close();
-        }
+    clickOutside() {
+        this.close();
     }
 }
