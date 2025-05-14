@@ -4,6 +4,7 @@
 @source "templates/";
 @source "templates/partials/";
 @source "templates/components/";
+@source "vendor/tales-from-a-dev/flowbite-bundle/templates/**/*.html.twig";
 
 
 :root {
@@ -102,11 +103,6 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.25rem;
     border: 1px solid #e2e8f0;
     border-radius: 0.375rem;
-}
-
-/* Workshop cards */
-.workshop-card {
-    position: relative;
 }
 
 .card {
@@ -261,10 +257,6 @@ h1, h2, h3, h4, h5, h6 {
     .workshops-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-}
-
-.workshop-card {
-    position: relative;
 }
 
 .spot-badge {
@@ -709,7 +701,6 @@ body {
 
 .workshop-card {
     position: relative;
-    overflow: hidden;
     border-radius: .75rem;
     border-width: 2px;
     border-style: solid;
@@ -1756,12 +1747,6 @@ body {
     --tw-space-y-reverse: 0;
     margin-top: calc(.5rem * calc(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(.5rem * var(--tw-space-y-reverse))
-}
-
-.space-y-3 > :not([hidden]) ~ :not([hidden]) {
-    --tw-space-y-reverse: 0;
-    margin-top: calc(.75rem * calc(1 - var(--tw-space-y-reverse)));
-    margin-bottom: calc(.75rem * var(--tw-space-y-reverse))
 }
 
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {

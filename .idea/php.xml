@@ -161,6 +161,10 @@
       <path value="$PROJECT_DIR$/vendor/symfonycasts/tailwind-bundle" />
       <path value="$PROJECT_DIR$/vendor/symfony/ux-twig-component" />
       <path value="$PROJECT_DIR$/vendor/symfony/ux-live-component" />
+      <path value="$PROJECT_DIR$/vendor/tales-from-a-dev/flowbite-bundle" />
+      <path value="$PROJECT_DIR$/vendor/tales-from-a-dev/twig-tailwind-extra" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/gehrisandro/tailwind-merge-php" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

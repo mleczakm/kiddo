@@ -344,6 +344,24 @@
             "config/packages/symfonycasts_tailwind.yaml"
         ]
     },
+    "tales-from-a-dev/flowbite-bundle": {
+        "version": "0.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.4",
+            "ref": "8c5eef17730535682128557a1016872fd3e81c33"
+        }
+    },
+    "tales-from-a-dev/twig-tailwind-extra": {
+        "version": "0.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.2",
+            "ref": "7243ab070ed66198eb82c026684e9b9773e7b64a"
+        }
+    },
     "twig/extra-bundle": {
         "version": "v3.21.0"
     }
