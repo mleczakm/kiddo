@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
@@ -203,6 +202,12 @@ TEXT);
 
     #[Route('/login_check', name: 'login_check')]
     public function check(): never
+    {
+        throw new \LogicException('This code should never be reached');
+    }
+
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(): never
     {
         throw new \LogicException('This code should never be reached');
     }
