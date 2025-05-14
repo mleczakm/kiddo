@@ -26,6 +26,18 @@
             "migrations/.gitignore"
         ]
     },
+    "odolbeau/phone-number-bundle": {
+        "version": "4.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "3.0",
+            "ref": "0d4442802a90dd2d1d6c18618998b43f69af0d95"
+        },
+        "files": [
+            "config/packages/misd_phone_number.yaml"
+        ]
+    },
     "phpstan/phpstan": {
         "version": "2.1",
         "recipe": {
@@ -273,6 +285,15 @@
             "config/packages/twig.yaml",
             "templates/base.html.twig"
         ]
+    },
+    "symfony/uid": {
+        "version": "7.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "7.0",
+            "ref": "0df5844274d871b37fc3816c57a768ffc60a43a5"
+        }
     },
     "symfony/ux-live-component": {
         "version": "2.24",

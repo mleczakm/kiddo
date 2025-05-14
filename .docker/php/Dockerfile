@@ -6,7 +6,7 @@ ENV APP_ENV=dev
 CMD bin/console swoole:server:run
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions @composer ds opcache pcntl pdo_sqlite swoole xdebug
+    install-php-extensions @composer ds opcache pcntl pdo_pgsql swoole xdebug
 
 FROM dev-local AS dev
 

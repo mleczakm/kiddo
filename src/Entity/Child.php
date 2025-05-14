@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\ChildRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Ulid;
+
+#[ORM\Entity(repositoryClass: ChildRepository::class)]
+class Child
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'ulid')]
+    private Ulid $id;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $age = null;
+    public function __construct()
+    {
+        $this->id = new Ulid();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+
+    public function setAge(?int $age): static
+    {
+        $this->age = $age;
+
+        return $this;
+    }
+}
