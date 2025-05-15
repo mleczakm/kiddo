@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
-class LoginAction extends AbstractController
+class SecurityController extends AbstractController
 {
     #[Route('/login', name: 'app_login')]
     public function form(Request $request, MailerInterface $mailer, UserProviderInterface $userProvider, LoginLinkHandlerInterface $loginLinkHandler): Response
@@ -40,10 +40,7 @@ class LoginAction extends AbstractController
             $email = (new Email())
                 ->from('hello@example.com')
                 ->to($user->getEmail())
-                //->cc('cc@example.com')
-                //->bcc('bcc@example.com')
                 ->replyTo('no-reply@example.com')
-                //->priority(Email::PRIORITY_HIGH)
                 ->subject('Zaloguj się do Sensorycznej!')
                 ->html(<<<HTML
 <!DOCTYPE html>
@@ -113,6 +110,7 @@ class LoginAction extends AbstractController
         .help-text {
           font-size: 14px;
           color: #666;
+          overflow-wrap: break-word;
         }
       </style>
     </head>
@@ -156,7 +154,7 @@ class LoginAction extends AbstractController
 
 
         <div class="footer">
-          <p>&copy; 2025 Sensoryczna. All rights reserved.</p>
+          <p>&copy; 2025 Sensoryczna. Wszystkie prawa zastrzeżone.</p>
         </div>
       </div>
     </body>
