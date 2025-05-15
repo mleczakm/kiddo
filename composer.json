@@ -104,7 +104,7 @@
         "sa": {
             "Validate composer.json": "@composer validate",
             "Security audit": "@composer audit",
-            "lint:twig": "bin/console lint:twig templates",
+            "lint:twig": "bin/console lint:twig src templates",
             "Phpstan": "phpstan analyse --memory-limit=-1",
             "Rector": "rector --dry-run",
             "ECS": "ecs check"

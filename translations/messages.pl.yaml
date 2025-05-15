@@ -1,2 +1,23 @@
 form:
-  login.submit: Zaloguj się za pomocą linku wysłanego na e-mail
+  login:
+    submit: Zaloguj się za pomocą linku wysłanego na e-mail
+    header: Witamy ponownie!
+
+  register:
+    title: "Utwórz konto"
+    email: "Email"
+    submit: "Zarejestruj się"
+    already_have_account: "Masz już konto?"
+    login: "Zaloguj się"
+    name: "Imię"
+
+    dont_have_account: "Nie masz jeszcze konta?"
+    register: "Zarejestruj się"
+    
+    verify_mail: Proszę sprawdź swoją skrzynkę pocztową!
+    mail_sent_header: Witamy!
+
+page:
+  default:
+    header: "Warsztatownia sensoryczna"
+    footer: © 2025 Warsztatownia Sensoryczna. Wszystkie prawa zastrzeżone.

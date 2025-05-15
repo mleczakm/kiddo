@@ -2,7 +2,7 @@ twig:
     file_name_pattern: '*.twig'
     form_themes:
 #      - '@Flowbite/form/default.html.twig'
-      - 'tailwind_2_layout.html.twig'
+      - 'partials/form_layout.html.twig'
     paths:
       '%kernel.project_dir%/templates/email': 'email' #forces @email to be inside '%kernel.project_dir%/templates/email
 

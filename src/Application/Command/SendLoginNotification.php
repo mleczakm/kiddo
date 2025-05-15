@@ -6,7 +6,8 @@ namespace App\Application\Command;
 
 readonly class SendLoginNotification
 {
-    public function __construct(public string $email)
-    {
+    public function __construct(
+        public string $email
+    ) {
     }
 }

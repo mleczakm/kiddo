@@ -20,8 +20,8 @@ readonly class SendLoginNotificationHandler
         private UserProviderInterface $userProvider,
         private LoginLinkHandlerInterface $loginLinkHandler,
         private TranslatorInterface $translator,
-    )
-    {}
+    ) {
+    }
 
     public function __invoke(SendLoginNotification $command): void
     {

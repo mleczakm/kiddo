@@ -1,9 +1,11 @@
 {% extends 'base.html.twig' %}
 
+
+
 {% block body %}
     <main class="flex-grow">
         <div class="page-container">
-            <div class="max-w-md mx-auto"><h1 class="section-title text-center">Welcome Back</h1>
+            <div class="max-w-md mx-auto"><h1 class="section-title text-center">{{ 'form.login.header'|trans }}</h1>
                 <div class="rounded-lg border bg-card text-card-foreground shadow-sm mb-8">
                     <div class="p-6">
                         {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
@@ -17,8 +19,11 @@
                         {{ form_end(form) }}
                     </div>
                 </div>
-                <div class="text-center"><p class="text-muted-foreground">Don't have an account? <a
-                                class="text-workshop-red hover:underline" href="/register">Register</a></p></div>
+                <div class="text-center">
+                    <p class="text-muted-foreground">{{ 'form.register.dont_have_account'|trans }}
+                        <a class="text-workshop-red hover:underline" href="{{ path('user_register') }}">{{ 'form.register.register'|trans }}</a>
+                    </p>
+                </div>
             </div>
         </div>
     </main>

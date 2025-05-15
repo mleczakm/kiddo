@@ -19,10 +19,21 @@ use Symfony\Component\Routing\Attribute\Route;
 class RegisterUserAction extends AbstractController
 {
     #[Route('/register', name: 'user_register')]
-    public function form(Request $request, EntityManagerInterface $entityManager, MessageBusInterface $messageBus): Response
-    {
+    public function form(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MessageBusInterface $messageBus
+    ): Response {
         $user = new User();
-        $form = $this->createFormBuilder($user)->add('name', TextType::class, ['label' => 'form.register.name',])->add('email', EmailType::class)->add('submit', SubmitType::class, ['label' => 'form.register.submit',])->getForm();
+        $form = $this->createFormBuilder($user)
+            ->add('name', TextType::class, [
+                'label' => 'form.register.name',
+            ])
+            ->add('email', EmailType::class)
+            ->add('submit', SubmitType::class, [
+                'label' => 'form.register.submit',
+            ])
+            ->getForm();
 
         $form->handleRequest($request);
 
@@ -37,9 +48,10 @@ class RegisterUserAction extends AbstractController
             $messageBus->dispatch(new SendLoginNotification($user->getEmail()));
 
             return $this->redirectToRoute('app_email_confirmation');
-
         }
 
-        return $this->render('register.html.twig', ['form' => $form->createView()]);
+        return $this->render('register.html.twig', [
+            'form' => $form,
+        ]);
     }
 }

@@ -1,2 +1,21 @@
 form:
   login.submit: Login using link sent by email
+
+  register:
+    title: "Create an Account"
+    email: "Email"
+    submit: "Register"
+    already_have_account: "Already have an account?"
+    login: "Login"
+    name: "Name"
+
+    dont_have_account: "Don't have an account yet?"
+    register: "Register"
+
+    verify_mail: Please check your inbox!
+    mail_sent_header: Welcome!
+
+page:
+  default:
+    header: "Warsztatownia sensoryczna"
+    footer: © 2025 Sensory Workshop. All rights reserved.

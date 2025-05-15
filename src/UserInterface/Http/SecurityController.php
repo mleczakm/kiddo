@@ -19,7 +19,10 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function form(Request $request, MessageBusInterface $messageBus): Response
     {
-        $form = $this->createFormBuilder()->add('email', EmailType::class)->add('submit', SubmitType::class, ['label' => 'form.login.submit',])->getForm();
+        $form = $this->createFormBuilder()
+            ->add('email', EmailType::class)->add('submit', SubmitType::class, [
+    'label' => 'form.login.submit',
+])->getForm();
 
         $form->handleRequest($request);
 
@@ -31,7 +34,9 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_email_confirmation');
         }
 
-        return $this->render('login.html.twig', ['form' => $form->createView(),]);
+        return $this->render('login.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/email-confirmation', name: 'app_email_confirmation')]
