@@ -5,15 +5,16 @@ ENV APP_ENV=dev
 
 CMD bin/console swoole:server:run
 
+
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions @composer ds opcache pcntl pdo_pgsql swoole xdebug
+    install-php-extensions apcu @composer ds opcache pcntl pdo_pgsql swoole xdebug xsl
+
 
 FROM dev-local AS dev
 
-RUN --mount=type=bind,target=/context \
-    cp -f /context/composer.json . && \
-    cp -f /context/composer.lock . && \
-    composer install --prefer-dist --no-scripts --no-interaction --no-progress --no-cache --optimize-autoloader
+COPY composer.json composer.lock .
+
+RUN composer install --prefer-dist --no-scripts --no-interaction --no-progress --no-cache --optimize-autoloader
 
 RUN --mount=type=bind,target=/context \
     mkdir ./bin/ && \

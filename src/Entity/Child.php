@@ -21,10 +21,10 @@ class Child
     private User $user;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private string $name;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $age = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $birthday = null;
 
     public function __construct()
     {

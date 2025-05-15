@@ -1,0 +1,71 @@
+{% apply inky_to_html|inline_css %}
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            {% block style %}
+            {{ source("@email/default/main.css") }}
+            {% endblock %}
+        </style>
+    </head>
+    <body>
+    <div class="email-container {{ ("urgent" == importance ? "alert" : ("high" == importance ? "warning" : "default")) }}">
+        <div class="header">
+            <div class="logo">
+                <span class="red">S</span>
+                <span class="green">e</span>
+                <span class="yellow">n</span>
+                <span class="blue">s</span>
+                <span class="pink">o</span>
+                <span class="red">r</span>
+                <span class="green">y</span>
+                <span class="yellow">c</span>
+                <span class="blue">z</span>
+                <span class="pink">n</span>
+                <span class="red">a</span>
+            </div>
+        </div>
+        {% block lead %}
+            {% if importance is not null %}<small><strong>{{ importance|upper }}</strong></small>{% endif %}
+            <p class="lead">
+                {{ email.subject }}
+            </p>
+        {% endblock %}
+
+        {% block content %}
+            {% if markdown %}
+                {{ include('@email/zurb_2/notification/content_markdown.html.twig') }}
+            {% else %}
+                {{ raw ? content|raw : content|nl2br }}
+            {% endif %}
+        {% endblock %}
+
+        {% block action %}
+            {% if action_url %}
+                <spacer size="16"></spacer>
+                <div style="text-align: center;">
+                    <a href="{{ action_url }}" class="button">{{ action_text|trans({}, 'emails') }}</a>
+                </div>
+                <p>{{ 'link_warning_upper'|trans({}, 'emails') }}</p>
+
+                <p class="help-text">{{ action_url }}</p>
+
+                <p>{{ 'link_warning_underlying'|trans({}, 'emails') }}</p>
+            {% endif %}
+        {% endblock %}
+
+        {% block exception %}
+            {% if exception %}
+                <spacer size="16"></spacer>
+                <p><em>{{ 'exception'|trans({}, 'emails') }}</em></p>
+            {% endif %}
+        {% endblock %}
+        <div class="footer">
+            {{ 'footer'|trans({}, 'emails')|raw }}
+        </div>
+    </div>
+    </body>
+    </html>
+{% endapply %}
+

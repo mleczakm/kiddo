@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main class="flex-grow">
+        <div class="page-container">
+            <div class="max-w-md mx-auto"><h1 class="section-title text-center">Create an Account</h1>
+                <div class="rounded-lg border bg-card text-card-foreground shadow-sm mb-8">
+                    <div class="p-6">
+                        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+                        <div>
+                            {{ form_label(form.email, 'Email', {'label_attr': {'class': 'block text-sm font-medium mb-1'}}) }}
+                            {{ form_widget(form.email, {'attr': {'class': 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm input-styled'}}) }}
+                        </div>
+                        <div>
+                            {{ form_widget(form.submit, {'attr': {'class': 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90'}}) }}
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+                <div class="text-center"><p class="text-muted-foreground">Already have an account? <a
+                                class="text-workshop-red hover:underline" href="{{ path('app_login') }}">Login</a></p></div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
