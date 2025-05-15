@@ -19,6 +19,7 @@ body {
 .logo {
     font-size: 28px;
     font-weight: bold;
+    color: hsl(30 76% 18%);
 }
 .logo span {
     display: inline-block;

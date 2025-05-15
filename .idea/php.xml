@@ -177,6 +177,7 @@
       <path value="$PROJECT_DIR$/vendor/lorenzo/pinky" />
       <path value="$PROJECT_DIR$/vendor/twig/inky-extra" />
       <path value="$PROJECT_DIR$/vendor/twig/cssinliner-extra" />
+      <path value="$PROJECT_DIR$/vendor/dunglas/doctrine-json-odm" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

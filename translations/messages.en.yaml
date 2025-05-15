@@ -19,3 +19,14 @@ page:
   default:
     header: "Warsztatownia sensoryczna"
     footer: © 2025 Sensory Workshop. All rights reserved.
+
+  workshops: Workshops
+  homepage: Homepage
+  my_bookings: My Bookings
+  logout: Logout
+  login: Login
+  email: "Email:"
+  phone: "Telefon:"
+  contact_us: "Contact Us"
+  quick_links: "Quick Links"
+  description: Creative sensory workshops for children, designed to stimulate imagination and development through play.

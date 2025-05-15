@@ -13,6 +13,7 @@
         "doctrine/doctrine-bundle": "^2.14",
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.3",
+        "dunglas/doctrine-json-odm": "^1.4",
         "odolbeau/phone-number-bundle": "^4.1",
         "phpdocumentor/reflection-docblock": "^5.6",
         "phpstan/phpdoc-parser": "^2.1",
