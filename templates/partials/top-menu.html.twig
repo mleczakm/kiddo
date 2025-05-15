@@ -11,20 +11,19 @@
             <nav class="hidden md:flex items-center gap-8">
                 <a
                         class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
-                        href="{{ path('homepage') }}">Home</a>
+                        href="{{ path('homepage') }}">{{ 'page.homepage'|trans }}</a>
                 <a
                         class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
-                        href="{{ path('workshops') }}">Workshops</a>
+                        href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a>
                 {% if app.user %}
-                <a href="/dashboard"
-                                                          class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">My
-                    Bookings</a>
+                <a href="/dashboard" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
+                    {{ 'page.my_bookings'|trans }}</a>
                 <a href="{{ path('app_logout') }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
-                    Logout
+                    {{ 'page.logout'|trans }}
                 </a>
                 {% else %}
                 <a href="{{ path('app_login') }}"
-                   class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">Login</a>
+                   class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">{{ 'page.login'|trans }}</a>
                 {% endif %}
             </nav>
             <button class="md:hidden">

@@ -42,6 +42,10 @@ class SecurityController extends AbstractController
     #[Route('/email-confirmation', name: 'app_email_confirmation')]
     public function mailConfirmation(): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('homepage');
+        }
+
         return $this->render('email-confirmation.html.twig');
     }
 

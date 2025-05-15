@@ -21,3 +21,9 @@ page:
   default:
     header: "Warsztatownia sensoryczna"
     footer: © 2025 Warsztatownia Sensoryczna. Wszystkie prawa zastrzeżone.
+
+  workshops: Warsztaty
+  homepage: Strona główna
+  my_bookings: Moje rezerwacje
+  logout: Wyloguj się
+  login: Zaloguj się

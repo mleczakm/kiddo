@@ -5,11 +5,11 @@ link_warning_upper: Jeśli powyższy przycisk nie działa, możesz skopiować i 
 link_warning_underlying: Jeśli nie prosiłeś(-aś) o link do logowania, zignoruj tę wiadomość. Bezpieczeństwo Twojego konta jest dla nas ważne.
 
 login_link:
-  subject: 'Zaloguj się do swojego konta w Sensorycznej'
+  subject: 'Zaloguj się do swojego konta w Warsztatowni Sensorycznej'
   content:
     html: |
       Witaj %name%,
 
-      Ostatnio poprosiłeś(-aś) o link do logowania do Sensorycznej. Kliknij poniższy przycisk, aby bezpiecznie zalogować się na swoje konto:
+      Ostatnio poprosiłeś(-aś) o link do logowania do Warsztatowni Sensorycznej. Kliknij poniższy przycisk, aby bezpiecznie zalogować się na swoje konto:
 
 Sign in: Zaloguj się
