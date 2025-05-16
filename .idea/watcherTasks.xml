@@ -3,7 +3,7 @@
   <component name="ProjectTasksOptions">
     <TaskOptions isEnabled="true">
       <option name="arguments" value="-c &quot;docker compose run --rm php bin/console cache:clear -e dev &amp;&amp; docker compose restart php&quot;" />
-      <option name="checkSyntaxErrors" value="false" />
+      <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="*" />
@@ -15,7 +15,7 @@
       </option>
       <option name="outputFromStdout" value="false" />
       <option name="program" value="sh" />
-      <option name="runOnExternalChanges" value="true" />
+      <option name="runOnExternalChanges" value="false" />
       <option name="scopeName" value="Unnamed" />
       <option name="trackOnlyRoot" value="false" />
       <option name="workingDir" value="$PROJECT_DIR$" />

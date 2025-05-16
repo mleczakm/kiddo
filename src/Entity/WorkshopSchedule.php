@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\WorkshopScheduleRepository;
@@ -26,7 +28,9 @@ class WorkshopSchedule
     #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $endDate;
 
-    #[ORM\Column(type: 'json_document', options: ['jsonb' => true])]
+    #[ORM\Column(type: 'json_document', options: [
+        'jsonb' => true,
+    ])]
     private mixed $strategy;
 
     #[ORM\Column(type: 'json', nullable: true)]
@@ -34,6 +38,9 @@ class WorkshopSchedule
 
     #[ORM\OneToMany(mappedBy: 'schedule', targetEntity: WorkshopOccurrence::class)]
     private Collection $occurrences;
+
+    #[ORM\Column(type: 'json_document')]
+    private WorkshopType $type = WorkshopType::WEEKLY;
 
     public function __construct()
     {

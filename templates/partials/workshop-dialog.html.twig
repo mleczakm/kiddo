@@ -8,14 +8,12 @@
     <div class="grid">
     <div class="flex flex-col space-y-1.5 text-center sm:text-left">
         <h2 id="radix-:r1:" class="tracking-tight text-2xl font-bold font-display text-workshop-brown">
-            Music &amp; Movement</h2>
-        <p id="radix-:r2:" class="text-sm text-muted-foreground">Rhythmic activities combining music, dance and
-            coordination
-            exercises</p>
+            {{ lesson.metadata.title }}</h2>
+        <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
     </div>
     <div class="space-y-6">
         <div class="w-full h-48 md:h-60 rounded-lg bg-cover bg-center"
-             style="background-color: rgb(247, 195, 67); background-image: none;"></div>
+             style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="flex items-start">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -28,8 +26,19 @@
                     <path d="m9 16 2 2 4-4"></path>
                 </svg>
                 <div>
-                    <p class="font-medium">Schedule</p>
-                    <p class="text-muted-foreground">Every Wednesday, 16:00-17:00</p>
+                    <p class="font-medium">{{ 'lesson.schedule'|trans }}</p>
+                    <p class="text-muted-foreground">{% if lesson.type.value == 'weeklya' %}
+                            {{ 'lesson.every'|trans({
+                                'day': lesson.metadata.schedule|date('l'),
+                                'hour': lesson.metadata.schedule|date('H:i')
+                            }) }}
+                        {% else %}
+                            {{ 'lesson.once'|trans({
+                                'day': lesson.metadata.schedule|date('l'),
+                                'date': lesson.metadata.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
+                                'hour': lesson.metadata.schedule|date('H:i')
+                            }) }}
+                        {% endif %}</p>
                 </div>
             </div>
             <div class="flex items-start">
@@ -40,8 +49,8 @@
                     <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
                 <div>
-                    <p class="font-medium">Duration</p>
-                    <p class="text-muted-foreground">60 minutes</p>
+                    <p class="font-medium">{{ 'lesson.duration'|trans }}</p>
+                    <p class="text-muted-foreground">{{ 'lesson.minutes'|trans({minutes: lesson.metadata.duration}) }}</p>
                 </div>
             </div>
             <div class="flex items-start">
@@ -54,8 +63,8 @@
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
                 <div>
-                    <p class="font-medium">Age Range</p>
-                    <p class="text-muted-foreground">4-7 years</p>
+                    <p class="font-medium">{{ 'lesson.age_range_label'|trans }}</p>
+                    <p class="text-muted-foreground">{{ lesson.metadata.ageRange.max ? 'lesson.age_range'|trans({min: lesson.metadata.ageRange.min, max: lesson.metadata.ageRange.max, top: lesson.metadata.ageRange.max}) : 'lesson.age_above'|trans({min: lesson.metadata.ageRange.min}) }}</p>
                 </div>
             </div>
             <div class="flex items-start">
@@ -66,8 +75,8 @@
                     <circle cx="12" cy="10" r="3"></circle>
                 </svg>
                 <div>
-                    <p class="font-medium">Location</p>
-                    <p class="text-muted-foreground">Dance Room</p>
+                    <p class="font-medium">{{ 'lesson.location' }}</p>
+                    <p class="text-muted-foreground">{{ 'page.default.address.street'|trans }}, {{ 'page.default.address.city'|trans }}</p>
                 </div>
             </div>
             <div class="flex items-start">
@@ -78,22 +87,19 @@
                     <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle>
                 </svg>
                 <div>
-                    <p class="font-medium">Group</p>
-                    <p class="text-muted-foreground">Rhythm Kids</p>
+                    <p class="font-medium">{{ 'lesson.category'|trans }}</p>
+                    <p class="text-muted-foreground">{{ lesson.metadata.category }}</p>
                 </div>
             </div>
             <div class="flex items-center">
                 <div class="inline-flex items-center rounded-full border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-workshop-green text-workshop-green text-base py-1 px-3">
-                    8 spots available
+                    {{ 'lesson.spots_available'|trans({spots: lesson.metadata.capacity}) }}
                 </div>
             </div>
         </div>
         <div>
-            <h3 class="font-semibold mb-2">About This Workshop</h3>
-            <p class="text-muted-foreground">In this energetic workshop, children will discover the joy of rhythm and
-                movement. Through a series of fun activities with instruments, dance routines, and coordination games,
-                kids will develop their gross motor skills, sense of rhythm, and musical appreciation. Each session ends
-                with a calming cool-down activity.</p>
+            <h3 class="font-semibold mb-2">{{ 'lesson.description'|trans }}</h3>
+            <p class="text-muted-foreground">{{ lesson.metadata.description }}</p>
         </div>
         <div class="bg-muted/50 p-4 rounded-lg">
             <h3 class="text-lg font-bold mb-4 font-display text-workshop-brown">

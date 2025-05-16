@@ -1,0 +1,115 @@
+form:
+  login:
+    submit: Zaloguj się za pomocą linku wysłanego na e-mail
+    header: Witamy ponownie!
+
+  register:
+    title: "Utwórz konto"
+    email: "Email"
+    submit: "Zarejestruj się"
+    already_have_account: "Masz już konto?"
+    login: "Zaloguj się"
+    name: "Imię"
+
+    dont_have_account: "Nie masz jeszcze konta?"
+    register: "Zarejestruj się"
+    
+    verify_mail: Proszę sprawdź swoją skrzynkę pocztową!
+    mail_sent_header: Witamy!
+
+page:
+  default:
+    header: "Warsztatownia sensoryczna"
+    footer: © 2025 Warsztatownia Sensoryczna. Wszystkie prawa zastrzeżone.
+    address:
+      street: "Aleja Jana Pawła II 12D"
+      city: "Radzymin"
+      postal_code: "05-250"
+    email: warsztatownia.sensoryczna@gmail.com
+
+  register: Zarejestruj się
+  workshops: Warsztaty
+  homepage: Strona główna
+  my_bookings: Moje rezerwacje
+  logout: Wyloguj się
+  login: Zaloguj się
+  email: "Email:"
+  phone: "Telefon:"
+  contact_us: "Skontaktuj się z nami"
+  quick_links: "Szybkie linki"
+  description: Miejsce dla Rodzin z małymi dziećmi ❤️ Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia 🥰
+lesson:
+  page:
+    #Browse Our Workshops
+    header: "Przeglądaj nasze warsztaty"
+    #Discover our range of creative and educational workshops for children of all ages
+    lead: "Poznaj naszą ofertę kreatywnych i edukacyjnych warsztatów dla dzieci w każdym wieku"
+  every: >-
+    {day, select,
+        Monday   {Każdy poniedziałek, o {hour}}
+        Tuesday   {Każdy wtorek, o {hour}}
+        Wednesday   {Każda środa, o {hour}}
+        Thursday   {Każdy czwartek, o {hour}}
+        Friday   {Każdy piątek, o {hour}}
+        Saturday   {Każda sobota, o {hour}}
+        Sunday   {Każda niedziela, o {hour}}
+        other    {}
+    }
+    
+  once: >-
+    {day, select,
+        Monday   {Poniedziałek {date}, o {hour}}
+        Tuesday   {Wtorek {date}, o {hour}}
+        Wednesday   {Środa {date}, o {hour}}
+        Thursday   {Czwartek {date}, o {hour}}
+        Friday   {Piątek {date}, o {hour}}
+        Saturday   {Sobota {date}, o {hour}}
+        Sunday   {Niedziela {date}, o {hour}}
+        other    {}
+    }
+
+  minutes: >-
+    {minutes, plural,
+      =0 {brak}
+      one {# minuta}
+      few {# minuty}
+      many {# minut}
+      other {# minut}
+    }
+
+  schedule: Harmonogram
+  duration: Czas trwania
+  age_range_label: 'Zakres wiekowy'
+  age_range: >-
+    {top, plural,
+      =0 {brak wiekowych ograniczeń}
+      one {{min}-{max} rok}
+      few {{min}-{max} lata}
+      many {{min}-{max} lat}
+      other {{min}-{max} lat}
+    }
+
+  details: Zobacz więcej
+  age_above: Więcej niż >-
+    {min, plural,
+    =0 {brak}
+    one {# rok}
+    few {# lat}
+    many {# lata}
+    other {# lata}
+    }
+  location: Lokalizacja
+  category: Kategoria
+  description: O tych zajęciach
+
+  spots_available: >-
+    {spots, plural,
+      =0 {brak miejsc}
+      one {# miejsce dostępne}
+      few {# miejsca dostępne}
+      many {# miejsc dostępnych}
+      other {# miejsc dostępnych}
+    }
+    
+  age: Wiek
+  search: Szukaj warsztatów...

@@ -178,6 +178,7 @@
       <path value="$PROJECT_DIR$/vendor/twig/inky-extra" />
       <path value="$PROJECT_DIR$/vendor/twig/cssinliner-extra" />
       <path value="$PROJECT_DIR$/vendor/dunglas/doctrine-json-odm" />
+      <path value="$PROJECT_DIR$/vendor/twig/intl-extra" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

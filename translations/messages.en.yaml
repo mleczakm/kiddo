@@ -30,3 +30,21 @@ page:
   contact_us: "Contact Us"
   quick_links: "Quick Links"
   description: Creative sensory workshops for children, designed to stimulate imagination and development through play.
+
+lesson:
+  page:
+    header: Browse Our Workshops
+    lead: Discover our range of creative and educational workshops for children of all ages
+
+  every: Every {day}
+  minutes: >-
+    { minutes, plural,
+      =0 {none}
+      one {# minute}
+      few {# minutes}
+      many {# minutes}
+      other {# minutes}
+    }
+  details: See details
+  age_above: Above {min}
+  

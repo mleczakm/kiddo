@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Uid\Ulid;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity]
 class WorkshopTemplate
@@ -19,6 +21,7 @@ class WorkshopTemplate
 
     #[ORM\Column(type: 'string')]
     private string $lead;
+
     #[ORM\Column(type: 'text')]
     private string $description;
 
@@ -31,9 +34,6 @@ class WorkshopTemplate
     #[ORM\OneToMany(mappedBy: 'template', targetEntity: WorkshopSchedule::class)]
     private Collection $schedules;
 
-    #[ORM\Column(type: 'json_document')]
-    private WorkshopType $type = WorkshopType::WEEKLY;
-
     public function __construct()
     {
         $this->id = new Ulid();
@@ -43,6 +43,6 @@ class WorkshopTemplate
 
     public static function createOneTime()
     {
-        
+
     }
 }
