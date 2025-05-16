@@ -27,7 +27,7 @@
                 </svg>
                 <div>
                     <p class="font-medium">{{ 'lesson.schedule'|trans }}</p>
-                    <p class="text-muted-foreground">{% if lesson.type.value == 'weeklya' %}
+                    <p class="text-muted-foreground">{% if lesson.type.value == 'weekly' %}
                             {{ 'lesson.every'|trans({
                                 'day': lesson.metadata.schedule|date('l'),
                                 'hour': lesson.metadata.schedule|date('H:i')
@@ -75,7 +75,7 @@
                     <circle cx="12" cy="10" r="3"></circle>
                 </svg>
                 <div>
-                    <p class="font-medium">{{ 'lesson.location' }}</p>
+                    <p class="font-medium">{{ 'lesson.location'|trans }}</p>
                     <p class="text-muted-foreground">{{ 'page.default.address.street'|trans }}, {{ 'page.default.address.city'|trans }}</p>
                 </div>
             </div>
