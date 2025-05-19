@@ -114,7 +114,7 @@ class WorkshopsAction extends AbstractController
         $lessons[] = new Lesson($fabrCzekoladyMetadata);
 
         return $this->render('workshops.html.twig', [
-                'workshops' => $lessons,
-            ]);
+            'workshops' => $lessons,
+        ]);
     }
 }

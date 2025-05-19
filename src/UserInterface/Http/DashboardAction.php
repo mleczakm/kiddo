@@ -12,10 +12,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DashboardAction extends AbstractController
 {
     #[Route(path: [
-        'en' =>  '/dashboard',
+        'en' => '/dashboard',
         'pl' => '/panel',
-    ]
-        , name: 'dashboard')]
+    ], name: 'dashboard')]
     #[IsGranted('ROLE_USER')]
     public function __invoke(): Response
     {
