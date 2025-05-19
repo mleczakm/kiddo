@@ -32,7 +32,7 @@ RUN --mount=type=bind,target=/context \
     cp -f /context/ecs.php . && \
     cp -f /context/importmap.php . && \
     cp -f /context/phpstan.dist.neon . && \
-    cp -f /context/phpstan.baseline.neon . && \
+    cp -f /context/phpstan-baseline.neon . && \
     cp -f /context/phpunit.xml.dist . && \
     cp -f /context/rector.php . && \
     bin/console cache:warmup
