@@ -27,6 +27,7 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var array{email: string} $data */
             $data = $form->getData();
 
             $messageBus->dispatch(new SendLoginNotification($data['email']));

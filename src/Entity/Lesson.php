@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity]
@@ -43,5 +44,16 @@ class Lesson
     public function setMetadata(LessonMetadata $metadata): void
     {
         $this->metadata = $metadata;
+    }
+
+    /**
+     * @return list<Reservation>
+     */
+    public function apply(Ticket $ticket): array
+    {
+        $reservation = new Reservation($this, $ticket, Clock::get()->now());
+        $ticket->addReservation($reservation);
+
+        return [$reservation];
     }
 }

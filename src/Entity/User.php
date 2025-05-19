@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use libphonenumber\PhoneNumber;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -31,6 +30,8 @@ class User implements UserInterface
     private array $roles = [];
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private string $email;
 
     #[ORM\Column(type: 'phone_number', nullable: true)]
@@ -45,39 +46,9 @@ class User implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Child::class, cascade: ['persist', 'remove'])]
-    private Collection $children;
-
     public function __construct()
     {
-        $this->children = new ArrayCollection();
         $this->createdAt = Clock::get()->now();
-    }
-
-    public function getChildren(): Collection
-    {
-        return $this->children;
-    }
-
-    public function addChild(Child $child): static
-    {
-        if (! $this->children->contains($child)) {
-            $this->children->add($child);
-            $child->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChild(Child $child): static
-    {
-        if ($this->children->removeElement($child)) {
-            if ($child->getUser() === $this) {
-                $child->setUser(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getId(): ?int
@@ -92,7 +63,7 @@ class User implements UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     /**

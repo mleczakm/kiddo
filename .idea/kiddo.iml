@@ -167,6 +167,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/zenstruck/assert" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/zenstruck/foundry" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dunglas/doctrine-json-odm" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpstan-symfony" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/twig/intl-extra" />
     </content>
     <orderEntry type="inheritedJdk" />

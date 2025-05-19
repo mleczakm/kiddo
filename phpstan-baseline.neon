@@ -1,0 +1,13 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Application\\CommandHandler\\SendLoginNotificationHandler\:\:__construct\(\) has parameter \$userProvider with generic interface Symfony\\Component\\Security\\Core\\User\\UserProviderInterface but does not specify its types\: TUser$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Application/CommandHandler/SendLoginNotificationHandler.php
+
+		-
+			message: '#^Method App\\Entity\\User\:\:getUserIdentifier\(\) should return non\-empty\-string but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Entity/User.php

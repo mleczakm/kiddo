@@ -9,12 +9,16 @@ use Doctrine\Common\Collections\Collection;
 class Series
 {
     public function __construct(
-        public WorkshopType $type = WorkshopType::WEEKLY,
+        /** @var Collection<int, Lesson> */
         public Collection $lessons,
+        public WorkshopType $type = WorkshopType::WEEKLY,
     ) {
     }
 
-    public function apply(Ticket $ticket)
+    /**
+     * @return list<Reservation>
+     */
+    public function apply(Ticket $ticket): array
     {
         $reservations = [];
 
@@ -27,6 +31,9 @@ class Series
         return $reservations;
     }
 
+    /**
+     * @return iterable<Lesson>
+     */
     private function findActiveLessons(): iterable
     {
         yield from $this->lessons;
