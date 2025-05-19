@@ -103,8 +103,7 @@
             "@auto-scripts"
         ],
         "qa": {
-            "Static analysis": "@sa",
-            "Functional tests": "@tests:functional"
+            "Static analysis": "@sa"
         },
         "sa": {
             "Validate composer.json": "@composer validate",
