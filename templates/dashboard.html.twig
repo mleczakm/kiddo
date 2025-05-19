@@ -2,9 +2,9 @@
 
 {% block body %}
 <main class="flex-grow">
-    <div class="page-container"><h1 class="section-title">My Dashboard</h1>
+    <div class="page-container"><h1 class="section-title">{{ 'page.my_bookings'|trans }}</h1>
         <div class="space-y-8">
-            <section><h2 class="text-2xl font-bold mb-4 font-display text-workshop-brown">My Carnets</h2>
+            <section><h2 class="text-2xl font-bold mb-4 font-display text-workshop-brown">{{ 'page.my_carnets'|trans }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="rounded-lg border bg-card text-card-foreground shadow-sm border-l-4 border-l-workshop-green">
                         <div class="p-6">
@@ -28,7 +28,7 @@
                     </div>
                 </div>
             </section>
-            <section><h2 class="text-2xl font-bold mb-4 font-display text-workshop-brown">My Bookings</h2>
+            <section><h2 class="text-2xl font-bold mb-4 font-display text-workshop-brown">{{ 'page.my_bookings'|trans }}</h2>
                 <div dir="ltr" data-orientation="horizontal">
                     <div role="tablist" aria-orientation="horizontal"
                          class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full mb-6"
