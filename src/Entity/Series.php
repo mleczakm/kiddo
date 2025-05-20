@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Brick\Money\Money;
 
 class Series
 {
@@ -12,7 +13,14 @@ class Series
         /** @var Collection<int, Lesson> */
         public Collection $lessons,
         public WorkshopType $type = WorkshopType::WEEKLY,
+        public array $ticketOptions = [],
     ) {
+        $this->ticketOptions = [
+            new TicketOption(
+                TicketType::CARNET_4,
+                Money::of(180, 'PLN'),
+            ),
+        ];
     }
 
     /**

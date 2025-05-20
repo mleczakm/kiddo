@@ -180,6 +180,8 @@
       <path value="$PROJECT_DIR$/vendor/dunglas/doctrine-json-odm" />
       <path value="$PROJECT_DIR$/vendor/twig/intl-extra" />
       <path value="$PROJECT_DIR$/vendor/phpstan/phpstan-symfony" />
+      <path value="$PROJECT_DIR$/vendor/brick/math" />
+      <path value="$PROJECT_DIR$/vendor/brick/money" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

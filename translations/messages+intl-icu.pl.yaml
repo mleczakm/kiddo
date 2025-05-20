@@ -113,3 +113,15 @@ lesson:
     
   age: Wiek
   search: Szukaj warsztatów...
+
+  booking_options: Opcje rezerwacji
+  carnet_4: Karnet na 4 wejścia
+  one_time: Jednorazowe wejście
+  carnet_4.description: >-
+    4 wejścia do wykorzystania przez miesiąc. Oszczędź 20 złotych w porównaniu z pojedynczymi wejściami!
+    
+    - karnet ważny przez miesiąc od zakupu
+    
+    - rezerwacja może być anulowana do 24h przed zajęciami z dowolnego powodu
+
+  one_time.description: Zarezerwuj pojedyncze wejście na zajęcia

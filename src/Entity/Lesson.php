@@ -7,6 +7,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
+use Brick\Money\Money;
 
 #[ORM\Entity]
 class Lesson
@@ -25,10 +26,20 @@ class Lesson
 
     public WorkshopType $type = WorkshopType::WEEKLY;
 
+    private array $ticketOptions;
+
+    private ?Series $series = null;
+
     public function __construct(LessonMetadata $metadata)
     {
         $this->id = new Ulid();
         $this->metadata = $metadata;
+        $this->ticketOptions = [
+            new TicketOption(
+                TicketType::ONE_TIME,
+                Money::of(50, 'PLN'),
+            ),
+        ];
     }
 
     public function getId(): Ulid
@@ -55,5 +66,20 @@ class Lesson
         $ticket->addReservation($reservation);
 
         return [$reservation];
+    }
+
+    public function getTicketOptions(): iterable
+    {
+        if ($this->series) {
+            yield from $this->series->ticketOptions;
+        }
+        yield from $this->ticketOptions;
+    }
+
+    public function setSeries(Series $series): Lesson
+    {
+        $this->series = $series;
+
+        return $this;
     }
 }

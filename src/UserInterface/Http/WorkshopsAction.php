@@ -7,6 +7,8 @@ namespace App\UserInterface\Http;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
+use App\Entity\Series;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,7 +35,10 @@ class WorkshopsAction extends AbstractController
             category: 'Muzyka, Taniec, Śpiew',
         );
 
-        $lessons[] = new Lesson($metadata);
+        $lessons[] = $lesson = new Lesson($metadata);
+        $lesson->setSeries(new Series(
+            new ArrayCollection([$lesson])
+        ));
 
         $klubMaluchaMetadata = new LessonMetadata(
             title: 'Klub Malucha',
