@@ -125,3 +125,7 @@ lesson:
     - rezerwacja może być anulowana do 24h przed zajęciami z dowolnego powodu
 
   one_time.description: Zarezerwuj pojedyncze wejście na zajęcia
+
+  accept_terms: Akceptuję <a href="{url}">warunki i zasady</a>
+  book_and_pay: Zarezerwuj i zapłać
+  cancel: Anuluj

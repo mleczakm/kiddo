@@ -77,4 +77,9 @@ class Lesson
 
         return $this;
     }
+
+    public function defaultTicketOption(): TicketOption
+    {
+        return $this->ticketOptions[0];
+    }
 }

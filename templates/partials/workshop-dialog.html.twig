@@ -141,19 +141,29 @@
             </div>
         </div>
         <div class="sm:justify-end sm:space-x-2 flex flex-col sm:flex-row gap-2 sm:gap-0">
+            <div class="flex items-center">
+                <input type="checkbox" id="terms" required class="mr-2 h-4 w-4 rounded border-input text-workshop-red focus:ring-2 focus:ring-workshop-red/50">
+                <label for="terms" class="text-sm text-muted-foreground">{{ 'lesson.accept_terms'|trans({'url': '/terms'})|raw }}</label>
+            </div>
             <form method="dialog">
                 <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                    Cancel
+                    {{ 'lesson.cancel'|trans }}
                 </button>
             </form>
+            {% if app.user %}
             <div class="flex flex-col sm:flex-row gap-2">
-                <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border hover:text-accent-foreground h-10 px-4 py-2 bg-workshop-yellow/10 border-workshop-yellow text-workshop-brown hover:bg-workshop-yellow/20">
-                    Quick Book
-                </button>
                 <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90">
-                    Book &amp; Pay
+                    {{ 'lesson.book_and_pay'|trans }}
                 </button>
             </div>
+            {% else %}
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <a href="{{ path('app_login') }}"
+                       class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90">
+                        {{ 'lesson.login'|trans }}
+                    </a>
+                </div>
+            {% endif %}
         </div>
 
         <form method="dialog">
