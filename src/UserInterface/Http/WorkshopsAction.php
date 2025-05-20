@@ -36,9 +36,7 @@ class WorkshopsAction extends AbstractController
         );
 
         $lessons[] = $lesson = new Lesson($metadata);
-        $lesson->setSeries(new Series(
-            new ArrayCollection([$lesson])
-        ));
+        $lesson->setSeries(new Series(new ArrayCollection([$lesson])));
 
         $klubMaluchaMetadata = new LessonMetadata(
             title: 'Klub Malucha',

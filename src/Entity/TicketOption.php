@@ -11,5 +11,6 @@ final class TicketOption
     public function __construct(
         public readonly TicketType $type,
         public readonly Money $price,
-    ) {}
+    ) {
+    }
 }

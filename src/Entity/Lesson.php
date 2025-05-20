@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Brick\Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
-use Brick\Money\Money;
 
 #[ORM\Entity]
 class Lesson
@@ -34,12 +34,7 @@ class Lesson
     {
         $this->id = new Ulid();
         $this->metadata = $metadata;
-        $this->ticketOptions = [
-            new TicketOption(
-                TicketType::ONE_TIME,
-                Money::of(50, 'PLN'),
-            ),
-        ];
+        $this->ticketOptions = [new TicketOption(TicketType::ONE_TIME, Money::of(50, 'PLN'))];
     }
 
     public function getId(): Ulid
