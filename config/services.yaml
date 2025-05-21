@@ -26,3 +26,13 @@ services:
     App\Application\CommandHandler\:
         resource: '../src/Application/CommandHandler/'
         tags: ['messenger.message_handler']
+
+    dunglas_doctrine_json_odm.serializer:
+        class: Dunglas\DoctrineJsonOdm\Serializer
+        arguments:
+            - [ '@App\Infrastructure\Symfony\Serializer\MoneyNormalizer', '@?dunglas_doctrine_json_odm.normalizer.backed_enum', '@?dunglas_doctrine_json_odm.normalizer.uid', '@dunglas_doctrine_json_odm.normalizer.datetime', '@dunglas_doctrine_json_odm.normalizer.array', '@dunglas_doctrine_json_odm.normalizer.object' ]
+            - [ '@serializer.encoder.json' ]
+            - '@?dunglas_doctrine_json_odm.type_mapper'
+        public: true
+        autowire: false
+        autoconfigure: false

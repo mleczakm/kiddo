@@ -24,16 +24,22 @@ class Lesson
     #[ORM\Column(type: 'string', nullable: false)]
     public string $status;
 
-    public WorkshopType $type = WorkshopType::WEEKLY;
-
+    /**
+     * @var list<TicketOption>
+     */
+    #[ORM\Column(type: 'json_document', options: [
+        'jsonb' => true,
+    ])]
     private array $ticketOptions;
 
+    #[ORM\ManyToOne(targetEntity: Series::class, inversedBy: 'lessons')]
     private ?Series $series = null;
 
     public function __construct(LessonMetadata $metadata)
     {
         $this->id = new Ulid();
         $this->metadata = $metadata;
+        $this->status = 'active';
         $this->ticketOptions = [new TicketOption(TicketType::ONE_TIME, Money::of(50, 'PLN'))];
     }
 
@@ -63,12 +69,18 @@ class Lesson
         return [$reservation];
     }
 
-    public function getTicketOptions(): iterable
+    /**
+     * @return array<TicketOption>
+     */
+    public function getTicketOptions(): array
     {
+        $options = [];
         if ($this->series) {
-            yield from $this->series->ticketOptions;
+            $options = array_merge($options, $this->series->ticketOptions);
         }
-        yield from $this->ticketOptions;
+        $options = array_merge($options, $this->ticketOptions);
+
+        return $options;
     }
 
     public function setSeries(Series $series): Lesson
@@ -76,6 +88,11 @@ class Lesson
         $this->series = $series;
 
         return $this;
+    }
+
+    public function getSeries(): ?Series
+    {
+        return $this->series;
     }
 
     public function defaultTicketOption(): TicketOption

@@ -6,16 +6,52 @@ namespace App\Entity;
 
 use Brick\Money\Money;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Ulid;
 
+#[ORM\Entity]
 class Series
 {
+    #[ORM\Id]
+    #[ORM\Column(type: 'ulid')]
+    private Ulid $id;
+
+    /**
+     * @var Collection<int, Lesson>
+     */
+    #[ORM\OneToMany(mappedBy: 'series', targetEntity: Lesson::class)]
+    public Collection $lessons;
+
+    #[ORM\Column(type: 'string', enumType: WorkshopType::class)]
+    public WorkshopType $type = WorkshopType::WEEKLY;
+
+    /**
+     * @var list<TicketOption>
+     */
+    #[ORM\Column(type: 'json_document', options: [
+        'jsonb' => true,
+    ])]
+    public array $ticketOptions = [];
+
+    /**
+     * @param Collection<int, Lesson> $lessons
+     * @param list<TicketOption> $ticketOptions
+     */
     public function __construct(
-        /** @var Collection<int, Lesson> */
-        public Collection $lessons,
-        public WorkshopType $type = WorkshopType::WEEKLY,
-        public array $ticketOptions = [],
+        Collection $lessons,
+        WorkshopType $type = WorkshopType::WEEKLY,
+        array $ticketOptions = [],
     ) {
-        $this->ticketOptions = [new TicketOption(TicketType::CARNET_4, Money::of(180, 'PLN'))];
+        $this->id = new Ulid();
+        $this->lessons = $lessons;
+        $this->type = $type;
+        /** @var list<TicketOption> $ticketOptions */
+        $this->ticketOptions = $ticketOptions ?: [new TicketOption(TicketType::CARNET_4, Money::of(180, 'PLN'))];
+    }
+
+    public function getId(): Ulid
+    {
+        return $this->id;
     }
 
     /**

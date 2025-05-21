@@ -11,6 +11,16 @@ export default class extends Controller {
         }
     }
 
+    openById(event) {
+        const id = event.target.dataset.modalId;
+        if (!id) return;
+        const dialog = document.getElementById(id);
+        if (dialog && typeof dialog.showModal === 'function') {
+            dialog.showModal();
+            document.body.classList.add('overflow-hidden', 'blur-sm');
+        }
+    }
+
     close() {
         if (!this.hasDialogTarget) {
             return;
@@ -30,3 +40,4 @@ export default class extends Controller {
         this.close();
     }
 }
+
