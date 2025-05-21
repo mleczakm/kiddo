@@ -8,6 +8,7 @@ use App\Entity\Lesson;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -41,7 +42,7 @@ class LessonModal
 
         if ($this->lesson !== null && $this->selectedTicketType === null) {
             $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
-            $this->selectedTicketType = $ticketOptions[0]->type->value;
+            $this->selectedTicketType = $ticketOptions[$this->activeTabIndex]->type->value;
         }
     }
 
@@ -52,7 +53,7 @@ class LessonModal
     }
 
     #[LiveAction]
-    public function selectTab(int $index, string $ticketType): void
+    public function selectTab(#[LiveArg] int $index, #[LiveArg('tickettype')] string $ticketType): void
     {
         $this->activeTabIndex = $index;
         $this->selectedTicketType = $ticketType;
