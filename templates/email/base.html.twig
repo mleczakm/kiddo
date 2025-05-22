@@ -11,32 +11,53 @@
             margin: 0 auto;
             padding: 20px;
         }
+
         .email-container {
             background-color: #f9f1de;
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .logo {
             font-size: 28px;
             font-weight: bold;
         }
+
         .logo span {
             display: inline-block;
         }
-        .red { color: #e34646; }
-        .green { color: #98c93c; }
-        .yellow { color: #f7c343; }
-        .blue { color: #71c3db; }
-        .pink { color: #eecbe9; }
+
+        .red {
+            color: #e34646;
+        }
+
+        .green {
+            color: #98c93c;
+        }
+
+        .yellow {
+            color: #f7c343;
+        }
+
+        .blue {
+            color: #71c3db;
+        }
+
+        .pink {
+            color: #eecbe9;
+        }
+
         h1 {
             color: #4c2e11;
             margin-top: 0;
         }
+
         .button {
             display: inline-block;
             background-color: #e34646;
@@ -47,21 +68,25 @@
             font-weight: 600;
             margin: 25px 0;
         }
+
         .button:hover {
             background-color: #d33636;
         }
+
         .note {
             background-color: rgba(247, 195, 67, 0.1);
             padding: 15px;
             border-left: 4px solid #f7c343;
             margin: 20px 0;
         }
+
         .footer {
             margin-top: 30px;
             text-align: center;
             font-size: 14px;
             color: #738f3e;
         }
+
         .help-text {
             font-size: 14px;
             color: #666;
@@ -85,12 +110,13 @@
             <span class="blue">z</span>
             <span class="pink">n</span>
             <span class="red">a</span>
-        </div>
+            </span>
     </div>
-    {{ content|trans({}, 'email') }}
-    <div class="footer">
-        {{ 'footer'|trans({}, 'email') }}
-    </div>
+</div>
+{{ content|trans({}, 'email') }}
+<div class="footer">
+    {{ 'footer'|trans({}, 'email') }}
+</div>
 </div>
 </body>
 </html>

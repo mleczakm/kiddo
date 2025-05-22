@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Command\SendReservationNotification;
 use App\Entity\AwaitingPaymentFactory;
 use App\Entity\Lesson;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -44,11 +46,11 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $paymentAmount = null;
 
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(
+        private EntityManagerInterface $em,
+        private MessageBusInterface $bus,
+    )
     {
-        $this->em = $em;
     }
 
     #[LiveAction]
@@ -109,6 +111,13 @@ class LessonModal extends AbstractController
             $awaitingPayment = AwaitingPaymentFactory::create($user, $amount);
             $this->em->persist($awaitingPayment);
             $this->em->flush();
+            $this->bus->dispatch(new SendReservationNotification(
+                $user->getEmail(),
+                $user->getName(),
+                $awaitingPayment->getCode(),
+                $amount,
+            ));
+
             $this->paymentCode = $awaitingPayment->getCode();
             $this->paymentAmount = (string) $amount;
             $this->paymentStatus = 'awaiting_payment';
