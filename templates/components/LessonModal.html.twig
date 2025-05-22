@@ -22,6 +22,21 @@
             data-modal-target="dialog"
             class="fixed left-[70%] top-[80%] z-50 w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
         <div class="grid">
+            {% if paymentCode is not empty %}
+                <div class="flex flex-col items-center justify-center min-h-[300px]">
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
+                        <div class="text-2xl font-bold text-workshop-brown mb-4">
+                            {{ 'blik.instruction'|trans }} <span class="text-workshop-red whitespace-nowrap">732 575 375</span>
+                        </div>
+                        <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span class="text-workshop-red whitespace-nowrap">{{ paymentAmount }}</span>. {{ 'blik.instruction_3'|trans }}</div>
+                        <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
+                        <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
+                        <div class="text-muted-foreground text-sm border-t pt-4 mt-4">
+                            {{ 'blik.alt_transfer'|trans({'title': paymentCode,'account': '<span class="text-workshop-red whitespace-nowrap">78 2490 0005 0000 4530 7300 8250</span>'})|raw }}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
             <div class="flex flex-col space-y-1.5 text-center sm:text-left">
                 <h2 id="radix-:r1:" class="tracking-tight text-2xl font-bold font-display text-workshop-brown">
                     {{ lesson.metadata.title }}</h2>
@@ -31,7 +46,6 @@
                 <div class="w-full h-48 md:h-60 rounded-lg bg-cover bg-center"
                      style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- [poprzednia zawartość bez zmian] -->
                 </div>
                 <div>
                     <h3 class="font-semibold mb-2">{{ 'lesson.description'|trans }}</h3>
@@ -41,7 +55,6 @@
                     <h3 class="text-lg font-bold mb-4 font-display text-workshop-brown">
                         {{ 'lesson.booking_options'|trans }}</h3>
 
-                    {# Zakładki z opcjami biletów #}
                     <div dir="ltr">
                         <div role="tablist" aria-orientation="horizontal"
                              class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full mb-4"
@@ -133,7 +146,10 @@
                 </svg>
                 <span class="sr-only">Close</span>
             </button>
+        {% endif %}
         </div>
     </dialog>
 </div>
+
+
 

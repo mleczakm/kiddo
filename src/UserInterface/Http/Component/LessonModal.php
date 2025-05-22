@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Entity\AwaitingPaymentFactory;
 use App\Entity\Lesson;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -13,7 +16,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent]
-class LessonModal
+class LessonModal extends AbstractController
 {
     use DefaultActionTrait;
 
@@ -34,6 +37,19 @@ class LessonModal
 
     #[LiveProp]
     public ?string $paymentStatus = null;
+
+    #[LiveProp]
+    public ?string $paymentCode = null;
+
+    #[LiveProp]
+    public ?string $paymentAmount = null;
+
+    private EntityManagerInterface $em;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
 
     #[LiveAction]
     public function openModal(): void
@@ -60,29 +76,50 @@ class LessonModal
     }
 
     #[LiveAction]
-    public function processPayment(): JsonResponse
+    public function processPayment(): void
     {
         if (! $this->termsAccepted) {
             $this->paymentStatus = 'error';
-            return new JsonResponse([
-                'status' => 'error',
-                'message' => 'Musisz zaakceptować warunki i zasady.',
-            ]);
+            return;
         }
 
         if (! $this->selectedTicketType) {
             $this->paymentStatus = 'error';
-            return new JsonResponse([
-                'status' => 'error',
-                'message' => 'Musisz wybrać typ biletu.',
-            ]);
+            return;
         }
 
-        // Logika płatności z wybranym typem biletu
-        $this->paymentStatus = 'success';
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Płatność została pomyślnie przetworzona.',
-        ]);
+        /** @var ?User $user */
+        $user = $this->getUser();
+
+        if ($this->lesson && $user) {
+            $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
+            $selected = null;
+            foreach ($ticketOptions as $option) {
+                if ($option->type->value === $this->selectedTicketType) {
+                    $selected = $option;
+                    break;
+                }
+            }
+            if ($selected === null) {
+                $this->paymentStatus = 'error';
+                return;
+            }
+            $amount = $selected->price;
+
+            $awaitingPayment = AwaitingPaymentFactory::create($user, $amount);
+            $this->em->persist($awaitingPayment);
+            $this->em->flush();
+            $this->paymentCode = $awaitingPayment->getCode();
+            $this->paymentAmount = (string) $amount;
+            $this->paymentStatus = 'awaiting_payment';
+            return;
+        }
+
+        $this->paymentStatus = 'error';
+    }
+
+    public function getPaymentCode(): ?string
+    {
+        return $this->paymentCode;
     }
 }

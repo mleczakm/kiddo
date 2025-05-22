@@ -130,3 +130,16 @@ lesson:
   book_and_pay: Zarezerwuj i zapłać
   cancel: Anuluj
   accept_terms_first: Najpierw zaakceptuj warunki i zasady
+
+blik:
+  instruction: "Wykonaj przelew BLIK na telefon"
+  instruction_2: "na kwotę"
+  title:
+    instruction: "W tytule przelewu wpisz:"
+  info: "Po zaksięgowaniu płatności Twoja rezerwacja zostanie potwierdzona."
+  alt_transfer: >-
+    Możesz też wykonać klasyczny przelew na numer konta: {account}
+    
+    o tym samym tytule "{title}"
+  amount: "Kwota do zapłaty: {amount}"
+  instruction_3: "W tytule przelewu wpisz:"
