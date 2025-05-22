@@ -20,7 +20,7 @@
     {# Dialog #}
     <dialog {% if modalOpened %}open{% endif %}
             data-modal-target="dialog"
-            class="fixed left-[70%] top-[80%] z-50 w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
+            class="fixed left-[70%] z-50 w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
         <div class="grid">
             {% if paymentCode is not empty %}
                 <div class="flex flex-col items-center justify-center min-h-[300px]">
