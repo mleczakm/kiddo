@@ -7,6 +7,30 @@ parameters:
 			path: src/Application/CommandHandler/SendLoginNotificationHandler.php
 
 		-
+			message: '#^Property App\\Entity\\AwaitingPayment\:\:\$user type mapping mismatch\: database can contain App\\Entity\\User\|null but property expects App\\Entity\\User\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/AwaitingPayment.php
+
+		-
+			message: '#^Class App\\Entity\\Reservation constructor invoked with 3 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Entity/Lesson.php
+
+		-
+			message: '#^Parameter \#1 \$user of class App\\Entity\\Reservation constructor expects App\\Entity\\User, \$this\(App\\Entity\\Lesson\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Entity/Lesson.php
+
+		-
+			message: '#^Property App\\Entity\\Reservation\:\:\$user type mapping mismatch\: database can contain App\\Entity\\User\|null but property expects App\\Entity\\User\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Reservation.php
+
+		-
 			message: '#^Method App\\Entity\\User\:\:getUserIdentifier\(\) should return non\-empty\-string but returns string\.$#'
 			identifier: return.type
 			count: 1
