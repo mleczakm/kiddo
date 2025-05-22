@@ -18,11 +18,23 @@ reservation:
   subject: 'Twoja rezerwacja w Warsztatowni Sensorycznej – oczekujemy na płatność'
   content:
     html: |
-      <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
-        <div class="text-2xl font-bold text-workshop-brown mb-4">
-          Przelej BLIK na numer <span class="text-workshop-red whitespace-nowrap">732 575 375</span>
+      <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem; max-width: 32rem; text-align: center;">
+                                      <div style="font-size: 1.5rem; font-weight: bold; color: #4c2e11; margin-bottom: 1rem;">
+                                                                                  Przelej BLIK na numer <span style="color: #e34646; white-space: nowrap;">732 575 375</span>
+                                      </div>
+                                      <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">
+                                                               Kwota do zapłaty: <span style="color: #e34646; white-space: nowrap;">%paymentAmount%</span>. W tytule przelewu wpisz poniższy kod:
+                                      </div>
+                                      <div style="font-size: 1.5rem; font-family: monospace; background-color: #f3f4f6; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; user-select: all; letter-spacing: 0.1em; color: #e34646;">
+                                                               %paymentCode%
+                                      </div>
+                                      <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                                        Rezerwacja zostanie potwierdzona po zaksięgowaniu płatności.
+                                      </div>
+                                      <div style="color: #6b7280; font-size: 0.875rem; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;">
+                                        Jeśli wolisz, możesz dokonać przelewu na konto: <span style="color: #e34646; white-space: nowrap;">78 2490 0005 0000 4530 7300 8250</span>.
+                                      </div>
         </div>
-        <div class="text-lg mb-2">Kwota do zapłaty: <span class="text-workshop-red whitespace-nowrap">%paymentAmount%</span>. W tytule przelewu wpisz poniższy kod:</div>
-        <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">%paymentCode%</div>
-        <div class="text-muted-foreground text-sm mb-4">Rezerwacja zostanie potwierdzona po zaksięgowaniu płatności.</div>
-        <div class="text-muted
+      
+importance:
+  high: uwaga

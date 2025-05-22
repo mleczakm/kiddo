@@ -28,9 +28,8 @@
             </div>
         </div>
         {% block lead %}
-            {% if importance is not null %}<small><strong>{{ importance|upper }}</strong></small>{% endif %}
             <p class="lead">
-                {{ email.subject }}
+                {% if importance is not null %}<small><strong>{{ importance|trans|upper }}</strong></small>{% endif %} {{ email.subject }}
             </p>
         {% endblock %}
 
@@ -38,7 +37,7 @@
             {% if markdown %}
                 {{ include('@email/zurb_2/notification/content_markdown.html.twig') }}
             {% else %}
-                {{ raw ? content|raw : content|nl2br }}
+                {{ content matches '/<.*?>/s' or raw ? content|raw : content|nl2br }}
             {% endif %}
         {% endblock %}
 

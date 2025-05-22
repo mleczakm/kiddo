@@ -49,8 +49,7 @@ class LessonModal extends AbstractController
     public function __construct(
         private EntityManagerInterface $em,
         private MessageBusInterface $bus,
-    )
-    {
+    ) {
     }
 
     #[LiveAction]

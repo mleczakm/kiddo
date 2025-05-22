@@ -16,4 +16,3 @@ readonly class SendReservationNotification
     ) {
     }
 }
-
