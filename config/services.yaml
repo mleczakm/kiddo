@@ -36,3 +36,23 @@ services:
         public: true
         autowire: false
         autoconfigure: false
+
+    App\Infrastructure\Symfony\Scheduler:
+        arguments:
+            $scheduleProviders:
+                - '@App\Infrastructure\Symfony\Scheduler\MainSchedule'
+
+    App\Infrastructure\Swoole\Configurator\WithScheduler:
+        tags:
+            - 'swoole_bundle.server_configurator'
+
+    DirectoryTree\ImapEngine\MailboxInterface:
+        class: DirectoryTree\ImapEngine\Mailbox
+        arguments:
+            $config:
+                port: 993
+                ssl: true
+                username: '%env(MAILBOX_USERNAME)%'
+                password: '%env(MAILBOX_PASSWORD)%'
+                host: '%env(MAILBOX_HOST)%'
+        public: true

@@ -7,6 +7,7 @@ namespace App\UserInterface\Http\Component;
 use App\Application\Command\SendReservationNotification;
 use App\Entity\AwaitingPaymentFactory;
 use App\Entity\Lesson;
+use App\Entity\Reservation;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -108,7 +109,12 @@ class LessonModal extends AbstractController
             $amount = $selected->price;
 
             $awaitingPayment = AwaitingPaymentFactory::create($user, $amount);
+
+            $reservation = new Reservation($user);
+            $awaitingPayment->addReservation($reservation);
+
             $this->em->persist($awaitingPayment);
+            $this->em->persist($reservation);
             $this->em->flush();
             $this->bus->dispatch(new SendReservationNotification(
                 $user->getEmail(),

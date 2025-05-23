@@ -1,6 +1,18 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Call to an undefined method DirectoryTree\\ImapEngine\\Connection\\ImapQueryBuilder\:\:withHeaders\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Application/CommandHandler/ImportTransfersFromMailHandler.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: src/Application/CommandHandler/ImportTransfersFromMailHandler.php
+
+		-
 			message: '#^Method App\\Application\\CommandHandler\\SendLoginNotificationHandler\:\:__construct\(\) has parameter \$userProvider with generic interface Symfony\\Component\\Security\\Core\\User\\UserProviderInterface but does not specify its types\: TUser$#'
 			identifier: missingType.generics
 			count: 1
@@ -25,6 +37,24 @@ parameters:
 			path: src/Entity/Lesson.php
 
 		-
+			message: '#^Property App\\Entity\\Reservation\:\:\$awaitingPayments with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/Reservation.php
+
+		-
+			message: '#^Property App\\Entity\\Reservation\:\:\$lessons is unused\.$#'
+			identifier: property.unused
+			count: 1
+			path: src/Entity/Reservation.php
+
+		-
+			message: '#^Property App\\Entity\\Reservation\:\:\$lessons with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/Reservation.php
+
+		-
 			message: '#^Property App\\Entity\\Reservation\:\:\$user type mapping mismatch\: database can contain App\\Entity\\User\|null but property expects App\\Entity\\User\.$#'
 			identifier: doctrine.associationType
 			count: 1
@@ -35,3 +65,21 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Tests\\Application\\CommandHandler\\ImportTransfersFromMailHandlerTest\:\:\$mailbox is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNotEmpty\(\) with array\{\} will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php

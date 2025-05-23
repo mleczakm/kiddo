@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
@@ -27,6 +28,10 @@ class Reservation
 
     #[ORM\Column(type: 'string', length: 20)]
     private string $status;
+
+    public Collection $awaitingPayments;
+
+    private Collection $lessons;
 
     public function __construct(User $user)
     {
