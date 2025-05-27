@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http;
 
-use App\Entity\AgeRange;
 use App\Entity\Lesson;
-use App\Entity\LessonMetadata;
-use App\Entity\Series;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

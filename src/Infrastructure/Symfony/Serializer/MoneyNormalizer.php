@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Serializer;
 
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Brick\Money\Money;
 
-class MoneyNormalizer implements \Symfony\Component\Serializer\Normalizer\DenormalizerInterface, \Symfony\Component\Serializer\Normalizer\NormalizerInterface
+class MoneyNormalizer implements DenormalizerInterface, NormalizerInterface
 {
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
