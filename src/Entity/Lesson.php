@@ -19,11 +19,6 @@ class Lesson
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
 
-    #[ORM\Column(type: 'json_document', options: [
-        'jsonb' => true,
-    ])]
-    private LessonMetadata $metadata;
-
     /**
      * @var list<TicketOption>
      */
@@ -35,10 +30,13 @@ class Lesson
     #[ORM\ManyToOne(targetEntity: Series::class, inversedBy: 'lessons')]
     private ?Series $series = null;
 
-    public function __construct(LessonMetadata $metadata)
-    {
+    public function __construct(
+        #[ORM\Column(type: 'json_document', options: [
+            'jsonb' => true,
+        ])]
+        private LessonMetadata $metadata
+    ) {
         $this->id = new Ulid();
-        $this->metadata = $metadata;
         $this->status = 'active';
         $this->ticketOptions = [new TicketOption(TicketType::ONE_TIME, Money::of(50, 'PLN'))];
     }

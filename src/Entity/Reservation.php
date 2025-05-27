@@ -22,9 +22,6 @@ class Reservation
     #[ORM\Id, ORM\Column(type: 'ulid')]
     private Ulid $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $user;
-
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $reservedAt;
 
@@ -33,10 +30,11 @@ class Reservation
 
     private Collection $lessons;
 
-    public function __construct(User $user)
-    {
+    public function __construct(
+        #[ORM\ManyToOne(targetEntity: User::class)]
+        private User $user
+    ) {
         $this->id = new Ulid();
-        $this->user = $user;
         $this->reservedAt = new \DateTimeImmutable();
         $this->status = self::STATUS_UNCONFIRMED;
     }

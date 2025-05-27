@@ -29,7 +29,7 @@ class Scheduler
      * @param list<ScheduleProviderInterface> $scheduleProviders
      */
     public function __construct(
-        private MessageBusInterface $bus,
+        private readonly MessageBusInterface $bus,
         array $scheduleProviders,
         private readonly ClockInterface $clock = new Clock(),
         private readonly ?EventDispatcherInterface $dispatcher = null

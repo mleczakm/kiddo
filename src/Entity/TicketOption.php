@@ -6,10 +6,10 @@ namespace App\Entity;
 
 use Brick\Money\Money;
 
-final class TicketOption
+final readonly class TicketOption
 {
     public function __construct(
-        public readonly TicketType $type,
-        public readonly Money $price,
+        public TicketType $type,
+        public Money $price,
     ) {}
 }

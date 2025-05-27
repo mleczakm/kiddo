@@ -17,35 +17,29 @@ class AwaitingPayment
     #[ORM\Id, ORM\Column(type: 'ulid', unique: true)]
     private Ulid $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $user;
-
     /**
      * @var Collection<int, Reservation>
      */
     #[ORM\ManyToMany(targetEntity: Reservation::class)]
     private Collection $reservations;
 
-    #[ORM\Column(type: 'string', length: 4, unique: true)]
-    private string $code;
-
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'json_document')]
-    private Money $amount;
-
-    #[ORM\Column(type: 'json_document')]
     private MoneyBag $paidAmount;
 
-    public function __construct(User $user, string $code, Money $amount)
-    {
+    public function __construct(
+        #[ORM\ManyToOne(targetEntity: User::class)]
+        private User $user,
+        #[ORM\Column(type: 'string', length: 4, unique: true)]
+        private string $code,
+        #[ORM\Column(type: 'json_document')]
+        private Money $amount
+    ) {
         $this->id = new Ulid();
-        $this->user = $user;
-        $this->code = $code;
         $this->createdAt = new \DateTimeImmutable();
         $this->reservations = new ArrayCollection();
-        $this->amount = $amount;
         $this->paidAmount = new MoneyBag();
     }
 

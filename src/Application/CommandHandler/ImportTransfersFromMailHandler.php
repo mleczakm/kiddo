@@ -18,9 +18,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class ImportTransfersFromMailHandler
 {
     public function __construct(
-        private MailboxInterface $mailbox,
-        private TransferNotificationMailParserInterface $mailParser,
-        private MessageBusInterface $messageBus,
+        private readonly MailboxInterface $mailbox,
+        private readonly TransferNotificationMailParserInterface $mailParser,
+        private readonly MessageBusInterface $messageBus,
     ) {}
 
     public function __invoke(ImportTransfersFromMail $message): void

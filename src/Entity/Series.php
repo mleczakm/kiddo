@@ -13,15 +13,6 @@ use Symfony\Component\Uid\Ulid;
 class Series
 {
     /**
-     * @var Collection<int, Lesson>
-     */
-    #[ORM\OneToMany(mappedBy: 'series', targetEntity: Lesson::class)]
-    public Collection $lessons;
-
-    #[ORM\Column(type: 'string', enumType: WorkshopType::class)]
-    public WorkshopType $type = WorkshopType::WEEKLY;
-
-    /**
      * @var list<TicketOption>
      */
     #[ORM\Column(type: 'json_document', options: [
@@ -38,13 +29,13 @@ class Series
      * @param list<TicketOption> $ticketOptions
      */
     public function __construct(
-        Collection $lessons,
-        WorkshopType $type = WorkshopType::WEEKLY,
+        #[ORM\OneToMany(mappedBy: 'series', targetEntity: Lesson::class)]
+        public Collection $lessons,
+        #[ORM\Column(type: 'string', enumType: WorkshopType::class)]
+        public WorkshopType $type = WorkshopType::WEEKLY,
         array $ticketOptions = [],
     ) {
         $this->id = new Ulid();
-        $this->lessons = $lessons;
-        $this->type = $type;
         /** @var list<TicketOption> $ticketOptions */
         $this->ticketOptions = $ticketOptions ?: [new TicketOption(TicketType::CARNET_4, Money::of(180, 'PLN'))];
     }

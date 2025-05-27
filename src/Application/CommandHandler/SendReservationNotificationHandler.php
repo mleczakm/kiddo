@@ -27,7 +27,7 @@ readonly class SendReservationNotificationHandler
         $subject = $this->translator->trans('reservation.subject', [], 'emails');
         $content = $this->translator->trans('reservation.content.html', $translatorContext, 'emails');
 
-        $email = (new Notification())
+        $email = new Notification()
             ->importance('')
             ->subject($subject)
             ->content($content);
