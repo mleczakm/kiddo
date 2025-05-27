@@ -11,9 +11,7 @@ final readonly class SaveTransferHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {
-
-    }
+    ) {}
 
     public function __invoke(SaveTransfer $command): void
     {

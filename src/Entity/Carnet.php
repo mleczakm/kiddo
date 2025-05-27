@@ -8,7 +8,5 @@ class Carnet
 {
     public function __construct(
         public readonly int $entries
-    ) {
-
-    }
+    ) {}
 }

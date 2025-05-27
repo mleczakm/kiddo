@@ -10,7 +10,5 @@ final readonly class SaveTransfer
 {
     public function __construct(
         public Transfer $transfer
-    ) {
-
-    }
+    ) {}
 }

@@ -15,8 +15,7 @@ readonly class SendReservationNotificationHandler
     public function __construct(
         private NotifierInterface $notifier,
         private TranslatorInterface $translator,
-    ) {
-    }
+    ) {}
 
     public function __invoke(SendReservationNotification $command): void
     {

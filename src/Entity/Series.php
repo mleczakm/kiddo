@@ -12,10 +12,6 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity]
 class Series
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'ulid')]
-    private Ulid $id;
-
     /**
      * @var Collection<int, Lesson>
      */
@@ -32,6 +28,10 @@ class Series
         'jsonb' => true,
     ])]
     public array $ticketOptions = [];
+
+    #[ORM\Id]
+    #[ORM\Column(type: 'ulid')]
+    private Ulid $id;
 
     /**
      * @param Collection<int, Lesson> $lessons

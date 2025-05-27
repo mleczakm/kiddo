@@ -15,7 +15,11 @@ final class WithScheduler implements Configurator
 
     public function __construct(
         private readonly Scheduler $scheduler
-    ) {
+    ) {}
+
+    public function __destruct()
+    {
+        Timer::clear($this->tickId);
     }
 
     public function configure(Server $server): void
@@ -27,10 +31,5 @@ final class WithScheduler implements Configurator
         $server->on('shutdown', function (): void {
             Timer::clear($this->tickId);
         });
-    }
-
-    public function __destruct()
-    {
-        Timer::clear($this->tickId);
     }
 }

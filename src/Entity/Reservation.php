@@ -11,6 +11,14 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity]
 class Reservation
 {
+    public const STATUS_UNCONFIRMED = 'unconfirmed';
+
+    public const STATUS_CONFIRMED = 'confirmed';
+
+    public const STATUS_PAID = 'paid';
+
+    public Collection $awaitingPayments;
+
     #[ORM\Id, ORM\Column(type: 'ulid')]
     private Ulid $id;
 
@@ -20,16 +28,8 @@ class Reservation
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $reservedAt;
 
-    public const STATUS_UNCONFIRMED = 'unconfirmed';
-
-    public const STATUS_CONFIRMED = 'confirmed';
-
-    public const STATUS_PAID = 'paid';
-
     #[ORM\Column(type: 'string', length: 20)]
     private string $status;
-
-    public Collection $awaitingPayments;
 
     private Collection $lessons;
 

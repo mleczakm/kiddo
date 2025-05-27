@@ -13,6 +13,5 @@ readonly class SendReservationNotification
         public string $username,
         public string $paymentCode,
         public Money $paymentAmount
-    ) {
-    }
+    ) {}
 }

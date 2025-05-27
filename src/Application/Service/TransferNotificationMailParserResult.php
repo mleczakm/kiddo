@@ -15,6 +15,5 @@ readonly class TransferNotificationMailParserResult
         public string $sender,
         public string $title,
         public string $amount,
-    ) {
-    }
+    ) {}
 }

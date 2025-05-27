@@ -21,8 +21,7 @@ class ImportTransfersFromMailHandler
         private MailboxInterface $mailbox,
         private TransferNotificationMailParserInterface $mailParser,
         private MessageBusInterface $messageBus,
-    ) {
-    }
+    ) {}
 
     public function __invoke(ImportTransfersFromMail $message): void
     {

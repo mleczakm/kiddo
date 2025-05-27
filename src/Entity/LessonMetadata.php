@@ -16,6 +16,5 @@ final class LessonMetadata
         public int $duration,
         public AgeRange $ageRange,
         public string $category,
-    ) {
-    }
+    ) {}
 }

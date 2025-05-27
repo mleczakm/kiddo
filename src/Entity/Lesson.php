@@ -12,6 +12,9 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity]
 class Lesson
 {
+    #[ORM\Column(type: 'string', nullable: false)]
+    public string $status;
+
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
@@ -20,9 +23,6 @@ class Lesson
         'jsonb' => true,
     ])]
     private LessonMetadata $metadata;
-
-    #[ORM\Column(type: 'string', nullable: false)]
-    public string $status;
 
     /**
      * @var list<TicketOption>
@@ -83,7 +83,7 @@ class Lesson
         return $options;
     }
 
-    public function setSeries(Series $series): Lesson
+    public function setSeries(Series $series): self
     {
         $this->series = $series;
 

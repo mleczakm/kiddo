@@ -8,6 +8,5 @@ readonly class SendLoginNotification
 {
     public function __construct(
         public string $email
-    ) {
-    }
+    ) {}
 }

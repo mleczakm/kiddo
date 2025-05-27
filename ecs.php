@@ -10,17 +10,7 @@ return ECSConfig::configure()
     ->withRootFiles()
     // add a single rule
     ->withRules([NoUnusedImportsFixer::class])
+    ->withPhpCsFixerSets(perCS20: true, doctrineAnnotation: true, php84Migration: true, phpunit100MigrationRisky: true)
     // add sets - group of rules
-    ->withPreparedSets(
-        arrays: true,
-        namespaces: true,
-        spaces: true,
-        docblocks: true,
-        comments: true,
-        psr12: true,
-        symplify: true,
-        cleanCode: true,
-        strict: true,
-    )
-
+    ->withPreparedSets(psr12: true, common: true, symplify: true, strict: true, cleanCode: true)
 ;
