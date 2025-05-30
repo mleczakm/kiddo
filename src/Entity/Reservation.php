@@ -32,7 +32,9 @@ class Reservation
 
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class)]
-        private User $user
+        private User $user,
+        #[ORM\ManyToOne(targetEntity: Lesson::class)]
+        private Lesson $lesson
     ) {
         $this->id = new Ulid();
         $this->reservedAt = new \DateTimeImmutable();

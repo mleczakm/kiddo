@@ -82,4 +82,9 @@ class AwaitingPayment
     {
         $this->reservations->removeElement($reservation);
     }
+
+    public function getAmount(): Money
+    {
+        return $this->amount;
+    }
 }

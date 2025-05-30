@@ -62,6 +62,20 @@ class Series
     }
 
     /**
+
+     * @return Lesson[]
+     */
+    public function getLessonsGte(Lesson $lesson, int $limit): array
+    {
+        $criteria = \Doctrine\Common\Collections\Criteria::create()
+            ->where(\Doctrine\Common\Collections\Criteria::expr()->gte('id', $lesson->getId()))
+            ->setMaxResults($limit)
+            ->orderBy(['id' => 'ASC']);
+
+        return $this->lessons->matching($criteria)->toArray();
+    }
+
+    /**
      * @return iterable<Lesson>
      */
     private function findActiveLessons(): iterable

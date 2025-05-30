@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Command\SaveAwaitingPayment;
 use App\Application\Command\SendReservationNotification;
 use App\Entity\AwaitingPaymentFactory;
 use App\Entity\Lesson;
-use App\Entity\Reservation;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,10 +47,9 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $paymentAmount = null;
 
-    public function __construct(
-        private EntityManagerInterface $em,
-        private MessageBusInterface $bus,
-    ) {}
+    public function __construct(private EntityManagerInterface $em, private MessageBusInterface $bus)
+    {
+    }
 
     #[LiveAction]
     public function openModal(): void
@@ -79,12 +78,12 @@ class LessonModal extends AbstractController
     #[LiveAction]
     public function processPayment(): void
     {
-        if (! $this->termsAccepted) {
+        if (!$this->termsAccepted) {
             $this->paymentStatus = 'error';
             return;
         }
 
-        if (! $this->selectedTicketType) {
+        if (!$this->selectedTicketType) {
             $this->paymentStatus = 'error';
             return;
         }
@@ -93,41 +92,17 @@ class LessonModal extends AbstractController
         $user = $this->getUser();
 
         if ($this->lesson && $user) {
-            $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
-            $selected = null;
-            foreach ($ticketOptions as $option) {
-                if ($option->type->value === $this->selectedTicketType) {
-                    $selected = $option;
-                    break;
-                }
-            }
-            if ($selected === null) {
-                $this->paymentStatus = 'error';
-                return;
-            }
-            $amount = $selected->price;
+            $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
+            $awaitingPayment = AwaitingPaymentFactory::create($user, $selected->price);
 
-            $awaitingPayment = AwaitingPaymentFactory::create($user, $amount);
-
-            $reservation = new Reservation($user);
-            $awaitingPayment->addReservation($reservation);
-
-            $this->em->persist($awaitingPayment);
-            $this->em->persist($reservation);
-            $this->em->flush();
-            $this->bus->dispatch(new SendReservationNotification(
-                $user->getEmail(),
-                $user->getName(),
-                $awaitingPayment->getCode(),
-                $amount,
-            ));
+            $this->bus->dispatch(new SaveAwaitingPayment($user, $awaitingPayment));
 
             $this->paymentCode = $awaitingPayment->getCode();
-            $this->paymentAmount = (string) $amount;
+            $this->paymentAmount = (string)$selected->price;
             $this->paymentStatus = 'awaiting_payment';
+
             return;
         }
-
         $this->paymentStatus = 'error';
     }
 

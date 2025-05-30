@@ -81,6 +81,17 @@ class Lesson
         return $options;
     }
 
+    public function getMatchingTicketOption(string $selectedTicketType): TicketOption
+    {
+        foreach ($this->getTicketOptions() as $option) {
+            if ($option->type->value === $selectedTicketType) {
+                return $option;
+            }
+        }
+
+        throw new \InvalidArgumentException('Unsupported ticket type: ' . $selectedTicketType);
+    }
+
     public function setSeries(Series $series): self
     {
         $this->series = $series;

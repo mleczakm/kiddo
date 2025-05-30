@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Scheduler;
 
-use App\Application\Command\DummyCommand;
 use App\Application\Command\ImportTransfersFromMail;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -22,7 +21,6 @@ final readonly class MainSchedule implements ScheduleProviderInterface
         return new Schedule()
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
-            ->with(RecurringMessage::every(1, new DummyCommand()))
             ->with(RecurringMessage::every(30, new ImportTransfersFromMail()))
         ;
     }
