@@ -202,6 +202,7 @@
       <path value="$PROJECT_DIR$/vendor/symfony/scheduler" />
       <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
       <path value="$PROJECT_DIR$/vendor/symfony/lock" />
+      <path value="$PROJECT_DIR$/vendor/rregeer/phpunit-coverage-check" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

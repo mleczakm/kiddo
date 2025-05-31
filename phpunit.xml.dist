@@ -24,7 +24,9 @@
             <directory>tests/Smoke</directory>
         </testsuite>
         <testsuite name="Unit tests">
-            <directory>tests/Unit</directory>
+            <directory>tests/Application</directory>
+            <directory>tests/Domain</directory>
+            <directory>tests/Infrastructure</directory>
         </testsuite>
     </testsuites>
 
