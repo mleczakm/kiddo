@@ -7,7 +7,7 @@ CMD bin/console swoole:server:run
 
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions apcu @composer intl ds opcache pcntl pdo_pgsql swoole xdebug xsl
+    install-php-extensions apcu @composer intl ds opcache pcntl pcov pdo_pgsql swoole xdebug xsl
 
 
 FROM dev-local AS dev
