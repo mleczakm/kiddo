@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Brick\Money\Money;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
@@ -30,6 +32,12 @@ class Lesson
     #[ORM\ManyToOne(targetEntity: Series::class, inversedBy: 'lessons')]
     private ?Series $series = null;
 
+    /**
+     * @var Collection<int, Booking>
+     */
+    #[ORM\ManyToMany(targetEntity: Booking::class, mappedBy: 'lessons')]
+    private Collection $bookings;
+
     public function __construct(
         #[ORM\Column(type: 'json_document', options: [
             'jsonb' => true,
@@ -39,6 +47,7 @@ class Lesson
         $this->id = new Ulid();
         $this->status = 'active';
         $this->ticketOptions = [new TicketOption(TicketType::ONE_TIME, Money::of(50, 'PLN'))];
+        $this->bookings = new ArrayCollection();
     }
 
     public function getId(): Ulid
@@ -96,6 +105,29 @@ class Lesson
     {
         $this->series = $series;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): self
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings[] = $booking;
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): self
+    {
+        $this->bookings->removeElement($booking);
         return $this;
     }
 

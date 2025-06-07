@@ -8,30 +8,25 @@ use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\SaveTransfer;
 use App\Application\Service\TransferNotificationMailParserInterface;
 use App\Entity\Transfer;
-use DirectoryTree\ImapEngine\MailboxInterface;
 use DirectoryTree\ImapEngine\Message;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
-class ImportTransfersFromMailHandler
+readonly class ImportTransfersFromMailHandler
 {
     public function __construct(
-        private readonly MailboxInterface $mailbox,
-        private readonly TransferNotificationMailParserInterface $mailParser,
-        private readonly MessageBusInterface $messageBus,
+        private TransferNotificationMailParserInterface $mailParser,
+        private MessageBusInterface $messageBus,
+        private IncomingNotificationMailQuery $incomingNotificationMailQuery,
     ) {}
 
     public function __invoke(ImportTransfersFromMail $message): void
     {
         $transfers = [];
         /** @var Message $incomingNotification */
-        foreach ($this->mailbox->inbox()->messages()->from('powiadomienia@alior.pl')->withHeaders()
-            ->withBody()
-            ->unseen()
-            ->get() as $incomingNotification) {
-
+        foreach ($this->incomingNotificationMailQuery as $incomingNotification) {
             if (str_starts_with($incomingNotification->subject() ?? '', 'Uznanie rachunku')) {
                 $parsed = $this->mailParser->fromMailSubjectAndContent(
                     $incomingNotification->subject() ?? '',

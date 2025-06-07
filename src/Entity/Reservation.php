@@ -32,8 +32,8 @@ class Reservation
 
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class)]
-        private User $user,
-        #[ORM\ManyToOne(targetEntity: Lesson::class)]
+        private ?User $user,
+        #[ORM\ManyToOne(targetEntity: Lesson::class, inversedBy: 'reservations')]
         private Lesson $lesson
     ) {
         $this->id = new Ulid();

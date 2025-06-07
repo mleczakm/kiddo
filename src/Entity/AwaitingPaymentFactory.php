@@ -8,7 +8,7 @@ use Brick\Money\Money;
 
 class AwaitingPaymentFactory
 {
-    public static function generateCode(int $length = 4): string
+    public function generateCode(int $length = 4): string
     {
         $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         $code = '';
@@ -18,7 +18,7 @@ class AwaitingPaymentFactory
         return $code;
     }
 
-    public static function create(User $user, Money $amount): AwaitingPayment
+    public function create(User $user, Money $amount): AwaitingPayment
     {
         $code = self::generateCode();
         return new AwaitingPayment($user, $code, $amount);

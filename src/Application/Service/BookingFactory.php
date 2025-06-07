@@ -2,25 +2,21 @@
 
 namespace App\Application\Service;
 
+use App\Entity\Booking;
+use App\Entity\Carnet;
 use App\Entity\Lesson;
 use App\Entity\Reservation;
-use App\Entity\TicketOption;
 use App\Entity\TicketType;
 use App\Entity\User;
 
-class ReservationsFromTicketTypeFactory
+class BookingFactory
 {
-    /**
-     * @return iterable<Reservation|Carnet> An iterable collection of Reservation and Carnet objects.
-     */
-    public function createFrom(Lesson $lesson, TicketType $ticketType, User $user): iterable
+    public function createFrom(Lesson $lesson, TicketType $ticketType, User $user): Booking
     {
-        if ($ticketType->value === TicketType::ONE_TIME) {
-            $reservation = new Reservation($user, $lesson);
-
-            yield $reservation;
+        if ($ticketType === TicketType::ONE_TIME) {
+            return new Booking($user, $lesson);
         }
-        if ($ticketType->value === TicketType::CARNET_4) {
+        if ($ticketType === TicketType::CARNET_4) {
             // Pobierz serię lekcji, do której należy bieżąca lekcja
             $series = $lesson->getSeries();
             if (!$series) {
@@ -34,13 +30,10 @@ class ReservationsFromTicketTypeFactory
 
             $reservations = [];
             foreach ($allLessons as $fetchedLesson) {
-                $reservations[] = new Reservation($user, $lesson);
+                $reservations[] = new Reservation($user, $fetchedLesson);
             }
 
-            $carnet = new Carnet($user, $reservations);
-            foreach ($selectedLessons as $l) {
-                yield new Reservation($user, $l);
-            }
+
         }
     }
 }

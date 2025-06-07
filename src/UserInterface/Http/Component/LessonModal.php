@@ -47,7 +47,7 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $paymentAmount = null;
 
-    public function __construct(private EntityManagerInterface $em, private MessageBusInterface $bus)
+    public function __construct(private readonly MessageBusInterface $bus)
     {
     }
 
@@ -95,7 +95,7 @@ class LessonModal extends AbstractController
             $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
             $awaitingPayment = AwaitingPaymentFactory::create($user, $selected->price);
 
-            $this->bus->dispatch(new SaveAwaitingPayment($user, $awaitingPayment));
+            $this->bus->dispatch(new SaveAwaitingPayment($user, $awaitingPayment, $this->lesson));
 
             $this->paymentCode = $awaitingPayment->getCode();
             $this->paymentAmount = (string)$selected->price;

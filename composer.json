@@ -119,7 +119,12 @@
             "Rector": "rector --dry-run",
             "ECS": "ecs check"
         },
-        "tests:functional": {
+        "tests": {
+            "Unit tests": "bin/phpunit --testsuite \"Unit tests\"",
+            "Smoke": "@tests:smoke",
+            "All with coverage": "bin/phpunit --coverage-text --coverage-xml target/coverage"
+        },
+        "tests:smoke": {
             "Smoke tests": "bin/phpunit --testsuite \"Smoke tests\""
         },
         "qa:fix": {
@@ -145,6 +150,7 @@
         "phpunit/phpunit": "^9.6.23",
         "rector/rector": "^2.0.16",
         "roave/security-advisories": "dev-latest",
+        "rregeer/phpunit-coverage-check": "^0.3.1",
         "symfony/browser-kit": "7.3.*",
         "symfony/css-selector": "7.3.*",
         "symfony/debug-bundle": "7.3.*",
