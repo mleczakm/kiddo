@@ -11,7 +11,7 @@
         "ext-iconv": "*",
         "ext-swoole": "*",
         "brick/money": "^0.10.1",
-        "directorytree/imapengine": "^1.13.6",
+        "directorytree/imapengine": "^1.13.8",
         "doctrine/dbal": "^3.9.4",
         "doctrine/doctrine-bundle": "^2.14",
         "doctrine/doctrine-migrations-bundle": "^3.4.2",
@@ -45,13 +45,13 @@
         "symfony/scheduler": "7.3.*",
         "symfony/security-bundle": "7.3.*",
         "symfony/serializer": "7.3.*",
-        "symfony/stimulus-bundle": "^2.25.2",
+        "symfony/stimulus-bundle": "^2.26.1",
         "symfony/string": "7.3.*",
         "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
         "symfony/uid": "7.3.*",
-        "symfony/ux-live-component": "^2.25.2",
-        "symfony/ux-turbo": "^2.25.2",
+        "symfony/ux-live-component": "^2.26.1",
+        "symfony/ux-turbo": "^2.26.1",
         "symfony/validator": "7.3.*",
         "symfony/web-link": "7.3.*",
         "symfony/yaml": "7.3.*",
@@ -130,7 +130,9 @@
         "qa:fix": {
             "Disable timeout": "Composer\\Config::disableProcessTimeout",
             "Rector": "rector",
-            "ECS fix": "ecs check --fix"
+            "ECS fix": "ecs check --fix",
+            "Phpstan fix baseline step 1": "phpstan analyse --memory-limit=-1 --configuration=phpstan.regenerate-baseline.neon",
+            "Phpstan fix baseline step 2": "phpstan analyse --memory-limit=-1 --generate-baseline"
         }
     },
     "conflict": {
@@ -148,7 +150,7 @@
         "phpstan/phpstan-doctrine": "^2.0.3",
         "phpstan/phpstan-symfony": "^2.0.6",
         "phpunit/phpunit": "^9.6.23",
-        "rector/rector": "^2.0.16",
+        "rector/rector": "^2.0.18",
         "roave/security-advisories": "dev-latest",
         "rregeer/phpunit-coverage-check": "^0.3.1",
         "symfony/browser-kit": "7.3.*",
@@ -158,7 +160,7 @@
         "symfony/phpunit-bridge": "^7.3.0",
         "symfony/stopwatch": "7.3.*",
         "symfony/web-profiler-bundle": "7.3.*",
-        "symplify/easy-coding-standard": "^12.5.18",
-        "zenstruck/foundry": "^2.5.2"
+        "symplify/easy-coding-standard": "^12.5.20",
+        "zenstruck/foundry": "^2.6.0"
     }
 }
