@@ -144,17 +144,6 @@ class Booking
         return $this;
     }
 
-    public function getTicket(): ?CarnetTicket
-    {
-        return $this->ticket;
-    }
-
-    public function setTicket(?CarnetTicket $ticket): self
-    {
-        $this->ticket = $ticket;
-        return $this;
-    }
-
     public function getPayment(): ?Payment
     {
         return $this->payment;
