@@ -11,7 +11,7 @@
         "ext-iconv": "*",
         "ext-swoole": "*",
         "brick/money": "^0.10.1",
-        "directorytree/imapengine": "^1.13.8",
+        "directorytree/imapengine": "^1.14.0",
         "doctrine/dbal": "^3.9.4",
         "doctrine/doctrine-bundle": "^2.14",
         "doctrine/doctrine-migrations-bundle": "^3.4.2",
