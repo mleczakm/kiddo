@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
-use App\Application\Command\SaveAwaitingPayment;
-use App\Application\Command\SendReservationNotification;
-use App\Entity\AwaitingPaymentFactory;
+use App\Application\Command\AddBooking;
+use App\Application\Service\BookingFactory;
+use App\Entity\PaymentFactory;
 use App\Entity\Lesson;
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -47,9 +46,10 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $paymentAmount = null;
 
-    public function __construct(private readonly MessageBusInterface $bus)
-    {
-    }
+    public function __construct(
+        private readonly MessageBusInterface $bus,
+        private readonly BookingFactory $bookingFactory,
+    ) {}
 
     #[LiveAction]
     public function openModal(): void
@@ -78,12 +78,12 @@ class LessonModal extends AbstractController
     #[LiveAction]
     public function processPayment(): void
     {
-        if (!$this->termsAccepted) {
+        if (! $this->termsAccepted) {
             $this->paymentStatus = 'error';
             return;
         }
 
-        if (!$this->selectedTicketType) {
+        if (! $this->selectedTicketType) {
             $this->paymentStatus = 'error';
             return;
         }
@@ -93,12 +93,16 @@ class LessonModal extends AbstractController
 
         if ($this->lesson && $user) {
             $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
-            $awaitingPayment = AwaitingPaymentFactory::create($user, $selected->price);
 
-            $this->bus->dispatch(new SaveAwaitingPayment($user, $awaitingPayment, $this->lesson));
+            $booking = $this->bookingFactory->createFrom($this->lesson, $selected, $user);
+            $payment = new PaymentFactory()
+                ->create($user, $selected->price);
+            $booking->setPayment($payment);
 
-            $this->paymentCode = $awaitingPayment->getCode();
-            $this->paymentAmount = (string)$selected->price;
+            $this->bus->dispatch(new AddBooking($booking));
+
+            $this->paymentCode = $payment->getPaymentCode()?->getCode();
+            $this->paymentAmount = (string) $selected->price;
             $this->paymentStatus = 'awaiting_payment';
 
             return;

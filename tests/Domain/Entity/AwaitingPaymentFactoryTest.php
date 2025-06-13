@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Domain\Entity;
 
-use App\Entity\AwaitingPaymentFactory;
+use App\Entity\PaymentFactory;
 use PHPUnit\Framework\TestCase;
 
 class AwaitingPaymentFactoryTest extends TestCase
@@ -12,7 +12,8 @@ class AwaitingPaymentFactoryTest extends TestCase
     public function testCreateRandom4LetterString(): void
     {
 
-        $code = AwaitingPaymentFactory::generateCode(4);
+        $code = new PaymentFactory()
+            ->generateCode(4);
 
         $this->assertMatchesRegularExpression(
             '/^[A-Z0-9]{4}$/',

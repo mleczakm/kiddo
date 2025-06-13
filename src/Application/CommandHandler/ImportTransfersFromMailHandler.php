@@ -26,7 +26,7 @@ readonly class ImportTransfersFromMailHandler
     {
         $transfers = [];
         /** @var Message $incomingNotification */
-        foreach ($this->incomingNotificationMailQuery as $incomingNotification) {
+        foreach (($this->incomingNotificationMailQuery)() as $incomingNotification) {
             if (str_starts_with($incomingNotification->subject() ?? '', 'Uznanie rachunku')) {
                 $parsed = $this->mailParser->fromMailSubjectAndContent(
                     $incomingNotification->subject() ?? '',

@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\CommandHandler;
 
-use App\Application\Command\ImportTransfersFromMail;
-use App\Application\Command\SaveTransfer;
-use App\Entity\Transfer;
-use DirectoryTree\ImapEngine\Message;
-use Symfony\Component\Clock\Clock;
+use DirectoryTree\ImapEngine\MessageQueryInterface;
 
 interface IncomingNotificationMailQuery
 {
+    /**
+     * @return iterable<MessageQueryInterface>
+     */
     public function __invoke(): iterable;
 }
