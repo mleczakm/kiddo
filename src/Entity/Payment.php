@@ -14,20 +14,18 @@ use Symfony\Component\Uid\Ulid;
 class Payment
 {
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_PAID = 'paid';
+
     public const STATUS_FAILED = 'failed';
+
     public const STATUS_REFUNDED = 'refunded';
+
     public const STATUS_EXPIRED = 'expired';
 
     #[ORM\Id]
     #[ORM\Column(type: 'ulid', unique: true)]
     private Ulid $id;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $user;
-
-    #[ORM\Column(type: 'json_document')]
-    private Money $amount;
 
     #[ORM\Column(type: 'string', length: 20)]
     private string $status = self::STATUS_PENDING;
@@ -38,28 +36,27 @@ class Payment
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?\DateTimeImmutable $expiresAt = null;
-
     /**
      * @var Collection<int, Booking>
      */
     #[ORM\OneToMany(mappedBy: 'payment', targetEntity: Booking::class)]
     private Collection $bookings;
 
-    #[ORM\OneToOne(targetEntity: PaymentCode::class, mappedBy: 'payment', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private ?PaymentCode $paymentCode;
+    #[ORM\OneToOne(targetEntity: PaymentCode::class, mappedBy: 'payment', cascade: [
+        'persist',
+        'remove',
+    ], orphanRemoval: true)]
+    private ?PaymentCode $paymentCode = null;
 
     public function __construct(
-        User $user,
-        Money $amount,
-        ?\DateTimeImmutable $expiresAt
+        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\JoinColumn(nullable: false)]
+        private User $user,
+        #[ORM\Column(type: 'json_document')]
+        private Money $amount
     ) {
         $this->id = new Ulid();
-        $this->user = $user;
-        $this->amount = $amount;
         $this->createdAt = new \DateTimeImmutable();
-        $this->expiresAt = $expiresAt;
         $this->bookings = new ArrayCollection();
     }
 
@@ -85,12 +82,12 @@ class Payment
 
     public function setStatus(string $status): self
     {
-        if (!in_array($status, [
+        if (! in_array($status, [
             self::STATUS_PENDING,
             self::STATUS_PAID,
             self::STATUS_FAILED,
             self::STATUS_REFUNDED,
-            self::STATUS_EXPIRED
+            self::STATUS_EXPIRED,
         ], true)) {
             throw new \InvalidArgumentException('Invalid payment status');
         }
@@ -134,16 +131,6 @@ class Payment
         return $this->paidAt;
     }
 
-    public function getExpiresAt(): ?\DateTimeImmutable
-    {
-        return $this->expiresAt;
-    }
-
-    public function isExpired(): bool
-    {
-        return $this->expiresAt && $this->expiresAt < new \DateTimeImmutable();
-    }
-
     /**
      * @return Collection<int, Booking>
      */
@@ -154,7 +141,7 @@ class Payment
 
     public function addBooking(Booking $booking): self
     {
-        if (!$this->bookings->contains($booking)) {
+        if (! $this->bookings->contains($booking)) {
             $this->bookings[] = $booking;
             $booking->setPayment($this);
         }

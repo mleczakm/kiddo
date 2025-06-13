@@ -28,10 +28,6 @@ services:
         arguments:
 #            $paymentCodeLifetime: '%env(int:PAYMENT_CODE_LIFETIME)%'
 
-    App\Command\CleanupExpiredPaymentCodesCommand:
-        arguments:
-            $paymentCodeLifetime: '%env(int:PAYMENT_CODE_LIFETIME)%'
-
     App\Application\CommandHandler\:
         resource: '../src/Application/CommandHandler/'
         tags: ['messenger.message_handler']

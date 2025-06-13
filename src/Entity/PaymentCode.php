@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'payment_code')]
@@ -13,6 +12,7 @@ use Symfony\Component\Uid\Ulid;
 class PaymentCode
 {
     public const CODE_LENGTH = 4;
+
     public const CHARS = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ'; // Exclude I and O for readability
 
     #[ORM\Id]
@@ -23,16 +23,15 @@ class PaymentCode
     #[ORM\Column(type: 'string', length: 4, unique: true)]
     private string $code;
 
-    #[ORM\OneToOne(inversedBy: 'paymentCode', targetEntity: Payment::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private Payment $payment;
-
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    public function __construct(Payment $payment)
-    {
-        $this->payment = $payment;
+    public function __construct(
+        #[ORM\OneToOne(targetEntity: Payment::class, inversedBy: 'paymentCode')]
+        #[ORM\JoinColumn(nullable: false)]
+        private Payment $payment
+    ) {
+        $this->payment->setPaymentCode($this);
         $this->createdAt = new \DateTimeImmutable();
         $this->generateCode();
     }

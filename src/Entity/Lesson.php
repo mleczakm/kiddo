@@ -8,7 +8,6 @@ use Brick\Money\Money;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity]
@@ -66,17 +65,6 @@ class Lesson
     }
 
     /**
-     * @return list<Reservation>
-     */
-    public function apply(Ticket $ticket): array
-    {
-        $reservation = new Reservation($this, $ticket, Clock::get()->now());
-        $ticket->addReservation($reservation);
-
-        return [$reservation];
-    }
-
-    /**
      * @return array<TicketOption>
      */
     public function getTicketOptions(): array
@@ -118,7 +106,7 @@ class Lesson
 
     public function addBooking(Booking $booking): self
     {
-        if (!$this->bookings->contains($booking)) {
+        if (! $this->bookings->contains($booking)) {
             $this->bookings[] = $booking;
         }
 

@@ -13,19 +13,19 @@ use Symfony\Component\Uid\Ulid;
 class Booking
 {
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_CONFIRMED = 'confirmed';
+
     public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_COMPLETED = 'completed';
 
     #[ORM\Id]
     #[ORM\Column(type: 'ulid', unique: true)]
     private Ulid $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $user;
-
     /**
-     * @var Collection<int, Lesson>
+     * @var Collection<int|string, Lesson>
      */
     #[ORM\ManyToMany(targetEntity: Lesson::class, inversedBy: 'bookings')]
     private Collection $lessons;
@@ -42,13 +42,15 @@ class Booking
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $notes = null;
 
-    #[ORM\ManyToOne(targetEntity: Payment::class, inversedBy: 'bookings')]
-    private ?Payment $payment = null;
-
-    public function __construct(User $user, Lesson ... $lessons)
-    {
+    public function __construct(
+        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\JoinColumn(nullable: false)]
+        private User $user,
+        #[ORM\ManyToOne(targetEntity: Payment::class, cascade: ['persist'], inversedBy: 'bookings')]
+        public ?Payment $payment,
+        Lesson ... $lessons
+    ) {
         $this->id = new Ulid();
-        $this->user = $user;
         $this->lessons = new ArrayCollection($lessons);
         $this->status = self::STATUS_PENDING;
         $this->createdAt = new \DateTimeImmutable();
@@ -65,7 +67,7 @@ class Booking
     }
 
     /**
-     * @return Collection<int, Lesson>
+     * @return Collection<int|string, Lesson>
      */
     public function getLessons(): Collection
     {
@@ -74,7 +76,7 @@ class Booking
 
     public function addLesson(Lesson $lesson): self
     {
-        if (!$this->lessons->contains($lesson)) {
+        if (! $this->lessons->contains($lesson)) {
             $this->lessons[] = $lesson;
             $lesson->addBooking($this);
         }
@@ -98,7 +100,11 @@ class Booking
 
     public function setStatus(string $status): self
     {
-        if (!in_array($status, [self::STATUS_PENDING, self::STATUS_CONFIRMED, self::STATUS_CANCELLED, self::STATUS_COMPLETED], true)) {
+        if (! in_array(
+            $status,
+            [self::STATUS_PENDING, self::STATUS_CONFIRMED, self::STATUS_CANCELLED, self::STATUS_COMPLETED],
+            true
+        )) {
             throw new \InvalidArgumentException('Invalid booking status');
         }
 

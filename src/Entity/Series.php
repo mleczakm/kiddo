@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Brick\Money\Money;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,7 +30,7 @@ class Series
      * @param list<TicketOption> $ticketOptions
      */
     public function __construct(
-        #[ORM\OneToMany(mappedBy: 'series', targetEntity: Lesson::class)]
+        #[ORM\OneToMany(targetEntity: Lesson::class, mappedBy: 'series')]
         public Collection $lessons,
         #[ORM\Column(type: 'string', enumType: WorkshopType::class)]
         public WorkshopType $type = WorkshopType::WEEKLY,
@@ -46,40 +47,18 @@ class Series
     }
 
     /**
-     * @return list<Reservation>
-     */
-    public function apply(Ticket $ticket): array
-    {
-        $reservations = [];
-
-        foreach ($this->findActiveLessons() as $lesson) {
-            if ($ticket->match($lesson)) {
-                array_push($reservations, ...$lesson->apply($ticket));
-            }
-        }
-
-        return $reservations;
-    }
-
-    /**
-
      * @return Lesson[]
      */
     public function getLessonsGte(Lesson $lesson, int $limit): array
     {
-        $criteria = \Doctrine\Common\Collections\Criteria::create()
-            ->where(\Doctrine\Common\Collections\Criteria::expr()->gte('id', $lesson->getId()))
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->gte('id', $lesson->getId()))
             ->setMaxResults($limit)
-            ->orderBy(['id' => 'ASC']);
+            ->orderBy([
+                'id' => 'ASC',
+            ]);
 
-        return $this->lessons->matching($criteria)->toArray();
-    }
-
-    /**
-     * @return iterable<Lesson>
-     */
-    private function findActiveLessons(): iterable
-    {
-        yield from $this->lessons;
+        return $this->lessons->matching($criteria)
+            ->toArray();
     }
 }

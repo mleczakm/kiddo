@@ -6,7 +6,7 @@ namespace App\Entity;
 
 use Brick\Money\Money;
 
-class AwaitingPaymentFactory
+class PaymentFactory
 {
     public function generateCode(int $length = 4): string
     {
@@ -18,9 +18,11 @@ class AwaitingPaymentFactory
         return $code;
     }
 
-    public function create(User $user, Money $amount): AwaitingPayment
+    public function create(User $user, Money $amount): Payment
     {
-        $code = self::generateCode();
-        return new AwaitingPayment($user, $code, $amount);
+        $payment = new Payment($user, $amount);
+        new PaymentCode($payment);
+
+        return $payment;
     }
 }
