@@ -20,9 +20,9 @@ class Transfer
         #[ORM\Column(type: 'string', length: 255)]
         private string $sender,
         #[ORM\Column(type: 'string', length: 255)]
-        private string $title,
+        public string $title,
         #[ORM\Column(type: 'string', length: 255)]
-        private string $amount,
+        public string $amount,
         #[ORM\Column(type: 'datetime_immutable')]
         private \DateTimeImmutable $transferredAt
     ) {}
