@@ -1,0 +1,32 @@
+framework:
+    workflows:
+        payment:
+            type: 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Payment
+            initial_marking: pending
+            places:
+                - pending
+                - paid
+                - failed
+                - refunded
+                - expired
+            transitions:
+                pay:
+                    guard: "subject.isPaid() or is_granted('ROLE_ADMIN')"
+                    from: pending
+                    to: paid
+                fail:
+                    from: pending
+                    to: failed
+                refund:
+                    from: paid
+                    to: refunded
+                expire:
+                    from: pending
+                    to: expired

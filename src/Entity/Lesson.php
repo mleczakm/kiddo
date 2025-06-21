@@ -38,9 +38,7 @@ class Lesson
     private Collection $bookings;
 
     public function __construct(
-        #[ORM\Column(type: 'json_document', options: [
-            'jsonb' => true,
-        ])]
+        #[ORM\Embedded(class: LessonMetadata::class)]
         private LessonMetadata $metadata
     ) {
         $this->id = new Ulid();

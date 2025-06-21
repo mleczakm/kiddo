@@ -54,6 +54,7 @@
         "symfony/ux-turbo": "^2.26.1",
         "symfony/validator": "7.3.*",
         "symfony/web-link": "7.3.*",
+        "symfony/workflow": "7.3.*",
         "symfony/yaml": "7.3.*",
         "symfonycasts/tailwind-bundle": "^0.10.0",
         "tales-from-a-dev/flowbite-bundle": "^0.8.1",

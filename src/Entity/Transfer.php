@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// src/Entity/Transfer.php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +11,10 @@ class Transfer
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
     private int $id;
+
+    #[ORM\ManyToOne(targetEntity: Payment::class, inversedBy: 'transfers')]
+    #[ORM\JoinColumn(name: 'payment_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?Payment $payment = null;
 
     public function __construct(
         #[ORM\Column(type: 'string', length: 255)]
@@ -26,4 +28,15 @@ class Transfer
         #[ORM\Column(type: 'datetime_immutable')]
         private \DateTimeImmutable $transferredAt
     ) {}
+
+    public function getPayment(): ?Payment
+    {
+        return $this->payment;
+    }
+
+    public function setPayment(?Payment $payment): self
+    {
+        $this->payment = $payment;
+        return $this;
+    }
 }
