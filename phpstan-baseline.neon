@@ -41,9 +41,3 @@ parameters:
 			identifier: deadCode.unreachable
 			count: 1
 			path: tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php
-
-		-
-			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNotEmpty\(\) with array\{\} will always evaluate to false\.$#'
-			identifier: staticMethod.impossibleType
-			count: 1
-			path: tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php

@@ -14,7 +14,7 @@ class TransferMoneyParser
         $cleaned = preg_replace('/[^\d,]/', '', $amount);
 
         // Replace comma with dot to create a valid decimal number
-        $number = str_replace(',', '.', $cleaned);
+        $number = str_replace(',', '.', $cleaned ?? '');
 
         // If the number starts with a dot, add leading zero
         if (str_starts_with($number, '.')) {

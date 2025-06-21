@@ -24,6 +24,9 @@ class TransferMoneyParserTest extends TestCase
         $this->assertSame('PLN', (string) $result->getCurrency());
     }
 
+    /**
+     * @return array<array{0: string, 1: Money}>
+     */
     public static function moneyStringProvider(): array
     {
         return [
