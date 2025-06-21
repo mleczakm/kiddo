@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Scheduler;
 
+use App\Application\Command\CheckExpiredBookings;
 use App\Application\Command\CheckExpiredPayments;
 use App\Application\Command\ImportTransfersFromMail;
 use Symfony\Component\Scheduler\RecurringMessage;
@@ -23,6 +24,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->with(RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 30)))
+            ->with(RecurringMessage::every('30 minutes', new CheckExpiredBookings()))
             ->with(RecurringMessage::every('30 minutes', new ImportTransfersFromMail()))
         ;
     }

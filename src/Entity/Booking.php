@@ -114,6 +114,21 @@ class Booking
         return $this;
     }
 
+    public function canBeConfirmed(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    public function canBeCancelled(): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true);
+    }
+
+    public function canBeCompleted(): bool
+    {
+        return $this->status === self::STATUS_CONFIRMED;
+    }
+
     public function confirm(): self
     {
         return $this->setStatus(self::STATUS_CONFIRMED);
