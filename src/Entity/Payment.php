@@ -11,7 +11,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[ORM\Entity]
 class Payment
@@ -123,44 +122,17 @@ class Payment
             throw new \InvalidArgumentException(sprintf('Invalid payment status: %s', $status));
         }
 
-        $this->status = $status;
-        return $this;
-    }
-
-    public function markAsPaid(): self
-    {
-        $this->status = self::STATUS_PAID;
-        $this->paidAt = new \DateTimeImmutable();
-        return $this;
-    }
-
-    public function canTransition(string $transition, WorkflowInterface $workflow): bool
-    {
-        return $workflow->can($this, $transition);
-    }
-
-    public function applyTransition(string $transition, WorkflowInterface $workflow): void
-    {
-        if ($this->canTransition($transition, $workflow)) {
-            $workflow->apply($this, $transition);
+        switch ($status) {
+            case self::STATUS_PAID:
+                $this->paidAt = new \DateTimeImmutable();
+                $this->paymentCode = null;
+                break;
+            default:
+                break;
         }
-    }
 
-    public function markAsFailed(): self
-    {
-        $this->status = self::STATUS_FAILED;
-        return $this;
-    }
+        $this->status = $status;
 
-    public function markAsRefunded(): self
-    {
-        $this->status = self::STATUS_REFUNDED;
-        return $this;
-    }
-
-    public function markAsExpired(): self
-    {
-        $this->status = self::STATUS_EXPIRED;
         return $this;
     }
 

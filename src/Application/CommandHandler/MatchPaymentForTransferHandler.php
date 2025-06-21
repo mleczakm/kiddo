@@ -21,14 +21,10 @@ final readonly class MatchPaymentForTransferHandler
         $transfer = $command->transfer;
         $title = $command->transfer->title;
 
-        // Extract payment code from the transfer title (assuming format like "Payment ABC123")
-        if (preg_match('/\b([A-Z0-9]{4,8})\b/', $title, $matches)) {
-            $code = $matches[1];
-
-            // Find payment code in the database
+        foreach (explode(' ', $title) as $word) {
             $paymentCode = $this->entityManager->getRepository(PaymentCode::class)
                 ->findOneBy([
-                    'code' => $code,
+                    'code' => $word,
                 ]);
 
             if ($paymentCode) {

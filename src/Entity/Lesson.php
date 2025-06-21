@@ -38,7 +38,7 @@ class Lesson
     private Collection $bookings;
 
     public function __construct(
-        #[ORM\Embedded(class: LessonMetadata::class)]
+        #[ORM\Embedded(class: LessonMetadata::class, columnPrefix: false)]
         private LessonMetadata $metadata
     ) {
         $this->id = new Ulid();

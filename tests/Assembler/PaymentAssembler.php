@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Assembler;
 
+use App\Entity\Transfer;
 use App\Entity\Payment;
 use App\Entity\User;
 use Brick\Money\Money;
@@ -13,6 +14,11 @@ use Brick\Money\Money;
  */
 class PaymentAssembler extends EntityAssembler
 {
+    /**
+     * @var Transfer[]
+     */
+    private array $transfers = [];
+
     public function withId(string $id): static
     {
         return $this->with('id', $id);
@@ -69,6 +75,17 @@ class PaymentAssembler extends EntityAssembler
             $property->setValue($payment, $this->properties['createdAt']);
         }
 
+        foreach ($this->transfers as $transfer) {
+            $payment->addTransfer($transfer);
+        }
+
         return $payment;
+    }
+
+    public function withTransfers(Transfer ...$transfers): static
+    {
+        $this->transfers = $transfers;
+
+        return $this;
     }
 }
