@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\MatchPaymentForTransfer;
+use App\Application\Service\TransferMoneyParser;
 use App\Entity\PaymentCode;
 use Doctrine\ORM\EntityManagerInterface;
 
-
-final class MatchPaymentForTransferHandler
+final readonly class MatchPaymentForTransferHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-    ) {
-    }
+    ) {}
 
     public function __invoke(MatchPaymentForTransfer $command): void
     {
@@ -25,21 +26,18 @@ final class MatchPaymentForTransferHandler
 
             // Find payment code in the database
             $paymentCode = $this->entityManager->getRepository(PaymentCode::class)
-                ->findOneBy(['code' => $code]);
+                ->findOneBy([
+                    'code' => $code,
+                ]);
 
             if ($paymentCode) {
                 $payment = $paymentCode->getPayment();
 
                 $paymentAmount = $payment->getAmount();
-                $transferAmount = $transfer->getAmount();
-                if ($paymentAmount->isEqualTo($transferAmount)) {
+                $transferAmount = TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount);
+                if ($paymentAmount->isLessThanOrEqualTo($transferAmount)) {
                     $payment->markAsPaid();
-                    $this->entityManager->flush();
                 }
-
-                // Or simply mark as paid if code matches
-                $payment->markAsPaid();
-                $this->entityManager->flush();
             }
         }
     }
