@@ -72,6 +72,7 @@ readonly class SendPaymentNotificationHandler
         $content = $this->translator->trans('payment.notification.user.message', $translatorContext, 'emails');
 
         $notification = new Notification()
+            ->importance('')
             ->subject($subject)
             ->content($content);
 
@@ -125,6 +126,7 @@ readonly class SendPaymentNotificationHandler
         $content = $this->translator->trans('payment.notification.admin.greeting', $translatorContext, 'emails');
 
         $notification = new Notification()
+            ->importance('')
             ->subject($subject)
             ->content($content);
 
