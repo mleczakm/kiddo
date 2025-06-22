@@ -101,6 +101,7 @@ homepage:
     subtitle: 'Zapisz się do naszego newslettera, aby otrzymywać informacje o nowych warsztatach, specjalnych ofertach i kreatywnych zajęciach dla dzieci.'
     email_placeholder: 'Twój adres email'
     subscribe: 'Zapisz się'
+    subscription_disabled: 'Subskrypcja na newsletter dostępna już wkrótce!'
 
 lesson:
   page:

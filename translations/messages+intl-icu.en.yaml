@@ -91,3 +91,4 @@ homepage:
     subtitle: 'Subscribe to our newsletter to get updates about new workshops, special offers, and creative activities for kids.'
     email_placeholder: 'Your email address'
     subscribe: 'Subscribe'
+    subscription_disabled: 'Subscription coming soon!'
