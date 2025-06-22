@@ -1,2 +1,36 @@
 footer: <p>&copy; 2025 Sensoryczna. All rights reserved.</p>
 exception: Exception stack trace attached.
+
+# Payment Notifications
+payment:
+  notification:
+    user:
+      subject: 'Payment Confirmation - Thank You!'
+      message: |-
+        Hello,
+        
+        We are pleased to confirm that we have received your payment of %amount%.
+        
+        Payment Details:
+        Booking Reference: %reference%
+        Amount Paid: %amount%
+        Payment Date: %date%
+        
+        Booked Lessons:
+        %lessons%
+        
+        Thank you for choosing our service!
+    admin:
+      subject: 'New Payment Received - #%id%'
+      greeting: |-
+        A new payment has been received:
+        
+        Payment ID: %id%
+        Amount: %amount%
+        User: %user%
+        Booking: %booking%
+        
+        Booked Lessons:
+        %lessons%
+        
+        Please log in to the admin panel for more details.

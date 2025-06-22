@@ -42,4 +42,19 @@ class UserRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * @return User[]
+     */
+    public function findByRole(string $string)
+    {
+        /** @var User[] $admins */
+        $admins = $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', $string)
+            ->getQuery()
+            ->getResult();
+
+        return $admins;
+    }
 }

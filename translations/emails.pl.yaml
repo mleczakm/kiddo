@@ -38,3 +38,43 @@ reservation:
       
 importance:
   high: uwaga
+
+payment:
+  notification:
+    user:
+      subject: 'Potwierdzenie płatności - Dziękujemy!'
+      message: >-
+        Dzień dobry,
+        
+        Z przyjemnością potwierdzamy otrzymanie Twojej płatności w wysokości %amount%.
+        
+        Szczegóły płatności:
+        
+        Numer rezerwacji: %reference%
+        
+        Zapłacona kwota: %amount%
+        
+        Data płatności: %date%
+        
+        Zarezerwowane zajęcia:
+        %lessons%
+        
+        Dziękujemy za skorzystanie z naszych usług!
+    admin:
+      subject: 'Nowa płatność otrzymana - #%id%'
+      greeting: >-
+        Otrzymano nową płatność:
+        
+        ID płatności: %id%
+        
+        Kwota: %amount%
+        
+        Użytkownik: %user%
+        
+        Rezerwacja: %booking%
+        
+        Zarezerwowane zajęcia:
+        %lessons%
+        
+        Zaloguj się do panelu administracyjnego, aby zobaczyć więcej szczegółów.
+    

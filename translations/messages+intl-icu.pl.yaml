@@ -197,8 +197,11 @@ blik:
     instruction: "W tytule przelewu wpisz:"
   info: "Po zaksięgowaniu płatności Twoja rezerwacja zostanie potwierdzona."
   alt_transfer: >-
-    Możesz też wykonać klasyczny przelew na numer konta: {account}
+    Możesz też wykonać klasyczny przelew na numer konta: {account}     
     
     o tym samym tytule "{title}"
+
   amount: "Kwota do zapłaty: {amount}"
   instruction_3: "W tytule przelewu wpisz:"
+  
+
