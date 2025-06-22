@@ -35,6 +35,7 @@ lesson:
   page:
     header: Browse Our Workshops
     lead: Discover our range of creative and educational workshops for children of all ages
+    workshops: Workshops
 
   every: Every {day}
   minutes: >-
@@ -47,4 +48,65 @@ lesson:
     }
   details: See details
   age_above: Above {min}
+    
+  previous_week: Previous week
+  next_week: Next week
+  current_week: Current week
+  no_workshops: No workshops available
+  check_another_week: Please check another week or contact us for more information.
+  view_details: View details
+  years: years
+  people: people
+  minutes_short: min
+  capacity: Capacity
+  age_range: Age range
+  time: Time
+  duration: Duration
+  location: Location
+  spots_available: Spots available
+  book_now: Book now
+  workshop_details: Workshop details
+  about_workshop: About this workshop
+  what_to_expect: What to expect
+  requirements: Requirements
+  what_to_bring: What to bring
+  cancellation_policy: Cancellation policy
+  related_workshops: You might also like
+  no_related_workshops: No related workshops available at the moment.
+  booking_success: Your booking was successful!
+  booking_confirmation: Booking confirmation
+  booking_reference: Reference number
+  booking_date: Booking date
+  booking_status: Status
+  booking_pending: Pending
+  booking_confirmed: Confirmed
+  booking_cancelled: Cancelled
+  
+  # Modal content
+  ticket_options: Ticket Options
+  no_special_requirements: No special requirements
+  bring_yourself: Just bring yourself and your enthusiasm!
+  download_ticket: Download ticket
+  contact_support: Contact support
+  back_to_workshops: Back to workshops
+  filter_by: Filter by
+  all_categories: All categories
+  all_ages: All ages
+  reset_filters: Reset filters
+  apply_filters: Apply filters
+  sort_by: Sort by
+  sort_date_asc: Date (earliest first)
+  sort_date_desc: Date (latest first)
+  sort_price_asc: Price (low to high)
+  sort_price_desc: Price (high to low)
+  sort_popularity: Most popular
+  sort_newest: Newest first
+  no_workshops_found: No workshops found matching your criteria.
+  try_changing_filters: Try changing your filters or search term.
+  clear_all_filters: Clear all filters
+  show_filters: Show filters
+  hide_filters: Hide filters
+  loading: Loading...
+  load_more: Load more
+  showing_results: Showing {from} to {to} of {total} results
   

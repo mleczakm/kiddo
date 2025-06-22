@@ -7,6 +7,7 @@ namespace App\UserInterface\Http;
 use App\Entity\Lesson;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -16,111 +17,54 @@ class WorkshopsAction extends AbstractController
         'pl' => '/warsztaty',
         'en' => 'workshops',
     ], name: 'workshops')]
-    public function __invoke(EntityManagerInterface $entityManager): Response
+    public function __invoke(EntityManagerInterface $entityManager, Request $request): Response
     {
-        //                $lessons = [];
-        //
-        //                $metadata = new LessonMetadata(
-        //                    title: 'Rodzinne Muzykowanie z Pomelody',
-        //                    lead: 'Zajęcia umuzykalniające dla rodzin z dziećmi 0-6 lat',
-        //                    visualTheme: 'rgb(238, 203, 233)',
-        //                    description: 'Warsztaty prowadzone w języku polskim i angielskim, wspierające rozwój muzyczny dzieci.',
-        //                    capacity: 12,
-        //                    schedule: new \DateTimeImmutable('today, 12:30'),
-        //                    duration: 60,
-        //                    ageRange: new AgeRange(4, 6),
-        //                    category: 'Muzyka, Taniec, Śpiew',
-        //                );
-        //
-        //                $lessons[] = $lesson = new Lesson($metadata);
-        //                $lesson->setSeries($series = new Series(new ArrayCollection([$lesson])));
-        //
-        //                $klubMaluchaMetadata = new LessonMetadata(
-        //                    title: 'Klub Malucha',
-        //                    lead: 'Zajęcia dla najmłodszych dzieci',
-        //                    visualTheme: 'rgb(255, 223, 186)',
-        //                    description: 'Warsztaty wspierające rozwój społeczny i emocjonalny dzieci.',
-        //                    capacity: 10,
-        //                    schedule: new \DateTimeImmutable('2023-05-12 09:00'),
-        //                    duration: 150,
-        //                    ageRange: new AgeRange(1, 3),
-        //                    category: 'Rozwój społeczny'
-        //                );
-        //                $lessons[] = new Lesson($klubMaluchaMetadata);
-        //
-        //                $budujemyRelacjeMetadata = new LessonMetadata(
-        //                    title: 'Budujemy Relacje',
-        //                    lead: 'Warsztat dla dzieci 3-6 lat',
-        //                    visualTheme: 'rgb(186, 255, 201)',
-        //                    description: 'Trening umiejętności społecznych, rozwój współpracy i pokonywanie nieśmiałości.',
-        //                    capacity: 12,
-        //                    schedule: new \DateTimeImmutable('2023-05-13 10:00'),
-        //                    duration: 120,
-        //                    ageRange: new AgeRange(3, 6),
-        //                    category: 'Umiejętności społeczne'
-        //                );
-        //                $lessons[] = new Lesson($budujemyRelacjeMetadata);
-        //
-        //                $porankiBalagankiMetadata = new LessonMetadata(
-        //                    title: 'Poranki Bałaganki',
-        //                    lead: 'Warsztat dla najmłodszych',
-        //                    visualTheme: 'rgb(255, 186, 186)',
-        //                    description: 'Warsztaty wspierające rozwój społeczny, emocjonalny i poznawczy.',
-        //                    capacity: 8,
-        //                    schedule: new \DateTimeImmutable('2023-05-14 09:30'),
-        //                    duration: 90,
-        //                    ageRange: new AgeRange(2, 4),
-        //                    category: 'Rozwój poznawczy'
-        //                );
-        //                $lessons[] = new Lesson($porankiBalagankiMetadata);
-        //
-        //                $muzykowanieMetadata = new LessonMetadata(
-        //                    title: 'Rodzinne Muzykowanie z Pomelody',
-        //                    lead: 'Zajęcia umuzykalniające dla rodzin z dziećmi 0-6 lat',
-        //                    visualTheme: 'rgb(238, 203, 233)',
-        //                    description: 'Warsztaty prowadzone w języku polskim i angielskim, wspierające rozwój muzyczny dzieci.',
-        //                    capacity: 15,
-        //                    schedule: new \DateTimeImmutable('2023-05-15 12:30'),
-        //                    duration: 60,
-        //                    ageRange: new AgeRange(0, 6),
-        //                    category: 'Muzyka, Taniec, Śpiew'
-        //                );
-        //                $lessons[] = new Lesson($muzykowanieMetadata);
-        //
-        //                $cwiczymyMozgMetadata = new LessonMetadata(
-        //                    title: 'Ćwiczymy Mózg przez Ruch',
-        //                    lead: 'Warsztat bazujący na terapii zaburzeń integracji sensorycznej',
-        //                    visualTheme: 'rgb(186, 238, 255)',
-        //                    description: 'Zajęcia ruchowe wspierające rozwój układu nerwowego i sensorycznego.',
-        //                    capacity: 10,
-        //                    schedule: new \DateTimeImmutable('2023-05-16 11:00'),
-        //                    duration: 120,
-        //                    ageRange: new AgeRange(4, 7),
-        //                    category: 'Rozwój ruchowy'
-        //                );
-        //                $lessons[] = new Lesson($cwiczymyMozgMetadata);
-        //
-        //                $fabrCzekoladyMetadata = new LessonMetadata(
-        //                    title: 'Fabryka Czekolady',
-        //                    lead: 'Warsztat dla dzieci 2-4 lata',
-        //                    visualTheme: 'rgb(255, 238, 186)',
-        //                    description: 'Dekorowanie czekolady, poznawanie historii i próbowanie różnych rodzajów czekolady.',
-        //                    capacity: 8,
-        //                    schedule: new \DateTimeImmutable('2023-05-17 14:00'),
-        //                    duration: 90,
-        //                    ageRange: new AgeRange(2, 4),
-        //                    category: 'Kreatywność'
-        //                );
-        //                $lessons[] = new Lesson($fabrCzekoladyMetadata);
-        //
-        //                $entityManager->persist($series);
-        //                foreach ($lessons as $lesson) {
-        //                    $entityManager->persist($lesson);
-        //                }
-        //                $entityManager->flush();
+        $weekParam = $request->query->get('week');
+        $now = new \DateTimeImmutable();
+
+        // If week parameter is provided, use it as the reference date
+        if ($weekParam) {
+            try {
+                $referenceDate = new \DateTimeImmutable($weekParam);
+            } catch (\Exception) {
+                $referenceDate = $now;
+            }
+        } else {
+            // If today is Saturday, show next week's lessons
+            $referenceDate = (int) $now->format('N') === 6 ?
+                $now->modify('next monday') :
+                $now->modify('monday this week');
+        }
+
+        $startDate = $referenceDate->modify('monday this week');
+        $endDate = (clone $startDate)->modify('sunday this week 23:59:59');
+
+        $query = $entityManager->createQuery('
+            SELECT l
+            FROM App\Entity\Lesson l
+            WHERE l.metadata.schedule BETWEEN :start AND :end
+            ORDER BY l.metadata.schedule ASC
+        ')
+            ->setParameter('start', $startDate)
+            ->setParameter('end', $endDate);
+
+        /** @var Lesson[] $lessons */
+        $lessons = $query->getResult();
+
+        // Convert lessons to array and sort by schedule time
+        $workshops = [];
+        foreach ($lessons as $lesson) {
+            $workshops[] = $lesson;
+        }
+
+        // Sort workshops by schedule time
+        usort($workshops, fn(Lesson $a, Lesson $b) => $a->getMetadata()->schedule <=> $b->getMetadata()->schedule);
 
         return $this->render('workshops.html.twig', [
-            'workshops' => $entityManager->getRepository(Lesson::class)->findAll(),
+            'workshops' => $workshops,
+            'weekStart' => $startDate,
+            'weekEnd' => $endDate,
+            'currentWeek' => $now->format('Y-m-d'),
         ]);
     }
 }

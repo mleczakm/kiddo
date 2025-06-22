@@ -108,6 +108,8 @@ class Booking
             throw new \InvalidArgumentException('Invalid booking status');
         }
 
+
+
         $this->status = $status;
         $this->updatedAt = new \DateTimeImmutable();
 
