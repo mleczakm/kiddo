@@ -39,12 +39,13 @@ class WorkshopsAction extends AbstractController
         $startDate = $referenceDate->modify('monday this week');
         $endDate = $startDate->modify('sunday this week 23:59:59');
 
-        $query = $entityManager->createQuery('
+        $query = $entityManager->createQuery(<<<DQL
             SELECT l
             FROM App\Entity\Lesson l
+            LEFT JOIN l.bookings b WITH b.status = 'confirmed'
             WHERE l.metadata.schedule BETWEEN :start AND :end
             ORDER BY l.metadata.schedule ASC
-        ')
+            DQL)
             ->setParameter('start', $startDate)
             ->setParameter('end', $endDate);
 

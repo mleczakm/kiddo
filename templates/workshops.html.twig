@@ -54,7 +54,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {% for lesson in workshops %}
                     <div class="workshop-card">
-                        <div class="spot-badge"> {{ 'lesson.spots_available'|trans({spots: lesson.metadata.capacity}) }}</div>
+                        <div class="spot-badge"> {{ 'lesson.spots_available'|trans({spots: lesson.getAvailableSpots()}) }}</div>
                         <div class="rounded-lg bg-card text-card-foreground shadow-sm h-full flex flex-col border-0">
                             <div class="h-48 bg-cover bg-center"
                                  style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>
@@ -86,7 +86,7 @@
                                                 'date': lesson.metadata.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
                                                 'hour': lesson.metadata.schedule|date('H:i')
                                             }) }}
-                                            {% endif %}</span>
+                                            {% endif %}
                                         </span>
                                     </div>
                                     <div class="flex items-center text-sm">

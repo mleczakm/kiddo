@@ -126,4 +126,14 @@ class Lesson
     {
         return $this->ticketOptions[0];
     }
+
+    public function getAvailableSpots(): int
+    {
+        return max(
+            0,
+            $this->metadata->capacity -
+            $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
+                ->count()
+        );
+    }
 }

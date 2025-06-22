@@ -177,4 +177,9 @@ class Booking
         $this->payment = $payment;
         return $this;
     }
+
+    public function isConfirmed(): bool
+    {
+        return $this->status === self::STATUS_CONFIRMED;
+    }
 }
