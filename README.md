@@ -12,14 +12,14 @@ This is a PHP-based application for managing workshops and email communications.
 
 ### High Priority
 - [ ] Complete workshop management functionality
-- [ ] Complete booking process
-- [ ] Add workflows of payment and booking
+- [x] Complete booking process
+- [x] Add workflows of payment and booking
 - [x] Complete user login/register
 - [ ] Cover logging in non-existing user 
 
 ### Medium Priority
 - [ ] Write comprehensive tests
-- [ ] Add more language translations
+- [x] Add more language translations
 
 ### Low Priority
 - [ ] Add CD deploy pipeline
