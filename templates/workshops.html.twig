@@ -30,14 +30,14 @@
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
-                        {{ 'previous_week'|trans }}
+                        {{ 'lesson.previous_week'|trans }}
                     </a>
                     <span class="px-3 py-1.5 text-sm bg-gray-100 rounded-md whitespace-nowrap">
                         {{ weekStart|format_date('medium') }} - {{ weekEnd|format_date('medium') }}
                     </span>
                     <a href="{{ path('workshops', {'_locale': app.request.locale, 'week': weekStart.modify('+7 days')|date('Y-m-d')}) }}"
                        class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm">
-                        {{ 'next_week'|trans }}
+                        {{ 'lesson.next_week'|trans }}
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
@@ -45,7 +45,7 @@
                     {% if weekStart.format('Y-m-d') != currentWeek|date('Y-m-d') %}
                         <a href="{{ path('workshops', {'_locale': app.request.locale}) }}"
                            class="px-3 py-1.5 text-sm border rounded-md hover:bg-gray-50 whitespace-nowrap">
-                            {{ 'current_week'|trans }}
+                            {{ 'lesson.current_week'|trans }}
                         </a>
                     {% endif %}
                 </div>

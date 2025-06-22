@@ -7,6 +7,7 @@ namespace App\UserInterface\Http;
 use App\Entity\Lesson;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,13 +15,13 @@ use Symfony\Component\Routing\Attribute\Route;
 class WorkshopsAction extends AbstractController
 {
     #[Route(path: [
-        'pl' => '/warsztaty',
+        'pl' => 'warsztaty',
         'en' => 'workshops',
     ], name: 'workshops')]
     public function __invoke(EntityManagerInterface $entityManager, Request $request): Response
     {
         $weekParam = $request->query->get('week');
-        $now = new \DateTimeImmutable();
+        $now = Clock::get()->now();
 
         // If week parameter is provided, use it as the reference date
         if ($weekParam) {
@@ -30,14 +31,13 @@ class WorkshopsAction extends AbstractController
                 $referenceDate = $now;
             }
         } else {
-            // If today is Saturday, show next week's lessons
-            $referenceDate = (int) $now->format('N') === 6 ?
+            $referenceDate = (int) $now->format('N') >= 6 ?
                 $now->modify('next monday') :
                 $now->modify('monday this week');
         }
 
         $startDate = $referenceDate->modify('monday this week');
-        $endDate = (clone $startDate)->modify('sunday this week 23:59:59');
+        $endDate = $startDate->modify('sunday this week 23:59:59');
 
         $query = $entityManager->createQuery('
             SELECT l
@@ -51,17 +51,8 @@ class WorkshopsAction extends AbstractController
         /** @var Lesson[] $lessons */
         $lessons = $query->getResult();
 
-        // Convert lessons to array and sort by schedule time
-        $workshops = [];
-        foreach ($lessons as $lesson) {
-            $workshops[] = $lesson;
-        }
-
-        // Sort workshops by schedule time
-        usort($workshops, fn(Lesson $a, Lesson $b) => $a->getMetadata()->schedule <=> $b->getMetadata()->schedule);
-
         return $this->render('workshops.html.twig', [
-            'workshops' => $workshops,
+            'workshops' => $lessons,
             'weekStart' => $startDate,
             'weekEnd' => $endDate,
             'currentWeek' => $now->format('Y-m-d'),
