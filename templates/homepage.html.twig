@@ -55,9 +55,9 @@
                                         {{ 'workshop.spots_available'|trans({count: availableSpots}) }}
                                     {% endif %}
                                 </div>
-                                <div class="rounded-lg bg-card text-card-foreground shadow-sm h-full flex flex-col overflow-hidden border-0">
-                                    <div class="h-48 bg-cover bg-center"
-                                         style="background-color: {{ workshop.metadata.visualTheme }}; background-image: none;"></div>
+                                <div class="rounded-lg bg-white shadow-sm h-full flex flex-col">
+                                    <div class="h-48 bg-cover bg-center rounded-t-lg"
+                                         style="background-color: {{ workshop.metadata.visualTheme }}; background-image: none; border-top-left-radius: 12px; border-top-right-radius: 12px;"></div>
                                     <div class="p-6 flex flex-col flex-grow">
                                         <h3 class="text-xl font-bold mb-2 font-display">
                                             {{ workshop.metadata.title }}
@@ -247,7 +247,7 @@
                                 >
                                 <button 
                                     type="submit"
-                                    class="bg-workshop-red hover:bg-workshop-red/90 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+                                    class="bg-workshop-red hover:bg-workshop-red/90 text-white font-medium py-3 px-8 rounded-lg transition-colors whitespace-nowrap"
                                 >
                                     {{ 'homepage.newsletter.subscribe'|trans }}
                                 </button>

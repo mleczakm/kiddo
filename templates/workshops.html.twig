@@ -55,9 +55,9 @@
                 {% for lesson in workshops %}
                     <div class="workshop-card">
                         <div class="spot-badge"> {{ 'lesson.spots_available'|trans({spots: lesson.getAvailableSpots()}) }}</div>
-                        <div class="rounded-lg bg-card text-card-foreground shadow-sm h-full flex flex-col border-0">
-                            <div class="h-48 bg-cover bg-center"
-                                 style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>
+                        <div class="rounded-lg bg-white shadow-sm h-full flex flex-col">
+                            <div class="h-48 bg-cover bg-center rounded-t-lg"
+                                 style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none; border-top-left-radius: 12px; border-top-right-radius: 12px;"></div>
                             <div class="p-6 flex flex-col flex-grow">
                                 <div class="flex justify-between items-start mb-2"><h3
                                             class="text-xl font-bold font-display">{{ lesson.metadata.category }}</h3>
