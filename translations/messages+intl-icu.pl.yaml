@@ -206,3 +206,34 @@ blik:
   instruction_3: "W tytule przelewu wpisz:"
   
 
+
+dashboard:
+  status:
+    active: Aktywne
+    cancelled: Anulowane
+  cancel: Anuluj
+  sessions_used: Wykorzystane zajęcia
+  valid_until: Ważne do
+  not_available: Brak danych
+  sessions_remaining: >-
+    {count, plural,
+        one {# zajęcie pozostało}
+        few {# zajęcia pozostały}
+        many {# zajęć pozostało}
+        other {# zajęć pozostało}
+    }
+  upcoming_sessions: Nadchodzące zajęcia
+  no_upcoming_sessions: Brak nadchodzących zajęć
+  active_bookings: Aktywne rezerwacje
+  cancelled_bookings: Anulowane rezerwacje
+  no_active_bookings: Nie masz aktywnych rezerwacji
+  no_cancelled_bookings: Nie masz anulowanych rezerwacji
+  browse_workshops: Przeglądaj dostępne warsztaty
+  payment:
+    paid: Opłacone
+  confirm_cancel: Czy na pewno chcesz anulować tę rezerwację?
+  single_session: Pojedyncze zajęcia
+  actions:
+    cancel: Anuluj
+  single_entry: Pojedyncze wejście
+  at: o

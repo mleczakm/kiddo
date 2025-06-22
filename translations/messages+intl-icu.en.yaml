@@ -1,1 +1,25 @@
-
+dashboard:
+  status:
+    active: Active
+    cancelled: Cancelled
+  sessions_used: Sessions Used
+  valid_until: Valid Until
+  not_available: N/A
+  sessions_remaining: >-
+    {count, plural,
+        one {# session remaining}
+        other {# sessions remaining}
+    }
+  upcoming_sessions: Upcoming Sessions
+  no_upcoming_sessions: No upcoming sessions
+  active_bookings: Active Bookings
+  cancelled_bookings: Cancelled Bookings
+  no_active_bookings: You don't have any active bookings
+  no_cancelled_bookings: You don't have any cancelled bookings
+  browse_workshops: Browse available workshops
+  payment:
+    paid: Paid
+  confirm_cancel: Are you sure you want to cancel this booking?
+  single_session: Single Session
+  actions:
+    cancel: Cancel
