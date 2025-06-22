@@ -23,3 +23,71 @@ dashboard:
   single_session: Single Session
   actions:
     cancel: Cancel
+
+workshop:
+  fully_booked: 'Fully booked'
+  spots_available: >-
+    {count, plural,
+        one {1 spot left!}
+        other {# spots available}
+    }
+  view_details: 'View Details'
+  no_upcoming_workshops: 'No upcoming workshops at the moment. Please check back later!'
+
+lesson:
+  minutes: '{minutes} minutes'
+  ages: 'Ages {min}-{max}'
+  every: 'Every {day} at {hour}'
+  single_session: 'Single Session'
+  actions:
+    cancel: Cancel
+
+homepage:
+  hero:
+    title: '<span class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span class="text-workshop-yellow">n</span><span class="text-workshop-blue">s</span><span class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span class="text-workshop-green">y</span> <span class="text-workshop-yellow">W</span><span class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span class="text-workshop-green">k</span><span class="text-workshop-blue">s</span><span class="text-workshop-pink">h</span><span class="text-workshop-yellow">o</span><span class="text-workshop-red">p</span><span class="text-workshop-green">s</span>'
+    subtitle: 'Creative, fun, and educational workshops for children to explore their senses and develop their skills through play and imagination.'
+    explore_workshops: 'Explore Workshops'
+    register_now: 'Register Now'
+  popular_workshops:
+    title: 'Popular Workshops'
+    subtitle: 'Join our most beloved creative sessions where children can explore, learn, and have fun.'
+    view_all: 'View All Workshops'
+  how_it_works:
+    title: 'How It Works'
+    subtitle: 'Booking a workshop is easy! Follow these simple steps to get your child started on a creative journey.'
+    step1:
+      number: '1'
+      title: 'Browse Workshops'
+      description: 'Explore our variety of creative workshops designed for different age groups and interests.'
+    step2:
+      number: '2'
+      title: 'Choose Your Plan'
+      description: 'Select a one-time session or a monthly carnet for regular attendance.'
+    step3:
+      number: '3'
+      title: 'Book & Pay'
+      description: Secure your child's spot by completing the booking and payment process.
+    step4:
+      number: '4'
+      title: 'Enjoy the Workshop'
+      description: 'Bring your child to experience creative learning and sensory play!'
+  testimonials:
+    title: 'What Parents Say'
+    subtitle: 'Hear from families who have experienced our workshops'
+    testimonial1:
+      quote: "\"My daughter absolutely loves the sensory arts workshop. It's been wonderful watching her creativity bloom each week!\""
+      author: 'Anna K.'
+      role: 'Parent of a 5-year-old'
+    testimonial2:
+      quote: '\"The monthly carnet is such great value. My son looks forward to his Saturday morning workshop every week.\"'
+      author: 'Michael P.'
+      role: 'Parent of a 7-year-old'
+    testimonial3:
+      quote: '\"The booking system is so easy to use, and I love that I can manage all our classes in one place.\"'
+      author: 'Sophie L.'
+      role: 'Parent of twins'
+  newsletter:
+    title: 'Stay Updated'
+    subtitle: 'Subscribe to our newsletter to get updates about new workshops, special offers, and creative activities for kids.'
+    email_placeholder: 'Your email address'
+    subscribe: 'Subscribe'

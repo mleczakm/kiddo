@@ -36,8 +36,72 @@ page:
   phone: "Telefon:"
   contact_us: "Skontaktuj się z nami"
   quick_links: "Szybkie linki"
-  description: Miejsce dla Rodzin z małymi dziećmi ❤️ Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia 🥰
+  description: Miejsce dla Rodzin z małymi dziećmi Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia
   my_carnets: Moje karnety
+
+# Workshop related translations
+workshop:
+  fully_booked: 'Brak miejsc'
+  spots_available: >-
+    {count, plural,
+      one {1 miejsce!}
+      few {# miejsca!}
+      many {# miejsc!}
+      other {# miejsca}
+    }
+  view_details: 'Zobacz szczegóły'
+  no_upcoming_workshops: 'Brak nadchodzących warsztatów. Sprawdź ponownie później!'
+
+homepage:
+  hero:
+    title: 'Warsztaty <span class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span class="text-workshop-yellow">n</span><span class="text-workshop-blue">s</span><span class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span class="text-workshop-green">y</span><span class="text-workshop-blue">c</span><span class="text-workshop-yellow">z</span><span class="text-workshop-pink">n</span><span class="text-workshop-red">e</span>'
+    subtitle: 'Kreatywne, zabawne i edukacyjne warsztaty dla dzieci, które pozwalają odkrywać zmysły i rozwijać umiejętności poprzez zabawę i wyobraźnię.'
+    explore_workshops: 'Zobacz warsztaty'
+    register_now: 'Zarejestruj się'
+  popular_workshops:
+    title: 'Popularne warsztaty'
+    subtitle: 'Dołącz do naszych ulubionych sesji kreatywnych, w których dzieci mogą odkrywać, uczyć się i świetnie się bawić.'
+    view_all: 'Zobacz wszystkie warsztaty'
+  how_it_works:
+    title: 'Jak to działa'
+    subtitle: 'Rezerwacja warsztatów jest prosta! Wykonaj te proste kroki, aby rozpocząć przygodę Twojego dziecka z kreatywnością.'
+    step1:
+      number: '1'
+      title: 'Przeglądaj warsztaty'
+      description: 'Odkryj naszą różnorodną ofertę kreatywnych warsztatów zaprojektowanych dla różnych grup wiekowych i zainteresowań.'
+    step2:
+      number: '2'
+      title: 'Wybierz plan'
+      description: 'Wybierz pojedyncze zajęcia lub miesięczny karnet na regularne uczestnictwo.'
+    step3:
+      number: '3'
+      title: 'Zarezerwuj i zapłać'
+      description: 'Zarezerwuj miejsce dla swojego dziecka, dokonując rezerwacji i płatności.'
+    step4:
+      number: '4'
+      title: 'Ciesz się warsztatami'
+      description: 'Przyjdź ze swoim dzieckiem, aby doświadczyć kreatywnej nauki i zabawy sensorycznej!'
+  testimonials:
+    title: 'Co mówią rodzice'
+    subtitle: 'Opinie rodzin, które uczestniczyły w naszych warsztatach'
+    testimonial1:
+      quote: '„Moja córka uwielbia warsztaty sztuki sensorycznej. To wspaniałe obserwować, jak jej kreatywność rozkwita każdego tygodnia!"'
+      author: 'Anna K.'
+      role: 'Mama 5-latki'
+    testimonial2:
+      quote: '„Miesięczny karnet to świetna oferta. Mój syn nie może się doczekać swoich sobotnich porannych warsztatów."'
+      author: 'Michał K.'
+      role: 'Tata 7-latka'
+    testimonial3:
+      quote: '„System rezerwacji jest bardzo prosty w obsłudze i uwielbiam, że mogę zarządzać wszystkimi zajęciami w jednym miejscu."'
+      author: 'Zofia L.'
+      role: 'Mama bliźniąt'
+  newsletter:
+    title: 'Bądź na bieżąco'
+    subtitle: 'Zapisz się do naszego newslettera, aby otrzymywać informacje o nowych warsztatach, specjalnych ofertach i kreatywnych zajęciach dla dzieci.'
+    email_placeholder: 'Twój adres email'
+    subscribe: 'Zapisz się'
+
 lesson:
   page:
     #Browse Our Workshops
