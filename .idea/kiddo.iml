@@ -191,6 +191,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/zbateson/mb-wrapper" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/zbateson/stream-decorators" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rregeer/phpunit-coverage-check" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dama/doctrine-test-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/scienta/doctrine-json-functions" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/staabm/side-effects-detector" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/workflow" />
     </content>

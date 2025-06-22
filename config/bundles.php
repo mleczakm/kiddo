@@ -23,6 +23,7 @@ use TalesFromADev\FlowbiteBundle\TalesFromADevFlowbiteBundle;
 use Misd\PhoneNumberBundle\MisdPhoneNumberBundle;
 use Zenstruck\Foundry\ZenstruckFoundryBundle;
 use Dunglas\DoctrineJsonOdm\Bundle\DunglasDoctrineJsonOdmBundle;
+use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
 
 return [
     FrameworkBundle::class => [
@@ -89,5 +90,8 @@ return [
     ],
     DunglasDoctrineJsonOdmBundle::class => [
         'all' => true,
+    ],
+    DAMADoctrineTestBundle::class => [
+        'test' => true,
     ],
 ];

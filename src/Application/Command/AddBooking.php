@@ -9,6 +9,6 @@ use App\Entity\Booking;
 final readonly class AddBooking
 {
     public function __construct(
-        public readonly Booking $booking
+        public Booking $booking
     ) {}
 }

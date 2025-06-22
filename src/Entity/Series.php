@@ -52,7 +52,7 @@ class Series
     public function getLessonsGte(Lesson $lesson, int $limit): array
     {
         $criteria = Criteria::create()
-            ->where(Criteria::expr()->gte('schedule', $lesson->getMetadata()->schedule))
+            ->where(Criteria::expr()->gte('metadata.schedule', $lesson->getMetadata()->schedule))
             ->setMaxResults($limit)
             ->orderBy([
                 'id' => 'ASC',

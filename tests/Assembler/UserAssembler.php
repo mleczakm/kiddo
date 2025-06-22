@@ -5,58 +5,127 @@ declare(strict_types=1);
 namespace App\Tests\Assembler;
 
 use App\Entity\User;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberUtil;
 
-/**
- * @extends EntityAssembler<User>
- */
-class UserAssembler extends EntityAssembler
+class UserAssembler
 {
-    public function withId(int $id): static
-    {
-        return $this->with('id', $id);
-    }
+    private ?int $id = null;
 
-    public function withEmail(string $email): static
-    {
-        return $this->with('email', $email);
-    }
+    private string $email;
 
-    public function withName(string $name): static
-    {
-        return $this->with('name', $name);
-    }
+    private string $name;
+
+    private ?PhoneNumber $phone = null;
 
     /**
-     * @param array<string> $roles
+     * @var list<string>
      */
-    public function withRoles(array $roles): static
+    private array $roles = ['ROLE_USER'];
+
+    private ?\DateTimeImmutable $createdAt = null;
+
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    private function __construct() {}
+
+    public static function new(): self
     {
-        return $this->with('roles', $roles);
+        $instance = new self();
+        $instance->email = 'user' . uniqid('', true) . '@example.com';
+        $instance->name = 'Test User';
+        return $instance;
     }
 
-    public function withPhone(?string $phone): static
+    public function withId(int $id): self
     {
-        return $this->with('phone', $phone);
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function withEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function withName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function withRoles(string ... $roles): self
+    {
+        $this->roles = array_values($roles);
+
+        return $this;
+    }
+
+    public function withPhone(?string $phone): self
+    {
+        if ($phone !== null) {
+            $phoneUtil = PhoneNumberUtil::getInstance();
+            try {
+                $this->phone = $phoneUtil->parse($phone, 'PL');
+            } catch (\Exception) {
+                // If parsing fails, set to null
+                $this->phone = null;
+            }
+        } else {
+            $this->phone = null;
+        }
+
+        return $this;
+    }
+
+    public function withCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function withUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 
     public function assemble(): User
     {
         $user = new User();
 
-        if (isset($this->properties['id'])) {
+        // Set ID using reflection if provided
+        if ($this->id !== null) {
             $reflection = new \ReflectionClass($user);
-            $property = $reflection->getProperty('id');
-            $property->setAccessible(true);
-            $property->setValue($user, $this->properties['id']);
+            $idProperty = $reflection->getProperty('id');
+            $idProperty->setAccessible(true);
+            $idProperty->setValue($user, $this->id);
         }
 
-        foreach ($this->properties as $property => $value) {
-            if ($property !== 'id') {
-                $method = 'set' . ucfirst($property);
-                if (method_exists($user, $method)) {
-                    $user->{$method}($value);
-                }
-            }
+        // Set properties using public methods
+        $user->setEmail($this->email);
+        $user->setName($this->name);
+        $user->setRoles($this->roles);
+
+        if ($this->phone !== null) {
+            $user->setPhone($this->phone);
+        }
+
+        // Set timestamps if provided, otherwise let the entity handle them
+        if ($this->createdAt !== null) {
+            $createdAtProperty = new \ReflectionClass($user)
+                ->getProperty('createdAt');
+            $createdAtProperty->setAccessible(true);
+            $createdAtProperty->setValue($user, $this->createdAt);
+        }
+
+        if ($this->updatedAt !== null) {
+            $user->setUpdatedAt($this->updatedAt);
         }
 
         return $user;

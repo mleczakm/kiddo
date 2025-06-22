@@ -46,15 +46,15 @@ class UserRepository extends ServiceEntityRepository
     /**
      * @return User[]
      */
-    public function findByRole(string $string): array
+    public function findByRole(string $role): array
     {
-        /** @var User[] $admins */
-        $admins = $this->createQueryBuilder('u')
-            ->andWhere('u.roles LIKE :role')
-            ->setParameter('role', $string)
+        /** @var User[] $users */
+        $users = $this->createQueryBuilder('u')
+            ->andWhere('JSONB_CONTAINS(u.roles, :role) = true')
+            ->setParameter('role', '"' . $role . '"') // Wrap the role in quotes to make it a valid JSON string
             ->getQuery()
             ->getResult();
 
-        return $admins;
+        return $users;
     }
 }

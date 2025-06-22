@@ -26,7 +26,9 @@ class User implements UserInterface
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column]
+    #[ORM\Column(type: 'json', options: [
+        'jsonb' => true,
+    ])]
     private array $roles = [];
 
     #[ORM\Column(length: 255)]

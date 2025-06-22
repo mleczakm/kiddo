@@ -205,6 +205,8 @@
       <path value="$PROJECT_DIR$/vendor/rregeer/phpunit-coverage-check" />
       <path value="$PROJECT_DIR$/vendor/symfony/workflow" />
       <path value="$PROJECT_DIR$/vendor/staabm/side-effects-detector" />
+      <path value="$PROJECT_DIR$/vendor/dama/doctrine-test-bundle" />
+      <path value="$PROJECT_DIR$/vendor/scienta/doctrine-json-functions" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -293,7 +295,7 @@
   </component>
   <component name="PhpUnit">
     <phpunit_settings>
-      <phpunit_by_interpreter interpreter_id="d832997d-63a8-466a-8eea-f2f758c3a31a" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" />
+      <phpunit_by_interpreter interpreter_id="d832997d-63a8-466a-8eea-f2f758c3a31a" configuration_file_path="/app/phpunit.xml.dist" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
     </phpunit_settings>
   </component>
   <component name="Psalm">
