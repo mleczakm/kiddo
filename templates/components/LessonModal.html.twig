@@ -27,7 +27,7 @@
                     <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
                         <div class="text-2xl font-bold text-workshop-brown mb-4">
                             {{ 'blik.instruction'|trans }} <span
-                                    class="text-workshop-red whitespace-nowrap">732 575 375</span>
+                                    class="text-workshop-red whitespace-nowrap"> {{ 'blik.phone'|trans }}</span>
                         </div>
                         <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span
                                     class="text-workshop-red whitespace-nowrap">{{ paymentAmount }}</span>. {{ 'blik.instruction_3'|trans }}
@@ -238,7 +238,7 @@
                         <path d="M18 6 6 18"></path>
                         <path d="m6 6 12 12"></path>
                     </svg>
-                    <span class="sr-only">Close</span>
+                    <span class="sr-only">{{ 'lesson.close'|trans }}</span>
                 </button>
             {% endif %}
         </div>

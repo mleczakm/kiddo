@@ -41,6 +41,7 @@ lesson:
   single_session: 'Single Session'
   actions:
     cancel: Cancel
+  close: Close
 
 homepage:
   hero:
