@@ -24,6 +24,7 @@ use Misd\PhoneNumberBundle\MisdPhoneNumberBundle;
 use Zenstruck\Foundry\ZenstruckFoundryBundle;
 use Dunglas\DoctrineJsonOdm\Bundle\DunglasDoctrineJsonOdmBundle;
 use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 
 return [
     FrameworkBundle::class => [
@@ -93,5 +94,8 @@ return [
     ],
     DAMADoctrineTestBundle::class => [
         'test' => true,
+    ],
+    EasyAdminBundle::class => [
+        'all' => true,
     ],
 ];

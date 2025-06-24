@@ -38,6 +38,7 @@ page:
   quick_links: "Szybkie linki"
   description: Miejsce dla Rodzin z małymi dziećmi Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia
   my_carnets: Moje karnety
+  admin_dashboard: Panel administracyjny
 
 # Workshop related translations
 workshop:
@@ -303,3 +304,6 @@ dashboard:
     cancel: Anuluj
   single_entry: Pojedyncze wejście
   at: o
+admin_dashboard:
+  title: Kiddo System Rezerwacji Warsztatów - 2025
+  frontpage: Strona główna

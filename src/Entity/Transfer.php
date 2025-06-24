@@ -29,6 +29,11 @@ class Transfer
         private \DateTimeImmutable $transferredAt
     ) {}
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
     public function getPayment(): ?Payment
     {
         return $this->payment;

@@ -1,6 +1,6 @@
 <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4">
-        <div class="flex justify-between items-center"><a class="flex items-center gap-2" href="/">
+        <div class="flex justify-between items-center"><a class="flex items-center gap-2" href="{{ path('homepage') }}">
                 <span class="font-display text-2xl font-bold text-workshop-brown">
                     Warsztatownia
                     <span class="text-workshop-red">S</span>
@@ -26,7 +26,13 @@
                 {% if app.user %}
                 <a href="{{ path('dashboard') }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
                     {{ 'page.my_bookings'|trans }}</a>
-                <a href="{{ path('app_logout') }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('admin') }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
+                            {{ 'page.admin_dashboard'|trans }}</a>
+                    {% endif %}
+
+                    <a href="{{ path('app_logout') }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
                     {{ 'page.logout'|trans }}
                 </a>
                 {% else %}
