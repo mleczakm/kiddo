@@ -1,6 +1,8 @@
 swoole:
   http_server:
     static: advanced
+    services:
+      trust_all_proxies_handler: true
   task_worker:
     services:
       reset_handler: true
