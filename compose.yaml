@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/app
       - ~/.composer:/.composer
-      - .docker/php/ini/development.ini:/usr/local/etc/php/conf.d/zz-php.ini
+      - .docker/php/ini/zz-php.ini:/usr/local/etc/php/conf.d/zz-php.ini
 
     user: 1000:1000
     ports:
