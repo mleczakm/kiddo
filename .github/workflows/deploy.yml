@@ -27,7 +27,7 @@ jobs:
             IMAGE_REF="${{ needs.build-and-qa.outputs.image_digest }}"
             echo "Using image digest from build job: $IMAGE_REF"
           else
-            IMAGE_REF="ghcr.io/${{ github.repository }}:latest"
+            IMAGE_REF="ghcr.io/${{ github.repository }}:${{ github.sha }}"
             echo "Warning: Could not get image digest from build job, falling back to latest tag: $IMAGE_REF"
           fi
           
