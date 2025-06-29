@@ -9,11 +9,12 @@ on:
 jobs:
   deploy:
     environment: production
+    needs: [build-and-qa]  # Add this line to specify the dependency
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     
     outputs:
-      image_digest: ${{ steps.image-ref.outputs.image_ref }}
+      image_digest: ${{ steps.image-ref.outputs.image_digest }}
 
     steps:
       - name: Checkout repository
@@ -22,17 +23,17 @@ jobs:
       - name: Get image reference
         id: image-ref
         run: |
-          # Get the image digest from the build job
-          IMAGE_REF="${{ needs.build-and-qa.outputs.image_digest }}"
-          
-          # Fallback to using the latest tag if digest is not available
-          if [ -z "$IMAGE_REF" ]; then
-            echo "Warning: Could not get image digest from build job, falling back to latest tag"
+          # Get the image reference from the build job or use latest tag
+          if [ -n "${{ needs.build-and-qa.outputs.image_digest }}" ]; then
+            IMAGE_REF="${{ needs.build-and-qa.outputs.image_digest }}"
+            echo "Using image digest from build job: $IMAGE_REF"
+          else
             IMAGE_REF="ghcr.io/${{ github.repository }}:latest"
+            echo "Warning: Could not get image digest from build job, falling back to latest tag: $IMAGE_REF"
           fi
           
-          echo "Using image reference: $IMAGE_REF"
-          echo "image_ref=$IMAGE_REF" >> $GITHUB_OUTPUT
+          # Set the output
+          echo "image_digest=$IMAGE_REF" >> $GITHUB_OUTPUT
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
@@ -45,7 +46,7 @@ jobs:
             cd /opt/projects/hosting/
             
             # Get the image reference from previous step
-            IMAGE_REF="${{ steps.image-ref.outputs.image_ref }}"
+            IMAGE_REF="${{ steps.image-ref.outputs.image_digest }}"
             
             # Update .env file with the new image reference
             echo "Updating .env file with new image reference..."
