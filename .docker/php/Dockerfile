@@ -58,8 +58,8 @@ COPY public/ public/
 COPY src/ src/
 COPY templates/ templates/
 COPY translations/ translations/
-COPY .env .env.prod ./
+COPY .env .env.prod importmap.php ./
 
-RUN bin/console cache:warmup
+RUN bin/console cache:warmup && bin/console tailwind:build && bin/console asset-map:compile
 
 EXPOSE 9501

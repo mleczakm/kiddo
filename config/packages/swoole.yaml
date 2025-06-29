@@ -1,5 +1,6 @@
 swoole:
   http_server:
+    static: advanced
   task_worker:
     services:
       reset_handler: true
