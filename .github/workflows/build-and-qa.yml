@@ -56,15 +56,16 @@ jobs:
       - name: Run Composer QA
         run: docker run --rm ${{ steps.meta.outputs.tags }} composer qa
 
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract production metadata
         if: success()
-        id: meta
+        id: meta-prod
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
+            type=sha,format=long
 
       # Build and push production image if QA passes
       - name: Build and push production image
@@ -76,10 +77,8 @@ jobs:
           file: .docker/php/Dockerfile
           target: prod
           push: true
-          tags: |
-            ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-prod.outputs.tags }}
+          labels: ${{ steps.meta-prod.outputs.labels }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
@@ -88,6 +87,9 @@ jobs:
       # Output the image digest for the deployment workflow
       - name: Output image digest
         if: success()
+        id: image-digest
         run: |
-          echo "image_digest=${{ steps.build-prod.outputs.digest }}" >> $GITHUB_OUTPUT
-        id: image_digest
+          # Get the full image reference with digest
+          IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-prod.outputs.digest }}"
+          echo "image_digest=$IMAGE_REF" >> $GITHUB_OUTPUT
+          echo "Image reference: $IMAGE_REF"
