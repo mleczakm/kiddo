@@ -10,6 +10,8 @@ RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bi
 
 FROM base AS dev-local
 
+ENV APP_ENV=dev
+
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions pcov xdebug
 
