@@ -10,6 +10,7 @@ jobs:
   deploy:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    needs: [build-and-qa]
     
     outputs:
       image_digest: ${{ steps.image-ref.outputs.image_ref }}
@@ -83,6 +84,3 @@ jobs:
             docker exec kiddo php bin/console doctrine:schema:update --force --no-interaction
             
             echo "Deployment completed successfully!"
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
