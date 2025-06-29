@@ -47,14 +47,14 @@ jobs:
           file: .docker/php/Dockerfile
           target: dev
           push: true
-          tags: local-dev-image:latest
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-cache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-cache,mode=max
           load: true
 
       # Run Composer QA script against the development image
       - name: Run Composer QA
-        run: docker run --rm local-dev-image:latest composer qa
+        run: docker run --rm ${{ steps.meta.outputs.tags }} composer qa
 
       - name: Extract production metadata
         if: success()
