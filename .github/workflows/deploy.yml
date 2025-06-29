@@ -9,7 +9,6 @@ on:
 jobs:
   deploy:
     environment: production
-    needs: [build-and-qa]  # Add this line to specify the dependency
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     
