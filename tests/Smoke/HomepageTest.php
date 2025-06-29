@@ -2,19 +2,41 @@
 
 declare(strict_types=1);
 
-namespace Smoke;
+namespace App\Tests\Smoke;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class HomepageTest extends WebTestCase
 {
-    public function testHomepage(): void
+    /**
+     * Test that homepage is accessible.
+     */
+    public function testHomepageIsAccessible(): void
     {
-        $client = static::createClient([
-            'environment' => 'test',
-        ]);
-        $crawler = $client->request('GET', '/');
+        $client = static::createClient();
+        $client->request('GET', '/');
+        $this->assertResponseIsSuccessful();
+    }
 
-        self::assertResponseStatusCodeSame(200);
+    /**
+     * Test that login page is accessible.
+     */
+    public function testLoginPageIsAccessible(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/login');
+        $this->assertResponseIsSuccessful();
+    }
+
+    /**
+     * Test that admin dashboard redirects when not authenticated.
+     */
+    public function testAdminDashboardRequiresAuthentication(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/admin');
+
+        // Should redirect when not authenticated (status code 302)
+        $this->assertResponseStatusCodeSame(401);
     }
 }

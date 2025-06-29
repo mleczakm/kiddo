@@ -32,22 +32,62 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=long
 
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@v6
+      # Build and test the development image
+      - name: Build and test development image
+        id: build-dev
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: .docker/php/Dockerfile
-          push: true
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
+          target: dev
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
+          cache-to: type=inline
 
-      # Run Composer QA script
+      # Run Composer QA script against the development image
       - name: Run Composer QA
         run: docker run --rm ${{ steps.meta.outputs.tags }} composer qa
+
+      - name: Extract metadata (tags, labels) for Docker
+        if: success()
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+
+      # Build and push production image if QA passes
+      - name: Build and push production image
+        if: success()
+        id: build-prod
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .docker/php/Dockerfile
+          target: prod
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
+
+      # Output the image digest for the deployment workflow
+      - name: Output image digest
+        if: success()
+        run: |
+          echo "image_digest=${{ steps.build-prod.outputs.digest }}" >> $GITHUB_OUTPUT
+        id: image_digest
