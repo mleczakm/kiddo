@@ -8,14 +8,14 @@ CMD bin/console swoole:server:run
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions apcu @composer intl ds opcache pcntl pdo_pgsql sysvsem swoole xsl
 
+COPY .docker/php/ini/zz-php.ini /usr/local/etc/php/conf.d/zz-php.ini
+
 FROM base AS dev-local
 
 ENV APP_ENV=dev
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions pcov xdebug
-
-COPY .docker/php/ini/zz-php.ini /usr/local/etc/php/conf.d/zz-php.ini
 
 FROM dev-local AS dev
 
