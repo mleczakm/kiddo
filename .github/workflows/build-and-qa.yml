@@ -38,19 +38,19 @@ jobs:
           tags: |
             type=sha,format=long
 
-      # Build the development image for testing
-      - name: Build development image for testing
+      # Build and cache development image
+      - name: Build and cache development image
         id: build-dev
         uses: docker/build-push-action@v5
         with:
           context: .
           file: .docker/php/Dockerfile
           target: dev
-          push: false
+          push: true
           tags: local-dev-image:latest
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
-          cache-to: type=inline
-          load: true  # Load the image into the local Docker daemon
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-cache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-cache,mode=max
+          load: true
 
       # Run Composer QA script against the development image
       - name: Run Composer QA
