@@ -38,8 +38,8 @@ jobs:
           tags: |
             type=sha,format=long
 
-      # Build and test the development image
-      - name: Build and test development image
+      # Build the development image for testing
+      - name: Build development image for testing
         id: build-dev
         uses: docker/build-push-action@v5
         with:
@@ -47,14 +47,14 @@ jobs:
           file: .docker/php/Dockerfile
           target: dev
           push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: local-dev-image:latest
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
           cache-to: type=inline
+          load: true  # Load the image into the local Docker daemon
 
       # Run Composer QA script against the development image
       - name: Run Composer QA
-        run: docker run --rm ${{ steps.meta.outputs.tags }} composer qa
+        run: docker run --rm local-dev-image:latest composer qa
 
       - name: Extract production metadata
         if: success()
@@ -77,8 +77,12 @@ jobs:
           file: .docker/php/Dockerfile
           target: prod
           push: true
-          tags: ${{ steps.meta-prod.outputs.tags }}
-          labels: ${{ steps.meta-prod.outputs.labels }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
@@ -90,6 +94,6 @@ jobs:
         id: image-digest
         run: |
           # Get the full image reference with digest
-          IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-prod.outputs.digest }}"
+          IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
           echo "image_digest=$IMAGE_REF" >> $GITHUB_OUTPUT
           echo "Image reference: $IMAGE_REF"

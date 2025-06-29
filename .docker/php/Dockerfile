@@ -57,3 +57,5 @@ COPY translations/ translations/
 COPY .env .env.prod ./
 
 RUN bin/console cache:warmup
+
+EXPOSE 9501
