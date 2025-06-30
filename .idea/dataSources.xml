@@ -15,7 +15,7 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="postgresql://karol115:5D68_d1baa1@psql01.mikr.us:5432/db_karol115?serverVersion=16&amp;charset=utf8" uuid="3272cf03-ed9a-4684-9030-ec7440bb31d4">
+    <data-source source="LOCAL" name="psql01.mikr.us" uuid="3272cf03-ed9a-4684-9030-ec7440bb31d4">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
