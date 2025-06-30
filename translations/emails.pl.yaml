@@ -20,7 +20,7 @@ reservation:
     html: |
       <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem; max-width: 32rem; text-align: center;">
                                       <div style="font-size: 1.5rem; font-weight: bold; color: #4c2e11; margin-bottom: 1rem;">
-                                                                                  Przelej BLIK na numer <span style="color: #e34646; white-space: nowrap;">732 575 375</span>
+                                                                                  Przelej BLIK na numer <span style="color: #e34646; white-space: nowrap;">571 531 213</span>
                                       </div>
                                       <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">
                                                                Kwota do zapłaty: <span style="color: #e34646; white-space: nowrap;">%paymentAmount%</span>. W tytule przelewu wpisz poniższy kod:
@@ -32,7 +32,7 @@ reservation:
                                         Rezerwacja zostanie potwierdzona po zaksięgowaniu płatności.
                                       </div>
                                       <div style="color: #6b7280; font-size: 0.875rem; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;">
-                                        Jeśli wolisz, możesz dokonać przelewu na konto: <span style="color: #e34646; white-space: nowrap;">78 2490 0005 0000 4530 7300 8250</span>.
+                                        Jeśli wolisz, możesz dokonać przelewu na konto: <span style="color: #e34646; white-space: nowrap;">46 2490 0005 0000 4000 1897 5420</span>.
                                       </div>
         </div>
       
