@@ -25,35 +25,6 @@ class SeedWorkshopsCommand extends Command
 {
     private const int WEEKS_AHEAD = 12; // Number of weeks to generate workshops for
 
-    private const array ONE_TIME_EVENTS = [
-        [
-            'title' => 'Warsztaty plastyczne',
-            'lead' => 'Tworzenie prac plastycznych różnymi technikami',
-            'visualTheme' => 'rgb(255, 200, 200)',
-            'description' => 'Zajęcia plastyczne rozwijające kreatywność i zdolności manualne.',
-            'capacity' => 10,
-            'date' => '2025-07-10',
-            'startTime' => '16:00',
-            'duration' => 90,
-            'ageRange' => [4, 8],
-            'category' => 'Sztuka',
-            'price' => 60.00,
-        ],
-        [
-            'title' => 'Teatrzyk dla dzieci',
-            'lead' => 'Zabawa w teatr dla najmłodszych',
-            'visualTheme' => 'rgb(200, 200, 255)',
-            'description' => 'Zajęcia teatralne rozwijające wyobraźnię i umiejętności aktorskie.',
-            'capacity' => 12,
-            'date' => '2025-07-17',
-            'startTime' => '17:00',
-            'duration' => 60,
-            'ageRange' => [3, 6],
-            'category' => 'Teatr',
-            'price' => 50.00,
-        ],
-    ];
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -77,141 +48,157 @@ class SeedWorkshopsCommand extends Command
         $io->section('Creating workshops');
 
         // Create one-time events first
-        $this->createOneTimeEvents($io);
+        //        $this->createOneTimeEvents($io);
 
         // Then create weekly series
         $this->createWeeklySeries($io);
-    }
-
-    private function createOneTimeEvents(SymfonyStyle $io): void
-    {
-        $io->section('Creating one-time events');
-
-        foreach (self::ONE_TIME_EVENTS as $event) {
-            $date = new \DateTimeImmutable($event['date'] . ' ' . $event['startTime']);
-
-            // Skip if the event is in the past
-            if ($date < new \DateTimeImmutable()) {
-                $io->note(sprintf('Skipping past one-time event: %s', $event['title']));
-                continue;
-            }
-
-            $metadata = new LessonMetadata(
-                title: $event['title'],
-                lead: $event['lead'],
-                visualTheme: $event['visualTheme'],
-                description: $event['description'],
-                capacity: $event['capacity'],
-                schedule: $date,
-                duration: $event['duration'],
-                ageRange: new AgeRange($event['ageRange'][0], $event['ageRange'][1]),
-                category: $event['category'],
-            );
-
-            $lesson = new Lesson($metadata);
-
-            // Create a series for this one-time event
-            $ticketOptions = [new TicketOption(TicketType::ONE_TIME, Money::of($event['price'], 'PLN'))];
-
-            $series = new Series(
-                lessons: new ArrayCollection([$lesson]),
-                type: WorkshopType::ONE_TIME,
-                ticketOptions: $ticketOptions
-            );
-
-            $lesson->setSeries($series);
-
-            $this->entityManager->persist($lesson);
-            $this->entityManager->persist($series);
-
-            $io->success(sprintf('Created one-time event: %s on %s', $event['title'], $date->format('Y-m-d H:i')));
-        }
-
-        $this->entityManager->flush();
     }
 
     private function createWeeklySeries(SymfonyStyle $io): void
     {
         $io->section('Creating weekly workshop series');
 
-        // 1. Rodzinne Muzykowanie z Pomelody (Weekly on Thursdays at 16:30)
+        // 1. Klub Malucha - Poniedziałek 9:00-11:30
         $this->createWorkshopSeries(
-            title: 'Rodzinne Muzykowanie z Pomelody',
-            lead: 'Zajęcia umuzykalniające dla rodzin z dziećmi 0-6 lat',
-            visualTheme: 'rgb(238, 203, 233)',
-            description: 'Warsztaty prowadzone w języku polskim i angielskim, wspierające rozwój muzyczny dzieci.',
-            capacity: 12,
-            startTime: '16:30',
-            dayOfWeek: 4, // Thursday
-            duration: 60,
-            ageRange: new AgeRange(0, 6),
-            category: 'Muzyka, Taniec, Śpiew',
-            price: Money::of(40, 'PLN'),
-            io: $io,
-        );
-
-        // 2. Klub Malucha (Weekly on Wednesdays at 10:00)
-        $this->createWorkshopSeries(
-            title: 'Klub Malucha',
+            title: 'Klub Malucha - Poniedziałek',
             lead: 'Zajęcia dla najmłodszych dzieci',
             visualTheme: 'rgb(255, 223, 186)',
-            description: 'Warsztaty wspierające rozwój społeczny i emocjonalny dzieci.',
-            capacity: 10,
-            startTime: '10:00',
-            dayOfWeek: 3, // Wednesday
-            duration: 90,
+            description: 'Zajęcia ogólnorozwojowe dla najmłodszych dzieci, wspierające rozwój społeczny, emocjonalny i motoryczny.',
+            capacity: 8,
+            startTime: '09:00',
+            dayOfWeek: 1, // Monday
+            duration: 150, // 2.5 hours
             ageRange: new AgeRange(1, 3),
-            category: 'Rozwój społeczny',
-            price: Money::of(45, 'PLN'),
+            category: 'Rozwój ogólny',
+            price: Money::of(80, 'PLN'),
             io: $io,
         );
 
-        // 3. Budujemy Relacje (Weekly on Tuesdays at 16:00)
+        // 2. Klub Malucha - Wtorek 9:00-11:30
         $this->createWorkshopSeries(
-            title: 'Budujemy Relacje',
-            lead: 'Warsztat dla dzieci 3-6 lat',
+            title: 'Klub Malucha - Wtorek',
+            lead: 'Zajęcia dla najmłodszych dzieci',
+            visualTheme: 'rgb(255, 223, 186)',
+            description: 'Zajęcia ogólnorozwojowe dla najmłodszych dzieci, wspierające rozwój społeczny, emocjonalny i motoryczny.',
+            capacity: 8,
+            startTime: '09:00',
+            dayOfWeek: 2, // Tuesday
+            duration: 150, // 2.5 hours
+            ageRange: new AgeRange(1, 3),
+            category: 'Rozwój ogólny',
+            price: Money::of(80, 'PLN'),
+            io: $io,
+        );
+
+        // 3. Budujemy Relacje - Trening Umiejętności Społecznych - Wtorek 17:00
+        $this->createWorkshopSeries(
+            title: 'Budujemy Relacje - Trening Umiejętności Społecznych',
+            lead: 'Warsztat dla dzieci 4-7 lat',
             visualTheme: 'rgb(186, 255, 201)',
-            description: 'Trening umiejętności społecznych, rozwój współpracy i pokonywanie nieśmiałości.',
-            capacity: 12,
-            startTime: '16:00',
+            description: 'Zajęcia rozwijające umiejętności społeczne, komunikacyjne i emocjonalne u dzieci.',
+            capacity: 8,
+            startTime: '17:00',
             dayOfWeek: 2, // Tuesday
             duration: 60,
-            ageRange: new AgeRange(3, 6),
-            category: 'Umiejętności społeczne',
-            price: Money::of(45, 'PLN'),
+            ageRange: new AgeRange(4, 7),
+            category: 'Rozwój społeczny',
+            price: Money::of(60, 'PLN'),
             io: $io,
         );
 
-        // 4. Ćwiczymy Mózg przez Ruch (Weekly on Mondays at 16:00)
+        // 4. Bałaganki - Środa 10:00
         $this->createWorkshopSeries(
-            title: 'Ćwiczymy Mózg przez Ruch',
-            lead: 'Warsztat bazujący na terapii zaburzeń integracji sensorycznej',
-            visualTheme: 'rgb(186, 238, 255)',
-            description: 'Zajęcia ruchowe wspierające rozwój układu nerwowego i sensorycznego.',
-            capacity: 10,
-            startTime: '16:00',
-            dayOfWeek: 1, // Monday
+            title: 'Bałaganki',
+            lead: 'Zajęcia sensoryczno-plastyczne',
+            visualTheme: 'rgb(255, 200, 200)',
+            description: 'Zajęcia plastyczne z elementami sensoplastyki, rozwijające kreatywność i integrację sensoryczną.',
+            capacity: 8,
+            startTime: '10:00',
+            dayOfWeek: 3, // Wednesday
             duration: 60,
-            ageRange: new AgeRange(4, 7),
-            category: 'Rozwój ruchowy',
+            ageRange: new AgeRange(2, 5),
+            category: 'Sztuka i rozwój sensoryczny',
             price: Money::of(50, 'PLN'),
             io: $io,
         );
 
-        // 5. Fabryka Czekolady (Bi-weekly on Fridays at 16:30)
+        // 5. Senso Bobasy - Środa 11:45
         $this->createWorkshopSeries(
-            title: 'Fabryka Czekolady',
-            lead: 'Warsztat dla dzieci 2-4 lata',
-            visualTheme: 'rgb(255, 238, 186)',
-            description: 'Dekorowanie czekolady, poznawanie historii i próbowanie różnych rodzajów czekolady.',
+            title: 'Senso Bobasy',
+            lead: 'Zajęcia sensoryczne dla niemowląt',
+            visualTheme: 'rgb(200, 230, 255)',
+            description: 'Zajęcia sensoryczne wspierające rozwój niemowląt poprzez zabawy stymulujące zmysły.',
+            capacity: 8,
+            startTime: '11:45',
+            dayOfWeek: 3, // Wednesday
+            duration: 45,
+            ageRange: new AgeRange(0, 2),
+            category: 'Rozwój sensoryczny',
+            price: Money::of(60, 'PLN'),
+            io: $io,
+        );
+
+        // 6. Rodzinne muzykowanie z Pomelody - Czwartek 10:00
+        $this->createWorkshopSeries(
+            title: 'Rodzinne muzykowanie z Pomelody',
+            lead: 'Zajęcia umuzykalniające dla rodzin z dziećmi',
+            visualTheme: 'rgb(238, 203, 233)',
+            description: 'Zajęcia umuzykalniające metodą Pomelody, łączące zabawę z nauką rytmu i melodii.',
+            capacity: 10,
+            startTime: '10:00',
+            dayOfWeek: 4, // Thursday
+            duration: 45,
+            ageRange: new AgeRange(0, 5),
+            category: 'Muzyka i ruch',
+            price: Money::of(59, 'PLN'),
+            io: $io,
+        );
+
+        // 7. Ćwiczymy mózg przez ruch - Czwartek 16:30
+        $this->createWorkshopSeries(
+            title: 'Ćwiczymy mózg przez ruch - Czwartek',
+            lead: 'Zajęcia ruchowe wspierające rozwój mózgu',
+            visualTheme: 'rgb(200, 255, 200)',
+            description: 'Zajęcia ruchowe oparte na metodzie integracji sensorycznej, wspierające rozwój układu nerwowego.',
             capacity: 8,
             startTime: '16:30',
-            dayOfWeek: 5, // Friday
-            duration: 90,
-            ageRange: new AgeRange(2, 4),
-            category: 'Kreatywność',
+            dayOfWeek: 4, // Thursday
+            duration: 60,
+            ageRange: new AgeRange(3, 6),
+            category: 'Rozwój ruchowy',
             price: Money::of(55, 'PLN'),
-            isBiWeekly: true,
+            io: $io,
+        );
+
+        // 8. Ćwiczymy mózg przez ruch - Piątek 10:00
+        $this->createWorkshopSeries(
+            title: 'Ćwiczymy mózg przez ruch - Piątek',
+            lead: 'Zajęcia ruchowe wspierające rozwój mózgu',
+            visualTheme: 'rgb(200, 255, 200)',
+            description: 'Zajęcia ruchowe oparte na metodzie integracji sensorycznej, wspierające rozwój układu nerwowego.',
+            capacity: 8,
+            startTime: '10:00',
+            dayOfWeek: 5, // Friday
+            duration: 60,
+            ageRange: new AgeRange(3, 6),
+            category: 'Rozwój ruchowy',
+            price: Money::of(55, 'PLN'),
+            io: $io,
+        );
+
+        // 9. Ćwiczymy mózg przez ruch - Piątek 11:45
+        $this->createWorkshopSeries(
+            title: 'Ćwiczymy mózg przez ruch - Piątek późne przedpołudnie',
+            lead: 'Zajęcia ruchowe wspierające rozwój mózgu',
+            visualTheme: 'rgb(200, 255, 200)',
+            description: 'Zajęcia ruchowe oparte na metodzie integracji sensorycznej, wspierające rozwój układu nerwowego.',
+            capacity: 8,
+            startTime: '11:45',
+            dayOfWeek: 5, // Friday
+            duration: 60,
+            ageRange: new AgeRange(3, 6),
+            category: 'Rozwój ruchowy',
+            price: Money::of(55, 'PLN'),
             io: $io,
         );
     }
@@ -280,11 +267,25 @@ class SeedWorkshopsCommand extends Command
         }
 
         // Create a series with ticket options
+        $carnetPrice = match (true) {
+            // Klub Malucha - 320 zł for 4 classes
+            str_contains($title, 'Klub Malucha') => Money::of(320, 'PLN'),
+            // TUS (Budujemy Relacje) - 240 zł for 4 classes
+            str_contains($title, 'Budujemy Relacje') => Money::of(240, 'PLN'),
+            // Bałaganki - 180 zł for 4 classes
+            str_contains($title, 'Bałaganki') => Money::of(180, 'PLN'),
+            // Senso Bobasy - 200 zł for 4 classes
+            str_contains($title, 'Senso Bobasy') => Money::of(200, 'PLN'),
+            // Ćwiczymy mózg - 220 zł for 4 classes
+            str_contains($title, 'Ćwiczymy mózg') => Money::of(220, 'PLN'),
+            // Default: 10% discount for 4 classes
+            default => $price->multipliedBy(4)
+                ->multipliedBy(0.9)
+        };
+
         $ticketOptions = [
             new TicketOption(TicketType::ONE_TIME, $price),
-            new TicketOption(TicketType::CARNET_4, $price->multipliedBy(4)->multipliedBy(
-                0.9
-            )), // 10% discount for 4 classes
+            new TicketOption(TicketType::CARNET_4, $carnetPrice),
         ];
 
         $series = new Series(

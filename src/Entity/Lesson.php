@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Brick\Money\Money;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,14 +19,6 @@ class Lesson
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
 
-    /**
-     * @var list<TicketOption>
-     */
-    #[ORM\Column(type: 'json_document', options: [
-        'jsonb' => true,
-    ])]
-    private array $ticketOptions;
-
     #[ORM\ManyToOne(targetEntity: Series::class, inversedBy: 'lessons')]
     private ?Series $series = null;
 
@@ -39,11 +30,17 @@ class Lesson
 
     public function __construct(
         #[ORM\Embedded(class: LessonMetadata::class, columnPrefix: false)]
-        private LessonMetadata $metadata
+        private LessonMetadata $metadata,
+        /**
+         * @var list<TicketOption>
+         */
+        #[ORM\Column(type: 'json_document', options: [
+            'jsonb' => true,
+        ])]
+        private array $ticketOptions = [],
     ) {
         $this->id = new Ulid();
         $this->status = 'active';
-        $this->ticketOptions = [new TicketOption(TicketType::ONE_TIME, Money::of(50, 'PLN'))];
         $this->bookings = new ArrayCollection();
     }
 
@@ -122,9 +119,9 @@ class Lesson
         return $this->series;
     }
 
-    public function defaultTicketOption(): TicketOption
+    public function defaultTicketOption(): ?TicketOption
     {
-        return $this->ticketOptions[0];
+        return $this->series?->ticketOptions[0] ?? $this->ticketOptions[0] ?? null;
     }
 
     public function getAvailableSpots(): int
