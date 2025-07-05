@@ -22,7 +22,36 @@
             data-modal-target="dialog"
             class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
         <div class="grid">
-            {% if paymentCode is not empty %}
+            {% if termsOpened %}
+                <div class="flex flex-col space-y-2 text-center sm:text-left mb-6 h-[80vh]">
+                    <object
+                            data="/docs/Regulamin.pdf"
+                            type="application/pdf"
+                            width="100%"
+                            height="100%"
+                            style="min-height: 100%;"
+                    >
+                        <p>
+                            Your browser does not support PDFs. [Download the
+                            PDF](/docs/Regulamin.pdf) .
+                        </p>
+                    </object>
+                </div>
+                <div class="flex justify-end gap-4 mt-4">
+                    <button type="button"
+                            data-action="live#action"
+                            data-live-action-param="closeTerms"
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                        {{ 'lesson.cancel'|trans }}
+                    </button>
+                    <button type="button"
+                            data-action="live#action"
+                            data-live-action-param="acceptTermsAndClose"
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90">
+                        {{ 'lesson.accept_terms_and_close'|trans }}
+                    </button>
+                </div>
+            {% elseif paymentCode is not empty %}
                 <div class="flex flex-col items-center justify-center min-h-[300px]">
                     <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
                         <div class="text-2xl font-bold text-workshop-brown mb-4">
@@ -190,7 +219,7 @@
                                data-model="termsAccepted"
                                class="mr-2 h-4 w-4 rounded border-input text-workshop-red focus:ring-2 focus:ring-workshop-red/50">
                         <label for="terms"
-                               class="text-sm text-muted-foreground">{{ 'lesson.accept_terms'|trans({'url': '/terms'})|raw }}</label>
+                               class="text-sm text-muted-foreground">{{ 'lesson.accept_terms'|raw }}</label>
                     </div>
                     <button type="button"
                             data-action="live#action"

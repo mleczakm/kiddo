@@ -46,6 +46,9 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $paymentAmount = null;
 
+    #[LiveProp]
+    public bool $termsOpened = false;
+
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly BookingFactory $bookingFactory,
@@ -60,6 +63,25 @@ class LessonModal extends AbstractController
             $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
             $this->selectedTicketType = $ticketOptions[$this->activeTabIndex]->type->value;
         }
+    }
+
+    #[LiveAction]
+    public function openTerms(): void
+    {
+        $this->termsOpened = true;
+    }
+
+    #[LiveAction]
+    public function closeTerms(): void
+    {
+        $this->termsOpened = false;
+    }
+
+    #[LiveAction]
+    public function acceptTermsAndClose(): void
+    {
+        $this->termsAccepted = true;
+        $this->closeTerms();
     }
 
     #[LiveAction]

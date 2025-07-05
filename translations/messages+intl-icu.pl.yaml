@@ -105,6 +105,9 @@ homepage:
     subscription_disabled: 'Subskrypcja na newsletter dostępna już wkrótce!'
 
 lesson:
+  terms: "Regulamin"
+  pdf_not_supported: "Twoja przeglądarka nie obsługuje podglądu plików PDF."
+  download_terms: "Pobierz regulamin (PDF)"
   page:
     #Browse Our Workshops
     header: "Przeglądaj nasze warsztaty"
@@ -251,12 +254,13 @@ lesson:
 
   one_time.description: Zarezerwuj pojedyncze wejście na zajęcia
 
-  accept_terms: Akceptuję <a href="{url}">warunki i zasady</a>
+  accept_terms: Akceptuję warunki i zasady <a data-action="click->live#action" data-live-action-param="openTerms">(Regulamin)</a>
   book_and_pay: Zarezerwuj i zapłać
   cancel: Anuluj
   accept_terms_first: Najpierw zaakceptuj warunki i zasady
   login: Zaloguj się
   close: Zamknij
+  accept_terms_and_close: Zaakceptuj regulamin
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
