@@ -7,14 +7,10 @@ namespace App\UserInterface\Http\Admin;
 use App\Entity\Series;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
  * @extends AbstractCrudController<Series>
@@ -32,34 +28,59 @@ class SeriesCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Series')
             ->setEntityLabelInPlural('Series')
-            ->setSearchFields(['name', 'description'])
+            ->setSearchFields([]) // No searchable fields in the base entity
             ->setDefaultSort([
-                'createdAt' => 'DESC',
+                'id' => 'DESC',
             ])
-            ->showEntityActionsInlined();
+            ->showEntityActionsInlined()
+            ->setEntityPermission('ROLE_ADMIN');
     }
 
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
-            TextField::new('name'),
-            SlugField::new('slug')
-                ->setTargetFieldName('name')
+            // Basic info
+            IdField::new('id')
+                ->hideOnForm()
                 ->hideOnIndex(),
-            TextareaField::new('description')
-                ->hideOnIndex(),
-            ImageField::new('image')
-                ->setBasePath('uploads/series')
-                ->setUploadDir('public/uploads/series')
-                ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
-                ->hideOnIndex(),
-            IntegerField::new('sortOrder', 'Sort Order')
-                ->setHelp('Lower numbers appear first'),
-            BooleanField::new('isActive'),
-            DateTimeField::new('createdAt')->hideOnForm(),
-            DateTimeField::new('updatedAt')->hideOnForm(),
+
+            //            // Workshop type
+            //            TextField::new('type', 'Workshop Type')
+            //                ->formatValue(fn ($value) => $value ? $value->value : '')
+            //                ->hideWhenCreating()
+            //                ->hideWhenUpdating(),
+
+            // Ticket options (read-only)
+            TextareaField::new('ticketOptions', 'Ticket Options')
+                ->formatValue(function ($value) {
+                    if (empty($value)) {
+                        return 'No ticket options';
+                    }
+                    return implode("\n", array_map(
+                        fn($opt) => sprintf(
+                            '%s: %s %s',
+                            $opt->type->value,
+                            $opt->price->getAmount(),
+                            $opt->price->getCurrency()
+                                ->getCurrencyCode()
+                        ),
+                        $value
+                    ));
+                })
+                ->hideOnIndex()
+                ->setFormTypeOption('disabled', 'disabled'),
+
+            // Lessons count (read-only)
+            IntegerField::new('lessons', 'Number of Lessons')
+                ->formatValue(fn($value, $entity) => count($entity->lessons))
+                ->hideWhenCreating()
+                ->hideWhenUpdating(),
+
+            // Lessons association (for reference)
+            AssociationField::new('lessons')
+                ->setTemplatePath('admin/fields/lessons.html.twig')
+                ->hideOnForm(),
         ];
     }
 }
