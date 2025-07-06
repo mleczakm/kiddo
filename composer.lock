@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb960b1f2c145b2ca750b971036eaff2",
+    "content-hash": "a7f2f878584db6de5db80a0e28172629",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2867,16 +2867,16 @@
         },
         {
             "name": "logdash/php-sdk",
-            "version": "v1.0.6",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/logdash-io/php-sdk.git",
-                "reference": "28776712ac524c55e9a5ffc3c38ca391682542a2"
+                "reference": "5aecf5d3cdb1f45e0a7e679c3e3d656f3e602134"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/28776712ac524c55e9a5ffc3c38ca391682542a2",
-                "reference": "28776712ac524c55e9a5ffc3c38ca391682542a2",
+                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/5aecf5d3cdb1f45e0a7e679c3e3d656f3e602134",
+                "reference": "5aecf5d3cdb1f45e0a7e679c3e3d656f3e602134",
                 "shasum": ""
             },
             "require": {
@@ -2888,6 +2888,7 @@
                 "phpunit/phpunit": "^10.0",
                 "squizlabs/php_codesniffer": "^3.7"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2915,9 +2916,9 @@
             ],
             "support": {
                 "issues": "https://github.com/logdash-io/php-sdk/issues",
-                "source": "https://github.com/logdash-io/php-sdk/tree/v1.0.6"
+                "source": "https://github.com/logdash-io/php-sdk/tree/main"
             },
-            "time": "2025-06-27T19:42:14+00:00"
+            "time": "2025-06-27T20:53:20+00:00"
         },
         {
             "name": "lorenzo/pinky",
@@ -15472,6 +15473,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "logdash/php-sdk": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
