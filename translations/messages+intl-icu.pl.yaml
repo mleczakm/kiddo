@@ -261,7 +261,7 @@ lesson:
   login: Zaloguj się
   close: Zamknij
   accept_terms_and_close: Zaakceptuj regulamin
-
+  fully_booked: Brak wolnych miejsc
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
   instruction_2: "na kwotę"

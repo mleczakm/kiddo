@@ -229,22 +229,31 @@
                     </button>
                     {% if app.user %}
                         <div class="flex flex-col sm:flex-row gap-2">
-                            {% if not termsAccepted %}
+                            {% if not termsAccepted and lesson.canBeBoocked() %}
                                 <span class="inline-block" title="{{ 'lesson.accept_terms_first'|trans }}">
-            <button type="button"
-                    disabled
-                    aria-disabled="true"
-                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pointer-events-none opacity-50 cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white">
-                {{ 'lesson.book_and_pay'|trans }}
-            </button>
-        </span>
-                            {% else %}
+                                    <button type="button"
+                                        disabled
+                                        aria-disabled="true"
+                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pointer-events-none opacity-50 cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white">
+                                    {{ 'lesson.book_and_pay'|trans }}
+                                    </button>
+                                </span>
+                            {% elseif lesson.canBeBoocked() %}
                                 <button type="button"
                                         data-action="live#action"
                                         data-live-action-param="processPayment"
                                         class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-10 px-4 py-2 bg-workshop-red text-white [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
                                     {{ 'lesson.book_and_pay'|trans }}
                                 </button>
+                            {% else %}
+                                <span class="inline-block" title="{{ 'lesson.fully_booked'|trans }}">
+                                    <button type="button"
+                                            disabled
+                                            aria-disabled="true"
+                                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pointer-events-none opacity-50 cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white">
+                                    {{ 'lesson.book_and_pay'|trans }}
+                                    </button>
+                                </span>
                             {% endif %}
                         </div>
                     {% else %}

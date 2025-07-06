@@ -133,4 +133,9 @@ class Lesson
                 ->count()
         );
     }
+
+    public function canBeBooked(): bool
+    {
+        return $this->status === 'active' && $this->getAvailableSpots() > 0;
+    }
 }
