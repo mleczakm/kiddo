@@ -63,6 +63,6 @@ COPY .env .env.prod importmap.php ./
 RUN bin/console cache:warmup  \
     && bin/console tailwind:build --minify  \
     && bin/console asset-map:compile \
-    && bin//console assets:install --symlink
+    && bin/console assets:install --symlink
 
 EXPOSE 9501
