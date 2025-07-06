@@ -61,3 +61,14 @@ services:
                 password: '%env(MAILBOX_PASSWORD)%'
                 host: '%env(MAILBOX_HOST)%'
         public: true
+
+    logdash:
+        class: Logdash\Logdash
+        factory: [ 'Logdash\Logdash', 'create' ]
+        arguments:
+            - apiKey: '%env(LOGDASH_API_KEY)%'
+              verbose: '%kernel.debug%'
+
+    Logdash\Logger\Logger:
+        factory: [ '@logdash', 'logger' ]
+        public: true

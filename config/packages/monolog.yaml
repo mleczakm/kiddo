@@ -5,6 +5,11 @@ monolog:
 when@dev:
     monolog:
         handlers:
+            buffer:
+                type: buffer
+                level: debug
+                handler: main
+                buffer_size: 0 # No limit
             main:
                 type: stream
                 path: "php://stderr"
@@ -40,6 +45,14 @@ when@test:
 when@prod:
     monolog:
         handlers:
+            buffer:
+                type: buffer
+                level: debug
+                handler: main
+                buffer_size: 0 # No limit
+            grouped_main:
+                type: group
+                members: [main, logdash]
             main:
                 type: fingers_crossed
                 action_level: error
@@ -48,9 +61,9 @@ when@prod:
                 buffer_size: 50 # How many messages should be saved? Prevent memory leaks
             nested:
                 type: stream
-                path: php://stderr
-                level: debug
+                path: php://stdout
                 formatter: monolog.formatter.json
+                level: debug
             console:
                 type: console
                 process_psr_3_messages: false
@@ -60,3 +73,7 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
+            logdash:
+                type: service
+                id: App\Infrastructure\Monolog\LogdashHandler
+                level: debug
