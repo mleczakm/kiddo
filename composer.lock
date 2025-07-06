@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7f2f878584db6de5db80a0e28172629",
+    "content-hash": "d92a3a38b8efc1052ae203a8288c1772",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2871,12 +2871,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/logdash-io/php-sdk.git",
-                "reference": "5aecf5d3cdb1f45e0a7e679c3e3d656f3e602134"
+                "reference": "396a8c421b79f2263485117650bcadedd50ba940"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/5aecf5d3cdb1f45e0a7e679c3e3d656f3e602134",
-                "reference": "5aecf5d3cdb1f45e0a7e679c3e3d656f3e602134",
+                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/396a8c421b79f2263485117650bcadedd50ba940",
+                "reference": "396a8c421b79f2263485117650bcadedd50ba940",
                 "shasum": ""
             },
             "require": {
