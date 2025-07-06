@@ -50,9 +50,9 @@ when@prod:
                 level: debug
                 handler: main
                 buffer_size: 0 # No limit
-            grouped_main:
-                type: group
-                members: [main, logdash]
+#            grouped_main:
+#                type: group
+#                members: [main, logdash]
             main:
                 type: fingers_crossed
                 action_level: error
@@ -73,7 +73,7 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
-            logdash:
-                type: service
-                id: App\Infrastructure\Monolog\LogdashHandler
-                level: debug
+#            logdash:
+#                type: service
+#                id: App\Infrastructure\Monolog\LogdashHandler
+#                level: debug
