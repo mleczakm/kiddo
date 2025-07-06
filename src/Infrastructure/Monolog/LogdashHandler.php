@@ -12,15 +12,12 @@ use Monolog\LogRecord;
 
 class LogdashHandler extends AbstractProcessingHandler
 {
-    private LogdashLogger $logger;
-
     public function __construct(
-        LogdashLogger $logger,
+        private readonly LogdashLogger $logger,
         int|string|Level $level = Level::Debug,
         bool $bubble = true
     ) {
         parent::__construct($level, $bubble);
-        $this->logger = $logger;
     }
 
     protected function write(LogRecord $record): void
