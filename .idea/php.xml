@@ -212,6 +212,7 @@
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/swoole-bundle/resetter-bundle" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

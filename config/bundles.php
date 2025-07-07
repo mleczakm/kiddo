@@ -2,100 +2,79 @@
 
 declare(strict_types=1);
 
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
-use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
-use Symfony\Bundle\DebugBundle\DebugBundle;
-use Symfony\Bundle\TwigBundle\TwigBundle;
-use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
-use Symfony\UX\StimulusBundle\StimulusBundle;
-use Symfony\UX\Turbo\TurboBundle;
-use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
-use Symfony\Bundle\SecurityBundle\SecurityBundle;
-use Symfony\Bundle\MonologBundle\MonologBundle;
-use Symfony\Bundle\MakerBundle\MakerBundle;
-use SwooleBundle\SwooleBundle\Bridge\Symfony\Bundle\SwooleBundle;
-use Symfonycasts\TailwindBundle\SymfonycastsTailwindBundle;
-use Symfony\UX\TwigComponent\TwigComponentBundle;
-use Symfony\UX\LiveComponent\LiveComponentBundle;
-use TalesFromADev\Twig\Extra\Tailwind\Bridge\Symfony\Bundle\TalesFromADevTwigExtraTailwindBundle;
-use TalesFromADev\FlowbiteBundle\TalesFromADevFlowbiteBundle;
-use Misd\PhoneNumberBundle\MisdPhoneNumberBundle;
-use Zenstruck\Foundry\ZenstruckFoundryBundle;
-use Dunglas\DoctrineJsonOdm\Bundle\DunglasDoctrineJsonOdmBundle;
-use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
-use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
-
 return [
-    FrameworkBundle::class => [
+    Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => [
         'all' => true,
     ],
-    DoctrineBundle::class => [
+    Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => [
         'all' => true,
     ],
-    DoctrineMigrationsBundle::class => [
+    Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => [
         'all' => true,
     ],
-    DebugBundle::class => [
+    Symfony\Bundle\DebugBundle\DebugBundle::class => [
         'dev' => true,
     ],
-    TwigBundle::class => [
+    Symfony\Bundle\TwigBundle\TwigBundle::class => [
         'all' => true,
     ],
-    WebProfilerBundle::class => [
-        'dev' => true,
-        'test' => true,
-    ],
-    StimulusBundle::class => [
-        'all' => true,
-    ],
-    TurboBundle::class => [
-        'all' => true,
-    ],
-    TwigExtraBundle::class => [
-        'all' => true,
-    ],
-    SecurityBundle::class => [
-        'all' => true,
-    ],
-    MonologBundle::class => [
-        'all' => true,
-    ],
-    MakerBundle::class => [
-        'dev' => true,
-    ],
-    SwooleBundle::class => [
-        'all' => true,
-    ],
-    SymfonycastsTailwindBundle::class => [
-        'all' => true,
-    ],
-    TwigComponentBundle::class => [
-        'all' => true,
-    ],
-    LiveComponentBundle::class => [
-        'all' => true,
-    ],
-    TalesFromADevTwigExtraTailwindBundle::class => [
-        'all' => true,
-    ],
-    TalesFromADevFlowbiteBundle::class => [
-        'all' => true,
-    ],
-    MisdPhoneNumberBundle::class => [
-        'all' => true,
-    ],
-    ZenstruckFoundryBundle::class => [
+    Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => [
         'dev' => true,
         'test' => true,
     ],
-    DunglasDoctrineJsonOdmBundle::class => [
+    Symfony\UX\StimulusBundle\StimulusBundle::class => [
         'all' => true,
     ],
-    DAMADoctrineTestBundle::class => [
+    Symfony\UX\Turbo\TurboBundle::class => [
+        'all' => true,
+    ],
+    Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => [
+        'all' => true,
+    ],
+    Symfony\Bundle\SecurityBundle\SecurityBundle::class => [
+        'all' => true,
+    ],
+    Symfony\Bundle\MonologBundle\MonologBundle::class => [
+        'all' => true,
+    ],
+    Symfony\Bundle\MakerBundle\MakerBundle::class => [
+        'dev' => true,
+    ],
+    SwooleBundle\SwooleBundle\Bridge\Symfony\Bundle\SwooleBundle::class => [
+        'all' => true,
+    ],
+    Symfonycasts\TailwindBundle\SymfonycastsTailwindBundle::class => [
+        'all' => true,
+    ],
+    Symfony\UX\TwigComponent\TwigComponentBundle::class => [
+        'all' => true,
+    ],
+    Symfony\UX\LiveComponent\LiveComponentBundle::class => [
+        'all' => true,
+    ],
+    TalesFromADev\Twig\Extra\Tailwind\Bridge\Symfony\Bundle\TalesFromADevTwigExtraTailwindBundle::class => [
+        'all' => true,
+    ],
+    TalesFromADev\FlowbiteBundle\TalesFromADevFlowbiteBundle::class => [
+        'all' => true,
+    ],
+    Misd\PhoneNumberBundle\MisdPhoneNumberBundle::class => [
+        'all' => true,
+    ],
+    Zenstruck\Foundry\ZenstruckFoundryBundle::class => [
+        'dev' => true,
         'test' => true,
     ],
-    EasyAdminBundle::class => [
+    Dunglas\DoctrineJsonOdm\Bundle\DunglasDoctrineJsonOdmBundle::class => [
+        'all' => true,
+    ],
+    DAMA\DoctrineTestBundle\DAMADoctrineTestBundle::class => [
+        'test' => true,
+    ],
+    EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle::class => [
+        'all' => true,
+    ],
+    SwooleBundle\ResetterBundle\SwooleBundleResetterBundle::class => [
         'all' => true,
     ],
 ];

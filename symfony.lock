@@ -106,6 +106,9 @@
             "tests/bootstrap.php"
         ]
     },
+    "swoole-bundle/resetter-bundle": {
+        "version": "1.0.0"
+    },
     "symfony/asset-mapper": {
         "version": "7.2",
         "recipe": {
