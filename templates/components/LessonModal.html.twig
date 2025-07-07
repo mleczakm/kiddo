@@ -229,7 +229,7 @@
                     </button>
                     {% if app.user %}
                         <div class="flex flex-col sm:flex-row gap-2">
-                            {% if not termsAccepted and lesson.canBeBoocked() %}
+                            {% if not termsAccepted and lesson.canBeBooked() %}
                                 <span class="inline-block" title="{{ 'lesson.accept_terms_first'|trans }}">
                                     <button type="button"
                                         disabled
@@ -238,7 +238,7 @@
                                     {{ 'lesson.book_and_pay'|trans }}
                                     </button>
                                 </span>
-                            {% elseif lesson.canBeBoocked() %}
+                            {% elseif lesson.canBeBooked() %}
                                 <button type="button"
                                         data-action="live#action"
                                         data-live-action-param="processPayment"
