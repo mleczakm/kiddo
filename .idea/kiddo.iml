@@ -199,8 +199,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/guzzle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/promises" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/logdash/php-sdk" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/macpaw/symfony-health-check-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/swoole-bundle/resetter-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/kodus/mock-cache" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -2,6 +2,7 @@ FROM php:8.4-cli-alpine AS base
 
 WORKDIR /app
 ENV APP_ENV=prod
+EXPOSE 9501
 
 CMD bin/console swoole:server:run
 
@@ -46,6 +47,8 @@ RUN --mount=type=bind,target=/context \
 
 FROM base AS prod
 
+HEALTHCHECK --start-period=5s --interval=5s --timeout=1s --retries=3 CMD curl -sS localhost:9501/health || exit 1
+
 COPY composer.json composer.lock ./
 
 RUN composer install --prefer-dist --no-scripts --no-interaction --no-progress --no-cache --optimize-autoloader --no-dev
@@ -65,5 +68,3 @@ RUN bin/console cache:warmup  \
     && bin/console importmap:install \
     && bin/console asset-map:compile \
     && bin/console assets:install --symlink
-
-EXPOSE 9501

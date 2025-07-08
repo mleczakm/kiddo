@@ -68,6 +68,19 @@
             "config/routes/easyadmin.yaml"
         ]
     },
+    "macpaw/symfony-health-check-bundle": {
+        "version": "1.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "7bcf3b4de9b5271d0f389ce58ec6cce55f48ee6f"
+        },
+        "files": [
+            "config/packages/symfony_health_check.yaml",
+            "config/routes/symfony_health_check.yaml"
+        ]
+    },
     "odolbeau/phone-number-bundle": {
         "version": "4.1",
         "recipe": {

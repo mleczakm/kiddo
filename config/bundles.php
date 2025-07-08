@@ -77,4 +77,7 @@ return [
     SwooleBundle\ResetterBundle\SwooleBundleResetterBundle::class => [
         'all' => true,
     ],
+    SymfonyHealthCheckBundle\SymfonyHealthCheckBundle::class => [
+        'all' => true,
+    ],
 ];

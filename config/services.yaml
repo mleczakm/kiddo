@@ -72,3 +72,11 @@ services:
     Logdash\Logger\Logger:
         factory: [ '@logdash', 'logger' ]
         public: true
+
+    Symfony\Component\Cache\Psr16Cache:
+
+    Psr\SimpleCache\CacheInterface:
+        alias: Symfony\Component\Cache\Psr16Cache
+
+    SymfonyHealthCheckBundle\Check\DoctrineORMCheck:
+        alias: symfony_health_check.doctrine_check

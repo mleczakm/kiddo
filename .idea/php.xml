@@ -213,6 +213,8 @@
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/vendor/swoole-bundle/resetter-bundle" />
+      <path value="$PROJECT_DIR$/vendor/macpaw/symfony-health-check-bundle" />
+      <path value="$PROJECT_DIR$/vendor/kodus/mock-cache" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

@@ -10,6 +10,12 @@ security:
                 class: App\Entity\User
                 property: email
     firewalls:
+        healthcheck:
+            pattern: ^/health
+            security: false
+        ping:
+            pattern: ^/ping
+            security: false
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false

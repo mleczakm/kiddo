@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "765770760cdaff4c157190d3f01f3c1c",
+    "content-hash": "23640b4248ed4069c78aa84cfca14994",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2972,6 +2972,77 @@
                 "source": "https://github.com/lorenzo/pinky/tree/1.1.0"
             },
             "time": "2023-07-31T13:36:50+00:00"
+        },
+        {
+            "name": "macpaw/symfony-health-check-bundle",
+            "version": "v1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MacPaw/symfony-health-check-bundle.git",
+                "reference": "65d45b2236184a64248d30771502f227f560f194"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MacPaw/symfony-health-check-bundle/zipball/65d45b2236184a64248d30771502f227f560f194",
+                "reference": "65d45b2236184a64248d30771502f227f560f194",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4",
+                "symfony/framework-bundle": "^3.4 || ^4.1.12 || ^5.0 || ^6.0 || ^7.0"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "phpstan/phpstan": "1.11.*",
+                "phpunit/phpunit": "^8.5 || ^9.0",
+                "predis/predis": "^2.3",
+                "squizlabs/php_codesniffer": "3.7.*",
+                "symfony/browser-kit": "^3.4 || ^4.4 || ^5.0 || ^6.0 || ^7.0",
+                "symfony/cache": "^3.4 || ^4.4 || ^5.0 || ^6.0 || ^7.0",
+                "symfony/phpunit-bridge": "^3.4 || ^4.1.12 || ^5.0 || ^6.0 || ^7.0",
+                "symfony/yaml": "^3.4 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "SymfonyHealthCheckBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yozhef Hisem",
+                    "email": "hisemjo@gmail.com",
+                    "homepage": "https://macpaw.com/",
+                    "role": "Software Engineer"
+                },
+                {
+                    "name": "Ivan Hisem",
+                    "email": "2yonchi@gmail.com",
+                    "homepage": "https://macpaw.com/",
+                    "role": "Software Engineer"
+                }
+            ],
+            "description": "Symfony health check bundle",
+            "homepage": "https://github.com/MacPaw/symfony-health-check-bundle",
+            "keywords": [
+                "MacPaw",
+                "Symfony-Health-Check",
+                "Symfony-Health-Check-Bundle",
+                "Symfony-Health-Check-Doctrine",
+                "doctrine",
+                "healthcheck",
+                "monitoring",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/MacPaw/symfony-health-check-bundle/issues",
+                "source": "https://github.com/MacPaw/symfony-health-check-bundle/tree/v1.7.0"
+            },
+            "time": "2025-03-04T08:22:19+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -11749,6 +11820,57 @@
                 "source": "https://github.com/FakerPHP/Faker/tree/v1.24.1"
             },
             "time": "2024-11-21T13:46:39+00:00"
+        },
+        {
+            "name": "kodus/mock-cache",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kodus/mock-cache.git",
+                "reference": "d6f425c20890db77fcd70b9a78bcb88187fb2926"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kodus/mock-cache/zipball/d6f425c20890db77fcd70b9a78bcb88187fb2926",
+                "reference": "d6f425c20890db77fcd70b9a78bcb88187fb2926",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 8.0",
+                "psr/simple-cache": "^2||^3"
+            },
+            "require-dev": {
+                "codeception/codeception": "^5",
+                "codeception/module-asserts": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kodus\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rasmus Schultz",
+                    "email": "rasc@jfmedier.dk",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Thomas Pedersen",
+                    "email": "thno@jfmedier.dk",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PSR-16 cache-implementation for integration tests",
+            "support": {
+                "issues": "https://github.com/kodus/mock-cache/issues",
+                "source": "https://github.com/kodus/mock-cache/tree/2.1.0"
+            },
+            "time": "2025-01-09T14:00:27+00:00"
         },
         {
             "name": "masterminds/html5",
