@@ -24,26 +24,22 @@ COPY composer.json composer.lock ./
 
 RUN composer install --prefer-dist --no-scripts --no-interaction --no-progress --no-cache --optimize-autoloader
 
-RUN --mount=type=bind,target=/context \
-    mkdir ./bin/ && \
-    cp -a /context/assets/ . && \
-    cp -a /context/bin/ . && \
-    cp -a /context/config/ . && \
-    cp -a /context/migrations/ . && \
-    cp -a /context/public/ . && \
-    cp -a /context/src/ . && \
-    cp -a /context/templates/ . && \
-    cp -a /context/tests/ . && \
-    cp -a /context/translations/ . && \
-    cp -f /context/.env . && \
-    cp -f /context/.env.test . && \
-    cp -f /context/ecs.php . && \
-    cp -f /context/importmap.php . && \
-    cp -f /context/phpstan.dist.neon . && \
-    cp -f /context/phpstan-baseline.neon . && \
-    cp -f /context/phpunit.xml.dist . && \
-    cp -f /context/rector.php . && \
-    bin/console cache:warmup
+COPY assets/ assets/
+COPY bin/ bin/
+COPY config/ config/
+COPY migrations/ migrations/
+COPY public/ public/
+COPY src/ src/
+COPY templates/ templates/
+COPY tests/ tests/
+COPY translations/ translations/
+COPY .env .env.test ecs.php importmap.php phpstan.dist.neon phpstan-baseline.neon phpunit.xml.dist rector.php ./
+
+RUN bin/console cache:warmup \
+    && bin/console tailwind:build --minify  \
+    && bin/console importmap:install \
+    && bin/console asset-map:compile \
+    && bin/console assets:install --symlink
 
 FROM base AS prod
 
