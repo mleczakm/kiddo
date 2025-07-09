@@ -298,6 +298,7 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
   <component name="PhpRuntimeConfiguration">
     <extensions>
+      <extension name="ds" enabled="true" />
       <extension name="swoole" enabled="true" />
     </extensions>
   </component>

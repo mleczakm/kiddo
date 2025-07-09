@@ -106,3 +106,7 @@ daily_lessons_schedule:
   no_lessons: Dzisiaj (%date%) nie odbywają się żadne zajęcia.
   subject: 'Raport dzienny zajęć na %date%'
   no_attendants: 'Brak zapisanych uczestników.'
+  user_subject: "Przypomnienie o dzisiejszych zajęciach (%date%)"
+  user_greeting: "Cześć %name%,"
+  user_reminder: "To szybkie przypomnienie o Twoich dzisiejszych zajęciach w %date%:"
+  user_footer: "Do zobaczenia na zajęciach w Warsztatowni Sensorycznej!"

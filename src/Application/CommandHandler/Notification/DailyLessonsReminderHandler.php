@@ -7,7 +7,10 @@ namespace App\Application\CommandHandler\Notification;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Entity\Lesson;
+use App\Entity\User;
 use App\Repository\UserRepository;
+use Ds\Map;
+use Ds\Set;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -43,6 +46,32 @@ readonly class DailyLessonsReminderHandler
 
         foreach ($admins as $admin) {
             $this->notifier->send($notification, new Recipient($admin->getEmail()));
+        }
+
+        /** @var Map<User, Set<Lesson>> $usersWithLessons */
+        $usersWithLessons = new \Ds\Map();
+        foreach ($lessons as $lesson) {
+            foreach ($lesson->getBookings() as $booking) {
+                $user = $booking->getUser();
+                $userLessons = $usersWithLessons->get($user, new Set());
+                $userLessons->add($lesson);
+                $usersWithLessons->put($user, $userLessons);
+            }
+        }
+        foreach ($usersWithLessons as $user => $userLessons) {
+            $userContent = $this->twig->render('email/notification/daily-user-reminder.html.twig', [
+                'lessons' => $userLessons,
+                'date' => $date,
+                'user' => $user,
+            ]);
+            $userSubject = $this->twig->render('email/notification/daily-user-reminder-subject.html.twig', [
+                'date' => $date,
+            ]);
+            $userNotification = new Notification()
+                ->importance('')
+                ->subject($userSubject)
+                ->content($userContent);
+            $this->notifier->send($userNotification, new Recipient($user->getEmail()));
         }
     }
 

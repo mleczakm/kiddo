@@ -1,0 +1,2 @@
+{% trans_default_domain 'emails' %}
+{{ 'daily_lessons_schedule.user_subject'|trans({'%date%': date|format_datetime(pattern='EEEE, dd.MM, HH:mm')}) }}

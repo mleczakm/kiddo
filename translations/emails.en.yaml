@@ -34,3 +34,9 @@ payment:
         %lessons%
         
         Please log in to the admin panel for more details.
+
+daily_lessons_schedule:
+  user_subject: "Reminder about today's lessons (%date%)"
+  user_greeting: "Hi %name%,"
+  user_reminder: "This is a quick reminder about your lessons today on %date%:"
+  user_footer: "See you at the workshop!"
