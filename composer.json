@@ -29,6 +29,7 @@
         "swoole-bundle/swoole-bundle": "^0.24.1",
         "symfony/asset": "7.3.*",
         "symfony/asset-mapper": "7.3.*",
+        "symfony/brevo-mailer": "7.3.*",
         "symfony/console": "7.3.*",
         "symfony/doctrine-messenger": "7.3.*",
         "symfony/dotenv": "7.3.*",

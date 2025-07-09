@@ -203,6 +203,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/swoole-bundle/resetter-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/kodus/mock-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/brevo-mailer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

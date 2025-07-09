@@ -215,6 +215,7 @@
       <path value="$PROJECT_DIR$/vendor/swoole-bundle/resetter-bundle" />
       <path value="$PROJECT_DIR$/vendor/macpaw/symfony-health-check-bundle" />
       <path value="$PROJECT_DIR$/vendor/kodus/mock-cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/brevo-mailer" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
