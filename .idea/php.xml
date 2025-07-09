@@ -216,6 +216,12 @@
       <path value="$PROJECT_DIR$/vendor/macpaw/symfony-health-check-bundle" />
       <path value="$PROJECT_DIR$/vendor/kodus/mock-cache" />
       <path value="$PROJECT_DIR$/vendor/symfony/brevo-mailer" />
+      <path value="$PROJECT_DIR$/vendor/bgalati/monolog-sentry-handler" />
+      <path value="$PROJECT_DIR$/vendor/jean85/pretty-package-versions" />
+      <path value="$PROJECT_DIR$/vendor/sentry/sentry" />
+      <path value="$PROJECT_DIR$/vendor/nyholm/psr7" />
+      <path value="$PROJECT_DIR$/vendor/symfony/psr-http-message-bridge" />
+      <path value="$PROJECT_DIR$/vendor/sentry/sentry-symfony" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

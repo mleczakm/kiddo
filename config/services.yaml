@@ -80,3 +80,10 @@ services:
 
     SymfonyHealthCheckBundle\Check\DoctrineORMCheck:
         alias: symfony_health_check.doctrine_check
+        
+    BGalati\MonologSentryHandler\SentryHandler:
+    Sentry\Integration\RequestIntegration:
+    Sentry\Integration\EnvironmentIntegration:
+    Sentry\Integration\FrameContextifierIntegration:
+    Sentry\Integration\RequestFetcherInterface:
+        class: Sentry\Integration\RequestFetcher

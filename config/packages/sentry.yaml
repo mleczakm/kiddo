@@ -1,0 +1,27 @@
+when@prod:
+    sentry:
+        dsn: '%env(SENTRY_DSN)%'
+        register_error_listener: false # Disabled to avoid duplicated Sentry events
+        register_error_handler: false # Disabled to avoid duplicated Sentry events, see https://github.com/getsentry/sentry-symfony/pull/687
+        tracing: false
+        messenger: false # Duplicates Sentry events as it is already managed through Monolog.
+        options:
+            attach_stacktrace: false # Disabled to avoid stacktrace on pure logs
+            default_integrations: false
+            integrations:
+                - 'Sentry\Integration\RequestIntegration'
+                - 'Sentry\Integration\EnvironmentIntegration'
+                - 'Sentry\Integration\FrameContextifierIntegration'
+#        If you are using Monolog, you also need this additional configuration to log the errors correctly:
+#        https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
+#        register_error_listener: false
+#        register_error_handler: false
+
+#    monolog:
+#        handlers:
+#            sentry:
+#                type: sentry
+#                level: !php/const Monolog\Logger::ERROR
+#                hub_id: Sentry\State\HubInterface
+#                fill_extra_context: true # Enables sending monolog context to Sentry
+#                process_psr_3_messages: false # Disables the resolution of PSR-3 placeholders

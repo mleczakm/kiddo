@@ -48,7 +48,7 @@ when@prod:
             buffer:
                 type: buffer
                 level: debug
-                handler: main
+                handler: grouped_main
                 buffer_size: 0 # No limit
             grouped_main:
                 type: whatfailuregroup
@@ -77,3 +77,17 @@ when@prod:
                 type: service
                 id: App\Infrastructure\Monolog\LogdashHandler
                 level: debug
+            sentry:
+                type: fingers_crossed
+                action_level: error
+                handler: sentry_buffer
+                include_stacktraces: true
+                channels: [ "!event" ]
+            sentry_buffer:
+                type: buffer
+                handler: sentry_handler
+                level: info
+                process_psr_3_messages: true
+            sentry_handler:
+                type: service
+                id: BGalati\MonologSentryHandler\SentryHandler
