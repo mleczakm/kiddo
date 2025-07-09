@@ -52,9 +52,28 @@ jobs:
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-cache,mode=max
           load: true
 
-      # Run Composer QA script against the development image
-      - name: Run Composer QA
-        run: docker run --rm ${{ steps.meta.outputs.tags }} composer qa
+      # Run Composer Static Analysis script against the development image
+      - name: Run Composer SA
+        run: docker run --rm ${{ steps.meta.outputs.tags }} composer sa
+
+      # Start PostgreSQL for tests
+      - name: Start PostgreSQL
+        uses: postgres:15
+        with:
+          env:
+            POSTGRES_DB: app_test
+            POSTGRES_USER: app
+            POSTGRES_PASSWORD: !ChangeMe!
+          ports: |
+            5432:5432
+        # Use a service so the container is accessible as 'db' host
+        id: db
+
+      # Run all tests
+      - name: Run Tests
+        run: docker run --rm --network github_network ${{ steps.meta.outputs.tags }} composer tests
+        env:
+          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
 
       - name: Extract production metadata
         if: success()

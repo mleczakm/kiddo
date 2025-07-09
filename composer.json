@@ -132,8 +132,7 @@
         "tests": {
             "Unit tests": "bin/phpunit --testsuite \"Unit\"",
             "Smoke": "@tests:smoke",
-            "Functional": "@tests:functional",
-            "All with coverage": "bin/phpunit --coverage-text --coverage-xml target/coverage"
+            "Functional": "@tests:functional"
         },
         "tests:smoke": {
             "Setup": "@tests:functional:setup",
@@ -147,7 +146,10 @@
             "Functional tests setup": "bin/console doctrine:database:create --if-not-exists --env=test",
             "Functional tests schema": "bin/console doctrine:schema:update --force --env=test"
         },
-        "qa:fix": {
+        "qa:fix": [
+            "@sa:fix"
+        ],
+        "sa:fix": {
             "Disable timeout": "Composer\\Config::disableProcessTimeout",
             "ECS fix": "ecs check --fix",
             "Phpstan fix baseline step 1": "phpstan analyse --memory-limit=-1 --configuration=phpstan.regenerate-baseline.neon",
