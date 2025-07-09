@@ -74,7 +74,7 @@ jobs:
       - name: Run Tests
         run: docker run --rm ${{ steps.meta.outputs.tags }} composer tests
         env:
-          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
+          DATABASE_URL: "postgresql://app:!ChangeMe!@localhost:5432/app_test?serverVersion=15&charset=utf8"
 
       - name: Extract production metadata
         if: success()
