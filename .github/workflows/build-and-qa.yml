@@ -70,11 +70,17 @@ jobs:
       - name: Run Composer SA
         run: docker run --rm ${{ steps.meta.outputs.tags }} composer sa
 
+
+      - name: Get GitHub Actions Docker network name
+        id: network
+        run: |
+            echo "NETWORK_NAME=$(docker network ls --filter name=github --format '{{.Name}}')" >> $GITHUB_ENV
+
       # Run all tests
       - name: Run Tests
-        run: docker run --rm ${{ steps.meta.outputs.tags }} composer tests
+        run: docker run --rm --network $NETWORK_NAME ${{ steps.meta.outputs.tags }} composer tests
         env:
-          DATABASE_URL: "postgresql://app:!ChangeMe!@localhost:5432/app_test?serverVersion=15&charset=utf8"
+          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
 
       - name: Extract production metadata
         if: success()
