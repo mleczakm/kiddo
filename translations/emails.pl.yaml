@@ -77,4 +77,28 @@ payment:
         %lessons%
         
         Zaloguj się do panelu administracyjnego, aby zobaczyć więcej szczegółów.
-    
+
+user:
+  notification:
+    admin:
+      subject: 'Nowy użytkownik zarejestrowany - %email%'
+      content: >-
+        Otrzymano nową rejestrację użytkownika:
+        
+        ID użytkownika: #%id%
+        
+        Imię: %name%
+                
+        Email: %email%
+        
+        Zaloguj się do panelu administracyjnego, aby zobaczyć więcej szczegółów.
+    confirmation:
+      subject: 'Potwierdzenie rejestracji - Warsztatownia Sensoryczna'
+      message: >-
+        Dziękujemy za pomyślną rejestrację w Warsztatowni Sensorycznej!
+      
+        Możesz w panelu użytkownika przeglądać swoje rezerwacje i płatności, a już w niedalekiej
+        przyszłości anulować i przenosić rezerwacje oraz zarządzać swoim kontem.
+                      
+        Pozdrawiamy,
+        Zespół Warsztatowni Sensorycznej

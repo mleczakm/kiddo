@@ -2,7 +2,6 @@ framework:
     notifier:
         chatter_transports:
         texter_transports:
-            email: smtp://%env(MAILER_DSN)%
         channel_policy:
             # use chat/slack, chat/telegram, sms/twilio or sms/nexmo
             urgent: ['email']
@@ -12,3 +11,11 @@ framework:
             low: ['email']
         admin_recipients:
             - { email: michal@mleczko.dev }
+
+when@test:
+    framework:
+        notifier:
+            chatter_transports:
+            texter_transports:
+        mailer:
+            dsn: 'null://null'
