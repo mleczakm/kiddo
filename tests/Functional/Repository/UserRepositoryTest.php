@@ -17,7 +17,7 @@ class UserRepositoryTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->userRepository = $kernel->getContainer()
+        $this->userRepository = self::getContainer()
             ->get(UserRepository::class);
     }
 
