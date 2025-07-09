@@ -11,6 +11,20 @@ env:
 
 jobs:
   build-and-qa:
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_DB: app_test
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: "!ChangeMe!"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     runs-on: ubuntu-latest
 
     permissions:
@@ -55,19 +69,6 @@ jobs:
       # Run Composer Static Analysis script against the development image
       - name: Run Composer SA
         run: docker run --rm ${{ steps.meta.outputs.tags }} composer sa
-
-      # Start PostgreSQL for tests
-      - name: Start PostgreSQL
-        uses: postgres:15
-        with:
-          env:
-            POSTGRES_DB: app_test
-            POSTGRES_USER: app
-            POSTGRES_PASSWORD: !ChangeMe!
-          ports: |
-            5432:5432
-        # Use a service so the container is accessible as 'db' host
-        id: db
 
       # Run all tests
       - name: Run Tests
