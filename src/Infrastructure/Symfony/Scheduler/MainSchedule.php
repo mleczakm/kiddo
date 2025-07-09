@@ -7,6 +7,7 @@ namespace App\Infrastructure\Symfony\Scheduler;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Command\CheckExpiredPayments;
 use App\Application\Command\ImportTransfersFromMail;
+use App\Application\Command\Notification\DailyLessonsReminder;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
@@ -26,6 +27,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->with(RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 30)))
             ->with(RecurringMessage::every('30 minutes', new CheckExpiredBookings()))
             ->with(RecurringMessage::every(30, new ImportTransfersFromMail()))
+            ->with(RecurringMessage::cron('0 7 * * *', new DailyLessonsReminder()))
         ;
     }
 }

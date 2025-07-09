@@ -102,3 +102,7 @@ user:
                       
         Pozdrawiamy,
         Zespół Warsztatowni Sensorycznej
+daily_lessons_schedule:
+  no_lessons: Dzisiaj (%date%) nie odbywają się żadne zajęcia.
+  subject: 'Raport dzienny zajęć na %date%'
+  no_attendants: 'Brak zapisanych uczestników.'

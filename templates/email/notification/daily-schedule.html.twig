@@ -1,0 +1,23 @@
+{% trans_default_domain 'emails' %}
+{% if lessons is empty %}
+  <p>{{ 'daily_lessons_schedule.no_lessons'|trans({'%date%': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+{% else %}
+  <ul>
+    {% for lesson in lessons %}
+      <li>
+        <strong>{{ lesson.metadata.title }}</strong>
+        ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})
+        <ul>
+          {% set attendants = lesson.attendants %}
+          {% if attendants|length > 0 %}
+            {% for user in attendants %}
+              <li>{{ user.name }} ({{ user.email }})</li>
+            {% endfor %}
+          {% else %}
+            <li>{{ 'daily_lessons_schedule.no_attendants'|trans() }}</li>
+          {% endif %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

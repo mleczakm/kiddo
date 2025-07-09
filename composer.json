@@ -120,7 +120,8 @@
             "@auto-scripts"
         ],
         "qa": {
-            "Static analysis": "@sa"
+            "Static analysis": "@sa",
+            "Tests": "@tests"
         },
         "sa": {
             "Validate composer.json": "@composer validate",

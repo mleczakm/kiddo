@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: 'App\\Repository\\LessonRepository')]
 class Lesson
 {
     #[ORM\Column(type: 'string', nullable: false)]
@@ -137,5 +137,15 @@ class Lesson
     public function canBeBooked(): bool
     {
         return $this->status === 'active' && $this->getAvailableSpots() > 0;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getAttendants(): array
+    {
+        return $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
+            ->map(fn(Booking $booking): User => $booking->getUser())
+            ->toArray();
     }
 }
