@@ -46,6 +46,8 @@ class NewUserHandlerTest extends KernelTestCase
         $this->mailer()
             ->assertSentEmailCount(3);
 
+        self::assertNotEmpty($user->getConfirmedAt());
+
         $emails = $this->mailer()
             ->sentEmails();
 

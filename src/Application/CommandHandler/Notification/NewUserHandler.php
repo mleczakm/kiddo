@@ -7,6 +7,7 @@ namespace App\Application\CommandHandler\Notification;
 use App\Application\Command\Notification\NewUser;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -25,6 +26,8 @@ readonly class NewUserHandler
     public function __invoke(NewUser $command): void
     {
         $user = $command->user;
+        $user->setConfirmedAt(Clock::get()->now());
+
         $this->sendUserConfirmation($user);
         $this->sendAdminInformation($user);
     }
