@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use libphonenumber\PhoneNumber;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -51,9 +53,16 @@ class User implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $confirmedAt = null;
 
+    /**
+     * @var Collection<int, Tenant>
+     */
+    #[ORM\ManyToMany(targetEntity: Tenant::class, mappedBy: 'users')]
+    private Collection $tenants;
+
     public function __construct()
     {
         $this->createdAt = Clock::get()->now();
+        $this->tenants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,5 +168,29 @@ class User implements UserInterface
     public function setConfirmedAt(?\DateTimeImmutable $confirmedAt): void
     {
         $this->confirmedAt = $confirmedAt;
+    }
+
+    /**
+     * @return Collection<int, Tenant>
+     */
+    public function getTenants(): Collection
+    {
+        return $this->tenants;
+    }
+
+    public function addTenant(Tenant $tenant): void
+    {
+        if (! $this->tenants->contains($tenant)) {
+            $this->tenants->add($tenant);
+            $tenant->addUser($this);
+        }
+    }
+
+    public function removeTenant(Tenant $tenant): void
+    {
+        if ($this->tenants->contains($tenant)) {
+            $this->tenants->removeElement($tenant);
+            $tenant->removeUser($this);
+        }
     }
 }
