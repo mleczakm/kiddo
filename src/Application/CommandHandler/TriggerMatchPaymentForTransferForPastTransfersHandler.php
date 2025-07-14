@@ -10,7 +10,7 @@ use App\Entity\Transfer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class TriggerMatchPaymentForTransferForPastTransfersHandlers
+class TriggerMatchPaymentForTransferForPastTransfersHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -19,12 +19,14 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlers
 
     public function __invoke(TriggerMatchPaymentForTransferForPastTransfers $command): void
     {
-        /** @var Transfer $transfer */
-        foreach ($this->entityManager->createQuery('
+        $transfers = $this->entityManager->createQuery('
             SELECT t
             FROM App\Entity\Transfer t
             WHERE t.payment IS NULL
-        ')->getArrayResult() as $transfer) {
+        ')->getResult();
+
+        /** @var Transfer $transfer */
+        foreach (is_array($transfers) ? $transfers : [] as $transfer) {
             $this->bus->dispatch(new MatchPaymentForTransfer($transfer));
         }
     }
