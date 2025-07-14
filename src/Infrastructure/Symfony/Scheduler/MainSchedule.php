@@ -25,11 +25,12 @@ final readonly class MainSchedule implements ScheduleProviderInterface
         return new Schedule()
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
-            ->with(RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 30)))
-            ->with(RecurringMessage::every('30 minutes', new CheckExpiredBookings()))
-            ->with(RecurringMessage::every(29, new ImportTransfersFromMail()))
-            ->with(RecurringMessage::cron('0 7 * * *', new DailyLessonsReminder()))
-            ->with(RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers()))
-        ;
+            ->with(
+                //RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 30)),
+                //RecurringMessage::every('30 minutes', new CheckExpiredBookings()),
+                RecurringMessage::every(30, new ImportTransfersFromMail()),
+                RecurringMessage::cron('0 7 * * *', new DailyLessonsReminder()),
+                RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers())
+            );
     }
 }
