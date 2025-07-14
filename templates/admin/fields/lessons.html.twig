@@ -1,0 +1,18 @@
+{% if field.value is not empty %}
+    <div class="lessons-list">
+        {% for lesson in field.value %}
+            <div class="lesson-item py-1">
+                <a href="{{ ea_url()
+                    .setController('App\\UserInterface\\Http\\Admin\\LessonCrudController')
+                    .setAction('detail')
+                    .setEntityId(lesson.id) }}">
+                    {{ lesson.metadata.title }} ({{ lesson.metadata.schedule|date('Y-m-d H:i') }})
+                </a>
+            </div>
+        {% else %}
+            <span class="text-muted">No lessons</span>
+        {% endfor %}
+    </div>
+{% else %}
+    <span class="text-muted">No lessons</span>
+{% endif %}
