@@ -23,7 +23,7 @@ class WorkshopsAction extends AbstractController
         $weekParam = $request->query->get('week');
         $now = Clock::get()->now();
 
-        // If week parameter is provided, use it as the reference date
+        // If the week parameter is provided, use it as the reference date
         if ($weekParam) {
             try {
                 $referenceDate = new \DateTimeImmutable($weekParam);

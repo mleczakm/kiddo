@@ -99,8 +99,10 @@ user:
       
         Możesz w panelu użytkownika przeglądać swoje rezerwacje i płatności, a już w niedalekiej
         przyszłości anulować i przenosić rezerwacje oraz zarządzać swoim kontem.
+                
                       
         Pozdrawiamy,
+        
         Zespół Warsztatowni Sensorycznej
 daily_lessons_schedule:
   no_lessons: Dzisiaj (%date%) nie odbywają się żadne zajęcia.
@@ -110,3 +112,12 @@ daily_lessons_schedule:
   user_greeting: "Cześć %name%,"
   user_reminder: "To szybkie przypomnienie o Twoich dzisiejszych zajęciach w %date%:"
   user_footer: "Do zobaczenia na zajęciach w Warsztatowni Sensorycznej!"
+login_email_missingnotification:
+  subject: "Nie znaleziono konta zarejestrowanego na podany adres email!"
+  content: >-    
+    Zarejestruj się używając formularza na stronie lub użyj innego maila do zalogowania się.
+    
+    
+    Pozdrawiamy,
+    
+    Zespół Warsztatowni Sensorycznej

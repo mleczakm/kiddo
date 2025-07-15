@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SecurityController extends AbstractController
 {
@@ -20,7 +22,10 @@ class SecurityController extends AbstractController
     public function form(Request $request, MessageBusInterface $messageBus): Response
     {
         $form = $this->createFormBuilder()
-            ->add('email', EmailType::class)->add('submit', SubmitType::class, [
+            ->add('email', EmailType::class, [
+                'constraints' => [new Email(), new NotBlank()],
+            ])
+            ->add('submit', SubmitType::class, [
                 'label' => 'form.login.submit',
             ])->getForm();
 
