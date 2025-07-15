@@ -44,6 +44,7 @@ class WorkshopsAction extends AbstractController
             FROM App\Entity\Lesson l
             LEFT JOIN l.bookings b WITH b.status = 'confirmed'
             WHERE l.metadata.schedule BETWEEN :start AND :end
+            AND l.status = 'active'
             ORDER BY l.metadata.schedule ASC
             DQL)
             ->setParameter('start', $startDate)
