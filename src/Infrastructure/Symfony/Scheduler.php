@@ -52,7 +52,6 @@ class Scheduler
 
     public function run(): void
     {
-
         foreach ($this->generators as $generator) {
             foreach ($generator->getMessages() as $context => $message) {
                 if (! $this->dispatcher) {

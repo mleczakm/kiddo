@@ -87,3 +87,6 @@ services:
     Sentry\Integration\FrameContextifierIntegration:
     Sentry\Integration\RequestFetcherInterface:
         class: Sentry\Integration\RequestFetcher
+
+    Symfony\Contracts\Service\ResetInterface:
+        alias: services_resetter

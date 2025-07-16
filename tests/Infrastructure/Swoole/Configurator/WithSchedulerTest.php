@@ -10,15 +10,17 @@ use PHPUnit\Framework\TestCase;
 use Swoole\Http\Server;
 use Swoole\Timer;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 final class WithSchedulerTest extends TestCase
 {
     public function testRegisterSwooleTick(): void
     {
         self::assertEmpty(iterator_to_array(Timer::list()));
-        ($withScheduler = new WithScheduler(new Scheduler($this->createMock(
-            MessageBusInterface::class
-        ), [])))->configure($this->createMock(Server::class));
+        ($withScheduler = new WithScheduler(
+            new Scheduler($this->createMock(MessageBusInterface::class), []),
+            $this->createMock(ResetInterface::class)
+        ))->configure($this->createMock(Server::class));
 
         $ticks = iterator_to_array(Timer::list());
 
