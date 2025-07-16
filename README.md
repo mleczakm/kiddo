@@ -15,16 +15,16 @@ This is a PHP-based application for managing workshops and email communications.
 - [x] Complete booking process
 - [x] Add workflows of payment and booking
 - [x] Complete user login/register
-- [ ] Cover logging in non-existing user 
+- [x] Cover logging in non-existing user 
 
 ### Medium Priority
 - [ ] Write comprehensive tests
 - [x] Add more language translations
 
 ### Low Priority
-- [ ] Add CD deploy pipeline
-- [ ] Set up monitoring
-- [ ] Add logging
+- [x] Add CD deploy pipeline
+- [x] Set up monitoring
+- [x] Add logging
 
 ## Development Setup
 1. Clone the repository
