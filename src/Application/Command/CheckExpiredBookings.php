@@ -7,6 +7,6 @@ namespace App\Application\Command;
 readonly class CheckExpiredBookings
 {
     public function __construct(
-        public \DateTimeImmutable $expirationTime = new \DateTimeImmutable('-30 minutes')
+        public \DateTimeImmutable $expirationTime = new \DateTimeImmutable('-60 minutes')
     ) {}
 }

@@ -26,10 +26,10 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->with(
-                //RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 30)),
-                //RecurringMessage::every('30 minutes', new CheckExpiredBookings()),
+                RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 30)),
+                RecurringMessage::every('60 minutes', new CheckExpiredBookings()),
                 RecurringMessage::every(30, new ImportTransfersFromMail()),
-                RecurringMessage::cron('0 7 * * *', new DailyLessonsReminder()),
+                RecurringMessage::cron('0 7 * * *', new DailyLessonsReminder(), new \DateTimeZone('Europe/Warsaw')),
                 RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers())
             );
     }
