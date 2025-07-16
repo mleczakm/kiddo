@@ -20,8 +20,8 @@ readonly class SendReservationNotificationHandler
     public function __invoke(SendReservationNotification $command): void
     {
         $translatorContext = [
-            '%paymentCode%' => $command->paymentCode,
-            '%paymentAmount%' => (string) $command->paymentAmount,
+            'paymentCode' => $command->paymentCode,
+            'paymentAmount' => (string) $command->paymentAmount,
         ];
 
         $subject = $this->translator->trans('reservation.subject', [], 'emails');

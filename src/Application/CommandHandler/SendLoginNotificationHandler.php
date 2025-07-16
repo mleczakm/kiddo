@@ -44,7 +44,7 @@ readonly class SendLoginNotificationHandler
         $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user, lifetime: 60 * 60);
 
         $translatorContext = [
-            '%name%' => $user->getName(),
+            'name' => $user->getName(),
         ];
 
         $notification = new LoginLinkNotification(

@@ -35,9 +35,7 @@ readonly class NewUserHandler
     private function sendUserConfirmation(User $user): void
     {
         $subject = $this->translator->trans('user.notification.confirmation.subject', [], 'emails');
-        $content = $this->translator->trans('user.notification.confirmation.message', [
-            '%email%' => $user->getEmail(),
-        ], 'emails');
+        $content = $this->translator->trans('user.notification.confirmation.message', [], 'emails');
 
         $notification = new Notification()
             ->importance('')
@@ -51,12 +49,12 @@ readonly class NewUserHandler
     {
         $admins = $this->userRepository->findByRole('ROLE_ADMIN');
         $subject = $this->translator->trans('user.notification.admin.subject', [
-            '%email%' => $user->getEmail(),
+            'email' => $user->getEmail(),
         ], 'emails');
         $content = $this->translator->trans('user.notification.admin.content', [
-            '%email%' => $user->getEmail(),
-            '%name%' => $user->getName(),
-            '%id%' => $user->getId(),
+            'email' => $user->getEmail(),
+            'name' => $user->getName(),
+            'id' => $user->getId(),
         ], 'emails');
 
         $notification = new Notification()

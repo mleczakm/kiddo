@@ -9,34 +9,48 @@ payment:
       message: |-
         Hello,
         
-        We are pleased to confirm that we have received your payment of %amount%.
+        We are pleased to confirm that we have received your payment of {amount}.
         
         Payment Details:
-        Booking Reference: %reference%
-        Amount Paid: %amount%
-        Payment Date: %date%
+        Booking Reference: {reference}
+        Amount Paid: {amount}
+        Payment Date: {date}
         
         Booked Lessons:
-        %lessons%
+        {lessons}
         
         Thank you for choosing our service!
     admin:
-      subject: 'New Payment Received - #%id%'
+      subject: 'New Payment Received - #{id}'
       greeting: |-
         A new payment has been received:
         
-        Payment ID: %id%
-        Amount: %amount%
-        User: %user%
-        Booking: %booking%
+        Payment ID: {id}
+        Amount: {amount}
+        User: {user}
+        Booking: {booking}
         
         Booked Lessons:
-        %lessons%
+        {lessons}
         
         Please log in to the admin panel for more details.
 
 daily_lessons_schedule:
-  user_subject: "Reminder about today's lessons (%date%)"
-  user_greeting: "Hi %name%,"
-  user_reminder: "This is a quick reminder about your lessons today on %date%:"
+  user_subject: "Reminder about today's lessons ({date})"
+  user_greeting: "Hi {name},"
+  user_reminder: "This is a quick reminder about your lessons today on {date}:"
   user_footer: "See you at the workshop!"
+
+booking_cancellation:
+  subject: 'Cancellation of booking for the class on {date}'
+  content: |
+    Dear {name},
+
+    We regret to inform you that your booking for the class on {date} has been cancelled due to non-payment.
+
+    If you believe this is a mistake, please contact us at warsztatownia@kiddo.edu.pl
+
+    You can make a new booking: {booking_url}
+
+    Best regards,
+    The Sensory Workshop Team

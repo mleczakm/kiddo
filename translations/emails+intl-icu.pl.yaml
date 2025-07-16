@@ -8,7 +8,7 @@ login_link:
   subject: 'Zaloguj się do swojego konta w Warsztatowni Sensorycznej'
   content:
     html: |
-      Witaj %name%,
+      Witaj {name},
 
       Ostatnio poprosiłeś(-aś) o link do logowania do Warsztatowni Sensorycznej. Kliknij poniższy przycisk, aby bezpiecznie zalogować się na swoje konto:
 
@@ -23,10 +23,10 @@ reservation:
                                                                                   Przelej BLIK na numer <span style="color: #e34646; white-space: nowrap;">571 531 213</span>
                                       </div>
                                       <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">
-                                                               Kwota do zapłaty: <span style="color: #e34646; white-space: nowrap;">%paymentAmount%</span>. W tytule przelewu wpisz poniższy kod:
+                                                               Kwota do zapłaty: <span style="color: #e34646; white-space: nowrap;">{paymentAmount}</span>. W tytule przelewu wpisz poniższy kod:
                                       </div>
                                       <div style="font-size: 1.5rem; font-family: monospace; background-color: #f3f4f6; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; user-select: all; letter-spacing: 0.1em; color: #e34646;">
-                                                               %paymentCode%
+                                                               {paymentCode}
                                       </div>
                                       <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
                                         Rezerwacja zostanie potwierdzona po zaksięgowaniu płatności.
@@ -46,50 +46,50 @@ payment:
       message: >-
         Dzień dobry,
         
-        Z przyjemnością potwierdzamy otrzymanie Twojej płatności w wysokości %amount%.
+        Z przyjemnością potwierdzamy otrzymanie Twojej płatności w wysokości {amount}.
         
         Szczegóły płatności:
         
-        Numer rezerwacji: %reference%
+        Numer rezerwacji: {reference}
         
-        Zapłacona kwota: %amount%
+        Zapłacona kwota: {amount}
         
-        Data płatności: %date%
+        Data płatności: {date}
         
         Zarezerwowane zajęcia:
-        %lessons%
+        {lessons}
         
         Dziękujemy za skorzystanie z naszych usług!
     admin:
-      subject: 'Nowa płatność otrzymana - #%id%'
+      subject: 'Nowa płatność otrzymana - #{id}'
       greeting: >-
         Otrzymano nową płatność:
         
-        ID płatności: %id%
+        ID płatności: {id}
         
-        Kwota: %amount%
+        Kwota: {amount}
         
-        Użytkownik: %user%
+        Użytkownik: {user}
         
-        Rezerwacja: %booking%
+        Rezerwacja: {booking}
         
         Zarezerwowane zajęcia:
-        %lessons%
+        {lessons}
         
         Zaloguj się do panelu administracyjnego, aby zobaczyć więcej szczegółów.
 
 user:
   notification:
     admin:
-      subject: 'Nowy użytkownik zarejestrowany - %email%'
+      subject: 'Nowy użytkownik zarejestrowany - {email}'
       content: >-
         Otrzymano nową rejestrację użytkownika:
         
-        ID użytkownika: #%id%
+        ID użytkownika: #{id}
         
-        Imię: %name%
+        Imię: {name}
                 
-        Email: %email%
+        Email: {email}
         
         Zaloguj się do panelu administracyjnego, aby zobaczyć więcej szczegółów.
     confirmation:
@@ -105,12 +105,12 @@ user:
         
         Zespół Warsztatowni Sensorycznej
 daily_lessons_schedule:
-  no_lessons: Dzisiaj (%date%) nie odbywają się żadne zajęcia.
-  subject: 'Raport dzienny zajęć na %date%'
+  no_lessons: 'Dzisiaj ({date}) nie odbywają się żadne zajęcia.'
+  subject: 'Raport dzienny zajęć na {date}'
   no_attendants: 'Brak zapisanych uczestników.'
-  user_subject: "Przypomnienie o dzisiejszych zajęciach (%date%)"
-  user_greeting: "Cześć %name%,"
-  user_reminder: "To szybkie przypomnienie o Twoich dzisiejszych zajęciach w %date%:"
+  user_subject: 'Przypomnienie o dzisiejszych zajęciach ({date})'
+  user_greeting: 'Cześć {name},'
+  user_reminder: 'To szybkie przypomnienie o Twoich dzisiejszych zajęciach w {date}:'
   user_footer: "Do zobaczenia na zajęciach w Warsztatowni Sensorycznej!"
 login_email_missingnotification:
   subject: "Nie znaleziono konta zarejestrowanego na podany adres email!"
@@ -120,4 +120,19 @@ login_email_missingnotification:
     
     Pozdrawiamy,
     
+    Zespół Warsztatowni Sensorycznej
+
+booking_cancellation:
+  subject: 'Anulowanie rezerwacji - {lesson} {date}'
+  content: |
+    Cześć {name},
+
+    Przykro nam poinformować, że Twoja rezerwacja na zajęcia {lesson} {date} została anulowana 
+    z powodu nieotrzymania płatności w wyznaczonym czasie.
+
+
+    Jeśli uważasz, że to pomyłka, prosimy o kontakt.
+
+
+    Pozdrawiamy,
     Zespół Warsztatowni Sensorycznej

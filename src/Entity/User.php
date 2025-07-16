@@ -112,6 +112,15 @@ class User implements UserInterface
         return $this->email;
     }
 
+    public function getEmailString(): string
+    {
+        if ($this->name) {
+            return sprintf('%s <%s>', $this->name, $this->email);
+        }
+        return $this->email;
+
+    }
+
     public function setEmail(string $email): static
     {
         $this->email = $email;

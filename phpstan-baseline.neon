@@ -67,13 +67,7 @@ parameters:
 			path: src/Infrastructure/Monolog/LogdashHandler.php
 
 		-
-			message: '#^Property App\\Tests\\Application\\CommandHandler\\ImportTransfersFromMailHandlerTest\:\:\$mailbox is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
+			message: '#^Generator expects value type DirectoryTree\\ImapEngine\\MessageQueryInterface, DirectoryTree\\ImapEngine\\MessageInterface given\.$#'
+			identifier: generator.valueType
 			count: 1
 			path: tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php

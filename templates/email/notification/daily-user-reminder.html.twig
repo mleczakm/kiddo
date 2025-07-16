@@ -1,8 +1,8 @@
 {% trans_default_domain 'emails' %}
 
-<p>{{ 'daily_lessons_schedule.user_greeting'|trans({'%name%': user.name}) }}</p>
+<p>{{ 'daily_lessons_schedule.user_greeting'|trans({'name': user.name}) }}</p>
 
-<p>{{ 'daily_lessons_schedule.user_reminder'|trans({'%date%': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+<p>{{ 'daily_lessons_schedule.user_reminder'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
 <ul>
   {% for lesson in lessons %}
     <li>

@@ -61,11 +61,11 @@ readonly class SendPaymentNotificationHandler
         }
 
         $translatorContext = [
-            '%amount%' => (string) $payment->getAmount(),
-            '%reference%' => (string) $firstBooking->getId(),
-            '%date%' => $payment->getCreatedAt()
+            'amount' => (string) $payment->getAmount(),
+            'reference' => (string) $firstBooking->getId(),
+            'date' => $payment->getCreatedAt()
                 ->format('Y-m-d H:i'),
-            '%lessons%' => $this->formatLessonsList($lessonsDetails),
+            'lessons' => $this->formatLessonsList($lessonsDetails),
         ];
 
         $subject = $this->translator->trans('payment.notification.user.subject', [], 'emails');
@@ -112,16 +112,16 @@ readonly class SendPaymentNotificationHandler
         }
 
         $translatorContext = [
-            '%id%' => (string) $payment->getId(),
-            '%amount%' => (string) $payment->getAmount(),
-            '%user%' => $firstBooking->getUser()
+            'id' => (string) $payment->getId(),
+            'amount' => (string) $payment->getAmount(),
+            'user' => $firstBooking->getUser()
                 ->getEmail(),
-            '%booking%' => $firstBooking->getId(),
-            '%lessons%' => $this->formatLessonsList($lessonsDetails),
+            'booking' => $firstBooking->getId(),
+            'lessons' => $this->formatLessonsList($lessonsDetails),
         ];
 
         $subject = $this->translator->trans('payment.notification.admin.subject', [
-            '%id%' => $payment->getId(),
+            'id' => $payment->getId(),
         ], 'emails');
         $content = $this->translator->trans('payment.notification.admin.greeting', $translatorContext, 'emails');
 

@@ -1,6 +1,6 @@
 {% trans_default_domain 'emails' %}
 {% if lessons %}
-{{ 'daily_lessons_schedule.subject'|trans({'%date%': date|format_datetime(pattern='EEEE, dd.MM')}) }}
+{{ 'daily_lessons_schedule.subject'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}
 {% else %}
-{{ 'daily_lessons_schedule.no_lessons'|trans({'%date%': date|format_datetime(pattern='EEEE, dd.MM')}) }}
+{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}
 {% endif %}

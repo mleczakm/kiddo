@@ -315,3 +315,15 @@ dashboard:
 admin_dashboard:
   title: Kiddo System Rezerwacji Warsztatów - 2025
   frontpage: Strona główna
+
+from_day_of_week: >-
+  {day, select,
+      1   {z poniedziałku {date}, o {hour}}
+      2   {z wtorku {date}, o {hour}}
+      3   {ze środy {date}, o {hour}}
+      4   {z czwartku {date}, o {hour}}
+      5   {z piątku {date}, o {hour}}
+      6   {z soboty {date}, o {hour}}
+      7   {z niedzieli {date}, o {hour}}
+      other    {asdasdasd}
+  }

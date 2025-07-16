@@ -1,6 +1,6 @@
 {% trans_default_domain 'emails' %}
 {% if lessons is empty %}
-  <p>{{ 'daily_lessons_schedule.no_lessons'|trans({'%date%': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+  <p>{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
 {% else %}
   <ul>
     {% for lesson in lessons %}
