@@ -49,12 +49,12 @@ class LessonRepository extends ServiceEntityRepository
             ->setParameter('status', 'active')
             ->orderBy('l.metadata.schedule', 'ASC');
 
-        if ($query) {
+        if ($query !== null) {
             $qb->andWhere('ILIKE(l.metadata.title, :query) = TRUE')
                 ->setParameter('query', '%' . $query . '%');
         }
 
-        if ($age) {
+        if ($age !== null) {
             $qb->andWhere('l.metadata.ageRange.min <= :age')
                 ->andWhere('l.metadata.ageRange.max >= :age')
                 ->setParameter('age', $age);
