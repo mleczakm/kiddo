@@ -29,6 +29,7 @@ doctrine:
         dql:
             string_functions:
                 JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
+                ILIKE: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Ilike
 
 when@test:
     doctrine:

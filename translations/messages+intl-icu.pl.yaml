@@ -250,7 +250,7 @@ lesson:
   carnet_4: Karnet na 4 wejścia
   one_time: Jednorazowe wejście
   carnet_4.description: >-
-    4 wejścia do wykorzystania przez miesiąc. Oszczędź 20 złotych w porównaniu z pojedynczymi wejściami!
+    4 następujące po sobie wejścia na zajęcia.
     
     - karnet ważny przez miesiąc od zakupu
     
@@ -266,6 +266,7 @@ lesson:
   close: Zamknij
   accept_terms_and_close: Zaakceptuj regulamin
   fully_booked: Brak wolnych miejsc
+  no_lessons_found: W wybranym okresie brak zajęć spełniających kryteria.
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
   instruction_2: "na kwotę"

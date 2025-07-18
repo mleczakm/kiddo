@@ -8,6 +8,7 @@
     "require": {
         "php": ">=8.4",
         "ext-ctype": "*",
+        "ext-ds": "*",
         "ext-iconv": "*",
         "ext-swoole": "*",
         "bgalati/monolog-sentry-handler": "^2.1",
@@ -22,6 +23,7 @@
         "easycorp/easyadmin-bundle": "^4.24.9",
         "logdash/php-sdk": "dev-main#396a8c421b79f2263485117650bcadedd50ba940",
         "macpaw/symfony-health-check-bundle": "^1.7",
+        "martin-georgiev/postgresql-for-doctrine": "^3.2",
         "nyholm/psr7": "^1.8.2",
         "odolbeau/phone-number-bundle": "^4.1",
         "phpdocumentor/reflection-docblock": "^5.6.2",
@@ -72,8 +74,7 @@
         "twig/extra-bundle": "^3.21",
         "twig/inky-extra": "^3.21",
         "twig/intl-extra": "^3.21",
-        "twig/twig": "^2.12|^3.21.1",
-      "ext-ds": "*"
+        "twig/twig": "^2.12|^3.21.1"
     },
     "config": {
         "allow-plugins": {

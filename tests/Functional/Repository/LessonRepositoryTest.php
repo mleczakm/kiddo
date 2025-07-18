@@ -43,4 +43,33 @@ class LessonRepositoryTest extends KernelTestCase
         $this->assertContains($lesson2, $results);
         $this->assertNotContains($lessonOther, $results);
     }
+
+    public function testFindByFilters(): void
+    {
+        $date = new DateTimeImmutable('2025-07-09 10:00:00');
+        $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
+
+        $em = self::getContainer()->get('doctrine')->getManager();
+
+        $lesson1 = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
+            ->assemble();
+        $lesson2 = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date->setTime(15, 0))->assemble())
+            ->assemble();
+        $lessonOther = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($otherDate)->assemble())
+            ->assemble();
+
+        $em->persist($lesson1);
+        $em->persist($lesson2);
+        $em->persist($lessonOther);
+        $em->flush();
+
+        /** @var LessonRepository $repo */
+        $repo = self::getContainer()->get(LessonRepository::class);
+        $results = $repo->findByFilters(null, null, week: $date->format('Y-m-d'));
+
+        $this->assertCount(2, $results);
+    }
 }
