@@ -2,6 +2,9 @@ form:
   login:
     submit: Zaloguj się za pomocą linku wysłanego na e-mail
     header: Witamy ponownie!
+    success:
+      title: Wysłano link do zalogowania
+      message: "Na podany adres e-mail wysłano link do zalogowania. Sprawdź swoją skrzynkę pocztową!"
 
   register:
     title: "Utwórz konto"

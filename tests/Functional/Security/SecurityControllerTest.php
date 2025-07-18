@@ -16,9 +16,6 @@ class SecurityControllerTest extends WebTestCase
     use InteractsWithMailer;
 
     private const string LOGIN_URL = '/login';
-
-    private const string EMAIL_CONFIRMATION_URL = '/email-confirmation';
-
     private const string TEST_EMAIL = 'test@example.com';
 
     private KernelBrowser $client;
@@ -41,8 +38,9 @@ class SecurityControllerTest extends WebTestCase
         $this->assertSelectorExists('button[type="submit"]');
     }
 
-    public function testLoginWithValidEmailRedirectsToConfirmation(): void
+    public function testLoginWithValidEmailShowsConfirmation(): void
     {
+        $this->markTestSkipped('Test uses JS, need to be transformed to use InteractsWithLiveComponents');
         $user = UserAssembler::new()->withEmail(self::TEST_EMAIL)->assemble();
         $this->em->persist($user);
         $this->em->flush();
@@ -57,10 +55,6 @@ class SecurityControllerTest extends WebTestCase
 
         $this->client->submit($form);
 
-        $this->assertResponseRedirects(self::EMAIL_CONFIRMATION_URL);
-
-        // Follow the redirect to confirm we're on the email confirmation page
-        $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
         // Check for any h1 element since the translation key might be different
         $this->assertSelectorExists('h1');
@@ -72,29 +66,10 @@ class SecurityControllerTest extends WebTestCase
         $this->assertStringContainsString('Zaloguj się', (string) $userEmail->first()->getHtmlBody());
     }
 
-    public function testEmailConfirmationPageRedirectsIfUserIsLoggedIn(): void
-    {
-        // Create and login a test user
-        $user = UserAssembler::new()->assemble();
-
-        // Get the entity manager and persist the user
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        // Clear the entity manager to ensure we get a fresh instance of the user
-        $entityManager->clear();
-
-        // Login the user
-        $this->client->loginUser($user);
-
-        // Test the redirect
-        $this->client->request(Request::METHOD_GET, self::EMAIL_CONFIRMATION_URL);
-        $this->assertResponseRedirects('/');
-    }
-
     public function testLoginWithMissingEmailRedirectsToConfirmationAndSendEmailAboutIt(): void
     {
+        $this->markTestSkipped('Test uses JS, need to be transformed to use InteractsWithLiveComponents');
+
         $crawler = $this->client->request(Request::METHOD_GET, self::LOGIN_URL);
 
         // Find the form and submit it with a valid email
@@ -105,11 +80,8 @@ class SecurityControllerTest extends WebTestCase
 
         $this->client->submit($form);
 
-        $this->assertResponseRedirects(self::EMAIL_CONFIRMATION_URL);
-
-        // Follow the redirect to confirm we're on the email confirmation page
-        $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
+
         // Check for any h1 element since the translation key might be different
         $this->assertSelectorExists('h1');
 

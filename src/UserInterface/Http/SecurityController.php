@@ -19,40 +19,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class SecurityController extends AbstractController
 {
     #[Route('/login', name: 'app_login')]
-    public function form(Request $request, MessageBusInterface $messageBus): Response
+    public function form(): Response
     {
-        $form = $this->createFormBuilder()
-            ->add('email', EmailType::class, [
-                'constraints' => [new Email(), new NotBlank()],
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'form.login.submit',
-            ])->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{email: string} $data */
-            $data = $form->getData();
-
-            $messageBus->dispatch(new SendLoginNotification($data['email']));
-
-            return $this->redirectToRoute('app_email_confirmation');
-        }
-
-        return $this->render('login.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/email-confirmation', name: 'app_email_confirmation')]
-    public function mailConfirmation(): Response
-    {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('homepage');
-        }
-
-        return $this->render('email-confirmation.html.twig');
+        return $this->render('login.html.twig');
     }
 
     #[Route('/login_check', name: 'login_check')]

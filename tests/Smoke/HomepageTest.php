@@ -31,7 +31,6 @@ class HomepageTest extends WebTestCase
             'Ping' => ['/ping'],
             'Login' => ['/login'],
             'Register' => ['/register'],
-            'Email confirmation' => ['/email-confirmation'],
             'Admin' => ['/admin', 401],
             'Logout' => ['/logout', 302],
         ];
