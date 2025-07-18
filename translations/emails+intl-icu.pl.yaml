@@ -6,11 +6,17 @@ link_warning_underlying: Jeśli nie prosiłeś(-aś) o link do logowania, zignor
 
 login_link:
   subject: 'Zaloguj się do swojego konta w Warsztatowni Sensorycznej'
+  register_subject: 'Potwierdzenie rejestracji w Warsztatowni Sensorycznej'
   content:
     html: |
       Witaj {name},
 
       Ostatnio poprosiłeś(-aś) o link do logowania do Warsztatowni Sensorycznej. Kliknij poniższy przycisk, aby bezpiecznie zalogować się na swoje konto:
+  register_content:
+    html: |
+      Witaj {name},
+
+      Kliknij poniższy przycisk, aby po raz pierwszy bezpiecznie zalogować się na swoje konto:
 
 Sign in: Zaloguj się
 

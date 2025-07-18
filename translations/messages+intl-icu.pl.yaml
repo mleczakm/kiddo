@@ -10,6 +10,9 @@ form:
     already_have_account: "Masz już konto?"
     login: "Zaloguj się"
     name: "Imię"
+    success:
+      title: "Rejestracja zakończona pomyślnie!"
+      message: "Dziękujemy za rejestrację. Na podany adres e-mail wysłaliśmy link do logowania."
 
     dont_have_account: "Nie masz jeszcze konta?"
     register: "Zarejestruj się"
@@ -40,7 +43,7 @@ page:
   phone: "Telefon:"
   contact_us: "Skontaktuj się z nami"
   quick_links: "Szybkie linki"
-  description: MieSendLoginNotificationHandler.phpjsce dla Rodzin z małymi dziećmi Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia
+  description: Miejsce dla Rodzin z małymi dziećmi Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia
   my_carnets: Moje karnety
   admin_dashboard: Panel administracyjny
 

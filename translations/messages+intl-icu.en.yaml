@@ -1,3 +1,30 @@
+form:
+  login:
+    submit: Log in using the link sent to your email
+    header: Welcome back!
+
+  register:
+    title: Create an account
+    email: Email
+    submit: Register
+    already_have_account: Already have an account?
+    login: Log in
+    name: Name
+    success:
+      title: Registration successful!
+      message: Thank you for registering. We've sent a login link to your email address.
+      login_link: Go to login
+
+    dont_have_account: Don't have an account yet?
+    register: Register
+    
+    verify_mail: >-
+      If you have an account with us, we've sent a login link to the provided email address.
+      <br/>
+      <br/>
+      Please check your inbox!
+    mail_sent_header: Welcome!
+
 dashboard:
   status:
     active: Active
