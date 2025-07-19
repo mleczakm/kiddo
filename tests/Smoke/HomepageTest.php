@@ -31,7 +31,7 @@ class HomepageTest extends WebTestCase
             'Ping' => ['/ping'],
             'Login' => ['/login'],
             'Register' => ['/register'],
-            'Admin' => ['/admin', 401],
+            'Admin' => ['/admin', 302],
             'Logout' => ['/logout', 302],
         ];
     }
@@ -59,7 +59,7 @@ class HomepageTest extends WebTestCase
     {
         return [
             'Panel' => ['/panel'],
-            'Admin' => ['/admin', 403],
+            'Admin' => ['/admin', 302],
         ];
     }
 
