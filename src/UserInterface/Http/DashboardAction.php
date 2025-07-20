@@ -114,9 +114,9 @@ class DashboardAction extends AbstractController
         return $this->render(
             'dashboard.html.twig',
             [
-                'activeBookings' => $activeBookings,
-                'cancelledBookings' => $cancelledBookings,
-                'carnets' => $carnets,
+                'activeBookings' => array_reverse($activeBookings),
+                'cancelledBookings' => array_reverse($cancelledBookings),
+                'carnets' => array_reverse($carnets),
                 'activeLessonsCount' => $activeLessonsCount,
                 'page' => [
                     'title' => 'dashboard.title',
