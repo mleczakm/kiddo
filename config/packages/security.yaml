@@ -41,7 +41,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/panel, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/panel, roles: ROLE_USER }
     
     # Custom access denied handler
     role_hierarchy:
