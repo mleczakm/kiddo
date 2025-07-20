@@ -83,6 +83,10 @@ class DashboardAction extends AbstractController
                         ->schedule < new \DateTimeImmutable()
                 )->count();
 
+                $carnets[$seriesId]['status'] = $carnets[$seriesId]['totalLessons'] - $carnets[$seriesId]['usedLessons'] > 0 ?
+                    'active'
+                    : 'past';
+
                 // Add carnet lessons to active bookings if not cancelled
                 if ($booking->getStatus() !== Booking::STATUS_CANCELLED) {
                     $activeBookings[] = $booking;

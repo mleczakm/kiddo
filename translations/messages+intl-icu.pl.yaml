@@ -293,6 +293,7 @@ dashboard:
   status:
     active: Aktywne
     cancelled: Anulowane
+    past: Wykorzystany
   cancel: Anuluj
   sessions_used: Wykorzystane zajęcia
   valid_until: Ważne do
