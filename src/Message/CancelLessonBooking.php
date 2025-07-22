@@ -4,40 +4,33 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-use App\Entity\User;
-use Symfony\Component\Uid\Ulid;
-
 final class CancelLessonBooking
 {
     public function __construct(
-        private Ulid $bookingId,
-        private Ulid $lessonId,
-        private User $cancelledBy,
+        private int $bookingId,
+        private int $lessonId,
+        private int $cancelledById,
         private ?string $reason = null
-    ) {}
+    ) {
+    }
 
-    public function getBookingId(): Ulid
+    public function getBookingId(): int
     {
         return $this->bookingId;
     }
 
-    public function getLessonId(): Ulid
+    public function getLessonId(): int
     {
         return $this->lessonId;
     }
 
-    public function getCancelledBy(): User
+    public function getCancelledById(): int
     {
-        return $this->cancelledBy;
+        return $this->cancelledById;
     }
 
     public function getReason(): ?string
     {
         return $this->reason;
-    }
-
-    public function isRefundRequested(): bool
-    {
-        return true;
     }
 }

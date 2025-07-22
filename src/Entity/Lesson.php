@@ -129,8 +129,8 @@ class Lesson
     {
         return max(
             0,
-            $this->metadata->capacity
-            - $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
+            $this->metadata->capacity -
+            $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
                 ->count()
         );
     }
@@ -138,11 +138,6 @@ class Lesson
     public function canBeBooked(): bool
     {
         return $this->status === 'active' && $this->getAvailableSpots() > 0;
-    }
-
-    public function future(): bool
-    {
-        return $this->metadata->schedule >= Clock::get()->now();
     }
 
     /**
@@ -158,10 +153,5 @@ class Lesson
     public function cancellationAvailable(): bool
     {
         return $this->status === 'active' && $this->metadata->schedule >= Clock::get()->now()->modify('+24h');
-    }
-
-    public function setTicketOptions(TicketOption ... $options): void
-    {
-        $this->ticketOptions = array_values($options);
     }
 }

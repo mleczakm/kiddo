@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Lesson;
 use App\Entity\Series;
+use App\Entity\Child;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,17 +20,14 @@ class LessonRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Lesson::class);
     }
-
+    
     /**
      * Finds available lessons for rescheduling a booking.
      *
      * @param Series $series The series to find lessons in
      * @param \DateTimeInterface $afterDate Only return lessons after this date
      * @param int $maxResults Maximum number of results to return
-     * @return array<int, Lesson>
-     */
-    /**
-     * @return array<int, Lesson>
+     * @return Lesson[]
      */
     public function findAvailableLessonsForReschedule(
         Series $series,
@@ -37,27 +35,22 @@ class LessonRepository extends ServiceEntityRepository
         int $maxResults = 10
     ): array {
         $qb = $this->createQueryBuilder('l');
-
-        /** @var array<int, Lesson> $result */
-        $result = $qb
+        
+        return $qb
             ->andWhere('l.metadata.schedule > :afterDate')
             ->andWhere('l.status = :status')
-            ->andWhere('l.series = :series')
             ->setParameter('afterDate', $afterDate)
             ->setParameter('status', 'active')
-            ->setParameter('series', $series->getId(), 'ulid')
             ->orderBy('l.metadata.schedule', 'ASC')
             ->setMaxResults($maxResults)
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 
     /**
      * @return Lesson[]
      */
-    public function findActiveByDate(DateTimeImmutable $date): array
+    public function findByDate(DateTimeImmutable $date): array
     {
         $start = $date->setTime(0, 0, 0);
         $end = $date->setTime(23, 59, 59);
@@ -66,8 +59,6 @@ class LessonRepository extends ServiceEntityRepository
         $result = $this->createQueryBuilder('l')
             ->where('l.metadata.schedule >= :start')
             ->andWhere('l.metadata.schedule <= :end')
-            ->andWhere('l.status = :status')
-            ->setParameter('status', 'active')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->getQuery()
@@ -110,98 +101,5 @@ class LessonRepository extends ServiceEntityRepository
             ->getResult();
 
         return $result;
-    }
-
-    /**
-     * @return array<int, Lesson>
-     */
-    public function findUpcoming(\DateTimeImmutable $since, int $limit): array
-    {
-        /** @var Lesson[] $lessons */
-        $lessons = $this->createQueryBuilder('l')
-            ->leftJoin('l.bookings', 'b')
-            ->where('l.metadata.schedule > :since')
-            ->setParameter('since', $since)
-            ->orderBy('l.metadata.schedule', 'ASC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-
-        return $lessons;
-    }
-
-    /**
-     * @return array<int, Lesson>
-     */
-    public function findUpcomingWithBookings(\DateTimeImmutable $since, int $limit): array
-    {
-        /** @var Lesson[] $lessons */
-        $lessons = $this->createQueryBuilder('l')
-            ->leftJoin('l.bookings', 'b')
-            ->andWhere('l.metadata.schedule > :since')
-            ->andWhere('l.status = :status')
-            ->setParameter('status', 'active')
-            ->setParameter('since', $since)
-            ->orderBy('l.metadata.schedule', 'ASC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-
-        return $lessons;
-    }
-
-    /**
-     * @return array<int, Lesson>
-     */
-    public function findUpcomingWithBookingsInRange(
-        \DateTimeImmutable $startDate,
-        \DateTimeImmutable $endDate,
-        bool $showCancelled = false
-    ): array {
-        $qb = $this->createQueryBuilder('l')
-            ->leftJoin('l.bookings', 'b')
-            ->andWhere('l.metadata.schedule >= :startDate')
-            ->andWhere('l.metadata.schedule <= :endDate')
-            ->setParameter('startDate', $startDate)
-            ->setParameter('endDate', $endDate)
-            ->orderBy('l.metadata.schedule', 'ASC');
-
-        if (! $showCancelled) {
-            $qb->andWhere('l.status = :status')
-                ->setParameter('status', 'active');
-        }
-
-        /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()
-            ->getResult();
-
-        return $lessons;
-    }
-
-    /**
-     * @return array<int, Lesson>
-     */
-    public function findUpcomingInRange(
-        \DateTimeImmutable $startDate,
-        \DateTimeImmutable $endDate,
-        bool $showCancelled = false
-    ): array {
-        $qb = $this->createQueryBuilder('l')
-            ->andWhere('l.metadata.schedule >= :startDate')
-            ->andWhere('l.metadata.schedule <= :endDate')
-            ->setParameter('startDate', $startDate)
-            ->setParameter('endDate', $endDate)
-            ->orderBy('l.metadata.schedule', 'ASC');
-
-        if (! $showCancelled) {
-            $qb->andWhere('l.status = :status')
-                ->setParameter('status', 'active');
-        }
-
-        /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()
-            ->getResult();
-
-        return $lessons;
     }
 }

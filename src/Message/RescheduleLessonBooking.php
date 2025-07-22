@@ -4,37 +4,35 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-use App\Entity\User;
-use Symfony\Component\Uid\Ulid;
-
 final class RescheduleLessonBooking
 {
     public function __construct(
-        private Ulid $bookingId,
-        private Ulid $oldLessonId,
-        private Ulid $newLessonId,
-        private User $rescheduledBy,
+        private int $bookingId,
+        private int $oldLessonId,
+        private int $newLessonId,
+        private int $rescheduledById,
         private ?string $reason = null
-    ) {}
+    ) {
+    }
 
-    public function getBookingId(): Ulid
+    public function getBookingId(): int
     {
         return $this->bookingId;
     }
 
-    public function getOldLessonId(): Ulid
+    public function getOldLessonId(): int
     {
         return $this->oldLessonId;
     }
 
-    public function getNewLessonId(): Ulid
+    public function getNewLessonId(): int
     {
         return $this->newLessonId;
     }
 
-    public function getRescheduledBy(): User
+    public function getRescheduledById(): int
     {
-        return $this->rescheduledBy;
+        return $this->rescheduledById;
     }
 
     public function getReason(): ?string
