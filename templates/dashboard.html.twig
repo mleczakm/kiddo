@@ -152,19 +152,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="bg-muted p-6 flex items-center justify-center md:w-48"> 
-                                                    <form method="post" action="" onsubmit="return confirm('{{ 'dashboard.confirm_cancel'|trans }}')">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ booking.id) }}">
-                                                        <button type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                                stroke-linecap="round" stroke-linejoin="round"
-                                                                class="lucide lucide-x w-4 h-4 mr-2">
-                                                                <path d="M18 6 6 18"></path>
-                                                                <path d="m6 6 12 12"></path>
-                                                            </svg>
-                                                            {{ 'dashboard.cancel'|trans }}
-                                                        </button>
-                                                    </form>
+                                                    {% if date(lesson.metadata.schedule) > date('+24 hours') %}
+                                                        {{ component('BookingCancellationModal', {booking: booking, lesson: lesson}) }}
+                                                    {% else %}
+                                                        <span class="text-sm text-muted-foreground text-center">
+                                                            {{ 'booking.cancellation_not_available'|trans }}
+                                                        </span>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>

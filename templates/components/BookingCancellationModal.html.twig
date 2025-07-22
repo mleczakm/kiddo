@@ -1,0 +1,195 @@
+<div {{ attributes }}
+        {% if modalOpened %}data-modal-state="open" {% else %}data-modal-state="closed"{% endif %}
+        {{ stimulus_controller('live', {
+            url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\BookingCancellationModal' })
+        }) }}
+        data-action="live:action:success->live#update">
+
+    <button data-action="live#action"
+            data-live-action-param="openModal"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 border border-workshop-red text-workshop-red hover:bg-workshop-red/10 transition-colors"
+            type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-x w-4 h-4 mr-2">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+        </svg>
+        {{ 'booking.cancel'|trans }}
+    </button>
+
+    {# Overlay #}
+    <div
+            data-action="click->live#action"
+            data-live-action-param="closeModal"
+            class="{% if not modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
+            style="pointer-events: auto;" aria-hidden="true"></div>
+
+    {# Dialog #}
+    <dialog {% if modalOpened %}open{% endif %}
+            data-modal-target="dialog"
+            class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 gap-4 border bg-white p-8 shadow-lg duration-200 rounded-lg max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="space-y-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        {{ 'booking.cancel_booking'|trans }}
+                    </h2>
+                    <p class="text-gray-600 mt-1">
+                        {{ 'booking.cancel_confirmation'|trans }}
+                    </p>
+                </div>
+                <button type="button" 
+                        data-action="live#action"
+                        data-live-action-param="closeModal"
+                        class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <div class="space-y-4">
+                    <h3 class="text-base font-medium text-gray-900">
+                        {{ 'booking.reason_for_cancellation'|trans }}
+                    </h3>
+                    <div class="space-y-3">
+                        {# Reschedule Option #}
+                        <div class="relative flex items-start p-4 border border-gray-200 rounded-lg hover:border-workshop-red transition-colors">
+                            <div class="flex items-center h-5 mt-0.5">
+                                <input
+                                    type="radio"
+                                    id="reason_reschedule"
+                                    name="cancellation_reason"
+                                    value="reschedule"
+                                    data-model="selectedOption"
+                                    {% if selectedOption == 'reschedule' %}checked{% endif %}
+                                    {% if not this.availableLessons|length %}disabled{% endif %}
+                                    class="h-4 w-4 text-workshop-red focus:ring-workshop-red border-gray-300">
+                            </div>
+                            <div class="ml-3">
+                                <label for="reason_reschedule" class="block text-sm font-medium text-gray-900">
+                                    {{ 'booking.reason_reschedule'|trans }}
+                                </label>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    {{ 'booking.available_lessons_count'|trans({'%count%': this.availableLessons|length}) }}
+                                </p>
+                                
+                                {% if selectedOption == 'reschedule' and this.availableLessons|length %}
+                                    <div class="mt-4 space-y-3">
+                                        <h4 class="text-sm font-medium text-gray-900">
+                                            {{ 'booking.select_new_lesson'|trans }}
+                                        </h4>
+                                        <div class="space-y-3 max-h-60 overflow-y-auto pr-2 -mx-2">
+                                            {% for availableLesson in this.availableLessons %}
+                                                <div class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+                                                    <input
+                                                        type="radio"
+                                                        id="lesson_{{ availableLesson.id }}"
+                                                        name="new_lesson"
+                                                        value="{{ availableLesson.id }}"
+                                                        data-model="selectedLessonId"
+                                                        class="h-4 w-4 text-workshop-red focus:ring-workshop-red border-gray-300">
+                                                    <label for="lesson_{{ availableLesson.id }}" class="ml-3 block">
+                                                        <div class="font-medium text-gray-900">{{ availableLesson|format_datetime('medium', 'short') }}</div>
+                                                        <div class="text-sm text-gray-500">
+                                                            {{ availableLesson.duration }} {{ 'minutes'|trans }}
+                                                            <span class="mx-1">•</span>
+                                                            {{ random(1, 5) }} {{ 'spots_available'|trans }}
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# Refund Option #}
+                        <div class="relative flex items-start p-4 border border-gray-200 rounded-lg hover:border-workshop-red transition-colors">
+                            <div class="flex items-center h-5 mt-0.5">
+                                <input
+                                    type="radio"
+                                    id="reason_refund"
+                                    name="cancellation_reason"
+                                    value="refund"
+                                    data-model="selectedOption"
+                                    {% if selectedOption == 'refund' %}checked{% endif %}
+                                    class="h-4 w-4 text-workshop-red focus:ring-workshop-red border-gray-300">
+                            </div>
+                            <div class="ml-3">
+                                <label for="reason_refund" class="block text-sm font-medium text-gray-900">
+                                    {{ 'booking.reason_refund'|trans }}
+                                </label>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    {{ 'booking.reason_refund_description'|trans }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {# Other Option #}
+                        <div class="relative flex items-start p-4 border border-gray-200 rounded-lg hover:border-workshop-red transition-colors">
+                            <div class="flex items-start h-5 mt-0.5">
+                                <input
+                                    type="radio"
+                                    id="reason_other"
+                                    name="cancellation_reason"
+                                    value="other"
+                                    data-model="selectedOption"
+                                    {% if selectedOption == 'other' %}checked{% endif %}
+                                    class="h-4 w-4 mt-1 text-workshop-red focus:ring-workshop-red border-gray-300">
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <label for="reason_other" class="block text-sm font-medium text-gray-900 mb-2">
+                                    {{ 'booking.reason_other'|trans }}
+                                </label>
+                                <div class="relative">
+                                    <textarea
+                                        name="reason_other"
+                                        data-model="cancellationReason"
+                                        {% if selectedOption == 'other' %}required{% endif %}
+                                        class="w-full min-h-[100px] rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-workshop-red focus:border-transparent"
+                                        placeholder="{{ 'booking.please_specify'|trans }}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-200">
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3">
+                    <button
+                        type="button"
+                        data-action="live#action"
+                        data-live-action-param="closeModal"
+                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                        {{ 'common.cancel'|trans }}
+                    </button>
+                    <button
+                        type="button"
+                        data-action="live#action"
+                        data-live-action-param="processCancellation"
+                        data-live-action-param-type-param="{{ selectedOption }}"
+                        data-live-action-param-lesson-id-param="{{ selectedLessonId }}"
+                        data-live-action-param-reason-param="{{ cancellationReason }}"
+                        {% if selectedOption == 'other' and not cancellationReason %}disabled{% endif %}
+                        {% if selectedOption == 'reschedule' and not selectedLessonId %}disabled{% endif %}
+                        class="inline-flex w-full justify-center rounded-md bg-workshop-red px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-workshop-red sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
+                        {% if selectedOption == 'reschedule' %}
+                            {{ 'booking.confirm_reschedule'|trans }}
+                        {% else %}
+                            {{ 'booking.confirm_cancellation'|trans }}
+                        {% endif %}
+                    </button>
+                </div>
+                <p class="mt-3 text-sm text-gray-500">
+                    {{ 'booking.cancellation_policy'|trans }}
+                </p>
+            </div>
+        </div>
+    </dialog>
+</div>
