@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Monolog;
 
 use Logdash\Logger\Logger as LogdashLogger;
-use Logdash\LogLevel;
+use Logdash\Types\LogLevel;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
@@ -31,15 +31,10 @@ class LogdashHandler extends AbstractProcessingHandler
 
     private function convertMonologLevelToLogdash(Level $level): LogLevel
     {
-        return match ($level->name) {
-            Level::Debug->name => LogLevel::DEBUG,
-            Level::Info->name => LogLevel::INFO,
-            Level::Notice->name => LogLevel::INFO,
-            Level::Warning->name => LogLevel::WARN,
-            Level::Error->name => LogLevel::ERROR,
-            Level::Critical->name => LogLevel::ERROR,
-            Level::Alert->name => LogLevel::ERROR,
-            Level::Emergency->name => LogLevel::ERROR,
+        return match ($level) {
+            Level::Debug => LogLevel::DEBUG,
+            Level::Warning => LogLevel::WARN,
+            Level::Error, Level::Critical, Level::Alert, Level::Emergency => LogLevel::ERROR,
             default => LogLevel::INFO,
         };
     }

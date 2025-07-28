@@ -21,7 +21,7 @@
         "dragonmantank/cron-expression": "^3.4",
         "dunglas/doctrine-json-odm": "^1.4.2",
         "easycorp/easyadmin-bundle": "^4.24.9",
-        "logdash/php-sdk": "dev-main#396a8c421b79f2263485117650bcadedd50ba940",
+        "logdash/php-sdk": "dev-main",
         "macpaw/symfony-health-check-bundle": "^1.7",
         "martin-georgiev/postgresql-for-doctrine": "^3.2",
         "novaway/feature-flag-bundle": "3.0.0-beta2",

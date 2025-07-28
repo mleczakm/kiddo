@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b731e3b3e57ec37aa0a3c57052081f2",
+    "content-hash": "b0361ed167c91c3689b101ca4565811e",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2992,12 +2992,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/logdash-io/php-sdk.git",
-                "reference": "396a8c421b79f2263485117650bcadedd50ba940"
+                "reference": "d22e55bdd45f4ca18af4aa5546dc50cf0525e67b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/396a8c421b79f2263485117650bcadedd50ba940",
-                "reference": "396a8c421b79f2263485117650bcadedd50ba940",
+                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/d22e55bdd45f4ca18af4aa5546dc50cf0525e67b",
+                "reference": "d22e55bdd45f4ca18af4aa5546dc50cf0525e67b",
                 "shasum": ""
             },
             "require": {
@@ -3005,6 +3005,7 @@
                 "php": ">=8.1"
             },
             "require-dev": {
+                "php-parallel-lint/php-parallel-lint": "^1.4",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^10.0",
                 "squizlabs/php_codesniffer": "^3.7"
@@ -3012,6 +3013,10 @@
             "default-branch": true,
             "type": "library",
             "autoload": {
+                "files": [
+                    "src/Sync/CreateLogSync.php",
+                    "src/Metrics/CreateMetrics.php"
+                ],
                 "psr-4": {
                     "Logdash\\": "src/"
                 }
@@ -3039,7 +3044,7 @@
                 "issues": "https://github.com/logdash-io/php-sdk/issues",
                 "source": "https://github.com/logdash-io/php-sdk/tree/main"
             },
-            "time": "2025-06-27T20:53:20+00:00"
+            "time": "2025-07-28T12:44:41+00:00"
         },
         {
             "name": "lorenzo/pinky",
