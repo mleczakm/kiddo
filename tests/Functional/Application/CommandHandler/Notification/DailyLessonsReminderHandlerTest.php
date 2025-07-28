@@ -20,7 +20,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
 
     public function testSendsUserRemindersWithCorrectContent(): void
     {
-        $date = new DateTimeImmutable('2025-07-09 10:00:00');
+        $date = new DateTimeImmutable('2025-07-09 10:00:00', new \DateTimeZone('UTC'));
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
         $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $em = self::getContainer()->get('doctrine')->getManager();
@@ -49,5 +49,6 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $this->assertStringContainsString('Cześć Jan Kowalski', $body);
         $this->assertStringContainsString('Joga', $body);
         $this->assertStringContainsString('09.07', $body);
+        $this->assertStringContainsString('12:00', $body);
     }
 }
