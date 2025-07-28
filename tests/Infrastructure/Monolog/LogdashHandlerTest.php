@@ -13,18 +13,24 @@ use PHPUnit\Framework\TestCase;
 
 class LogdashHandlerTest extends TestCase
 {
+    /**
+     * @var \Closure
+     */
     private $logMethod;
 
+    /**
+     * @var list<string>
+     */
     private array $logRecords = [];
 
     protected function setUp(): void
     {
-        $this->logMethod = fn(... $args) => $this->logRecords[] = $args;
+        $this->logMethod = fn(...$args) => $this->logRecords[] = $args;
     }
 
     public function testItHandlesLogRecords(): void
     {
-        $handler = new LogdashHandler(new Logger($this->logMethod), 'debug');
+        $handler = new LogdashHandler(new Logger($this->logMethod), Level::Debug);
         $record = [
             'message' => 'Test log message',
             'context' => [
@@ -58,7 +64,7 @@ class LogdashHandlerTest extends TestCase
     public function testItHandlesAllLogLevels(Level $level, string $levelName): void
     {
         $this->logRecords = [];
-        $handler = new LogdashHandler(new Logger($this->logMethod), strtolower($levelName));
+        $handler = new LogdashHandler(new Logger($this->logMethod));
         $record = [
             'message' => 'Test log message',
             'context' => [
@@ -83,6 +89,9 @@ class LogdashHandlerTest extends TestCase
         }
     }
 
+    /**
+     * @return list<array{0: Level, 1: string}>
+     */
     public static function logLevelProvider(): array
     {
         return [
