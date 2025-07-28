@@ -81,6 +81,9 @@
             "config/routes/symfony_health_check.yaml"
         ]
     },
+    "novaway/feature-flag-bundle": {
+        "version": "3.0.0-beta2"
+    },
     "nyholm/psr7": {
         "version": "1.8",
         "recipe": {

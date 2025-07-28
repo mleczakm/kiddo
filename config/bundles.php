@@ -88,4 +88,7 @@ return [
         'dev' => true,
         'test' => true,
     ],
+    Novaway\Bundle\FeatureFlagBundle\NovawayFeatureFlagBundle::class => [
+        'all' => true,
+    ],
 ];

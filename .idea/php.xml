@@ -226,6 +226,7 @@
       <path value="$PROJECT_DIR$/vendor/zenstruck/mailer-test" />
       <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
       <path value="$PROJECT_DIR$/vendor/martin-georgiev/postgresql-for-doctrine" />
+      <path value="$PROJECT_DIR$/vendor/novaway/feature-flag-bundle" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

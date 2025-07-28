@@ -1,0 +1,8 @@
+novaway_feature_flag:
+  default_manager: default
+  managers:
+    default:
+      factory: 'novaway_feature_flag.factory.array'
+      options:
+        features:
+          cart: false
