@@ -77,9 +77,8 @@ class HomepageTest extends WebTestCase
         $em->flush();
 
         $client->loginUser($user);
-        $client->request('GET', '/admin/lesson');
+        $client->request('GET', '/admin');
 
-        // Should redirect when not authenticated (status code 302)
         $this->assertResponseStatusCodeSame(200);
     }
 }

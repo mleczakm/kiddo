@@ -5,28 +5,63 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Admin;
 
 use App\Entity\Booking;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\Series;
 use App\Entity\Transfer;
 use App\Entity\User;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Symfony\Component\HttpFoundation\Response;
 
 use function Symfony\Component\Translation\t;
 
-#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {}
+
     #[\Override]
+    #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        return $this->redirect($adminUrlGenerator->setController(LessonCrudController::class)->generateUrl());
+        $em = $this->entityManager;
+        // Fetch booking statuses summary
+        $statuses = $em->createQuery(
+            'SELECT b.status, COUNT(b.id) as count FROM App\\Entity\\Booking b GROUP BY b.status'
+        )->getResult();
+
+        // Fetch recent bookings (last 10)
+        $recentBookings = $em->getRepository(\App\Entity\Booking::class)->findBy([], [
+            'createdAt' => 'DESC',
+        ], 10);
+
+        // Fetch lessons for the next 10 days (including today)
+        $today = new \DateTimeImmutable('today');
+        $end = $today->modify('+9 days')
+            ->setTime(23, 59, 59);
+        $lessons = $em->createQuery(
+            'SELECT l, b, u FROM App\\Entity\\Lesson l
+             LEFT JOIN l.bookings b
+             LEFT JOIN b.user u
+             WHERE l.metadata.schedule >= :today AND l.metadata.schedule <= :end
+                AND l.status = :status
+             ORDER BY l.metadata.schedule ASC'
+        )
+            ->setParameter('today', $today)
+            ->setParameter('end', $end)
+            ->setParameter('status', 'active')
+            ->getResult();
+
+        return $this->render('admin/dashboard.html.twig', [
+            'statuses' => $statuses,
+            'recentBookings' => $recentBookings,
+            'upcomingLessons' => $lessons,
+        ]);
     }
 
     #[\Override]
