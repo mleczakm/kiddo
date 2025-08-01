@@ -1,0 +1,309 @@
+<div {{ attributes }}
+        {% if modalOpened %}data-modal-state="open" {% else %}data-modal-state="closed"{% endif %}
+        {{ stimulus_controller('live', {
+            url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\BookingCancellationModal' })
+        }) }}
+        data-action="live:action:success->live#update">
+
+    <button data-action="live#action"
+            data-live-action-param="openModal"
+            class="bg-muted inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 border border-workshop-red text-workshop-red hover:bg-workshop-red/10 transition-colors"
+            type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-x w-4 h-4 mr-2">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+        </svg>
+        {{ 'booking.cancel'|trans }}
+    </button>
+
+    {# Overlay #}
+    <div
+            data-action="click->live#action"
+            data-live-action-param="closeModal"
+            class="{% if not modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
+            style="pointer-events: auto;" aria-hidden="true"></div>
+
+    {# Dialog #}
+    <dialog {% if modalOpened %}open{% endif %}
+            data-modal-target="dialog"
+            class="fixed left-1/2 top-1/2 z-50 max-w-[90vw] sm:max-w-md -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 rounded-lg max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
+        <button type="button"
+                data-action="live#action"
+                data-live-action-param="closeModal"
+                class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="h-4 w-4">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+            </svg>
+            <span class="sr-only">Close</span>
+        </button>
+        <div class="space-y-6">
+            <div class="flex flex-col space-y-1.5 text-center sm:text-left">
+                <h2 class="text-2xl font-bold font-display text-workshop-brown">
+                    {{ 'booking.cancel_booking'|trans }}
+                </h2>
+                <p class="text-muted-foreground">
+                    {{ 'booking.cancel_confirmation'|trans({'%lesson%': lesson.metadata.title}) }}
+                </p>
+            </div>
+
+            {# Lesson Card #}
+            <div class="rounded-lg border bg-muted/50">
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-semibold">{{ lesson.metadata.title }}</h3>
+                            <p class="text-sm text-muted-foreground">{{ lesson.metadata.category }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm space-x-4">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-calendar w-4 h-4 mr-1 text-workshop-red">
+                                <path d="M8 2v4"></path>
+                                <path d="M16 2v4"></path>
+                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                            <span>{{ lesson.metadata.schedule|date('d.m.Y') }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-clock w-4 h-4 mr-1 text-workshop-red">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>{{ lesson.metadata.schedule|date('H:i') }} - {{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Tabs Navigation #}
+            <div class="space-y-6">
+                <div role="tablist" class="flex items-center rounded-md bg-muted p-1 text-muted-foreground w-full">
+                    <button
+                            role="tab"
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                            data-state="{{ this.getTabState('reschedule') }}"
+                            data-action="live#action"
+                            data-live-action-param="selectTab"
+                            data-live-index-param="0"
+                            data-live-option-param="reschedule"
+                            aria-selected="{{ this.isTabActive('reschedule') ? 'true' : 'false' }}"
+                            {{ stimulus_controller('submit-button', {
+                                text: 'booking.reschedule'|trans
+                            }) }}
+                    >
+                        {{ 'booking.reschedule'|trans }}
+                    </button>
+                    <button
+                            role="tab"
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                            data-state="{{ this.getTabState('refund') }}"
+                            data-action="live#action"
+                            data-live-action-param="selectTab"
+                            data-live-index-param="1"
+                            data-live-option-param="refund"
+                            aria-selected="{{ this.isTabActive('refund') ? 'true' : 'false' }}"
+                    >
+                        {{ 'booking.refund'|trans }}
+                    </button>
+                    <button
+                            role="tab"
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                            data-state="{{ this.getTabState('cancel') }}"
+                            data-action="live#action"
+                            data-live-action-param="selectTab"
+                            data-live-index-param="2"
+                            data-live-option-param="cancel"
+                            aria-selected="{{ this.isTabActive('cancel') ? 'true' : 'false' }}"
+                    >
+                        {{ 'booking.other'|trans }}
+                    </button>
+                </div>
+
+                {# Reschedule Tab Content #}
+                <div role="tabpanel" class="space-y-4 {{ not this.isTabActive('reschedule') ? 'hidden' : '' }}"
+                     data-state="{{ this.getTabState('reschedule') }}">
+                    <h4 class="font-semibold">{{ 'booking.choose_alternative_workshop'|trans }}</h4>
+                    {% if this.availableLessons|length > 0 %}
+                        <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                            {% for availableLesson in this.availableLessons %}
+                                <div class="relative rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer transition-colors hover:border-workshop-red/50">
+                                    <div class="p-3">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-calendar w-4 h-4 mr-1 text-workshop-red">
+                                                        <path d="M8 2v4"></path>
+                                                        <path d="M16 2v4"></path>
+                                                        <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                                        <path d="M3 10h18"></path>
+                                                    </svg>
+                                                    <span class="text-sm font-medium">
+                                                        {{ availableLesson.metadata.schedule|format_datetime(pattern='EEEE, d MMMM', locale=app.request.locale) }}
+                                                    </span>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-clock w-4 h-4 mr-1 text-workshop-blue">
+                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                                    </svg>
+                                                    <span class="text-sm">
+                                                        {{ availableLesson.metadata.schedule|date('H:i') }}-{{ availableLesson.metadata.schedule|date_modify('+' ~ availableLesson.metadata.duration ~ ' minutes')|date('H:i') }}
+                                                    </span>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-users w-4 h-4 mr-1 text-green-600">
+                                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                                        <circle cx="9" cy="7" r="4"></circle>
+                                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                    </svg>
+                                                    <span class="text-sm text-green-600">
+                                                        {{ availableLesson.availableSpots ?? 0 }} {{ 'booking.spots'|trans }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="text-sm text-muted-foreground">
+                                                {% if isFeatureEnabled('lesson_location') %}
+                                                    {{ availableLesson.metadata.location }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <input
+                                                id="lesson_{{ availableLesson.id }}"
+                                                name="reschedule_lesson_id"
+                                                type="radio"
+                                                value="{{ availableLesson.id }}"
+                                                data-model="selectedLessonId"
+                                                class="absolute inset-0 h-full w-full cursor-pointer opacity-0 peer"
+                                                {% if selectedLessonId == availableLesson.id %}checked{% endif %}
+                                        >
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="rounded-lg border p-4 text-center text-muted-foreground">
+                            {{ 'booking.no_alternative_workshops'|trans }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Refund Tab Content #}
+                <div role="tabpanel" class="space-y-4 {{ not this.isTabActive('refund') ? 'hidden' : '' }}"
+                     data-state="{{ this.getTabState('refund') }}">
+                    <div class="space-y-2">
+                        <p class="text-sm text-muted-foreground">
+                            {{ 'booking.refund_description'|trans }}
+                        </p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
+                            <div class="space-y-3">
+                                <div class="flex items-center text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-arrow-right w-4 h-4 mr-2 text-workshop-red">
+                                        <path d="M5 12h14"></path>
+                                        <path d="m12 5 7 7-7 7"></path>
+                                    </svg>
+                                    <span>{{ 'booking.refund_point_1'|trans }}</span></div>
+                                <div class="flex items-center text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-arrow-right w-4 h-4 mr-2 text-workshop-red">
+                                        <path d="M5 12h14"></path>
+                                        <path d="m12 5 7 7-7 7"></path>
+                                    </svg>
+                                    <span>{{ 'booking.refund_point_2'|trans }}</span></div>
+                                <div class="flex items-center text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-arrow-right w-4 h-4 mr-2 text-workshop-red">
+                                        <path d="M5 12h14"></path>
+                                        <path d="m12 5 7 7-7 7"></path>
+                                    </svg>
+                                    <span>{{ 'booking.refund_point_3'|trans }}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Other Tab Content #}
+                <div role="tabpanel" class="space-y-4 {{ not this.isTabActive('cancel') ? 'hidden' : '' }}"
+                     data-state="{{ this.getTabState('cancel') }}">
+                    <div class="space-y-2">
+                        <label for="cancellation-reason" class="block text-sm font-medium">
+                            {{ 'booking.tell_us_more'|trans }}
+                        </label>
+                        <div class="relative">
+                            <textarea
+                                    id="cancellation-reason"
+                                    name="cancellation_reason"
+                                    rows="4"
+                                    data-model="cancellationReason"
+                                    class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    placeholder="{{ 'booking.please_specify'|trans }}"
+                            ></textarea>
+                            <p data-lov-id="src/components/CancellationDialog.tsx:224:16" data-lov-name="p"
+                               data-component-path="src/components/CancellationDialog.tsx" data-component-line="224"
+                               data-component-file="CancellationDialog.tsx" data-component-name="p"
+                               data-component-content="%7B%22text%22%3A%22An%20admin%20will%20review%20your%20request%20and%20contact%20you%20within%2024%20hours.%22%2C%22className%22%3A%22text-xs%20text-muted-foreground%20mt-2%22%7D"
+                               class="text-xs text-muted-foreground mt-2">{{ 'booking.tell_us_more_footer'|trans }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Footer Buttons #}
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t border-border">
+                <button
+                        type="button"
+                        data-action="live#action"
+                        data-live-action-param="closeModal"
+                        class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                >
+                    {{ 'booking.keep_booking'|trans }}
+                </button>
+                <button
+                        type="submit"
+                        data-action="live#action"
+                        data-live-action-param="cancelBooking"
+                        class="inline-flex h-10 items-center justify-center rounded-md bg-workshop-red px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-workshop-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-workshop-red focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                        {% if this.isButtonDisabled() %}disabled{% endif %}
+                >
+                    {% if this.selectedOption == 'reschedule' %}
+                        {{ 'booking.reschedule'|trans }}
+                    {% elseif this.selectedOption == 'refund' %}
+                        {{ 'booking.refund'|trans }}
+                    {% elseif this.selectedOption == 'cancel' %}
+                        {{ 'booking.cancel'|trans }}
+                    {% endif %}
+                </button>
+            </div>
+            <p class="mt-3 text-sm text-gray-500">
+                {{ 'booking.cancellation_policy'|trans }}
+            </p>
+        </div>
+    </dialog>
+</div>

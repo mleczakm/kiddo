@@ -273,6 +273,38 @@ lesson:
   accept_terms_and_close: Zaakceptuj regulamin
   fully_booked: Brak wolnych miejsc
   no_lessons_found: W wybranym okresie brak zajęć spełniających kryteria.
+  
+booking:
+  cancel: Anuluj rezerwację
+  cancel_booking: Anuluj rezerwację
+  cancel_confirmation: 'Czy na pewno chcesz anulować tę rezerwację?'
+  reason_for_cancellation: 'Powód anulowania:'
+  reason_refund_description: 'Otrzymasz zwrot środków zgodnie z naszą polityką zwrotów'
+  no_available_lessons: 'Brak dostępnych terminów do przełożenia'
+  available_lessons_count: 'Dostępne terminy: {count}'
+  select_new_lesson: 'Wybierz nowy termin zajęć'
+  confirm_reschedule: 'Potwierdź przełożenie'
+  cancellation_policy: 'Anulowanie rezerwacji możliwe jest do 24h przed rozpoczęciem zajęć.'
+  spots_available: 'Wolne miejsca: {count}'
+  reason_reschedule: Przełożenie na inny termin
+  reason_refund: Zwrot środków
+  reason_other: Inny (proszę podać szczegóły)
+  please_specify: Daj nam znać, dlaczego musisz odwołać rezerwację i jak możemy Ci pomóc w przyszłości...
+  confirm_cancellation: Potwierdź anulowanie
+  cancellation_not_available: Minął czas na anulowanie rezerwacji
+  tell_us_more: "Prosimy o podanie powodu rezygnacji:"
+  tell_us_more_footer: Administrator rozpatrzy Twoją prośbę i skontaktuje się z Tobą w ciągu 24 godzin.
+  reschedule: Przełóż termin
+  refund: Poproś o zwrot
+  other: Inny powód
+  no_alternative_workshops: Brak dostępnych zajęć na które byłaby możliwość przełożenia terminu
+  refund_description: Zwrot kwoty za rezerwację
+  choose_alternative_workshop: Wybierz inny termin zajęć
+  refund_point_1: Pełny zwrot środków zostanie dokonany na Twoje konto bankowe.
+  refund_point_2: "Czas przetwarzania: 3–5 dni roboczych."
+  refund_point_3: Anulowanie musi zostać dokonane co najmniej 24 godziny przed rozpoczęciem warsztatu.
+  keep_booking: "Zachowaj rezerwację"
+
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
   instruction_2: "na kwotę"
@@ -314,7 +346,7 @@ dashboard:
   browse_workshops: Przeglądaj dostępne warsztaty
   payment:
     paid: Opłacone
-  confirm_cancel: Czy na pewno chcesz anulować tę rezerwację?
+  confirm_cancel: Czy na pewno chcesz anulować tę rezerwację? Wybierz sposób
   single_session: Pojedyncze zajęcia
   actions:
     cancel: Anuluj
@@ -335,3 +367,5 @@ from_day_of_week: >-
       7   {z niedzieli {date}, o {hour}}
       other    {asdasdasd}
   }
+common:
+  cancel: Anuluj

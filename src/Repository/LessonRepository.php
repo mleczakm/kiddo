@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Lesson;
+use App\Entity\Series;
+use App\Entity\Child;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +19,32 @@ class LessonRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Lesson::class);
+    }
+    
+    /**
+     * Finds available lessons for rescheduling a booking.
+     *
+     * @param Series $series The series to find lessons in
+     * @param \DateTimeInterface $afterDate Only return lessons after this date
+     * @param int $maxResults Maximum number of results to return
+     * @return Lesson[]
+     */
+    public function findAvailableLessonsForReschedule(
+        Series $series,
+        \DateTimeInterface $afterDate,
+        int $maxResults = 10
+    ): array {
+        $qb = $this->createQueryBuilder('l');
+        
+        return $qb
+            ->andWhere('l.metadata.schedule > :afterDate')
+            ->andWhere('l.status = :status')
+            ->setParameter('afterDate', $afterDate)
+            ->setParameter('status', 'active')
+            ->orderBy('l.metadata.schedule', 'ASC')
+            ->setMaxResults($maxResults)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

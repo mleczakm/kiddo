@@ -18,12 +18,26 @@ form:
     dont_have_account: Don't have an account yet?
     register: Register
     
-    verify_mail: >-
-      If you have an account with us, we've sent a login link to the provided email address.
-      <br/>
-      <br/>
-      Please check your inbox!
-    mail_sent_header: Welcome!
+booking:
+  cancel:
+  cancel_booking: Cancel Booking
+  cancel_confirmation: Are you sure you want to cancel this booking?
+  reason_for_cancellation: Reason for Cancellation
+  reason_reschedule: Reschedule to another lesson
+  reason_refund: Request a refund
+  reason_other: Other (please specify)
+  please_specify: Please provide more details
+  confirm_cancellation: Confirm Cancellation
+  cancellation_not_available: Cancellation not available
+  no_available_lessons: No available lessons
+  verify_mail: >-
+    If you have an account with us, we've sent a login link to the provided email address.
+    <br/>
+    <br/>
+    Please check your inbox!
+  mail_sent_header: Welcome!
+  tell_us_more: Let us know why you need to cancel and how we can help you in the future...
+  tell_us_more_footer: An admin will review your request and contact you within 24 hours.
 
 dashboard:
   status:

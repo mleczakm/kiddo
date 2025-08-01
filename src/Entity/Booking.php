@@ -182,4 +182,9 @@ class Booking
     {
         return $this->status === self::STATUS_CONFIRMED;
     }
+
+    public function canBeRescheduledFor(Lesson $lesson): bool
+    {
+        return $this->isConfirmed() && $this->lessons->contains($lesson) && $lesson->cancellationAvailable();
+    }
 }

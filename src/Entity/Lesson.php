@@ -7,6 +7,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: 'App\\Repository\\LessonRepository')]
@@ -147,5 +148,10 @@ class Lesson
         return $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
             ->map(fn(Booking $booking): User => $booking->getUser())
             ->toArray();
+    }
+
+    public function cancellationAvailable(): bool
+    {
+        return true || $this->status === 'active' && $this->metadata->schedule >= Clock::get()->now()->modify('+24h');
     }
 }
