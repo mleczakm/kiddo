@@ -1950,6 +1950,10 @@ body {
     border-color: rgb(227 70 70 / var(--tw-border-opacity))
 }
 
+.hover\:border-workshop-red\/50:hover {
+    border-color: rgb(227 70 70 / 0.5);
+}
+
 .border-workshop-yellow {
     --tw-border-opacity: 1;
     border-color: rgb(247 195 67 / var(--tw-border-opacity))
