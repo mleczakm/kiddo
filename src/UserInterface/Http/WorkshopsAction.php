@@ -31,13 +31,11 @@ class WorkshopsAction extends AbstractController
                 $referenceDate = $now;
             }
         } else {
-            $referenceDate = (int) $now->format('N') >= 6 ?
-                $now->modify('next monday') :
-                $now->modify('monday this week');
+            $referenceDate = $now;
         }
 
-        $startDate = $referenceDate->modify('monday this week');
-        $endDate = $startDate->modify('sunday this week 23:59:59');
+        $startDate = $referenceDate;
+        $endDate = $startDate->modify('+7 days');
 
         $query = $entityManager->createQuery(<<<DQL
             SELECT l

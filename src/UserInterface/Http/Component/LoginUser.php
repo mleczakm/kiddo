@@ -39,10 +39,7 @@ class LoginUser extends AbstractController
         /** @var FormInterface<array{email: string}> $form */
         $form = $this->createFormBuilder()
             ->add('email', EmailType::class, [
-                'constraints' => [
-                    new Email(),
-                    new NotBlank()
-                ],
+                'constraints' => [new Email(), new NotBlank()],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'form.login.submit',

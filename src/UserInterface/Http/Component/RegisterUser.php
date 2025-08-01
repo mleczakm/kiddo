@@ -59,7 +59,7 @@ class RegisterUser extends AbstractController
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Email(),
-                    new Assert\Unique(normalizer: mb_strtolower(...))
+                    new Assert\Unique(normalizer: mb_strtolower(...)),
                 ],
 
             ])
