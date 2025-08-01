@@ -5180,16 +5180,16 @@
         },
         {
             "name": "symfony/brevo-mailer",
-            "version": "v7.3.0",
+            "version": "v7.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/brevo-mailer.git",
-                "reference": "f8eaa8d16fda38ce31548130aee8e90d5d94d32d"
+                "reference": "e3efdac57c76eb0a504c2000aaa53abf370ea4ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/brevo-mailer/zipball/f8eaa8d16fda38ce31548130aee8e90d5d94d32d",
-                "reference": "f8eaa8d16fda38ce31548130aee8e90d5d94d32d",
+                "url": "https://api.github.com/repos/symfony/brevo-mailer/zipball/e3efdac57c76eb0a504c2000aaa53abf370ea4ef",
+                "reference": "e3efdac57c76eb0a504c2000aaa53abf370ea4ef",
                 "shasum": ""
             },
             "require": {
@@ -5229,7 +5229,7 @@
             "description": "Symfony Brevo Mailer Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/brevo-mailer/tree/v7.3.0"
+                "source": "https://github.com/symfony/brevo-mailer/tree/v7.3.2"
             },
             "funding": [
                 {
@@ -5241,11 +5241,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-28T08:24:38+00:00"
+            "time": "2025-07-24T11:52:02+00:00"
         },
         {
             "name": "symfony/cache",
