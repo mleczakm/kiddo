@@ -56,7 +56,12 @@ class RegisterUser extends AbstractController
                 ],
             ])
             ->add('email', EmailType::class, [
-                'constraints' => [new Assert\NotBlank()],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Email(),
+                    new Assert\Unique(normalizer: mb_strtolower(...))
+                ],
+
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'form.register.submit',

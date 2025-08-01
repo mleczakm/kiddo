@@ -6,7 +6,11 @@ namespace App\Application\Command;
 
 readonly class SendLoginNotification
 {
+    public string $email;
+
     public function __construct(
-        public string $email
-    ) {}
+        string $email
+    ) {
+        $this->email = mb_strtolower($email);
+    }
 }
