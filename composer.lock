@@ -5999,16 +5999,16 @@
         },
         {
             "name": "symfony/doctrine-messenger",
-            "version": "v7.3.0",
+            "version": "v7.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/doctrine-messenger.git",
-                "reference": "099d9cd03f889c31c90d406fed07f25dc3732487"
+                "reference": "31ef09fa3185c8ef9a331170b7a9dd891047f5cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/099d9cd03f889c31c90d406fed07f25dc3732487",
-                "reference": "099d9cd03f889c31c90d406fed07f25dc3732487",
+                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/31ef09fa3185c8ef9a331170b7a9dd891047f5cb",
+                "reference": "31ef09fa3185c8ef9a331170b7a9dd891047f5cb",
                 "shasum": ""
             },
             "require": {
@@ -6051,7 +6051,7 @@
             "description": "Symfony Doctrine Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/doctrine-messenger/tree/v7.3.0"
+                "source": "https://github.com/symfony/doctrine-messenger/tree/v7.3.2"
             },
             "funding": [
                 {
@@ -6063,11 +6063,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-26T11:30:13+00:00"
+            "time": "2025-07-30T17:13:41+00:00"
         },
         {
             "name": "symfony/dotenv",
@@ -7505,16 +7509,16 @@
         },
         {
             "name": "symfony/messenger",
-            "version": "v7.3.1",
+            "version": "v7.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/messenger.git",
-                "reference": "716c89b86ce58c4946d436d862694971c999d1aa"
+                "reference": "f990f0d09deaa45955593be6aafbafe73b0682b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/messenger/zipball/716c89b86ce58c4946d436d862694971c999d1aa",
-                "reference": "716c89b86ce58c4946d436d862694971c999d1aa",
+                "url": "https://api.github.com/repos/symfony/messenger/zipball/f990f0d09deaa45955593be6aafbafe73b0682b9",
+                "reference": "f990f0d09deaa45955593be6aafbafe73b0682b9",
                 "shasum": ""
             },
             "require": {
@@ -7574,7 +7578,7 @@
             "description": "Helps applications send and receive messages to/from other applications or via message queues",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/messenger/tree/v7.3.1"
+                "source": "https://github.com/symfony/messenger/tree/v7.3.2"
             },
             "funding": [
                 {
@@ -7586,11 +7590,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-27T19:55:54+00:00"
+            "time": "2025-07-15T11:36:08+00:00"
         },
         {
             "name": "symfony/mime",
