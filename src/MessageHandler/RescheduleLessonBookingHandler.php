@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Entity\Booking;
+use App\Entity\User;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
 class RescheduleLessonBookingHandler
@@ -19,87 +21,110 @@ class RescheduleLessonBookingHandler
         private readonly BookingRepository $bookingRepository,
         private readonly LessonRepository $lessonRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly LoggerInterface $logger
-    ) {
-    }
+        private readonly LoggerInterface $logger,
+        private readonly WorkflowInterface $bookingStateMachine
+    ) {}
 
     public function __invoke(RescheduleLessonBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
-        
-        if (!$booking) {
-            $this->logger->error('Booking not found for rescheduling', ['bookingId' => $command->getBookingId()]);
+
+        if (! $booking) {
+            $this->logger->error('Booking not found for rescheduling', [
+                'bookingId' => $command->getBookingId(),
+                'rescheduledById' => $command->getRescheduledById(),
+            ]);
             return;
         }
-        
+
         if ($booking->isCancelled()) {
-            $this->logger->error('Cannot reschedule a cancelled booking', ['bookingId' => $booking->getId()]);
+            $this->logger->error('Cannot reschedule a cancelled booking', [
+                'bookingId' => $booking->getId(),
+                'rescheduledById' => $command->getRescheduledById(),
+            ]);
             return;
         }
-        
+
         $oldLesson = $booking->getLesson();
-        if (!$oldLesson || $oldLesson->getId() !== $command->getOldLessonId()) {
-            $this->logger->error('Original lesson not found or does not match booking', [
+        if (! $oldLesson || $oldLesson->getId() !== $command->getOldLessonId()) {
+            $this->logger->error('Old lesson not found in booking', [
                 'bookingId' => $booking->getId(),
-                'oldLessonId' => $command->getOldLessonId()
+                'oldLessonId' => $command->getOldLessonId(),
+                'rescheduledById' => $command->getRescheduledById(),
             ]);
             return;
         }
-        
+
         $newLesson = $this->lessonRepository->find($command->getNewLessonId());
-        if (!$newLesson) {
-            $this->logger->error('New lesson not found for rescheduling', [
-                'bookingId' => $booking->getId(),
-                'newLessonId' => $command->getNewLessonId()
+        if (! $newLesson) {
+            $this->logger->error('New lesson not found', [
+                'newLessonId' => $command->getNewLessonId(),
+                'rescheduledById' => $command->getRescheduledById(),
             ]);
             return;
         }
-        
-        // Check if the new lesson has available spots
-        if ($newLesson->isFullyBooked()) {
-            $this->logger->error('Cannot reschedule to a fully booked lesson', [
-                'bookingId' => $booking->getId(),
-                'newLessonId' => $newLesson->getId()
-            ]);
-            return;
-        }
-        
-        try {
-            // Create a new booking for the new lesson
-            $newBooking = clone $booking;
-            $newBooking->setLesson($newLesson);
-            $newBooking->setRescheduledFrom($booking);
-            $newBooking->setRescheduledAt(new \DateTimeImmutable());
-            $newBooking->setRescheduledBy($command->getRescheduledById());
-            $newBooking->setRescheduleReason($command->getReason());
-            
-            // Cancel the old booking
-            $booking->cancel(sprintf('Rescheduled to lesson #%d. %s', 
-                $newLesson->getId(),
-                $command->getReason() ?? ''
-            ));
-            
-            $this->entityManager->persist($newBooking);
-            $this->entityManager->persist($booking);
-            $this->entityManager->flush();
-            
-            $this->logger->info('Booking rescheduled successfully', [
-                'bookingId' => $booking->getId(),
-                'oldLessonId' => $oldLesson->getId(),
+
+        if ($newLesson->getAvailableSpots() <= 0) {
+            $this->logger->error('No available spots in the new lesson', [
                 'newLessonId' => $newLesson->getId(),
-                'rescheduledById' => $command->getRescheduledById()
+                'availableSpots' => $newLesson->getAvailableSpots(),
+                'rescheduledById' => $command->getRescheduledById(),
             ]);
-            
-            // Here you can add additional logic like sending notifications, etc.
-            
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to reschedule booking', [
-                'bookingId' => $booking->getId(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            throw $e;
+            return;
         }
+
+        // Create a new booking for the new lesson with the same user and payment
+        $newBooking = new Booking(user: $booking->getUser(), payment: $booking->getPayment(), lessons: $newLesson);
+
+        // Copy relevant data from the old booking
+        $newBooking->setNotes('Rescheduled from booking #' . $booking->getId()->toRfc4122());
+        $newBooking->setCreatedAt(new \DateTimeImmutable());
+        $newBooking->setUpdatedAt(new \DateTimeImmutable());
+
+        // Set reschedule metadata on the new booking
+        $newBooking->setRescheduledFrom($oldLesson);
+        $newBooking->setRescheduledBy($this->entityManager->getReference(User::class, $command->getRescheduledById()));
+        $newBooking->setRescheduleReason($command->getReason() ?? 'Rescheduled to new lesson');
+
+        // Apply workflow transition to cancel the old booking with reschedule reason
+        if (! $this->bookingStateMachine->can($booking, 'reschedule')) {
+            $this->logger->error('Cannot apply reschedule transition to booking', [
+                'bookingId' => $booking->getId()
+                    ->toRfc4122(),
+                'status' => $booking->getStatus(),
+                'availableTransitions' => $this->bookingStateMachine->getEnabledTransitions($booking),
+            ]);
+            throw new \RuntimeException('Cannot reschedule this booking in its current state');
+        }
+
+        // Apply the reschedule transition to the old booking
+        $this->bookingStateMachine->apply($booking, 'reschedule', [
+            'reason' => 'Rescheduled to new lesson #' . $newLesson->getId()->toRfc4122(),
+            'new_booking_id' => $newBooking->getId()
+                ->toRfc4122(),
+        ]);
+
+        // Update the old booking with reschedule details
+        $booking->setRescheduledFrom($oldLesson);
+        $booking->setRescheduledBy($this->entityManager->getReference(User::class, $command->getRescheduledById()));
+        $booking->setRescheduleReason($command->getReason());
+        $booking->setUpdatedAt(new \DateTimeImmutable());
+
+        // Persist the new booking
+        $this->entityManager->persist($newBooking);
+
+        $this->logger->info('Booking rescheduled successfully', [
+            'oldBookingId' => $booking->getId()
+                ->toRfc4122(),
+            'newBookingId' => $newBooking->getId()
+                ->toRfc4122(),
+            'oldLessonId' => $oldLesson->getId()
+                ->toRfc4122(),
+            'newLessonId' => $newLesson->getId()
+                ->toRfc4122(),
+            'rescheduledById' => $command->getRescheduledById()
+                ->toRfc4122(),
+            'reason' => $command->getReason(),
+        ]);
     }
 }

@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\Lesson;
 use App\Entity\Series;
-use App\Entity\Child;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,14 +19,17 @@ class LessonRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Lesson::class);
     }
-    
+
     /**
      * Finds available lessons for rescheduling a booking.
      *
      * @param Series $series The series to find lessons in
      * @param \DateTimeInterface $afterDate Only return lessons after this date
      * @param int $maxResults Maximum number of results to return
-     * @return Lesson[]
+     * @return array<int, Lesson>
+     */
+    /**
+     * @return array<int, Lesson>
      */
     public function findAvailableLessonsForReschedule(
         Series $series,
@@ -35,8 +37,9 @@ class LessonRepository extends ServiceEntityRepository
         int $maxResults = 10
     ): array {
         $qb = $this->createQueryBuilder('l');
-        
-        return $qb
+
+        /** @var array<int, Lesson> $result */
+        $result = $qb
             ->andWhere('l.metadata.schedule > :afterDate')
             ->andWhere('l.status = :status')
             ->setParameter('afterDate', $afterDate)
@@ -45,6 +48,8 @@ class LessonRepository extends ServiceEntityRepository
             ->setMaxResults($maxResults)
             ->getQuery()
             ->getResult();
+
+        return $result;
     }
 
     /**

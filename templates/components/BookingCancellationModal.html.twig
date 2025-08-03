@@ -137,7 +137,7 @@
                     {% if this.availableLessons|length > 0 %}
                         <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
                             {% for availableLesson in this.availableLessons %}
-                                <div class="relative rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer transition-colors hover:border-workshop-red/50">
+                                <div class="relative rounded-lg border text-card-foreground shadow-sm cursor-pointer transition-colors {% if selectedLessonId == availableLesson.id %}border-workshop-red bg-workshop-red/5{% else %}hover:border-workshop-red/50{% endif %}">
                                     <div class="p-3">
                                         <div class="flex justify-between items-center">
                                             <div class="flex items-center space-x-4">
@@ -182,11 +182,11 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div class="text-sm text-muted-foreground">
-                                                {% if isFeatureEnabled('lesson_location') %}
+                                            {% if isFeatureEnabled('lesson_location') and availableLesson.metadata.location is defined %}
+                                                <div class="text-sm text-muted-foreground">
                                                     {{ availableLesson.metadata.location }}
-                                                {% endif %}
-                                            </div>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                         <input
                                                 id="lesson_{{ availableLesson.id }}"
@@ -290,7 +290,7 @@
                         data-action="live#action"
                         data-live-action-param="cancelBooking"
                         class="inline-flex h-10 items-center justify-center rounded-md bg-workshop-red px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-workshop-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-workshop-red focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                        {% if this.isButtonDisabled() %}disabled{% endif %}
+                        {% if this.selectedOption == 'reschedule' and not this.selectedLessonId %}disabled{% endif %}
                 >
                     {% if this.selectedOption == 'reschedule' %}
                         {{ 'booking.reschedule'|trans }}

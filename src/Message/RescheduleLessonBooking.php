@@ -4,33 +4,34 @@ declare(strict_types=1);
 
 namespace App\Message;
 
+use Symfony\Component\Uid\Ulid;
+
 final class RescheduleLessonBooking
 {
     public function __construct(
-        private int $bookingId,
-        private int $oldLessonId,
-        private int $newLessonId,
-        private int $rescheduledById,
+        private Ulid $bookingId,
+        private Ulid $oldLessonId,
+        private Ulid $newLessonId,
+        private Ulid $rescheduledById,
         private ?string $reason = null
-    ) {
-    }
+    ) {}
 
-    public function getBookingId(): int
+    public function getBookingId(): Ulid
     {
         return $this->bookingId;
     }
 
-    public function getOldLessonId(): int
+    public function getOldLessonId(): Ulid
     {
         return $this->oldLessonId;
     }
 
-    public function getNewLessonId(): int
+    public function getNewLessonId(): Ulid
     {
         return $this->newLessonId;
     }
 
-    public function getRescheduledById(): int
+    public function getRescheduledById(): Ulid
     {
         return $this->rescheduledById;
     }

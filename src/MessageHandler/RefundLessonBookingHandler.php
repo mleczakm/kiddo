@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Entity\Booking;
+use App\Entity\User;
 use App\Message\RefundLessonBooking;
 use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
 class RefundLessonBookingHandler
@@ -17,80 +19,70 @@ class RefundLessonBookingHandler
     public function __construct(
         private readonly BookingRepository $bookingRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly LoggerInterface $logger
-    ) {
-    }
+        private readonly LoggerInterface $logger,
+        private readonly WorkflowInterface $bookingStateMachine
+    ) {}
 
     public function __invoke(RefundLessonBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
-        
-        if (!$booking) {
-            $this->logger->error('Booking not found for refund', ['bookingId' => $command->getBookingId()]);
+
+        if (! $booking) {
+            $this->logger->error('Booking not found for refund', [
+                'bookingId' => $command->getBookingId(),
+                'refundedById' => $command->getRefundedById(),
+            ]);
             return;
         }
-        
-        if ($booking->isRefunded()) {
-            $this->logger->info('Booking already refunded', ['bookingId' => $booking->getId()]);
-            return;
-        }
-        
+
         $lesson = $booking->getLesson();
-        if (!$lesson || $lesson->getId() !== $command->getLessonId()) {
-            $this->logger->error('Lesson not found or does not match booking for refund', [
+        if (! $lesson) {
+            $this->logger->error('No lesson found in booking', [
                 'bookingId' => $booking->getId(),
-                'lessonId' => $command->getLessonId()
+                'refundedById' => $command->getRefundedById(),
             ]);
             return;
         }
-        
-        try {
-            // Process the refund (this is a placeholder - integrate with your payment processor)
-            $refundAmount = $this->processRefund($booking, $command->getRefundedById());
-            
-            // Mark the booking as refunded
-            $booking->refund($command->getReason(), $refundAmount, $command->getRefundedById());
-            
-            $this->entityManager->persist($booking);
-            $this->entityManager->flush();
-            
-            $this->logger->info('Booking refund processed successfully', [
-                'bookingId' => $booking->getId(),
-                'refundAmount' => $refundAmount,
-                'refundedById' => $command->getRefundedById()
+
+        // Check if we can request a refund
+        if (! $this->bookingStateMachine->can($booking, 'request_refund')) {
+            $this->logger->error('Cannot apply refund transition to booking', [
+                'bookingId' => $booking->getId()
+                    ->toRfc4122(),
+                'status' => $booking->getStatus(),
+                'availableTransitions' => $this->bookingStateMachine->getEnabledTransitions($booking),
             ]);
-            
-            // Here you can add additional logic like sending notifications, etc.
-            
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to process booking refund', [
-                'bookingId' => $booking->getId(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            throw $e;
+            throw new \RuntimeException('Cannot request refund for this booking in its current state');
         }
-    }
-    
-    /**
-     * Process the refund with the payment processor.
-     * This is a placeholder - implement according to your payment processor's API.
-     */
-    private function processRefund(Booking $booking, int $refundedById): float
-    {
-        // TODO: Implement actual refund logic with your payment processor
-        // This is just a placeholder that returns the full amount
-        
-        $refundAmount = $booking->getAmountPaid();
-        
-        // Log the refund for now - in a real implementation, this would call the payment processor's API
-        $this->logger->info('Processing refund', [
-            'bookingId' => $booking->getId(),
-            'amount' => $refundAmount,
-            'refundedBy' => $refundedById
+
+        // Apply the refund request transition
+        $this->bookingStateMachine->apply($booking, 'request_refund', [
+            'reason' => $command->getReason(),
         ]);
-        
-        return $refundAmount;
+
+        // Update booking with refund details
+        $refundedBy = $this->entityManager->getReference(User::class, $command->getRefundedById());
+        $booking->setRefundedBy($refundedBy);
+        $booking->setUpdatedAt(new \DateTimeImmutable());
+
+        // Add note with refund details
+        $refundAmount = $booking->getAmountPaid(); // Mocked amount, to be implemented later
+        $note = sprintf(
+            "Refund requested.\nReason: %s\nSuggested amount to be refunded: %.2f PLN",
+            $command->getReason() ?? 'No reason provided',
+            $refundAmount / 100 // Convert from cents to PLN
+        );
+        $booking->setNotes($note);
+
+        $this->logger->info('Booking refund requested successfully', [
+            'bookingId' => $booking->getId()
+                ->toRfc4122(),
+            'lessonId' => $lesson->getId()
+                ->toRfc4122(),
+            'refundedById' => $command->getRefundedById()
+                ->toRfc4122(),
+            'reason' => $command->getReason(),
+            'refundAmount' => $refundAmount,
+        ]);
     }
 }

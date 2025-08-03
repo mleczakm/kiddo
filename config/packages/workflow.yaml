@@ -15,6 +15,7 @@ framework:
                 - confirmed
                 - cancelled
                 - completed
+                - refund_requested
             transitions:
                 confirm:
                     guard: "subject.canBeConfirmed()"
@@ -24,10 +25,21 @@ framework:
                     guard: "subject.canBeCancelled()"
                     from: [pending, confirmed]
                     to: cancelled
+                request_refund:
+                    guard: "subject.canRequestRefund()"
+                    from: [pending, confirmed]
+                    to: refund_requested
                 complete:
                     guard: "subject.canBeCompleted()"
                     from: confirmed
                     to: completed
+                reschedule:
+                    guard: "subject.canBeRescheduled()"
+                    from: [pending, confirmed]
+                    to: cancelled
+                    metadata:
+                        new_booking_required: true
+                        reason: 'rescheduled'
 
         payment:
             type: 'state_machine'

@@ -152,6 +152,6 @@ class Lesson
 
     public function cancellationAvailable(): bool
     {
-        return true || $this->status === 'active' && $this->metadata->schedule >= Clock::get()->now()->modify('+24h');
+        return $this->status === 'active' && $this->metadata->schedule >= Clock::get()->now()->modify('+24h');
     }
 }

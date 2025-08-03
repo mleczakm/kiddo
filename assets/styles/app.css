@@ -2088,6 +2088,100 @@ body {
     background-color: rgb(238 203 233 / var(--tw-bg-opacity))
 }
 
+.bg-foreground {
+    background-color: hsl(var(--foreground));
+}
+.bg-gray-100 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+}
+.bg-green-100 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1));
+}
+.bg-muted {
+    background-color: hsl(var(--muted));
+}
+.bg-muted\/30 {
+    background-color: hsl(var(--muted) / 0.3);
+}
+.bg-muted\/50 {
+    background-color: hsl(var(--muted) / 0.5);
+}
+.bg-popover {
+    background-color: hsl(var(--popover));
+}
+.bg-primary {
+    background-color: hsl(var(--primary));
+}
+.bg-red-50 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
+}
+.bg-secondary {
+    background-color: hsl(var(--secondary));
+}
+.bg-sidebar {
+    background-color: hsl(var(--sidebar-background));
+}
+.bg-sidebar-border {
+    background-color: hsl(var(--sidebar-border));
+}
+.bg-transparent {
+    background-color: transparent;
+}
+.bg-white {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+.bg-workshop-blue {
+    --tw-bg-opacity: 1;
+    background-color: rgb(113 195 219 / var(--tw-bg-opacity, 1));
+}
+.bg-workshop-blue\/10 {
+    background-color: rgb(113 195 219 / 0.1);
+}
+.bg-workshop-blue\/20 {
+    background-color: rgb(113 195 219 / 0.2);
+}
+.bg-workshop-green {
+    --tw-bg-opacity: 1;
+    background-color: rgb(152 201 60 / var(--tw-bg-opacity, 1));
+}
+.bg-workshop-green\/20 {
+    background-color: rgb(152 201 60 / 0.2);
+}
+.bg-workshop-pink {
+    --tw-bg-opacity: 1;
+    background-color: rgb(238 203 233 / var(--tw-bg-opacity, 1));
+}
+.bg-workshop-pink\/10 {
+    background-color: rgb(238 203 233 / 0.1);
+}
+.bg-workshop-pink\/20 {
+    background-color: rgb(238 203 233 / 0.2);
+}
+.bg-workshop-red {
+    --tw-bg-opacity: 1;
+    background-color: rgb(227 70 70 / var(--tw-bg-opacity, 1));
+}
+.bg-workshop-red\/10 {
+    background-color: rgb(227 70 70 / 0.1);
+}
+.bg-workshop-red\/5 {
+    background-color: rgb(227 70 70 / 0.05);
+}
+.bg-workshop-yellow {
+    --tw-bg-opacity: 1;
+    background-color: rgb(247 195 67 / var(--tw-bg-opacity, 1));
+}
+.bg-workshop-yellow\/10 {
+    background-color: rgb(247 195 67 / 0.1);
+}
+.bg-workshop-yellow\/20 {
+    background-color: rgb(247 195 67 / 0.2);
+}
+
 .bg-workshop-pink\/10 {
     background-color: #eecbe91a
 }

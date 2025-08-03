@@ -20,6 +20,8 @@ class Booking
 
     public const STATUS_COMPLETED = 'completed';
 
+    public const STATUS_REFUNDED = 'refunded';
+
     #[ORM\Id]
     #[ORM\Column(type: 'ulid', unique: true)]
     private Ulid $id;
@@ -36,8 +38,25 @@ class Booking
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\ManyToOne(targetEntity: Lesson::class)]
+    private ?Lesson $rescheduledFrom = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $rescheduledBy = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $rescheduleReason = null;
+
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $cancelledBy = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $refundedBy = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $notes = null;
@@ -108,8 +127,6 @@ class Booking
             throw new \InvalidArgumentException('Invalid booking status');
         }
 
-
-
         $this->status = $status;
         $this->updatedAt = new \DateTimeImmutable();
 
@@ -119,11 +136,6 @@ class Booking
     public function canBeConfirmed(): bool
     {
         return $this->status === self::STATUS_PENDING;
-    }
-
-    public function canBeCancelled(): bool
-    {
-        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true);
     }
 
     public function canBeCompleted(): bool
@@ -149,6 +161,12 @@ class Booking
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+        return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
@@ -185,6 +203,94 @@ class Booking
 
     public function canBeRescheduledFor(Lesson $lesson): bool
     {
-        return $this->isConfirmed() && $this->lessons->contains($lesson) && $lesson->cancellationAvailable();
+        if (! $this->isConfirmed()) {
+            return false;
+        }
+
+        return $this->lessons->contains($lesson);
+    }
+
+    public function canBeRescheduled(): bool
+    {
+        return $this->status === self::STATUS_PENDING || $this->status === self::STATUS_CONFIRMED;
+    }
+
+    public function canRequestRefund(): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true);
+    }
+
+    public function canBeCancelled(): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true);
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === self::STATUS_CANCELLED;
+    }
+
+    public function isRefunded(): bool
+    {
+        return $this->status === self::STATUS_REFUNDED;
+    }
+
+    public function getLesson(): ?Lesson
+    {
+        return $this->lessons->first() ?: null;
+    }
+
+    public function getAmountPaid(): int
+    {
+        if ($this->payment === null) {
+            return 0;
+        }
+
+        return $this->payment->getAmount()
+            ->getMinorAmount()
+            ->toInt();
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function setRefundedBy(?User $user): self
+    {
+        $this->refundedBy = $user;
+        return $this;
+    }
+
+    public function setCancelledBy(?User $user): self
+    {
+        $this->cancelledBy = $user;
+        return $this;
+    }
+
+    public function setLesson(Lesson $lesson): self
+    {
+        $this->lessons->clear();
+        $this->lessons->add($lesson);
+        return $this;
+    }
+
+    public function setRescheduledFrom(?Lesson $lesson): self
+    {
+        $this->rescheduledFrom = $lesson;
+        return $this;
+    }
+
+    public function setRescheduledBy(?User $user): self
+    {
+        $this->rescheduledBy = $user;
+        return $this;
+    }
+
+    public function setRescheduleReason(?string $reason): self
+    {
+        $this->rescheduleReason = $reason;
+        return $this;
     }
 }
