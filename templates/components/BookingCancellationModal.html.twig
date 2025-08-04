@@ -288,7 +288,8 @@
                 <button
                         type="submit"
                         data-action="live#action"
-                        data-live-action-param="cancelBooking"
+                        data-live-action-param="processCancellation"
+                        data-live-type-param="{{ this.selectedOption }}"
                         class="inline-flex h-10 items-center justify-center rounded-md bg-workshop-red px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-workshop-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-workshop-red focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                         {% if this.selectedOption == 'reschedule' and not this.selectedLessonId %}disabled{% endif %}
                 >

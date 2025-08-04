@@ -32,7 +32,8 @@ class RescheduleLessonBookingHandler
         if (! $booking) {
             $this->logger->error('Booking not found for rescheduling', [
                 'bookingId' => $command->getBookingId(),
-                'rescheduledById' => $command->getRescheduledById(),
+                'rescheduledById' => $command->getRescheduledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -40,7 +41,8 @@ class RescheduleLessonBookingHandler
         if ($booking->isCancelled()) {
             $this->logger->error('Cannot reschedule a cancelled booking', [
                 'bookingId' => $booking->getId(),
-                'rescheduledById' => $command->getRescheduledById(),
+                'rescheduledById' => $command->getRescheduledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -50,7 +52,8 @@ class RescheduleLessonBookingHandler
             $this->logger->error('Old lesson not found in booking', [
                 'bookingId' => $booking->getId(),
                 'oldLessonId' => $command->getOldLessonId(),
-                'rescheduledById' => $command->getRescheduledById(),
+                'rescheduledById' => $command->getRescheduledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -59,7 +62,8 @@ class RescheduleLessonBookingHandler
         if (! $newLesson) {
             $this->logger->error('New lesson not found', [
                 'newLessonId' => $command->getNewLessonId(),
-                'rescheduledById' => $command->getRescheduledById(),
+                'rescheduledById' => $command->getRescheduledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -68,7 +72,8 @@ class RescheduleLessonBookingHandler
             $this->logger->error('No available spots in the new lesson', [
                 'newLessonId' => $newLesson->getId(),
                 'availableSpots' => $newLesson->getAvailableSpots(),
-                'rescheduledById' => $command->getRescheduledById(),
+                'rescheduledById' => $command->getRescheduledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -83,7 +88,7 @@ class RescheduleLessonBookingHandler
 
         // Set reschedule metadata on the new booking
         $newBooking->setRescheduledFrom($oldLesson);
-        $newBooking->setRescheduledBy($this->entityManager->getReference(User::class, $command->getRescheduledById()));
+        $newBooking->setRescheduledBy($command->getRescheduledBy());
         $newBooking->setRescheduleReason($command->getReason() ?? 'Rescheduled to new lesson');
 
         // Apply workflow transition to cancel the old booking with reschedule reason
@@ -106,7 +111,7 @@ class RescheduleLessonBookingHandler
 
         // Update the old booking with reschedule details
         $booking->setRescheduledFrom($oldLesson);
-        $booking->setRescheduledBy($this->entityManager->getReference(User::class, $command->getRescheduledById()));
+        $booking->setRescheduledBy($command->getRescheduledBy());
         $booking->setRescheduleReason($command->getReason());
         $booking->setUpdatedAt(new \DateTimeImmutable());
 
@@ -122,8 +127,8 @@ class RescheduleLessonBookingHandler
                 ->toRfc4122(),
             'newLessonId' => $newLesson->getId()
                 ->toRfc4122(),
-            'rescheduledById' => $command->getRescheduledById()
-                ->toRfc4122(),
+            'rescheduledById' => $command->getRescheduledBy()
+                ->getId(), // User ID is an integer, not a Ulid
             'reason' => $command->getReason(),
         ]);
     }

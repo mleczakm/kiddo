@@ -6,6 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Entity\Booking;
 use App\Entity\Lesson;
+use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
@@ -97,11 +98,8 @@ class BookingCancellationModal extends AbstractController
     }
 
     #[LiveAction]
-    public function processCancellation(
-        string $typeParam,
-        ?int $lessonIdParam = null,
-        ?string $reasonParam = null
-    ): void {
+    public function processCancellation(#[LiveArg('type')] string $typeParam): void
+    {
         if (! in_array($typeParam, self::CANCELLATION_TYPES, true)) {
             throw new \InvalidArgumentException('Invalid cancellation type');
         }
@@ -110,55 +108,43 @@ class BookingCancellationModal extends AbstractController
             throw new \RuntimeException('Booking or lesson not set');
         }
 
-        $this->cancellationReason = $reasonParam ?? $this->cancellationReason;
+        $securityUser = $this->getUser();
+        if (! $securityUser instanceof User) {
+            throw new \RuntimeException('User not authenticated or invalid user type');
+        }
 
         switch ($typeParam) {
             case 'reschedule':
-                $newLesson = $this->lessonRepository->find($lessonIdParam);
+                $newLesson = $this->lessonRepository->find($this->selectedLessonId);
                 if (! $newLesson) {
                     throw new \RuntimeException('Selected lesson not found');
-                }
-
-                $user = $this->getUser();
-                if (! $user) {
-                    throw new \RuntimeException('User not authenticated');
                 }
 
                 $this->messageBus->dispatch(new RescheduleLessonBooking(
                     $this->booking->getId(),
                     $this->lesson->getId(),
                     $newLesson->getId(),
-                    Ulid::fromString($user->getUserIdentifier()),
-                    $this->cancellationReason
+                    $securityUser,
+                    $this->cancellationReason ?? ''
                 ));
                 break;
 
             case 'refund':
-                $user = $this->getUser();
-                if (! $user) {
-                    throw new \RuntimeException('User not authenticated');
-                }
-
                 $this->messageBus->dispatch(new RefundLessonBooking(
                     $this->booking->getId(),
                     $this->lesson->getId(),
-                    Ulid::fromString($user->getUserIdentifier()),
-                    $this->cancellationReason
+                    $securityUser,
+                    $this->cancellationReason ?? ''
                 ));
                 break;
 
             case 'cancel':
             default:
-                $user = $this->getUser();
-                if (! $user) {
-                    throw new \RuntimeException('User not authenticated');
-                }
-
                 $this->messageBus->dispatch(new CancelLessonBooking(
                     $this->booking->getId(),
                     $this->lesson->getId(),
-                    Ulid::fromString($user->getUserIdentifier()),
-                    $this->cancellationReason
+                    $securityUser,
+                    $this->cancellationReason ?? ''
                 ));
                 break;
         }

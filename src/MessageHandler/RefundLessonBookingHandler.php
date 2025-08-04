@@ -8,7 +8,6 @@ use App\Entity\Booking;
 use App\Entity\User;
 use App\Message\RefundLessonBooking;
 use App\Repository\BookingRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -18,7 +17,6 @@ class RefundLessonBookingHandler
 {
     public function __construct(
         private readonly BookingRepository $bookingRepository,
-        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly WorkflowInterface $bookingStateMachine
     ) {}
@@ -30,7 +28,8 @@ class RefundLessonBookingHandler
         if (! $booking) {
             $this->logger->error('Booking not found for refund', [
                 'bookingId' => $command->getBookingId(),
-                'refundedById' => $command->getRefundedById(),
+                'refundedById' => $command->getRefundedBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -39,7 +38,8 @@ class RefundLessonBookingHandler
         if (! $lesson) {
             $this->logger->error('No lesson found in booking', [
                 'bookingId' => $booking->getId(),
-                'refundedById' => $command->getRefundedById(),
+                'refundedById' => $command->getRefundedBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -61,8 +61,7 @@ class RefundLessonBookingHandler
         ]);
 
         // Update booking with refund details
-        $refundedBy = $this->entityManager->getReference(User::class, $command->getRefundedById());
-        $booking->setRefundedBy($refundedBy);
+        $booking->setRefundedBy($command->getRefundedBy());
         $booking->setUpdatedAt(new \DateTimeImmutable());
 
         // Add note with refund details
@@ -79,8 +78,8 @@ class RefundLessonBookingHandler
                 ->toRfc4122(),
             'lessonId' => $lesson->getId()
                 ->toRfc4122(),
-            'refundedById' => $command->getRefundedById()
-                ->toRfc4122(),
+            'refundedById' => $command->getRefundedBy()
+                ->getId(), // User ID is an integer, not a Ulid
             'reason' => $command->getReason(),
             'refundAmount' => $refundAmount,
         ]);

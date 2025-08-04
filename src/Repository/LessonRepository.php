@@ -42,8 +42,10 @@ class LessonRepository extends ServiceEntityRepository
         $result = $qb
             ->andWhere('l.metadata.schedule > :afterDate')
             ->andWhere('l.status = :status')
+            ->andWhere('l.series = :series')
             ->setParameter('afterDate', $afterDate)
             ->setParameter('status', 'active')
+            ->setParameter('series', $series->getId(), 'ulid')
             ->orderBy('l.metadata.schedule', 'ASC')
             ->setMaxResults($maxResults)
             ->getQuery()

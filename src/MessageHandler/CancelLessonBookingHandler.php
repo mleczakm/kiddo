@@ -7,7 +7,6 @@ namespace App\MessageHandler;
 use App\Message\CancelLessonBooking;
 use App\Entity\User;
 use App\Repository\BookingRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -17,9 +16,8 @@ class CancelLessonBookingHandler
 {
     public function __construct(
         private readonly BookingRepository $bookingRepository,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly LoggerInterface $logger,
         private readonly WorkflowInterface $bookingStateMachine,
+        private readonly LoggerInterface $logger,
     ) {}
 
     public function __invoke(CancelLessonBooking $command): void
@@ -29,7 +27,8 @@ class CancelLessonBookingHandler
         if (! $booking) {
             $this->logger->error('Booking not found', [
                 'bookingId' => $command->getBookingId(),
-                'cancelledById' => $command->getCancelledById(),
+                'cancelledById' => $command->getCancelledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -37,7 +36,8 @@ class CancelLessonBookingHandler
         if ($booking->isCancelled()) {
             $this->logger->info('Booking already cancelled', [
                 'bookingId' => $booking->getId(),
-                'cancelledById' => $command->getCancelledById(),
+                'cancelledById' => $command->getCancelledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -47,7 +47,8 @@ class CancelLessonBookingHandler
             $this->logger->error('Lesson not found in booking', [
                 'bookingId' => $booking->getId(),
                 'lessonId' => $command->getLessonId(),
-                'cancelledById' => $command->getCancelledById(),
+                'cancelledById' => $command->getCancelledBy()
+                    ->getId(),
             ]);
             return;
         }
@@ -72,8 +73,7 @@ class CancelLessonBookingHandler
         ]);
 
         // Update booking with cancellation details
-        $cancelledBy = $this->entityManager->getReference(User::class, $command->getCancelledById());
-        $booking->setCancelledBy($cancelledBy);
+        $booking->setCancelledBy($command->getCancelledBy());
         $booking->setUpdatedAt(new \DateTimeImmutable());
 
         // Add note with cancellation details
@@ -94,8 +94,8 @@ class CancelLessonBookingHandler
                     ->toRfc4122(),
                 'lessonId' => $lesson->getId()
                     ->toRfc4122(),
-                'cancelledById' => $command->getCancelledById()
-                    ->toRfc4122(),
+                'cancelledById' => $command->getCancelledBy()
+                    ->getId(), // User ID is an integer, not a Ulid
                 'reason' => $command->getReason(),
                 'isRefundRequest' => $command->isRefundRequested(),
             ]

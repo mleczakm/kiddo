@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Message;
 
+use App\Entity\User;
 use Symfony\Component\Uid\Ulid;
 
 final class RefundLessonBooking
@@ -11,7 +12,7 @@ final class RefundLessonBooking
     public function __construct(
         private Ulid $bookingId,
         private Ulid $lessonId,
-        private Ulid $refundedById,
+        private User $refundedBy,
         private ?string $reason = null
     ) {}
 
@@ -25,9 +26,9 @@ final class RefundLessonBooking
         return $this->lessonId;
     }
 
-    public function getRefundedById(): Ulid
+    public function getRefundedBy(): User
     {
-        return $this->refundedById;
+        return $this->refundedBy;
     }
 
     public function getReason(): ?string

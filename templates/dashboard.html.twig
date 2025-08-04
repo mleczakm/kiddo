@@ -27,7 +27,7 @@
                                             <div class="flex justify-between">
                                                 <span class="text-muted-foreground">{{ 'dashboard.valid_until'|trans }}:</span>
                                                 {% set latestDate = null %}
-                                                {% for booking in carnet.bookings %}
+                                                {% for booking in carnet.bookings|filter(booking => not booking.isCancelled) %}
                                                     {% for lesson in booking.lessons %}
                                                         {% if latestDate is null or lesson.metadata.schedule > latestDate %}
                                                             {% set latestDate = lesson.metadata.schedule %}
@@ -50,17 +50,19 @@
                                         </p>
 
                                         <div class="mt-4 pt-4 border-t">
-                                            <h4 class="text-sm font-medium mb-2">{{ 'dashboard.upcoming_sessions'|trans }}
-                                                :</h4>
+                                            <h4 class="text-sm font-medium mb-2">{{ 'dashboard.upcoming_sessions'|trans }}:</h4>
                                             <ul class="space-y-2 text-sm">
                                                 {% set upcomingSessions = [] %}
-                                                {% for booking in carnet.bookings %}
+                                                {% for booking in carnet.bookings|filter(booking => not booking.isCancelled) %}
                                                     {% for lesson in booking.lessons|filter(l => l.metadata.schedule > date())|sort((a, b) => a.metadata.schedule <=> b.metadata.schedule) %}
-                                                        {% set upcomingSessions = upcomingSessions|merge([lesson]) %}
+                                                        {% set upcomingSessions = upcomingSessions|merge([{
+                                                            'lesson': lesson,
+                                                            'booking': booking
+                                                        }]) %}
                                                     {% endfor %}
                                                 {% endfor %}
 
-                                                {% for lesson in upcomingSessions %}
+                                                {% for session in upcomingSessions %}
                                                     <li class="flex items-center">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                              viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -79,7 +81,7 @@
                                                             <path d="M12 18h.01"></path>
                                                             <path d="M16 18h.01"></path>
                                                         </svg>
-                                                        {{ lesson.metadata.schedule|date('d.m.Y H:i:s')|format_datetime(pattern: 'd MMMM') }} {{ 'dashboard.at'|trans }} {{ lesson.metadata.schedule|date('H:i') }}
+                                                        {{ session.lesson.metadata.schedule|date('d.m.Y H:i:s')|format_datetime(pattern: 'd MMMM') }} {{ 'dashboard.at'|trans }} {{ session.lesson.getMetadata().schedule|date('H:i') }}
                                                     </li>
                                                 {% else %}
                                                     <li class="text-muted-foreground">{{ 'dashboard.no_upcoming_sessions'|trans }}</li>
