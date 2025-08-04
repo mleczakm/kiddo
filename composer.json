@@ -23,7 +23,7 @@
         "easycorp/easyadmin-bundle": "^4.24.9",
         "logdash/php-sdk": "dev-main",
         "macpaw/symfony-health-check-bundle": "^1.7",
-        "martin-georgiev/postgresql-for-doctrine": "^3.3",
+        "martin-georgiev/postgresql-for-doctrine": "^3.4.1",
         "novaway/feature-flag-bundle": "3.0.0-beta2",
         "nyholm/psr7": "^1.8.2",
         "odolbeau/phone-number-bundle": "^4.2",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfd8976985756a852067bc259158eac2",
+    "content-hash": "e05fc8bb7b2a8d476c0a76057d484bbd",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3081,16 +3081,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v3.3.0",
+            "version": "v3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "1276f8d7bcdb1de8ce97cd4d0ac48472322c7c59"
+                "reference": "44371f7b3d7d400f57ed1d0ae88a902b102795d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/1276f8d7bcdb1de8ce97cd4d0ac48472322c7c59",
-                "reference": "1276f8d7bcdb1de8ce97cd4d0ac48472322c7c59",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/44371f7b3d7d400f57ed1d0ae88a902b102795d8",
+                "reference": "44371f7b3d7d400f57ed1d0ae88a902b102795d8",
                 "shasum": ""
             },
             "require": {
@@ -3149,7 +3149,7 @@
             ],
             "support": {
                 "issues": "https://github.com/martin-georgiev/postgresql-for-doctrine/issues",
-                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v3.3.0"
+                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v3.4.1"
             },
             "funding": [
                 {
@@ -3161,7 +3161,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-29T23:59:58+00:00"
+            "time": "2025-08-03T23:00:26+00:00"
         },
         {
             "name": "monolog/monolog",
