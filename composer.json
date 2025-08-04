@@ -167,6 +167,11 @@
         "symfony": {
             "allow-contrib": true,
             "require": "7.3.*"
+        },
+        "violinist": {
+            "automerge": 1,
+            "automerge_method": "rebase",
+            "one_pull_request_per_package": 1
         }
     },
     "require-dev": {
