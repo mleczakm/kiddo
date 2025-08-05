@@ -12,7 +12,7 @@
         "ext-iconv": "*",
         "ext-swoole": "*",
         "bgalati/monolog-sentry-handler": "^2.1",
-        "brick/money": "^0.10.1",
+        "brick/money": "^0.10.2",
         "directorytree/imapengine": "^1.15.3",
         "doctrine/dbal": "^3.10.0",
         "doctrine/doctrine-bundle": "^2.15.1",
