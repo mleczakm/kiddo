@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fcc0841870d489d2afa407d2710e24b",
+    "content-hash": "f4ecc4ed8a0f59b3bc8376dfd2550ede",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -4845,16 +4845,16 @@
         },
         {
             "name": "swoole-bundle/swoole-bundle",
-            "version": "v0.24.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony-swoole/swoole-bundle.git",
-                "reference": "159adf53ea10b27d092eb4a5966641506d022b05"
+                "reference": "211a324e8921dfaf9e46d0e0181a5d529d1f744c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/159adf53ea10b27d092eb4a5966641506d022b05",
-                "reference": "159adf53ea10b27d092eb4a5966641506d022b05",
+                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/211a324e8921dfaf9e46d0e0181a5d529d1f744c",
+                "reference": "211a324e8921dfaf9e46d0e0181a5d529d1f744c",
                 "shasum": ""
             },
             "require": {
@@ -16595,13 +16595,21 @@
             "time": "2024-08-15T01:29:19+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "swoole-bundle/swoole-bundle",
+            "version": "9999999-dev",
+            "alias": "0.24.1",
+            "alias_normalized": "0.24.1.0"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
         "logdash/php-sdk": 20,
         "novaway/feature-flag-bundle": 10,
         "roave/security-advisories": 20,
-        "swoole-bundle/resetter-bundle": 20
+        "swoole-bundle/resetter-bundle": 20,
+        "swoole-bundle/swoole-bundle": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
