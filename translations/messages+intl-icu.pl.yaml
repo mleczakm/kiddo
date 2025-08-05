@@ -273,11 +273,41 @@ lesson:
   accept_terms_and_close: Zaakceptuj regulamin
   fully_booked: Brak wolnych miejsc
   no_lessons_found: W wybranym okresie brak zajęć spełniających kryteria.
-  
+  title: "Warsztaty:"
 booking:
   cancel: Anuluj rezerwację
   cancel_booking: Anuluj rezerwację
   cancel_confirmation: 'Czy na pewno chcesz anulować tę rezerwację?'
+
+  payment_verification: Weryfikacja Twojej płatności...
+  
+  # Two-step booking process
+  proceed_to_payment: Przejdź do płatności
+  choose_payment_method: Wybierz metodę płatności
+  payment_methods: Metody płatności
+  blik: BLIK
+  blik_description: Szybka i bezpieczna płatność mobilna
+  bank_transfer: Przelew bankowy
+  transfer_description: Tradycyjny przelew bankowy
+  enter_blik_code: Wprowadź kod BLIK
+  blik_instruction: Wprowadź 6-cyfrowy kod BLIK z aplikacji bankowej
+  confirm_payment: Potwierdź płatność
+  confirm_booking: Potwierdź rezerwację i zapłać
+  processing: Przetwarzanie...
+  creating_booking: Tworzenie rezerwacji...
+  bank_transfer_details: Dane do przelewu
+  transfer_instruction: "Prosimy o dokonanie przelewu na następujące konto:"
+  recipient: Odbiorca
+  amount: Kwota
+  title: Tytuł przelewu
+  after_transfer: Po zaksięgowaniu wpłaty Twoja rezerwacja zostanie automatycznie potwierdzona.
+  back: Wróć
+  close: Zamknij
+  payment_success: Płatność zakończona pomyślnie!
+  payment_failed: Płatność nie powiodła się
+  payment_pending: Oczekiwanie na płatność
+  accept_terms_and_close: Zaakceptuj regulamin
+
   reason_for_cancellation: 'Powód anulowania:'
   reason_refund_description: 'Otrzymasz zwrot środków zgodnie z naszą polityką zwrotów'
   no_available_lessons: 'Brak dostępnych terminów do przełożenia'
@@ -304,6 +334,8 @@ booking:
   refund_point_2: "Czas przetwarzania: 3–5 dni roboczych."
   refund_point_3: Anulowanie musi zostać dokonane co najmniej 24 godziny przed rozpoczęciem warsztatu.
   keep_booking: "Zachowaj rezerwację"
+  add_to_cart: 'Dodaj do koszyka'
+  select_date: Wybierz datę rezerwacji warsztatów
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"

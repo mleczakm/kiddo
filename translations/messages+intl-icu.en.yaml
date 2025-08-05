@@ -38,6 +38,33 @@ booking:
   mail_sent_header: Welcome!
   tell_us_more: Let us know why you need to cancel and how we can help you in the future...
   tell_us_more_footer: An admin will review your request and contact you within 24 hours.
+  
+  # Two-step booking process
+  proceed_to_payment: Proceed to Payment
+  choose_payment_method: Choose Payment Method
+  payment_methods: Payment Methods
+  blik: BLIK
+  blik_description: Fast and secure mobile payment
+  bank_transfer: Bank Transfer
+  transfer_description: Traditional bank transfer
+  enter_blik_code: Enter BLIK Code
+  blik_instruction: Please enter the 6-digit BLIK code from your banking app
+  confirm_payment: Confirm Payment
+  confirm_booking: Confirm Booking
+  processing: Processing...
+  creating_booking: Creating Booking...
+  bank_transfer_details: Bank Transfer Details
+  transfer_instruction: "Please make a transfer to the following account:"
+  recipient: Recipient
+  amount: Amount
+  title: Title
+  after_transfer: After making the transfer, your booking will be confirmed automatically.
+  back: Back
+  close: Close
+  payment_success: Payment Successful!
+  payment_failed: Payment Failed
+  payment_pending: Payment Pending
+  payment_verification: Verifying your payment...
 
 dashboard:
   status:

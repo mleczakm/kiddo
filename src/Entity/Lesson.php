@@ -140,6 +140,11 @@ class Lesson
         return $this->status === 'active' && $this->getAvailableSpots() > 0;
     }
 
+    public function future(): bool
+    {
+        return $this->metadata->schedule >= Clock::get()->now();
+    }
+
     /**
      * @return User[]
      */

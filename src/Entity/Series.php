@@ -61,4 +61,30 @@ class Series
         return $this->lessons->matching($criteria)
             ->toArray();
     }
+
+    public function getLessonsGt(Lesson $lesson): ?Lesson
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->gt('metadata.schedule', $lesson->getMetadata()->schedule))
+            ->setMaxResults(1)
+            ->orderBy([
+                'id' => 'ASC',
+            ]);
+
+        return $this->lessons->matching($criteria)
+            ->first() ?: null;
+    }
+
+    public function getLessonsLt(Lesson $lesson): ?Lesson
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->lt('metadata.schedule', $lesson->getMetadata()->schedule))
+            ->setMaxResults(1)
+            ->orderBy([
+                'id' => 'DESC',
+            ]);
+
+        return $this->lessons->matching($criteria)
+            ->first() ?: null;
+    }
 }
