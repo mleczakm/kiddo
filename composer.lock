@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4ecc4ed8a0f59b3bc8376dfd2550ede",
+    "content-hash": "c544bac7e67f0d6f9c6694ffbd7a5db6",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -16415,16 +16415,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v2.6.1",
+            "version": "v2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "8ebdd32d98fd37c66c7cc6843ef29a41f3f9bd41"
+                "reference": "942874e5e0a386749cb30e155e3e8ef4fd45754e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/8ebdd32d98fd37c66c7cc6843ef29a41f3f9bd41",
-                "reference": "8ebdd32d98fd37c66c7cc6843ef29a41f3f9bd41",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/942874e5e0a386749cb30e155e3e8ef4fd45754e",
+                "reference": "942874e5e0a386749cb30e155e3e8ef4fd45754e",
                 "shasum": ""
             },
             "require": {
@@ -16514,7 +16514,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v2.6.1"
+                "source": "https://github.com/zenstruck/foundry/tree/v2.6.2"
             },
             "funding": [
                 {
@@ -16526,7 +16526,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-29T06:16:43+00:00"
+            "time": "2025-08-05T14:02:22+00:00"
         },
         {
             "name": "zenstruck/mailer-test",
