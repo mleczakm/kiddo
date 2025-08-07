@@ -57,7 +57,7 @@ class LessonRepository extends ServiceEntityRepository
     /**
      * @return Lesson[]
      */
-    public function findByDate(DateTimeImmutable $date): array
+    public function findActiveByDate(DateTimeImmutable $date): array
     {
         $start = $date->setTime(0, 0, 0);
         $end = $date->setTime(23, 59, 59);
@@ -66,6 +66,8 @@ class LessonRepository extends ServiceEntityRepository
         $result = $this->createQueryBuilder('l')
             ->where('l.metadata.schedule >= :start')
             ->andWhere('l.metadata.schedule <= :end')
+            ->andWhere('l.status = :status')
+            ->setParameter('status', 'active')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->getQuery()

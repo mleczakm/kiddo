@@ -20,6 +20,8 @@ readonly class DoctrineTodayLessonsQuery implements TodayLessonsQuery
      */
     public function forDate(DateTimeImmutable $date): array
     {
-        return $this->lessonRepository->findByDate($date);
+        return $this->lessonRepository
+
+            ->findActiveByDate($date);
     }
 }

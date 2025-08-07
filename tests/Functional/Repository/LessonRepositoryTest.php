@@ -29,20 +29,26 @@ class LessonRepositoryTest extends KernelTestCase
         $lessonOther = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($otherDate)->assemble())
             ->assemble();
+        $lessonOther2 = LessonAssembler::new()
+            ->withStatus('cancelled')
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
+            ->assemble();
 
         $em->persist($lesson1);
         $em->persist($lesson2);
         $em->persist($lessonOther);
+        $em->persist($lessonOther2);
         $em->flush();
 
         /** @var LessonRepository $repo */
         $repo = self::getContainer()->get(LessonRepository::class);
-        $results = $repo->findByDate($date);
+        $results = $repo->findActiveByDate($date);
 
         $this->assertCount(2, $results);
         $this->assertContains($lesson1, $results);
         $this->assertContains($lesson2, $results);
         $this->assertNotContains($lessonOther, $results);
+        $this->assertNotContains($lessonOther2, $results);
     }
 
     public function testFindByFilters(): void
