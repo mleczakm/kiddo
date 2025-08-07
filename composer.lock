@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5d339444e28ea2314d07a885b282da75",
+    "content-hash": "1251f944f5c5b23936418d08ea6ba3d8",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -403,16 +403,16 @@
         },
         {
             "name": "directorytree/imapengine",
-            "version": "v1.15.3",
+            "version": "v1.15.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/ImapEngine.git",
-                "reference": "828ccbf1cae50a423ce8d07beec25e2f808fff98"
+                "reference": "b2b61831b16f697980ad53dab85fea99b842b169"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/ImapEngine/zipball/828ccbf1cae50a423ce8d07beec25e2f808fff98",
-                "reference": "828ccbf1cae50a423ce8d07beec25e2f808fff98",
+                "url": "https://api.github.com/repos/DirectoryTree/ImapEngine/zipball/b2b61831b16f697980ad53dab85fea99b842b169",
+                "reference": "b2b61831b16f697980ad53dab85fea99b842b169",
                 "shasum": ""
             },
             "require": {
@@ -453,7 +453,7 @@
             ],
             "support": {
                 "issues": "https://github.com/DirectoryTree/ImapEngine/issues",
-                "source": "https://github.com/DirectoryTree/ImapEngine/tree/v1.15.3"
+                "source": "https://github.com/DirectoryTree/ImapEngine/tree/v1.15.4"
             },
             "funding": [
                 {
@@ -461,7 +461,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-12T02:19:34+00:00"
+            "time": "2025-08-06T23:51:53+00:00"
         },
         {
             "name": "doctrine/collections",
@@ -3268,16 +3268,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "3.10.1",
+            "version": "3.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CarbonPHP/carbon.git",
-                "reference": "1fd1935b2d90aef2f093c5e35f7ae1257c448d00"
+                "reference": "76b5c07b8a9d2025ed1610e14cef1f3fd6ad2c24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/1fd1935b2d90aef2f093c5e35f7ae1257c448d00",
-                "reference": "1fd1935b2d90aef2f093c5e35f7ae1257c448d00",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/76b5c07b8a9d2025ed1610e14cef1f3fd6ad2c24",
+                "reference": "76b5c07b8a9d2025ed1610e14cef1f3fd6ad2c24",
                 "shasum": ""
             },
             "require": {
@@ -3369,7 +3369,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-21T15:19:35+00:00"
+            "time": "2025-08-02T09:36:06+00:00"
         },
         {
             "name": "novaway/feature-flag-bundle",
