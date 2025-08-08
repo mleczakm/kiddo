@@ -30,21 +30,6 @@ class BookingsComponent extends AbstractController
     public string $viewMode = 'list';
 
     /**
-     * @var ?list<Booking>
-     */
-    public ?array $activeBookings = null;
-
-    /**
-     * @var ?list<Booking>
-     */
-    public ?array $pastBookings = null;
-
-    /**
-     * @var ?list<Booking>
-     */
-    public ?array $cancelledBookings = null;
-
-    /**
      * @return list<Booking>
      */
     #[LiveAction]
@@ -67,19 +52,19 @@ class BookingsComponent extends AbstractController
 
         /** @var list<Booking> $result */
         $result = match ($this->activeTab) {
-            'active' => $this->activeBookings ??= $qb
+            'active' => $qb
                 ->andWhere('l.metadata.schedule >= :now')
                 ->setParameter('now', Clock::get()->now())
                 ->setParameter('statuses', ['confirmed'])
                 ->getQuery()
                 ->getResult(),
-            'past' => $this->pastBookings ??= $qb
+            'past' => $qb
                 ->andWhere('l.metadata.schedule <= :now')
                 ->setParameter('now', Clock::get()->now())
                 ->setParameter('statuses', ['confirmed', 'completed'])
                 ->getQuery()
                 ->getResult(),
-            'cancelled' => $this->cancelledBookings ??= $qb
+            'cancelled' => $qb
                 ->setParameter('statuses', ['cancelled', 'rescheduled', 'refunded'])
                 ->getQuery()
                 ->getResult(),
