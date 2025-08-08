@@ -80,7 +80,8 @@ class RescheduleLessonBookingHandler
         $oldLessons = $booking->getLessons()
             ->toArray();
 
-        $lessons = array_merge([$newLesson],
+        $lessons = array_merge(
+            [$newLesson],
             array_filter($oldLessons, fn(Lesson $lesson) => $lesson->getId() !== $oldLesson->getId())
         );
 
