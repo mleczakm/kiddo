@@ -240,6 +240,11 @@ class Booking
         return $this->lessons->first() ?: null;
     }
 
+    public function getCancellationReason(): ?string
+    {
+        return $this->notes;
+    }
+
     public function getAmountPaid(): int
     {
         if ($this->payment === null) {

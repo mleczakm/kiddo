@@ -31,6 +31,24 @@ parameters:
 			path: src/Infrastructure/ImapEngine/AliorNotificationMailProvider.php
 
 		-
+			message: '#^Property App\\UserInterface\\Http\\Component\\BookingsComponent\:\:\$activeBookings \(list\<App\\Entity\\Booking\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/UserInterface/Http/Component/BookingsComponent.php
+
+		-
+			message: '#^Property App\\UserInterface\\Http\\Component\\BookingsComponent\:\:\$cancelledBookings \(list\<App\\Entity\\Booking\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/UserInterface/Http/Component/BookingsComponent.php
+
+		-
+			message: '#^Property App\\UserInterface\\Http\\Component\\BookingsComponent\:\:\$pastBookings \(list\<App\\Entity\\Booking\>\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/UserInterface/Http/Component/BookingsComponent.php
+
+		-
 			message: '#^Generator expects value type DirectoryTree\\ImapEngine\\MessageQueryInterface, DirectoryTree\\ImapEngine\\MessageInterface given\.$#'
 			identifier: generator.valueType
 			count: 1

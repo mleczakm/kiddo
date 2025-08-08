@@ -337,6 +337,8 @@ booking:
   add_to_cart: 'Dodaj do koszyka'
   select_date: Wybierz datę rezerwacji warsztatów
 
+
+
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
   instruction_2: "na kwotę"
@@ -378,12 +380,19 @@ dashboard:
   browse_workshops: Przeglądaj dostępne warsztaty
   payment:
     paid: Opłacone
+    expired: Przekroczono termin płatności
+    pending: Oczekuje na płatności
+    failed: Nie powiodło się
+    refunded: Zwrot środków
   confirm_cancel: Czy na pewno chcesz anulować tę rezerwację? Wybierz sposób
   single_session: Pojedyncze zajęcia
   actions:
     cancel: Anuluj
   single_entry: Pojedyncze wejście
   at: o
+  past_bookings: 'Przeszłe rezerwacje'
+  booking:
+    carnet: Karnet
 admin_dashboard:
   title: Kiddo System Rezerwacji Warsztatów - 2025
   frontpage: Strona główna

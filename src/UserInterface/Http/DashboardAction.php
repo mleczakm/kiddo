@@ -40,9 +40,6 @@ class DashboardAction extends AbstractController
             ->getQuery()
             ->getResult();
 
-        // Separate active and cancelled bookings and identify carnets
-        $activeBookings = [];
-        $cancelledBookings = [];
         $carnets = [];
 
         foreach ($bookings as $booking) {
@@ -103,21 +100,10 @@ class DashboardAction extends AbstractController
             }
         }
 
-        // Count all active lessons across all bookings
-        $activeLessonsCount = array_reduce(
-            $activeBookings,
-            fn($carry, $booking) => $carry + $booking->getLessons()
-                ->count(),
-            0
-        );
-
         return $this->render(
             'dashboard.html.twig',
             [
-                'activeBookings' => array_reverse($activeBookings),
-                'cancelledBookings' => array_reverse($cancelledBookings),
                 'carnets' => array_reverse($carnets),
-                'activeLessonsCount' => $activeLessonsCount,
                 'page' => [
                     'title' => 'dashboard.title',
                     'description' => 'dashboard.description',
