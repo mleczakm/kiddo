@@ -35,6 +35,8 @@ class DashboardAction extends AbstractController
             ->leftJoin('b.lessons', 'l')
             ->leftJoin('l.series', 's')
             ->where('b.user = :user')
+            ->andWhere('b.status IN (:statuses)')
+            ->setParameter('statuses', [Booking::STATUS_CONFIRMED])
             ->setParameter('user', $user)
             ->orderBy('l.metadata.schedule', 'ASC')
             ->getQuery()

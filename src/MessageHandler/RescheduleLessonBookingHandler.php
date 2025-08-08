@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Entity\Booking;
-use App\Entity\User;
+use App\Entity\Lesson;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
@@ -47,8 +47,8 @@ class RescheduleLessonBookingHandler
             return;
         }
 
-        $oldLesson = $booking->getLesson();
-        if (! $oldLesson || $oldLesson->getId() !== $command->getOldLessonId()) {
+        $oldLesson = $this->lessonRepository->find($command->getOldLessonId());
+        if (! $oldLesson || ! $booking->getLessons()->contains($oldLesson)) {
             $this->logger->error('Old lesson not found in booking', [
                 'bookingId' => $booking->getId(),
                 'oldLessonId' => $command->getOldLessonId(),
@@ -77,14 +77,21 @@ class RescheduleLessonBookingHandler
             ]);
             return;
         }
+        $oldLessons = $booking->getLessons()
+            ->toArray();
+
+        $lessons = array_merge([$newLesson],
+            array_filter($oldLessons, fn(Lesson $lesson) => $lesson->getId() !== $oldLesson->getId())
+        );
 
         // Create a new booking for the new lesson with the same user and payment
-        $newBooking = new Booking(user: $booking->getUser(), payment: $booking->getPayment(), lessons: $newLesson);
+        $newBooking = new Booking($booking->getUser(), $booking->getPayment(), ... $lessons);
 
         // Copy relevant data from the old booking
         $newBooking->setNotes('Rescheduled from booking #' . $booking->getId()->toRfc4122());
         $newBooking->setCreatedAt(new \DateTimeImmutable());
         $newBooking->setUpdatedAt(new \DateTimeImmutable());
+        $newBooking->setStatus(Booking::STATUS_CONFIRMED);
 
         // Set reschedule metadata on the new booking
         $newBooking->setRescheduledFrom($oldLesson);
@@ -93,43 +100,28 @@ class RescheduleLessonBookingHandler
 
         // Apply workflow transition to cancel the old booking with reschedule reason
         if (! $this->bookingStateMachine->can($booking, 'reschedule')) {
-            $this->logger->error('Cannot apply reschedule transition to booking', [
-                'bookingId' => $booking->getId()
-                    ->toRfc4122(),
-                'status' => $booking->getStatus(),
-                'availableTransitions' => $this->bookingStateMachine->getEnabledTransitions($booking),
+            $this->logger->error('Cannot apply reschedule transition to the old booking', [
+                'bookingId' => $booking->getId(),
+                'currentState' => $booking->getStatus(),
             ]);
-            throw new \RuntimeException('Cannot reschedule this booking in its current state');
+            return;
         }
 
-        // Apply the reschedule transition to the old booking
         $this->bookingStateMachine->apply($booking, 'reschedule', [
-            'reason' => 'Rescheduled to new lesson #' . $newLesson->getId()->toRfc4122(),
-            'new_booking_id' => $newBooking->getId()
+            'reason' => 'rescheduled',
+            'rescheduled_by' => $command->getRescheduledBy()
+                ->getId(),
+            'rescheduled_to_lesson' => $newLesson->getId()
                 ->toRfc4122(),
         ]);
 
-        // Update the old booking with reschedule details
-        $booking->setRescheduledFrom($oldLesson);
-        $booking->setRescheduledBy($command->getRescheduledBy());
-        $booking->setRescheduleReason($command->getReason());
-        $booking->setUpdatedAt(new \DateTimeImmutable());
-
-        // Persist the new booking
         $this->entityManager->persist($newBooking);
 
         $this->logger->info('Booking rescheduled successfully', [
-            'oldBookingId' => $booking->getId()
-                ->toRfc4122(),
-            'newBookingId' => $newBooking->getId()
-                ->toRfc4122(),
-            'oldLessonId' => $oldLesson->getId()
-                ->toRfc4122(),
-            'newLessonId' => $newLesson->getId()
-                ->toRfc4122(),
+            'oldBookingId' => $booking->getId(),
+            'newBookingId' => $newBooking->getId(),
             'rescheduledById' => $command->getRescheduledBy()
-                ->getId(), // User ID is an integer, not a Ulid
-            'reason' => $command->getReason(),
+                ->getId(),
         ]);
     }
 }
