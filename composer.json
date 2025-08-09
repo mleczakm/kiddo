@@ -17,7 +17,7 @@
         "doctrine/dbal": "^3.10.1",
         "doctrine/doctrine-bundle": "^2.15.1",
         "doctrine/doctrine-migrations-bundle": "^3.4.2",
-        "doctrine/orm": "^3.5.1",
+        "doctrine/orm": "^3.5.2",
         "dragonmantank/cron-expression": "^3.4",
         "dunglas/doctrine-json-odm": "^1.4.2",
         "easycorp/easyadmin-bundle": "^4.24.9",
