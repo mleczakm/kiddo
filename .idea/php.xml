@@ -223,9 +223,9 @@
       <path value="$PROJECT_DIR$/vendor/sentry/sentry-symfony" />
       <path value="$PROJECT_DIR$/vendor/zenstruck/callback" />
       <path value="$PROJECT_DIR$/vendor/zenstruck/mailer-test" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
       <path value="$PROJECT_DIR$/vendor/martin-georgiev/postgresql-for-doctrine" />
       <path value="$PROJECT_DIR$/vendor/novaway/feature-flag-bundle" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -297,7 +297,9 @@
       </interpreter>
     </phpInfoCache>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.4">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
   <component name="PhpRuntimeConfiguration">
     <extensions>
       <extension name="ds" enabled="true" />
@@ -307,6 +309,7 @@
   <component name="PhpStan">
     <PhpStan_settings>
       <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
+      <phpstan_by_interpreter interpreter_id="d832997d-63a8-466a-8eea-f2f758c3a31a" tool_path="/app/vendor/bin/phpstan" timeout="60000" />
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="d832997d-63a8-466a-8eea-f2f758c3a31a" tool_path="/app/vendor/bin/phpstan" timeout="60000" />
     </PhpStan_settings>
   </component>

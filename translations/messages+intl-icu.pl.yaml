@@ -49,6 +49,7 @@ page:
   description: Miejsce dla Rodzin z małymi dziećmi Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia
   my_carnets: Moje karnety
   admin_dashboard: Panel administracyjny
+  profile: Profil
 
 # Workshop related translations
 workshop:
@@ -410,3 +411,15 @@ from_day_of_week: >-
   }
 common:
   cancel: Anuluj
+
+profile:
+  user_roles: Uprawnienia użytkownika
+  title: Profil
+  section_heading: Informacje o użytkowniku
+  name: Imie
+  email: Adres e-mail
+  edit_profile: Edytuj profil
+  account_actions: Akcje dostępne na koncie
+
+ROLE_USER: Użytkownik
+ROLE_ADMIN: Administrator
