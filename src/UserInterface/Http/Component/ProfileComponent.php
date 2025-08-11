@@ -18,6 +18,8 @@ class ProfileComponent extends AbstractController
 
     public function getUser(): User
     {
-        return parent::getUser();
+        return ($user = parent::getUser()) && $user instanceof User
+            ? $user
+            : throw new \LogicException('Trying to load profile component on unauthenticated user.');
     }
 }
