@@ -54,4 +54,47 @@ class ProfileComponentTest extends WebTestCase
         $output = (string) $testComponent->render();
         $this->assertStringContainsString('Administrator', $output);
     }
+
+    public function testCanEditProfile(): void
+    {
+        $client = static::createClient();
+        $user = $this->createUser('ROLE_USER');
+        $client->loginUser($user);
+
+        $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
+
+        // Start editing
+        $testComponent->call('startEditing');
+        /** @var ProfileComponent $profileComponent */
+        $profileComponent = $testComponent->component();
+        $this->assertTrue($profileComponent->isEditing);
+        $this->assertStringContainsString(
+            '<form data-action="live#action" data-live-action-param="save">',
+            (string) $testComponent->render()
+        );
+
+        // Set new values
+        $testComponent
+            ->set('name', 'New Name')
+            ->set('email', 'new.email@example.com');
+
+        // Save changes
+        $testComponent->call('save');
+
+        /** @var ProfileComponent $profileComponent */
+        $profileComponent = $testComponent->component();
+        $this->assertFalse($profileComponent->isEditing);
+
+        // Check if user is updated in the database
+        /** @var User $updatedUser */
+        $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
+
+        $this->assertSame('New Name', $updatedUser->getName());
+        $this->assertSame('new.email@example.com', $updatedUser->getEmail());
+
+        // Check if the view is updated
+        $rendered = (string) $testComponent->render();
+        $this->assertStringContainsString('New Name', $rendered);
+        $this->assertStringContainsString('new.email@example.com', $rendered);
+    }
 }

@@ -3,59 +3,90 @@
         <h1 class="section-title">{{ 'profile.title'|trans }}</h1>
         <div class="max-w-2xl mx-auto space-y-6">
             <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-                <div class="flex flex-col space-y-1.5 p-6">
-                    <h3 class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                        <svg class="lucide lucide-user w-5 h-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round"
-                             stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        {{ 'profile.section_heading'|trans }}
-                    </h3>
-                </div>
-                <div class="p-6 pt-0 space-y-6">
-                    <div class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="name">
-                                {{ 'profile.name'|trans }}
-                            </label>
-                            <p class="text-lg font-medium">{{ this.user.name }}</p>
+                {% if not this.isEditing %}
+                    <div class="flex flex-col space-y-1.5 p-6">
+                        <h3 class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                            <svg class="lucide lucide-user w-5 h-5" height="24" stroke="currentColor" stroke-linecap="round"
+                                 stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            {{ 'profile.section_heading'|trans }}
+                        </h3>
+                    </div>
+                    <div class="p-6 pt-0 space-y-6">
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="name">
+                                    {{ 'profile.name'|trans }}
+                                </label>
+                                <p class="text-lg font-medium">{{ this.user.name }}</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="email">
+                                    {{ 'profile.email'|trans }}
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <svg class="lucide lucide-mail w-4 h-4 text-muted-foreground" height="24" stroke="currentColor"
+                                         stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                         width="24" xmlns="http://www.w3.org/2000/svg">
+                                        <rect height="16" rx="2" width="20" x="2" y="4"></rect>
+                                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                                    </svg>
+                                    <p class="text-lg">{{ this.user.email }}</p>
+                                </div>
+                            </div>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                    {{ 'profile.user_roles'|trans }}
+                                </label>
+                                <p class="text-lg">{{ this.user.roles|map(role => role|trans)|join(', ') }}</p>
+                            </div>
+                            {% endif %}
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="email">
-                                {{ 'profile.email'|trans }}
-                            </label>
-                            <div class="flex items-center gap-2">
-                                <svg class="lucide lucide-mail w-4 h-4 text-muted-foreground" fill="none" height="24" stroke="currentColor"
-                                     stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                     width="24" xmlns="http://www.w3.org/2000/svg">
-                                    <rect height="16" rx="2" width="20" x="2" y="4"></rect>
-                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                                </svg>
-                                <p class="text-lg">{{ this.user.email }}</p>
+                        <div class="flex gap-3 pt-4 border-t">
+                            <button
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                data-action="live#action"
+                                data-live-action-param="startEditing"
+                            >
+                                {{ 'profile.edit_profile'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <form data-action="live#action" data-live-action-param="save">
+                        <div class="flex flex-col space-y-1.5 p-6">
+                            <h3 class="text-2xl font-semibold leading-none tracking-tight">{{ 'profile.edit_profile'|trans }}</h3>
+                        </div>
+                        <div class="p-6 pt-0 space-y-6">
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="name">{{ 'profile.name'|trans }}</label>
+                                <input type="text" data-model="name" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="name">
+                                {% if this.getErrors('name') %}
+                                    <p class="text-sm text-red-600">{{ this.getErrors('name')|map(error => error|trans)|join(', ') }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="email">{{ 'profile.email'|trans }}</label>
+                                <input type="email" data-model="email" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="email">
+                                {% if this.getErrors('email') %}
+                                    <p class="text-sm text-red-600">{{ this.getErrors('email')|map(error => error|trans)|join(', ') }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="flex gap-3 pt-4 border-t">
+                                <button type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                                    {{ 'profile.save_changes'|trans }}
+                                </button>
+                                <button type="button" data-action="live#action" data-action-name="cancelEditing" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2">
+                                    {{ 'profile.cancel'|trans }}
+                                </button>
                             </div>
                         </div>
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <div class="space-y-2">
-                            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                {{ 'profile.user_roles'|trans }}
-                            </label>
-                            <p class="text-lg">{{ this.user.roles|map(role => role|trans)|join(', ') }}</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="flex gap-3 pt-4 border-t">
-                        <button 
-                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                            data-action="live#action"
-                            data-action-name="editProfile"
-                            disabled
-                        >
-                            {{ 'profile.edit_profile'|trans }}
-                        </button>
-                    </div>
-                </div>
+                    </form>
+                {% endif %}
             </div>
             <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
                 <div class="flex flex-col space-y-1.5 p-6">
@@ -64,8 +95,8 @@
                     </h3>
                 </div>
                 <div class="p-6 pt-0">
-                    <a 
-                        href="{{ path('app_logout') }}" 
+                    <a
+                        href="{{ path('app_logout') }}"
                         class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-workshop-red text-workshop-red hover:bg-workshop-red/10"
                     >
                         {{ 'page.logout'|trans }}

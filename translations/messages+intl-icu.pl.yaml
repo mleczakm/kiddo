@@ -30,7 +30,7 @@ form:
 page:
   default:
     header: "Warsztatownia sensoryczna"
-    footer: © 2025 Warsztatownia Sensoryczna. Wszystkie prawa zastrzeżone.
+    footer: 2025 Warsztatownia Sensoryczna. Wszystkie prawa zastrzeżone.
     address:
       street: "Aleja Jana Pawła II 12D"
       city: "Radzymin"
@@ -420,6 +420,13 @@ profile:
   email: Adres e-mail
   edit_profile: Edytuj profil
   account_actions: Akcje dostępne na koncie
+  update_success: Profil został pomyślnie zaktualizowany.
+  save_changes: Zapisz zmiany
+  cancel: Anuluj
+  name.not_blank: Imię nie może być puste.
+  name.min_length: Imię musi mieć co najmniej 2 znaki.
+  email.not_blank: Adres e-mail nie może być pusty.
+  email.invalid: Wprowadź poprawny adres e-mail.
 
 ROLE_USER: Użytkownik
 ROLE_ADMIN: Administrator
