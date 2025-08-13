@@ -1,75 +1,22 @@
-{% extends '@EasyAdmin/page/content.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block content_title %}{{ 'admin.dasboard.title'|trans }}{% endblock %}
+{% block title %}{{ 'admin.title'|trans }}{% endblock %}
 
-{% block content %}
-<div class="container mx-auto py-8">
-    <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
+{% block head_styles %}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap');
+        body {
+            background-color: hsl(var(--background));
+        }
+        .admin-panel-title {
+            font-family: 'Lora', serif;
+        }
+    </style>
+{% endblock %}
 
-    <h2 class="text-xl font-semibold mb-4">Upcoming Lessons (Next 10 Days)</h2>
-    <div class="overflow-x-auto mb-8">
-        <table class="min-w-full rounded shadow">
-            <thead>
-                <tr>
-                    <th class="py-2 px-4 border-b">Date</th>
-                    <th class="py-2 px-4 border-b">Title</th>
-                    <th class="py-2 px-4 border-b">Bookings</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lesson in upcomingLessons %}
-                    <tr>
-                        <td class="py-2 px-4 border-b">{{ lesson.metadata.schedule|date('Y-m-d H:i') }}</td>
-                        <td class="py-2 px-4 border-b">{{ lesson.metadata.title }}</td>
-                        <td class="py-2 px-4 border-b">
-                            {% if lesson.bookings|length > 0 %}
-                                <ul class="list-disc ml-4">
-                                    {% for booking in lesson.bookings %}
-                                        <li title="{{ booking.user.email }}">
-                                            {{ booking.user.name }} ({{ booking.status|title }})
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <span class="text-gray-500">No bookings</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="py-4 text-center text-gray-500">No upcoming lessons found.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+{% block body %}
+    <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-bold mb-8 font-display text-workshop-brown">{{ 'admin.title'|trans }}</h1>
+        {{ component('AdminDashboardComponent') }}
     </div>
-
-    <h2 class="text-xl font-semibold mb-4">Recent Bookings</h2>
-    <div class="overflow-x-auto">
-        <table class="min-w-full rounded shadow">
-            <thead>
-            <tr>
-                <th class="py-2 px-4 border-b">ID</th>
-                <th class="py-2 px-4 border-b">User</th>
-                <th class="py-2 px-4 border-b">Status</th>
-                <th class="py-2 px-4 border-b">Created At</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for booking in recentBookings %}
-                <tr>
-                    <td class="py-2 px-4 border-b">{{ booking.id }}</td>
-                    <td class="py-2 px-4 border-b">{{ booking.user.email }}</td>
-                    <td class="py-2 px-4 border-b">{{ booking.status|title }}</td>
-                    <td class="py-2 px-4 border-b">{{ booking.createdAt|date('Y-m-d H:i') }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4" class="py-4 text-center text-gray-500">No recent bookings found.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
 {% endblock %}

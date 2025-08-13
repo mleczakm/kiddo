@@ -18,7 +18,7 @@ form:
 page:
   default:
     header: "Warsztatownia sensoryczna"
-    footer: © 2025 Sensory Workshop. All rights reserved.
+    footer: 2025 Sensory Workshop. All rights reserved.
 
   workshops: Workshops
   homepage: Homepage
@@ -109,4 +109,47 @@ lesson:
   loading: Loading...
   load_more: Load more
   showing_results: Showing {from} to {to} of {total} results
-  
+
+carnets:
+  none_found: No carnets found.
+
+admin:
+  dashboard:
+    title: Admin Dashboard
+  tabs:
+    dashboard: Dashboard
+    lessons: Lessons
+    schedule: Schedule
+    transfers: Transfers
+    bookings: Bookings
+    users: Users
+  upcoming_lessons:
+    title: Upcoming Lessons
+    manage: Manage
+    cancel: Cancel
+    none_found: No upcoming lessons found.
+    placeholder: Upcoming lessons will be displayed here.
+  upcoming_attendees:
+    title: Upcoming Workshop Attendees
+    no_attendees: No attendees for this lesson yet.
+    none_found: No upcoming lessons with attendees found.
+    placeholder: Attendees for upcoming lessons will be displayed here.
+  quick_actions:
+    title: Quick Actions
+    add_lesson: Add Lesson
+    add_booking: Add Booking
+    add_user: Add User
+    view_reports: View Reports
+    badges:
+      active: active
+      paid: paid
+      pending: pending
+    buttons:
+      disable: Disable
+      revoke_all: Revoke All
+      reschedule: Reschedule
+      add_capacity: "+2 Capacity"
+      remove_capacity: "-2 Capacity"
+      quick_book: Quick Book
+      actions: Actions
+    placeholder: Quick actions will be available here.

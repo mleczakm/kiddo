@@ -111,4 +111,40 @@ class LessonRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    /**
+     * @return array<int, Lesson>
+     */
+    public function findUpcoming(\DateTimeImmutable $since, int $limit): array
+    {
+        /** @var Lesson[] $lessons */
+        $lessons = $this->createQueryBuilder('l')
+            ->andWhere('l.metadata.schedule > :since')
+//            ->leftJoin('l.bookings', 'b')
+            ->setParameter('since', $since)
+            ->orderBy('l.metadata.schedule', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return $lessons;
+    }
+
+    /**
+     * @return array<int, Lesson>
+     */
+    public function findUpcomingWithBookings(\DateTimeImmutable $since, int $limit): array
+    {
+        /** @var Lesson[] $lessons */
+        $lessons = $this->createQueryBuilder('l')
+//            ->addSelect('b')
+            ->andWhere('l.metadata.schedule > :since')
+            ->setParameter('since', $since)
+            ->orderBy('l.metadata.schedule', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return $lessons;
+    }
 }

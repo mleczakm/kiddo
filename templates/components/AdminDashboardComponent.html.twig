@@ -1,0 +1,98 @@
+<div {{ attributes }} data-controller="live">
+    <div class="flex justify-center mb-8">
+        <div class="inline-flex items-center justify-center rounded-xl bg-stone-100 p-1">
+            <button
+                type="button"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {{ activeTab == 'dashboard' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:bg-stone-200/50' }}"
+                data-action="live#action"
+                data-live-action-param="changeTab"
+                data-live-tab-param="dashboard"
+            >
+                {{ 'admin.tabs.dashboard'|trans }}
+            </button>
+            <button
+                type="button"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {{ activeTab == 'lessons' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:bg-stone-200/50' }}"
+                data-action="live#action"
+                data-live-action-param="changeTab"
+                data-live-tab-param="lessons"
+            >
+                {{ 'admin.tabs.lessons'|trans }}
+            </button>
+            <button
+                type="button"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {{ activeTab == 'schedule' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:bg-stone-200/50' }}"
+                data-action="live#action"
+                data-live-action-param="changeTab"
+                data-live-tab-param="schedule"
+            >
+                {{ 'admin.tabs.schedule'|trans }}
+            </button>
+            <button
+                type="button"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {{ activeTab == 'transfers' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:bg-stone-200/50' }}"
+                data-action="live#action"
+                data-live-action-param="changeTab"
+                data-live-tab-param="transfers"
+            >
+                {{ 'admin.tabs.transfers'|trans }}
+            </button>
+            <button
+                type="button"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {{ activeTab == 'bookings' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:bg-stone-200/50' }}"
+                data-action="live#action"
+                data-live-action-param="changeTab"
+                data-live-tab-param="bookings"
+            >
+                {{ 'admin.tabs.bookings'|trans }}
+            </button>
+            <button
+                type="button"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {{ activeTab == 'users' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:bg-stone-200/50' }}"
+                data-action="live#action"
+                data-live-action-param="changeTab"
+                data-live-tab-param="users"
+            >
+                {{ 'admin.tabs.users'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="space-y-6">
+        {% if activeTab == 'dashboard' %}
+            <div class="grid xl:grid-cols-2 gap-8">
+                {{ component('UpcomingLessonsComponent') }}
+                {{ component('UpcomingAttendeesComponent') }}
+            </div>
+
+            <div class="rounded-xl border bg-stone-50 text-card-foreground shadow p-6">
+                <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <span>{{ 'admin_dashboard.quick_actions.title'|trans }}</span>
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground flex flex-col h-24 items-center justify-center rounded-md px-4 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-circle mb-2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="16"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+                        <span>{{ 'admin_dashboard.quick_actions.create_workshop'|trans }}</span>
+                    </button>
+                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground flex flex-col h-24 items-center justify-center rounded-md px-4 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ticket-plus mb-2"><path d="M2 9a3 3 0 0 1 0 6v1a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-1a3 3 0 0 1 0-6V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>
+                        <span>{{ 'admin_dashboard.quick_actions.manage_bookings'|trans }}</span>
+                    </button>
+                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground flex flex-col h-24 items-center justify-center rounded-md px-4 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                        <span>{{ 'admin_dashboard.quick_actions.manage_users'|trans }}</span>
+                    </button>
+                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground flex flex-col h-24 items-center justify-center rounded-md px-4 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-3 mb-2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                        <span>{{ 'admin_dashboard.quick_actions.view_reports'|trans }}</span>
+                    </button>
+                </div>
+            </div>
+        {% else %}
+            <div class="rounded-xl border bg-stone-50 text-card-foreground shadow p-6">
+                <p class="text-muted-foreground">Content for the "{{ activeTab }}" tab will be implemented soon.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
