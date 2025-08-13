@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Assembler;
 
+use App\Entity\PaymentCode;
 use App\Entity\Transfer;
 use App\Entity\Payment;
 use App\Entity\User;
@@ -18,6 +19,15 @@ class PaymentAssembler extends EntityAssembler
      * @var Transfer[]
      */
     private array $transfers = [];
+
+    private ?PaymentCode $paymentCode = null;
+
+    public function withPaymentCode(PaymentCode $paymentCode): static
+    {
+        $this->paymentCode = $paymentCode;
+
+        return $this;
+    }
 
     public function withId(string $id): static
     {
@@ -77,6 +87,10 @@ class PaymentAssembler extends EntityAssembler
 
         foreach ($this->transfers as $transfer) {
             $payment->addTransfer($transfer);
+        }
+
+        if ($this->paymentCode) {
+            $payment->setPaymentCode($this->paymentCode);
         }
 
         return $payment;

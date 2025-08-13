@@ -91,4 +91,7 @@ return [
     Novaway\Bundle\FeatureFlagBundle\NovawayFeatureFlagBundle::class => [
         'all' => true,
     ],
+    Zenstruck\Messenger\Test\ZenstruckMessengerTestBundle::class => [
+        'test' => true,
+    ],
 ];

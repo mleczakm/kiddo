@@ -9,6 +9,7 @@ use App\Application\Service\BookingFactory;
 use App\Entity\PaymentFactory;
 use App\Entity\Lesson;
 use App\Entity\User;
+use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -43,8 +44,7 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $paymentCode = null;
 
-    #[LiveProp]
-    public ?string $paymentAmount = null;
+    public ?Money $paymentAmount = null;
 
     #[LiveProp]
     public bool $termsOpened = false;
@@ -207,7 +207,7 @@ class LessonModal extends AbstractController
             $this->bus->dispatch(new AddBooking($booking));
 
             $this->paymentCode = $payment->getPaymentCode()?->getCode();
-            $this->paymentAmount = (string) $selected->price;
+            $this->paymentAmount = $selected->price;
             $this->paymentStatus = 'awaiting_payment';
             $this->paymentModal = false;
 

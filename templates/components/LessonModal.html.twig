@@ -61,7 +61,7 @@
                                     class="text-workshop-red whitespace-nowrap"> {{ 'blik.phone'|trans }}</span>
                         </div>
                         <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span
-                                    class="text-workshop-red whitespace-nowrap">{{ paymentAmount }}</span>. {{ 'blik.instruction_3'|trans }}
+                                    class="text-workshop-red whitespace-nowrap">{{ paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
                         </div>
                         <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
                         <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
@@ -207,7 +207,7 @@
                                 <div class="p-4 bg-background rounded-lg mb-4">
                                     <div class="flex justify-between items-center mb-2">
                                         <h4 class="font-medium">{{ ('lesson.' ~ activeTicketOption.type.value)|trans }}</h4>
-                                        <span class="text-lg font-bold">{{ activeTicketOption.price }}</span>
+                                        <span class="text-lg font-bold">{{ activeTicketOption.price|money }}</span>
                                     </div>
                                     <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>
                                 </div>

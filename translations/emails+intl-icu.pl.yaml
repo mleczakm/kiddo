@@ -22,26 +22,12 @@ Sign in: Zaloguj się
 
 reservation:
   subject: 'Twoja rezerwacja w Warsztatowni Sensorycznej – oczekujemy na płatność'
-  content:
-    html: |
-      <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem; max-width: 32rem; text-align: center;">
-                                      <div style="font-size: 1.5rem; font-weight: bold; color: #4c2e11; margin-bottom: 1rem;">
-                                                                                  Przelej BLIK na numer <span style="color: #e34646; white-space: nowrap;">571 531 213</span>
-                                      </div>
-                                      <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">
-                                                               Kwota do zapłaty: <span style="color: #e34646; white-space: nowrap;">{paymentAmount}</span>. W tytule przelewu wpisz poniższy kod:
-                                      </div>
-                                      <div style="font-size: 1.5rem; font-family: monospace; background-color: #f3f4f6; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; user-select: all; letter-spacing: 0.1em; color: #e34646;">
-                                                               {paymentCode}
-                                      </div>
-                                      <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
-                                        Rezerwacja zostanie potwierdzona po zaksięgowaniu płatności.
-                                      </div>
-                                      <div style="color: #6b7280; font-size: 0.875rem; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;">
-                                        Jeśli wolisz, możesz dokonać przelewu na konto: <span style="color: #e34646; white-space: nowrap;">46 2490 0005 0000 4000 1897 5420</span>.
-                                      </div>
-        </div>
-      
+  blik_transfer: 'Przelej BLIK na numer <span style="color: #e34646; white-space: nowrap;">{blikPhoneNumber}</span>'
+  amount_to_pay: 'Kwota do zapłaty: <span style="color: #e34646; white-space: nowrap;">{paymentAmount}</span>'
+  payment_title: 'W tytule przelewu wpisz poniższy kod:'
+  confirmation_after_payment: 'Rezerwacja zostanie potwierdzona po zaksięgowaniu płatności.'
+  bank_transfer_option: 'Jeśli wolisz, możesz dokonać przelewu na konto: <span style="color: #e34646; white-space: nowrap;">{bankAccountNumber}</span>.'
+
 importance:
   high: uwaga
 
@@ -58,7 +44,7 @@ payment:
         
         Numer rezerwacji: {reference}
         
-        Zapłacona kwota: {amount}
+        Zap��acona kwota: {amount}
         
         Data płatności: {date}
         

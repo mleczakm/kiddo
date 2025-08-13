@@ -94,3 +94,6 @@ services:
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
             - '%env(DATABASE_URL)%'
+
+    App\Infrastructure\Twig\MoneyExtension:
+        tags: ['twig.extension']
