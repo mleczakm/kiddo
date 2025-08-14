@@ -68,4 +68,35 @@ class UserRepositoryTest extends KernelTestCase
         $nonExistentRoleUsers = $this->userRepository->findByRole('ROLE_NON_EXISTENT');
         $this->assertCount(0, $nonExistentRoleUsers);
     }
+
+    public function testFindAllMatching(): void
+    {
+        $user1 = UserAssembler::new()
+            ->withName('John Doe')
+            ->withEmail('john.doe@example.com')
+            ->assemble();
+        $user2 = UserAssembler::new()
+            ->withName('Jane Doe')
+            ->withEmail('jane.doe@example.com')
+            ->assemble();
+        $user3 = UserAssembler::new()
+            ->withName('Bob Smith')
+            ->withEmail('bob.smith@example.com')
+            ->assemble();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($user1);
+        $entityManager->persist($user2);
+        $entityManager->persist($user3);
+        $entityManager->flush();
+
+        $matchingUsers = $this->userRepository->findAllMatching('jane.doe');
+        $this->assertCount(1, $matchingUsers);
+        $this->assertEquals($user2, $matchingUsers[0]);
+
+        $matchingUsers = $this->userRepository->findAllMatching('smith');
+        $this->assertCount(1, $matchingUsers);
+        $this->assertEquals($user3, $matchingUsers[0]);
+    }
 }

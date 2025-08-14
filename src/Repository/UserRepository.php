@@ -71,7 +71,7 @@ class UserRepository extends ServiceEntityRepository
         }
 
         /** @var User[] $result */
-        $result = $qb->orderBy('u.name', 'ASC')
+        $result = $qb->orderBy('u.id', 'DESC')
             ->getQuery()
             ->getResult();
 
