@@ -71,9 +71,6 @@ return [
     DAMA\DoctrineTestBundle\DAMADoctrineTestBundle::class => [
         'test' => true,
     ],
-    EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle::class => [
-        'all' => true,
-    ],
     SwooleBundle\ResetterBundle\SwooleBundleResetterBundle::class => [
         'dev' => true,
         'prod' => true,

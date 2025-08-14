@@ -56,18 +56,6 @@
             "ref": "c2ab78f625df0c89af5908d50a28602ff8c4919f"
         }
     },
-    "easycorp/easyadmin-bundle": {
-        "version": "4.24",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "4.14",
-            "ref": "13b3e524d1038a6861ad6c7fc64e31b644ba0c54"
-        },
-        "files": [
-            "config/routes/easyadmin.yaml"
-        ]
-    },
     "macpaw/symfony-health-check-bundle": {
         "version": "1.7",
         "recipe": {

@@ -193,8 +193,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/scienta/doctrine-json-functions" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/staabm/side-effects-detector" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/workflow" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/easycorp/easyadmin-bundle" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/twig/html-extra" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/guzzle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/promises" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/logdash/php-sdk" />

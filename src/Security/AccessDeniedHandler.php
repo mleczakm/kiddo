@@ -40,7 +40,7 @@ readonly class AccessDeniedHandler implements EventSubscriberInterface
 
         if (! str_starts_with($path, $this->router->generate('dashboard')) && ! str_starts_with(
             $path,
-            $this->router->generate('admin')
+            $this->router->generate('app_admin_dashboard')
         )) {
             return;
         }
