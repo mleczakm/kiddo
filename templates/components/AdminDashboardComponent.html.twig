@@ -89,6 +89,8 @@
                     </button>
                 </div>
             </div>
+        {% elseif activeTab == 'users' %}
+            {{ component('UsersComponent') }}
         {% else %}
             <div class="rounded-xl border bg-stone-50 text-card-foreground shadow p-6">
                 <p class="text-muted-foreground">Content for the "{{ activeTab }}" tab will be implemented soon.</p>

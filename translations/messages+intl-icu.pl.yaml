@@ -401,20 +401,37 @@ admin_dashboard:
     title: 'Nadchodzące zajęcia'
     actions: 'Akcje'
   upcoming_attendees:
-    title: 'Nadchodzące warsztaty – uczestnicy'
+    title: Nadchodzący uczestnicy
+    no_attendees: Brak uczestników.
+    attendees: '{count, plural, one {# uczestnik} few {# uczestników} many {# uczestników} other {# uczestnika}}'
     add_capacity: '+1'
     remove_capacity: '-1'
 
     quick_book: 'Szybka rezerwacja'
     actions: 'Akcje'
-    no_attendees: 'Brak uczestników'
-    attendees: 'Uczestnicy'
   quick_actions:
     title: 'Szybkie akcje'
     create_workshop: 'Utwórz warsztat'
     manage_bookings: 'Zarządzaj rezerwacjami'
     manage_users: 'Zarządzaj użytkownikami'
     view_reports: 'Zobacz raporty'
+  capacity: uczestników
+
+admin_users:
+  title: Użytkownicy
+  search:
+    placeholder: Szukaj użytkowników...
+  add_user: Dodaj użytkownika
+  table:
+    name: Nazwa
+    email: Email
+    role: Rola
+    status: Status
+    actions: Akcje
+  status:
+    active: Aktywny
+  actions:
+    edit: Edytuj
 
 admin:
   badges:

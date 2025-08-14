@@ -13,7 +13,7 @@
                         <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                             <div>
                                 <h4 class="font-medium">{{ lesson.metadata.title }}</h4>
-                                <p class="text-sm text-muted-foreground">{{ lesson.metadata.schedule|format_datetime('medium', 'short') }} • {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }} capacity</p>
+                                <p class="text-sm text-muted-foreground">{{ lesson.metadata.schedule|format_datetime('medium', 'short') }} • {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }} {{ 'admin_dashboard.capacity'|trans }}</p>
                             </div>
                             <div class="flex gap-2">
                                 <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">{{ 'admin_dashboard.upcoming_attendees.add_capacity'|trans }}</button>

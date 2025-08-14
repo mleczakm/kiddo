@@ -57,4 +57,24 @@ class UserRepository extends ServiceEntityRepository
 
         return $users;
     }
+
+    /**
+     * @return User[]
+     */
+    public function findAllMatching(string $query): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        if (! empty($query)) {
+            $qb->andWhere('LOWER(u.name) LIKE :query OR LOWER(u.email) LIKE :query')
+                ->setParameter('query', '%' . strtolower($query) . '%');
+        }
+
+        /** @var User[] $result */
+        $result = $qb->orderBy('u.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
 }
