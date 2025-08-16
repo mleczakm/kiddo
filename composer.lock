@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00c519ed6b92a0a5b5403619498a240d",
+    "content-hash": "7e5f6766484a9632d5f1b667a6cb288a",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3271,7 +3271,7 @@
         },
         {
             "name": "novaway/feature-flag-bundle",
-            "version": "3.0.0-beta2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/novaway/NovawayFeatureFlagBundle.git",
@@ -3332,7 +3332,7 @@
             ],
             "support": {
                 "issues": "https://github.com/novaway/NovawayFeatureFlagBundle/issues",
-                "source": "https://github.com/novaway/NovawayFeatureFlagBundle/tree/3.0.0-beta2"
+                "source": "https://github.com/novaway/NovawayFeatureFlagBundle/tree/3.0.0"
             },
             "time": "2025-02-21T18:35:01+00:00"
         },
@@ -16550,7 +16550,6 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "logdash/php-sdk": 20,
-        "novaway/feature-flag-bundle": 10,
         "roave/security-advisories": 20,
         "swoole-bundle/resetter-bundle": 20,
         "swoole-bundle/swoole-bundle": 20
