@@ -172,9 +172,9 @@ class BookingCancellationModal extends AbstractController
         $schedule = $this->lesson->getMetadata()
             ->schedule;
 
-        return $series !== null &&
-            $schedule > new \DateTimeImmutable() &&
-            count($this->getAvailableLessons()) > 0;
+        return $series !== null
+            && $schedule > new \DateTimeImmutable()
+            && count($this->getAvailableLessons()) > 0;
     }
 
     public function isButtonDisabled(): bool

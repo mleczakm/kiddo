@@ -83,8 +83,8 @@ class CarnetsComponent extends AbstractController
                         ->schedule < new \DateTimeImmutable()
                 )->count();
 
-                $carnets[$seriesId]['status'] = $carnets[$seriesId]['totalLessons'] - $carnets[$seriesId]['usedLessons'] > 0 ?
-                    'active'
+                $carnets[$seriesId]['status'] = $carnets[$seriesId]['totalLessons'] - $carnets[$seriesId]['usedLessons'] > 0
+                    ? 'active'
                     : 'past';
             }
         }

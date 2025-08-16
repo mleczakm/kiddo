@@ -129,8 +129,8 @@ class Lesson
     {
         return max(
             0,
-            $this->metadata->capacity -
-            $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
+            $this->metadata->capacity
+            - $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
                 ->count()
         );
     }
