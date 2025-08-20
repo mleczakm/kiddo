@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71c434fb1dcbb77e351ddd5f3e2f66e7",
+    "content-hash": "f134563db96f5c3cec3483fccb63f901",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -10709,16 +10709,16 @@
         },
         {
             "name": "symfony/ux-turbo",
-            "version": "v2.29.1",
+            "version": "v2.29.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-turbo.git",
-                "reference": "b1a4aa38fbe08434944b8e4d7ea4eca52d5db361"
+                "reference": "b8a6f2ecb707ef69b53ff049b52e86c0dc06bc7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-turbo/zipball/b1a4aa38fbe08434944b8e4d7ea4eca52d5db361",
-                "reference": "b1a4aa38fbe08434944b8e4d7ea4eca52d5db361",
+                "url": "https://api.github.com/repos/symfony/ux-turbo/zipball/b8a6f2ecb707ef69b53ff049b52e86c0dc06bc7b",
+                "reference": "b8a6f2ecb707ef69b53ff049b52e86c0dc06bc7b",
                 "shasum": ""
             },
             "require": {
@@ -10788,7 +10788,7 @@
                 "turbo-stream"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-turbo/tree/v2.29.1"
+                "source": "https://github.com/symfony/ux-turbo/tree/v2.29.2"
             },
             "funding": [
                 {
@@ -10808,7 +10808,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-08T11:38:41+00:00"
+            "time": "2025-08-18T20:25:45+00:00"
         },
         {
             "name": "symfony/ux-twig-component",
