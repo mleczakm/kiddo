@@ -10,6 +10,11 @@ class TransferMoneyParser
 {
     public static function transferMoneyStringToMoneyObject(string $amount): Money
     {
+        // Verify if it is not a default format like 5.00, 100.00, etc.
+        if (is_numeric($amount)) {
+            return Money::of($amount, 'PLN');
+        }
+
         // Remove all non-digit and non-comma characters
         $cleaned = preg_replace('/[^\d,]/', '', $amount);
 

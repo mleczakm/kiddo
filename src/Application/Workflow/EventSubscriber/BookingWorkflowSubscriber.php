@@ -19,6 +19,7 @@ class BookingWorkflowSubscriber implements EventSubscriberInterface
     {
         return [
             'workflow.payment.completed.pay' => 'onPaymentCompleted',
+            'workflow.payment.completed.expire' => 'onPaymentExpired',
         ];
     }
 
@@ -41,6 +42,29 @@ class BookingWorkflowSubscriber implements EventSubscriberInterface
         foreach ($bookings as $booking) {
             if ($this->bookingStateMachine->can($booking, 'confirm')) {
                 $this->bookingStateMachine->apply($booking, 'confirm');
+            }
+        }
+    }
+
+    public function onPaymentExpired(Event $event): void
+    {
+        $payment = $event->getSubject();
+
+        if (! $payment instanceof Payment) {
+            return;
+        }
+
+        // Only process if payment was just marked as paid
+        if ($payment->getStatus() !== Payment::STATUS_EXPIRED) {
+            return;
+        }
+
+        // Get all bookings associated with this payment
+        $bookings = $payment->getBookings();
+
+        foreach ($bookings as $booking) {
+            if ($this->bookingStateMachine->can($booking, 'cancel')) {
+                $this->bookingStateMachine->apply($booking, 'cancel');
             }
         }
     }
