@@ -44,7 +44,7 @@ payment:
         
         Numer rezerwacji: {reference}
         
-        Zap��acona kwota: {amount}
+        Zapłacona kwota: {amount}
         
         Data płatności: {date}
         
