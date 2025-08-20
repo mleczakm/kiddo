@@ -119,8 +119,8 @@ class LessonRepository extends ServiceEntityRepository
     {
         /** @var Lesson[] $lessons */
         $lessons = $this->createQueryBuilder('l')
-            ->andWhere('l.metadata.schedule > :since')
-//            ->leftJoin('l.bookings', 'b')
+            ->leftJoin('l.bookings', 'b')
+            ->where('l.metadata.schedule > :since')
             ->setParameter('since', $since)
             ->orderBy('l.metadata.schedule', 'ASC')
             ->setMaxResults($limit)
@@ -137,8 +137,10 @@ class LessonRepository extends ServiceEntityRepository
     {
         /** @var Lesson[] $lessons */
         $lessons = $this->createQueryBuilder('l')
-//            ->addSelect('b')
+            ->leftJoin('l.bookings', 'b')
             ->andWhere('l.metadata.schedule > :since')
+            ->andWhere('l.status = :status')
+            ->setParameter('status', 'active')
             ->setParameter('since', $since)
             ->orderBy('l.metadata.schedule', 'ASC')
             ->setMaxResults($limit)

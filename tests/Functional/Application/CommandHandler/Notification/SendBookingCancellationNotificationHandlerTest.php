@@ -37,7 +37,7 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
 
         $booking = BookingAssembler::new()
             ->withUser($user)
-            ->withLessons([$lesson])
+            ->withLessons($lesson)
             ->withStatus('cancelled')
             ->assemble();
 

@@ -31,7 +31,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->withSchedule($date)->assemble())
             ->assemble();
         $em->persist($lesson);
-        $booking = BookingAssembler::new()->withUser($user)->withLessons([$lesson])->withStatus(
+        $booking = BookingAssembler::new()->withUser($user)->withLessons($lesson)->withStatus(
             'confirmed'
         )->assemble();
         $lesson->addBooking($booking);

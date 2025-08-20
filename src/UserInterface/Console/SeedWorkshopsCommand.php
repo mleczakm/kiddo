@@ -414,7 +414,7 @@ class SeedWorkshopsCommand extends Command
                 $booking = \App\Tests\Assembler\BookingAssembler::new()
                     ->withUser($user)
                     ->withPayment($payments[$j % count($payments)])
-                    ->withLessons([$lesson])
+                    ->withLessons($lesson)
                     ->withStatus('confirmed')
                     ->assemble();
                 $this->entityManager->persist($booking);

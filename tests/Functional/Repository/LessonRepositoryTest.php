@@ -92,4 +92,33 @@ class LessonRepositoryTest extends KernelTestCase
         $this->assertCount(1, $repo->findByFilters(null, 2, week: $date->format('Y-m-d')));
         $this->assertCount(1, $repo->findByFilters('OOOOO', null, week: $date->format('Y-m-d')));
     }
+
+    public function testFindUpcoming(): void
+    {
+        $date = new DateTimeImmutable('+2 day');
+        $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
+
+        $em = self::getContainer()->get('doctrine')->getManager();
+
+        $lesson1 = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
+            ->assemble();
+        $lesson2 = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date->setTime(15, 0))->assemble())
+            ->assemble();
+        $lessonOther = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($otherDate)->assemble())
+            ->assemble();
+
+        $em->persist($lesson1);
+        $em->persist($lesson2);
+        $em->persist($lessonOther);
+        $em->flush();
+
+        /** @var LessonRepository $repo */
+        $repo = self::getContainer()->get(LessonRepository::class);
+        $this->assertCount(2, $repo->findUpcoming($now = new DateTimeImmutable(), 10));
+        $this->assertEquals($lesson1, $repo->findUpcoming($now, 10)[0]);
+        $this->assertEquals($lesson2, $repo->findUpcoming($now, 10)[1]);
+    }
 }

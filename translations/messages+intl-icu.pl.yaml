@@ -401,7 +401,7 @@ admin_dashboard:
     title: 'Nadchodzące zajęcia'
     actions: 'Akcje'
   upcoming_attendees:
-    title: Nadchodzący uczestnicy
+    title: Najbliższe rezerwacje
     no_attendees: Brak uczestników.
     attendees: '{count, plural, one {# uczestnik} few {# uczestników} many {# uczestników} other {# uczestnika}}'
     add_capacity: '+1'
