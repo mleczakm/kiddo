@@ -409,6 +409,7 @@ admin_dashboard:
 
     quick_book: 'Szybka rezerwacja'
     actions: 'Akcje'
+    no_upcoming_attendees: Brak nadchodzących wydarzeń
   quick_actions:
     title: 'Szybkie akcje'
     create_workshop: 'Utwórz warsztat'
@@ -486,3 +487,32 @@ from_day_of_week: >-
       7   {z niedzieli {date}, o {hour}}
       other    {asdasdasd}
   }
+
+action:
+  close: Zamknij
+  confirm_and_merge: Połącz przelew z płatnością
+  cancel: Anuluj
+
+payment:
+  sender: Nadawca
+  amount: Kwota
+  date: Data
+  action: Akcja
+  approve: Zatwierdź
+  reject: Zignoruj
+  assign_payment: Przypisz płatność
+  assign_to_transfer: Przypisz płatność do przelewu od %sender%.
+  search: Szukaj płatności
+  search_placeholder: Szukaj po kwocie, nazwie użytkownika lub emailu...
+  assign: Przypisz
+  no_pending_payments: Brak oczekujących płatności.
+  transfer_details: Szczegóły przelewu
+  account_number: Numer konta
+  transfer_title: Tytuł przelewu
+  select_payment: Wybierz pasującą płatność
+  select_payment_help: Wybierz, z którą płatnością należy powiązać ten przelew
+  amount_match: Kwota się zgadza
+  status_pending: oczekuje
+  booked: "Zarezerwowano: {date}"
+  title: Tytuł przelewu
+  pending_transfers: Przychodzące nierozpoznane przelewy

@@ -41,6 +41,7 @@ class TransferMoneyParserTest extends TestCase
             [',5', Money::of('0.50', 'PLN')],
             ['5,', Money::of('5.00', 'PLN')],
             ['5', Money::of('5.00', 'PLN')],
+            ['5.00', Money::of('5.00', 'PLN')],
         ];
     }
 }

@@ -24,7 +24,6 @@
 
                         <div class="space-y-2">
                             {% if lesson.bookings is not empty %}
-                                <h5 class="text-sm font-medium">{{ 'admin_dashboard.upcoming_attendees.attendees'|trans }}:</h5>
                                 {% for booking in lesson.bookings %}
                                     <div class="flex items-center justify-between p-2 border rounded">
                                         <div>

@@ -44,4 +44,19 @@ class Transfer
         $this->payment = $payment;
         return $this;
     }
+
+    public function getSender(): string
+    {
+        return $this->sender;
+    }
+
+    public function getAccountNumber(): string
+    {
+        return $this->accountNumber;
+    }
+
+    public function getTransferredAt(): \DateTimeImmutable
+    {
+        return $this->transferredAt;
+    }
 }

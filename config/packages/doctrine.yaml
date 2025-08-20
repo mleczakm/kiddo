@@ -30,6 +30,7 @@ doctrine:
             string_functions:
                 JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
                 ILIKE: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Ilike
+                JSON_GET_TEXT: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonGetText
 
 when@test:
     doctrine:

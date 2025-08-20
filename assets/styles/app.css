@@ -2076,7 +2076,11 @@ body {
 
 .bg-workshop-green {
     --tw-bg-opacity: 1;
-    background-color: rgb(152 201 60 / var(--tw-bg-opacity))
+    background-color: rgb(152 201 60 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-workshop-green\/90:hover {
+    background-color:#98c93ce6
 }
 
 .bg-workshop-green\/20 {

@@ -22,8 +22,16 @@ class PaymentTest extends TestCase
     public function testIsPaidTrueOnTransfers(): void
     {
         $payment = new Payment(UserAssembler::new()->assemble(), Money::of(100, Currency::ofCountry('PL')));
-        $payment->addTransfer(TransferAssembler::new()->withAmount('100.00')->assemble());
+        $payment->addTransfer(TransferAssembler::new()->withAmount('100,00')->assemble());
 
         $this->assertTrue($payment->isPaid());
+    }
+
+    public function testAmountMatch(): void
+    {
+        $payment = new Payment(UserAssembler::new()->assemble(), Money::of(100, Currency::ofCountry('PL')));
+        $transfer = TransferAssembler::new()->withAmount('100,00')->assemble();
+
+        $this->assertTrue($payment->amountMatch($transfer));
     }
 }
