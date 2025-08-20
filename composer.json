@@ -62,7 +62,7 @@
         "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
         "symfony/uid": "7.3.*",
-        "symfony/ux-live-component": "^2.29.1",
+        "symfony/ux-live-component": "^2.29.2",
         "symfony/ux-turbo": "^2.29.1",
         "symfony/validator": "7.3.*",
         "symfony/web-link": "7.3.*",

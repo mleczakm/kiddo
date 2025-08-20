@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7971e3ed635c842bc2d1468dc3cd7df4",
+    "content-hash": "71c434fb1dcbb77e351ddd5f3e2f66e7",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -10608,16 +10608,16 @@
         },
         {
             "name": "symfony/ux-live-component",
-            "version": "v2.29.1",
+            "version": "v2.29.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-live-component.git",
-                "reference": "be9aed778681bd496a5ebbc039aef313a48ec7f4"
+                "reference": "5d5e52071c392630aef852c7b7bf94ecd4fa8b99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/be9aed778681bd496a5ebbc039aef313a48ec7f4",
-                "reference": "be9aed778681bd496a5ebbc039aef313a48ec7f4",
+                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/5d5e52071c392630aef852c7b7bf94ecd4fa8b99",
+                "reference": "5d5e52071c392630aef852c7b7bf94ecd4fa8b99",
                 "shasum": ""
             },
             "require": {
@@ -10685,7 +10685,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-live-component/tree/v2.29.1"
+                "source": "https://github.com/symfony/ux-live-component/tree/v2.29.2"
             },
             "funding": [
                 {
@@ -10705,7 +10705,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-08T11:38:41+00:00"
+            "time": "2025-08-18T20:25:45+00:00"
         },
         {
             "name": "symfony/ux-turbo",
@@ -10812,16 +10812,16 @@
         },
         {
             "name": "symfony/ux-twig-component",
-            "version": "v2.29.0",
+            "version": "v2.29.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-twig-component.git",
-                "reference": "d3d94191485891899ac623a9c852feb0a6392101"
+                "reference": "dae83d81c6c6be05b9cd906e236ee66c50b8bbb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/d3d94191485891899ac623a9c852feb0a6392101",
-                "reference": "d3d94191485891899ac623a9c852feb0a6392101",
+                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/dae83d81c6c6be05b9cd906e236ee66c50b8bbb8",
+                "reference": "dae83d81c6c6be05b9cd906e236ee66c50b8bbb8",
                 "shasum": ""
             },
             "require": {
@@ -10875,7 +10875,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-twig-component/tree/v2.29.0"
+                "source": "https://github.com/symfony/ux-twig-component/tree/v2.29.2"
             },
             "funding": [
                 {
@@ -10895,7 +10895,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-05T22:04:40+00:00"
+            "time": "2025-08-14T20:58:41+00:00"
         },
         {
             "name": "symfony/validator",
