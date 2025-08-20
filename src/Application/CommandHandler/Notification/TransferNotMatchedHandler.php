@@ -55,13 +55,13 @@ final readonly class TransferNotMatchedHandler
         ], 'emails');
 
         $notification = new Notification()
-            ->importance('high') // Mark as high importance since this requires attention
+            ->importance('')
             ->subject($subject)
             ->content($content);
 
         // Send it to all admins
         foreach ($admins as $admin) {
-            $this->notifier->send($notification, new Recipient($admin->getEmail()));
+            $this->notifier->send($notification, new Recipient($admin->getEmailString()));
         }
 
         // Cache the notification for today
