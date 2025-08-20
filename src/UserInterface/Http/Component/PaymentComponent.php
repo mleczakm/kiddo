@@ -29,10 +29,10 @@ final class PaymentComponent extends AbstractController
     public function getTransfers(): array
     {
         return $this->transferRepository->findBy([
-                'payment' => null,
-            ], [
-                'transferredAt' => 'DESC',
-            ]);
+            'payment' => null,
+        ], [
+            'transferredAt' => 'DESC',
+        ]);
     }
 
     #[LiveAction]
