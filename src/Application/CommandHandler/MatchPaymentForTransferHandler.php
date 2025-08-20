@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\MatchPaymentForTransfer;
+use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Entity\PaymentCode;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 final readonly class MatchPaymentForTransferHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private WorkflowInterface $paymentStateMachine
+        private WorkflowInterface $paymentStateMachine,
+        private MessageBusInterface $messageBus
     ) {}
 
     public function __invoke(MatchPaymentForTransfer $command): void
@@ -34,7 +37,11 @@ final readonly class MatchPaymentForTransferHandler
                 if ($this->paymentStateMachine->can($payment, 'pay')) {
                     $this->paymentStateMachine->apply($payment, 'pay');
                 }
+
+                return;
             }
         }
+
+        $this->messageBus->dispatch(new TransferNotMatchedCommand($transfer));
     }
 }

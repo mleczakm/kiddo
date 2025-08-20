@@ -1,6 +1,25 @@
 footer: <p>&copy; 2025 Sensoryczna. All rights reserved.</p>
 exception: Exception stack trace attached.
 
+# Transfer Notifications
+transfer:
+  notification:
+    not_matched:
+      subject: 'Transfer Not Matched'
+      content: |
+        Hello,
+
+        We have received a new transfer that could not be automatically matched to any payment.
+
+        Transfer details:
+        - Amount: {amount}
+        - Sender: {sender}
+        - Title: {title}
+        - Date: {date}
+        - Transfer ID: {transfer_id}
+
+        Please check and match this transfer manually in the admin panel.
+
 # Payment Notifications
 payment:
   notification:

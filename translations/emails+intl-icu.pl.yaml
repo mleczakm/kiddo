@@ -31,6 +31,24 @@ reservation:
 importance:
   high: uwaga
 
+transfer:
+  notification:
+    not_matched:
+      subject: 'Nie znaleziono dopasowania dla przelewu'
+      content: |
+        Dzień dobry,
+
+        Otrzymaliśmy nowy przelew, którego nie udało się automatycznie dopasować do żadnej płatności.
+
+        Szczegóły przelewu:
+        - Kwota: {amount}
+        - Nadawca: {sender}
+        - Tytuł: {title}
+        - Data: {date}
+        - ID przelewu: {transfer_id}
+
+        Prosimy o ręczne sprawdzenie i dopasowanie przelewu w panelu administracyjnym.
+
 payment:
   notification:
     user:
