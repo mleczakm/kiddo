@@ -13553,12 +13553,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "45efa5832686533f38dc0445a8b185f6d0649c2f"
+                "reference": "aba5d69a31ad55e7f105fe6d6caffba529d56c2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/45efa5832686533f38dc0445a8b185f6d0649c2f",
-                "reference": "45efa5832686533f38dc0445a8b185f6d0649c2f",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/aba5d69a31ad55e7f105fe6d6caffba529d56c2c",
+                "reference": "aba5d69a31ad55e7f105fe6d6caffba529d56c2c",
                 "shasum": ""
             },
             "conflict": {
@@ -13902,7 +13902,7 @@
                 "jbartels/wec-map": "<3.0.3",
                 "jcbrand/converse.js": "<3.3.3",
                 "joelbutcher/socialstream": "<5.6|>=6,<6.2",
-                "johnbillion/wp-crontrol": "<1.16.2",
+                "johnbillion/wp-crontrol": "<1.16.2|>=1.17,<1.19.2",
                 "joomla/application": "<1.0.13",
                 "joomla/archive": "<1.1.12|>=2,<2.0.1",
                 "joomla/database": ">=1,<2.2|>=3,<3.4",
@@ -14508,7 +14508,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-15T23:05:36+00:00"
+            "time": "2025-08-19T21:05:31+00:00"
         },
         {
             "name": "rregeer/phpunit-coverage-check",
