@@ -95,7 +95,7 @@ class LessonRepositoryTest extends KernelTestCase
 
     public function testFindUpcoming(): void
     {
-        $date = new DateTimeImmutable('+2 day');
+        $date = new DateTimeImmutable('+2 day')->setTime(12, 12);
         $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
 
         $em = self::getContainer()->get('doctrine')->getManager();
@@ -104,7 +104,7 @@ class LessonRepositoryTest extends KernelTestCase
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
             ->assemble();
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date->setTime(15, 0))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date->setTime(12, 13))->assemble())
             ->assemble();
         $lessonOther = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($otherDate)->assemble())
