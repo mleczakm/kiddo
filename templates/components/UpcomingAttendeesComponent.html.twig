@@ -15,9 +15,38 @@
                                 <h4 class="font-medium">{{ lesson.metadata.title }}</h4>
                                 <p class="text-sm text-muted-foreground">{{ lesson.metadata.schedule|format_datetime('medium', 'short') }} • {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }} {{ 'admin_dashboard.capacity'|trans }}</p>
                             </div>
-                            <div class="flex gap-2">
-                                <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">{{ 'admin_dashboard.upcoming_attendees.add_capacity'|trans }}</button>
-                                <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">{{ 'admin_dashboard.upcoming_attendees.remove_capacity'|trans }}</button>
+                            <div class="flex items-center gap-2">
+                                <button
+                                    data-action="click->live#action"
+                                    data-live-action-param="decreaseCapacity"
+                                    data-live-lesson-id-param="{{ lesson.id }}"
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none"
+                                    {{ lesson.metadata.capacity <= lesson.bookings|length ? 'disabled' : '' }}
+                                    title="{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}"
+                                >
+                                    <span class="sr-only">{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                                        <path d="M5 12h14"/>
+                                    </svg>
+                                </button>
+                                
+                                <span class="text-sm font-medium min-w-[2rem] text-center">
+                                    {{ lesson.metadata.capacity - lesson.bookings|length }}
+                                </span>
+                                
+                                <button
+                                    data-action="click->live#action"
+                                    data-live-action-param="increaseCapacity"
+                                    data-live-lesson-id-param="{{ lesson.id }}"
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                                    title="{{ 'admin_dashboard.upcoming_attendees.increase_capacity'|trans }}"
+                                >
+                                    <span class="sr-only">{{ 'admin_dashboard.upcoming_attendees.increase_capacity'|trans }}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                                        <path d="M5 12h14"/>
+                                        <path d="M12 5v14"/>
+                                    </svg>
+                                </button>
                                 <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3">{{ 'admin_dashboard.upcoming_attendees.quick_book'|trans }}</button>
                             </div>
                         </div>

@@ -410,6 +410,8 @@ admin_dashboard:
     quick_book: 'Szybka rezerwacja'
     actions: 'Akcje'
     no_upcoming_attendees: Brak nadchodzących wydarzeń
+    decrease_capacity: 'Zmniejsz ilość dostępnych miejsc'
+    increase_capacity: 'Zwiększ ilość dostępnych miejsc'
   quick_actions:
     title: 'Szybkie akcje'
     create_workshop: 'Utwórz warsztat'
