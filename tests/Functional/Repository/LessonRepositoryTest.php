@@ -95,7 +95,8 @@ class LessonRepositoryTest extends KernelTestCase
 
     public function testFindUpcoming(): void
     {
-        $date = new DateTimeImmutable('+2 day')->setTime(12, 12);
+        $date = new DateTimeImmutable('+2 day')
+            ->setTime(12, 12);
         $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
 
         $em = self::getContainer()->get('doctrine')->getManager();
