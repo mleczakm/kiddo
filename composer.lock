@@ -13553,12 +13553,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "aba5d69a31ad55e7f105fe6d6caffba529d56c2c"
+                "reference": "afc1b5ea0233d87f958f1a73da7468f387da9022"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/aba5d69a31ad55e7f105fe6d6caffba529d56c2c",
-                "reference": "aba5d69a31ad55e7f105fe6d6caffba529d56c2c",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/afc1b5ea0233d87f958f1a73da7468f387da9022",
+                "reference": "afc1b5ea0233d87f958f1a73da7468f387da9022",
                 "shasum": ""
             },
             "conflict": {
@@ -14011,6 +14011,7 @@
                 "mongodb/mongodb": ">=1,<1.9.2",
                 "monolog/monolog": ">=1.8,<1.12",
                 "moodle/moodle": "<4.3.12|>=4.4,<4.4.8|>=4.5.0.0-beta,<4.5.4",
+                "moonshine/moonshine": "<=3.12.5",
                 "mos/cimage": "<0.7.19",
                 "movim/moxl": ">=0.8,<=0.10",
                 "movingbytes/social-network": "<=1.2.1",
@@ -14366,7 +14367,7 @@
                 "uasoft-indonesia/badaso": "<=2.9.7",
                 "unisharp/laravel-filemanager": "<2.9.1",
                 "universal-omega/dynamic-page-list3": "<3.6.4",
-                "unopim/unopim": "<0.1.5",
+                "unopim/unopim": "<=0.2",
                 "userfrosting/userfrosting": ">=0.3.1,<4.6.3",
                 "usmanhalalit/pixie": "<1.0.3|>=2,<2.0.2",
                 "uvdesk/community-skeleton": "<=1.1.1",
@@ -14508,7 +14509,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-19T21:05:31+00:00"
+            "time": "2025-08-21T15:06:11+00:00"
         },
         {
             "name": "rregeer/phpunit-coverage-check",
