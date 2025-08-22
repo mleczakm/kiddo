@@ -40,7 +40,7 @@
         "symfony/dotenv": "7.3.*",
         "symfony/event-dispatcher": "7.3.*",
         "symfony/expression-language": "7.3.*",
-        "symfony/flex": "^2.8.1",
+        "symfony/flex": "^2.8.2",
         "symfony/form": "7.3.*",
         "symfony/framework-bundle": "7.3.*",
         "symfony/http-client": "7.3.*",
