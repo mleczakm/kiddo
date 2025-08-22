@@ -4670,12 +4670,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony-swoole/resetter-bundle.git",
-                "reference": "582489b5a1e2829c000f2fe01b5a449e8d5580ef"
+                "reference": "525db56d19ca33a5e835ff9ab5c20b444f39935c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-swoole/resetter-bundle/zipball/582489b5a1e2829c000f2fe01b5a449e8d5580ef",
-                "reference": "582489b5a1e2829c000f2fe01b5a449e8d5580ef",
+                "url": "https://api.github.com/repos/symfony-swoole/resetter-bundle/zipball/525db56d19ca33a5e835ff9ab5c20b444f39935c",
+                "reference": "525db56d19ca33a5e835ff9ab5c20b444f39935c",
                 "shasum": ""
             },
             "require": {
@@ -4739,7 +4739,7 @@
                 "issues": "https://github.com/symfony-swoole/resetter-bundle/issues",
                 "source": "https://github.com/symfony-swoole/resetter-bundle/tree/master"
             },
-            "time": "2025-08-19T19:40:22+00:00"
+            "time": "2025-08-21T11:30:43+00:00"
         },
         {
             "name": "swoole-bundle/swoole-bundle",
@@ -8358,7 +8358,7 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.32.0",
+            "version": "v1.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
@@ -8419,7 +8419,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.32.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.33.0"
             },
             "funding": [
                 {
@@ -8428,6 +8428,10 @@
                 },
                 {
                     "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
                     "type": "github"
                 },
                 {
