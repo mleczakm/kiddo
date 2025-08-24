@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 #[AsMessageHandler]
 readonly class SendPaymentNotificationHandler
@@ -20,7 +20,7 @@ readonly class SendPaymentNotificationHandler
     public function __construct(
         private NotifierInterface $notifier,
         private UserRepository $userRepository,
-        private TranslatorInterface $translator,
+        private Environment $twig,
     ) {}
 
     public function __invoke(SendPaymentNotificationCommand $command): void
@@ -44,51 +44,31 @@ readonly class SendPaymentNotificationHandler
     private function sendUserNotification(Payment $payment, User $user): void
     {
         $bookings = $payment->getBookings();
-        $lessonsDetails = [];
         $firstBooking = $bookings->first() ?: throw new \LogicException('No booking found for payment');
-
+        $lessons = [];
         foreach ($bookings as $booking) {
             foreach ($booking->getLessons() as $lesson) {
-                $schedule = $lesson->getMetadata()
-                    ->schedule;
-                $lessonsDetails[] = [
-                    'title' => $lesson->getMetadata()
-                        ->title,
-                    'date' => $schedule->format('Y-m-d'),
-                    'time' => $schedule->format('H:i'),
-                ];
+                $lessons[] = $lesson;
             }
         }
 
-        $translatorContext = [
-            'amount' => (string) $payment->getAmount(),
-            'reference' => (string) $firstBooking->getId(),
-            'date' => $payment->getCreatedAt()
-                ->format('Y-m-d H:i'),
-            'lessons' => $this->formatLessonsList($lessonsDetails),
-        ];
-
-        $subject = $this->translator->trans('payment.notification.user.subject', [], 'emails');
-        $content = $this->translator->trans('payment.notification.user.message', $translatorContext, 'emails');
-
+        $subject = $this->twig->render('email/notification/payment-notification-user-subject.html.twig', [
+            'user' => $user,
+            'payment' => $payment,
+            'reference' => $firstBooking->getId(),
+            'lessons' => $lessons,
+        ]);
+        $content = $this->twig->render('email/notification/payment-notification-user.html.twig', [
+            'user' => $user,
+            'payment' => $payment,
+            'reference' => $firstBooking->getId(),
+            'lessons' => $lessons,
+        ]);
         $notification = new Notification()
             ->importance('')
             ->subject($subject)
             ->content($content);
-
-        $this->notifier->send($notification, new Recipient($user->getEmail()));
-    }
-
-    /**
-     * @param list<array{title: string, date: string, time: string}> $lessons
-     */
-    private function formatLessonsList(array $lessons): string
-    {
-        $formatted = [];
-        foreach ($lessons as $lesson) {
-            $formatted[] = sprintf('- %s, %s %s', $lesson['title'], $lesson['date'], $lesson['time']);
-        }
-        return implode("\n", $formatted);
+        $this->notifier->send($notification, new Recipient($user->getEmailString()));
     }
 
     private function sendAdminNotifications(Payment $payment): void
@@ -96,42 +76,28 @@ readonly class SendPaymentNotificationHandler
         $admins = $this->userRepository->findByRole('ROLE_ADMIN');
         $bookings = $payment->getBookings();
         $firstBooking = $bookings->first() ?: throw new \LogicException('No booking found for payment');
-        $lessonsDetails = [];
-
+        $lessons = [];
         foreach ($bookings as $booking) {
             foreach ($booking->getLessons() as $lesson) {
-                $schedule = $lesson->getMetadata()
-                    ->schedule;
-                $lessonsDetails[] = [
-                    'title' => $lesson->getMetadata()
-                        ->title,
-                    'date' => $schedule->format('Y-m-d'),
-                    'time' => $schedule->format('H:i'),
-                ];
+                $lessons[] = $lesson;
             }
         }
-
-        $translatorContext = [
-            'id' => (string) $payment->getId(),
-            'amount' => (string) $payment->getAmount(),
-            'user' => $firstBooking->getUser()
-                ->getEmail(),
-            'booking' => $firstBooking->getId(),
-            'lessons' => $this->formatLessonsList($lessonsDetails),
-        ];
-
-        $subject = $this->translator->trans('payment.notification.admin.subject', [
-            'id' => $payment->getId(),
-        ], 'emails');
-        $content = $this->translator->trans('payment.notification.admin.greeting', $translatorContext, 'emails');
-
-        $notification = new Notification()
-            ->importance('')
-            ->subject($subject)
-            ->content($content);
-
         foreach ($admins as $admin) {
-            $this->notifier->send($notification, new Recipient($admin->getEmail()));
+            $subject = $this->twig->render('email/notification/payment-notification-admin-subject.html.twig', [
+                'user' => $firstBooking->getUser(),
+                'payment' => $payment,
+                'lessons' => $lessons,
+            ]);
+            $content = $this->twig->render('email/notification/payment-notification-admin.html.twig', [
+                'user' => $admin,
+                'payment' => $payment,
+                'lessons' => $lessons,
+            ]);
+            $notification = new Notification()
+                ->importance('')
+                ->subject($subject)
+                ->content($content);
+            $this->notifier->send($notification, new Recipient($admin->getEmailString()));
         }
     }
 }

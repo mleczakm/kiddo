@@ -1,0 +1,4 @@
+{% trans_default_domain 'emails' %}
+{% set lesson = lessons|first %}
+{{ 'payment.notification.user.subject'|trans({'user': user.emailString}) }} {{ lesson.metadata.title }}, {{ lesson.metadata.schedule|format_datetime(pattern='MM-dd HH:mm') }}{{ lessons|length > 1 ? 'payment.notification.and_others'|trans }}{{ 'payment.notification.user.thank_you'|trans }}
+

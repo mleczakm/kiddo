@@ -1,0 +1,16 @@
+{% trans_default_domain 'emails' %}
+<p>{{ 'payment.notification.user.greeting'|trans({'name': user.name}) }}</p>
+
+<p>{{ 'payment.notification.user.info'|trans({'amount': payment.amount|money, 'date': payment.createdAt|format_datetime(pattern='MM.dd HH:mm')}) }}</p>
+
+<ul>
+    {% for lesson in lessons %}
+        <li>
+            <strong>{{ lesson.metadata.title }}</strong>
+            ({{ lesson.metadata.schedule|format_datetime(pattern='MM.dd, HH:mm ') }})
+        </li>
+    {% endfor %}
+</ul>
+
+<p>{{ 'payment.notification.user.footer'|trans }}</p>
+
