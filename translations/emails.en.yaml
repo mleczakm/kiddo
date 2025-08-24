@@ -16,7 +16,6 @@ transfer:
         - Sender: {sender}
         - Title: {title}
         - Date: {date}
-        - Transfer ID: {transfer_id}
 
         Please check and match this transfer manually in the admin panel.
 

@@ -45,7 +45,6 @@ transfer:
         - Nadawca: {sender}
         - Tytuł: {title}
         - Data: {date}
-        - ID przelewu: {transfer_id}
 
         Prosimy o ręczne sprawdzenie i dopasowanie przelewu w panelu administracyjnym.
 

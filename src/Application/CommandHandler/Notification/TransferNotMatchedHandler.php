@@ -51,7 +51,6 @@ final readonly class TransferNotMatchedHandler
             'title' => $transfer->title,
             'date' => $transfer->getTransferredAt()
                 ->format('Y-m-d H:i'),
-            'transfer_id' => $transfer->getId(),
         ], 'emails');
 
         $notification = new Notification()

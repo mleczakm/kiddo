@@ -7,7 +7,9 @@ namespace App\Application\CommandHandler;
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\SaveTransfer;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 final readonly class SaveTransferHandler
 {
@@ -20,6 +22,9 @@ final readonly class SaveTransferHandler
     {
         $this->entityManager->persist($command->transfer);
 
-        $this->commandBus->dispatch(new MatchPaymentForTransfer($command->transfer));
+        $this->commandBus->dispatch(
+            new Envelope(new MatchPaymentForTransfer($command->transfer))
+                ->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }
