@@ -265,7 +265,7 @@ lesson:
 
   one_time.description: Zarezerwuj pojedyncze wejście na zajęcia
 
-  accept_terms: Akceptuję warunki i zasady <a data-action="click->live#action" data-live-action-param="openTerms">(Regulamin)</a>
+  accept_terms: Akceptuję warunki i zasady <a class="cursor-pointer" data-action="click->live#action" data-live-action-param="openTerms">(kliknij, aby zobaczyć regulamin)</a>
   book_and_pay: Zarezerwuj i zapłać
   cancel: Anuluj
   accept_terms_first: Najpierw zaakceptuj warunki i zasady
