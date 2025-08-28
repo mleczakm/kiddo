@@ -59,6 +59,9 @@ class User implements UserInterface
     #[ORM\ManyToMany(targetEntity: Tenant::class, mappedBy: 'users')]
     private Collection $tenants;
 
+    /**
+     * @var Collection<int, Booking>
+     */
     #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'user')]
     private Collection $bookings;
 
@@ -207,6 +210,9 @@ class User implements UserInterface
         }
     }
 
+    /**
+     * @return Collection<int, Booking>
+     */
     public function getBookings(): Collection
     {
         return $this->bookings;
