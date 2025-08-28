@@ -59,10 +59,14 @@ class User implements UserInterface
     #[ORM\ManyToMany(targetEntity: Tenant::class, mappedBy: 'users')]
     private Collection $tenants;
 
+    #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'user')]
+    private Collection $bookings;
+
     public function __construct()
     {
         $this->createdAt = Clock::get()->now();
         $this->tenants = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -201,5 +205,10 @@ class User implements UserInterface
             $this->tenants->removeElement($tenant);
             $tenant->removeUser($this);
         }
+    }
+
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
     }
 }

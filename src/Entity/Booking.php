@@ -62,7 +62,7 @@ class Booking
     private ?string $notes = null;
 
     public function __construct(
-        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
         #[ORM\JoinColumn(nullable: false)]
         private User $user,
         #[ORM\ManyToOne(targetEntity: Payment::class, cascade: ['persist'], inversedBy: 'bookings')]
