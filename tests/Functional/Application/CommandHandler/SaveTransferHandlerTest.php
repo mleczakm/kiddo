@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Application\CommandHandler;
+namespace App\Tests\Functional\Application\CommandHandler;
 
 use App\Application\Command\SaveTransfer;
 use App\Tests\Assembler\TransferAssembler;
