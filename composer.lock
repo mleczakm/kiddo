@@ -4671,12 +4671,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony-swoole/resetter-bundle.git",
-                "reference": "9a8d97eb24a39944f88ffc6312b094a908be53b2"
+                "reference": "a99a7d20bf00084e0d36b8596b601b2ead55fd57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-swoole/resetter-bundle/zipball/9a8d97eb24a39944f88ffc6312b094a908be53b2",
-                "reference": "9a8d97eb24a39944f88ffc6312b094a908be53b2",
+                "url": "https://api.github.com/repos/symfony-swoole/resetter-bundle/zipball/a99a7d20bf00084e0d36b8596b601b2ead55fd57",
+                "reference": "a99a7d20bf00084e0d36b8596b601b2ead55fd57",
                 "shasum": ""
             },
             "require": {
@@ -4740,7 +4740,7 @@
                 "issues": "https://github.com/symfony-swoole/resetter-bundle/issues",
                 "source": "https://github.com/symfony-swoole/resetter-bundle/tree/master"
             },
-            "time": "2025-08-22T11:42:38+00:00"
+            "time": "2025-08-28T12:20:31+00:00"
         },
         {
             "name": "swoole-bundle/swoole-bundle",
