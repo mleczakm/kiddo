@@ -149,4 +149,59 @@ class LessonRepository extends ServiceEntityRepository
 
         return $lessons;
     }
+
+    /**
+     * @return array<int, Lesson>
+     */
+    public function findUpcomingWithBookingsInRange(
+        \DateTimeImmutable $startDate,
+        \DateTimeImmutable $endDate,
+        bool $showCancelled = false
+    ): array {
+        $qb = $this->createQueryBuilder('l')
+            ->leftJoin('l.bookings', 'b')
+            ->andWhere('l.metadata.schedule >= :startDate')
+            ->andWhere('l.metadata.schedule <= :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->orderBy('l.metadata.schedule', 'ASC');
+
+        if (! $showCancelled) {
+            $qb->andWhere('l.status = :status')
+                ->setParameter('status', 'active');
+        }
+
+        /** @var Lesson[] $lessons */
+        $lessons = $qb->getQuery()
+            ->getResult();
+
+        return $lessons;
+    }
+
+    /**
+     * @return array<int, Lesson>
+     */
+    public function findUpcomingInRange(
+        \DateTimeImmutable $startDate,
+        \DateTimeImmutable $endDate,
+        bool $showCancelled = false
+    ): array {
+        $qb = $this->createQueryBuilder('l')
+            ->andWhere('l.metadata.schedule >= :startDate')
+            ->andWhere('l.metadata.schedule <= :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->orderBy('l.metadata.schedule', 'ASC');
+
+        if (! $showCancelled) {
+            $qb->andWhere('l.status = :status')
+                ->setParameter('status', 'active');
+        }
+
+        /** @var Lesson[] $lessons */
+        $lessons = $qb->getQuery()
+            ->getResult();
+
+        return $lessons;
+    }
 }

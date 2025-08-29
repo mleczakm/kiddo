@@ -400,6 +400,7 @@ admin_dashboard:
   upcoming_lessons:
     title: 'Nadchodzące zajęcia'
     actions: 'Akcje'
+    no_upcoming_lessons: Brak nadchodzących wydarzeń
   upcoming_attendees:
     title: Najbliższe rezerwacje
     no_attendees: Brak uczestników.
