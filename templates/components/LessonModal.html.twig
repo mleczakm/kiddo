@@ -174,7 +174,7 @@
 
                     <div>
                         <h3 class="font-semibold mb-2">{{ 'lesson.description'|trans }}</h3>
-                        <p class="text-muted-foreground">{{ lesson.metadata.description }}</p>
+                        <p class="text-muted-foreground">{{ lesson.metadata.description|raw|nl2br }}</p>
                     </div>
                     <div class="bg-muted/50 p-4 rounded-lg">
                         <h3 class="text-lg font-bold mb-4 font-display text-workshop-brown">
@@ -385,7 +385,7 @@
                             <div class="flex justify-between items-center mb-2">
                                 <div>
                                     <h4 class="font-medium">{{ ('lesson.' ~ activeTicketOption.type.value)|trans }}</h4>
-                                    <div class="text-muted text-sm mb-1">{{ activeTicketOption.description }}</div>
+                                    <div class="text-muted text-sm mb-1">{{ activeTicketOption.description|raw|nl2br }}</div>
                                     <div class="text-xs text-info">
                                         {% set policy = activeTicketOption.reschedulePolicy %}
                                         {% if policy == constant('App\\Entity\\TicketReschedulePolicy::ONETIME_24H_BEFORE') %}
