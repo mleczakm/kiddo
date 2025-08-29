@@ -206,7 +206,20 @@
                                  class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                                 <div class="p-4 bg-background rounded-lg mb-4">
                                     <div class="flex justify-between items-center mb-2">
-                                        <h4 class="font-medium">{{ ('lesson.' ~ activeTicketOption.type.value)|trans }}</h4>
+                                        <div>
+                                            <h4 class="font-medium">{{ ('lesson.' ~ activeTicketOption.type.value)|trans }}</h4>
+                                            <div class="text-muted text-sm mb-1">{{ activeTicketOption.description }}</div>
+                                            <div class="text-xs text-info">
+                                                {% set policy = activeTicketOption.reschedulePolicy %}
+                                                {% if policy == constant('App\\Entity\\TicketReschedulePolicy::ONETIME_24H_BEFORE') %}
+                                                    {{ 'ticket.reschedule.onetime_24h'|trans|raw }}
+                                                {% elseif policy == constant('App\\Entity\\TicketReschedulePolicy::UNLIMITED_24H_BEFORE') %}
+                                                    {{ 'ticket.reschedule.unlimited_24h'|trans|raw }}
+                                                {% else %}
+                                                    {{ 'ticket.reschedule.not_allowed'|trans|raw }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                         <span class="text-lg font-bold">{{ activeTicketOption.price|money }}</span>
                                     </div>
                                     <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>
@@ -370,7 +383,20 @@
                          class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                         <div class="p-4 bg-background rounded-lg mb-4">
                             <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-medium">{{ ('lesson.' ~ activeTicketOption.type.value)|trans }}</h4>
+                                <div>
+                                    <h4 class="font-medium">{{ ('lesson.' ~ activeTicketOption.type.value)|trans }}</h4>
+                                    <div class="text-muted text-sm mb-1">{{ activeTicketOption.description }}</div>
+                                    <div class="text-xs text-info">
+                                        {% set policy = activeTicketOption.reschedulePolicy %}
+                                        {% if policy == constant('App\\Entity\\TicketReschedulePolicy::ONETIME_24H_BEFORE') %}
+                                            {{ 'ticket.reschedule.onetime_24h'|trans }}
+                                        {% elseif policy == constant('App\\Entity\\TicketReschedulePolicy::UNLIMITED_24H_BEFORE') %}
+                                            {{ 'ticket.reschedule.unlimited_24h'|trans }}
+                                        {% else %}
+                                            {{ 'ticket.reschedule.not_allowed'|trans }}
+                                        {% endif %}
+                                    </div>
+                                </div>
                                 <span class="text-lg font-bold">{{ activeTicketOption.price }}</span>
                             </div>
                             <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>

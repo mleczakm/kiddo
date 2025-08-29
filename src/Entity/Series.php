@@ -38,7 +38,7 @@ class Series
     ) {
         $this->id = new Ulid();
         /** @var list<TicketOption> $ticketOptions */
-        $this->ticketOptions = $ticketOptions ?: [new TicketOption(TicketType::CARNET_4, Money::of(180, 'PLN'))];
+        $this->ticketOptions = $ticketOptions;
     }
 
     public function getId(): Ulid

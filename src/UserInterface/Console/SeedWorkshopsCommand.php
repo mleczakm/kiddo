@@ -12,6 +12,7 @@ use App\Entity\Series;
 use App\Entity\TicketOption;
 use App\Entity\TicketType;
 use App\Entity\WorkshopType;
+use App\Entity\TicketReschedulePolicy;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -327,8 +328,18 @@ class SeedWorkshopsCommand extends Command
         };
 
         $ticketOptions = [
-            new TicketOption(TicketType::ONE_TIME, $price),
-            new TicketOption(TicketType::CARNET_4, $carnetPrice),
+            new TicketOption(
+                TicketType::ONE_TIME,
+                $price,
+                'Bilet jednorazowy',
+                TicketReschedulePolicy::ONETIME_24H_BEFORE
+            ),
+            new TicketOption(
+                TicketType::CARNET_4,
+                $carnetPrice,
+                'Karnet na 4 wejścia',
+                TicketReschedulePolicy::UNLIMITED_24H_BEFORE
+            ),
         ];
 
         $series = new Series(

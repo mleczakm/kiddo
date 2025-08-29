@@ -19,6 +19,42 @@ parameters:
 			path: src/Application/CommandHandler/SendLoginNotificationHandler.php
 
 		-
+			message: '#^Cannot access offset ''carnet_4'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Command/MigrateTicketOptionsCommand.php
+
+		-
+			message: '#^Cannot access offset ''description'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Command/MigrateTicketOptionsCommand.php
+
+		-
+			message: '#^Cannot access offset ''lesson'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Command/MigrateTicketOptionsCommand.php
+
+		-
+			message: '#^Cannot access offset ''one_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Command/MigrateTicketOptionsCommand.php
+
+		-
+			message: '#^Parameter \#3 \$description of class App\\Entity\\TicketOption constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Command/MigrateTicketOptionsCommand.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between App\\Entity\\TicketType\:\:ONE_TIME and App\\Entity\\TicketType\:\:ONE_TIME will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: src/Command/MigrateTicketOptionsCommand.php
+
+		-
 			message: '#^Method App\\Entity\\User\:\:getUserIdentifier\(\) should return non\-empty\-string but returns string\.$#'
 			identifier: return.type
 			count: 1

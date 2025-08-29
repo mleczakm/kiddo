@@ -9,6 +9,7 @@ use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Entity\Series;
 use App\Entity\TicketOption;
+use App\Entity\TicketReschedulePolicy;
 use App\Entity\TicketType;
 use Brick\Money\Money;
 
@@ -131,7 +132,12 @@ class LessonAssembler extends EntityAssembler
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('ticketOptions');
             $property->setAccessible(true);
-            $property->setValue($lesson, [new TicketOption(TicketType::ONE_TIME, Money::of(50, 'PLN'))]);
+            $property->setValue($lesson, [new TicketOption(
+                TicketType::ONE_TIME,
+                Money::of(50, 'PLN'),
+                'Bilet jednorazowy',
+                TicketReschedulePolicy::UNLIMITED_24H_BEFORE
+            )]);
         }
 
         if (isset($this->properties['series'])) {

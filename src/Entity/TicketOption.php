@@ -11,5 +11,7 @@ final readonly class TicketOption
     public function __construct(
         public TicketType $type,
         public Money $price,
+        public string $description,
+        public TicketReschedulePolicy $reschedulePolicy,
     ) {}
 }

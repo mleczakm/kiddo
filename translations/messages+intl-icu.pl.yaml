@@ -518,3 +518,10 @@ payment:
   booked: "Zarezerwowano: {date}"
   title: Tytuł przelewu
   pending_transfers: Przychodzące nierozpoznane przelewy
+
+ticket:
+  reschedule:
+    onetime_24h: "Możliwość przełożenia: <strong>jednokrotnie</strong>, do 24h przed"
+    unlimited_24h: "Możliwość przełożenia: <strong>wielokrotnie</strong>, do 24h przed"
+    not_allowed: "Brak możliwości przełożenia"
+
