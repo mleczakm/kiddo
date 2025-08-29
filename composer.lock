@@ -7815,16 +7815,16 @@
         },
         {
             "name": "symfony/notifier",
-            "version": "v7.3.0",
+            "version": "v7.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/notifier.git",
-                "reference": "9e68a3266c8b0381f8756022b1c1ba3c0264416e"
+                "reference": "33e91495d9674b6ba5e2a1de810902ba976156f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/notifier/zipball/9e68a3266c8b0381f8756022b1c1ba3c0264416e",
-                "reference": "9e68a3266c8b0381f8756022b1c1ba3c0264416e",
+                "url": "https://api.github.com/repos/symfony/notifier/zipball/33e91495d9674b6ba5e2a1de810902ba976156f5",
+                "reference": "33e91495d9674b6ba5e2a1de810902ba976156f5",
                 "shasum": ""
             },
             "require": {
@@ -7873,7 +7873,7 @@
                 "notifier"
             ],
             "support": {
-                "source": "https://github.com/symfony/notifier/tree/v7.3.0"
+                "source": "https://github.com/symfony/notifier/tree/v7.3.3"
             },
             "funding": [
                 {
@@ -7885,11 +7885,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-01T12:12:53+00:00"
+            "time": "2025-08-13T11:49:31+00:00"
         },
         {
             "name": "symfony/options-resolver",
