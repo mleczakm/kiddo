@@ -1,54 +1,113 @@
 <div {{ attributes }} class="rounded-xl border bg-stone-50 text-card-foreground shadow">
     <div class="flex flex-col space-y-1.5 p-6">
-        <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-5 h-5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>{{ 'admin_dashboard.upcoming_attendees.title'|trans }}</span>
-        </h3>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+            <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-5 h-5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>{{ 'admin_dashboard.upcoming_attendees.title'|trans }}</span>
+            </h3>
+            <div class="flex flex-wrap items-center gap-2">
+                <button
+                    type="button"
+                    data-action="live#action"
+                    data-live-action-param="toggleCancelled"
+                    class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm {{ this.showCancelled ? 'bg-gray-100 border-gray-400' : 'bg-white' }}"
+                    title="{{ this.showCancelled ? 'Hide cancelled lessons' : 'Show cancelled lessons' }}"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% if this.showCancelled %}
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                        {% else %}
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        {% endif %}
+                    </svg>
+                    <span class="sr-only">{{ this.showCancelled ? 'Hide cancelled' : 'Show cancelled' }}</span>
+                </button>
+                <button
+                    type="button"
+                    data-model="week"
+                    data-value="{{ this.week|date_modify('-7 days')|date('Y-m-d') }}"
+                    data-action="live#update"
+                    class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+                    title="{{ 'lesson.previous_week'|trans }}"
+                >
+                    <span class="sr-only">{{ 'lesson.previous_week'|trans }}</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <span class="px-3 py-1.5 text-sm bg-gray-100 rounded-md whitespace-nowrap">
+                    {{ this.weekStart|date('m.d') }} - {{ this.weekEnd|date('m.d') }}
+                </span>
+                <button
+                    type="button"
+                    data-model="week"
+                    data-value="{{ this.week|date_modify('+7 days')|date('Y-m-d') }}"
+                    data-action="live#update"
+                    class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+                    title="{{ 'lesson.next_week'|trans }}"
+                >
+                    <span class="sr-only">{{ 'lesson.next_week'|trans }}</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
     <div class="p-6 pt-0">
         <div class="space-y-6">
             {% if this.lessons is not empty %}
                 {% for lesson in this.lessons %}
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div class="space-y-3 {{ lesson.status == 'cancelled' ? 'opacity-60' : '' }}">
+                        <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg {{ lesson.status == 'cancelled' ? 'bg-red-50 border border-red-200' : '' }}">
                             <div>
-                                <h4 class="font-medium">{{ lesson.metadata.title }}</h4>
+                                <h4 class="font-medium {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : '' }}">
+                                    {{ lesson.metadata.title }}
+                                    {% if lesson.status == 'cancelled' %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 ml-2">
+                                            Cancelled
+                                        </span>
+                                    {% endif %}
+                                </h4>
                                 <p class="text-sm text-muted-foreground">{{ lesson.metadata.schedule|format_datetime('medium', 'short') }} • {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }} {{ 'admin_dashboard.capacity'|trans }}</p>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button
-                                    data-action="click->live#action"
-                                    data-live-action-param="decreaseCapacity"
-                                    data-live-lesson-id-param="{{ lesson.id }}"
-                                    class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none"
-                                    {{ lesson.metadata.capacity <= lesson.bookings|length ? 'disabled' : '' }}
-                                    title="{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}"
-                                >
-                                    <span class="sr-only">{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-                                        <path d="M5 12h14"/>
-                                    </svg>
-                                </button>
-                                
-                                <span class="text-sm font-medium min-w-[2rem] text-center">
-                                    {{ lesson.metadata.capacity - lesson.bookings|length }}
-                                </span>
-                                
-                                <button
-                                    data-action="click->live#action"
-                                    data-live-action-param="increaseCapacity"
-                                    data-live-lesson-id-param="{{ lesson.id }}"
-                                    class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
-                                    title="{{ 'admin_dashboard.upcoming_attendees.increase_capacity'|trans }}"
-                                >
-                                    <span class="sr-only">{{ 'admin_dashboard.upcoming_attendees.increase_capacity'|trans }}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-                                        <path d="M5 12h14"/>
-                                        <path d="M12 5v14"/>
-                                    </svg>
-                                </button>
-                                <button disabled class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3">{{ 'admin_dashboard.upcoming_attendees.quick_book'|trans }}</button>
-                            </div>
+                            {% if lesson.status != 'cancelled' %}
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        data-action="click->live#action"
+                                        data-live-action-param="decreaseCapacity"
+                                        data-live-lesson-id-param="{{ lesson.id }}"
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none"
+                                        {{ lesson.metadata.capacity <= lesson.bookings|length ? 'disabled' : '' }}
+                                        title="{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}"
+                                    >
+                                        <span class="sr-only">{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                                            <path d="M5 12h14"/>
+                                        </svg>
+                                    </button>
+
+                                    <span class="text-sm font-medium min-w-[2rem] text-center">
+                                        {{ lesson.metadata.capacity - lesson.bookings|length }}
+                                    </span>
+
+                                    <button
+                                        data-action="click->live#action"
+                                        data-live-action-param="increaseCapacity"
+                                        data-live-lesson-id-param="{{ lesson.id }}"
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                                        title="{{ 'admin_dashboard.upcoming_attendees.increase_capacity'|trans }}"
+                                    >
+                                        <span class="sr-only">{{ 'admin_dashboard.upcoming_attendees.increase_capacity'|trans }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                                            <path d="M5 12h14"/>
+                                            <path d="M12 5v14"/>
+                                        </svg>
+                                    </button>
+                                    <button disabled class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3">{{ 'admin_dashboard.upcoming_attendees.quick_book'|trans }}</button>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <div class="space-y-2">

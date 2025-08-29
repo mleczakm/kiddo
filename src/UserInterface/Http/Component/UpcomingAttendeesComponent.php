@@ -8,9 +8,11 @@ use App\Entity\Lesson;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Clock\Clock;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent]
@@ -18,17 +20,39 @@ final class UpcomingAttendeesComponent extends AbstractController
 {
     use DefaultActionTrait;
 
+    #[LiveProp(writable: true, url: true)]
+    public string $week;
+
+    #[LiveProp(writable: true, url: true)]
+    public bool $showCancelled = false;
+
     public function __construct(
         private readonly LessonRepository $lessonRepository,
         private readonly EntityManagerInterface $entityManager,
-    ) {}
+    ) {
+        $this->week = Clock::get()->now()->format('Y-m-d');
+    }
 
     /**
      * @return Lesson[]
      */
     public function getLessons(): array
     {
-        return $this->lessonRepository->findUpcomingWithBookings(new \DateTimeImmutable(), 5);
+        $startDate = new \DateTimeImmutable($this->week);
+        $endDate = $startDate->modify('+7 days');
+
+        return $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, $this->showCancelled);
+    }
+
+    public function getWeekStart(): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable($this->week);
+    }
+
+    public function getWeekEnd(): \DateTimeImmutable
+    {
+        return $this->getWeekStart()
+            ->modify('+7 days');
     }
 
     #[LiveAction]
@@ -46,10 +70,16 @@ final class UpcomingAttendeesComponent extends AbstractController
     public function decreaseCapacity(#[LiveArg] string $lessonId): void
     {
         $lesson = $this->lessonRepository->find($lessonId);
-        if ($lesson && $lesson->getMetadata()->capacity > count($lesson->getBookings())) {
+        if ($lesson && $lesson->getMetadata()->capacity > $lesson->getBookings()->count()) {
             $lesson->getMetadata()
                 ->capacity--;
             $this->entityManager->flush();
         }
+    }
+
+    #[LiveAction]
+    public function toggleCancelled(): void
+    {
+        $this->showCancelled = ! $this->showCancelled;
     }
 }
