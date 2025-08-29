@@ -6582,16 +6582,16 @@
         },
         {
             "name": "symfony/form",
-            "version": "v7.3.2",
+            "version": "v7.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/form.git",
-                "reference": "e83e898d1589f3ec647824bd4416defe3d6e3875"
+                "reference": "f151b4a027fa67769268b80111f7fdb63edb5e79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/form/zipball/e83e898d1589f3ec647824bd4416defe3d6e3875",
-                "reference": "e83e898d1589f3ec647824bd4416defe3d6e3875",
+                "url": "https://api.github.com/repos/symfony/form/zipball/f151b4a027fa67769268b80111f7fdb63edb5e79",
+                "reference": "f151b4a027fa67769268b80111f7fdb63edb5e79",
                 "shasum": ""
             },
             "require": {
@@ -6659,7 +6659,7 @@
             "description": "Allows to easily create, process and reuse HTML forms",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/form/tree/v7.3.2"
+                "source": "https://github.com/symfony/form/tree/v7.3.3"
             },
             "funding": [
                 {
@@ -6679,7 +6679,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-07-24T12:10:26+00:00"
+            "time": "2025-08-18T13:10:53+00:00"
         },
         {
             "name": "symfony/framework-bundle",
@@ -7893,16 +7893,16 @@
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v7.3.2",
+            "version": "v7.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver.git",
-                "reference": "119bcf13e67dbd188e5dbc74228b1686f66acd37"
+                "reference": "0ff2f5c3df08a395232bbc3c2eb7e84912df911d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/119bcf13e67dbd188e5dbc74228b1686f66acd37",
-                "reference": "119bcf13e67dbd188e5dbc74228b1686f66acd37",
+                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/0ff2f5c3df08a395232bbc3c2eb7e84912df911d",
+                "reference": "0ff2f5c3df08a395232bbc3c2eb7e84912df911d",
                 "shasum": ""
             },
             "require": {
@@ -7940,7 +7940,7 @@
                 "options"
             ],
             "support": {
-                "source": "https://github.com/symfony/options-resolver/tree/v7.3.2"
+                "source": "https://github.com/symfony/options-resolver/tree/v7.3.3"
             },
             "funding": [
                 {
@@ -7960,7 +7960,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-07-15T11:36:08+00:00"
+            "time": "2025-08-05T10:16:07+00:00"
         },
         {
             "name": "symfony/password-hasher",
@@ -8114,16 +8114,16 @@
         },
         {
             "name": "symfony/polyfill-intl-icu",
-            "version": "v1.32.0",
+            "version": "v1.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-icu.git",
-                "reference": "763d2a91fea5681509ca01acbc1c5e450d127811"
+                "reference": "bfc8fa13dbaf21d69114b0efcd72ab700fb04d0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/763d2a91fea5681509ca01acbc1c5e450d127811",
-                "reference": "763d2a91fea5681509ca01acbc1c5e450d127811",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/bfc8fa13dbaf21d69114b0efcd72ab700fb04d0c",
+                "reference": "bfc8fa13dbaf21d69114b0efcd72ab700fb04d0c",
                 "shasum": ""
             },
             "require": {
@@ -8178,7 +8178,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-icu/tree/v1.32.0"
+                "source": "https://github.com/symfony/polyfill-intl-icu/tree/v1.33.0"
             },
             "funding": [
                 {
@@ -8190,11 +8190,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-21T18:38:29+00:00"
+            "time": "2025-06-20T22:24:30+00:00"
         },
         {
             "name": "symfony/polyfill-intl-idn",
