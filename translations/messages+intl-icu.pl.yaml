@@ -273,7 +273,7 @@ lesson:
   accept_terms_and_close: Zaakceptuj regulamin
   fully_booked: Brak wolnych miejsc
   no_lessons_found: W wybranym okresie brak zajęć spełniających kryteria.
-  
+
 booking:
   cancel: Anuluj rezerwację
   cancel_booking: Anuluj rezerwację
@@ -342,6 +342,88 @@ dashboard:
 admin_dashboard:
   title: Kiddo System Rezerwacji Warsztatów - 2025
   frontpage: Strona główna
+  upcoming_lessons:
+    title: 'Nadchodzące zajęcia'
+    actions: 'Akcje'
+    no_upcoming_lessons: Brak nadchodzących wydarzeń
+  upcoming_attendees:
+    title: Najbliższe rezerwacje
+    no_attendees: Brak uczestników.
+    attendees: '{count, plural, one {# uczestnik} few {# uczestników} many {# uczestników} other {# uczestnika}}'
+    add_capacity: '+1'
+    remove_capacity: '-1'
+
+    quick_book: 'Szybka rezerwacja'
+    actions: 'Akcje'
+    no_upcoming_attendees: Brak nadchodzących wydarzeń
+    decrease_capacity: 'Zmniejsz ilość dostępnych miejsc'
+    increase_capacity: 'Zwiększ ilość dostępnych miejsc'
+  quick_actions:
+    title: 'Szybkie akcje'
+    create_workshop: 'Utwórz warsztat'
+    manage_bookings: 'Zarządzaj rezerwacjami'
+    manage_users: 'Zarządzaj użytkownikami'
+    view_reports: 'Zobacz raporty'
+  capacity: uczestników
+
+admin_users:
+  title: Użytkownicy
+  search:
+    placeholder: Szukaj użytkowników...
+  add_user: Dodaj użytkownika
+  table:
+    name: Nazwa
+    email: Email
+    role: Rola
+    status: Status
+    actions: Akcje
+  status:
+    active: Aktywny
+  actions:
+    edit: Edytuj
+
+admin:
+  badges:
+    paid: 'Opłacone'
+    unpaid: 'Nieopłacone'
+  title: 'Panel Administratora'
+  tabs:
+    dashboard: 'Pulpit'
+    workshops: 'Warsztaty'
+    bookings: 'Rezerwacje'
+    users: 'Użytkownicy'
+    reports: 'Raporty'
+    settings: 'Ustawienia'
+    lessons: Zajęcia
+    schedule: Harmonogram
+    transfers: Płatności
+    messages: Wiadomości
+
+profile:
+  title: 'Mój profil'
+  personal_data:
+    title: 'Dane osobowe'
+  user_roles: Uprawnienia użytkownika
+  section_heading: Informacje o użytkowniku
+  name: Imie
+  email: Adres e-mail
+  edit_profile: Edytuj profil
+  account_actions: Akcje dostępne na koncie
+  update_success: Profil został pomyślnie zaktualizowany.
+  save_changes: Zapisz zmiany
+  cancel: Anuluj
+  name.not_blank: Imię nie może być puste.
+  name.min_length: Imię musi mieć co najmniej 2 znaki.
+  email.not_blank: Adres e-mail nie może być pusty.
+  email.invalid: Wprowadź poprawny adres e-mail.
+
+ROLE_USER: Użytkownik
+ROLE_ADMIN: Administrator
+
+carnets:
+  none_found: Nie znaleziono żadnych karnetów.
+
+
 
 from_day_of_week: >-
   {day, select,

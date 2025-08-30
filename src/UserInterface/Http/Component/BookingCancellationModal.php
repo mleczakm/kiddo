@@ -6,14 +6,17 @@ namespace App\UserInterface\Http\Component;
 
 use App\Entity\Booking;
 use App\Entity\Lesson;
+use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\LessonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -25,8 +28,7 @@ class BookingCancellationModal extends AbstractController
     public function __construct(
         private readonly MessageBusInterface $messageBus,
         private readonly LessonRepository $lessonRepository
-    ) {
-    }
+    ) {}
 
     #[LiveProp]
     public ?Booking $booking = null;
@@ -41,32 +43,49 @@ class BookingCancellationModal extends AbstractController
     public string $cancellationReason = '';
 
     #[LiveProp(writable: true)]
-    public string $selectedOption = '';
+    public string $selectedOption = 'reschedule';
 
     #[LiveProp(writable: true)]
-    public ?int $selectedLessonId = null;
+    public ?Ulid $selectedLessonId = null;
 
     private const CANCELLATION_TYPES = ['reschedule', 'refund', 'cancel'];
 
+    /**
+     * @return array<int, Lesson>
+     */
     public function getAvailableLessons(): array
     {
-        if (!$this->booking || !$this->lesson) {
+        if (! $this->booking || ! $this->lesson) {
             return [];
         }
 
         $series = $this->lesson->getSeries();
-        if (!$series) {
+        if (! $series) {
             return [];
         }
 
-        // Get all future lessons in the same series that have available spots
-        $availableLessons = $this->lessonRepository->findAvailableLessonsForReschedule(
+        $user = $this->booking->getUser();
+
+        // Get all future lessons in the same series that have available spots and no conflicts for user
+        $availableLessons = $this->lessonRepository->findAvailableLessonsForUserReschedule(
             $series,
-            $this->lesson->getMetadata()->schedule,
+            $this->lesson->getMetadata()
+                ->schedule,
+            $user
         );
 
         // Remove the current lesson from the list
         return array_filter($availableLessons, fn($lesson) => $lesson->getId() !== $this->lesson->getId());
+    }
+
+    public function getTabState(string $option): string
+    {
+        return $this->selectedOption === $option ? 'active' : 'inactive';
+    }
+
+    public function isTabActive(string $option): bool
+    {
+        return $this->selectedOption === $option;
     }
 
     #[LiveAction]
@@ -79,27 +98,28 @@ class BookingCancellationModal extends AbstractController
     public function closeModal(): void
     {
         $this->modalOpened = false;
-        $this->cancellationReason = '';
-        $this->selectedOption = '';
     }
 
     #[LiveAction]
-    public function processCancellation(string $typeParam, ?int $lessonIdParam = null, ?string $reasonParam = null): void
+    public function processCancellation(#[LiveArg('type')] string $typeParam): void
     {
-        if (!in_array($typeParam, self::CANCELLATION_TYPES, true)) {
+        if (! in_array($typeParam, self::CANCELLATION_TYPES, true)) {
             throw new \InvalidArgumentException('Invalid cancellation type');
         }
 
-        if (!$this->booking || !$this->lesson) {
+        if (! $this->booking || ! $this->lesson) {
             throw new \RuntimeException('Booking or lesson not set');
         }
 
-        $this->cancellationReason = $reasonParam ?? $this->cancellationReason;
+        $securityUser = $this->getUser();
+        if (! $securityUser instanceof User) {
+            throw new \RuntimeException('User not authenticated or invalid user type');
+        }
 
         switch ($typeParam) {
             case 'reschedule':
-                $newLesson = $this->lessonRepository->find($lessonIdParam);
-                if (!$newLesson) {
+                $newLesson = $this->lessonRepository->find($this->selectedLessonId);
+                if (! $newLesson) {
                     throw new \RuntimeException('Selected lesson not found');
                 }
 
@@ -107,8 +127,8 @@ class BookingCancellationModal extends AbstractController
                     $this->booking->getId(),
                     $this->lesson->getId(),
                     $newLesson->getId(),
-                    $this->getUser()->getId(),
-                    $this->cancellationReason
+                    $securityUser,
+                    $this->cancellationReason ?? ''
                 ));
                 break;
 
@@ -116,8 +136,8 @@ class BookingCancellationModal extends AbstractController
                 $this->messageBus->dispatch(new RefundLessonBooking(
                     $this->booking->getId(),
                     $this->lesson->getId(),
-                    $this->getUser()->getId(),
-                    $this->cancellationReason
+                    $securityUser,
+                    $this->cancellationReason ?? ''
                 ));
                 break;
 
@@ -126,27 +146,47 @@ class BookingCancellationModal extends AbstractController
                 $this->messageBus->dispatch(new CancelLessonBooking(
                     $this->booking->getId(),
                     $this->lesson->getId(),
-                    $this->getUser()->getId(),
-                    $this->cancellationReason
+                    $securityUser,
+                    $this->cancellationReason ?? ''
                 ));
                 break;
         }
 
         // Reset the form
         $this->modalOpened = false;
-        $this->selectedOption = '';
+        $this->selectedOption = 'reschedule';
         $this->cancellationReason = '';
         $this->selectedLessonId = null;
     }
 
+    #[LiveAction]
+    public function selectTab(#[LiveArg] int $index, #[LiveArg('option')] string $option): void
+    {
+        $this->selectedOption = $option;
+    }
+
     public function canBeRescheduled(): bool
     {
-        if (!$this->booking || !$this->lesson) {
+        if (! $this->booking || ! $this->lesson) {
             return false;
         }
 
-        return $this->lesson->getSeries() !== null &&
-            $this->lesson->getStartTime() > new \DateTimeImmutable() &&
-            count($this->getAvailableLessons()) > 0;
+        $series = $this->lesson->getSeries();
+        $schedule = $this->lesson->getMetadata()
+            ->schedule;
+
+        return $series !== null
+            && $schedule > new \DateTimeImmutable()
+            && count($this->getAvailableLessons()) > 0;
+    }
+
+    public function isButtonDisabled(): bool
+    {
+        if ($this->selectedOption === 'reschedule') {
+            return $this->selectedLessonId === null;
+        }
+
+        // For cancel and refund, just check if reason is provided (optional but recommended)
+        return false;
     }
 }

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
-use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -15,12 +13,20 @@ final class AdminDashboardComponent
 {
     use DefaultActionTrait;
 
-    #[LiveProp(writable: true)]
+    #[LiveProp]
     public string $activeTab = 'dashboard';
 
-    #[LiveAction]
-    public function changeTab(#[LiveArg] string $tab): void
+    public function getTabUrl(string $tab): string
     {
-        $this->activeTab = $tab;
+        return match ($tab) {
+            'dashboard' => '/admin',
+            'lessons' => '/admin/zajecia',
+            'schedule' => '/admin/harmonogram',
+            'transfers' => '/admin/platnosci',
+            'bookings' => '/admin/rezerwacje',
+            'users' => '/admin/uzytkownicy',
+            'messages' => '/admin/wiadomosci',
+            default => '/admin',
+        };
     }
 }

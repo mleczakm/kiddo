@@ -6,7 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Lesson;
 use App\Entity\Series;
-use App\Entity\Child;
+use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,7 +20,7 @@ class LessonRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Lesson::class);
     }
-    
+
     /**
      * Finds available lessons for rescheduling a booking.
      *
@@ -35,7 +35,7 @@ class LessonRepository extends ServiceEntityRepository
         int $maxResults = 10
     ): array {
         $qb = $this->createQueryBuilder('l');
-        
+
         return $qb
             ->andWhere('l.metadata.schedule > :afterDate')
             ->andWhere('l.status = :status')
@@ -45,6 +45,39 @@ class LessonRepository extends ServiceEntityRepository
             ->setMaxResults($maxResults)
             ->getQuery()
             ->getResult();
+
+        return $result;
+    }
+
+    /**
+     * @return array<int, Lesson>
+     */
+    public function findAvailableLessonsForUserReschedule(
+        Series $series,
+        \DateTimeInterface $afterDate,
+        User $user,
+        int $maxResults = 10
+    ): array {
+        $qb = $this->createQueryBuilder('l');
+
+        /** @var array<int, Lesson> $result */
+        $result = $qb
+            ->leftJoin('l.bookings', 'b')
+            ->leftJoin('b.user', 'u')
+            ->andWhere('l.metadata.schedule > :afterDate')
+            ->andWhere('l.status = :status')
+            ->andWhere('l.series = :series')
+            ->setParameter('afterDate', $afterDate)
+            ->setParameter('status', 'active')
+            ->setParameter('series', $series->getId(), 'ulid')
+            ->setParameter('user', $user)
+            ->setParameter('activeStatuses', ['confirmed', 'pending'])
+            ->orderBy('l.metadata.schedule', 'ASC')
+            ->setMaxResults($maxResults)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
     }
 
     /**
