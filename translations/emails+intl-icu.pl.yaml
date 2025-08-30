@@ -62,14 +62,10 @@ payment:
 
       footer: 'W razie pytań prosimy o kontakt.'
     admin:
-      subject: 'Nowa płatność od "{user}" za'
+      subject: 'Nowa płatność od {user} za'
       info: >-
         Otrzymano nową płatność:
-        
-        
         Kwota: {amount}
-        
-        
         Użytkownik: {user}
                 
         Zarezerwowane zajęcia:

@@ -1,0 +1,226 @@
+<div {{ attributes }} data-controller="live">
+    <div class="rounded-xl border bg-stone-50 text-card-foreground shadow">
+        <div class="flex flex-col space-y-1.5 p-6 border-b">
+            <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle">
+                    <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/>
+                </svg>
+                <span>Wiadomości od użytkowników</span>
+                {% if this.unreadCount > 0 %}
+                    <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                        {{ this.unreadCount }}
+                    </span>
+                {% endif %}
+            </h3>
+        </div>
+
+        <div class="p-6">
+            <!-- Filter Tabs -->
+            <div class="flex space-x-1 mb-6 bg-stone-100 p-1 rounded-lg">
+                <button
+                    type="button"
+                    class="flex-1 text-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ activeFilter == 'unread' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}"
+                    data-action="live#action"
+                    data-live-action-param="changeFilter"
+                    data-live-filter-param="unread"
+                >
+                    Nieprzeczytane
+                    {% if this.unreadCount > 0 %}
+                        <span class="ml-2 bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs">{{ this.unreadCount }}</span>
+                    {% endif %}
+                </button>
+                <button
+                    type="button"
+                    class="flex-1 text-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ activeFilter == 'in_progress' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}"
+                    data-action="live#action"
+                    data-live-action-param="changeFilter"
+                    data-live-filter-param="in_progress"
+                >
+                    W trakcie
+                </button>
+                <button
+                    type="button"
+                    class="flex-1 text-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ activeFilter == 'resolved' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}"
+                    data-action="live#action"
+                    data-live-action-param="changeFilter"
+                    data-live-filter-param="resolved"
+                >
+                    Rozwiązane
+                </button>
+                <button
+                    type="button"
+                    class="flex-1 text-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ activeFilter == 'all' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900' }}"
+                    data-action="live#action"
+                    data-live-action-param="changeFilter"
+                    data-live-filter-param="all"
+                >
+                    Wszystkie
+                </button>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Messages List -->
+                <div class="space-y-4">
+                    {% for message in this.messages %}
+                        {% set statusClass = message.status.value == 'unread' ? 'bg-red-100 text-red-800' : (message.status.value == 'read' ? 'bg-blue-100 text-blue-800' : (message.status.value == 'in_progress' ? 'bg-yellow-100 text-yellow-800' : (message.status.value == 'resolved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'))) %}
+                        {% set typeClass = message.type.value in ['booking_issue', 'cancellation_request', 'reschedule_request', 'refund_request'] ? 'bg-orange-100 text-orange-800' : (message.type.value == 'complaint' ? 'bg-red-100 text-red-800' : (message.type.value == 'technical_issue' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800')) %}
+
+                        <div class="p-4 border rounded-lg cursor-pointer transition-colors {{ message.unread ? 'bg-blue-50 border-blue-200' : 'bg-white' }} hover:bg-gray-50"
+                             data-action="live#action"
+                             data-live-action-param="selectMessage"
+                             data-live-message-id-param="{{ message.id }}">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium {{ statusClass }}">
+                                            {{ message.status.value == 'unread' ? 'Nieprzeczytana' : (message.status.value == 'read' ? 'Przeczytana' : (message.status.value == 'in_progress' ? 'W trakcie' : (message.status.value == 'resolved' ? 'Rozwiązana' : 'Zarchiwizowana'))) }}
+                                        </span>
+                                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium {{ typeClass }}">
+                                            {% set typeLabel = message.type.value == 'general' ? 'Ogólne' : (message.type.value == 'booking_issue' ? 'Problem z rezerwacją' : (message.type.value == 'cancellation_request' ? 'Prośba o anulowanie' : (message.type.value == 'reschedule_request' ? 'Prośba o przełożenie' : (message.type.value == 'refund_request' ? 'Prośba o zwrot' : (message.type.value == 'complaint' ? 'Reklamacja' : (message.type.value == 'technical_issue' ? 'Problem techniczny' : 'Nieznany')))))) %}
+                                            {{ typeLabel }}
+                                        </span>
+                                    </div>
+                                    <h4 class="text-sm font-medium text-gray-900 truncate">{{ message.subject }}</h4>
+                                    <p class="text-sm text-gray-600 truncate">{{ message.user.name }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ message.createdAt|date('d.m.Y H:i') }}</p>
+                                </div>
+                                {% if message.unread %}
+                                    <div class="flex-shrink-0">
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8 text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox mx-auto mb-3 text-gray-400">
+                                <polyline points="22,12 16,12 14,15 10,15 8,12 2,12"/>
+                                <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                            </svg>
+                            <p>Brak wiadomości w wybranej kategorii</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Message Details -->
+                <div class="lg:border-l lg:pl-6">
+                    {% if selectedMessageId and this.selectedMessage %}
+                        {% set selectedStatusClass = selectedMessage.status.value == 'unread' ? 'bg-red-100 text-red-800' : (selectedMessage.status.value == 'read' ? 'bg-blue-100 text-blue-800' : (selectedMessage.status.value == 'in_progress' ? 'bg-yellow-100 text-yellow-800' : (selectedMessage.status.value == 'resolved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'))) %}
+                        {% set selectedTypeClass = selectedMessage.type.value in ['booking_issue', 'cancellation_request', 'reschedule_request', 'refund_request'] ? 'bg-orange-100 text-orange-800' : (selectedMessage.type.value == 'complaint' ? 'bg-red-100 text-red-800' : (selectedMessage.type.value == 'technical_issue' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800')) %}
+
+                        <div class="bg-white border rounded-lg p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ selectedMessage.subject }}</h3>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium {{ selectedStatusClass }}">
+                                            {{ selectedMessage.status.value == 'unread' ? 'Nieprzeczytana' : (selectedMessage.status.value == 'read' ? 'Przeczytana' : (selectedMessage.status.value == 'in_progress' ? 'W trakcie' : (selectedMessage.status.value == 'resolved' ? 'Rozwiązana' : 'Zarchiwizowana'))) }}
+                                        </span>
+                                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium {{ selectedTypeClass }}">
+                                            {% set selectedTypeLabel = selectedMessage.type.value == 'general' ? 'Ogólne' : (selectedMessage.type.value == 'booking_issue' ? 'Problem z rezerwacją' : (selectedMessage.type.value == 'cancellation_request' ? 'Prośba o anulowanie' : (selectedMessage.type.value == 'reschedule_request' ? 'Prośba o przełożenie' : (selectedMessage.type.value == 'refund_request' ? 'Prośba o zwrot' : (selectedMessage.type.value == 'complaint' ? 'Reklamacja' : (selectedMessage.type.value == 'technical_issue' ? 'Problem techniczny' : 'Nieznany')))))) %}
+                                            {{ selectedTypeLabel }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="text-gray-400 hover:text-gray-600"
+                                    data-action="live#action"
+                                    data-live-action-param="closeMessageDetails"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
+                                        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="mb-4 pb-4 border-b">
+                                <p class="text-sm text-gray-600 mb-1">Od: <strong>{{ selectedMessage.user.name }}</strong></p>
+                                <p class="text-sm text-gray-600 mb-1">Email: <strong>{{ selectedMessage.user.email }}</strong></p>
+                                <p class="text-sm text-gray-600">Data: <strong>{{ selectedMessage.createdAt|date('d.m.Y H:i') }}</strong></p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4 class="text-sm font-medium text-gray-900 mb-2">Treść wiadomości:</h4>
+                                <p class="text-sm text-gray-700 whitespace-pre-line">{{ selectedMessage.message }}</p>
+                            </div>
+
+                            {% if selectedMessage.relatedBooking %}
+                                <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-1">Powiązana rezerwacja:</h4>
+                                    <p class="text-sm text-gray-600">ID: {{ selectedMessage.relatedBooking.id }}</p>
+                                </div>
+                            {% endif %}
+
+                            <!-- Admin Actions -->
+                            <div class="border-t pt-4">
+                                <h4 class="text-sm font-medium text-gray-900 mb-3">Działania administratora:</h4>
+
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Notatki administratora:</label>
+                                    <textarea
+                                        data-model="live#adminNotes"
+                                        rows="3"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="Dodaj notatki..."
+                                    >{{ adminNotes }}</textarea>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+                                    <button
+                                        type="button"
+                                        class="px-3 py-1.5 text-sm font-medium bg-yellow-100 text-yellow-800 rounded-md hover:bg-yellow-200"
+                                        data-action="live#action"
+                                        data-live-action-param="updateStatus"
+                                        data-live-message-id-param="{{ selectedMessage.id }}"
+                                        data-live-status-param="in_progress"
+                                    >
+                                        Oznacz jako w trakcie
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="px-3 py-1.5 text-sm font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200"
+                                        data-action="live#action"
+                                        data-live-action-param="updateStatus"
+                                        data-live-message-id-param="{{ selectedMessage.id }}"
+                                        data-live-status-param="resolved"
+                                    >
+                                        Oznacz jako rozwiązane
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="px-3 py-1.5 text-sm font-medium bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200"
+                                        data-action="live#action"
+                                        data-live-action-param="updateStatus"
+                                        data-live-message-id-param="{{ selectedMessage.id }}"
+                                        data-live-status-param="archived"
+                                    >
+                                        Archiwizuj
+                                    </button>
+                                </div>
+
+                                {% if selectedMessage.adminNotes %}
+                                    <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                                        <h5 class="text-sm font-medium text-blue-900 mb-1">Poprzednie notatki:</h5>
+                                        <p class="text-sm text-blue-800 whitespace-pre-line">{{ selectedMessage.adminNotes }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center justify-center h-64 text-gray-500">
+                            <div class="text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mouse-pointer-click mx-auto mb-3 text-gray-400">
+                                    <path d="m9 9 5 12 1.774-5.226L21 14 9 9z"/>
+                                    <path d="m16.071 16.071 4.243 4.243"/>
+                                    <path d="m7.188 2.239.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656-2.12 2.122"/>
+                                </svg>
+                                <p>Wybierz wiadomość z listy, aby wyświetlić szczegóły</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

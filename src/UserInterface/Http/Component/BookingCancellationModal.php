@@ -64,11 +64,14 @@ class BookingCancellationModal extends AbstractController
             return [];
         }
 
-        // Get all future lessons in the same series that have available spots
-        $availableLessons = $this->lessonRepository->findAvailableLessonsForReschedule(
+        $user = $this->booking->getUser();
+
+        // Get all future lessons in the same series that have available spots and no conflicts for user
+        $availableLessons = $this->lessonRepository->findAvailableLessonsForUserReschedule(
             $series,
             $this->lesson->getMetadata()
                 ->schedule,
+            $user
         );
 
         // Remove the current lesson from the list
@@ -179,6 +182,11 @@ class BookingCancellationModal extends AbstractController
 
     public function isButtonDisabled(): bool
     {
-        return true;
+        if ($this->selectedOption === 'reschedule') {
+            return $this->selectedLessonId === null;
+        }
+
+        // For cancel and refund, just check if reason is provided (optional but recommended)
+        return false;
     }
 }
