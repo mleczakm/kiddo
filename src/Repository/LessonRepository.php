@@ -97,9 +97,8 @@ class LessonRepository extends ServiceEntityRepository
                 ->setParameter('age', $age);
         }
 
-        $weekStart = new \DateTimeImmutable($week)
-            ->modify('monday this week');
-        $weekEnd = $weekStart->modify('sunday this week 23:59:59');
+        $weekStart = new \DateTimeImmutable($week);
+        $weekEnd = $weekStart->modify('+7 days 23:59:59');
 
         $qb->andWhere('l.metadata.schedule BETWEEN :weekStart AND :weekEnd')
             ->setParameter('weekStart', $weekStart)

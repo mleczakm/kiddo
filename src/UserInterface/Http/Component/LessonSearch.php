@@ -46,13 +46,12 @@ class LessonSearch
 
     public function getWeekStart(): \DateTimeImmutable
     {
-        return new \DateTimeImmutable($this->week)
-            ->modify('monday this week');
+        return new \DateTimeImmutable($this->week);
     }
 
     public function getWeekEnd(): \DateTimeImmutable
     {
         return $this->getWeekStart()
-            ->modify('sunday this week');
+            ->modify('+7 days');
     }
 }
