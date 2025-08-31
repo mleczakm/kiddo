@@ -67,6 +67,12 @@ parameters:
 			path: src/Infrastructure/ImapEngine/AliorNotificationMailProvider.php
 
 		-
+			message: '#^Parameter \#1 \$callback of method Ds\\Vector\<App\\Entity\\Lesson\>\:\:reduce\(\) expects callable\(Ds\\PriorityQueue\<mixed\>\|void, App\\Entity\\Lesson\)\: \(Ds\\PriorityQueue\<mixed\>\|void\), Closure\(Ds\\PriorityQueue, App\\Entity\\Lesson\)\: void given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Repository/LessonRepository.php
+
+		-
 			message: '#^Generator expects value type DirectoryTree\\ImapEngine\\MessageQueryInterface, DirectoryTree\\ImapEngine\\MessageInterface given\.$#'
 			identifier: generator.valueType
 			count: 1

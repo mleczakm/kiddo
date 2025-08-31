@@ -11,8 +11,8 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent('LessonSearch')]
-class LessonSearch
+#[AsLiveComponent('UpcomingLessons')]
+class UpcomingLessons
 {
     use DefaultActionTrait;
 
@@ -25,6 +25,12 @@ class LessonSearch
     #[LiveProp(writable: true, url: true)]
     public string $week;
 
+    #[LiveProp]
+    public bool $showSearch = true;
+
+    #[LiveProp]
+    public ?int $limit = null;
+
     public function __construct(
         private LessonRepository $lessonRepository
     ) {
@@ -36,7 +42,7 @@ class LessonSearch
      */
     public function getWorkshops(): array
     {
-        return $this->lessonRepository->findByFilters($this->query, $this->age, $this->week);
+        return $this->lessonRepository->findByFilters($this->query, $this->age, $this->week, $this->limit);
     }
 
     public function getCurrentWeek(): string

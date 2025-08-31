@@ -9,6 +9,8 @@ use App\Entity\Series;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Ds\PriorityQueue;
+use Ds\Vector;
 
 /**
  * @extends ServiceEntityRepository<Lesson>
@@ -79,8 +81,13 @@ class LessonRepository extends ServiceEntityRepository
     /**
      * @return Lesson[]
      */
-    public function findByFilters(?string $query, ?int $age, string $week): array
-    {
+    public function findByFilters(
+        ?string $query,
+        ?int $age,
+        string $week,
+        ?int $limit = null,
+        bool $orderByPopularity = false
+    ): array {
         $qb = $this->createQueryBuilder('l')
             ->andWhere('l.status = :status')
             ->setParameter('status', 'active')
@@ -104,9 +111,26 @@ class LessonRepository extends ServiceEntityRepository
             ->setParameter('weekStart', $weekStart)
             ->setParameter('weekEnd', $weekEnd);
 
+        if ($limit !== null && ! $orderByPopularity) {
+            $qb->setMaxResults($limit);
+        }
+
         /** @var Lesson[] $result */
         $result = $qb->getQuery()
             ->getResult();
+
+        if ($orderByPopularity) {
+            /** @var Lesson[] $result */
+            $result = new Vector($result)
+                ->reduce(
+                    fn(PriorityQueue $queue, Lesson $lesson) => $queue->push($lesson, $lesson->getBookings()->count()),
+                    new PriorityQueue()
+                )?->toArray();
+
+            if ($limit !== null) {
+                $result = array_slice($result, 0, $limit);
+            }
+        }
 
         return $result;
     }
