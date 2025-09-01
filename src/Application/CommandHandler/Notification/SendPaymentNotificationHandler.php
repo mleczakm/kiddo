@@ -89,7 +89,7 @@ readonly class SendPaymentNotificationHandler
                 'lessons' => $lessons,
             ]);
             $content = $this->twig->render('email/notification/payment-notification-admin.html.twig', [
-                'user' => $admin,
+                'user' => $firstBooking->getUser(),
                 'payment' => $payment,
                 'lessons' => $lessons,
             ]);

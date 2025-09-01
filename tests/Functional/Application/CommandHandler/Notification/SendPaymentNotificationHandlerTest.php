@@ -79,11 +79,16 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         self::assertStringContainsString('user@example.com', $userEmail->getTo()[0]->getAddress());
         self::assertStringContainsString('admin1@example.com', $adminEmail1->getTo()[0]->getAddress());
         self::assertStringContainsString('admin2@example.com', $adminEmail2->getTo()[0]->getAddress());
+        self::assertStringContainsString('user@example.com', (string) $adminEmail2->getHtmlBody());
+        self::assertStringContainsString('user@example.com', (string) $adminEmail1->getHtmlBody());
+        self::assertStringContainsString('<user@example.com>', (string) $adminEmail2->getSubject());
+        self::assertStringContainsString('<user@example.com>', (string) $adminEmail1->getSubject());
+
         self::assertStringContainsString('123,45', (string) $userEmail->getHtmlBody());
         self::assertStringContainsString('Joga', (string) $userEmail->getHtmlBody());
         self::assertStringContainsString('Joga', (string) $userEmail->getSubject());
         self::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
         self::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
-        self::assertStringContainsString('08.24', (string) $userEmail->getHtmlBody());
+        self::assertStringContainsString('niedziela 24 sie', (string) $userEmail->getHtmlBody());
     }
 }

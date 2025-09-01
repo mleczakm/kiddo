@@ -53,7 +53,6 @@ payment:
     user:
       subject: 'Potwierdzenie rezerwacji - '
       thank_you: ', dziękujemy!'
-      greeting: 'Dziękujemy za płatność, {name}!'
       info: >-
         Z przyjemnością potwierdzamy otrzymanie Twojej płatności w wysokości {amount}.
 
@@ -138,3 +137,5 @@ booking_cancellation:
 
     Pozdrawiamy,
     Zespół Warsztatowni Sensorycznej
+
+at: o
