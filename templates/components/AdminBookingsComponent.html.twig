@@ -1,0 +1,176 @@
+{# templates/components/AdminBookingsComponent.html.twig #}
+<div {{ attributes }} data-controller="live">
+    <div class="rounded-xl border bg-stone-50 text-card-foreground shadow p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-check">
+                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8" x2="8" y1="2" y2="6"/>
+                    <line x1="3" x2="21" y1="10" y2="10"/>
+                    <path d="m9 16 2 2 4-4"/>
+                </svg>
+                <span>{{ 'admin_dashboard.bookings.title'|trans }}</span>
+            </h3>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <div class="flex-1">
+                <input
+                    type="text"
+                    placeholder="{{ 'admin_dashboard.bookings.search_placeholder'|trans }}"
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value="{{ this.search }}"
+                    data-model="search"
+                    data-action="live#update"
+                />
+            </div>
+
+            <div class="flex gap-2">
+                {% set counts = this.getFilterCounts() %}
+                <button
+                    data-model="filter"
+                    data-value="all"
+                    data-action="live#update"
+                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'all' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                >
+                    {{ 'admin_dashboard.bookings.filter.all'|trans }} ({{ counts.all }})
+                </button>
+                <button
+                    data-model="filter"
+                    data-value="active"
+                    data-action="live#update"
+                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'active' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                >
+                    {{ 'admin_dashboard.bookings.filter.active'|trans }} ({{ counts.active }})
+                </button>
+                <button
+                    data-model="filter"
+                    data-value="completed"
+                    data-action="live#update"
+                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'completed' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                >
+                    {{ 'admin_dashboard.bookings.filter.completed'|trans }} ({{ counts.completed }})
+                </button>
+                <button
+                    data-model="filter"
+                    data-value="cancelled"
+                    data-action="live#update"
+                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'cancelled' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                >
+                    {{ 'admin_dashboard.bookings.filter.cancelled'|trans }} ({{ counts.cancelled }})
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4">
+            {% for item in this.getAllBookings() %}
+                {% set booking = item.booking %}
+                {% set isCarnet = item.isCarnet %}
+                {% set progress = item.progress %}
+
+                <div class="rounded-lg border bg-card text-card-foreground shadow-sm {{ isCarnet ? 'border-l-4 border-l-workshop-blue' : 'border-l-4 border-l-workshop-green' }}">
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h4 class="font-semibold text-lg">{{ booking.user.name }}</h4>
+                                    <span class="text-sm text-muted-foreground">{{ booking.user.email }}</span>
+                                    {% if isCarnet %}
+                                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
+                                            {{ 'admin_dashboard.bookings.carnet'|trans }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-sm text-muted-foreground">
+                                    {{ booking.lessons.first.metadata.title }}
+                                    {% if booking.lessons.count > 1 %}
+                                        + {{ booking.lessons.count - 1 }} {{ 'admin_dashboard.bookings.more_lessons'|trans }}
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <div class="text-right">
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors
+                                    {% if booking.status == 'confirmed' %}border-transparent bg-green-100 text-green-800{% elseif booking.status == 'completed' %}border-transparent bg-blue-100 text-blue-800{% elseif booking.status == 'cancelled' %}border-transparent bg-red-100 text-red-800{% else %}border-transparent bg-gray-100 text-gray-800{% endif %}">
+                                    {{ ('admin_dashboard.bookings.status.' ~ booking.status)|trans }}
+                                </span>
+
+                                {% if booking.payment %}
+                                    <div class="mt-1">
+                                        <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium
+                                            {% if booking.payment.status == 'paid' %}bg-green-50 text-green-700{% else %}bg-orange-50 text-orange-700{% endif %}">
+                                            {{ ('admin_dashboard.bookings.payment.' ~ booking.payment.status)|trans }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="text-sm">
+                                <span class="text-muted-foreground">{{ 'admin_dashboard.bookings.total_lessons'|trans }}:</span>
+                                <span class="font-medium">{{ item.totalLessons }}</span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-muted-foreground">{{ 'admin_dashboard.bookings.completed'|trans }}:</span>
+                                <span class="font-medium">{{ item.completedLessons }}</span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-muted-foreground">{{ 'admin_dashboard.bookings.remaining'|trans }}:</span>
+                                <span class="font-medium">{{ item.remainingLessons }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-muted-foreground">{{ 'admin_dashboard.bookings.progress'|trans }}:</span>
+                                <span class="font-medium">{{ progress|round }}%</span>
+                            </div>
+                            <div class="bg-muted rounded-full h-2">
+                                <div class="h-2 rounded-full {{ isCarnet ? 'bg-workshop-blue' : 'bg-workshop-green' }}"
+                                     style="width: {{ progress }}%;"></div>
+                            </div>
+                        </div>
+
+                        {% if item.upcomingLessons is not empty %}
+                            <div class="border-t pt-3">
+                                <h5 class="text-sm font-medium mb-2">{{ 'admin_dashboard.bookings.upcoming_lessons'|trans }}:</h5>
+                                <div class="space-y-1">
+                                    {% for lesson in item.upcomingLessons|slice(0, 3) %}
+                                        <div class="flex items-center text-xs text-muted-foreground">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-2">
+                                                <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                                <line x1="16" x2="16" y1="2" y2="6"/>
+                                                <line x1="8" x2="8" y1="2" y2="6"/>
+                                                <line x1="3" x2="21" y1="10" y2="10"/>
+                                            </svg>
+                                            {{ lesson.metadata.schedule|format_datetime(pattern='d MMMM') }} {{ 'admin_dashboard.bookings.at'|trans }} {{ lesson.metadata.schedule|date('H:i') }}
+                                        </div>
+                                    {% endfor %}
+                                    {% if item.upcomingLessons|length > 3 %}
+                                        <div class="text-xs text-muted-foreground">
+                                            {{ 'admin_dashboard.bookings.and_more'|trans({'count': item.upcomingLessons|length - 3}) }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-x mx-auto mb-4 text-muted-foreground">
+                        <rect width="18" height="18" x="3" y="4" rx="2"/>
+                        <line x1="16" x2="16" y1="2" y2="6"/>
+                        <line x1="8" x2="8" y1="2" y2="6"/>
+                        <line x1="3" x2="21" y1="10" y2="10"/>
+                        <path d="m14.5 16-5-5"/>
+                        <path d="m9.5 16 5-5"/>
+                    </svg>
+                    <p class="text-muted-foreground">{{ 'admin_dashboard.bookings.no_bookings'|trans }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -22,6 +22,8 @@ class Booking
 
     public const STATUS_REFUNDED = 'refunded';
 
+    public const STATUS_REFUND_REQUESTED = 'refund_requested';
+
     #[ORM\Id]
     #[ORM\Column(type: 'ulid', unique: true)]
     private Ulid $id;
@@ -121,10 +123,17 @@ class Booking
     {
         if (! in_array(
             $status,
-            [self::STATUS_PENDING, self::STATUS_CONFIRMED, self::STATUS_CANCELLED, self::STATUS_COMPLETED],
+            [
+                self::STATUS_PENDING,
+                self::STATUS_CONFIRMED,
+                self::STATUS_CANCELLED,
+                self::STATUS_COMPLETED,
+                self::STATUS_REFUNDED,
+                self::STATUS_REFUND_REQUESTED,
+            ],
             true
         )) {
-            throw new \InvalidArgumentException('Invalid booking status');
+            throw new \InvalidArgumentException('Invalid booking status:' . $status);
         }
 
         $this->status = $status;

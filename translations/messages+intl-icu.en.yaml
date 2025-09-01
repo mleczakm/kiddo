@@ -161,3 +161,32 @@ homepage:
     email_placeholder: 'Your email address'
     subscribe: 'Subscribe'
     subscription_disabled: 'Subscription coming soon!'
+
+admin_dashboard:
+  bookings:
+    title: 'All Bookings & Carnets'
+    search_placeholder: 'Search by name, email, or workshop...'
+    filter:
+      all: 'All'
+      active: 'Active'
+      completed: 'Completed'
+      cancelled: 'Cancelled'
+    carnet: 'Carnet'
+    more_lessons: 'more lessons'
+    status:
+      confirmed: 'Confirmed'
+      completed: 'Completed'
+      cancelled: 'Cancelled'
+      pending: 'Pending'
+    payment:
+      paid: 'Paid'
+      pending: 'Pending'
+      failed: 'Failed'
+    total_lessons: 'Total Lessons'
+    completed: 'Completed'
+    remaining: 'Remaining'
+    progress: 'Progress'
+    upcoming_lessons: 'Upcoming Lessons'
+    at: 'at'
+    and_more: '{count, plural, one {and # more} other {and # more}}'
+    no_bookings: 'No bookings found'

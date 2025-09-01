@@ -77,6 +77,8 @@
                     </button>
                 </div>
             </div>
+        {% elseif activeTab == 'bookings' %}
+            {{ component('AdminBookingsComponent') }}
         {% elseif activeTab == 'users' %}
             {{ component('UsersComponent') }}
         {% elseif activeTab == 'transfers' %}

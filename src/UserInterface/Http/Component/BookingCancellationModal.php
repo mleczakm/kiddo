@@ -74,7 +74,8 @@ class BookingCancellationModal extends AbstractController
         // Remove the current lesson from the list
         return array_filter(
             $availableLessons,
-            fn($lesson) => $lesson->getId() !== $this->lesson->getId() && ! $this->booking->getLessons()->contains($lesson)
+            fn($lesson) => $lesson->getId() !== $this->lesson->getId() && ! $this->booking->getLessons()
+                ->contains($lesson)
         );
     }
 
@@ -104,7 +105,7 @@ class BookingCancellationModal extends AbstractController
     public function processCancellation(#[LiveArg('type')] string $typeParam): void
     {
         if (! in_array($typeParam, self::CANCELLATION_TYPES, true)) {
-            throw new \InvalidArgumentException('Invalid cancellation type');
+            throw new \InvalidArgumentException('Invalid cancellation type: ' . $typeParam);
         }
 
         if (! $this->booking || ! $this->lesson) {

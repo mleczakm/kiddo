@@ -27,6 +27,7 @@ form:
       Proszę sprawdź swoją skrzynkę pocztową!
     mail_sent_header: Witamy!
 
+
 page:
   default:
     header: "Warsztatownia sensoryczna"
@@ -49,6 +50,7 @@ page:
   description: Miejsce dla Rodzin z małymi dziećmi Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia
   my_carnets: Moje karnety
   admin_dashboard: Panel administracyjny
+  profile: Profil
 
 # Workshop related translations
 workshop:
@@ -292,6 +294,26 @@ booking:
   please_specify: Proszę podać więcej szczegółów
   confirm_cancellation: Potwierdź anulowanie
   cancellation_not_available: Minął czas na anulowanie rezerwacji
+  reschedule: Przełóż termin
+  refund: Zwrot środków
+  other: Inne
+  choose_alternative_workshop: Wybierz alternatywne zajęcia
+  spots: >-
+    {count, plural,
+      =0 {brak miejsc}
+      one {# miejsce}
+      few {# miejsca}
+      many {# miejsc}
+      other {# miejsca}
+    }
+  refund_description: Opis zwrotu
+  refund_point_1: Zwrot jest możliwy do 24h przed zajęciami
+  refund_point_2: Środki zostaną zwrócone w ciągu 3-5 dni roboczych
+  refund_point_3: Zwrot zostanie dokonany na to samo konto z którego dokonano płatności
+  keep_booking: Zachowaj rezerwację
+  tell_us_more: "Prosimy o podanie powodu rezygnacji:"
+  tell_us_more_footer: Administracja rozpatrzy Twoją prośbę i skontaktuje się z Tobą w ciągu 24 godzin z decyzją.
+
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
   instruction_2: "na kwotę"
@@ -328,17 +350,23 @@ dashboard:
   no_upcoming_sessions: Brak nadchodzących zajęć
   active_bookings: Aktywne rezerwacje
   cancelled_bookings: Anulowane rezerwacje
+  past_bookings: Przeszłe rezerwacje
   no_active_bookings: Nie masz aktywnych rezerwacji
   no_cancelled_bookings: Nie masz anulowanych rezerwacji
   browse_workshops: Przeglądaj dostępne warsztaty
   payment:
     paid: Opłacone
+    pending: Oczekująca płatność
+    expired: "Płatność wygasła"
   confirm_cancel: Czy na pewno chcesz anulować tę rezerwację? Wybierz sposób
   single_session: Pojedyncze zajęcia
   actions:
     cancel: Anuluj
   single_entry: Pojedyncze wejście
   at: o
+  booking:
+    carnet: "Karnet"
+
 admin_dashboard:
   title: Kiddo System Rezerwacji Warsztatów - 2025
   frontpage: Strona główna
@@ -365,6 +393,35 @@ admin_dashboard:
     manage_users: 'Zarządzaj użytkownikami'
     view_reports: 'Zobacz raporty'
   capacity: uczestników
+
+  bookings:
+    title: 'Wszystkie Rezerwacje i Karnety'
+    search_placeholder: 'Szukaj po nazwisku, email lub warsztacie...'
+    filter:
+      all: 'Wszystkie'
+      active: 'Aktywne'
+      completed: 'Zakończone'
+      cancelled: 'Anulowane'
+    carnet: 'Karnet'
+    more_lessons: 'więcej zajęć'
+    status:
+      confirmed: 'Potwierdzone'
+      completed: 'Zakończone'
+      cancelled: 'Anulowane'
+      pending: 'Oczekujące'
+    payment:
+      paid: 'Opłacone'
+      pending: 'Oczekuje'
+      failed: 'Nieudane'
+      expired: 'Wygasła'
+    total_lessons: 'Łącznie Zajęć'
+    completed: 'Zakończone'
+    remaining: 'Pozostałe'
+    progress: 'Postęp'
+    upcoming_lessons: 'Nadchodzące Zajęcia'
+    at: 'o'
+    and_more: '{count, plural, one {i # więcej} few {i # więcej} other {i # więcej}}'
+    no_bookings: 'Nie znaleziono rezerwacji'
 
 admin_users:
   title: Użytkownicy
@@ -438,3 +495,13 @@ from_day_of_week: >-
   }
 common:
   cancel: Anuluj
+
+# Payment system
+payment:
+  pending_transfers: "Oczekujące przelewy"
+  sender: "Nadawca"
+  title: "Tytuł"
+  amount: "Kwota"
+  date: "Data"
+  approve: "Zatwierdź"
+  reject: "Odrzuć"
