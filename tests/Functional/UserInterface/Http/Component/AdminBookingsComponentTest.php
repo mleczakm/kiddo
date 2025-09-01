@@ -341,19 +341,20 @@ class AdminBookingsComponentTest extends KernelTestCase
         $user = UserAssembler::new()->assemble();
         $this->entityManager->persist($user);
 
+        $olderTimestamp = new \DateTimeImmutable('2023-01-01 10:00:00');
+        $newerTimestamp = new \DateTimeImmutable('2023-01-01 11:00:00');
+
         $olderBooking = BookingAssembler::new()
             ->withUser($user)
             ->withStatus(Booking::STATUS_CONFIRMED)
+            ->withCreatedAt($olderTimestamp)
             ->assemble();
         $this->entityManager->persist($olderBooking);
-        $this->entityManager->flush();
-
-        // Wait a moment to ensure different timestamps
-        usleep(1000);
 
         $newerBooking = BookingAssembler::new()
             ->withUser($user)
             ->withStatus(Booking::STATUS_CONFIRMED)
+            ->withCreatedAt($newerTimestamp)
             ->assemble();
         $this->entityManager->persist($newerBooking);
         $this->entityManager->flush();
@@ -363,7 +364,7 @@ class AdminBookingsComponentTest extends KernelTestCase
 
         // Assert - Should be ordered by createdAt DESC (newest first)
         $this->assertCount(2, $result);
-        $this->assertSame($newerBooking, $result[0]['booking']);
-        $this->assertSame($olderBooking, $result[1]['booking']);
+        $this->assertEquals($newerBooking->getId(), $result[0]['booking']->getId());
+        $this->assertEquals($olderBooking->getId(), $result[1]['booking']->getId());
     }
 }

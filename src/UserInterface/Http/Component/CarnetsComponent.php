@@ -89,6 +89,9 @@ class CarnetsComponent extends AbstractController
             }
         }
 
-        return array_reverse($carnets);
+        // Filter out expired carnets - only return active ones
+        $activeCarnets = array_filter($carnets, fn($carnet) => $carnet['status'] === 'active');
+
+        return array_reverse($activeCarnets);
     }
 }
