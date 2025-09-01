@@ -64,18 +64,18 @@ class BookingCancellationModal extends AbstractController
             return [];
         }
 
-        $user = $this->booking->getUser();
-
         // Get all future lessons in the same series that have available spots and no conflicts for user
-        $availableLessons = $this->lessonRepository->findAvailableLessonsForUserReschedule(
+        $availableLessons = $this->lessonRepository->findAvailableLessonsForReschedule(
             $series,
             $this->lesson->getMetadata()
                 ->schedule,
-            $user
         );
 
         // Remove the current lesson from the list
-        return array_filter($availableLessons, fn($lesson) => $lesson->getId() !== $this->lesson->getId());
+        return array_filter(
+            $availableLessons,
+            fn($lesson) => $lesson->getId() !== $this->lesson->getId() && ! $this->booking->getLessons()->contains($lesson)
+        );
     }
 
     public function getTabState(string $option): string
