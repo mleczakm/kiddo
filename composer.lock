@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0bdc332e651da78246ebdb165410331",
+    "content-hash": "024f8e0345440a633b50dbbd2872c6b8",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1957,16 +1957,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "9.0.10",
+            "version": "9.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "727af7896f37194f7417def96b2140481668a28c"
+                "reference": "d2fa6fa9fa9feb18670e4b267332162b2a9cb8fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/727af7896f37194f7417def96b2140481668a28c",
-                "reference": "727af7896f37194f7417def96b2140481668a28c",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/d2fa6fa9fa9feb18670e4b267332162b2a9cb8fe",
+                "reference": "d2fa6fa9fa9feb18670e4b267332162b2a9cb8fe",
                 "shasum": ""
             },
             "require": {
@@ -1980,7 +1980,7 @@
             "require-dev": {
                 "ext-dom": "*",
                 "friendsofphp/php-cs-fixer": "^3.71",
-                "infection/infection": "^0.28.0",
+                "infection/infection": "^0.29|^0.31.0",
                 "nette/php-generator": "^4.1",
                 "php-coveralls/php-coveralls": "^2.7",
                 "phpstan/extension-installer": "^1.4.3",
@@ -2029,7 +2029,7 @@
                 "issues": "https://github.com/giggsey/libphonenumber-for-php/issues",
                 "source": "https://github.com/giggsey/libphonenumber-for-php"
             },
-            "time": "2025-07-18T06:47:04+00:00"
+            "time": "2025-09-01T08:24:24+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -3417,16 +3417,16 @@
         },
         {
             "name": "odolbeau/phone-number-bundle",
-            "version": "v4.2.0",
+            "version": "v4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/odolbeau/phone-number-bundle.git",
-                "reference": "0952c8d10a245d2e6d13263c97715679654cd7e4"
+                "reference": "93dc64ea00f3bbea4eb88ce94ddf0aa80f3261e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/0952c8d10a245d2e6d13263c97715679654cd7e4",
-                "reference": "0952c8d10a245d2e6d13263c97715679654cd7e4",
+                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/93dc64ea00f3bbea4eb88ce94ddf0aa80f3261e6",
+                "reference": "93dc64ea00f3bbea4eb88ce94ddf0aa80f3261e6",
                 "shasum": ""
             },
             "require": {
@@ -3487,9 +3487,9 @@
             ],
             "support": {
                 "issues": "https://github.com/odolbeau/phone-number-bundle/issues",
-                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v4.2.0"
+                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v4.2.1"
             },
-            "time": "2025-07-15T20:50:09+00:00"
+            "time": "2025-08-11T21:50:22+00:00"
         },
         {
             "name": "php-di/invoker",
