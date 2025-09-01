@@ -27,7 +27,7 @@ final readonly class MatchPaymentForTransferHandler
         foreach (explode(' ', $title) as $word) {
             $paymentCode = $this->entityManager->getRepository(PaymentCode::class)
                 ->findOneBy([
-                    'code' => $word,
+                    'code' => mb_strtoupper($word),
                 ]);
 
             if ($paymentCode) {
