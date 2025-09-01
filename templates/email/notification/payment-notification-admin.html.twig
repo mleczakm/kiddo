@@ -2,7 +2,7 @@
 
 <p>{{ 'payment.notification.admin.info'|trans({
         'amount': payment.amount|money,
-        'date': payment.createdAt|format_datetime(pattern='MM.dd, HH:mm'),
+        'date': payment.createdAt|format_datetime(pattern='dd.MM, HH:mm'),
         'user': user.emailString
     })|raw }}</p>
 
