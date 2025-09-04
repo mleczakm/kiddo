@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor == 'violinist-bot'
     steps:
-      - uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: rebase
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto "1"
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
