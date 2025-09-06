@@ -11,7 +11,7 @@
                     data-action="live#action"
                     data-live-action-param="toggleCancelled"
                     class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm {{ this.showCancelled ? 'bg-gray-100 border-gray-400' : 'bg-white' }}"
-                    title="{{ this.showCancelled ? 'Hide cancelled lessons' : 'Show cancelled lessons' }}"
+                    title="{{ this.showCancelled ? 'admin_dashboard.upcoming_lessons.hide_cancelled_lessons_and_bookings'|trans : 'admin_dashboard.upcoming_lessons.show_cancelled_lessons_and_bookings'|trans }}"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         {% if this.showCancelled %}
@@ -21,7 +21,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         {% endif %}
                     </svg>
-                    <span class="sr-only">{{ this.showCancelled ? 'Hide cancelled' : 'Show cancelled' }}</span>
+                    <span class="sr-only">{{ this.showCancelled ? 'admin_dashboard.upcoming_lessons.hide_cancelled_lessons_and_bookings'|trans : 'admin_dashboard.upcoming_lessons.show_cancelled_lessons_and_bookings'|trans }}</span>
                 </button>
                 <button
                     type="button"
@@ -66,14 +66,35 @@
                                 {% if lesson.status == 'cancelled' %}
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 ml-2">
                                         Cancelled
-                                    </span>
+                                    </span> 
                                 {% endif %}
                             </h4>
                             <p class="text-sm text-muted-foreground">{{ lesson.metadata.schedule|format_datetime('medium', 'short') }}</p>
+
+                            {# Show attendees list when showCancelled is enabled #}
+                            {% if this.showCancelled %}
+                                {% set confirmedBookings = lesson.bookings|filter(booking => booking.isConfirmed()) %}
+                                {% set cancelledBookings = lesson.bookings|filter(booking => booking.isCancelled()) %}
+
+                                {% if confirmedBookings|length > 0 or cancelledBookings|length > 0 %}
+                                    <div class="mt-2 text-sm text-gray-600">
+                                        <strong>{{ 'admin_dashboard.upcoming_lessons.attendees'|trans }}:</strong>
+                                        <ul class="mt-1 space-y-1">
+                                            {% for booking in confirmedBookings %}
+                                                <li class="text-green-700">✓ {{ booking.user.name }} ({{ booking.user.email }})</li>
+                                            {% endfor %}
+                                            {% for booking in cancelledBookings %}
+                                                <li class="text-red-600 line-through">✗ {{ booking.user.name }} ({{ booking.user.email }}) - {{ 'admin_dashboard.upcoming_lessons.cancelled'|trans }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
                         </div>
                         <div class="flex items-center gap-2">
+                            {% set confirmedCount = lesson.bookings|filter(booking => booking.isConfirmed())|length %}
                             <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
-                                {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
+                                {{ confirmedCount }}/{{ lesson.metadata.capacity }}
                             </span>
                             {% if lesson.status != 'cancelled' %}
                                 <button disabled class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3" data-action="live#action" data-action-name="prevent:openModal">

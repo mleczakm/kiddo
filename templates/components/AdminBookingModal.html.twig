@@ -1,0 +1,271 @@
+<div {{ attributes }} data-controller="live">
+    <!-- Trigger Button -->
+    <button type="button"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            data-action="click->live#action"
+            data-live-action-param="openModal"
+    >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Create Manual Booking
+    </button>
+
+    {% if modalOpened %}
+        <div class="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+             style="pointer-events: auto;"
+             data-action="live#action"
+             data-action-name="closeModal">
+        </div>
+
+        <dialog
+             class="fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-lg"
+             tabindex="-1"
+             style="pointer-events: auto;"
+
+        >
+
+            <!-- Modal Header -->
+            <div class="flex flex-col space-y-1.5 text-center sm:text-left">
+                <h2 class="text-lg font-semibold leading-none tracking-tight">
+                    Manual Booking
+                </h2>
+                <p class="text-sm text-muted-foreground">
+                    Create a manual booking for a selected user
+                </p>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="space-y-4">
+
+                <!-- User Selection -->
+                <div>
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Select User
+                    </label>
+
+                    {% if selectedUserId and selectedUser %}
+                        <!-- Selected User Display -->
+                        <div class="mt-2 flex items-center justify-between p-3 border rounded-md bg-muted">
+                            <div>
+                                <div class="font-medium">{{ selectedUser.name }}</div>
+                                <div class="text-sm text-muted-foreground">{{ selectedUser.email }}</div>
+                            </div>
+                            <button type="button"
+                                    class="text-muted-foreground hover:text-foreground"
+                                    data-action="live#action"
+                                    data-action-name="clearUserSelection">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    {% else %}
+                        <!-- User Search Input -->
+                        <div class="relative mt-2">
+                            <input type="text"
+                                   class="w-full px-3 py-2 border border-input rounded-md bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                   placeholder="Search users by name or email..."
+                                   data-model="live#userSearch"
+                                   data-action="input->live#update"
+                                   value="{{ userSearch }}"/>
+
+                            <!-- User Search Results Dropdown -->
+                            {% if userSearch and userSearch|length >= 2 %}
+                                {% set filteredUsers = this.filteredUsers %}
+                                {% if filteredUsers|length > 0 %}
+                                    <div class="absolute z-10 w-full mt-1 bg-background border border-input rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                        {% for user in filteredUsers %}
+                                            <button type="button"
+                                                    class="w-full px-3 py-2 text-left hover:bg-muted focus:bg-muted focus:outline-none"
+                                                    data-action="live#action"
+                                                    data-action-name="selectUser"
+                                                    data-action-param-user-id="{{ user.id }}">
+                                                <div class="font-medium">{{ user.name }}</div>
+                                                <div class="text-sm text-muted-foreground">{{ user.email }}</div>
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                {% elseif userSearch|length >= 2 %}
+                                    <div class="absolute z-10 w-full mt-1 bg-background border border-input rounded-md shadow-lg">
+                                        <div class="px-3 py-2 text-sm text-muted-foreground">
+                                            No users found matching "{{ userSearch }}"
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Lesson Selection -->
+                <div>
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Select Lessons
+                        {% if this.totalSelectedLessons > 0 %}
+                            <span class="text-xs text-muted-foreground">({{ this.totalSelectedLessons }} selected)</span>
+                        {% endif %}
+                    </label>
+
+                    <!-- Selected Lessons Display -->
+                    {% if this.totalSelectedLessons > 0 %}
+                        <div class="mt-2 space-y-2">
+                            {% for lesson in this.selectedLessons %}
+                                <div class="flex items-center justify-between p-2 border rounded-md bg-muted text-sm">
+                                    <div>
+                                        <div class="font-medium">{{ lesson.metadata.title }}</div>
+                                        <div class="text-muted-foreground">
+                                            {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                                            {% if lesson.series %}
+                                                - {{ lesson.series.name }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <button type="button"
+                                            class="text-muted-foreground hover:text-foreground"
+                                            data-action="live#action"
+                                            data-action-name="removeLesson"
+                                            data-action-param-lesson-id="{{ lesson.id }}">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Lesson Search Input -->
+                    <div class="relative mt-2">
+                        <input type="text"
+                               class="w-full px-3 py-2 border border-input rounded-md bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                               placeholder="Search lessons..."
+                               data-model="live#lessonSearch"
+                               data-action="input->live#update"
+                               value="{{ lessonSearch }}"/>
+
+                        <!-- Lesson Search Results Dropdown -->
+                        {% if lessonSearch and lessonSearch|length >= 2 %}
+                            {% set filteredLessons = this.filteredLessons %}
+                            {% if filteredLessons|length > 0 %}
+                                <div class="absolute z-10 w-full mt-1 bg-background border border-input rounded-md shadow-lg max-h-48 overflow-y-auto">
+                                    {% for lesson in filteredLessons %}
+                                        {% if not this.isLessonSelected(lesson.id) %}
+                                            <button type="button"
+                                                    class="w-full px-3 py-2 text-left hover:bg-muted focus:bg-muted focus:outline-none"
+                                                    data-action="live#action"
+                                                    data-action-name="selectLesson"
+                                                    data-action-param-lesson-id="{{ lesson.id }}">
+                                                <div class="font-medium">{{ lesson.metadata.title }}</div>
+                                                <div class="text-sm text-muted-foreground">
+                                                    {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                                                    {% if lesson.series %}- {{ lesson.series.name }}{% endif %}
+                                                </div>
+                                            </button>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% elseif lessonSearch|length >= 2 %}
+                                <div class="absolute z-10 w-full mt-1 bg-background border border-input rounded-md shadow-lg">
+                                    <div class="px-3 py-2 text-sm text-muted-foreground">
+                                        No lessons found matching "{{ lessonSearch }}"
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Booking Type -->
+                <div>
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Booking Type
+                    </label>
+                    <select class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            data-model="live#bookingType"
+                            data-action="change->live#update">
+                        {% for value, label in this.bookingTypeOptions %}
+                            <option value="{{ value }}" {% if bookingType == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Amount
+                        </label>
+                        <input type="number"
+                               step="0.01"
+                               class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                               placeholder="0.00"
+                               data-model="live#amount"
+                               data-action="input->live#update"
+                               value="{{ amount }}"/>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Payment Method
+                        </label>
+                        <select class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                data-model="live#paymentMethod"
+                                data-action="change->live#update">
+                            {% for value, label in this.paymentMethodOptions %}
+                                <option value="{{ value }}" {% if paymentMethod == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Notes (Optional)
+                    </label>
+                    <textarea
+                            class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-h-[80px] resize-y"
+                            placeholder="Add any additional notes..."
+                            data-model="live#notes"
+                            data-action="input->live#update">{{ notes }}</textarea>
+                </div>
+
+                <!-- Error/Success Messages -->
+                {% if errorMessage %}
+                    <div class="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                        <p class="text-sm text-destructive">{{ errorMessage }}</p>
+                    </div>
+                {% endif %}
+
+                {% if successMessage %}
+                    <div class="p-3 bg-green-50 border border-green-200 rounded-md">
+                        <p class="text-sm text-green-800">{{ successMessage }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-2 pt-4">
+                    <button type="button"
+                            class="px-4 py-2 text-sm font-medium border border-input rounded-md hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            data-action="live#action"
+                            data-action-name="closeModal">
+                        Cancel
+                    </button>
+                    <button type="button"
+                            class="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
+                            data-action="live#action"
+                            data-action-name="createBooking"
+                            {% if not this.isFormValid %}disabled{% endif %}>
+                        Create Booking
+                    </button>
+                </div>
+            </div>
+        </dialog>
+    {% endif %}
+</div>

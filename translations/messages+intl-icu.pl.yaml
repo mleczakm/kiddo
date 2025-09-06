@@ -374,13 +374,16 @@ admin_dashboard:
     title: 'Nadchodzące zajęcia'
     actions: 'Akcje'
     no_upcoming_lessons: Brak nadchodzących wydarzeń
+    show_cancelled_lessons_and_bookings: 'Pokaż anulowane zajęcia i rezerwacje'
+    hide_cancelled_lessons_and_bookings: 'Ukryj anulowane zajęcia i rezerwacje'
+    attendees: 'Uczestnicy'
+    cancelled: 'Anulowane'
   upcoming_attendees:
     title: Najbliższe rezerwacje
     no_attendees: Brak uczestników.
     attendees: '{count, plural, one {# uczestnik} few {# uczestników} many {# uczestników} other {# uczestnika}}'
     add_capacity: '+1'
     remove_capacity: '-1'
-
     quick_book: 'Szybka rezerwacja'
     actions: 'Akcje'
     no_upcoming_attendees: Brak nadchodzących wydarzeń
@@ -393,7 +396,6 @@ admin_dashboard:
     manage_users: 'Zarządzaj użytkownikami'
     view_reports: 'Zobacz raporty'
   capacity: uczestników
-
   bookings:
     title: 'Wszystkie Rezerwacje i Karnety'
     search_placeholder: 'Szukaj po nazwisku, email lub warsztacie...'

@@ -190,3 +190,11 @@ admin_dashboard:
     at: 'at'
     and_more: '{count, plural, one {and # more} other {and # more}}'
     no_bookings: 'No bookings found'
+  upcoming_lessons:
+    title: 'Upcoming Lessons'
+    show_cancelled_lessons_and_bookings: 'Show cancelled lessons and bookings'
+    hide_cancelled_lessons_and_bookings: 'Hide cancelled lessons and bookings'
+    attendees: 'Attendees'
+    cancelled: 'Cancelled'
+    actions: 'Actions'
+    no_upcoming_lessons: 'No upcoming lessons'

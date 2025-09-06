@@ -164,4 +164,9 @@ class Lesson
     {
         $this->ticketOptions = array_values($options);
     }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
 }

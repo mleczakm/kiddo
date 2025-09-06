@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DTO\BookedLesson;
+use App\Entity\DTO\LessonMap;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,15 +16,11 @@ class Booking
 {
     public const STATUS_PENDING = 'pending';
 
-    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_ACTIVE = 'active';
 
     public const STATUS_CANCELLED = 'cancelled';
 
-    public const STATUS_COMPLETED = 'completed';
-
-    public const STATUS_REFUNDED = 'refunded';
-
-    public const STATUS_REFUND_REQUESTED = 'refund_requested';
+    public const STATUS_PAST = 'past';
 
     #[ORM\Id]
     #[ORM\Column(type: 'ulid', unique: true)]
@@ -40,14 +38,8 @@ class Booking
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\ManyToOne(targetEntity: Lesson::class)]
-    private ?Lesson $rescheduledFrom = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private ?User $rescheduledBy = null;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $rescheduleReason = null;
+    #[ORM\Column(type: 'json_document', nullable: true)]
+    private ?LessonMap $bookedLessonsMap = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
@@ -55,10 +47,6 @@ class Booking
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $cancelledBy = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?User $refundedBy = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $notes = null;
@@ -75,6 +63,8 @@ class Booking
         $this->lessons = new ArrayCollection($lessons);
         $this->status = self::STATUS_PENDING;
         $this->createdAt = new \DateTimeImmutable();
+
+        $this->bookedLessonsMap = LessonMap::createFromBooking($this);
     }
 
     public function getId(): Ulid
@@ -95,20 +85,33 @@ class Booking
         return $this->lessons;
     }
 
+    /**
+     * Add lesson to booking
+     */
     public function addLesson(Lesson $lesson): self
     {
         if (! $this->lessons->contains($lesson)) {
             $this->lessons[] = $lesson;
             $lesson->addBooking($this);
+
+            // Add to booked lessons map
+            $bookedLesson = new BookedLesson((string) $lesson->getId());
+            $this->bookedLessonsMap->setLesson((string) $lesson->getId(), $bookedLesson);
         }
 
         return $this;
     }
 
+    /**
+     * Remove lesson from booking
+     */
     public function removeLesson(Lesson $lesson): self
     {
         if ($this->lessons->removeElement($lesson)) {
             $lesson->removeBooking($this);
+
+            // Remove from booked lessons map
+            $this->bookedLessonsMap->removeLesson((string) $lesson->getId());
         }
 
         return $this;
@@ -123,17 +126,10 @@ class Booking
     {
         if (! in_array(
             $status,
-            [
-                self::STATUS_PENDING,
-                self::STATUS_CONFIRMED,
-                self::STATUS_CANCELLED,
-                self::STATUS_COMPLETED,
-                self::STATUS_REFUNDED,
-                self::STATUS_REFUND_REQUESTED,
-            ],
+            [self::STATUS_PENDING, self::STATUS_ACTIVE, self::STATUS_CANCELLED, self::STATUS_PAST],
             true
         )) {
-            throw new \InvalidArgumentException('Invalid booking status:' . $status);
+            throw new \InvalidArgumentException('Invalid booking status: ' . $status);
         }
 
         $this->status = $status;
@@ -147,24 +143,184 @@ class Booking
         return $this->status === self::STATUS_PENDING;
     }
 
-    public function canBeCompleted(): bool
+    public function canBeCancelled(): bool
     {
-        return $this->status === self::STATUS_CONFIRMED;
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_ACTIVE], true);
     }
 
     public function confirm(): self
     {
-        return $this->setStatus(self::STATUS_CONFIRMED);
+        return $this->setStatus(self::STATUS_ACTIVE);
     }
 
-    public function cancel(): self
+    public function cancel(?User $cancelledBy = null, ?string $reason = null): self
     {
-        return $this->setStatus(self::STATUS_CANCELLED);
+        $this->setStatus(self::STATUS_CANCELLED);
+        $this->cancelledBy = $cancelledBy;
+
+        // Cancel all booked lessons using the map
+        $this->bookedLessonsMap->cancelAllBookedLessons($reason);
+
+        if ($reason) {
+            $this->notes = $reason;
+        }
+
+        return $this;
     }
 
     public function complete(): self
     {
-        return $this->setStatus(self::STATUS_COMPLETED);
+        return $this->setStatus(self::STATUS_PAST);
+    }
+
+    /**
+     * Get all booked lessons as DTOs
+     * @return BookedLesson[]
+     */
+    public function getBookedLessons(): array
+    {
+        return $this->bookedLessonsMap->getAllLessons();
+    }
+
+    /**
+     * Get booked lesson by lesson ID
+     */
+    public function getBookedLesson(string $lessonId): ?BookedLesson
+    {
+        return $this->bookedLessonsMap->getLesson($lessonId);
+    }
+
+    /**
+     * Update booked lesson in the map
+     */
+    public function updateBookedLesson(BookedLesson $bookedLesson): self
+    {
+        $this->bookedLessonsMap->setLesson($bookedLesson->lessonId, $bookedLesson);
+        $this->updatedAt = new \DateTimeImmutable();
+        return $this;
+    }
+
+    /**
+     * Cancel specific lesson
+     */
+    public function cancelLesson(string $lessonId, ?string $reason = null): bool
+    {
+        $result = $this->bookedLessonsMap->cancelLesson($lessonId, $reason);
+        if ($result) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $result;
+    }
+
+    /**
+     * Refund specific lesson
+     */
+    public function refundLesson(string $lessonId, ?string $reason = null): bool
+    {
+        $result = $this->bookedLessonsMap->refundLesson($lessonId, $reason);
+        if ($result) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $result;
+    }
+
+    /**
+     * Reschedule specific lesson
+     */
+    public function rescheduleLesson(
+        string $fromLessonId,
+        string $toLessonId,
+        ?string $rescheduledBy = null,
+        ?string $reason = null
+    ): bool {
+        $result = $this->bookedLessonsMap->rescheduleLesson($fromLessonId, $toLessonId, $rescheduledBy, $reason);
+        if ($result) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $result;
+    }
+
+    /**
+     * Get active (booked) lessons count
+     */
+    public function getActiveBookedLessonsCount(): int
+    {
+        return $this->bookedLessonsMap->getActiveBookedLessonsCount();
+    }
+
+    /**
+     * Check if booking has any active lessons
+     */
+    public function hasActiveBookedLessons(): bool
+    {
+        return $this->bookedLessonsMap->hasActiveBookedLessons();
+    }
+
+    public function getActiveBookedLessonEntities(): \Generator
+    {
+        yield from $this->getBookedLessonsMap()
+            ->active()
+            ->map(fn(Ulid $key, BookedLesson $value) => $value->entity($this));
+    }
+
+    /**
+     * Check if booking should be marked as past
+     */
+    public function shouldBeMarkedAsPast(): bool
+    {
+        if ($this->status === self::STATUS_PAST) {
+            return false;
+        }
+
+        return $this->bookedLessonsMap->areAllActiveLessonsInPast($this);
+    }
+
+    /**
+     * @return BookedLesson[]
+     */
+    public function getLessonsByStatus(string $status): array
+    {
+        return match ($status) {
+            BookedLesson::STATUS_BOOKED => $this->bookedLessonsMap->getBooked(),
+            BookedLesson::STATUS_CANCELLED => $this->bookedLessonsMap->getCancelled(),
+            BookedLesson::STATUS_REFUNDED => $this->bookedLessonsMap->getRefunded(),
+            BookedLesson::STATUS_RESCHEDULED => $this->bookedLessonsMap->getRescheduled(),
+            default => []
+        };
+    }
+
+    /**
+     * Get lessons that can be modified (future active lessons)
+     * @return BookedLesson[]
+     */
+    public function getModifiableLessons(): array
+    {
+        return $this->bookedLessonsMap->getModifiableLessons($this);
+    }
+
+    /**
+     * Get booking status summary
+     * @return array{total: int, booked: int, cancelled: int, refunded: int, rescheduled: int}
+     */
+    public function getLessonStatusSummary(): array
+    {
+        return $this->bookedLessonsMap->getStatusSummary();
+    }
+
+    /**
+     * @return BookedLesson[]
+     */
+    public function getPastActiveLessons(): array
+    {
+        return $this->bookedLessonsMap->getPastActiveLessons($this);
+    }
+
+    /**
+     * @return BookedLesson[]
+     */
+    public function getFutureActiveLessons(): array
+    {
+        return $this->bookedLessonsMap->getFutureActiveLessons($this);
     }
 
     public function getCreatedAt(): \DateTimeImmutable
@@ -207,41 +363,47 @@ class Booking
 
     public function isConfirmed(): bool
     {
-        return $this->status === self::STATUS_CONFIRMED;
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function isPast(): bool
+    {
+        return $this->status === self::STATUS_PAST;
     }
 
     public function canBeRescheduledFor(Lesson $lesson): bool
     {
-        if (! $this->isConfirmed()) {
+        if (! $this->isActive()) {
             return false;
         }
 
-        return $this->lessons->contains($lesson);
+        $bookedLesson = $this->getBookedLesson((string) $lesson->getId());
+        return $bookedLesson && $bookedLesson->isBooked();
     }
 
     public function canBeRescheduled(): bool
     {
-        return $this->status === self::STATUS_PENDING || $this->status === self::STATUS_CONFIRMED;
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_ACTIVE], true);
     }
 
     public function canRequestRefund(): bool
     {
-        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true);
-    }
-
-    public function canBeCancelled(): bool
-    {
-        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true);
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_ACTIVE], true);
     }
 
     public function isCancelled(): bool
     {
         return $this->status === self::STATUS_CANCELLED;
-    }
-
-    public function isRefunded(): bool
-    {
-        return $this->status === self::STATUS_REFUNDED;
     }
 
     public function getLesson(): ?Lesson
@@ -271,40 +433,49 @@ class Booking
         return $this;
     }
 
-    public function setRefundedBy(?User $user): self
-    {
-        $this->refundedBy = $user;
-        return $this;
-    }
-
     public function setCancelledBy(?User $user): self
     {
         $this->cancelledBy = $user;
         return $this;
     }
 
+    public function getCancelledBy(): ?User
+    {
+        return $this->cancelledBy;
+    }
+
     public function setLesson(Lesson $lesson): self
     {
         $this->lessons->clear();
         $this->lessons->add($lesson);
+
+        // Reset and reinitialize booked lessons map
+        $this->bookedLessonsMap = LessonMap::createFromBooking($this);
+
         return $this;
     }
 
-    public function setRescheduledFrom(?Lesson $lesson): self
+    /**
+     * Get the booked lessons map
+     */
+    public function getBookedLessonsMap(): LessonMap
     {
-        $this->rescheduledFrom = $lesson;
+        return $this->bookedLessonsMap ?? LessonMap::createFromBooking($this);
+    }
+
+    /**
+     * Set the booked lessons map (for deserialization)
+     */
+    public function setBookedLessonsMap(LessonMap $bookedLessonsMap): self
+    {
+        $this->bookedLessonsMap = $bookedLessonsMap;
         return $this;
     }
 
-    public function setRescheduledBy(?User $user): self
+    public function entities(self $booking): array
     {
-        $this->rescheduledBy = $user;
-        return $this;
-    }
-
-    public function setRescheduleReason(?string $reason): self
-    {
-        $this->rescheduleReason = $reason;
-        return $this;
+        return $booking->lessons->filter(
+            fn(Lesson $lesson): bool => $this->lessons->contains(new BookedLesson($lesson->getId()))
+        );
     }
 }
