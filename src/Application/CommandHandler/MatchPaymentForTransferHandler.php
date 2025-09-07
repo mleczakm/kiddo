@@ -24,11 +24,10 @@ final readonly class MatchPaymentForTransferHandler
         $transfer = $command->transfer;
         $title = $command->transfer->title;
 
-        foreach (explode(' ', $title) as $word) {
-            $cleanWord = preg_replace('/[^A-Za-z0-9]/', '', $word) ?? '';
+        foreach ($this->tokenizeTitle($title) as $word) {
             $paymentCode = $this->entityManager->getRepository(PaymentCode::class)
                 ->findOneBy([
-                    'code' => mb_strtoupper($cleanWord),
+                    'code' => $word,
                 ]);
 
             if ($paymentCode) {
@@ -44,5 +43,26 @@ final readonly class MatchPaymentForTransferHandler
         }
 
         $this->messageBus->dispatch(new TransferNotMatchedCommand($transfer));
+    }
+
+    /**
+     * @return \Generator<int, string>
+     */
+    private function tokenizeTitle(string $title): \Generator
+    {
+        $tokens = array_values(array_filter(
+            explode(' ', preg_replace('/[^A-Za-z0-9]/', ' ', mb_strtoupper($title)) ?? ''),
+            fn(string $word): bool => $word !== ''
+        ));
+
+        foreach ($tokens as $token) {
+            yield $token;
+        }
+
+        $count = count($tokens);
+
+        for ($i = 0; $i < $count - 1; $i++) {
+            yield $tokens[$i] . $tokens[$i + 1];
+        }
     }
 }

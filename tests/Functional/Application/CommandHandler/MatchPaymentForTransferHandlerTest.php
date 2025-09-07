@@ -47,6 +47,10 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
             'code at end of title' => ['END1', 'Transfer description ending with END1'],
             'special characters in title' => ['SPEC', 'Payment: SPEC - for services!'],
             'special character after code' => ['SPEC', 'Payment: SPEC, - for services!'],
+            'missed code by space' => ['SPEC', 'Payment: SPE C, - for services!'],
+            'missed code by space 2nd' => ['SPEC', 'Pay ment: SPE C, - for services!'],
+            'missed code by multiple spaces' => ['SPEC', 'Pay  ment: SPE  C, - for services!'],
+            'missed code by multiple spaces 2nd' => ['SPEC', 'Pay  ment: SPE   C, - for services!'],
         ];
     }
 
