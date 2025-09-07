@@ -13,6 +13,8 @@ use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
@@ -34,33 +36,58 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->messageBus = $container->get(MessageBusInterface::class);
     }
 
-    public function testMatchesPaymentWithSingleWordCode(): void
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function paymentMatchingProvider(): array
     {
+        return [
+            'single word code' => ['TEST', 'Payment for order TEST additional text'],
+            'code in middle of title' => ['XYZ9', 'Some random text XYZ9 more text here'],
+            'code at end of title' => ['END1', 'Transfer description ending with END1'],
+            'special characters in title' => ['SPEC', 'Payment: SPEC - for services!'],
+            'special character after code' => ['SPEC', 'Payment: SPEC, - for services!'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function invalidTitleProvider(): array
+    {
+        return [
+            'empty title' => [''],
+            'title with only spaces' => ['   '],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('paymentMatchingProvider')]
+    public function matchesPaymentCodeInTitle(string $code, string $title): void
+    {
+        $amount = 100.00;
+        $currency = 'PLN';
         // Arrange
         $user = UserAssembler::new()->assemble();
         $this->entityManager->persist($user);
 
         $payment = PaymentAssembler::new()
             ->withUser($user)
-            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withAmount(Money::of((string) $amount, $currency))
             ->withStatus(Payment::STATUS_PENDING)
             ->assemble();
         $this->entityManager->persist($payment);
 
         $paymentCode = new PaymentCode($payment);
-        // Set a specific code for testing - using reflection to override the generated code
         $reflection = new \ReflectionClass($paymentCode);
         $codeProperty = $reflection->getProperty('code');
         $codeProperty->setAccessible(true);
-        $codeProperty->setValue($paymentCode, 'TEST');
-
+        $codeProperty->setValue($paymentCode, $code);
         $this->entityManager->persist($paymentCode);
 
         $transfer = TransferAssembler::new()
-            ->withTitle('Payment for order TEST additional text')
-            ->withAmount('100.00')
-            ->withSender('John Doe')
-            ->withAccountNumber('1234567890')
+            ->withTitle($title)
+            ->withAmount((string) $amount)
             ->assemble();
         $this->entityManager->persist($transfer);
         $this->entityManager->flush();
@@ -165,7 +192,8 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
     }
 
-    public function testMatchesFirstFoundCodeWhenMultipleCodesInTitle(): void
+    #[Test]
+    public function matchesFirstFoundCodeWhenMultipleCodesInTitle(): void
     {
         // Arrange
         $user1 = UserAssembler::new()->assemble();
@@ -226,7 +254,8 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->assertEquals(Payment::STATUS_PENDING, $payment2->getStatus());
     }
 
-    public function testCaseInsensitiveMatching(): void
+    #[Test]
+    public function matchesPaymentCodeCaseInsensitively(): void
     {
         // Arrange
         $user = UserAssembler::new()->assemble();
@@ -244,7 +273,6 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $codeProperty = $reflection->getProperty('code');
         $codeProperty->setAccessible(true);
         $codeProperty->setValue($paymentCode, 'CASE');
-
         $this->entityManager->persist($paymentCode);
 
         $transfer = TransferAssembler::new()
@@ -315,140 +343,31 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
     }
 
-    public function testDispatchesTransferNotMatchedCommandWhenNoCodeFound(): void
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function noMatchingCodeProvider(): array
     {
-        $transfer = TransferAssembler::new()
-            ->withTitle('Transfer without any payment code')
-            ->withAmount('100.00')
-            ->withSender('No Code User')
-            ->withAccountNumber('1234567890')
-            ->assemble();
-        $this->entityManager->persist($transfer);
-        $this->entityManager->flush();
-
-        // Act
-        $command = new MatchPaymentForTransfer($transfer);
-        $this->messageBus->dispatch($command);
-
-        // Assert
-        $this->entityManager->refresh($transfer);
-
-        // Transfer should not be associated with any payment
-        $this->assertNull($transfer->getPayment());
-
-        // Check that TransferNotMatchedCommand was dispatched
-        $this->bus()
-            ->dispatched()
-            ->assertContains(TransferNotMatchedCommand::class);
+        return [
+            'no code in title' => ['Transfer without any payment code'],
+            'non-existent code' => ['Transfer with NONEXISTENT code'],
+        ];
     }
 
-    public function testDispatchesTransferNotMatchedCommandWhenCodeNotFound(): void
+    #[Test]
+    #[DataProvider('noMatchingCodeProvider')]
+    public function dispatchesTransferNotMatchedWhenNoMatchingCodeFound(string $title): void
     {
-        $transfer = TransferAssembler::new()
-            ->withTitle('Transfer with NONEXISTENT code')
-            ->withAmount('100.00')
-            ->withSender('Nonexistent Code')
-            ->withAccountNumber('1234567890')
-            ->assemble();
-        $this->entityManager->persist($transfer);
-        $this->entityManager->flush();
-
-        // Act
-        $command = new MatchPaymentForTransfer($transfer);
-        $this->messageBus->dispatch($command);
-
-        // Assert
-        $this->entityManager->refresh($transfer);
-
-        // Transfer should not be associated with any payment
-        $this->assertNull($transfer->getPayment());
-
-        // Check that TransferNotMatchedCommand was dispatched
-        $this->bus()
-            ->dispatched()
-            ->assertContains(TransferNotMatchedCommand::class);
-    }
-
-    public function testHandlesEmptyTitle(): void
-    {
-        $transfer = TransferAssembler::new()
-            ->withTitle('')
-            ->withAmount('100.00')
-            ->withSender('Empty Title')
-            ->withAccountNumber('1234567890')
-            ->assemble();
-        $this->entityManager->persist($transfer);
-        $this->entityManager->flush();
-
-        // Act
-        $command = new MatchPaymentForTransfer($transfer);
-        $this->messageBus->dispatch($command);
-
-        // Assert
-        $this->entityManager->refresh($transfer);
-
-        // Transfer should not be associated with any payment
-        $this->assertNull($transfer->getPayment());
-
-        // Check that TransferNotMatchedCommand was dispatched
-        $this->bus()
-            ->dispatched()
-            ->assertContains(TransferNotMatchedCommand::class);
-    }
-
-    public function testHandlesTitleWithOnlySpaces(): void
-    {
-        $transfer = TransferAssembler::new()
-            ->withTitle('   ')
-            ->withAmount('100.00')
-            ->withSender('Spaces Only')
-            ->withAccountNumber('1234567890')
-            ->assemble();
-        $this->entityManager->persist($transfer);
-        $this->entityManager->flush();
-
-        // Act
-        $command = new MatchPaymentForTransfer($transfer);
-        $this->messageBus->dispatch($command);
-
-        // Assert
-        $this->entityManager->refresh($transfer);
-
-        // Transfer should not be associated with any payment
-        $this->assertNull($transfer->getPayment());
-
-        // Check that TransferNotMatchedCommand was dispatched
-        $this->bus()
-            ->dispatched()
-            ->assertContains(TransferNotMatchedCommand::class);
-    }
-
-    public function testMatchesPaymentCodeWithSpecialCharactersInTitle(): void
-    {
+        $amount = 100.00;
+        $currency = 'PLN';
+        $sender = 'Test Sender';
+        $accountNumber = '1234567890';
         // Arrange
-        $user = UserAssembler::new()->assemble();
-        $this->entityManager->persist($user);
-
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->withAmount(Money::of('400.00', 'PLN'))
-            ->withStatus(Payment::STATUS_PENDING)
-            ->assemble();
-        $this->entityManager->persist($payment);
-
-        $paymentCode = new PaymentCode($payment);
-        $reflection = new \ReflectionClass($paymentCode);
-        $codeProperty = $reflection->getProperty('code');
-        $codeProperty->setAccessible(true);
-        $codeProperty->setValue($paymentCode, 'SPEC');
-
-        $this->entityManager->persist($paymentCode);
-
         $transfer = TransferAssembler::new()
-            ->withTitle('Payment: SPEC - for services!')
-            ->withAmount('400.00')
-            ->withSender('Special Chars')
-            ->withAccountNumber('1234567890')
+            ->withTitle($title)
+            ->withAmount((string) $amount)
+            ->withSender($sender)
+            ->withAccountNumber($accountNumber)
             ->assemble();
         $this->entityManager->persist($transfer);
         $this->entityManager->flush();
@@ -458,11 +377,39 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->messageBus->dispatch($command);
 
         // Assert
-        $this->entityManager->refresh($payment);
         $this->entityManager->refresh($transfer);
+        $this->assertNull($transfer->getPayment());
+        $this->bus()
+            ->dispatched()
+            ->assertContains(TransferNotMatchedCommand::class);
+    }
 
-        $this->assertTrue($payment->getTransfers()->contains($transfer));
-        $this->assertSame($payment, $transfer->getPayment());
-        $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
+    #[Test]
+    #[DataProvider('invalidTitleProvider')]
+    public function handlesInvalidTitles(string $title): void
+    {
+        $amount = 100.00;
+        $currency = 'PLN';
+        $sender = 'Test Sender';
+        $accountNumber = '1234567890';
+        $transfer = TransferAssembler::new()
+            ->withTitle($title)
+            ->withAmount((string) $amount)
+            ->withSender($sender)
+            ->withAccountNumber($accountNumber)
+            ->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        // Act
+        $command = new MatchPaymentForTransfer($transfer);
+        $this->messageBus->dispatch($command);
+
+        // Assert
+        $this->entityManager->refresh($transfer);
+        $this->assertNull($transfer->getPayment());
+        $this->bus()
+            ->dispatched()
+            ->assertContains(TransferNotMatchedCommand::class);
     }
 }

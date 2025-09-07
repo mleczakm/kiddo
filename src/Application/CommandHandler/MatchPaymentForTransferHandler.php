@@ -25,9 +25,10 @@ final readonly class MatchPaymentForTransferHandler
         $title = $command->transfer->title;
 
         foreach (explode(' ', $title) as $word) {
+            $cleanWord = preg_replace('/[^A-Za-z0-9]/', '', $word) ?? '';
             $paymentCode = $this->entityManager->getRepository(PaymentCode::class)
                 ->findOneBy([
-                    'code' => mb_strtoupper($word),
+                    'code' => mb_strtoupper($cleanWord),
                 ]);
 
             if ($paymentCode) {

@@ -155,7 +155,6 @@ class AdminBookingModal extends AbstractController
         ]);
     }
 
-
     public function getSelectedUser(): ?User
     {
         if (! $this->selectedUserId) {
