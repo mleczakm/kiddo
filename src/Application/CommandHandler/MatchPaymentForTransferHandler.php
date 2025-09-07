@@ -55,14 +55,39 @@ final readonly class MatchPaymentForTransferHandler
             fn(string $word): bool => $word !== ''
         ));
 
+        $emitted = [];
+
         foreach ($tokens as $token) {
-            yield $token;
+            yield $emitted[] = $token;
         }
 
         $count = count($tokens);
 
         for ($i = 0; $i < $count - 1; $i++) {
-            yield $tokens[$i] . $tokens[$i + 1];
+            yield $emitted[] = $tokens[$i] . $tokens[$i + 1];
+        }
+
+        foreach ($emitted as $token) {
+            $substituted = str_replace('0', 'O', $token);
+
+            if ($substituted !== $token) {
+                yield $substituted;
+            }
+
+            $substituted = str_replace('O', '0', $token);
+
+            if ($substituted !== $token) {
+                yield $substituted;
+            }
+
+            $substituted = strtr($token, [
+                '0' => 'O',
+                'O' => '0',
+            ]);
+
+            if ($substituted !== $token) {
+                yield $substituted;
+            }
         }
     }
 }

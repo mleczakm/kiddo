@@ -43,6 +43,9 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
     {
         return [
             'single word code' => ['TEST', 'Payment for order TEST additional text'],
+            'missed zero with O' => ['TES0', 'Payment for order TESO additional text'],
+            'missed O with zero' => ['TESO', 'Payment for order TES0 additional text'],
+            'missed O with zero and zero with O' => ['T0SO', 'Payment for order TOS0 additional text'],
             'code in middle of title' => ['XYZ9', 'Some random text XYZ9 more text here'],
             'code at end of title' => ['END1', 'Transfer description ending with END1'],
             'special characters in title' => ['SPEC', 'Payment: SPEC - for services!'],
