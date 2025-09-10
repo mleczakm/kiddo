@@ -178,7 +178,7 @@
                                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                                     </svg>
                                                     <span class="text-sm text-green-600">
-                                                        {{ availableLesson.availableSpots ?? 0 }} {{ 'booking.spots'|trans }}
+                                                        {{ 'booking.spots'|trans({count: availableLesson.availableSpots}) }}
                                                     </span>
                                                 </div>
                                             </div>

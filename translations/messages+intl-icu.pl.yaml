@@ -300,11 +300,11 @@ booking:
   choose_alternative_workshop: Wybierz alternatywne zajęcia
   spots: >-
     {count, plural,
-      =0 {brak miejsc}
-      one {# miejsce}
-      few {# miejsca}
-      many {# miejsc}
-      other {# miejsca}
+      =0 {brak miejsc}
+      one {# miejsce}
+      few {# miejsca}
+      many {# miejsc}
+      other {# miejsca}
     }
   refund_description: Opis zwrotu
   refund_point_1: Zwrot jest możliwy do 24h przed zajęciami
