@@ -43,12 +43,21 @@
             <div class="space-y-4">
                 {% for booking in this.getCurrentBookings %}
                     {% for lesson in booking.lessons %}
-                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
+                        {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
+                        {% set isRescheduled = booking.lessonsMap.isRescheduledLesson(lesson.id) %}
+                        {% set isFuture = lesson.metadata.schedule > date() %}
+                        {% set show =
+                            (activeTab == 'cancelled' and isCancelled) or
+                            (activeTab == 'active' and (not isCancelled) and isFuture) or
+                            (activeTab == 'past' and (not isCancelled) and (not isFuture))
+                        %}
+                        {% if show %}
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden {{ isCancelled ? 'opacity-70' : '' }}">
                             <div class="flex flex-col md:flex-row">
                                 <div class="p-6 flex-grow">
                                     <div class="flex justify-between items-start">
                                         <div>
-                                            <h3 class="font-bold text-lg mb-1">{{ lesson.metadata.title }}</h3>
+                                            <h3 class="font-bold text-lg mb-1 {{ isCancelled ? 'line-through text-muted-foreground' : '' }}">{{ lesson.metadata.title }}</h3>
                                             <p class="text-sm text-muted-foreground">{{ 'dashboard.single_entry'|trans }}</p>
                                         </div>
                                         <div class="text-right min-w-[80px] flex flex-col items-end gap-2">
@@ -79,7 +88,7 @@
                                     </div>
                                     <div class="mt-4 space-y-2">
                                         <div class="flex items-center space-x-2 text-sm">
-                                            <div class="flex items-center">
+                                            <div class="flex items-center {{ isCancelled ? 'line-through text-muted-foreground' : '' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                      height="16" viewBox="0 0 24 24" fill="none"
                                                      stroke="currentColor" stroke-width="2"
@@ -93,7 +102,7 @@
                                                 </svg>
                                                 <span>{{ lesson.metadata.schedule|date('d.m.Y') }}</span>
                                             </div>
-                                            <div class="flex items-center">
+                                            <div class="flex items-center {{ isCancelled ? 'line-through text-muted-foreground' : '' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                      height="16" viewBox="0 0 24 24" fill="none"
                                                      stroke="currentColor" stroke-width="2"
@@ -103,12 +112,18 @@
                                                     <polyline points="12 6 12 12 16 14"></polyline>
                                                 </svg>
                                                 <span>{{ lesson.metadata.schedule|date('H:i') }} - {{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</span>
+                                                {% if isCancelled %}
+                                                    <span class="ml-2 inline-flex items-center rounded-full bg-red-50 text-red-700 px-2.5 py-0.5 text-xs font-semibold border border-red-200">
+                                                        {{ isRescheduled ? 'rescheduled' : 'cancelled' }}
+                                                    </span>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="p-6 flex items-center justify-center md:w-60">
-                                    {% if booking.canBeRescheduledFor(lesson) and lesson.cancellationAvailable() %}
+                                    {% set canModify = (not isCancelled) and (not isRescheduled) and isFuture %}
+                                    {% if canModify and lesson.cancellationAvailable() %}
                                         {{ component('BookingCancellationModal', {booking: booking, lesson: lesson}) }}
                                     {% else %}
                                         <span class="text-sm text-muted-foreground text-center">
@@ -118,6 +133,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                     {% endfor %}
                 {% else %}
                     <div class="text-center py-8 text-muted-foreground">

@@ -1,0 +1,433 @@
+<div data-lov-id="src/pages/Admin.tsx:1376:10" data-lov-name="Card" data-component-path="src/pages/Admin.tsx"
+     data-component-line="1376" data-component-file="Admin.tsx" data-component-name="Card"
+     data-component-content="%7B%7D" class="rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div data-lov-id="src/pages/Admin.tsx:1377:12" data-lov-name="CardHeader" data-component-path="src/pages/Admin.tsx"
+         data-component-line="1377" data-component-file="Admin.tsx" data-component-name="CardHeader"
+         data-component-content="%7B%7D" class="flex flex-col space-y-1.5 p-6">
+        <h3 data-lov-id="src/pages/Admin.tsx:1378:14" data-lov-name="CardTitle"
+            data-component-path="src/pages/Admin.tsx" data-component-line="1378" data-component-file="Admin.tsx"
+            data-component-name="CardTitle"
+            data-component-content="%7B%22text%22%3A%22User%20Management%20(%20users)%22%2C%22className%22%3A%22flex%20items-center%20gap-2%22%7D"
+            class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-users w-5 h-5" data-lov-id="src/pages/Admin.tsx:1379:16" data-lov-name="Users"
+                 data-component-path="src/pages/Admin.tsx" data-component-line="1379" data-component-file="Admin.tsx"
+                 data-component-name="Users" data-component-content="%7B%22className%22%3A%22w-5%20h-5%22%7D">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            User Management (3 users)
+        </h3>
+    </div>
+    <div data-lov-id="src/pages/Admin.tsx:1383:12" data-lov-name="CardContent" data-component-path="src/pages/Admin.tsx"
+         data-component-line="1383" data-component-file="Admin.tsx" data-component-name="CardContent"
+         data-component-content="%7B%7D" class="p-6 pt-0">
+        <div data-lov-id="src/components/ui/table.tsx:9:2" data-lov-name="div"
+             data-component-path="src/components/ui/table.tsx" data-component-line="9" data-component-file="table.tsx"
+             data-component-name="div"
+             data-component-content="%7B%22className%22%3A%22relative%20w-full%20overflow-auto%22%7D"
+             class="relative w-full overflow-auto">
+            <table data-lov-id="src/pages/Admin.tsx:1384:14" data-lov-name="Table"
+                   data-component-path="src/pages/Admin.tsx" data-component-line="1384" data-component-file="Admin.tsx"
+                   data-component-name="Table" data-component-content="%7B%7D" class="w-full caption-bottom text-sm">
+                <thead data-lov-id="src/pages/Admin.tsx:1385:16" data-lov-name="TableHeader"
+                       data-component-path="src/pages/Admin.tsx" data-component-line="1385"
+                       data-component-file="Admin.tsx" data-component-name="TableHeader" data-component-content="%7B%7D"
+                       class="[&amp;_tr]:border-b">
+                <tr data-lov-id="src/pages/Admin.tsx:1386:18" data-lov-name="TableRow"
+                    data-component-path="src/pages/Admin.tsx" data-component-line="1386" data-component-file="Admin.tsx"
+                    data-component-name="TableRow" data-component-content="%7B%7D"
+                    class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <th data-lov-id="src/pages/Admin.tsx:1387:20" data-lov-name="TableHead"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1387"
+                        data-component-file="Admin.tsx" data-component-name="TableHead"
+                        data-component-content="%7B%22text%22%3A%22User%22%7D"
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        User
+                    </th>
+                    <th data-lov-id="src/pages/Admin.tsx:1388:20" data-lov-name="TableHead"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1388"
+                        data-component-file="Admin.tsx" data-component-name="TableHead"
+                        data-component-content="%7B%22text%22%3A%22Contact%22%7D"
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        Contact
+                    </th>
+                    <th data-lov-id="src/pages/Admin.tsx:1389:20" data-lov-name="TableHead"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1389"
+                        data-component-file="Admin.tsx" data-component-name="TableHead"
+                        data-component-content="%7B%22text%22%3A%22Role%22%7D"
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        Role
+                    </th>
+                    <th data-lov-id="src/pages/Admin.tsx:1390:20" data-lov-name="TableHead"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1390"
+                        data-component-file="Admin.tsx" data-component-name="TableHead"
+                        data-component-content="%7B%22text%22%3A%22Bookings%22%7D"
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        Bookings
+                    </th>
+                    <th data-lov-id="src/pages/Admin.tsx:1391:20" data-lov-name="TableHead"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1391"
+                        data-component-file="Admin.tsx" data-component-name="TableHead"
+                        data-component-content="%7B%22text%22%3A%22Status%22%7D"
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        Status
+                    </th>
+                    <th data-lov-id="src/pages/Admin.tsx:1392:20" data-lov-name="TableHead"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1392"
+                        data-component-file="Admin.tsx" data-component-name="TableHead"
+                        data-component-content="%7B%22text%22%3A%22Last%20Active%22%7D"
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        Last Active
+                    </th>
+                    <th data-lov-id="src/pages/Admin.tsx:1393:20" data-lov-name="TableHead"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1393"
+                        data-component-file="Admin.tsx" data-component-name="TableHead"
+                        data-component-content="%7B%22text%22%3A%22Actions%22%7D"
+                        class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody data-lov-id="src/pages/Admin.tsx:1396:16" data-lov-name="TableBody"
+                       data-component-path="src/pages/Admin.tsx" data-component-line="1396"
+                       data-component-file="Admin.tsx" data-component-name="TableBody" data-component-content="%7B%7D"
+                       class="[&amp;_tr:last-child]:border-0">
+                <tr data-lov-id="src/pages/Admin.tsx:1398:20" data-lov-name="TableRow"
+                    data-component-path="src/pages/Admin.tsx" data-component-line="1398" data-component-file="Admin.tsx"
+                    data-component-name="TableRow" data-component-content="%7B%7D"
+                    class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <td data-lov-id="src/pages/Admin.tsx:1399:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1399"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1400:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1400"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1401:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1401"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">
+                                Demo User</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1402:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1402"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22text%22%3A%22ID%3A%22%2C%22className%22%3A%22text-sm%20text-muted-foreground%22%7D"
+                               class="text-sm text-muted-foreground">ID: user-123</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1405:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1405"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1406:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1406"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1407:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1407"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%22%7D" class="text-sm">
+                                user@example.com</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1408:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1408"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%20text-muted-foreground%22%7D"
+                               class="text-sm text-muted-foreground">+1234567890</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1411:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1411"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1412:24" data-lov-name="Badge"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1412"
+                             data-component-file="Admin.tsx" data-component-name="Badge" data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                            User
+                        </div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1416:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1416"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">5
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1417:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1417"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1418:24" data-lov-name="Badge"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1418"
+                             data-component-file="Admin.tsx" data-component-name="Badge" data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            active
+                        </div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1422:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1422"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1423:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1423"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1424:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1424"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%22%7D" class="text-sm">
+                                14.01.2024</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1425:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1425"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22text%22%3A%22Joined%3A%22%2C%22className%22%3A%22text-xs%20text-muted-foreground%22%7D"
+                               class="text-xs text-muted-foreground">Joined: 1.12.2023</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1430:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1430"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1431:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1431"
+                             data-component-file="Admin.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20gap-2%22%7D" class="flex gap-2">
+                            <button data-lov-id="src/pages/Admin.tsx:1432:26" data-lov-name="Button"
+                                    data-component-path="src/pages/Admin.tsx" data-component-line="1432"
+                                    data-component-file="Admin.tsx" data-component-name="Button"
+                                    data-component-content="%7B%22text%22%3A%22Edit%22%7D"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                                Edit
+                            </button>
+                            <button data-lov-id="src/pages/Admin.tsx:1434:28" data-lov-name="Button"
+                                    data-component-path="src/pages/Admin.tsx" data-component-line="1434"
+                                    data-component-file="Admin.tsx" data-component-name="Button"
+                                    data-component-content="%7B%22text%22%3A%22Block%22%2C%22className%22%3A%22border-workshop-red%20text-workshop-red%20hover%3Abg-workshop-red%2F10%22%7D"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
+                                Block
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr data-lov-id="src/pages/Admin.tsx:1398:20" data-lov-name="TableRow"
+                    data-component-path="src/pages/Admin.tsx" data-component-line="1398" data-component-file="Admin.tsx"
+                    data-component-name="TableRow" data-component-content="%7B%7D"
+                    class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <td data-lov-id="src/pages/Admin.tsx:1399:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1399"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1400:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1400"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1401:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1401"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">
+                                Jane Smith</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1402:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1402"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22text%22%3A%22ID%3A%22%2C%22className%22%3A%22text-sm%20text-muted-foreground%22%7D"
+                               class="text-sm text-muted-foreground">ID: user-456</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1405:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1405"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1406:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1406"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1407:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1407"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%22%7D" class="text-sm">
+                                jane@example.com</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1408:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1408"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%20text-muted-foreground%22%7D"
+                               class="text-sm text-muted-foreground">+0987654321</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1411:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1411"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1412:24" data-lov-name="Badge"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1412"
+                             data-component-file="Admin.tsx" data-component-name="Badge" data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                            User
+                        </div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1416:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1416"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">3
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1417:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1417"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1418:24" data-lov-name="Badge"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1418"
+                             data-component-file="Admin.tsx" data-component-name="Badge" data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            active
+                        </div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1422:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1422"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1423:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1423"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1424:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1424"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%22%7D" class="text-sm">
+                                13.01.2024</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1425:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1425"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22text%22%3A%22Joined%3A%22%2C%22className%22%3A%22text-xs%20text-muted-foreground%22%7D"
+                               class="text-xs text-muted-foreground">Joined: 15.11.2023</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1430:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1430"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1431:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1431"
+                             data-component-file="Admin.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20gap-2%22%7D" class="flex gap-2">
+                            <button data-lov-id="src/pages/Admin.tsx:1432:26" data-lov-name="Button"
+                                    data-component-path="src/pages/Admin.tsx" data-component-line="1432"
+                                    data-component-file="Admin.tsx" data-component-name="Button"
+                                    data-component-content="%7B%22text%22%3A%22Edit%22%7D"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                                Edit
+                            </button>
+                            <button data-lov-id="src/pages/Admin.tsx:1434:28" data-lov-name="Button"
+                                    data-component-path="src/pages/Admin.tsx" data-component-line="1434"
+                                    data-component-file="Admin.tsx" data-component-name="Button"
+                                    data-component-content="%7B%22text%22%3A%22Block%22%2C%22className%22%3A%22border-workshop-red%20text-workshop-red%20hover%3Abg-workshop-red%2F10%22%7D"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
+                                Block
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr data-lov-id="src/pages/Admin.tsx:1398:20" data-lov-name="TableRow"
+                    data-component-path="src/pages/Admin.tsx" data-component-line="1398" data-component-file="Admin.tsx"
+                    data-component-name="TableRow" data-component-content="%7B%7D"
+                    class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <td data-lov-id="src/pages/Admin.tsx:1399:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1399"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1400:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1400"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1401:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1401"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">
+                                John Admin</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1402:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1402"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22text%22%3A%22ID%3A%22%2C%22className%22%3A%22text-sm%20text-muted-foreground%22%7D"
+                               class="text-sm text-muted-foreground">ID: user-789</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1405:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1405"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1406:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1406"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1407:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1407"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%22%7D" class="text-sm">
+                                admin@example.com</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1408:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1408"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%20text-muted-foreground%22%7D"
+                               class="text-sm text-muted-foreground">+1122334455</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1411:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1411"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1412:24" data-lov-name="Badge"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1412"
+                             data-component-file="Admin.tsx" data-component-name="Badge" data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            Admin
+                        </div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1416:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1416"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">0
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1417:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1417"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1418:24" data-lov-name="Badge"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1418"
+                             data-component-file="Admin.tsx" data-component-name="Badge" data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            active
+                        </div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1422:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1422"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1423:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1423"
+                             data-component-file="Admin.tsx" data-component-name="div" data-component-content="%7B%7D">
+                            <p data-lov-id="src/pages/Admin.tsx:1424:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1424"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22className%22%3A%22text-sm%22%7D" class="text-sm">
+                                14.01.2024</p>
+                            <p data-lov-id="src/pages/Admin.tsx:1425:26" data-lov-name="p"
+                               data-component-path="src/pages/Admin.tsx" data-component-line="1425"
+                               data-component-file="Admin.tsx" data-component-name="p"
+                               data-component-content="%7B%22text%22%3A%22Joined%3A%22%2C%22className%22%3A%22text-xs%20text-muted-foreground%22%7D"
+                               class="text-xs text-muted-foreground">Joined: 1.10.2023</p></div>
+                    </td>
+                    <td data-lov-id="src/pages/Admin.tsx:1430:22" data-lov-name="TableCell"
+                        data-component-path="src/pages/Admin.tsx" data-component-line="1430"
+                        data-component-file="Admin.tsx" data-component-name="TableCell" data-component-content="%7B%7D"
+                        class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                        <div data-lov-id="src/pages/Admin.tsx:1431:24" data-lov-name="div"
+                             data-component-path="src/pages/Admin.tsx" data-component-line="1431"
+                             data-component-file="Admin.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20gap-2%22%7D" class="flex gap-2">
+                            <button data-lov-id="src/pages/Admin.tsx:1432:26" data-lov-name="Button"
+                                    data-component-path="src/pages/Admin.tsx" data-component-line="1432"
+                                    data-component-file="Admin.tsx" data-component-name="Button"
+                                    data-component-content="%7B%22text%22%3A%22Edit%22%7D"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                                Edit
+                            </button>
+                            <button data-lov-id="src/pages/Admin.tsx:1434:28" data-lov-name="Button"
+                                    data-component-path="src/pages/Admin.tsx" data-component-line="1434"
+                                    data-component-file="Admin.tsx" data-component-name="Button"
+                                    data-component-content="%7B%22text%22%3A%22Block%22%2C%22className%22%3A%22border-workshop-red%20text-workshop-red%20hover%3Abg-workshop-red%2F10%22%7D"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
+                                Block
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

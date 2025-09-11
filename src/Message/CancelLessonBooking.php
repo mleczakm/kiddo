@@ -36,8 +36,9 @@ final class CancelLessonBooking
         return $this->reason;
     }
 
+    // Kept for backward compatibility; cancel action from modal never requests refund
     public function isRefundRequested(): bool
     {
-        return true;
+        return false;
     }
 }

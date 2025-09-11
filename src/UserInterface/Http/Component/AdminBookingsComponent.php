@@ -61,6 +61,9 @@ class AdminBookingsComponent extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $errorMessage = null;
 
+    /**
+     * @var array<string>
+     */
     #[LiveProp(writable: true)]
     public array $expandedBookings = [];
 
@@ -130,14 +133,11 @@ class AdminBookingsComponent extends AbstractController
 
             // Use new BookedLesson structure
             $totalLessons = count($booking->getLessons());
-            $activeLessons = []; //$booking->getBookedLessonsMap()->active();
-
-            // Calculate completed lessons from active booked lesson entities that are in the past
             $completedLessons = 0;
             $upcomingLessons = [];
 
-            /** @var Lesson $lesson */
-            foreach ([] as $lesson) {
+            // Calculate completed and upcoming lessons from actual lessons
+            foreach ($booking->getLessons() as $lesson) {
                 if ($lesson->getMetadata()->schedule < new \DateTimeImmutable()) {
                     $completedLessons++;
                 } else {
@@ -149,10 +149,10 @@ class AdminBookingsComponent extends AbstractController
                 'booking' => $booking,
                 'isCarnet' => $isCarnet,
                 'totalLessons' => $totalLessons,
-                'activeLessons' => $activeLessons,
                 'completedLessons' => $completedLessons,
-                'remainingLessons' => 1,
-                'progress' => $activeLessons > 0 ? (float) (1 / 2) : 0,
+                'remainingLessons' => count($upcomingLessons),
+                'progress' => $totalLessons > 0 ? (float) ($completedLessons / $totalLessons) : 0.0,
+                'upcomingLessons' => $upcomingLessons,
             ];
         }
 
@@ -161,7 +161,7 @@ class AdminBookingsComponent extends AbstractController
 
     private function isCarnetBooking(Booking $booking): bool
     {
-        if ($booking->getBookedLessonsMap()->count() > 1) {
+        if ($booking->getLessonsMap()->count() > 1) {
             return true;
         }
 
@@ -189,12 +189,21 @@ class AdminBookingsComponent extends AbstractController
 
         foreach ($counts as $count) {
             $countValue = (int) $count['count'];
+            $status = $count['status'];
             $result['all'] += $countValue;
-            if ($count['status'] === Booking::STATUS_ACTIVE) {
+
+            // Normalize legacy/alias statuses coming from queries/tests
+            if ($status === 'confirmed') {
+                $status = Booking::STATUS_ACTIVE;
+            } elseif ($status === 'completed') {
+                $status = Booking::STATUS_PAST;
+            }
+
+            if ($status === Booking::STATUS_ACTIVE) {
                 $result['active'] = $countValue;
-            } elseif ($count['status'] === Booking::STATUS_PAST) {
+            } elseif ($status === Booking::STATUS_PAST) {
                 $result['completed'] = $countValue;
-            } elseif ($count['status'] === Booking::STATUS_CANCELLED) {
+            } elseif ($status === Booking::STATUS_CANCELLED) {
                 $result['cancelled'] = $countValue;
             }
         }
@@ -376,7 +385,7 @@ class AdminBookingsComponent extends AbstractController
     public function getLessonStatusBadge(Lesson $lesson, Booking $booking): array
     {
         // Check if lesson exists in booking's lesson map
-        $lessonMap = $booking->getBookedLessonsMap();
+        $lessonMap = $booking->getLessonsMap();
         $lessonId = $lesson->getId();
 
         // Check if lesson is in cancelled map
@@ -423,7 +432,7 @@ class AdminBookingsComponent extends AbstractController
     public function canLessonBeModified(Lesson $lesson, Booking $booking): bool
     {
         $now = new \DateTimeImmutable();
-        $lessonMap = $booking->getBookedLessonsMap();
+        $lessonMap = $booking->getLessonsMap();
         $lessonId = $lesson->getId();
 
         // Can modify only if lesson is in active map and in the future

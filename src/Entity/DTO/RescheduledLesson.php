@@ -11,7 +11,7 @@ class RescheduledLesson extends BookedLesson
     public function __construct(
         public readonly Ulid $lessonId,
         public readonly Ulid $rescheduledFrom,
-    ) {
-        parent::__construct($lessonId);
-    }
+        public readonly int $rescheduledBy,
+        public readonly ?\DateTimeImmutable $rescheduledAt,
+    ) {}
 }

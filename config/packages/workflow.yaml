@@ -12,34 +12,30 @@ framework:
             initial_marking: pending
             places:
                 - pending
-                - confirmed
+                - active
                 - cancelled
-                - completed
-                - refund_requested
+                - past
             transitions:
                 confirm:
                     guard: "subject.canBeConfirmed()"
                     from: pending
-                    to: confirmed
+                    to: active
                 cancel:
                     guard: "subject.canBeCancelled()"
-                    from: [pending, confirmed]
+                    from: [pending, active]
                     to: cancelled
                 request_refund:
                     guard: "subject.canRequestRefund()"
-                    from: [pending, confirmed]
-                    to: refund_requested
+                    from: [active]
+                    to: active
                 complete:
                     guard: "subject.canBeCompleted()"
-                    from: confirmed
-                    to: completed
+                    from: active
+                    to: past
                 reschedule:
                     guard: "subject.canBeRescheduled()"
-                    from: [pending, confirmed]
-                    to: cancelled
-                    metadata:
-                        new_booking_required: true
-                        reason: 'rescheduled'
+                    from: [active]
+                    to: active
 
         payment:
             type: 'state_machine'

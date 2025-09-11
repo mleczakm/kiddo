@@ -12,9 +12,6 @@
                     </svg>
                     {{ 'admin_dashboard.bookings.title'|trans }}
                 </h3>
-
-                <!-- Manual Booking Modal Integration -->
-                {{ component('AdminBookingModal') }}
             </div>
         </div>
 
@@ -110,7 +107,7 @@
                         {{ 'admin_dashboard.bookings.filter.cancelled'|trans }} ({{ counts.cancelled }})
                     </button>
                 </div>
-            </div>getLessonStatusBadge
+            </div>
 
             {# Bookings Table #}
             <div>
@@ -126,7 +123,6 @@
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Płatność</th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status rezerwacji</th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Data utworzenia</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Akcje</th>
                             </tr>
                         </thead>
                         <tbody class="[&_tr:last-child]:border-0">
@@ -252,9 +248,6 @@
                                                     Mark Paid
                                                 </button>
                                             {% endif %}
-                                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                                                Edit
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -275,7 +268,6 @@
                                                                     <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Date & Time</th>
                                                                     <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Amount</th>
                                                                     <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Status</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Attendance</th>
                                                                     <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Actions</th>
                                                                 </tr>
                                                             </thead>
@@ -308,11 +300,6 @@
                                                                         <td class="p-4 align-middle text-xs">
                                                                             <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent {{ lessonStatus.class }}">
                                                                                 {{ lessonStatus.text }}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td class="p-4 align-middle text-xs">
-                                                                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-primary text-primary-foreground">
-                                                                                not tracked
                                                                             </div>
                                                                         </td>
                                                                         <td class="p-4 align-middle text-xs">

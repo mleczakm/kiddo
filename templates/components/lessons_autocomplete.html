@@ -1,0 +1,424 @@
+<div role="dialog" id="radix-:ru:" aria-describedby="radix-:r10:" aria-labelledby="radix-:rv:" data-state="open"
+     data-lov-id="src/components/LessonAutocomplete.tsx:50:6" data-lov-name="DialogContent"
+     data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="50"
+     data-component-file="LessonAutocomplete.tsx" data-component-name="DialogContent"
+     data-component-content="%7B%22className%22%3A%22max-w-md%22%7D"
+     class="fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-md"
+     tabindex="-1" style="pointer-events: auto;">
+    <div data-lov-id="src/components/LessonAutocomplete.tsx:51:8" data-lov-name="DialogHeader"
+         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="51"
+         data-component-file="LessonAutocomplete.tsx" data-component-name="DialogHeader" data-component-content="%7B%7D"
+         class="flex flex-col space-y-1.5 text-center sm:text-left"><h2 id="radix-:rv:"
+                                                                        data-lov-id="src/components/LessonAutocomplete.tsx:52:10"
+                                                                        data-lov-name="DialogTitle"
+                                                                        data-component-path="src/components/LessonAutocomplete.tsx"
+                                                                        data-component-line="52"
+                                                                        data-component-file="LessonAutocomplete.tsx"
+                                                                        data-component-name="DialogTitle"
+                                                                        data-component-content="%7B%7D"
+                                                                        class="text-lg font-semibold leading-none tracking-tight">
+        Select Lesson for Booking</h2></div>
+    <div tabindex="-1" data-lov-id="src/components/LessonAutocomplete.tsx:54:8" data-lov-name="Command"
+         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="54"
+         data-component-file="LessonAutocomplete.tsx" data-component-name="Command"
+         data-component-content="%7B%22className%22%3A%22rounded-lg%20border%20shadow-md%22%7D"
+         class="flex h-full w-full flex-col overflow-hidden bg-popover text-popover-foreground rounded-lg border shadow-md"
+         cmdk-root=""><label cmdk-label="" for=":r2n:" id=":r2m:"
+                             style="position: absolute; width: 1px; height: 1px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px;"></label>
+        <div data-lov-id="src/components/ui/command.tsx:42:2" data-lov-name="div"
+             data-component-path="src/components/ui/command.tsx" data-component-line="42"
+             data-component-file="command.tsx" data-component-name="div"
+             data-component-content="%7B%22className%22%3A%22flex%20items-center%20border-b%20px-3%22%7D"
+             class="flex items-center border-b px-3" cmdk-input-wrapper="">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-search mr-2 h-4 w-4 shrink-0 opacity-50"
+                 data-lov-id="src/components/ui/command.tsx:43:4" data-lov-name="Search"
+                 data-component-path="src/components/ui/command.tsx" data-component-line="43"
+                 data-component-file="command.tsx" data-component-name="Search"
+                 data-component-content="%7B%22className%22%3A%22mr-2%20h-4%20w-4%20shrink-0%20opacity-50%22%7D">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <input data-lov-id="src/components/LessonAutocomplete.tsx:55:10" data-lov-name="CommandInput"
+                   data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="55"
+                   data-component-file="LessonAutocomplete.tsx" data-component-name="CommandInput"
+                   data-component-content="%7B%7D"
+                   class="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                   placeholder="Search lessons by title, date, or time..." cmdk-input="" autocomplete="off"
+                   autocorrect="off" spellcheck="false" aria-autocomplete="list" role="combobox" aria-expanded="true"
+                   aria-controls=":r2l:" aria-labelledby=":r2m:" id=":r2n:" type="text" value=""></div>
+        <div data-lov-id="src/components/LessonAutocomplete.tsx:60:10" data-lov-name="CommandList"
+             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="60"
+             data-component-file="LessonAutocomplete.tsx" data-component-name="CommandList"
+             data-component-content="%7B%22className%22%3A%22max-h-%5B300px%5D%22%7D"
+             class="overflow-y-auto overflow-x-hidden max-h-[300px]" cmdk-list="" role="listbox"
+             aria-label="Suggestions" id=":r2l:" style="--cmdk-list-height: 328.0px;">
+            <div cmdk-list-sizer="">
+                <div data-lov-id="src/components/LessonAutocomplete.tsx:63:14" data-lov-name="CommandItem"
+                     data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="63"
+                     data-component-file="LessonAutocomplete.tsx" data-component-name="CommandItem"
+                     data-component-content="%7B%22className%22%3A%22flex%20flex-col%20items-start%20gap-2%20p-4%20cursor-pointer%20hover%3Abg-accent%22%7D"
+                     class="relative select-none rounded-sm text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50 flex flex-col items-start gap-2 p-4 cursor-pointer hover:bg-accent"
+                     id=":r2o:" cmdk-item="" role="option" aria-disabled="false" aria-selected="false"
+                     data-disabled="false" data-selected="false" data-value="workshop-1">
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:69:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="69"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20justify-between%20w-full%22%7D"
+                         class="flex items-center justify-between w-full"><span
+                            data-lov-id="src/components/LessonAutocomplete.tsx:70:18" data-lov-name="span"
+                            data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="70"
+                            data-component-file="LessonAutocomplete.tsx" data-component-name="span"
+                            data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">Creative Art Workshop</span>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:71:18" data-lov-name="Badge"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="71"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="Badge"
+                             data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            active
+                        </div>
+                    </div>
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:75:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="75"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-4%20text-sm%20text-muted-foreground%22%7D"
+                         class="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:76:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="76"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-calendar h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:77:20" data-lov-name="Calendar"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="77"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Calendar"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M8 2v4"></path>
+                                <path d="M16 2v4"></path>
+                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                            2024-01-15
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:80:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="80"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-clock h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:81:20" data-lov-name="Clock"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="81"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Clock"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            15:00
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:84:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="84"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22text%22%3A%22%2F%22%2C%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-users h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:85:20" data-lov-name="Users"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="85"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Users"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            8/12
+                        </div>
+                    </div>
+                </div>
+                <div data-lov-id="src/components/LessonAutocomplete.tsx:63:14" data-lov-name="CommandItem"
+                     data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="63"
+                     data-component-file="LessonAutocomplete.tsx" data-component-name="CommandItem"
+                     data-component-content="%7B%22className%22%3A%22flex%20flex-col%20items-start%20gap-2%20p-4%20cursor-pointer%20hover%3Abg-accent%22%7D"
+                     class="relative select-none rounded-sm text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50 flex flex-col items-start gap-2 p-4 cursor-pointer hover:bg-accent"
+                     id=":r2p:" cmdk-item="" role="option" aria-disabled="false" aria-selected="false"
+                     data-disabled="false" data-selected="false" data-value="workshop-2">
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:69:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="69"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20justify-between%20w-full%22%7D"
+                         class="flex items-center justify-between w-full"><span
+                            data-lov-id="src/components/LessonAutocomplete.tsx:70:18" data-lov-name="span"
+                            data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="70"
+                            data-component-file="LessonAutocomplete.tsx" data-component-name="span"
+                            data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">Music &amp; Movement</span>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:71:18" data-lov-name="Badge"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="71"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="Badge"
+                             data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            active
+                        </div>
+                    </div>
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:75:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="75"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-4%20text-sm%20text-muted-foreground%22%7D"
+                         class="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:76:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="76"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-calendar h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:77:20" data-lov-name="Calendar"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="77"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Calendar"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M8 2v4"></path>
+                                <path d="M16 2v4"></path>
+                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                            2024-01-16
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:80:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="80"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-clock h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:81:20" data-lov-name="Clock"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="81"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Clock"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            16:00
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:84:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="84"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22text%22%3A%22%2F%22%2C%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-users h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:85:20" data-lov-name="Users"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="85"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Users"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            5/8
+                        </div>
+                    </div>
+                </div>
+                <div data-lov-id="src/components/LessonAutocomplete.tsx:63:14" data-lov-name="CommandItem"
+                     data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="63"
+                     data-component-file="LessonAutocomplete.tsx" data-component-name="CommandItem"
+                     data-component-content="%7B%22className%22%3A%22flex%20flex-col%20items-start%20gap-2%20p-4%20cursor-pointer%20hover%3Abg-accent%22%7D"
+                     class="relative select-none rounded-sm text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50 flex flex-col items-start gap-2 p-4 cursor-pointer hover:bg-accent"
+                     id=":r2q:" cmdk-item="" role="option" aria-disabled="false" aria-selected="true"
+                     data-disabled="false" data-selected="true" data-value="workshop-3">
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:69:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="69"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20justify-between%20w-full%22%7D"
+                         class="flex items-center justify-between w-full"><span
+                            data-lov-id="src/components/LessonAutocomplete.tsx:70:18" data-lov-name="span"
+                            data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="70"
+                            data-component-file="LessonAutocomplete.tsx" data-component-name="span"
+                            data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">Science Explorers</span>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:71:18" data-lov-name="Badge"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="71"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="Badge"
+                             data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            active
+                        </div>
+                    </div>
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:75:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="75"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-4%20text-sm%20text-muted-foreground%22%7D"
+                         class="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:76:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="76"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-calendar h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:77:20" data-lov-name="Calendar"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="77"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Calendar"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M8 2v4"></path>
+                                <path d="M16 2v4"></path>
+                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                            2024-01-17
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:80:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="80"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-clock h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:81:20" data-lov-name="Clock"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="81"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Clock"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            14:30
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:84:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="84"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22text%22%3A%22%2F%22%2C%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-users h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:85:20" data-lov-name="Users"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="85"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Users"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            6/10
+                        </div>
+                    </div>
+                </div>
+                <div data-lov-id="src/components/LessonAutocomplete.tsx:63:14" data-lov-name="CommandItem"
+                     data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="63"
+                     data-component-file="LessonAutocomplete.tsx" data-component-name="CommandItem"
+                     data-component-content="%7B%22className%22%3A%22flex%20flex-col%20items-start%20gap-2%20p-4%20cursor-pointer%20hover%3Abg-accent%22%7D"
+                     class="relative select-none rounded-sm text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50 flex flex-col items-start gap-2 p-4 cursor-pointer hover:bg-accent"
+                     id=":r2r:" cmdk-item="" role="option" aria-disabled="false" aria-selected="false"
+                     data-disabled="false" data-selected="false" data-value="workshop-5">
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:69:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="69"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20justify-between%20w-full%22%7D"
+                         class="flex items-center justify-between w-full"><span
+                            data-lov-id="src/components/LessonAutocomplete.tsx:70:18" data-lov-name="span"
+                            data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="70"
+                            data-component-file="LessonAutocomplete.tsx" data-component-name="span"
+                            data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">Cooking Adventures</span>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:71:18" data-lov-name="Badge"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="71"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="Badge"
+                             data-component-content="%7B%7D"
+                             class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                            active
+                        </div>
+                    </div>
+                    <div data-lov-id="src/components/LessonAutocomplete.tsx:75:16" data-lov-name="div"
+                         data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="75"
+                         data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                         data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-4%20text-sm%20text-muted-foreground%22%7D"
+                         class="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:76:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="76"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-calendar h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:77:20" data-lov-name="Calendar"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="77"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Calendar"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M8 2v4"></path>
+                                <path d="M16 2v4"></path>
+                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                            2024-01-19
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:80:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="80"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-clock h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:81:20" data-lov-name="Clock"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="81"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Clock"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            10:00
+                        </div>
+                        <div data-lov-id="src/components/LessonAutocomplete.tsx:84:18" data-lov-name="div"
+                             data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="84"
+                             data-component-file="LessonAutocomplete.tsx" data-component-name="div"
+                             data-component-content="%7B%22text%22%3A%22%2F%22%2C%22className%22%3A%22flex%20items-center%20gap-1%22%7D"
+                             class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="lucide lucide-users h-3 w-3"
+                                 data-lov-id="src/components/LessonAutocomplete.tsx:85:20" data-lov-name="Users"
+                                 data-component-path="src/components/LessonAutocomplete.tsx" data-component-line="85"
+                                 data-component-file="LessonAutocomplete.tsx" data-component-name="Users"
+                                 data-component-content="%7B%22className%22%3A%22h-3%20w-3%22%7D">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            4/12
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" data-lov-id="src/components/ui/dialog.tsx:45:6" data-lov-name="DialogPrimitive.Close"
+            data-component-path="src/components/ui/dialog.tsx" data-component-line="45" data-component-file="dialog.tsx"
+            data-component-name="DialogPrimitive.Close"
+            data-component-content="%7B%22className%22%3A%22absolute%20right-4%20top-4%20rounded-sm%20opacity-70%20ring-offset-background%20transition-opacity%20hover%3Aopacity-100%20focus%3Aoutline-none%20focus%3Aring-2%20focus%3Aring-ring%20focus%3Aring-offset-2%20disabled%3Apointer-events-none%20data-%5Bstate%3Dopen%5D%3Abg-accent%20data-%5Bstate%3Dopen%5D%3Atext-muted-foreground%22%7D"
+            class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-x h-4 w-4" data-lov-id="src/components/ui/dialog.tsx:46:8" data-lov-name="X"
+             data-component-path="src/components/ui/dialog.tsx" data-component-line="46"
+             data-component-file="dialog.tsx" data-component-name="X"
+             data-component-content="%7B%22className%22%3A%22h-4%20w-4%22%7D">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+        </svg>
+        <span data-lov-id="src/components/ui/dialog.tsx:47:8" data-lov-name="span"
+              data-component-path="src/components/ui/dialog.tsx" data-component-line="47"
+              data-component-file="dialog.tsx" data-component-name="span"
+              data-component-content="%7B%22text%22%3A%22Close%22%2C%22className%22%3A%22sr-only%22%7D" class="sr-only">Close</span>
+    </button>
+</div>

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Entity\Booking;
-use App\Entity\Lesson;
-use App\Entity\TicketType;
 use App\Repository\BookingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -49,49 +47,13 @@ class CarnetsComponent extends AbstractController
         $carnets = [];
 
         foreach ($bookings as $booking) {
-            $isCarnet = false;
-
-            foreach ($booking->getLessons() as $lesson) {
-                foreach ($lesson->getTicketOptions() as $option) {
-                    if ($option->type === TicketType::CARNET_4) {
-                        $isCarnet = true;
-                        break 2;
-                    }
-                }
+            if ($booking->getLessonsMap()->lessons->count() > 1) {
+                $carnets[] = $booking;
             }
 
-            if ($isCarnet) {
-                /** @var Lesson $firstLesson */
-                $firstLesson = $booking->getLessons()
-                    ->first();
 
-                $seriesId = $firstLesson->getSeries()?->getId()
-                    ->toRfc4122() ?? 'unknown';
-                if (! isset($carnets[$seriesId])) {
-                    $carnets[$seriesId] = [
-                        'title' => $firstLesson->getMetadata()
-                            ->title,
-                        'bookings' => [],
-                        'totalLessons' => 0,
-                        'usedLessons' => 0,
-                    ];
-                }
-                $carnets[$seriesId]['bookings'][] = $booking;
-                $carnets[$seriesId]['totalLessons'] += $booking->getLessons()->count();
-                $carnets[$seriesId]['usedLessons'] += $booking->getLessons()->filter(
-                    fn(Lesson $l) => $l->getMetadata()
-                        ->schedule < new \DateTimeImmutable()
-                )->count();
-
-                $carnets[$seriesId]['status'] = $carnets[$seriesId]['totalLessons'] - $carnets[$seriesId]['usedLessons'] > 0
-                    ? 'active'
-                    : 'past';
-            }
         }
 
-        // Filter out expired carnets - only return active ones
-        $activeCarnets = array_filter($carnets, fn($carnet) => $carnet['status'] === 'active');
-
-        return array_reverse($activeCarnets);
+        return array_reverse($carnets);
     }
 }

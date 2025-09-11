@@ -13,9 +13,15 @@ class BookedLesson
         public readonly Ulid $lessonId
     ) {}
 
-    public function entity(Booking $booking)
+    public function entity(Booking $booking): ?\App\Entity\Lesson
     {
         return $booking->getLessons()
             ->get($this->lessonId->toString());
+    }
+
+    public function isBooked(): bool
+    {
+        // Assuming a lesson is booked by default when created
+        return true;
     }
 }

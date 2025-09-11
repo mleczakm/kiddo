@@ -55,17 +55,17 @@ class BookingsComponent extends AbstractController
             'active' => $qb
                 ->andWhere('l.metadata.schedule >= :now')
                 ->setParameter('now', Clock::get()->now())
-                ->setParameter('statuses', ['confirmed'])
+                ->setParameter('statuses', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE])
                 ->getQuery()
                 ->getResult(),
             'past' => $qb
                 ->andWhere('l.metadata.schedule <= :now')
                 ->setParameter('now', Clock::get()->now())
-                ->setParameter('statuses', ['confirmed', 'completed'])
+                ->setParameter('statuses', [Booking::STATUS_COMPLETED])
                 ->getQuery()
                 ->getResult(),
             'cancelled' => $qb
-                ->setParameter('statuses', ['cancelled', 'rescheduled', 'refunded'])
+                ->setParameter('statuses', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE, Booking::STATUS_CANCELLED])
                 ->getQuery()
                 ->getResult(),
             default => [],

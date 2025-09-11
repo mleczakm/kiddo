@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Series;
 use DateTimeImmutable;
@@ -185,13 +186,22 @@ class LessonRepository extends ServiceEntityRepository
             ->leftJoin('l.bookings', 'b')
             ->andWhere('l.metadata.schedule >= :startDate')
             ->andWhere('l.metadata.schedule <= :endDate')
+            ->andWhere('b.status IN (:bookingStatus)')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
             ->orderBy('l.metadata.schedule', 'ASC');
 
         if (! $showCancelled) {
             $qb->andWhere('l.status = :status')
-                ->setParameter('status', 'active');
+                ->setParameter('status', 'active')
+                ->setParameter('bookingStatus', [Booking::STATUS_ACTIVE])
+            ;
+        } else {
+            $qb->setParameter(
+                'bookingStatus',
+                [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE, Booking::STATUS_CANCELLED]
+            );
+
         }
 
         /** @var Lesson[] $lessons */
