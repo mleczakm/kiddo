@@ -19,8 +19,12 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
-        $denormalizeMap = function ($mapData) use ($format, $context) {
+        $denormalizeMap = function ($mapData) use ($format, $context): Map {
+            /** @var Map<Ulid, BookedLesson> $result */
             $result = new Map();
+            if (! is_iterable($mapData)) {
+                return $result;
+            }
             foreach ($mapData as $lessonId => $lessonData) {
                 // Force string for the key
                 $lessonIdStr = (string) $lessonId;
@@ -51,10 +55,12 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                 }
 
                 // Detect object type from 'type' field, default to BookedLesson
-                $class = is_array($lessonData) && array_key_exists('type', $lessonData)
-                    ? $lessonData['type']
-                    : BookedLesson::class;
+                $typeField = is_array($lessonData) ? ($lessonData['type'] ?? null) : null;
+                $class = is_string($typeField) ? $typeField : BookedLesson::class;
 
+                if (! $this->normalizer instanceof DenormalizerInterface) {
+                    throw new \LogicException('Normalizer must implement DenormalizerInterface');
+                }
                 $result->put(
                     Ulid::fromString($lessonIdStr),
                     $this->normalizer->denormalize($lessonData, $class, $format, $context)
@@ -62,11 +68,13 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
             }
             return $result;
         };
+
+        $payload = is_array($data) ? $data : [];
         $lessonMap = new LessonMap();
-        $lessonMap->lessons   = $denormalizeMap($data['lessons'] ?? []);
-        $lessonMap->active    = $denormalizeMap($data['active'] ?? []);
-        $lessonMap->past      = $denormalizeMap($data['past'] ?? []);
-        $lessonMap->cancelled = $denormalizeMap($data['cancelled'] ?? []);
+        $lessonMap->lessons   = $denormalizeMap($payload['lessons'] ?? []);
+        $lessonMap->active    = $denormalizeMap($payload['active'] ?? []);
+        $lessonMap->past      = $denormalizeMap($payload['past'] ?? []);
+        $lessonMap->cancelled = $denormalizeMap($payload['cancelled'] ?? []);
         return $lessonMap;
     }
 
@@ -80,7 +88,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
     }
 
     /**
-     * @return array{lessons: array<string>, active: array<string>, past: array<string>, cancelled: array<string>}
+     * @return array{lessons: array<mixed>, active: array<mixed>, past: array<mixed>, cancelled: array<mixed>}
      */
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {

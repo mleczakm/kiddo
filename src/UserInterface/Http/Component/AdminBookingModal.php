@@ -100,8 +100,10 @@ class AdminBookingModal extends AbstractController
         $qb->andWhere('l.metadata.title LIKE :search OR l.metadata.description LIKE :search OR s.name LIKE :search')
             ->setParameter('search', $searchTerm);
 
-        return $qb->getQuery()
+        /** @var Lesson[] $result */
+        $result = $qb->getQuery()
             ->getResult();
+        return $result;
     }
 
     /**
@@ -120,8 +122,10 @@ class AdminBookingModal extends AbstractController
             ->orderBy('u.name', 'ASC')
             ->setMaxResults(10);
 
-        return $qb->getQuery()
+        /** @var User[] $result */
+        $result = $qb->getQuery()
             ->getResult();
+        return $result;
     }
 
     /**
@@ -132,7 +136,12 @@ class AdminBookingModal extends AbstractController
     {
         try {
             $decoded = json_decode($this->selectedLessonIds, true);
-            return is_array($decoded) ? $decoded : [];
+            if (! is_array($decoded)) {
+                return [];
+            }
+            /** @var list<string> $ids */
+            $ids = array_values(array_filter($decoded, static fn($v) => is_string($v)));
+            return $ids;
         } catch (\Exception) {
             return [];
         }
@@ -184,7 +193,7 @@ class AdminBookingModal extends AbstractController
 
         if (! in_array($lessonId, $selectedIds, true)) {
             $selectedIds[] = $lessonId;
-            $this->selectedLessonIds = json_encode($selectedIds);
+            $this->selectedLessonIds = (string) json_encode($selectedIds);
         }
     }
 
@@ -193,7 +202,7 @@ class AdminBookingModal extends AbstractController
     {
         $selectedIds = $this->getSelectedLessonIdsArray();
         $selectedIds = array_values(array_filter($selectedIds, fn($id) => $id !== $lessonId));
-        $this->selectedLessonIds = json_encode($selectedIds);
+        $this->selectedLessonIds = (string) json_encode($selectedIds);
     }
 
     #[LiveAction]
@@ -297,6 +306,9 @@ class AdminBookingModal extends AbstractController
         return count($this->getSelectedLessonIdsArray());
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getBookingTypeOptions(): array
     {
         return [
@@ -305,6 +317,9 @@ class AdminBookingModal extends AbstractController
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getPaymentMethodOptions(): array
     {
         return [

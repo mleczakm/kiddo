@@ -21,7 +21,7 @@ class CarnetsComponent extends AbstractController
     ) {}
 
     /**
-     * @return array<string, mixed>
+     * @return list<Booking>
      */
     #[LiveAction]
     public function getCarnets(): array

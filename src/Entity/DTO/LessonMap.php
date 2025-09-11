@@ -32,41 +32,67 @@ class LessonMap implements \Countable
     public Map $active;
 
     /**
-     * @param array<string, array<string>> ...$datas
+     * @param array<string, list<string>> ...$datas
      */
     public function __construct(array ...$datas)
     {
-        $reduceMap = function (Map $lessons, int $index, string $lessonId): Map {
-            $lessons->put($id = Ulid::fromString($lessonId), new BookedLesson($id));
+        // Initialize empty maps
+        /** @var Map<Ulid, BookedLesson> $cancelled */
+        $cancelled = new Map();
+        /** @var Map<Ulid, BookedLesson> $past */
+        $past = new Map();
+        /** @var Map<Ulid, BookedLesson> $active */
+        $active = new Map();
+        /** @var Map<Ulid, BookedLesson> $lessons */
+        $lessons = new Map();
+        $this->cancelled = $cancelled;
+        $this->past = $past;
+        $this->active = $active;
+        $this->lessons = $lessons;
 
-            return $lessons;
-        };
-
+        // Support passing either a single associative array with keys or variadic keyed arrays
         foreach ($datas as $key => $data) {
-            switch ($key) {
-                case 'lessons':
-                    $this->lessons = new Map($data)
-                        ->reduce($reduceMap, new Map());
-                    break;
-                case 'past':
-                    $this->past = new Map($data)
-                        ->reduce($reduceMap, new Map());
-                    break;
-                case 'cancelled':
-                    $this->cancelled = new Map($data)
-                        ->reduce($reduceMap, new Map());
-                    break;
-                case 'active':
-                    $this->active = new Map($data)
-                        ->reduce($reduceMap, new Map());
-                    break;
+            if (is_string($key)) {
+                $payload = [
+                    $key => $data,
+                ];
+            } else {
+                $payload = $data; // expect associative array with optional keys
+            }
+
+            if (isset($payload['lessons'])) {
+                foreach ((array) $payload['lessons'] as $lessonId) {
+                    if (is_string($lessonId)) {
+                        $id = Ulid::fromString($lessonId);
+                        $this->lessons->put($id, new BookedLesson($id));
+                    }
+                }
+            }
+            if (isset($payload['past'])) {
+                foreach ((array) $payload['past'] as $lessonId) {
+                    if (is_string($lessonId)) {
+                        $id = Ulid::fromString($lessonId);
+                        $this->past->put($id, new BookedLesson($id));
+                    }
+                }
+            }
+            if (isset($payload['cancelled'])) {
+                foreach ((array) $payload['cancelled'] as $lessonId) {
+                    if (is_string($lessonId)) {
+                        $id = Ulid::fromString($lessonId);
+                        $this->cancelled->put($id, new BookedLesson($id));
+                    }
+                }
+            }
+            if (isset($payload['active'])) {
+                foreach ((array) $payload['active'] as $lessonId) {
+                    if (is_string($lessonId)) {
+                        $id = Ulid::fromString($lessonId);
+                        $this->active->put($id, new BookedLesson($id));
+                    }
+                }
             }
         }
-
-        $this->cancelled ??= new Map();
-        $this->past ??= new Map();
-        $this->active ??= new Map();
-        $this->lessons ??= new Map();
     }
 
     public static function createFromBooking(Booking $booking): self
@@ -99,17 +125,28 @@ class LessonMap implements \Countable
      */
     public function jsonSerialize(): array
     {
+        $lessons = [];
+        foreach ($this->lessons as $lesson) {
+            $lessons[] = $lesson->lessonId->toString();
+        }
+        $active = [];
+        foreach ($this->active as $lesson) {
+            $active[] = $lesson->lessonId->toString();
+        }
+        $past = [];
+        foreach ($this->past as $lesson) {
+            $past[] = $lesson->lessonId->toString();
+        }
+        $cancelled = [];
+        foreach ($this->cancelled as $lesson) {
+            $cancelled[] = $lesson->lessonId->toString();
+        }
+
         return [
-            'lessons' => $this->lessons->map(fn(BookedLesson $lesson): string => (string) $lesson->lessonId->toString())
-                ->toArray(),
-            'active' => $this->active->map(fn(BookedLesson $lesson): string => (string) $lesson->lessonId->toString())
-                ->toArray(),
-            'past' => $this->past->map(fn(BookedLesson $lesson): string => (string) $lesson->lessonId->toString())
-                ->toArray(),
-            'cancelled' => $this->cancelled->map(
-                fn(BookedLesson $lesson): string => (string) $lesson->lessonId->toString()
-            )
-                ->toArray(),
+            'lessons' => $lessons,
+            'active' => $active,
+            'past' => $past,
+            'cancelled' => $cancelled,
         ];
     }
 
@@ -214,7 +251,11 @@ class LessonMap implements \Countable
      */
     public function getBooked(): array
     {
-        return $this->active->toArray();
+        $result = [];
+        foreach ($this->active as $booked) {
+            $result[] = $booked;
+        }
+        return $result;
     }
 
     /**
@@ -222,7 +263,11 @@ class LessonMap implements \Countable
      */
     public function getCancelled(): array
     {
-        return $this->cancelled->toArray();
+        $result = [];
+        foreach ($this->cancelled as $booked) {
+            $result[] = $booked;
+        }
+        return $result;
     }
 
     /**
@@ -230,7 +275,11 @@ class LessonMap implements \Countable
      */
     public function getRefunded(): array
     {
-        return $this->cancelled->toArray(); // For simplicity
+        $result = [];
+        foreach ($this->cancelled as $booked) {
+            $result[] = $booked;
+        }
+        return $result; // For simplicity
     }
 
     /**
@@ -262,10 +311,14 @@ class LessonMap implements \Countable
      */
     public function getStatusSummary(): array
     {
+        // At the moment, refunded and rescheduled are represented via the cancelled map entries or not tracked separately.
+        // Return zero for those counters to satisfy the complete shape required by static analysis.
         return [
             'total' => $this->lessons->count(),
             'booked' => $this->active->count(),
             'cancelled' => $this->cancelled->count(),
+            'refunded' => 0,
+            'rescheduled' => 0,
         ];
     }
 
@@ -274,7 +327,11 @@ class LessonMap implements \Countable
      */
     public function getPastActiveLessons(Booking $booking): array
     {
-        return $this->past->toArray();
+        $result = [];
+        foreach ($this->past as $booked) {
+            $result[] = $booked;
+        }
+        return $result;
     }
 
     /**

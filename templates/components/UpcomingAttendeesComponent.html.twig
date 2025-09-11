@@ -11,7 +11,7 @@
                     data-action="live#action"
                     data-live-action-param="toggleCancelled"
                     class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm {{ this.showCancelled ? 'bg-gray-100 border-gray-400' : 'bg-white' }}"
-                    title="{{ this.showCancelled ? 'Hide cancelled lessons' : 'Show cancelled lessons' }}"
+                    title="{{ this.showCancelled ? 'admin_dashboard.upcoming_attendees.hide_cancelled'|trans : 'admin_dashboard.upcoming_attendees.show_cancelled'|trans }}"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         {% if this.showCancelled %}
@@ -21,7 +21,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         {% endif %}
                     </svg>
-                    <span class="sr-only">{{ this.showCancelled ? 'Hide cancelled' : 'Show cancelled' }}</span>
+                    <span class="sr-only">{{ this.showCancelled ? ('admin_dashboard.upcoming_attendees.hide_cancelled'|trans) : ('admin_dashboard.upcoming_attendees.show_cancelled'|trans) }}</span>
                 </button>
                 <button
                     type="button"
@@ -66,7 +66,7 @@
                                     {{ lesson.metadata.title }}
                                     {% if lesson.status == 'cancelled' %}
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 ml-2">
-                                            Cancelled
+                                            {{ 'admin_dashboard.bookings.status.cancelled'|trans }}
                                         </span>
                                     {% endif %}
                                 </h4>

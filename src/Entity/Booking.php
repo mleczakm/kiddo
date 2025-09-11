@@ -200,6 +200,9 @@ class Booking
     {
         /** @var ?Lesson $lesson */
         $lesson = $this->lessons->first();
+        if (! $lesson instanceof Lesson) {
+            return '';
+        }
 
         return $lesson->getMetadata()
             ->title ?? '';
@@ -254,7 +257,7 @@ class Booking
         // keyed by the original (from) lesson id
         $lessonMap->cancelled->put(
             $from->getId(),
-            new RescheduledLesson($to->getId(), $from->getId(), $rescheduledBy->getId(), new \DateTimeImmutable())
+            new RescheduledLesson($to->getId(), $from->getId(), $rescheduledBy->getId() ?? 0, new \DateTimeImmutable())
         );
 
         $this->lessonsMap = $lessonMap;

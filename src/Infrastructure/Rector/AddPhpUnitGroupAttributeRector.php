@@ -81,9 +81,6 @@ final class AddPhpUnitGroupAttributeRector extends AbstractRector
         }
 
         $group = $this->resolveDesiredGroup($node, $className);
-        if ($group === null) {
-            return null;
-        }
 
         // If already has Group attribute with the same value, skip
         if ($this->hasGroupAttributeWithValue($node, $group)) {
@@ -104,7 +101,7 @@ final class AddPhpUnitGroupAttributeRector extends AbstractRector
         return $node;
     }
 
-    private function resolveDesiredGroup(Class_ $node, string $className): ?string
+    private function resolveDesiredGroup(Class_ $node, string $className): string
     {
         // If class name contains Smoke, treat as smoke test
         if (str_contains($className, 'Smoke')) {

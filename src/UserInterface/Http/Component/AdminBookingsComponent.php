@@ -218,7 +218,8 @@ class AdminBookingsComponent extends AbstractController
      */
     public function getAvailableLessons(): array
     {
-        return $this->lessonRepository->createQueryBuilder('l')
+        /** @var Lesson[] $result */
+        $result = $this->lessonRepository->createQueryBuilder('l')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
             ->andWhere('l.metadata.schedule > :now')
@@ -228,6 +229,7 @@ class AdminBookingsComponent extends AbstractController
             ->setMaxResults(50)
             ->getQuery()
             ->getResult();
+        return $result;
     }
 
     #[LiveAction]
@@ -383,6 +385,9 @@ class AdminBookingsComponent extends AbstractController
         }
     }
 
+    /**
+     * @return array{class: string, text: string}
+     */
     public function getLessonStatusBadge(Lesson $lesson, Booking $booking): array
     {
         // Check if lesson exists in booking's lesson map
@@ -463,15 +468,19 @@ class AdminBookingsComponent extends AbstractController
     }
 
     /**
-     * Get selected lesson IDs as array
-     * @return array<Ulid>
+     * Get selected lesson IDs as array of ULID strings
+     * @return list<string>
      */
     public function getSelectedLessonIdsArray(): array
     {
         try {
             $decoded = json_decode($this->selectedLessonIds, true);
-
-            return is_array($decoded) ? array_map(Ulid::fromString(...), $decoded) : [];
+            if (! is_array($decoded)) {
+                return [];
+            }
+            /** @var list<string> $ids */
+            $ids = array_values(array_filter($decoded, static fn($v) => is_string($v) && Ulid::isValid($v)));
+            return $ids;
         } catch (\Exception) {
             return [];
         }
@@ -483,14 +492,17 @@ class AdminBookingsComponent extends AbstractController
      */
     public function getSelectedLessons(): array
     {
-        $ids = $this->getSelectedLessonIdsArray();
-        if (empty($ids)) {
+        $idStrings = $this->getSelectedLessonIdsArray();
+        if ($idStrings === []) {
             return [];
         }
+        $ids = array_map(static fn(string $s) => Ulid::fromString($s), $idStrings);
 
-        return $this->lessonRepository->findBy([
+        /** @var Lesson[] $lessons */
+        $lessons = $this->lessonRepository->findBy([
             'id' => $ids,
         ]);
+        return $lessons;
     }
 
     /**
@@ -513,18 +525,18 @@ class AdminBookingsComponent extends AbstractController
         $qb->andWhere('l.metadata.title LIKE :search OR l.metadata.description LIKE :search')
             ->setParameter('search', $searchTerm);
 
-        return $qb->getQuery()
+        /** @var Lesson[] $result */
+        $result = $qb->getQuery()
             ->getResult();
+        return $result;
     }
 
     /**
      * Check if a lesson is currently selected
      */
-    public function isLessonSelected($lessonId): bool
+    public function isLessonSelected(string $lessonId): bool
     {
-        $lessonIdString = (string) $lessonId;
-
-        return in_array($lessonIdString, $this->getSelectedLessonIdsArray(), true);
+        return in_array($lessonId, $this->getSelectedLessonIdsArray(), true);
     }
 
     #[LiveAction]
@@ -535,7 +547,7 @@ class AdminBookingsComponent extends AbstractController
 
         if (! in_array($lessonIdString, $selectedIds, true)) {
             $selectedIds[] = $lessonIdString;
-            $this->selectedLessonIds = json_encode($selectedIds);
+            $this->selectedLessonIds = (string) json_encode($selectedIds);
         }
     }
 
@@ -545,7 +557,7 @@ class AdminBookingsComponent extends AbstractController
         $lessonIdString = (string) $lessonId;
         $selectedIds = $this->getSelectedLessonIdsArray();
         $selectedIds = array_values(array_filter($selectedIds, fn($id) => $id !== $lessonIdString));
-        $this->selectedLessonIds = json_encode($selectedIds);
+        $this->selectedLessonIds = (string) json_encode($selectedIds);
     }
 
     /**

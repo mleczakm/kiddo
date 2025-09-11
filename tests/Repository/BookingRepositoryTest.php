@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
+use App\Entity\Lesson;
 use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Booking;
 use App\Repository\BookingRepository;
@@ -197,9 +198,16 @@ class BookingRepositoryTest extends KernelTestCase
         $this->assertEquals('Complete booking with all data', $savedBooking->getNotes());
         $this->assertEquals($createdAt->format('Y-m-d H:i:s'), $savedBooking->getCreatedAt()->format('Y-m-d H:i:s'));
         $this->assertEquals($user->getId(), $savedBooking->getUser()->getId());
-        $this->assertEquals($payment->getId(), $savedBooking->getPayment()->getId());
+
+        $savedPayment = $savedBooking->getPayment();
+        $this->assertNotNull($savedPayment);
+        $this->assertEquals($payment->getId(), $savedPayment->getId());
         $this->assertCount(1, $savedBooking->getLessons());
-        $this->assertEquals('Complete Workshop', $savedBooking->getLessons()->first()->getMetadata()->title);
+        /** @var Lesson $firstLesson */
+        $firstLesson = $savedBooking->getLessons()
+            ->first();
+        $this->assertNotFalse($firstLesson);
+        $this->assertEquals('Complete Workshop', $firstLesson->getMetadata()->title);
     }
 
     public function testSaveBookingWithDifferentStatuses(): void

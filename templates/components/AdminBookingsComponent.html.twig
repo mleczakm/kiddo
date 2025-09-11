@@ -61,26 +61,27 @@
             {% endif %}
 
             {# Manual Booking Form #}
+            {% if isFeatureEnabled('manual_bookings') %}
             <div class="mb-6 p-4 border rounded-md bg-background">
-                <h3 class="text-lg font-medium mb-4">Dodaj ręczną rezerwację</h3>
+                <h3 class="text-lg font-medium mb-4">{{ 'admin_dashboard.bookings.manual.add_title'|trans }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="text" placeholder="Imię klienta" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerName }}" data-model="customerName" data-action="live#update" />
-                    <input type="email" placeholder="Email klienta" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerEmail }}" data-model="customerEmail" data-action="live#update" />
-                    <input type="number" step="0.01" placeholder="Kwota (zł)" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.amount }}" data-model="amount" data-action="live#update" />
+                    <input type="text" placeholder="{{ 'admin_dashboard.bookings.manual.customer_name_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerName }}" data-model="customerName" data-action="live#update" />
+                    <input type="email" placeholder="{{ 'admin_dashboard.bookings.manual.customer_email_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerEmail }}" data-model="customerEmail" data-action="live#update" />
+                    <input type="number" step="0.01" placeholder="{{ 'admin_dashboard.bookings.manual.amount_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.amount }}" data-model="amount" data-action="live#update" />
                     <select class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-model="paymentMethod" data-action="live#update">
-                        <option value="">Wybierz metodę płatności</option>
-                        <option value="transfer">Przelew</option>
-                        <option value="cash">Gotówka</option>
-                        <option value="card">Karta</option>
+                        <option value="">{{ 'admin_dashboard.bookings.manual.select_payment_method'|trans }}</option>
+                        <option value="transfer">{{ 'admin_dashboard.bookings.manual.payment.transfer'|trans }}</option>
+                        <option value="cash">{{ 'admin_dashboard.bookings.manual.payment.cash'|trans }}</option>
+                        <option value="card">{{ 'admin_dashboard.bookings.manual.payment.card'|trans }}</option>
                     </select>
                 </div>
 
                 <div class="mb-4">
-                    <textarea placeholder="Notatki do rezerwacji" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" rows="3" data-model="notes" data-action="live#update">{{ this.notes }}</textarea>
+                    <textarea placeholder="{{ 'admin_dashboard.bookings.manual.notes_placeholder'|trans }}" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" rows="3" data-model="notes" data-action="live#update">{{ this.notes }}</textarea>
                 </div>
 
                 <div class="mb-4">
-                    <h4 class="font-medium mb-2">Wybierz zajęcia</h4>
+                    <h4 class="font-medium mb-2">{{ 'admin_dashboard.bookings.manual.select_lessons_title'|trans }}</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {% for lesson in this.getAvailableLessons() %}
                             <label class="inline-flex items-center gap-2">
@@ -88,15 +89,16 @@
                                 <span>{{ lesson.metadata.title }}</span>
                             </label>
                         {% else %}
-                            <p class="text-sm text-muted-foreground">Brak dostępnych zajęć do wyboru</p>
+                            <p class="text-sm text-muted-foreground">{{ 'admin_dashboard.bookings.manual.no_lessons'|trans }}</p>
                         {% endfor %}
                     </div>
                 </div>
 
                 <div>
-                    <button data-action="live#action" data-action-param="addManualBooking" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">Dodaj ręczną rezerwację</button>
+                    <button data-action="live#action" data-action-param="addManualBooking" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">{{ 'admin_dashboard.bookings.manual.add_button'|trans }}</button>
                 </div>
             </div>
+            {% endif %}
 
             {# Search and Filters #}
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
@@ -150,19 +152,19 @@
 
             {# Bookings Table #}
             <div>
-                <h3 class="text-lg font-medium mb-4">Wszystkie Rezerwacje i Karnety</h3>
+                <h3 class="text-lg font-medium mb-4">{{ 'admin_dashboard.bookings.table_title'|trans }}</h3>
                 <div class="relative w-full overflow-auto">
                     <table class="w-full caption-bottom text-sm">
                         <thead class="[&_tr]:border-b">
                             <tr class="border-b transition-colors hover:bg-muted/50">
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Klient <span class="sr-only">Warsztat Kwota Płatność Status rezerwacji Data utworzenia Akcje</span></th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.client'|trans }} <span class="sr-only">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }} {{ 'admin_dashboard.bookings.table.headers.amount'|trans }} {{ 'admin_dashboard.bookings.table.headers.payment'|trans }} {{ 'admin_dashboard.bookings.table.headers.booking_status'|trans }} {{ 'admin_dashboard.bookings.table.headers.created_at'|trans }} {{ 'admin_dashboard.bookings.table.headers.actions'|trans }}</span></th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-8"></th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Warsztat</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Kwota</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Płatność</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status rezerwacji</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Data utworzenia</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Akcje</th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.amount'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.payment'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.booking_status'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.created_at'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.actions'|trans }}</th>
                             </tr>
                         </thead>
                         <tbody class="[&_tr:last-child]:border-0">
@@ -210,19 +212,19 @@
                                                 {% set firstLesson = booking.lessons.first %}
                                                 <p class="font-medium">
                                                     {% if firstLesson.series %}
-                                                        {{ firstLesson.metadata.title }} (Seria: {{ firstLesson.series.type.value }})
+                                                        {{ firstLesson.metadata.title }} ({{ 'admin_dashboard.bookings.series'|trans }}: {{ firstLesson.series.type.value }})
                                                     {% else %}
-                                                        {{ firstLesson.metadata.title ?? 'Warsztat' }}
+                                                        {{ firstLesson.metadata.title ?? ('admin_dashboard.bookings.table.headers.workshop'|trans) }}
                                                     {% endif %}
                                                 </p>
                                                 <p class="text-sm text-muted-foreground">
                                                     {{ firstLesson.metadata.schedule|date('Y-m-d H:i') }}
                                                     {% if item.totalLessons > 1 %}
-                                                        <br/><span class="text-xs">+{{ item.totalLessons - 1 }} więcej zajęć</span>
+                                                        <br/><span class="text-xs">{{ 'admin_dashboard.bookings.more_lessons_count'|trans({count: (item.totalLessons - 1)}) }}</span>
                                                     {% endif %}
                                                 </p>
                                             {% else %}
-                                                <p class="font-medium text-muted-foreground">Brak zajęć</p>
+                                                <p class="font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.no_lessons_in_booking'|trans }}</p>
                                             {% endif %}
                                         </div>
                                     </td>
@@ -239,20 +241,20 @@
                                                 {% set paymentStatus = booking.payment.status %}
                                                 {% if paymentStatus == 'paid' %}
                                                     <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-green-500 text-white">
-                                                        paid
+                                                        {{ 'admin_dashboard.bookings.payment.paid'|trans }}
                                                     </div>
                                                 {% elseif paymentStatus == 'pending' %}
                                                     <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-yellow-500 text-white">
-                                                        pending
+                                                        {{ 'admin_dashboard.bookings.payment.pending'|trans }}
                                                     </div>
                                                 {% else %}
                                                     <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-red-500 text-white">
-                                                        {{ paymentStatus }}
+                                                        {{ ('admin_dashboard.bookings.payment.' ~ paymentStatus)|trans({}) }}
                                                     </div>
                                                 {% endif %}
                                             {% else %}
                                                 <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-gray-500 text-white">
-                                                    no payment
+                                                    {{ 'admin_dashboard.bookings.payment.none'|trans }}
                                                 </div>
                                             {% endif %}
                                         </div>
@@ -261,23 +263,23 @@
                                         {% set status = booking.status %}
                                         {% if status == 'active' %}
                                             <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-blue-500 text-white">
-                                                active
+                                                {{ 'admin_dashboard.bookings.status.confirmed'|trans }}
                                             </div>
                                         {% elseif status == 'pending' %}
                                             <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-yellow-500 text-white">
-                                                pending
+                                                {{ 'admin_dashboard.bookings.status.pending'|trans }}
                                             </div>
                                         {% elseif status == 'past' %}
                                             <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-green-500 text-white">
-                                                completed
+                                                {{ 'admin_dashboard.bookings.status.completed'|trans }}
                                             </div>
                                         {% elseif status == 'cancelled' %}
                                             <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-red-500 text-white">
-                                                cancelled
+                                                {{ 'admin_dashboard.bookings.status.cancelled'|trans }}
                                             </div>
                                         {% else %}
                                             <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-gray-500 text-white">
-                                                {{ status }}
+                                                {{ ('admin_dashboard.bookings.status.' ~ status)|trans({}) }}
                                             </div>
                                         {% endif %}
                                     </td>
@@ -293,7 +295,7 @@
                                                     data-action-param="{{ booking.id }}"
                                                     class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-green-600 text-white hover:bg-green-700 h-9 rounded-md px-3"
                                                 >
-                                                    Oznacz jako opłacone
+                                                    {{ 'admin_dashboard.bookings.actions.mark_paid'|trans }}
                                                 </button>
                                             {% endif %}
                                         </div>
@@ -306,17 +308,17 @@
                                         <td colspan="8" class="p-0 bg-muted/20">
                                             <div class="p-4">
                                                 <div class="space-y-3">
-                                                    <h4 class="font-semibold text-sm">Lesson Details</h4>
+                                                    <h4 class="font-semibold text-sm">{{ 'admin_dashboard.bookings.details.title'|trans }}</h4>
 
                                                     <div class="relative w-full overflow-auto">
                                                         <table class="w-full caption-bottom text-sm">
                                                             <thead class="[&_tr]:border-b">
                                                                 <tr class="border-b transition-colors hover:bg-muted/50">
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Lesson</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Date & Time</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Amount</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Status</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">Actions</th>
+                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.lesson'|trans }}</th>
+                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.date_time'|trans }}</th>
+                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.amount'|trans }}</th>
+                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.status'|trans }}</th>
+                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.actions'|trans }}</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="[&_tr:last-child]:border-0">
@@ -360,7 +362,7 @@
                                                                                             <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
                                                                                             <path d="M8 16H3v5"></path>
                                                                                         </svg>
-                                                                                        Reschedule
+                                                                                        {{ 'admin_dashboard.bookings.actions.reschedule'|trans }}
                                                                                     </button>
                                                                                     <button
                                                                                         data-action="live#action"
@@ -374,7 +376,7 @@
                                                                                             <path d="m15 9-6 6"></path>
                                                                                             <path d="m9 9 6 6"></path>
                                                                                         </svg>
-                                                                                        Cancel
+                                                                                        {{ 'admin_dashboard.bookings.actions.cancel'|trans }}
                                                                                     </button>
                                                                                     <button
                                                                                         data-action="live#action"
@@ -387,7 +389,7 @@
                                                                                             <line x1="12" x2="12" y1="2" y2="22"></line>
                                                                                             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                                                                         </svg>
-                                                                                        Refund
+                                                                                        {{ 'admin_dashboard.bookings.actions.refund'|trans }}
                                                                                     </button>
                                                                                 {% endif %}
                                                                             </div>

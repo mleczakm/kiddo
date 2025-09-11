@@ -6,3 +6,11 @@ novaway_feature_flag:
       options:
         features:
           cart: false
+
+when@test:
+  novaway_feature_flag:
+    managers:
+      default:
+        options:
+          features:
+            manual_bookings: true

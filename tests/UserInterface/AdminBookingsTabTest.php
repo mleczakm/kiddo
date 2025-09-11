@@ -21,9 +21,7 @@ class AdminBookingsTabTest extends WebTestCase
 {
     private function getEntityManager(): EntityManagerInterface
     {
-        $kernel = self::getContainer();
-        return $kernel->get('doctrine')
-            ->getManager();
+        return self::getContainer()->get(EntityManagerInterface::class);
     }
 
     public function testAdminBookingsPageAccessibleForAuthenticatedAdmin(): void
@@ -46,7 +44,7 @@ class AdminBookingsTabTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('.rounded-lg.border.bg-card', 'Admin bookings component should be present');
-        $this->assertSelectorTextContains('h3', 'All Bookings & Payments');
+        $this->assertSelectorTextContains('h3', 'Wszystkie rezerwacje');
     }
 
     public function testAdminBookingsPageRedirectsUnauthenticatedUsers(): void
