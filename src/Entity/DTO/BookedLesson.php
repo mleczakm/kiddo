@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DTO;
 
+use App\Entity\Lesson;
 use App\Entity\Booking;
 use Symfony\Component\Uid\Ulid;
 
@@ -13,7 +14,7 @@ class BookedLesson
         public readonly Ulid $lessonId
     ) {}
 
-    public function entity(Booking $booking): ?\App\Entity\Lesson
+    public function entity(Booking $booking): ?Lesson
     {
         return $booking->getLessons()
             ->get($this->lessonId->toString());

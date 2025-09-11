@@ -21,7 +21,7 @@ final readonly class DoctrineInsideTaskWorkerCheckHandler
             $response = $this->check->check();
 
             $this->cache->set($command->cacheKey, $response->getResult());
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             $this->cache->set($command->cacheKey, false, 5);
 
             return;

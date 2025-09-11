@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Entity;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Entity\TicketOption;
 use App\Entity\TicketType;
 use App\Entity\TicketReschedulePolicy;
 use Brick\Money\Money;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 class TicketOptionTest extends TestCase
 {
     public function testTicketOptionProperties(): void

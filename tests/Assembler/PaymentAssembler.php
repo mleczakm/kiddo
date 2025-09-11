@@ -97,16 +97,13 @@ class PaymentAssembler
 
         if (isset($this->id)) {
             $property = $reflection->getProperty('id');
-            $property->setAccessible(true);
             $property->setValue($payment, $this->id);
         }
 
         $statusProperty = $reflection->getProperty('status');
-        $statusProperty->setAccessible(true);
         $statusProperty->setValue($payment, $this->status);
 
         $createdAtProperty = $reflection->getProperty('createdAt');
-        $createdAtProperty->setAccessible(true);
         $createdAtProperty->setValue($payment, $createdAt);
 
         // Add payment code if provided

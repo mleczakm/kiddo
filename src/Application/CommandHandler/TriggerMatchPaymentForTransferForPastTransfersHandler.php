@@ -13,8 +13,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class TriggerMatchPaymentForTransferForPastTransfersHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private MessageBusInterface $bus
+        private readonly EntityManagerInterface $entityManager,
+        private readonly MessageBusInterface $bus
     ) {}
 
     public function __invoke(TriggerMatchPaymentForTransferForPastTransfers $command): void

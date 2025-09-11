@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\SendReservationNotification;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\PaymentAssembler;
@@ -13,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
+#[Group('functional')]
 class SendReservationNotificationHandlerTest extends KernelTestCase
 {
     use InteractsWithMailer;

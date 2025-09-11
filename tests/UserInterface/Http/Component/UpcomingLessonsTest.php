@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use App\Entity\Lesson;
 use App\Repository\LessonRepository;
 use App\UserInterface\Http\Component\UpcomingLessons;
@@ -12,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 
+#[Group('unit')]
 class UpcomingLessonsTest extends TestCase
 {
     private LessonRepository&MockObject $lessonRepository;
@@ -274,14 +278,10 @@ class UpcomingLessonsTest extends TestCase
         // Test that the class has the correct LiveComponent attribute
         $attributes = $reflectionClass->getAttributes();
         $this->assertNotEmpty($attributes);
-
-        $liveComponentAttribute = null;
-        foreach ($attributes as $attribute) {
-            if ($attribute->getName() === 'Symfony\UX\LiveComponent\Attribute\AsLiveComponent') {
-                $liveComponentAttribute = $attribute;
-                break;
-            }
-        }
+        $liveComponentAttribute = array_find(
+            $attributes,
+            fn($attribute) => $attribute->getName() === AsLiveComponent::class
+        );
 
         $this->assertNotNull($liveComponentAttribute);
         $this->assertEquals(['UpcomingLessons'], $liveComponentAttribute->getArguments());
@@ -297,7 +297,7 @@ class UpcomingLessonsTest extends TestCase
 
         $livePropAttribute = null;
         foreach ($attributes as $attribute) {
-            if ($attribute->getName() === 'Symfony\UX\LiveComponent\Attribute\LiveProp') {
+            if ($attribute->getName() === LiveProp::class) {
                 $livePropAttribute = $attribute;
                 break;
             }
@@ -316,7 +316,7 @@ class UpcomingLessonsTest extends TestCase
 
         $livePropAttribute = null;
         foreach ($attributes as $attribute) {
-            if ($attribute->getName() === 'Symfony\UX\LiveComponent\Attribute\LiveProp') {
+            if ($attribute->getName() === LiveProp::class) {
                 $livePropAttribute = $attribute;
                 break;
             }
@@ -335,7 +335,7 @@ class UpcomingLessonsTest extends TestCase
 
         $livePropAttribute = null;
         foreach ($attributes as $attribute) {
-            if ($attribute->getName() === 'Symfony\UX\LiveComponent\Attribute\LiveProp') {
+            if ($attribute->getName() === LiveProp::class) {
                 $livePropAttribute = $attribute;
                 break;
             }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use Brick\Money\Money;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\User;
@@ -258,7 +259,7 @@ class AdminBookingsComponent extends AbstractController
             }
 
             // Create payment with correct Money object
-            $money = \Brick\Money\Money::of($this->amount, 'PLN');
+            $money = Money::of($this->amount, 'PLN');
             $payment = new Payment($user, $money);
             $payment->setStatus(Payment::STATUS_PAID);
             $this->entityManager->persist($payment);
@@ -308,7 +309,7 @@ class AdminBookingsComponent extends AbstractController
                 $this->entityManager->flush();
                 $this->successMessage = 'Płatność została oznaczona jako opłacona';
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->errorMessage = 'Wystąpił błąd podczas aktualizacji płatności';
         }
     }
@@ -471,7 +472,7 @@ class AdminBookingsComponent extends AbstractController
             $decoded = json_decode($this->selectedLessonIds, true);
 
             return is_array($decoded) ? array_map(Ulid::fromString(...), $decoded) : [];
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return [];
         }
     }
@@ -550,7 +551,7 @@ class AdminBookingsComponent extends AbstractController
     /**
      * Calculate amount per lesson for a booking
      */
-    public function getAmountPerLesson(Booking $booking): ?\Brick\Money\Money
+    public function getAmountPerLesson(Booking $booking): ?Money
     {
         if (! $booking->getPayment() || count($booking->getLessons()) === 0) {
             return null;

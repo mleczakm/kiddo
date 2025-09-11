@@ -103,7 +103,6 @@ class UserAssembler
         if ($this->id !== null) {
             $reflection = new \ReflectionClass($user);
             $idProperty = $reflection->getProperty('id');
-            $idProperty->setAccessible(true);
             $idProperty->setValue($user, $this->id);
         }
 
@@ -120,7 +119,6 @@ class UserAssembler
         if ($this->createdAt !== null) {
             $createdAtProperty = new \ReflectionClass($user)
                 ->getProperty('createdAt');
-            $createdAtProperty->setAccessible(true);
             $createdAtProperty->setValue($user, $this->createdAt);
         }
 

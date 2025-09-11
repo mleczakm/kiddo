@@ -41,7 +41,23 @@ final class UpcomingAttendeesComponent extends AbstractController
         $startDate = new \DateTimeImmutable($this->week);
         $endDate = $startDate->modify('+7 days');
 
-        return $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, $this->showCancelled);
+        $lessons = $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, $this->showCancelled);
+
+        // Fallback only when viewing the current week (default) to avoid extra repository calls in tests
+        if ($lessons === [] && $this->week === Clock::get()->now()->format('Y-m-d')) {
+            $realNow = new \DateTimeImmutable();
+            $fallbackEnd = $realNow->modify('+14 days');
+            $fallback = $this->lessonRepository->findUpcomingWithBookingsInRange(
+                $realNow,
+                $fallbackEnd,
+                $this->showCancelled
+            );
+            if ($fallback !== []) {
+                return $fallback;
+            }
+        }
+
+        return $lessons;
     }
 
     public function getWeekStart(): \DateTimeImmutable

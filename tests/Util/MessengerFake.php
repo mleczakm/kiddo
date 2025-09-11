@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Util;
 
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Envelope;
 
-class MessengerFake implements \Symfony\Component\Messenger\MessageBusInterface
+class MessengerFake implements MessageBusInterface
 {
     /**
      * @var Envelope[]

@@ -49,7 +49,7 @@ readonly class DailyLessonsReminderHandler
         }
 
         /** @var Map<User, Set<Lesson>> $usersWithLessons */
-        $usersWithLessons = new \Ds\Map();
+        $usersWithLessons = new Map();
         foreach ($lessons as $lesson) {
             foreach ($lesson->getBookings() as $booking) {
                 $user = $booking->getUser();

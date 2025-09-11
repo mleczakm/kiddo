@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
+use PHPUnit\Framework\Attributes\Group;
+use SymfonyHealthCheckBundle\Check\DoctrineORMCheck;
 use App\Application\Command\DoctrineInsideTaskWorkerCheck;
 use App\Application\CommandHandler\DoctrineInsideTaskWorkerCheckHandler;
 use Kodus\Cache\MockCache;
 use PHPUnit\Framework\TestCase;
 use SymfonyHealthCheckBundle\Dto\Response;
 
+#[Group('unit')]
 class DoctrineInsideTaskWorkerCheckHandlerTest extends TestCase
 {
     public function testFailOnNativeCheckFail(): void
     {
         $nullCache = new MockCache();
-        $doctrineOrmCheck = $this->createMock(\SymfonyHealthCheckBundle\Check\DoctrineORMCheck::class);
+        $doctrineOrmCheck = $this->createMock(DoctrineORMCheck::class);
         $doctrineOrmCheck->expects($this->once())
             ->method('check')
             ->willReturn(new Response('', false, ''));
@@ -31,7 +34,7 @@ class DoctrineInsideTaskWorkerCheckHandlerTest extends TestCase
     public function testFailOnNativeCheckFatal(): void
     {
         $nullCache = new MockCache();
-        $doctrineOrmCheck = $this->createMock(\SymfonyHealthCheckBundle\Check\DoctrineORMCheck::class);
+        $doctrineOrmCheck = $this->createMock(DoctrineORMCheck::class);
         $doctrineOrmCheck->expects($this->once())
             ->method('check')
             ->willThrowException(new \LogicException());
@@ -47,7 +50,7 @@ class DoctrineInsideTaskWorkerCheckHandlerTest extends TestCase
     public function testPassOnNativeCheckSuccess(): void
     {
         $nullCache = new MockCache();
-        $doctrineOrmCheck = $this->createMock(\SymfonyHealthCheckBundle\Check\DoctrineORMCheck::class);
+        $doctrineOrmCheck = $this->createMock(DoctrineORMCheck::class);
         $doctrineOrmCheck->expects($this->once())
             ->method('check')
             ->willReturn(new Response('', true, ''));

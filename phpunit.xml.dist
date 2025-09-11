@@ -20,16 +20,8 @@
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
     </php>
     <testsuites>
-        <testsuite name="Smoke">
-            <directory>tests/Smoke</directory>
-        </testsuite>
-        <testsuite name="Unit">
-            <directory>tests/Application</directory>
-            <directory>tests/Domain</directory>
-            <directory>tests/Infrastructure</directory>
-        </testsuite>
-        <testsuite name="Functional">
-            <directory>tests/Functional</directory>
+        <testsuite name="All">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
     <extensions>

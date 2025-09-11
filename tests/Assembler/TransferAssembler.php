@@ -71,14 +71,12 @@ class TransferAssembler extends EntityAssembler
         if (isset($this->properties['id'])) {
             $reflection = new \ReflectionClass($transfer);
             $property = $reflection->getProperty('id');
-            $property->setAccessible(true);
             $property->setValue($transfer, $this->properties['id']);
         }
 
         if (isset($this->properties['payment'])) {
             $reflection = new \ReflectionClass($transfer);
             $property = $reflection->getProperty('payment');
-            $property->setAccessible(true);
             $property->setValue($transfer, $this->properties['payment']);
         }
 

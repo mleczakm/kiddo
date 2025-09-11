@@ -16,9 +16,6 @@ class Tenant
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $name;
-
     /**
      * @var Collection<int, User>
      */
@@ -31,10 +28,11 @@ class Tenant
     #[ORM\OneToMany(mappedBy: 'tenant', targetEntity: Setting::class, cascade: ['persist', 'remove'])]
     private Collection $settings;
 
-    public function __construct(string $name)
-    {
+    public function __construct(
+        #[ORM\Column(type: 'string', length: 255)]
+        private string $name
+    ) {
         $this->id = new Ulid();
-        $this->name = $name;
         $this->users = new ArrayCollection();
         $this->settings = new ArrayCollection();
     }

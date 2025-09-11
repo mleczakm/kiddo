@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\LessonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 
-#[ORM\Entity(repositoryClass: 'App\\Repository\\LessonRepository')]
+#[ORM\Entity(repositoryClass: LessonRepository::class)]
 class Lesson
 {
     #[ORM\Column(type: 'string', nullable: false)]

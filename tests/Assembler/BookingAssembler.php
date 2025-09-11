@@ -68,14 +68,12 @@ class BookingAssembler extends EntityAssembler
         if (isset($this->properties['id'])) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('id');
-            $property->setAccessible(true);
             $property->setValue($booking, $this->properties['id']);
         }
 
         if (isset($this->properties['status'])) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('status');
-            $property->setAccessible(true);
             $property->setValue($booking, $this->properties['status']);
         }
 
@@ -88,14 +86,12 @@ class BookingAssembler extends EntityAssembler
         if (isset($this->properties['createdAt'])) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('createdAt');
-            $property->setAccessible(true);
             $property->setValue($booking, $this->properties['createdAt']);
         }
 
         if (isset($this->properties['updatedAt'])) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('updatedAt');
-            $property->setAccessible(true);
             $property->setValue($booking, $this->properties['updatedAt']);
         }
 

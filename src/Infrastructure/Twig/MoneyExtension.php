@@ -10,9 +10,10 @@ use Twig\TwigFilter;
 
 class MoneyExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFilters(): array
     {
-        return [new TwigFilter('money', [$this, 'formatMoney'])];
+        return [new TwigFilter('money', $this->formatMoney(...))];
     }
 
     public function formatMoney(Money $money): string

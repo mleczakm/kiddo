@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\Service;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Application\Service\TransferMoneyParser;
 use Brick\Money\Money;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 class TransferMoneyParserTest extends TestCase
 {
     #[DataProvider('moneyStringProvider')]

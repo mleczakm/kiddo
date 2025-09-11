@@ -12,14 +12,6 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity]
 class Series
 {
-    /**
-     * @var list<TicketOption>
-     */
-    #[ORM\Column(type: 'json_document', options: [
-        'jsonb' => true,
-    ])]
-    public array $ticketOptions = [];
-
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
@@ -33,11 +25,12 @@ class Series
         public Collection $lessons,
         #[ORM\Column(type: 'string', enumType: WorkshopType::class)]
         public WorkshopType $type = WorkshopType::WEEKLY,
-        array $ticketOptions = [],
+        #[ORM\Column(type: 'json_document', options: [
+            'jsonb' => true,
+        ])]
+        public array $ticketOptions = [],
     ) {
         $this->id = new Ulid();
-        /** @var list<TicketOption> $ticketOptions */
-        $this->ticketOptions = $ticketOptions;
     }
 
     public function getId(): Ulid

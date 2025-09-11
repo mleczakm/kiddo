@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Assembler;
 
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use libphonenumber\PhoneNumberUtil;
 use libphonenumber\PhoneNumberFormat;
 
+#[Group('unit')]
 class UserAssemblerTest extends TestCase
 {
     public function testAssembleWithoutPhone(): void

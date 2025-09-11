@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Swoole\Configurator;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Infrastructure\Swoole\Configurator\WithScheduler;
 use App\Infrastructure\Symfony\Scheduler;
 use PHPUnit\Framework\TestCase;
@@ -12,6 +13,7 @@ use Swoole\Timer;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
+#[Group('unit')]
 final class WithSchedulerTest extends TestCase
 {
     public function testRegisterSwooleTick(): void

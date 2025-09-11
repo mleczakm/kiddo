@@ -7,7 +7,7 @@ namespace App\Message;
 use App\Entity\User;
 use Symfony\Component\Uid\Ulid;
 
-final class RescheduleLessonBooking
+final readonly class RescheduleLessonBooking
 {
     public function __construct(
         private Ulid $bookingId,

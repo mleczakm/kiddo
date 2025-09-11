@@ -73,6 +73,7 @@ class ProfileComponent extends AbstractController
         $this->user = $user;
     }
 
+    #[\Override]
     public function getUser(): User
     {
         return $this->user ??= ($user = parent::getUser()) && $user instanceof User

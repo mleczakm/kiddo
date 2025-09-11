@@ -16,19 +16,6 @@ class UserMessage
     #[ORM\Column(type: 'ulid', unique: true)]
     private Ulid $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private User $user;
-
-    #[ORM\Column(type: Types::STRING, length: 255)]
-    private string $subject;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private string $message;
-
-    #[ORM\Column(type: Types::STRING, length: 50, enumType: MessageType::class)]
-    private MessageType $type;
-
     #[ORM\Column(type: Types::STRING, length: 50, enumType: MessageStatus::class)]
     private MessageStatus $status;
 
@@ -54,16 +41,17 @@ class UserMessage
     private ?Lesson $relatedLesson = null;
 
     public function __construct(
-        User $user,
-        string $subject,
-        string $message,
-        MessageType $type = MessageType::GENERAL
+        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\JoinColumn(nullable: false)]
+        private User $user,
+        #[ORM\Column(type: Types::STRING, length: 255)]
+        private string $subject,
+        #[ORM\Column(type: Types::TEXT)]
+        private string $message,
+        #[ORM\Column(type: Types::STRING, length: 50, enumType: MessageType::class)]
+        private MessageType $type = MessageType::GENERAL
     ) {
         $this->id = new Ulid();
-        $this->user = $user;
-        $this->subject = $subject;
-        $this->message = $message;
-        $this->type = $type;
         $this->status = MessageStatus::UNREAD;
         $this->createdAt = new \DateTimeImmutable();
     }

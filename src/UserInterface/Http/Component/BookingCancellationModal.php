@@ -48,7 +48,7 @@ class BookingCancellationModal extends AbstractController
     #[LiveProp(writable: true)]
     public ?Ulid $selectedLessonId = null;
 
-    private const CANCELLATION_TYPES = ['reschedule', 'refund', 'cancel'];
+    private const array CANCELLATION_TYPES = ['reschedule', 'refund', 'cancel'];
 
     /**
      * @return array<int, Lesson>

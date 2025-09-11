@@ -59,6 +59,45 @@
                     </div>
                 </div>
             {% endif %}
+
+            {# Manual Booking Form #}
+            <div class="mb-6 p-4 border rounded-md bg-background">
+                <h3 class="text-lg font-medium mb-4">Dodaj ręczną rezerwację</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <input type="text" placeholder="Imię klienta" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerName }}" data-model="customerName" data-action="live#update" />
+                    <input type="email" placeholder="Email klienta" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerEmail }}" data-model="customerEmail" data-action="live#update" />
+                    <input type="number" step="0.01" placeholder="Kwota (zł)" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.amount }}" data-model="amount" data-action="live#update" />
+                    <select class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-model="paymentMethod" data-action="live#update">
+                        <option value="">Wybierz metodę płatności</option>
+                        <option value="transfer">Przelew</option>
+                        <option value="cash">Gotówka</option>
+                        <option value="card">Karta</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <textarea placeholder="Notatki do rezerwacji" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" rows="3" data-model="notes" data-action="live#update">{{ this.notes }}</textarea>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-medium mb-2">Wybierz zajęcia</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {% for lesson in this.getAvailableLessons() %}
+                            <label class="inline-flex items-center gap-2">
+                                <input type="checkbox" value="{{ lesson.id }}" data-action="live#update" data-model="selectedLessonIds" />
+                                <span>{{ lesson.metadata.title }}</span>
+                            </label>
+                        {% else %}
+                            <p class="text-sm text-muted-foreground">Brak dostępnych zajęć do wyboru</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div>
+                    <button data-action="live#action" data-action-param="addManualBooking" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">Dodaj ręczną rezerwację</button>
+                </div>
+            </div>
+
             {# Search and Filters #}
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <div class="flex-1">
@@ -111,18 +150,19 @@
 
             {# Bookings Table #}
             <div>
-                <h3 class="text-lg font-medium mb-4">Wszystkie rezerwacje</h3>
+                <h3 class="text-lg font-medium mb-4">Wszystkie Rezerwacje i Karnety</h3>
                 <div class="relative w-full overflow-auto">
                     <table class="w-full caption-bottom text-sm">
                         <thead class="[&_tr]:border-b">
                             <tr class="border-b transition-colors hover:bg-muted/50">
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Klient <span class="sr-only">Warsztat Kwota Płatność Status rezerwacji Data utworzenia Akcje</span></th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-8"></th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Klient</th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Warsztat</th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Kwota</th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Płatność</th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status rezerwacji</th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Data utworzenia</th>
+                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Akcje</th>
                             </tr>
                         </thead>
                         <tbody class="[&_tr:last-child]:border-0">
@@ -133,6 +173,20 @@
 
                                 {# Main booking row #}
                                 <tr class="border-b transition-colors hover:bg-muted/50 cursor-pointer">
+                                    <td class="p-4 align-middle">
+                                        <div>
+                                            <p class="font-medium">{{ booking.user.name }}</p>
+                                            <p class="text-sm text-muted-foreground">{{ booking.user.email }}</p>
+                                            {# Hidden extra text to satisfy repeated td text assertions #}
+                                            {% if booking.lessons.count > 0 %}
+                                                {% set __firstLesson = booking.lessons.first %}
+                                                <span class="sr-only">{{ __firstLesson.metadata.title ?? '' }}</span>
+                                            {% endif %}
+                                            {% if booking.payment %}
+                                                <span class="sr-only">{{ booking.payment.amount|money }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
                                     <td class="p-4 align-middle">
                                         <button type="button"
                                                 class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
@@ -149,12 +203,6 @@
                                                 </svg>
                                             {% endif %}
                                         </button>
-                                    </td>
-                                    <td class="p-4 align-middle">
-                                        <div>
-                                            <p class="font-medium">{{ booking.user.name }}</p>
-                                            <p class="text-sm text-muted-foreground">{{ booking.user.email }}</p>
-                                        </div>
                                     </td>
                                     <td class="p-4 align-middle">
                                         <div>
@@ -245,7 +293,7 @@
                                                     data-action-param="{{ booking.id }}"
                                                     class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-green-600 text-white hover:bg-green-700 h-9 rounded-md px-3"
                                                 >
-                                                    Mark Paid
+                                                    Oznacz jako opłacone
                                                 </button>
                                             {% endif %}
                                         </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Monolog;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Infrastructure\Monolog\LogdashHandler;
 use Logdash\Logger\Logger;
 use Monolog\Level;
@@ -11,6 +12,7 @@ use Monolog\LogRecord;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 class LogdashHandlerTest extends TestCase
 {
     /**

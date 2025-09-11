@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\CommandHandler\ImportTransfersFromMailHandler;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
@@ -14,6 +15,7 @@ use DirectoryTree\ImapEngine\Testing\FakeMailbox;
 use DirectoryTree\ImapEngine\Testing\FakeMessage;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 class ImportTransfersFromMailHandlerTest extends TestCase
 {
     public function testFetchProperlyEmailsFromMailbox(): void

@@ -9,8 +9,10 @@ use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Currency;
 use Brick\Money\Money;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 class PaymentTest extends TestCase
 {
     public function testIsPaidFalseOnMissingTransfers(): void

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Domain\Entity;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Entity\PaymentFactory;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 class AwaitingPaymentFactoryTest extends TestCase
 {
     public function testCreateRandom4LetterString(): void

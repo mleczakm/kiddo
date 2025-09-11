@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Entity\Booking;
 use App\Message\CancelLessonBooking;
 use App\Repository\BookingRepository;
 use Psr\Log\LoggerInterface;
@@ -77,7 +78,7 @@ class CancelLessonBookingHandler
 
         // If no active lessons remain, mark the whole booking as cancelled
         if (! $booking->hasActiveBookedLessons()) {
-            $booking->setStatus(\App\Entity\Booking::STATUS_CANCELLED);
+            $booking->setStatus(Booking::STATUS_CANCELLED);
         }
 
         $this->logger->info('Lesson cancelled within booking', [

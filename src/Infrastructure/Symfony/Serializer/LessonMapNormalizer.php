@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Serializer;
 
+use Ds\Map;
+use Symfony\Component\Uid\Ulid;
+use App\Entity\DTO\BookedLesson;
 use App\Entity\DTO\LessonMap;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
@@ -17,20 +20,20 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
         $denormalizeMap = function ($mapData) use ($format, $context) {
-            $result = new \Ds\Map();
+            $result = new Map();
             foreach ($mapData as $lessonId => $lessonData) {
                 // Force string for the key
                 $lessonIdStr = (string) $lessonId;
 
                 // If the key is not a valid ULID (e.g. numeric index like "0"), try to extract from payload
-                if (! \Symfony\Component\Uid\Ulid::isValid($lessonIdStr)) {
+                if (! Ulid::isValid($lessonIdStr)) {
                     $candidate = null;
                     if (is_array($lessonData)) {
                         // Common shapes produced by nested normalizers
                         $candidate = $lessonData['lessonId']
                             ?? ($lessonData['id'] ?? null)
                             ?? ($lessonData['lesson']['id'] ?? null);
-                    } elseif (is_string($lessonData) && \Symfony\Component\Uid\Ulid::isValid($lessonData)) {
+                    } elseif (is_string($lessonData) && Ulid::isValid($lessonData)) {
                         // Handle legacy form: list of ULID strings with numeric keys
                         $candidate = $lessonData;
                         // Also convert payload into a shape the inner normalizer can understand
@@ -39,7 +42,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                         ];
                     }
 
-                    if (is_string($candidate) && \Symfony\Component\Uid\Ulid::isValid($candidate)) {
+                    if (is_string($candidate) && Ulid::isValid($candidate)) {
                         $lessonIdStr = $candidate;
                     } else {
                         // Skip entries we cannot identify – better than throwing during rendering
@@ -50,10 +53,10 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                 // Detect object type from 'type' field, default to BookedLesson
                 $class = is_array($lessonData) && array_key_exists('type', $lessonData)
                     ? $lessonData['type']
-                    : \App\Entity\DTO\BookedLesson::class;
+                    : BookedLesson::class;
 
                 $result->put(
-                    \Symfony\Component\Uid\Ulid::fromString($lessonIdStr),
+                    Ulid::fromString($lessonIdStr),
                     $this->normalizer->denormalize($lessonData, $class, $format, $context)
                 );
             }
@@ -90,7 +93,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                 $normalized = $this->normalizer->normalize($lesson, $format, $context);
                 // Ensure type info is present to allow correct denormalization later
                 if (is_array($normalized)) {
-                    $normalized['type'] ??= get_class($lesson);
+                    $normalized['type'] ??= $lesson::class;
                 }
                 $result[$lessonId->toString()] = $normalized;
             }

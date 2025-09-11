@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use PHPUnit\Framework\Attributes\Group;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
@@ -15,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 
+#[Group('unit')]
 class UpcomingAttendeesComponentTest extends TestCase
 {
     private LessonRepository&MockObject $lessonRepository;
@@ -53,12 +57,8 @@ class UpcomingAttendeesComponentTest extends TestCase
             ->expects($this->once())
             ->method('findUpcomingWithBookingsInRange')
             ->with(
-                $this->callback(function ($startDate) use ($expectedStartDate) {
-                    return $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d');
-                }),
-                $this->callback(function ($endDate) use ($expectedEndDate) {
-                    return $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d');
-                })
+                $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
+                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'))
             )
             ->willReturn([]);
 
@@ -124,7 +124,7 @@ class UpcomingAttendeesComponentTest extends TestCase
         $metadata->capacity = 10;
 
         // Mock that lesson has 5 bookings (less than capacity)
-        $bookingsCollection = $this->createMock(\Doctrine\Common\Collections\Collection::class);
+        $bookingsCollection = $this->createMock(Collection::class);
         $bookingsCollection->method('count')
             ->willReturn(5);
         $lesson->method('getBookings')
@@ -164,7 +164,7 @@ class UpcomingAttendeesComponentTest extends TestCase
             ->willReturn($metadata);
 
         // Mock that lesson has 5 bookings (equals capacity)
-        $bookingsCollection = $this->createMock(\Doctrine\Common\Collections\Collection::class);
+        $bookingsCollection = $this->createMock(Collection::class);
         $bookingsCollection->method('count')
             ->willReturn(5);
         $lesson->method('getBookings')
@@ -206,12 +206,8 @@ class UpcomingAttendeesComponentTest extends TestCase
             ->expects($this->once())
             ->method('findUpcomingWithBookingsInRange')
             ->with(
-                $this->callback(function ($startDate) use ($expectedStartDate) {
-                    return $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d');
-                }),
-                $this->callback(function ($endDate) use ($expectedEndDate) {
-                    return $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d');
-                }),
+                $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
+                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d')),
                 true // showCancelled = true
             )
             ->willReturn([]);
@@ -242,7 +238,7 @@ class UpcomingAttendeesComponentTest extends TestCase
         $lesson->method('getMetadata')
             ->willReturn($metadata);
         $lesson->method('getBookings')
-            ->willReturn(new \Doctrine\Common\Collections\ArrayCollection());
+            ->willReturn(new ArrayCollection());
 
         return $lesson;
     }

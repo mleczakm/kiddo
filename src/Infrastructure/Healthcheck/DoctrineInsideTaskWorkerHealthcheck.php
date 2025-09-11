@@ -13,8 +13,8 @@ use SymfonyHealthCheckBundle\Dto\Response;
 class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
 {
     public function __construct(
-        private MessageBusInterface $bus,
-        private CacheInterface $cache,
+        private readonly MessageBusInterface $bus,
+        private readonly CacheInterface $cache,
     ) {}
 
     public function check(): Response

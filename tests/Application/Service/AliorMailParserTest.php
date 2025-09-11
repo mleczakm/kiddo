@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\Service;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Application\Service\AliorMailParser;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 class AliorMailParserTest extends TestCase
 {
     public function testParse(): void

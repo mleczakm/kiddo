@@ -129,21 +129,22 @@
             "Validate composer.json": "@composer validate",
             "Security audit": "@composer audit",
             "lint:twig": "bin/console lint:twig src templates",
+            "Rector": "rector --dry-run",
             "Phpstan": "phpstan analyse --memory-limit=-1",
             "ECS": "ecs check"
         },
         "tests": {
-            "Unit tests": "bin/phpunit --testsuite \"Unit\"",
+            "Unit tests": "bin/phpunit --group unit",
             "Smoke": "@tests:smoke",
             "Functional": "@tests:functional"
         },
         "tests:smoke": {
             "Setup": "@tests:functional:setup",
-            "Smoke tests": "bin/phpunit --testsuite \"Smoke\""
+            "Smoke tests": "bin/phpunit --group smoke"
         },
         "tests:functional": {
             "Setup": "@tests:functional:setup",
-            "Functional tests": "bin/phpunit --testsuite \"Functional\""
+            "Functional tests": "bin/phpunit --group functional"
         },
         "tests:functional:setup": {
             "Functional tests setup": "bin/console doctrine:database:create --if-not-exists --env=test",
@@ -154,6 +155,7 @@
         ],
         "sa:fix": {
             "Disable timeout": "Composer\\Config::disableProcessTimeout",
+            "Rector": "rector",
             "ECS fix": "ecs check --fix",
             "Phpstan fix baseline step 1": "phpstan analyse --memory-limit=-1 --configuration=phpstan.regenerate-baseline.neon",
             "Phpstan fix baseline step 2": "phpstan analyse --memory-limit=-1 --generate-baseline"

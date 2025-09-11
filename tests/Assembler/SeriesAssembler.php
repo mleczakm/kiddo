@@ -62,7 +62,6 @@ class SeriesAssembler extends EntityAssembler
         if (isset($this->properties['id'])) {
             $reflection = new \ReflectionClass($series);
             $property = $reflection->getProperty('id');
-            $property->setAccessible(true);
             $property->setValue($series, $this->properties['id']);
         }
 

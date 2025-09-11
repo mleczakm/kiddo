@@ -111,27 +111,23 @@ class LessonAssembler extends EntityAssembler
         if (isset($this->properties['id'])) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('id');
-            $property->setAccessible(true);
             $property->setValue($lesson, $this->properties['id']);
         }
 
         if (isset($this->properties['status'])) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('status');
-            $property->setAccessible(true);
             $property->setValue($lesson, $this->properties['status']);
         }
 
         if (isset($this->properties['ticketOptions'])) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('ticketOptions');
-            $property->setAccessible(true);
             $property->setValue($lesson, $this->properties['ticketOptions']);
         } else {
             // Add a default ticket option if none provided
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('ticketOptions');
-            $property->setAccessible(true);
             $property->setValue($lesson, [new TicketOption(
                 TicketType::ONE_TIME,
                 Money::of(50, 'PLN'),
@@ -143,7 +139,6 @@ class LessonAssembler extends EntityAssembler
         if (isset($this->properties['series'])) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('series');
-            $property->setAccessible(true);
             $property->setValue($lesson, $this->properties['series']);
         }
 

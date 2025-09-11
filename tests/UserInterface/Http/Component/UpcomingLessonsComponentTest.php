@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
@@ -14,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 
+#[Group('unit')]
 class UpcomingLessonsComponentTest extends TestCase
 {
     private LessonRepository&MockObject $lessonRepository;
@@ -49,12 +51,8 @@ class UpcomingLessonsComponentTest extends TestCase
             ->expects($this->once())
             ->method('findUpcomingInRange')
             ->with(
-                $this->callback(function ($startDate) use ($expectedStartDate) {
-                    return $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d');
-                }),
-                $this->callback(function ($endDate) use ($expectedEndDate) {
-                    return $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d');
-                })
+                $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
+                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'))
             )
             ->willReturn([]);
 
@@ -153,12 +151,8 @@ class UpcomingLessonsComponentTest extends TestCase
             ->expects($this->once())
             ->method('findUpcomingInRange')
             ->with(
-                $this->callback(function ($startDate) use ($expectedStartDate) {
-                    return $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d');
-                }),
-                $this->callback(function ($endDate) use ($expectedEndDate) {
-                    return $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d');
-                }),
+                $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
+                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d')),
                 true // showCancelled = true
             )
             ->willReturn([]);

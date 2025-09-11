@@ -65,11 +65,17 @@ class User implements UserInterface
     #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'user')]
     private Collection $bookings;
 
-    public function __construct()
+    public function __construct(?string $email = null, ?string $name = null)
     {
         $this->createdAt = Clock::get()->now();
         $this->tenants = new ArrayCollection();
         $this->bookings = new ArrayCollection();
+        if ($email !== null) {
+            $this->setEmail($email);
+        }
+        if ($name !== null) {
+            $this->setName($name);
+        }
     }
 
     public function getId(): ?int

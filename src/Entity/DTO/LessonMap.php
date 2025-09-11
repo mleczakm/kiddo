@@ -200,7 +200,7 @@ class LessonMap implements \Countable
     public function areAllActiveLessonsInPast(Booking $booking): bool
     {
         $now = new \DateTimeImmutable();
-        foreach ($this->active as $ulid => $bookedLesson) {
+        foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
             if ($lesson && $lesson->getMetadata()->schedule > $now) {
                 return false;
@@ -248,7 +248,7 @@ class LessonMap implements \Countable
     {
         $now = new \DateTimeImmutable();
         $modifiable = [];
-        foreach ($this->active as $ulid => $bookedLesson) {
+        foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
             if ($lesson && $lesson->getMetadata()->schedule > $now) {
                 $modifiable[] = $bookedLesson;
@@ -284,7 +284,7 @@ class LessonMap implements \Countable
     {
         $now = new \DateTimeImmutable();
         $future = [];
-        foreach ($this->active as $ulid => $bookedLesson) {
+        foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
             if ($lesson && $lesson->getMetadata()->schedule > $now) {
                 $future[] = $bookedLesson;

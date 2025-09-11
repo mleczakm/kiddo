@@ -133,7 +133,7 @@ class AdminBookingModal extends AbstractController
         try {
             $decoded = json_decode($this->selectedLessonIds, true);
             return is_array($decoded) ? $decoded : [];
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return [];
         }
     }
@@ -164,7 +164,7 @@ class AdminBookingModal extends AbstractController
         try {
             $ulid = Ulid::fromString($this->selectedUserId);
             return $this->userRepository->find($ulid);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return null;
         }
     }

@@ -397,7 +397,7 @@ admin_dashboard:
     view_reports: 'Zobacz raporty'
   capacity: uczestników
   bookings:
-    title: 'Wszystkie Rezerwacje i Karnety'
+    title: 'All Bookings & Payments'
     search_placeholder: 'Szukaj po nazwisku, email lub warsztacie...'
     filter:
       all: 'Wszystkie'

@@ -10,7 +10,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-final class UserLoginSubscriber
+final readonly class UserLoginSubscriber
 {
     public function __construct(
         private MessageBusInterface $bus
