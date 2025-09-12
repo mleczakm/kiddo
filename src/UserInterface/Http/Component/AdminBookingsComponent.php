@@ -21,6 +21,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Brick\Math\RoundingMode;
+use Symfony\Component\Clock\Clock;
 
 #[AsLiveComponent]
 class AdminBookingsComponent extends AbstractController
@@ -139,7 +140,7 @@ class AdminBookingsComponent extends AbstractController
 
             // Calculate completed and upcoming lessons from actual lessons
             foreach ($booking->getLessons() as $lesson) {
-                if ($lesson->getMetadata()->schedule < new \DateTimeImmutable()) {
+                if ($lesson->getMetadata()->schedule < Clock::get()->now()) {
                     $completedLessons++;
                 } else {
                     $upcomingLessons[] = $lesson;
@@ -224,7 +225,7 @@ class AdminBookingsComponent extends AbstractController
             ->where('l.status = :status')
             ->andWhere('l.metadata.schedule > :now')
             ->setParameter('status', 'active')
-            ->setParameter('now', new \DateTimeImmutable())
+            ->setParameter('now', Clock::get()->now())
             ->orderBy('l.metadata.schedule', 'ASC')
             ->setMaxResults(50)
             ->getQuery()
@@ -412,11 +413,11 @@ class AdminBookingsComponent extends AbstractController
 
         // Check if lesson is in active map
         if ($lessonMap->active()->hasKey($lessonId)) {
-            $now = new \DateTimeImmutable();
+            $now = Clock::get()->now();
             $schedule = $lesson->getMetadata()
                 ->schedule;
 
-            if ($schedule < $now) {
+            if ($schedule < Clock::get()->now()) {
                 return [
                     'class' => 'bg-green-500 text-white',
                     'text' => 'Completed',
@@ -437,7 +438,7 @@ class AdminBookingsComponent extends AbstractController
 
     public function canLessonBeModified(Lesson $lesson, Booking $booking): bool
     {
-        $now = new \DateTimeImmutable();
+        $now = Clock::get()->now();
         $lessonMap = $booking->getLessonsMap();
         $lessonId = $lesson->getId();
 
@@ -516,7 +517,7 @@ class AdminBookingsComponent extends AbstractController
             ->where('l.status = :status')
             ->andWhere('l.metadata.schedule > :now')
             ->setParameter('status', 'active')
-            ->setParameter('now', new \DateTimeImmutable())
+            ->setParameter('now', Clock::get()->now())
             ->orderBy('l.metadata.schedule', 'ASC')
             ->setMaxResults(10);
 

@@ -19,6 +19,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\Component\Clock\Clock;
 
 #[AsLiveComponent]
 class AdminBookingModal extends AbstractController
@@ -92,7 +93,7 @@ class AdminBookingModal extends AbstractController
             ->where('l.status = :status')
             ->andWhere('l.metadata.schedule > :now')
             ->setParameter('status', 'active')
-            ->setParameter('now', new \DateTimeImmutable())
+            ->setParameter('now', Clock::get()->now())
             ->orderBy('l.metadata.schedule', 'ASC')
             ->setMaxResults(10);
 

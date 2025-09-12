@@ -286,6 +286,9 @@ booking:
   available_lessons_count: 'Dostępne terminy: {count}'
   select_new_lesson: 'Wybierz nowy termin zajęć'
   confirm_reschedule: 'Potwierdź przełożenie'
+  confirm_booking: Potwierdź zamówienie i opłać
+  confirm_payment: Potwierdź płatność
+  select_date: Wybierz dzień zajęć
   cancellation_policy: 'Anulowanie rezerwacji możliwe jest do 24h przed rozpoczęciem zajęć.'
   spots_available: 'Wolne miejsca: {count}'
   reason_reschedule: Przełożenie na inny termin
@@ -552,3 +555,8 @@ payment:
   approve: "Zatwierdź"
   reject: "Odrzuć"
   
+ticket:
+  reschedule:
+    unlimited_24h: Możliwość <b>wielokrotnego</b> przełożenia zajęć do 24h przed rozpoczęciem
+    onetime_24h: Możliwość <b>jednorazowego</b> przełożenia zajęć do 24h przed rozpoczęciem
+

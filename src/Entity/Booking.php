@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Symfony\Component\Clock\Clock;
 use App\Entity\DTO\BookedLesson;
 use App\Entity\DTO\LessonMap;
 use App\Entity\DTO\RescheduledLesson;
@@ -68,7 +69,7 @@ class Booking
         $this->id = new Ulid();
         $this->lessons = new ArrayCollection($lessons);
         $this->status = self::STATUS_PENDING;
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = Clock::get()->now();
 
         $this->lessonsMap = LessonMap::createFromBooking($this);
     }
@@ -140,7 +141,7 @@ class Booking
         }
 
         $this->status = $status;
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = Clock::get()->now();
 
         return $this;
     }
@@ -216,7 +217,7 @@ class Booking
         $result = $this->getLessonsMap()
             ->cancelLesson($lessonId, $reason);
         if ($result) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = Clock::get()->now();
         }
         return $result;
     }
@@ -229,7 +230,7 @@ class Booking
         $result = $this->getLessonsMap()
             ->refundLesson($lessonId, $reason);
         if ($result) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = Clock::get()->now();
         }
         return $result;
     }

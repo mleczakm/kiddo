@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DTO;
 
+use Symfony\Component\Clock\Clock;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use Ds\Map;
@@ -98,18 +99,28 @@ class LessonMap implements \Countable
     public static function createFromBooking(Booking $booking): self
     {
         $lessonMap = new self([]);
+        $now = Clock::get()->now();
         foreach ($booking->getLessons() as $lesson) {
             $lessonId = $lesson->getId();
+            $booked = new BookedLesson($lessonId);
 
-            if ($booking->getStatus() === Booking::STATUS_PAST) {
-                $lessonMap->past->put($lessonId, new BookedLesson($lessonId));
-            } elseif ($booking->getStatus() === Booking::STATUS_ACTIVE) {
-                $lessonMap->active->put($lessonId, new BookedLesson($lessonId));
-            } elseif ($booking->getStatus() === Booking::STATUS_CANCELLED) {
-                $lessonMap->cancelled->put($lessonId, new BookedLesson($lessonId));
+            // Always register in the full list
+            $lessonMap->lessons->put($lessonId, $booked);
+
+            // If the whole booking is cancelled, mark lessons as cancelled
+            if ($booking->getStatus() === Booking::STATUS_CANCELLED) {
+                $lessonMap->cancelled->put($lessonId, $booked);
+                continue;
             }
 
-            $lessonMap->lessons->put($lessonId, new BookedLesson($lessonId));
+            // Otherwise, classify by the lesson's schedule
+            $schedule = $lesson->getMetadata()
+                ->schedule;
+            if ($schedule >= $now) {
+                $lessonMap->active->put($lessonId, $booked);
+            } else {
+                $lessonMap->past->put($lessonId, $booked);
+            }
         }
 
         return $lessonMap;
@@ -236,7 +247,7 @@ class LessonMap implements \Countable
 
     public function areAllActiveLessonsInPast(Booking $booking): bool
     {
-        $now = new \DateTimeImmutable();
+        $now = Clock::get()->now();
         foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
             if ($lesson && $lesson->getMetadata()->schedule > $now) {
@@ -295,7 +306,7 @@ class LessonMap implements \Countable
      */
     public function getModifiableLessons(Booking $booking): array
     {
-        $now = new \DateTimeImmutable();
+        $now = Clock::get()->now();
         $modifiable = [];
         foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
@@ -339,7 +350,7 @@ class LessonMap implements \Countable
      */
     public function getFutureActiveLessons(Booking $booking): array
     {
-        $now = new \DateTimeImmutable();
+        $now = Clock::get()->now();
         $future = [];
         foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);

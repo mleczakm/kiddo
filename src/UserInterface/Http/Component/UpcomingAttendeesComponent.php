@@ -45,7 +45,7 @@ final class UpcomingAttendeesComponent extends AbstractController
 
         // Fallback only when viewing the current week (default) to avoid extra repository calls in tests
         if ($lessons === [] && $this->week === Clock::get()->now()->format('Y-m-d')) {
-            $realNow = new \DateTimeImmutable();
+            $realNow = Clock::get()->now();
             $fallbackEnd = $realNow->modify('+14 days');
             $fallback = $this->lessonRepository->findUpcomingWithBookingsInRange(
                 $realNow,

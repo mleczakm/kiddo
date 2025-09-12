@@ -28,6 +28,9 @@ framework:
                     guard: "subject.canRequestRefund()"
                     from: [active]
                     to: active
+                attend:
+                    from: [active]
+                    to: active
                 complete:
                     guard: "subject.canBeCompleted()"
                     from: active
