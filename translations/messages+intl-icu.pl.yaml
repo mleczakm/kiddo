@@ -504,6 +504,18 @@ admin:
     transfers: Płatności
     messages: Wiadomości
     coming_soon: 'Sekcja "{tab}" wkrótce dostępna'
+  payments:
+    title: "Płatności"
+    headers:
+      date: "Data"
+      user: "Użytkownik"
+      amount: "Kwota"
+      what: "Za co"
+      status: "Status"
+      code: "Kod"
+      reservation: "Rezerwacja"
+    empty: "Brak płatności w wybranym tygodniu"
+    carnet: "Karnet"
 
 profile:
   title: 'Mój profil'
@@ -554,7 +566,24 @@ payment:
   date: "Data"
   approve: "Zatwierdź"
   reject: "Odrzuć"
+  assign_payment: "Przypisz płatność"
+  transfer_details: "Szczegóły przelewu"
+  account_number: "Numer konta"
+  transfer_title: "Tytuł przelewu"
+  select_payment: "Wybierz płatność"
+  select_payment_help: "Wybierz jedną z oczekujących płatności, aby przypisać ją do tego przelewu."
+  no_pending_payments: "Brak oczekujących płatności"
+  search_placeholder: "Szukaj płatności, użytkownika lub kodu..."
+  amount_match: "Kwota zgodna"
+  booked: "Utworzono: {date}"
+  status_pending: "Oczekująca"
+
   
+action:
+  cancel: "Anuluj"
+  confirm_and_merge: "Potwierdź i przypisz"
+  close: "Zamknij"
+
 ticket:
   reschedule:
     unlimited_24h: Możliwość <b>wielokrotnego</b> przełożenia zajęć do 24h przed rozpoczęciem

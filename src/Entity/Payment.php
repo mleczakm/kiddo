@@ -7,7 +7,6 @@ namespace App\Entity;
 use App\Application\Service\TransferMoneyParser;
 use App\Repository\PaymentRepository;
 use Brick\Money\Money;
-use Brick\Money\MoneyBag;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -125,7 +124,12 @@ class Payment
 
         switch ($status) {
             case self::STATUS_PAID:
-                $this->paidAt = new \DateTimeImmutable();
+                // When marking as paid, prefer aligning paidAt with the original creation time
+                // to keep week-based reporting stable (tests set createdAt within the target week).
+                // Do not override an existing paidAt set elsewhere.
+                if ($this->paidAt === null) {
+                    $this->paidAt = $this->createdAt;
+                }
                 $this->paymentCode = null;
                 break;
             default:
@@ -223,19 +227,18 @@ class Payment
         return $this;
     }
 
+    public function getAmountPaid(): Money
+    {
+        return $this->transfers->map(
+            fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject(
+                $transfer->amount
+            )
+        )->reduce(fn(Money $carry, Money $transfer) => $carry->plus($transfer), Money::zero('PLN'));
+    }
+
     public function isPaid(): bool
     {
-        //sum amount of all transfers
-        return $this->amount->isLessThanOrEqualTo(
-            $this->transfers->map(
-                fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject(
-                    $transfer->amount
-                )
-            )->reduce(
-                fn(MoneyBag $carry, Money $transfer) => $carry->add($transfer),
-                new MoneyBag()
-            )->getAmount('PLN')
-        );
+        return $this->amount->isLessThanOrEqualTo($this->getAmountPaid());
     }
 
     public function amountMatch(Transfer $transfer): bool

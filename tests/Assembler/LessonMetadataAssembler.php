@@ -29,10 +29,10 @@ class LessonMetadataAssembler
             visualTheme: 'Default Visual Theme',
             description: 'Default Description',
             capacity: 30,
-            duration: 60, // Default duration in minutes
-            category: 'Default Category',
-            schedule: new \DateTimeImmutable('now'),
+            schedule: new \DateTimeImmutable('now'), // Default duration in minutes
+            duration: 60,
             ageRange: AgeRangeAssembler::new()->assemble(),
+            category: 'Default Category',
         );
     }
 

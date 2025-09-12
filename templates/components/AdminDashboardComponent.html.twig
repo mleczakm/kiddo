@@ -57,6 +57,7 @@
         {% elseif activeTab == 'users' %}
             {{ component('UsersComponent') }}
         {% elseif activeTab == 'transfers' %}
+            {{ component('PaymentsListComponent') }}
             {{ component('PaymentComponent') }}
         {% elseif activeTab == 'messages' %}
             {{ component('UserMessagesComponent') }}

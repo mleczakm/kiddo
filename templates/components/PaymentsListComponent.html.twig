@@ -1,0 +1,134 @@
+<div {{ attributes }} class="rounded-xl border bg-stone-50 text-card-foreground shadow">
+  <div class="flex flex-col space-y-1.5 p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+      <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card w-5 h-5"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        <span>{{ 'admin.payments.title'|trans }}</span>
+      </h3>
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+            type="button"
+            data-model="week"
+            data-value="{{ this.week|date_modify('-7 days')|date('Y-m-d') }}"
+            data-action="live#update"
+            class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+            title="{{ 'lesson.previous_week'|trans }}"
+        >
+          <span class="sr-only">{{ 'lesson.previous_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <span class="px-3 py-1.5 text-sm bg-gray-100 rounded-md whitespace-nowrap">
+          {{ this.weekStart|date('d.m') }} - {{ this.weekEnd|date('d.m') }}
+        </span>
+        <button
+            type="button"
+            data-model="week"
+            data-value="{{ this.week|date_modify('+7 days')|date('Y-m-d') }}"
+            data-action="live#update"
+            class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+            title="{{ 'lesson.next_week'|trans }}"
+        >
+          <span class="sr-only">{{ 'lesson.next_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="p-6 pt-0">
+    <div class="relative w-full overflow-auto">
+      <table class="w-full caption-bottom text-sm">
+        <thead class="[&_tr]:border-b">
+          <tr class="border-b transition-colors hover:bg-muted/50">
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.date'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.user'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.amount'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.what'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.status'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.code'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody class="[&_tr:last-child]:border-0">
+          {% for payment in this.payments %}
+            {% set booking = payment.bookings|first %}
+            <tr class="border-b transition-colors hover:bg-muted/50">
+              <td class="p-4 align-middle">
+                {% if payment.paidAt %}
+                  {{ payment.paidAt|date('Y-m-d H:i') }}
+                {% else %}
+                  {{ payment.createdAt|date('Y-m-d H:i') }}
+                {% endif %}
+              </td>
+              <td class="p-4 align-middle">
+                <div>
+                  <div class="font-medium">{{ payment.user.name }}</div>
+                  <div class="text-xs text-muted-foreground">{{ payment.user.email }}</div>
+                </div>
+              </td>
+              <td class="p-4 align-middle font-medium">
+                {% if payment.status == 'paid' %}
+                  {{ payment.amountPaid|money }}<span class="text-muted-foreground text-xs">/ {{ payment.amount|money }}</span>
+                {% else %}
+                  <span class="text-muted-foreground text-xs">{{ payment.amountPaid|money }} /</span> {{ payment.amount|money }}
+                {% endif %}
+              </td>
+              <td class="p-4 align-middle">
+                {% if booking %}
+                  {% set firstLesson = booking.lessons|first %}
+                  {% if firstLesson %}
+                    <div class="font-medium">{{ firstLesson.metadata.title }}</div>
+                    <div class="text-xs text-muted-foreground mt-1">
+                      {% for lesson in booking.lessons %}
+                        {% set cancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
+                        <span class="{{ cancelled ? 'line-through text-red-600' : '' }}">
+                          {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                        </span>{{ not loop.last ? ', ' : '' }}
+                      {% endfor %}
+                      {% set extra = (booking.lessons|length) - 1 %}
+                      {% if extra > 0 %}
+                        <span class="ml-1 text-[10px] align-middle">(+ {{ extra }})</span>
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    {% set fallbackTitle = booking.title %}
+                    {% if fallbackTitle %}
+                      <div class="font-medium">{{ fallbackTitle }}</div>
+                    {% else %}
+                      -
+                    {% endif %}
+                  {% endif %}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td class="p-4 align-middle">
+                {% set status = payment.status %}
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors
+                  {{ status == 'paid' ? 'border-transparent bg-green-500 text-white' :
+                     (status == 'pending' ? 'border-transparent bg-yellow-500 text-white' :
+                     (status == 'failed' ? 'border-transparent bg-red-500 text-white' :
+                     (status == 'refunded' ? 'border-transparent bg-blue-500 text-white' : 'border-transparent bg-gray-500 text-white'))) }}">
+                  {{ ('admin_dashboard.bookings.payment.' ~ status)|trans }}
+                </div>
+              </td>
+              <td class="p-4 align-middle">
+                {% if payment.paymentCode %}
+                  <code class="text-xs bg-gray-100 px-2 py-1 rounded">{{ payment.paymentCode.code }}</code>
+                {% else %}
+                  <span class="text-muted-foreground">—</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="p-4 text-center text-muted-foreground">{{ 'admin.payments.empty'|trans }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
