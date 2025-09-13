@@ -513,9 +513,25 @@ admin:
       what: "Za co"
       status: "Status"
       code: "Kod"
-      reservation: "Rezerwacja"
     empty: "Brak płatności w wybranym tygodniu"
     carnet: "Karnet"
+  lessons:
+    title: "Zajęcia"
+    headers:
+      date: "Data"
+      title: "Tytuł"
+      capacity: "Miejsca"
+      status: "Status"
+      actions: "Akcje"
+    empty: "Brak zajęć w wybranym tygodniu"
+    show_cancelled: "Pokaż anulowane"
+    hide_cancelled: "Ukryj anulowane"
+    actions:
+      activate: "Aktywuj"
+      deactivate: "Dezaktywuj"
+    status:
+      active: "Aktywne"
+      cancelled: "Anulowane"
 
 profile:
   title: 'Mój profil'

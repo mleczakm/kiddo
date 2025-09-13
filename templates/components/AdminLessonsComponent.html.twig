@@ -1,0 +1,111 @@
+<div {{ attributes }} class="rounded-xl border bg-stone-50 text-card-foreground shadow">
+  <div class="flex flex-col space-y-1.5 p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+      <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open w-5 h-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>{{ 'admin.lessons.title'|trans }}</span>
+      </h3>
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+            type="button"
+            data-action="live#action"
+            data-live-action-param="toggleCancelled"
+            class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm {{ this.showCancelled ? 'bg-gray-100 border-gray-400' : 'bg-white' }}"
+            title="{{ this.showCancelled ? 'admin.lessons.hide_cancelled'|trans : 'admin.lessons.show_cancelled'|trans }}"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {% if this.showCancelled %}
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 0 1 1.563-3.029m5.858.908a3 3 0 1 1 4.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/>
+            {% else %}
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            {% endif %}
+          </svg>
+          <span class="sr-only">{{ this.showCancelled ? ('admin.lessons.hide_cancelled'|trans) : ('admin.lessons.show_cancelled'|trans) }}</span>
+        </button>
+        <button
+            type="button"
+            data-model="week"
+            data-value="{{ this.week|date_modify('-7 days')|date('Y-m-d') }}"
+            data-action="live#update"
+            class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+            title="{{ 'lesson.previous_week'|trans }}"
+        >
+          <span class="sr-only">{{ 'lesson.previous_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <span class="px-3 py-1.5 text-sm bg-gray-100 rounded-md whitespace-nowrap">
+          {{ this.weekStart|date('d.m') }} - {{ this.weekEnd|date('d.m') }}
+        </span>
+        <button
+            type="button"
+            data-model="week"
+            data-value="{{ this.week|date_modify('+7 days')|date('Y-m-d') }}"
+            data-action="live#update"
+            class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+            title="{{ 'lesson.next_week'|trans }}"
+        >
+          <span class="sr-only">{{ 'lesson.next_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="p-6 pt-0">
+    <div class="relative w-full overflow-auto">
+      <table class="w-full caption-bottom text-sm">
+        <thead class="[&_tr]:border-b">
+          <tr class="border-b transition-colors hover:bg-muted/50">
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.lessons.headers.date'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.lessons.headers.title'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.lessons.headers.capacity'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.lessons.headers.status'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.lessons.headers.actions'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody class="[&_tr:last-child]:border-0">
+          {% for lesson in this.lessons %}
+            <tr class="border-b transition-colors hover:bg-muted/50 {{ lesson.status == 'cancelled' ? 'opacity-60' : '' }}">
+              <td class="p-4 align-middle">
+                {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+              </td>
+              <td class="p-4 align-middle">
+                <div>
+                  <div class="font-medium {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : '' }}">{{ lesson.metadata.title }}</div>
+                  <div class="text-xs text-muted-foreground">{{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }}</div>
+                </div>
+              </td>
+              <td class="p-4 align-middle">
+                {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
+              </td>
+              <td class="p-4 align-middle">
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
+                  {{ lesson.status == 'active' ? ('admin.lessons.status.active'|trans) : ('admin.lessons.status.cancelled'|trans) }}
+                </div>
+              </td>
+              <td class="p-4 align-middle">
+                <button
+                    type="button"
+                    data-action="click->live#action"
+                    data-live-action-param="toggleStatus"
+                    data-live-lesson-id-param="{{ lesson.id }}"
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border h-9 rounded-md px-3 {{ lesson.status == 'active' ? 'border-red-600 text-red-600 hover:bg-red-600/10' : 'border-green-600 text-green-600 hover:bg-green-600/10' }}"
+                >
+                  {{ lesson.status == 'active' ? ('admin.lessons.actions.deactivate'|trans) : ('admin.lessons.actions.activate'|trans) }}
+                </button>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.lessons.empty'|trans }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
