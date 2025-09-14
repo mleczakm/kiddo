@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\SeriesRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: SeriesRepository::class)]
 class Series
 {
     #[ORM\Id]
@@ -29,6 +30,10 @@ class Series
             'jsonb' => true,
         ])]
         public array $ticketOptions = [],
+        #[ORM\Column(type: 'string', options: [
+            'default' => 'active',
+        ])]
+        public string $status = 'active',
     ) {
         $this->id = new Ulid();
     }
@@ -78,5 +83,57 @@ class Series
 
         return $this->lessons->matching($criteria)
             ->first() ?: null;
+    }
+
+    public function getFirstLesson(): Lesson
+    {
+        if ($this->lessons->isEmpty()) {
+            throw new \LogicException('No lessons found');
+        }
+
+        /** @var ?Lesson $first */
+        $first = null;
+        foreach ($this->lessons as $lesson) {
+            if ($first === null || $lesson->getMetadata()->schedule < $first->getMetadata()->schedule) {
+                $first = $lesson;
+            }
+        }
+
+        if ($first === null) {
+            throw new \LogicException('No lessons found');
+        }
+
+        return $first;
+    }
+
+    public function getLastLesson(): Lesson
+    {
+        if ($this->lessons->isEmpty()) {
+            throw new \LogicException('No lessons found');
+        }
+
+        /** @var ?Lesson $last */
+        $last = null;
+        foreach ($this->lessons as $lesson) {
+            if ($last === null || $lesson->getMetadata()->schedule > $last->getMetadata()->schedule) {
+                $last = $lesson;
+            }
+        }
+
+        if ($last === null) {
+            throw new \LogicException('No lessons found');
+        }
+
+        return $last;
+    }
+
+    public function cancel(): void
+    {
+        $this->status = 'cancelled';
+    }
+
+    public function activate(): void
+    {
+        $this->status = 'active';
     }
 }

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SshConfigs">
-    <configs>
-      <sshConfig host="karol115.mikrus.xyz" id="e8649e3d-f261-4683-833f-e31dc0ee66cd" keyPath="$PROJECT_DIR$/../.ssh/id_ed25519" port="10115" nameFormat="DESCRIPTIVE" username="root" useOpenSSHConfig="true" />
-    </configs>
-  </component>
-</project>

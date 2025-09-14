@@ -89,6 +89,7 @@ class Lesson
     public function setSeries(Series $series): self
     {
         $this->series = $series;
+        $this->series->lessons->add($this);
 
         return $this;
     }

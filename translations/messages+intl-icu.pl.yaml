@@ -255,8 +255,8 @@ lesson:
   search: Szukaj warsztatów...
 
   booking_options: Opcje rezerwacji
-  carnet_4: Karnet na 4 wejścia
-  one_time: Jednorazowe wejście
+  carnet_4: karnet 4 wejścia
+  one_time: jednorazowy
   carnet_4.description: >-
     4 następujące po sobie wejścia na zajęcia.
     
@@ -532,6 +532,21 @@ admin:
     status:
       active: "Aktywne"
       cancelled: "Anulowane"
+  schedule:
+    title: "Harmonogram"
+    headers:
+      type: "Typ serii"
+      tickets: "Rodzaje biletów"
+      period: "Okres"
+      status: "Status"
+      actions: "Akcje"
+    type:
+      weekly: "Cotygodniowa"
+      one_time: "Jednorazowa"
+    actions:
+      cancel: "Anuluj serię"
+      activate: "Aktywuj serię"
+    empty: "Brak serii w wybranym tygodniu"
 
 profile:
   title: 'Mój profil'

@@ -63,6 +63,8 @@
             {{ component('UserMessagesComponent') }}
         {% elseif activeTab == 'lessons' %}
             {{ component('AdminLessonsComponent') }}
+        {% elseif activeTab == 'schedule' %}
+            {{ component('AdminScheduleComponent') }}
         {% else %}
             <div class="rounded-xl border bg-stone-50 text-card-foreground shadow p-6">
                 <p class="text-muted-foreground">{{ 'admin.tabs.coming_soon'|trans({tab: activeTab}) }}</p>

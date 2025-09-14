@@ -1,0 +1,119 @@
+<div {{ attributes }} class="rounded-xl border bg-stone-50 text-card-foreground shadow">
+  <div class="flex flex-col space-y-1.5 p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+      <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-range w-5 h-5"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+        <span>{{ 'admin.schedule.title'|trans }}</span>
+      </h3>
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button"
+                data-action="live#action"
+                data-live-action-param="toggleCancelled"
+                class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm {{ this.showCancelled ? 'bg-gray-100 border-gray-400' : 'bg-white' }}"
+                title="{{ this.showCancelled ? 'admin.lessons.hide_cancelled'|trans : 'admin.lessons.show_cancelled'|trans }}">
+          <span class="sr-only">{{ this.showCancelled ? ('admin.lessons.hide_cancelled'|trans) : ('admin.lessons.show_cancelled'|trans) }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {% if this.showCancelled %}
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+            {% else %}
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            {% endif %}
+          </svg>
+        </button>
+        <button type="button"
+                data-model="week"
+                data-value="{{ this.week|date_modify('-7 days')|date('Y-m-d') }}"
+                data-action="live#update"
+                class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+                title="{{ 'lesson.previous_week'|trans }}">
+          <span class="sr-only">{{ 'lesson.previous_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <span class="px-3 py-1.5 text-sm bg-gray-100 rounded-md whitespace-nowrap">
+          {{ this.weekStart|date('d.m') }} - {{ this.weekEnd|date('d.m') }}
+        </span>
+        <button type="button"
+                data-model="week"
+                data-value="{{ this.week|date_modify('+7 days')|date('Y-m-d') }}"
+                data-action="live#update"
+                class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+                title="{{ 'lesson.next_week'|trans }}">
+          <span class="sr-only">{{ 'lesson.next_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="p-6 pt-0">
+    <div class="relative w-full overflow-auto">
+      <table class="w-full caption-bottom text-sm">
+        <thead class="[&_tr]:border-b">
+          <tr class="border-b transition-colors hover:bg-muted/50">
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.type'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.tickets'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.period'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.status'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.actions'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody class="[&_tr:last-child]:border-0">
+          {% for series in this.series %}
+            <tr class="border-b transition-colors hover:bg-muted/50 {{ series.status == 'cancelled' ? 'opacity-60' : '' }}">
+              <td class="p-4 align-middle">
+                <div class="font-medium">{{ series.firstLesson.metadata.title }}</div>
+                <div class="text-xs text-muted-foreground mt-1">{{ series.type.value == 'weekly' ? 'admin.schedule.type.weekly'|trans : 'admin.schedule.type.one_time'|trans }}</div>
+              </td>
+              <td class="p-4 align-middle">
+                {% if series.ticketOptions %}
+                  <div class="flex flex-wrap gap-1">
+                    {% for t in this.getTicketTypes(series) %}
+                      <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-100">{{ ('lesson.' ~ t)|trans }}</span>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <span class="text-muted-foreground">—</span>
+                {% endif %}
+              </td>
+              <td class="p-4 align-middle">
+                  {{ series.firstLesson.metadata.schedule|date('Y-m-d') }} — {{ series.lastLesson.metadata.schedule|date('Y-m-d') }}
+              </td>
+              <td class="p-4 align-middle">
+                {% set status = series.status %}
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors
+                  {{ status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
+                  {{ status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
+                </div>
+              </td>
+              <td class="p-4 align-middle">
+                {% if series.status == 'active' %}
+                  <button data-action="click->live#action"
+                          data-live-action-param="cancelSeries"
+                          data-live-series-id-param="{{ series.id }}"
+                          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-red-600 text-red-600 hover:bg-red-600/10">
+                    {{ 'admin.schedule.actions.cancel'|trans }}
+                  </button>
+                {% else %}
+                  <button data-action="click->live#action"
+                          data-live-action-param="activateSeries"
+                          data-live-series-id-param="{{ series.id }}"
+                          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-green-600 text-green-600 hover:bg-green-600/10">
+                    {{ 'admin.schedule.actions.activate'|trans }}
+                  </button>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.schedule.empty'|trans }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
