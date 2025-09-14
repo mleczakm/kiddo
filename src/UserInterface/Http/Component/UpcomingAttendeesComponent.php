@@ -72,7 +72,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     public function decreaseCapacity(#[LiveArg] string $lessonId): void
     {
         $lesson = $this->lessonRepository->find($lessonId);
-        if ($lesson && $lesson->getMetadata()->capacity > $lesson->getBookings()->count()) {
+        if ($lesson && $lesson->getMetadata()->capacity > $lesson->getAvailableSpots()) {
             $lesson->getMetadata()
                 ->capacity--;
             $this->entityManager->flush();

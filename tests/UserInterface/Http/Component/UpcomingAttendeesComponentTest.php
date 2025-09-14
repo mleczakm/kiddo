@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\DTO\LessonMap;
 use PHPUnit\Framework\Attributes\Group;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -145,7 +146,7 @@ class UpcomingAttendeesComponentTest extends TestCase
         $this->assertEquals(9, $metadata->capacity);
     }
 
-    public function testDecreaseCapacityDoesNotUpdateWhenCapacityEqualsBookings(): void
+    public function testDecreaseCapacityDoesNotUpdateWhenCapacityEqualsActiveBookings(): void
     {
         $metadata = new LessonMetadata(
             title: 'Test Lesson',
@@ -163,12 +164,9 @@ class UpcomingAttendeesComponentTest extends TestCase
         $lesson->method('getMetadata')
             ->willReturn($metadata);
 
-        // Mock that lesson has 5 bookings (equals capacity)
-        $bookingsCollection = $this->createMock(Collection::class);
-        $bookingsCollection->method('count')
+        // Mock that lesson has 5 active bookings (equals capacity)
+        $lesson->method('getAvailableSpots')
             ->willReturn(5);
-        $lesson->method('getBookings')
-            ->willReturn($bookingsCollection);
 
         $this->lessonRepository
             ->expects($this->once())
