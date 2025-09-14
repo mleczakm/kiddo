@@ -100,7 +100,7 @@
                                             data-live-action-param="decreaseCapacity"
                                             data-live-lesson-id-param="{{ lesson.id }}"
                                             class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none"
-                                            {{ lesson.metadata.capacity <= lesson.bookings|length ? 'disabled' : '' }}
+                                            {{ lesson.metadata.capacity <= activeBookings|length ? 'disabled' : '' }}
                                             title="{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}"
                                     >
                                         <span class="sr-only">{{ 'admin_dashboard.upcoming_attendees.decrease_capacity'|trans }}</span>
