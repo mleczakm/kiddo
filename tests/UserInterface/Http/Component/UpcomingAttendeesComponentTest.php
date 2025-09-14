@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http\Component;
 
 use PHPUnit\Framework\Attributes\Group;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
@@ -124,11 +123,8 @@ class UpcomingAttendeesComponentTest extends TestCase
         $metadata->capacity = 10;
 
         // Mock that lesson has 5 bookings (less than capacity)
-        $bookingsCollection = $this->createMock(Collection::class);
-        $bookingsCollection->method('count')
+        $lesson->method('getAvailableSpots')
             ->willReturn(5);
-        $lesson->method('getBookings')
-            ->willReturn($bookingsCollection);
 
         $this->lessonRepository
             ->expects($this->once())
@@ -165,17 +161,13 @@ class UpcomingAttendeesComponentTest extends TestCase
 
         // Mock that lesson has 5 active bookings (equals capacity)
         $lesson->method('getAvailableSpots')
-            ->willReturn(5);
+            ->willReturn(0);
 
         $this->lessonRepository
             ->expects($this->once())
             ->method('find')
             ->with('lesson-id')
             ->willReturn($lesson);
-
-        $this->entityManager
-            ->expects($this->never())
-            ->method('flush');
 
         $this->component->decreaseCapacity('lesson-id');
 

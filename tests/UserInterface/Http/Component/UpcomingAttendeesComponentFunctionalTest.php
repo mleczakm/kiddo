@@ -83,7 +83,6 @@ class UpcomingAttendeesComponentFunctionalTest extends WebTestCase
 
     public function testDecreaseCapacity(): void
     {
-        // Create test data with 2 bookings (out of 5 capacity)
         $futureDate = new \DateTimeImmutable('+1 day');
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(1)->assemble())
@@ -119,14 +118,17 @@ class UpcomingAttendeesComponentFunctionalTest extends WebTestCase
         $user = UserAssembler::new()->assemble();
 
         $booking1 = BookingAssembler::new()
+            ->withStatus('active')
             ->withUser($user)
             ->withLessons($lesson)
             ->assemble();
         $booking2 = BookingAssembler::new()
+            ->withStatus('active')
             ->withLessons($lesson)
             ->withUser($user)
             ->assemble();
         $booking3 = BookingAssembler::new()
+            ->withStatus('active')
             ->withUser($user)
             ->withLessons($lesson)
             ->assemble();
