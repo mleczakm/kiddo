@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use App\Entity\DTO\LessonMap;
 use PHPUnit\Framework\Attributes\Group;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
