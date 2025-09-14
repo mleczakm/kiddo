@@ -133,7 +133,7 @@ class Lesson
             0,
             $this->metadata->capacity
             - $this->bookings->filter(
-                fn(Booking $booking): bool => $booking->getLessonsMap()
+                fn(Booking $booking): bool => $booking->isActive() && $booking->getLessonsMap()
                     ->active->hasKey($this->id)
             )
                 ->count()

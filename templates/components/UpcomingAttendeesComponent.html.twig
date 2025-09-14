@@ -88,7 +88,7 @@
                                 </h4>
                                 <p class="text-sm text-muted-foreground">
                                     {{ lesson.metadata.schedule|format_datetime('medium', 'short') }} •
-                                    {% set activeBookings = lesson.bookings|filter(b => b.lessonsMap.active.hasKey(lesson.id)) %}
+                                    {% set activeBookings = lesson.bookings|filter(b => b.active and b.lessonsMap.active.hasKey(lesson.id)) %}
                                     {{ activeBookings|length }}
                                     /{{ lesson.metadata.capacity }} {{ 'admin_dashboard.capacity'|trans }}
                                 </p>
@@ -112,7 +112,7 @@
                                     </button>
 
                                     <span class="text-sm font-medium min-w-[2rem] text-center">
-                                        {{ lesson.metadata.capacity - lesson.bookings|length }}
+                                        {{ lesson.availableSpots }}
                                     </span>
 
                                     <button
@@ -137,7 +137,7 @@
                         </div>
 
                         <div class="space-y-2">
-                            {% set activeBookings = this.showCancelled ? lesson.bookings : lesson.bookings|filter(b => b.lessonsMap.active.hasKey(lesson.id)) %}
+                            {% set activeBookings = this.showCancelled ? lesson.bookings : lesson.bookings|filter(b => b.active and b.lessonsMap.active.hasKey(lesson.id)) %}
                             {% if activeBookings is not empty %}
                                 {% for booking in activeBookings %}
                                     <div class="flex items-center justify-between p-2 border rounded">
