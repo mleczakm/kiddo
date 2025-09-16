@@ -6,10 +6,8 @@ namespace App\Infrastructure\Symfony\EventSubscriber;
 
 use App\Tenant\TenantContext;
 use App\Tenant\TenantResolver;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[AsEventListener(event: 'kernel.request', method: 'onKernelRequest', priority: 32)]
 final readonly class TenantRequestSubscriber
@@ -17,8 +15,6 @@ final readonly class TenantRequestSubscriber
     public function __construct(
         private TenantResolver $resolver,
         private TenantContext $context,
-        #[Autowire(param: 'kernel.environment')]
-        private string $environment,
     ) {}
 
     public function onKernelRequest(RequestEvent $event): void
