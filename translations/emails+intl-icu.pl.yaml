@@ -1,17 +1,17 @@
-footer: <p>&copy; 2025 Sensoryczna. Wszystkie prawa zastrzeżone.</p>
+footer: <p>&copy; 2025. Wszystkie prawa zastrzeżone.</p>
 exception: Załączony ślad stosu wyjątku.
 
 link_warning_upper: Jeśli powyższy przycisk nie działa, możesz skopiować i wkleić poniższy link do swojej przeglądarki
 link_warning_underlying: Jeśli nie prosiłeś(-aś) o link do logowania, zignoruj tę wiadomość. Bezpieczeństwo Twojego konta jest dla nas ważne.
 
 login_link:
-  subject: 'Zaloguj się do swojego konta w Warsztatowni Sensorycznej'
-  register_subject: 'Potwierdzenie rejestracji w Warsztatowni Sensorycznej'
+  subject: 'Zaloguj się do swojego konta'
+  register_subject: 'Potwierdzenie rejestracji'
   content:
     html: |
       Witaj {name},
 
-      Ostatnio poprosiłeś(-aś) o link do logowania do Warsztatowni Sensorycznej. Kliknij poniższy przycisk, aby bezpiecznie zalogować się na swoje konto:
+      Ostatnio poprosiłeś(-aś) o link do logowania. Kliknij poniższy przycisk, aby bezpiecznie zalogować się na swoje konto:
   register_content:
     html: |
       Witaj {name},
@@ -90,9 +90,9 @@ user:
         
         Zaloguj się do panelu administracyjnego, aby zobaczyć więcej szczegółów.
     confirmation:
-      subject: 'Potwierdzenie rejestracji - Warsztatownia Sensoryczna'
+      subject: 'Potwierdzenie rejestracji'
       message: >-
-        Dziękujemy za pomyślną rejestrację w Warsztatowni Sensorycznej!
+        Dziękujemy za pomyślną rejestrację!
       
         Możesz w panelu użytkownika przeglądać swoje rezerwacje i płatności, a już w niedalekiej
         przyszłości anulować i przenosić rezerwacje oraz zarządzać swoim kontem.
@@ -100,7 +100,7 @@ user:
                       
         Pozdrawiamy,
         
-        Zespół Warsztatowni Sensorycznej
+        Zespół
 daily_lessons_schedule:
   no_lessons: 'Dzisiaj ({date}) nie odbywają się żadne zajęcia.'
   subject: 'Raport dzienny zajęć na {date}'

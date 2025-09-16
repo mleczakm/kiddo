@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main class="flex-grow">
+        {% if app.user and classRoom is defined and classRoom %}
+            <section class="py-10">
+                <div class="container mx-auto px-4">
+                    <h1 class="font-display text-3xl md:text-4xl font-bold text-workshop-brown mb-2">Rada Klasowa</h1>
+                    <p class="text-muted-foreground mb-6">Twoja klasa: <strong>{{ classRoom.name }}</strong></p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="border rounded-xl p-6 bg-white">
+                            <h2 class="text-xl font-semibold mb-4">Płatności</h2>
+                            <p class="mb-2">Wpłać szybkim przelewem BLIK na numer: <strong
+                                        class="text-workshop-red">{{ tenant_phone() ?? ('blik.phone'|trans) }}</strong>
+                            </p>
+                            <p class="mb-4 text-sm text-muted-foreground">Możesz też wykonać przelew na konto: <strong
+                                        class="text-workshop-red">{{ tenant_account() ?? '46 2490 0005 0000 4000 1897 5420' }}</strong>
+                            </p>
+                            <a class="btn-primary" href="{{ path('cc_dashboard') }}">Zobacz panel klasy</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {% else %}
+            <section class="py-16 md:py-24">
+                <div class="container mx-auto px-4 text-center">
+                    <h1 class="font-display text-4xl md:text-6xl font-bold text-workshop-brown mb-4">Rada Klasowa</h1>
+                    <p class="text-lg text-muted-foreground mb-8">
+                        Przejrzysty rejestr wpłat i wydatków klasowych. Zaloguj się aby zobaczyć obowiązki i historię
+                        płatności.
+                    </p>
+                    <div class="flex items-center justify-center gap-4">
+                        <a class="btn-primary" href="{{ path('app_login') }}">Zaloguj</a>
+                        <a class="btn-outline" href="{{ path('user_register') }}">Zarejestruj</a>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+    </main>
+{% endblock %}

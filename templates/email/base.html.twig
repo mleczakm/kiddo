@@ -97,10 +97,7 @@
 <body>
 <div class="email-container">
     <div class="header">
-        <span class="logo">
-            <span class="brown">Warsztatownia</span>
-            <span class="red">S</span> <span class="green">e</span> <span class="yellow">n</span> <span class="blue">s</span> <span class="pink">o</span> <span class="red">r</span> <span class="green">y</span> <span class="yellow">c</span> <span class="blue">z</span> <span class="pink">n</span> <span class="red">a</span>
-        </span>
+        <span class="logo">{{ tenant_name() ?? 'Kiddo' }}</span>
     </div>
 </div>
 {{ content|trans({}, 'email') }}

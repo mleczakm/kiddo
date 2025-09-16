@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{{ 'page.default.header'|trans }}{% endblock %}</title>
+    <title>{% block title %}{{ tenant_name() ?? ('page.default.header'|trans) }}{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
     {% block stylesheets %}
     {% endblock %}
@@ -21,7 +21,11 @@
         {{ include('partials/top-menu.html.twig') }}
         {% block body %}
         {% endblock %}
-        {{ include('partials/footer.html.twig') }}
+        {# Hide footer for ClassPay tenant (match by known names) #}
+        {% set _tenant = app.request.attributes.get('_tenant') ?? null %}
+        {% if not (_tenant and (_tenant.name matches '/classpay/i' or _tenant.name matches '/Skarbiec Mleczki/i')) %}
+            {{ include('partials/footer.html.twig') }}
+        {% endif %}
     </div>
 </div>
 </body>

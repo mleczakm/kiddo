@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<main class="flex-grow container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-display font-bold text-workshop-brown mb-6">Uczniowie</h1>
+  <div class="mb-6">Klasa: <strong>{{ classRoom.name }}</strong></div>
+
+  <form method="post" class="space-y-4 max-w-xl mb-8 p-4 border rounded bg-white">
+    <h2 class="text-lg font-semibold">Dodaj ucznia</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Imię</label>
+        <input name="first_name" type="text" class="w-full border rounded px-3 py-2" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Nazwisko</label>
+        <input name="last_name" type="text" class="w-full border rounded px-3 py-2" required>
+      </div>
+    </div>
+    <button class="btn-primary" type="submit">Dodaj</button>
+  </form>
+
+  <div class="overflow-x-auto">
+    <table class="w-full caption-bottom text-sm">
+      <thead>
+        <tr class="border-b">
+          <th class="text-left py-2 px-2">Imię</th>
+          <th class="text-left py-2 px-2">Nazwisko</th>
+          {% if isTreasurer %}
+            <th class="text-left py-2 px-2">Wymagane składki</th>
+            <th class="text-left py-2 px-2">Bilans</th>
+          {% endif %}
+          <th class="text-left py-2 px-2">Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+          {% set sid = s.id ~ '' %}
+          <tr class="border-b align-top">
+            <td class="py-2 px-2">{{ s.firstName }}</td>
+            <td class="py-2 px-2">{{ s.lastName }}</td>
+            {% if isTreasurer %}
+              {% set payments = paymentsByStudent[sid] ?? [] %}
+              <td class="py-2 px-2">
+                {% if payments|length > 0 %}
+                  <ul class="list-disc pl-5 space-y-1">
+                    {% for p in payments %}
+                      <li>
+                        <span class="font-medium">{{ p.label }}</span>
+                        <span class="text-muted-foreground">— {{ p.amount|money }}</span>
+                        {% set status = p.status %}
+                        {% if status == 'paid' %}
+                          <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700">opłacona</span>
+                        {% elseif status == 'partial' %}
+                          <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-700">częściowa</span>
+                        {% else %}
+                          <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700">nieopłacona</span>
+                        {% endif %}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <span class="text-muted-foreground">Brak</span>
+                {% endif %}
+              </td>
+              <td class="py-2 px-2 whitespace-nowrap">
+                {% set b = balances[sid] ?? null %}
+                {% if b %}
+                  <div>Wymagane: <strong>{{ b.required|money }}</strong></div>
+                  <div>Opłacone: <strong>{{ b.paid|money }}</strong></div>
+                  <div>Bilans: <strong>{{ b.balance|money }}</strong></div>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+            {% endif %}
+            <td class="py-2 px-2">
+              <div class="flex items-center gap-2">
+                {% if sid in (editableIds ?? []) %}
+                  <a class="btn-outline" href="{{ path('cc_student_edit', {id: sid}) }}">Edytuj</a>
+                {% endif %}
+                {% if isTreasurer %}
+                  <form method="post" action="{{ path('cc_student_delete', {id: sid}) }}" onsubmit="return confirm('Usunąć tego ucznia? Spowoduje to usunięcie jego przypisanych składek.');">
+                    <button class="btn-outline" type="submit">Usuń</button>
+                  </form>
+                {% endif %}
+                {% if (sid not in (editableIds ?? [])) and (not isTreasurer) %}
+                  <span class="text-muted-foreground">—</span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5" class="py-4 text-center text-muted-foreground">Brak uczniów</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+{% endblock %}

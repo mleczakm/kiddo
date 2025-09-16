@@ -14,6 +14,10 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function form(): Response
     {
+        // If the user is already authenticated, send them to their dashboard
+        if ($this->getUser()) {
+            return $this->redirectToRoute('user_dashboard');
+        }
         return $this->render('login.html.twig');
     }
 

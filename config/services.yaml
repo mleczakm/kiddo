@@ -97,3 +97,11 @@ services:
 
     App\Infrastructure\Twig\MoneyExtension:
         tags: ['twig.extension']
+
+    # Tenant-aware Twig helpers
+    App\Infrastructure\Symfony\Twig\TenantExtension:
+        tags: ['twig.extension']
+
+    # Class Council Twig helpers
+    App\Infrastructure\Symfony\Twig\ClassCouncilExtension:
+        tags: ['twig.extension']

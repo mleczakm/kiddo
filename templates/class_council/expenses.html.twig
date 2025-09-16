@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<main class="flex-grow container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-display font-bold text-workshop-brown mb-6">Wydatki klasy</h1>
+  <div class="mb-6">Klasa: <strong>{{ classRoom.name }}</strong></div>
+
+  <form method="post" class="space-y-4 max-w-xl mb-8 p-4 border rounded bg-white">
+    <h2 class="text-lg font-semibold">Dodaj wydatek</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium mb-1">Nazwa</label>
+        <input name="label" type="text" class="w-full border rounded px-3 py-2" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Kwota (PLN)</label>
+        <input name="amount_pln" type="number" step="0.01" class="w-full border rounded px-3 py-2" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Data</label>
+        <input name="spent_at" type="date" class="w-full border rounded px-3 py-2">
+      </div>
+    </div>
+    <button class="btn-primary" type="submit">Dodaj wydatek</button>
+  </form>
+
+  <div class="overflow-x-auto">
+    <table class="w-full caption-bottom text-sm">
+      <thead>
+        <tr class="border-b">
+          <th class="text-left py-2 px-2">Data</th>
+          <th class="text-left py-2 px-2">Nazwa</th>
+          <th class="text-left py-2 px-2">Kwota</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in expenses %}
+          <tr class="border-b">
+            <td class="py-2 px-2">{{ e.spentAt|date('Y-m-d') }}</td>
+            <td class="py-2 px-2">{{ e.label }}</td>
+            <td class="py-2 px-2">{{ e.amount|money }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="3" class="py-4 text-center text-muted-foreground">Brak wydatków</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6">
+    <a class="btn-outline" href="{{ path('cc_treasurer_overview') }}">Powrót do podsumowania</a>
+  </div>
+</main>
+{% endblock %}

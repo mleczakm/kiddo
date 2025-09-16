@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use Symfony\Component\Uid\Ulid;
 use App\Entity\Lesson;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -60,7 +61,9 @@ final class UpcomingAttendeesComponent extends AbstractController
     #[LiveAction]
     public function increaseCapacity(#[LiveArg] string $lessonId): void
     {
-        $lesson = $this->lessonRepository->find($lessonId);
+        // Convert incoming ULID string to Ulid object to ensure proper DBAL binding
+        $id = Ulid::fromString($lessonId);
+        $lesson = $this->lessonRepository->find($id);
         if ($lesson) {
             $lesson->getMetadata()
                 ->capacity++;
@@ -71,7 +74,8 @@ final class UpcomingAttendeesComponent extends AbstractController
     #[LiveAction]
     public function decreaseCapacity(#[LiveArg] string $lessonId): void
     {
-        $lesson = $this->lessonRepository->find($lessonId);
+        $id = Ulid::fromString($lessonId);
+        $lesson = $this->lessonRepository->find($id);
         if ($lesson && $lesson->getAvailableSpots() > 0) {
             $lesson->getMetadata()
                 ->capacity--;

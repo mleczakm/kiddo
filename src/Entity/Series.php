@@ -28,6 +28,7 @@ class Series
         public WorkshopType $type = WorkshopType::WEEKLY,
         #[ORM\Column(type: 'json_document', options: [
             'jsonb' => true,
+            'default' => '[]',
         ])]
         public array $ticketOptions = [],
         #[ORM\Column(type: 'string', options: [

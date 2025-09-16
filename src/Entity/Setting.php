@@ -22,8 +22,9 @@ class Setting
      */
     #[ORM\Column(type: 'json_document', options: [
         'jsonb' => true,
+        'default' => '{}',
     ])]
-    private mixed $content = null;
+    private mixed $content = [];
 
     #[ORM\ManyToOne(targetEntity: Tenant::class, inversedBy: 'settings')]
     #[ORM\JoinColumn(nullable: true)]

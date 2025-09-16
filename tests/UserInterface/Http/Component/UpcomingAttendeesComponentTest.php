@@ -16,6 +16,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\Uid\Ulid;
 
 #[Group('unit')]
 class UpcomingAttendeesComponentTest extends TestCase
@@ -104,14 +105,14 @@ class UpcomingAttendeesComponentTest extends TestCase
         $this->lessonRepository
             ->expects($this->once())
             ->method('find')
-            ->with('lesson-id')
+            ->with($ulid = Ulid::generate())
             ->willReturn($lesson);
 
         $this->entityManager
             ->expects($this->once())
             ->method('flush');
 
-        $this->component->increaseCapacity('lesson-id');
+        $this->component->increaseCapacity($ulid);
 
         $this->assertEquals(11, $metadata->capacity);
     }
@@ -129,14 +130,14 @@ class UpcomingAttendeesComponentTest extends TestCase
         $this->lessonRepository
             ->expects($this->once())
             ->method('find')
-            ->with('lesson-id')
+            ->with($ulid = Ulid::generate())
             ->willReturn($lesson);
 
         $this->entityManager
             ->expects($this->once())
             ->method('flush');
 
-        $this->component->decreaseCapacity('lesson-id');
+        $this->component->decreaseCapacity($ulid);
 
         $this->assertEquals(9, $metadata->capacity);
     }
@@ -166,10 +167,10 @@ class UpcomingAttendeesComponentTest extends TestCase
         $this->lessonRepository
             ->expects($this->once())
             ->method('find')
-            ->with('lesson-id')
+            ->with($ulid = Ulid::generate())
             ->willReturn($lesson);
 
-        $this->component->decreaseCapacity('lesson-id');
+        $this->component->decreaseCapacity($ulid);
 
         $this->assertEquals(5, $metadata->capacity);
     }

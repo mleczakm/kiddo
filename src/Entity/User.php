@@ -30,6 +30,7 @@ class User implements UserInterface
      */
     #[ORM\Column(type: 'json', options: [
         'jsonb' => true,
+        'default' => '[]',
     ])]
     private array $roles = [];
 

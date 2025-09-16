@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity]
+#[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_tenant_domain', columns: ['domain'])])]
 class Tenant
 {
     #[ORM\Id]
@@ -30,7 +31,15 @@ class Tenant
 
     public function __construct(
         #[ORM\Column(type: 'string', length: 255)]
-        private string $name
+        private string $name,
+        #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
+        private ?string $domain,
+        #[ORM\Column(type: 'string', length: 255, nullable: true)]
+        private ?string $emailFrom = null,
+        #[ORM\Column(type: 'string', length: 64, nullable: true)]
+        private ?string $blikPhone = null,
+        #[ORM\Column(type: 'string', length: 34, nullable: true)]
+        private ?string $transferAccount = null,
     ) {
         $this->id = new Ulid();
         $this->users = new ArrayCollection();
@@ -50,6 +59,46 @@ class Tenant
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+    public function setDomain(string $domain): void
+    {
+        $this->domain = $domain;
+    }
+
+    public function getEmailFrom(): ?string
+    {
+        return $this->emailFrom;
+    }
+
+    public function setEmailFrom(?string $emailFrom): void
+    {
+        $this->emailFrom = $emailFrom;
+    }
+
+    public function getBlikPhone(): ?string
+    {
+        return $this->blikPhone;
+    }
+
+    public function setBlikPhone(?string $blikPhone): void
+    {
+        $this->blikPhone = $blikPhone;
+    }
+
+    public function getTransferAccount(): ?string
+    {
+        return $this->transferAccount;
+    }
+
+    public function setTransferAccount(?string $transferAccount): void
+    {
+        $this->transferAccount = $transferAccount;
     }
 
     /**

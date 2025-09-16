@@ -10,6 +10,7 @@ use App\Entity\UserMessage;
 use App\Repository\UserMessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -61,7 +62,9 @@ class UserMessagesComponent extends AbstractController
             return null;
         }
 
-        return $this->userMessageRepository->find($this->selectedMessageId);
+        return $this->userMessageRepository->find(
+            $this->selectedMessageId ? Ulid::fromString($this->selectedMessageId) : null
+        );
     }
 
     #[LiveAction]
@@ -75,7 +78,7 @@ class UserMessagesComponent extends AbstractController
     public function selectMessage(#[LiveArg] string $messageId): void
     {
         $this->selectedMessageId = $messageId;
-        $message = $this->userMessageRepository->find($messageId);
+        $message = $this->userMessageRepository->find(Ulid::fromString($messageId));
 
         if ($message && $message->isUnread()) {
             $user = $this->getUser();
@@ -89,7 +92,7 @@ class UserMessagesComponent extends AbstractController
     #[LiveAction]
     public function updateStatus(#[LiveArg] string $messageId, #[LiveArg] string $status): void
     {
-        $message = $this->userMessageRepository->find($messageId);
+        $message = $this->userMessageRepository->find(Ulid::fromString($messageId));
         if (! $message) {
             return;
         }

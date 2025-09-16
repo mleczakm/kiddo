@@ -14,7 +14,9 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity(repositoryClass: LessonRepository::class)]
 class Lesson
 {
-    #[ORM\Column(type: 'string', nullable: false)]
+    #[ORM\Column(type: 'string', nullable: false, options: [
+        'default' => 'active',
+    ])]
     public string $status;
 
     #[ORM\Id]
@@ -38,6 +40,7 @@ class Lesson
          */
         #[ORM\Column(type: 'json_document', options: [
             'jsonb' => true,
+            'default' => '[]',
         ])]
         private array $ticketOptions = [],
     ) {

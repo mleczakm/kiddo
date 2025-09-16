@@ -1,0 +1,12 @@
+{% extends '@email/base_plain.html.twig' %}
+
+{% block body %}
+<p>Potwierdzenie rozliczenia płatności w systemie {{ tenant_name() ?? 'Kiddo' }}.</p>
+<p>Twoja płatność została zaksięgowana. Rozliczono następujące składki:</p>
+<ul>
+  {% for item in items %}
+    <li>{{ item.student }} — {{ item.label }}: <strong>{{ item.amount|money }}</strong></li>
+  {% endfor %}
+</ul>
+<p>Dziękujemy za terminowe wpłaty.</p>
+{% endblock %}

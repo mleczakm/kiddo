@@ -36,6 +36,7 @@
             </div>
         </div>
         <div class="mt-8 pt-4 border-t border-muted text-center text-sm text-muted-foreground">
-            <p>{{ 'page.default.footer'|trans }}</p></div>
+            <p>© {{ "now"|date("Y") }} {{ tenant_name() ?? 'Kiddo' }}. Wszystkie prawa zastrzeżone.</p>
+        </div>
     </div>
 </footer>

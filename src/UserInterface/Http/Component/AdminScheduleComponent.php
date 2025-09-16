@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use Symfony\Component\Uid\Ulid;
 use App\Entity\Series;
 use App\Repository\SeriesRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -80,7 +81,8 @@ final class AdminScheduleComponent extends AbstractController
     #[LiveAction]
     public function cancelSeries(#[LiveArg] string $seriesId): void
     {
-        $series = $this->seriesRepository->find($seriesId);
+        $id = Ulid::fromString($seriesId);
+        $series = $this->seriesRepository->find($id);
         if ($series instanceof Series) {
             $series->cancel();
             $this->em->flush();
@@ -90,7 +92,8 @@ final class AdminScheduleComponent extends AbstractController
     #[LiveAction]
     public function activateSeries(#[LiveArg] string $seriesId): void
     {
-        $series = $this->seriesRepository->find($seriesId);
+        $id = Ulid::fromString($seriesId);
+        $series = $this->seriesRepository->find($id);
         if ($series instanceof Series) {
             $series->activate();
             $this->em->flush();

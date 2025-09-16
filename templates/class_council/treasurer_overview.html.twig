@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<main class="flex-grow container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-display font-bold text-workshop-brown mb-6">Podsumowanie skarbnika</h1>
+  <div class="mb-6">Klasa: <strong>{{ classRoom.name }}</strong></div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="p-4 border rounded bg-white">
+      <div class="text-sm text-muted-foreground">Suma wymaganych</div>
+      <div class="text-xl font-semibold">{{ sumRequired|money }}</div>
+    </div>
+    <div class="p-4 border rounded bg-white">
+      <div class="text-sm text-muted-foreground">Suma opłaconych</div>
+      <div class="text-xl font-semibold">{{ sumPaid|money }}</div>
+    </div>
+    <div class="p-4 border rounded bg-white">
+      <div class="text-sm text-muted-foreground">Wydatki</div>
+      <div class="text-xl font-semibold">{{ sumExpenses|money }}</div>
+    </div>
+    <div class="p-4 border rounded bg-white">
+      <div class="text-sm text-muted-foreground">Bilans</div>
+      <div class="text-xl font-semibold">{{ balance|money }}</div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3 mb-6">
+    <a class="btn-outline" href="{{ path('cc_payment_templates') }}">Szablony składek</a>
+    <a class="btn-outline" href="{{ path('cc_expenses') }}">Wydatki</a>
+  </div>
+
+  <section class="mb-10">
+    <h2 class="text-xl font-semibold mb-4">Uczniowie i składki</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full caption-bottom text-sm">
+        <thead>
+          <tr class="border-b">
+            <th class="text-left py-2 px-2">Uczeń</th>
+            <th class="text-left py-2 px-2">Składka</th>
+            <th class="text-left py-2 px-2">Kwota</th>
+            <th class="text-left py-2 px-2">Status</th>
+            <th class="text-left py-2 px-2">Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for sp in studentPayments %}
+          <tr class="border-b">
+            <td class="py-2 px-2">{{ sp.student.firstName }} {{ sp.student.lastName }}</td>
+            <td class="py-2 px-2">{{ sp.label }}</td>
+            <td class="py-2 px-2">{{ sp.amount|money }}</td>
+            <td class="py-2 px-2">
+              {% set status = sp.status %}
+              {% if status == 'paid' %}
+                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700">opłacona</span>
+              {% elseif status == 'partial' %}
+                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-700">częściowa</span>
+              {% else %}
+                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700">nieopłacona</span>
+              {% endif %}
+            </td>
+            <td class="py-2 px-2">
+              <div class="flex gap-2">
+                {% if not sp.payment %}
+                <form method="post" action="{{ path('cc_generate_payment', {id: sp.id}) }}">
+                  <button class="btn-outline" type="submit">Utwórz płatność</button>
+                </form>
+                {% endif %}
+                {% if status != 'paid' %}
+                <form method="post" action="{{ path('cc_mark_student_payment_paid', {id: sp.id}) }}">
+                  <button class="btn-outline" type="submit">Oznacz jako opłacone</button>
+                </form>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5" class="py-4 text-center text-muted-foreground">Brak danych</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+{% endblock %}

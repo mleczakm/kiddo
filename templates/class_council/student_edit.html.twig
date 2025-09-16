@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<main class="flex-grow container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-display font-bold text-workshop-brown mb-6">Edytuj ucznia</h1>
+  <div class="mb-6">Klasa: <strong>{{ classRoom.name }}</strong></div>
+
+  <form method="post" class="space-y-4 max-w-xl p-4 border rounded bg-white">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Imię</label>
+        <input name="first_name" type="text" value="{{ student.firstName }}" class="w-full border rounded px-3 py-2" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Nazwisko</label>
+        <input name="last_name" type="text" value="{{ student.lastName }}" class="w-full border rounded px-3 py-2" required>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <button class="btn-primary" type="submit">Zapisz</button>
+      <a class="btn-outline" href="{{ path('cc_students') }}">Anuluj</a>
+    </div>
+  </form>
+</main>
+{% endblock %}

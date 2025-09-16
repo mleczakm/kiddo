@@ -1,41 +1,75 @@
 <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4">
-        <div class="flex justify-between items-center"><a class="flex items-center gap-2" href="{{ path('homepage') }}">
-                <span class="font-display text-2xl font-bold text-workshop-brown">
-                    Warsztatownia
-                    <span class="text-workshop-red">S</span> <span class="text-workshop-green">e</span> <span class="text-workshop-yellow">n</span> <span class="text-workshop-blue">s</span> <span class="text-workshop-pink">o</span> <span class="text-workshop-red">r</span> <span class="text-workshop-green">y</span> <span class="text-workshop-yellow">c</span> <span class="text-workshop-blue">z</span> <span class="text-workshop-pink">n</span> <span class="text-workshop-red">a</span>
-                </span>
+        <div class="flex justify-between items-center">
+            {% set tenant = app.request.attributes.get('_tenant') ?? null %}
+            {% set isClassPay = tenant and tenant.name matches '/Skarbiec Mleczki/i' %}
+            <a class="flex items-center gap-2" href="{{ isClassPay ? path('cc_dashboard') : path('homepage') }}">
+                {% if isClassPay %}
+                    <span class="font-display text-2xl font-bold text-workshop-brown">skarbiec mleczki</span>
+                {% else %}
+                    <span class="font-display text-2xl font-bold text-workshop-brown">{{ tenant_name() ?? 'Warsztatownia Sensoryczna' }}</span>
+                {% endif %}
             </a>
             <nav class="hidden md:flex items-center gap-8">
-                <a
-                        class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
-                        href="{{ path('homepage') }}">{{ 'page.homepage'|trans }}</a>
-                <a
-                        class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
-                        href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a>
-                {% if app.user %}
-                    <a href="{{ path('dashboard') }}"
-                       class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
-                        {{ 'page.my_bookings'|trans }}</a>
-
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('app_admin_dashboard') }}"
-                           class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
-                            {{ 'page.admin_dashboard'|trans }}</a>
+                {# Tenant-aware menu: show ClassPay navigation when tenant name matches #}
+                {% set tenant = app.request.attributes.get('_tenant') ?? null %}
+                {% if tenant and tenant.name matches '/Skarbiec Mleczki/i' %}
+                    {% if app.user %}
+                        <a class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                           href="{{ path('cc_dashboard') }}">Panel</a>
+                        {% if cc_is_carer() %}
+                            <a class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                               href="{{ path('cc_students') }}">Uczniowie</a>
+                            <a class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                               href="{{ path('cc_link_parent') }}">Powiąż rodzica</a>
+                        {% endif %}
+                        {% if cc_is_treasurer() %}
+                            <span class="mx-2 text-muted-foreground">|</span>
+                            <a class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                               href="{{ path('cc_treasurer_overview') }}">Skarbnik</a>
+                            <a class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                               href="{{ path('cc_payment_templates') }}">Szablony</a>
+                            <a class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                               href="{{ path('cc_expenses') }}">Wydatki</a>
+                        {% endif %}
+                    {% else %}
+                        <a class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                           href="{{ path('app_login') }}">Zaloguj</a>
                     {% endif %}
-                    <a href="{{ path('profile') }}"
-                       class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
-                        {{ 'page.profile'|trans }}</a>
+                {% else %}
+                    <a
+                            class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                            href="{{ path('homepage') }}">{{ 'page.homepage'|trans }}</a>
+                    <a
+                            class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
+                            href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a>
+                    {% if app.user %}
+                        <a href="{{ path('dashboard') }}"
+                           class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
+                            {{ 'page.my_bookings'|trans }}</a>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_admin_dashboard') }}"
+                               class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
+                                {{ 'page.admin_dashboard'|trans }}</a>
+                        {% endif %}
+                        <a href="{{ path('profile') }}"
+                           class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
+                            {{ 'page.profile'|trans }}</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}"
+                           class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">{{ 'page.login'|trans }}</a>
+                        <a href="{{ path('user_register') }}"
+                           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90">
+                            {{ 'page.register'|trans }}
+                        </a>
+                    {% endif %}
+                {% endif %}
+                {# Auth actions common #}
+                {% if app.user %}
                     <a href="{{ path('app_logout') }}"
                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-workshop-red text-workshop-red hover:bg-workshop-red/10">
                         {{ 'page.logout'|trans }}
-                    </a>
-                {% else %}
-                    <a href="{{ path('app_login') }}"
-                       class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">{{ 'page.login'|trans }}</a>
-                    <a href="{{ path('user_register') }}"
-                       class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90">
-                        {{ 'page.register'|trans }}
                     </a>
                 {% endif %}
             </nav>

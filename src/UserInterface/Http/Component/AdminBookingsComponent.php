@@ -301,7 +301,8 @@ class AdminBookingsComponent extends AbstractController
     public function markAsPaid(string $bookingId): void
     {
         try {
-            $booking = $this->bookingRepository->find($bookingId);
+            $id = Ulid::fromString($bookingId);
+            $booking = $this->bookingRepository->find($id);
             if (! $booking) {
                 $this->errorMessage = 'Nie znaleziono rezerwacji';
                 return;

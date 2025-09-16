@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use Symfony\Component\Uid\Ulid;
 use App\Entity\Lesson;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -69,7 +70,8 @@ final class AdminLessonsComponent extends AbstractController
     #[LiveAction]
     public function toggleStatus(#[LiveArg] string $lessonId): void
     {
-        $lesson = $this->lessonRepository->find($lessonId);
+        $id = Ulid::fromString($lessonId);
+        $lesson = $this->lessonRepository->find($id);
         if (! $lesson) {
             return;
         }
