@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c372476a03c8fe9506a6a2b7533de87b",
+    "content-hash": "a84a414b35ceac3bf5690c05489afff1",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -13626,16 +13626,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.1.5",
+            "version": "2.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "1cd6abfb5976fd4ed728d5b73ebd67c7c810cd88"
+                "reference": "c34cc07c4698f007a20dc5c99ff820089ae413ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/1cd6abfb5976fd4ed728d5b73ebd67c7c810cd88",
-                "reference": "1cd6abfb5976fd4ed728d5b73ebd67c7c810cd88",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/c34cc07c4698f007a20dc5c99ff820089ae413ce",
+                "reference": "c34cc07c4698f007a20dc5c99ff820089ae413ce",
                 "shasum": ""
             },
             "require": {
@@ -13674,7 +13674,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.1.5"
+                "source": "https://github.com/rectorphp/rector/tree/2.1.7"
             },
             "funding": [
                 {
@@ -13682,7 +13682,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-04T14:19:07+00:00"
+            "time": "2025-09-10T11:13:58+00:00"
         },
         {
             "name": "roave/security-advisories",
