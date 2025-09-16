@@ -31,12 +31,6 @@ final readonly class TenantRequestSubscriber
         if ($tenant !== null) {
             $request->attributes->set('_tenant', $tenant);
             $request->attributes->set('_tenant_id', (string) $tenant->getId());
-            return;
-        }
-
-        // Enforce tenant presence in non-dev/test environments
-        if (! in_array($this->environment, ['dev', 'test'], true)) {
-            throw new NotFoundHttpException();
         }
     }
 }
