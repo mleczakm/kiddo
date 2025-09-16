@@ -29,7 +29,7 @@
         "phpdocumentor/reflection-docblock": "^5.6.3",
         "phpstan/phpdoc-parser": "^2.3",
         "scienta/doctrine-json-functions": "^6.3",
-        "sentry/sentry-symfony": "^5.3.1",
+        "sentry/sentry-symfony": "^5.5.0",
         "swoole-bundle/resetter-bundle": "^1.1",
         "swoole-bundle/swoole-bundle": "dev-master#211a324e8921dfaf9e46d0e0181a5d529d1f744c as 0.24.1",
         "symfony/asset": "7.3.*",
