@@ -179,7 +179,7 @@
         "dama/doctrine-test-bundle": "^8.3.1",
         "kodus/mock-cache": "^2.1",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.1.26",
+        "phpstan/phpstan": "^2.1.27",
         "phpstan/phpstan-doctrine": "^2.0.6",
         "phpstan/phpstan-symfony": "^2.0.8",
         "phpunit/phpunit": "^11.5.39",
