@@ -193,7 +193,7 @@
         "symfony/phpunit-bridge": "^7.3.3",
         "symfony/stopwatch": "7.3.*",
         "symfony/web-profiler-bundle": "7.3.*",
-        "symplify/easy-coding-standard": "^12.5.24",
+        "symplify/easy-coding-standard": "^12.6.0",
         "zenstruck/foundry": "^2.6.3",
         "zenstruck/mailer-test": "^1.4.2",
         "zenstruck/messenger-test": "^1.11"
