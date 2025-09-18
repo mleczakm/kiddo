@@ -67,8 +67,7 @@
                             <input type="text"
                                    class="w-full px-3 py-2 border border-input rounded-md bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                                    placeholder="Search users by name or email..."
-                                   data-model="live#userSearch"
-                                   data-action="input->live#update"
+                                   data-model="userSearch"
                                    value="{{ userSearch }}"/>
 
                             <!-- User Search Results Dropdown -->
@@ -142,8 +141,7 @@
                         <input type="text"
                                class="w-full px-3 py-2 border border-input rounded-md bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                                placeholder="Search lessons..."
-                               data-model="live#lessonSearch"
-                               data-action="input->live#update"
+                               data-model="lessonSearch"
                                value="{{ lessonSearch }}"/>
 
                         <!-- Lesson Search Results Dropdown -->
@@ -184,8 +182,7 @@
                         Booking Type
                     </label>
                     <select class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            data-model="live#bookingType"
-                            data-action="change->live#update">
+                            data-model="bookingType">
                         {% for value, label in this.bookingTypeOptions %}
                             <option value="{{ value }}" {% if bookingType == value %}selected{% endif %}>
                                 {{ label }}
@@ -204,8 +201,7 @@
                                step="0.01"
                                class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                                placeholder="0.00"
-                               data-model="live#amount"
-                               data-action="input->live#update"
+                               data-model="amount"
                                value="{{ amount }}"/>
                     </div>
                     <div>
@@ -213,8 +209,7 @@
                             Payment Method
                         </label>
                         <select class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                data-model="live#paymentMethod"
-                                data-action="change->live#update">
+                                data-model="paymentMethod">
                             {% for value, label in this.paymentMethodOptions %}
                                 <option value="{{ value }}" {% if paymentMethod == value %}selected{% endif %}>
                                     {{ label }}
@@ -232,8 +227,7 @@
                     <textarea
                             class="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-h-[80px] resize-y"
                             placeholder="Add any additional notes..."
-                            data-model="live#notes"
-                            data-action="input->live#update">{{ notes }}</textarea>
+                            data-model="notes">{{ notes }}</textarea>
                 </div>
 
                 <!-- Error/Success Messages -->

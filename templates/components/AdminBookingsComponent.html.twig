@@ -65,10 +65,10 @@
             <div class="mb-6 p-4 border rounded-md bg-background">
                 <h3 class="text-lg font-medium mb-4">{{ 'admin_dashboard.bookings.manual.add_title'|trans }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="text" placeholder="{{ 'admin_dashboard.bookings.manual.customer_name_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerName }}" data-model="customerName" data-action="live#update" />
-                    <input type="email" placeholder="{{ 'admin_dashboard.bookings.manual.customer_email_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerEmail }}" data-model="customerEmail" data-action="live#update" />
-                    <input type="number" step="0.01" placeholder="{{ 'admin_dashboard.bookings.manual.amount_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.amount }}" data-model="amount" data-action="live#update" />
-                    <select class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-model="paymentMethod" data-action="live#update">
+                    <input type="text" placeholder="{{ 'admin_dashboard.bookings.manual.customer_name_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerName }}" data-model="customerName" />
+                    <input type="email" placeholder="{{ 'admin_dashboard.bookings.manual.customer_email_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerEmail }}" data-model="customerEmail" />
+                    <input type="number" step="0.01" placeholder="{{ 'admin_dashboard.bookings.manual.amount_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.amount }}" data-model="amount" />
+                    <select class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-model="paymentMethod">
                         <option value="">{{ 'admin_dashboard.bookings.manual.select_payment_method'|trans }}</option>
                         <option value="transfer">{{ 'admin_dashboard.bookings.manual.payment.transfer'|trans }}</option>
                         <option value="cash">{{ 'admin_dashboard.bookings.manual.payment.cash'|trans }}</option>
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <textarea placeholder="{{ 'admin_dashboard.bookings.manual.notes_placeholder'|trans }}" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" rows="3" data-model="notes" data-action="live#update">{{ this.notes }}</textarea>
+                    <textarea placeholder="{{ 'admin_dashboard.bookings.manual.notes_placeholder'|trans }}" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" rows="3" data-model="notes">{{ this.notes }}</textarea>
                 </div>
 
                 <div class="mb-4">
@@ -85,7 +85,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {% for lesson in this.getAvailableLessons() %}
                             <label class="inline-flex items-center gap-2">
-                                <input type="checkbox" value="{{ lesson.id }}" data-action="live#update" data-model="selectedLessonIds" />
+                                <input type="checkbox" value="{{ lesson.id }}" data-model="selectedLessonIds" />
                                 <span>{{ lesson.metadata.title }}</span>
                             </label>
                         {% else %}
@@ -109,8 +109,7 @@
                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                         value="{{ this.search }}"
                         data-model="search"
-                        data-action="live#update"
-                    />
+                                            />
                 </div>
 
                 <div class="flex gap-2">

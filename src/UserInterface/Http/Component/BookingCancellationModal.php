@@ -96,6 +96,15 @@ class BookingCancellationModal extends AbstractController
     }
 
     #[LiveAction]
+    public function openWithOption(#[LiveArg('option')] string $option): void
+    {
+        if (in_array($option, self::CANCELLATION_TYPES, true)) {
+            $this->selectedOption = $option;
+        }
+        $this->modalOpened = true;
+    }
+
+    #[LiveAction]
     public function closeModal(): void
     {
         $this->modalOpened = false;
