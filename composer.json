@@ -194,7 +194,7 @@
         "symfony/stopwatch": "7.3.*",
         "symfony/web-profiler-bundle": "7.3.*",
         "symplify/easy-coding-standard": "^12.6.0",
-        "zenstruck/foundry": "^2.6.3",
+        "zenstruck/foundry": "^2.7.0",
         "zenstruck/mailer-test": "^1.4.2",
         "zenstruck/messenger-test": "^1.11"
     }
