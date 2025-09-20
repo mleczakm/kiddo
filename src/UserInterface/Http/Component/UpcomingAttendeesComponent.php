@@ -78,10 +78,22 @@ final class UpcomingAttendeesComponent extends AbstractController
 
     public function __construct(
         private readonly LessonRepository $lessonRepository,
-        private readonly UserRepository $userRepository,
-        private readonly BookingRepository $bookingRepository,
         private readonly EntityManagerInterface $entityManager,
+        private ?UserRepository $userRepository = null,
+        private ?BookingRepository $bookingRepository = null,
     ) {
+        // Backward compatibility for tests that pass only (LessonRepository, EntityManagerInterface)
+        // or when repositories are not explicitly provided.
+        if ($this->userRepository === null) {
+            /** @var UserRepository $userRepo */
+            $userRepo = $this->entityManager->getRepository(User::class);
+            $this->userRepository = $userRepo;
+        }
+        if ($this->bookingRepository === null) {
+            /** @var BookingRepository $bookingRepo */
+            $bookingRepo = $this->entityManager->getRepository(Booking::class);
+            $this->bookingRepository = $bookingRepo;
+        }
         $this->week = Clock::get()->now()->format('Y-m-d');
     }
 
@@ -261,7 +273,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             $this->entityManager->persist($user);
         } else {
             // ensure name present/updated for convenience
-            if ($user->getName() !== $this->customerName && $this->customerName !== '') {
+            if ($user->getName() !== $this->customerName) {
                 $user->setName($this->customerName);
             }
         }
@@ -335,7 +347,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         }
 
         // Determine amount from lesson default ticket option
-        $amount = $lesson->defaultTicketOption()?->price ?? Money::of(0, 'PLN');
+        $amount = $lesson->defaultTicketOption()->price ?? Money::of(0, 'PLN');
 
         // Ensure booking has a Payment
         $payment = $booking->payment;
