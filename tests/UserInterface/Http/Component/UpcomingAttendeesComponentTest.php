@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Repository\BookingRepository;
+use App\Repository\UserRepository;
 use PHPUnit\Framework\Attributes\Group;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\AgeRange;
@@ -27,12 +29,23 @@ class UpcomingAttendeesComponentTest extends TestCase
 
     private UpcomingAttendeesComponent $component;
 
+    private UserRepository&MockObject $userRepository;
+
+    private BookingRepository&MockObject $bookingRepository;
+
     protected function setUp(): void
     {
         $this->lessonRepository = $this->createMock(LessonRepository::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->userRepository = $this->createMock(UserRepository::class);
+        $this->bookingRepository = $this->createMock(BookingRepository::class);
 
-        $this->component = new UpcomingAttendeesComponent($this->lessonRepository, $this->entityManager);
+        $this->component = new UpcomingAttendeesComponent(
+            $this->lessonRepository,
+            $this->entityManager,
+            $this->userRepository,
+            $this->bookingRepository,
+        );
     }
 
     public function testDefaultWeekIsCurrentDate(): void
@@ -41,9 +54,12 @@ class UpcomingAttendeesComponentTest extends TestCase
         $mockClock = new MockClock('2024-01-15 10:00:00');
         Clock::set($mockClock);
 
-        $component = new UpcomingAttendeesComponent($this->lessonRepository, $this->entityManager);
-
-        $this->assertEquals('2024-01-15', $component->week);
+        $this->assertEquals('2024-01-15', new UpcomingAttendeesComponent(
+            $this->lessonRepository,
+            $this->entityManager,
+            $this->userRepository,
+            $this->bookingRepository,
+        )->week);
     }
 
     public function testGetLessonsCallsRepositoryWithCorrectDateRange(): void
