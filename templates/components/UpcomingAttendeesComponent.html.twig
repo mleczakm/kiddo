@@ -88,7 +88,7 @@
                                 </h4>
                                 <p class="text-sm text-muted-foreground">
                                     {{ lesson.metadata.schedule|format_datetime('medium', 'short') }} •
-                                    {% set activeBookings = lesson.bookings|filter(b => b.active and b.lessonsMap.active.hasKey(lesson.id)) %}
+                                    {% set activeBookings = lesson.bookings|filter(b => b.active and (b.lessonsMap.active.hasKey(lesson.id) or b.lessonsMap.past.hasKey(lesson.id))) %}
                                     {{ activeBookings|length }}
                                     /{{ lesson.metadata.capacity }} {{ 'admin_dashboard.capacity'|trans }}
                                 </p>
@@ -140,7 +140,7 @@
                         </div>
 
                         <div class="space-y-2">
-                            {% set activeBookings = this.showCancelled ? lesson.bookings : lesson.bookings|filter(b => b.active and (b.lessonsMap.active.hasKey(lesson.id) or b.lessonsMap.past.hasKey(lesson.id)) %}
+                            {% set activeBookings = this.showCancelled ? lesson.bookings : lesson.bookings|filter(b => b.active and (b.lessonsMap.active.hasKey(lesson.id) or b.lessonsMap.past.hasKey(lesson.id))) %}
                             {% if activeBookings is not empty %}
                                 {% for booking in activeBookings %}
                                     <div class="flex items-center justify-between p-2 border rounded">
