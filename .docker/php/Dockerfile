@@ -7,7 +7,7 @@ EXPOSE 9501
 CMD bin/console swoole:server:run
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions apcu @composer intl ds opcache pcntl pdo_pgsql sysvsem swoole xsl
+    install-php-extensions apcu intl ds opcache pcntl pdo_pgsql sysvsem swoole xsl
 
 COPY .docker/php/ini/zz-php.ini /usr/local/etc/php/conf.d/zz-php.ini
 
@@ -16,7 +16,7 @@ FROM base AS dev-local
 ENV APP_ENV=dev
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions pcov xdebug
+    install-php-extensions @composer pcov xdebug
 
 FROM dev-local AS dev
 
@@ -47,7 +47,8 @@ HEALTHCHECK --start-period=5s --interval=5s --timeout=1s --retries=3 CMD curl -s
 
 COPY composer.json composer.lock ./
 
-RUN composer install --prefer-dist --no-scripts --no-interaction --no-progress --no-cache --optimize-autoloader --no-dev
+RUN --mount=type=bind,from=composer/composer:2-bin,source=/composer,target=/usr/bin/composer \
+    composer install --prefer-dist --no-scripts --no-interaction --no-progress --no-cache --optimize-autoloader --no-dev
 
 COPY assets/ assets/
 COPY bin/ bin/
