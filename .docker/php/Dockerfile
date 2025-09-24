@@ -61,8 +61,7 @@ COPY templates/ templates/
 COPY translations/ translations/
 COPY .env .env.prod importmap.php ./
 
-RUN --mount=type=bind,from=d3fk/tailwindcss:latest,source=/tailwindcss,target=/usr/bin/tailwindcss \
-    && bin/console cache:warmup  \
+RUN bin/console cache:warmup  \
     && bin/console tailwind:build --minify  \
     && bin/console importmap:install \
     && bin/console asset-map:compile \
