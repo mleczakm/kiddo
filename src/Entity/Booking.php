@@ -290,7 +290,7 @@ class Booking
         }
 
         return $this->getLessonsMap()
-            ->areAllActiveLessonsInPast($this);
+            ->areAllLessonsInPast($this);
     }
 
     /**

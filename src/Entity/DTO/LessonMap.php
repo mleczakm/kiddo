@@ -245,10 +245,10 @@ class LessonMap implements \Countable
         return $this->active->count() > 0;
     }
 
-    public function areAllActiveLessonsInPast(Booking $booking): bool
+    public function areAllLessonsInPast(Booking $booking): bool
     {
         $now = Clock::get()->now();
-        foreach ($this->active as $bookedLesson) {
+        foreach ($this->lessons as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
             if ($lesson && $lesson->getMetadata()->schedule > $now) {
                 return false;
@@ -298,7 +298,13 @@ class LessonMap implements \Countable
      */
     public function getRescheduled(): array
     {
-        return []; // Not implemented yet
+        $result = [];
+        foreach ($this->cancelled as $booked) {
+            if ($booked instanceof RescheduledLesson) {
+                $result[] = $booked;
+            }
+        }
+        return $result;
     }
 
     /**

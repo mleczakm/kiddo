@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Scheduler;
 
+use App\Application\Command\CheckBookingsToMarkPast;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Command\CheckExpiredPayments;
 use App\Application\Command\ImportTransfersFromMail;
@@ -30,7 +31,8 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 RecurringMessage::every('60 minutes', new CheckExpiredBookings()),
                 RecurringMessage::every(30, new ImportTransfersFromMail()),
                 RecurringMessage::cron('0 7 * * *', new DailyLessonsReminder(), new \DateTimeZone('Europe/Warsaw')),
-                RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers())
+                RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers()),
+                RecurringMessage::cron('5 * * * *', new CheckBookingsToMarkPast()),
             );
     }
 }
