@@ -34,4 +34,19 @@ class BookingRepository extends ServiceEntityRepository
 
         return $bookings;
     }
+
+    /**
+     * @return array<Booking>
+     */
+    public function findActiveBookings(): array
+    {
+        /** @var array<Booking> $bookings */
+        $bookings = $this->createQueryBuilder('b')
+            ->where('b.status = :status')
+            ->setParameter('status', Booking::STATUS_ACTIVE)
+            ->getQuery()
+            ->getResult();
+
+        return $bookings;
+    }
 }
