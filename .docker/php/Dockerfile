@@ -7,7 +7,7 @@ EXPOSE 9501
 CMD bin/console swoole:server:run
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions apcu intl ds opcache pcntl pdo_pgsql sysvsem swoole xsl
+    install-php-extensions apcu intl ds pcntl pdo_pgsql sysvsem swoole xsl
 
 COPY .docker/php/ini/zz-php.ini /usr/local/etc/php/conf.d/zz-php.ini
 
@@ -43,6 +43,12 @@ RUN bin/console cache:warmup \
     && rm -rf var/tailwind
 
 FROM base AS prod
+
+ARG APP_VERSION
+ARG APP_REVISION
+
+ENV APP_VERSION=${APP_VERSION}
+ENV APP_REVISION=${APP_REVISION}
 
 HEALTHCHECK --start-period=5s --interval=5s --timeout=1s --retries=3 CMD curl -sS localhost:9501/health || exit 1
 

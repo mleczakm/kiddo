@@ -12,20 +12,6 @@ env:
 
 jobs:
   build-and-qa:
-    services:
-      db:
-        image: postgres:15
-        env:
-          POSTGRES_DB: app_test
-          POSTGRES_USER: app
-          POSTGRES_PASSWORD: "!ChangeMe!"
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U app -d app_test"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     runs-on: ubuntu-latest
 
     permissions:
@@ -33,6 +19,9 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+
+    env:
+      APP_VERSION: "$(date +'%Y-%m-%d-%H%M')"
 
     steps:
       # Checkout repo
@@ -81,7 +70,7 @@ jobs:
       - name: Run Tests
         run: docker run --rm --network $NETWORK_NAME ${{ steps.meta.outputs.tags }} composer tests
         env:
-          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
+          DATABASE_URL: "sqlite:///%kernel.project_dir%/var/app_test.db"
 
       - name: Extract production metadata
         if: success()
@@ -105,6 +94,7 @@ jobs:
           target: prod
           push: true
           tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$APP_VERSION
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
@@ -113,6 +103,9 @@ jobs:
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
+          build-args: |
+            APP_VERSION=${{ env.APP_VERSION }}
+            APP_REVISION=${{ github.sha }}
 
       # Output the image digest for the deployment workflow
       - name: Output image digest
@@ -120,6 +113,6 @@ jobs:
         id: image-digest
         run: |
           # Get the full image reference with digest
-          IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
+          IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}"
           echo "image_digest=$IMAGE_REF" >> $GITHUB_OUTPUT
           echo "Image reference: $IMAGE_REF"
