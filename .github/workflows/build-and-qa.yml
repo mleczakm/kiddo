@@ -12,6 +12,20 @@ env:
 
 jobs:
   build-and-qa:
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_DB: app_test
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: "!ChangeMe!"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     runs-on: ubuntu-latest
 
     permissions:
@@ -70,7 +84,7 @@ jobs:
       - name: Run Tests
         run: docker run --rm --network $NETWORK_NAME ${{ steps.meta.outputs.tags }} composer tests
         env:
-          DATABASE_URL: "sqlite:///%kernel.project_dir%/var/app_test.db"
+          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
 
       - name: Extract production metadata
         if: success()
@@ -94,7 +108,7 @@ jobs:
           target: prod
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$APP_VERSION
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
