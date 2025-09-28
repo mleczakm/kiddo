@@ -12,6 +12,8 @@ env:
 
 jobs:
   build-and-qa:
+    outputs:
+      image_digest: ${{ steps.image-digest.outputs.image_digest }}
     services:
       db:
         image: postgres:15
@@ -33,9 +35,6 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-
-    env:
-      APP_VERSION: "$(date +'%Y-%m-%d-%H%M')"
 
     steps:
       # Checkout repo
@@ -97,6 +96,10 @@ jobs:
             type=ref,event=tag
             type=sha,format=long
 
+      - name: Generate version
+        id: version
+        run: echo "APP_VERSION=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+
       # Build and push production image if QA passes (only on push to main)
       - name: Build and push production image
         if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
@@ -108,7 +111,7 @@ jobs:
           target: prod
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.APP_VERSION }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
@@ -118,7 +121,7 @@ jobs:
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
           build-args: |
-            APP_VERSION=${{ env.APP_VERSION }}
+            APP_VERSION=${{ steps.version.outputs.APP_VERSION }}
             APP_REVISION=${{ github.sha }}
 
       # Output the image digest for the deployment workflow
@@ -127,6 +130,5 @@ jobs:
         id: image-digest
         run: |
           # Get the full image reference with digest
-          IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}"
-          echo "image_digest=$IMAGE_REF" >> $GITHUB_OUTPUT
+          echo "image_digest={{ steps.build-prod.outputs.digest }}" >> $GITHUB_OUTPUT
           echo "Image reference: $IMAGE_REF"
