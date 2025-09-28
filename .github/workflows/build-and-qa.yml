@@ -17,8 +17,6 @@ permissions:
 
 jobs:
   build-and-qa:
-    outputs:
-      image_digest: ${{ steps.image-digest.outputs.image_digest }}
     services:
       db:
         image: postgres:15
@@ -35,16 +33,12 @@ jobs:
           --health-retries 5
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
-
     steps:
       # Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -107,11 +101,11 @@ jobs:
           export TZ="Europe/Warsaw"
           echo "APP_VERSION=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
 
-      # Build and push production image if QA passes (only on push to main)
-      - name: Build and push production image
+      - name: Tag new release
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git tag ${{ steps.version.outputs.APP_VERSION }}
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin ${{ steps.version.outputs.APP_VERSION }}
