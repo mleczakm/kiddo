@@ -104,8 +104,9 @@ jobs:
 
       # Build and push production image if QA passes (only on push to main)
       - name: Build and push production image
-        uses: actions-ecosystem/action-push-tag@v1
-        if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/master')
-        with:
-          tag:
-            ${{ steps.version.outputs.APP_VERSION }}
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git tag ${{ steps.version.outputs.APP_VERSION }}
+          git push origin ${{ steps.version.outputs.APP_VERSION }}
