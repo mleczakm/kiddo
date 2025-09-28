@@ -1,38 +1,49 @@
-name: Deploy to Production
+name: Production Build & Deploy
 
 on:
-  workflow_run:
-    workflows: ["Build and QA"]
-    types: [completed]
-    branches: [master]
+  push:
+    tags:
+      - '*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  deploy:
+  build-and-deploy:
     environment: production
-    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    
-    outputs:
-      image_digest: ${{ steps.image-ref.outputs.image_digest }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Get image reference
-        id: image-ref
-        run: |
-          # Get the image reference from the build job or use latest tag
-          if [ -n "${{ needs.build-and-qa.outputs.image_digest }}" ]; then
-            IMAGE_REF="${{ needs.build-and-qa.outputs.image_digest }}"
-            echo "Using image digest from build job: $IMAGE_REF"
-          else
-            IMAGE_REF="ghcr.io/${{ github.repository }}:latest"
-            echo "Warning: Could not get image digest from build job, falling back to latest tag: $IMAGE_REF"
-          fi
-          
-          # Set the output
-          echo "image_digest=$IMAGE_REF" >> $GITHUB_OUTPUT
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push production image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .docker/php/Dockerfile
+          target: prod
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
+          build-args: |
+            APP_VERSION=${{ github.ref_name }}
+            APP_REVISION=${{ github.sha }}
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
@@ -42,10 +53,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /opt/projects/hosting/
-            
-            # Get the image reference from previous step
-            IMAGE_REF="${{ steps.image-ref.outputs.image_digest }}"
+            IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}"
             
             # Update .env file with the new image reference
             echo "Updating .env file with new image reference..."
