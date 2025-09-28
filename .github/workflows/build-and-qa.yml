@@ -98,7 +98,9 @@ jobs:
 
       - name: Generate version
         id: version
-        run: echo "APP_VERSION=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+        run: |
+          export TZ="Europe/Warsaw"
+          echo "APP_VERSION=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
 
       # Build and push production image if QA passes (only on push to main)
       - name: Build and push production image
