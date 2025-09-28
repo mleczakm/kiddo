@@ -129,6 +129,7 @@ jobs:
         if: success()
         id: image-digest
         run: |
-          # Get the full image reference with digest
-          echo "image_digest={{ steps.build-prod.outputs.digest }}" >> $GITHUB_OUTPUT
+          DIGEST="${{ steps.build-prod.outputs.digest }}"
+          IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${DIGEST}"
+          echo "image_digest=$IMAGE_REF" >> $GITHUB_OUTPUT
           echo "Image reference: $IMAGE_REF"
