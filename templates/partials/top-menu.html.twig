@@ -3,7 +3,8 @@
         <div class="flex justify-between items-center">
             {% set tenant = app.request.attributes.get('_tenant') ?? null %}
             {% set isClassPay = tenant and tenant.name matches '/Skarbiec Mleczki/i' %}
-            <a class="flex items-center gap-2" href="{{ isClassPay ? path('cc_dashboard') : path('homepage') }}">
+            <a class="flex items-center gap-2" href="{{ isClassPay ? path('cc_dashboard') : path('homepage') }}"
+               title="{{ 'last_update'|trans }}{{ last_release()|format_date(pattern: 'HH:mm, dd MMM') }}">
                 {% if isClassPay %}
                     <span class="font-display text-2xl font-bold text-workshop-brown">skarbiec mleczki</span>
                 {% else %}

@@ -136,7 +136,7 @@ lesson:
         Sunday   {Każda niedziela, o {hour}}
         other    {}
     }
-    
+
   once: >-
     {day, select,
         Monday   {Poniedziałek {date}, o {hour}}
@@ -250,7 +250,7 @@ lesson:
       many {# miejsc dostępnych}
       other {# miejsc dostępnych}
     }
-    
+
   age: Wiek
   search: Szukaj warsztatów...
 
@@ -609,7 +609,7 @@ payment:
   booked: "Utworzono: {date}"
   status_pending: "Oczekująca"
 
-  
+
 action:
   cancel: "Anuluj"
   confirm_and_merge: "Potwierdź i przypisz"
@@ -619,4 +619,4 @@ ticket:
   reschedule:
     unlimited_24h: Możliwość <b>wielokrotnego</b> przełożenia zajęć do 24h przed rozpoczęciem
     onetime_24h: Możliwość <b>jednorazowego</b> przełożenia zajęć do 24h przed rozpoczęciem
-
+last_update: "Ostatnia aktualizacja: "
