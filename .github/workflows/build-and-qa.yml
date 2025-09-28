@@ -10,6 +10,11 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
 jobs:
   build-and-qa:
     outputs:
