@@ -117,6 +117,17 @@
                     </svg>
                     {{ 'notifications.profile_settings'|trans }}
                 </a>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown"
+                       href="{{ path('app_admin_dashboard') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        {{ 'notifications.admin_panel'|trans }}
+                    </a>
+                {% endif %}
                 {% if is_granted('IS_IMPERSONATOR') %}
                     <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-green-50 text-green-700"
                        href="{{ path('homepage', {'_switch_user': '_exit'}) }}" data-turbo="false">
@@ -141,8 +152,8 @@
                             </svg>
                             {{ 'notifications.impersonate'|trans }}
                         </summary>
-                        <div class="mt-2" >
-                            <input id="impersonate-inputsdfsdfsdfsdf" type="text" class="w-full rounded border px-2 py-1 text-sm"
+                        <div class="mt-2">
+                            <input id="impersonate-input" type="text" class="w-full rounded border px-2 py-1 text-sm"
                                    placeholder="{{ 'notifications.impersonate_placeholder'|trans }}" autocomplete="off"
                                    data-model="query" data-action="input->live#action" data-live-action-param="suggest">
                             {% if this.suggestions is not empty %}
