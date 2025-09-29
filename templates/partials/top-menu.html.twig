@@ -46,7 +46,7 @@
                             href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a>
                     {% if app.user %}
                         <div class="relative">
-                            {{ include('components/notification/button.html.twig') }}
+                            {{ component('NotificationTrayLiveComponent') }}
                         </div>
                     {% else %}
                         <a href="{{ path('app_login') }}"

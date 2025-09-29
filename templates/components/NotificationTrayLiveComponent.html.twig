@@ -1,0 +1,178 @@
+<div {{ attributes }}>
+    {% set initials = (app.user and app.user.name is defined and app.user.name ? app.user.name : app.user.email)|split(' ')|map(v => v|first)|join('')|slice(0,2)|upper %}
+    <details id="notif-details" class="relative">
+        <summary id="notif-btn" class="list-none cursor-pointer">
+            <div class="relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground">
+                <span class="font-medium">{{ initials ?: 'ME' }}</span>
+                {# Unread badge from live getter #}
+                {% set c = this.getUnreadCount() %}
+                <span id="notif-badge"
+                      class="absolute -top-1 -right-1 {{ c>0 ? '' : 'hidden' }} min-w-5 h-5 px-1 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">{{ c>9 ? '9+' : (c>0 ? c : '') }}</span>
+            </div>
+        </summary>
+
+        <div id="notif-tray" class="absolute right-0 mt-2 w-80 bg-white border rounded-md shadow-lg z-50">
+            <div class="px-3 py-2 text-sm font-medium text-muted-foreground border-b flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                </svg>
+                {{ 'notifications.title'|trans }}
+            </div>
+
+            <div id="notif-list" class="max-h-64 overflow-y-auto p-2 space-y-1">
+                {% set items = this.getItems() %}
+                {% if items is empty %}
+                    <div class="text-sm text-muted-foreground p-3">{{ 'notifications.empty'|trans }}</div>
+                {% else %}
+                    {% for n in items %}
+                        {% set sev = n.severity.value ?? 'info' %}
+                        {% set color = sev == 'success' ? 'text-green-600' : (sev == 'warning' ? 'text-yellow-600' : (sev == 'error' ? 'text-red-600' : 'text-blue-600')) %}
+                        <div class="p-2 rounded-md transition-colors hover:bg-muted/50 flex items-start gap-2"
+                             data-id="{{ n.id }}" data-severity="{{ sev }}">
+                            <div class="mt-0.5 {{ color }}">
+                                {% if sev == 'success' %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M21.801 10A10 10 0 1 1 17 3.335"/>
+                                        <path d="m9 11 3 3L22 4"/>
+                                    </svg>
+                                {% elseif sev == 'warning' %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                        <line x1="12" y1="9" x2="12" y2="13"/>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                    </svg>
+                                {% elseif sev == 'error' %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <polygon
+                                                points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
+                                        <line x1="15" y1="9" x2="9" y2="15"/>
+                                        <line x1="9" y1="9" x2="15" y2="15"/>
+                                    </svg>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="16" x2="12" y2="12"/>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <div class="flex-1">
+                                {% if n.url %}
+                                    <a href="{{ n.url }}" class="block text-sm font-medium text-workshop-brown"
+                                       data-action="click->live#action" data-live-action-param="markRead"
+                                       data-live-action-param-id="{{ n.id }}">{{ n.title }}</a>
+                                {% else %}
+                                    <div class="block text-sm font-medium text-workshop-brown">{{ n.title }}</div>
+                                {% endif %}
+                                {% if n.body %}
+                                    <div class="text-sm text-muted-foreground">{{ n.body }}</div>
+                                {% endif %}
+                                <div class="text-xs text-muted-foreground mt-1">{{ n.createdAt|format_datetime(pattern: 'dd MMM, HH:mm') }}</div>
+                            </div>
+                            <button class="text-muted-foreground hover:text-red-600"
+                                    title="{{ 'notifications.dismiss'|trans }}" data-action="live#action"
+                                    data-live-action-param="delete" data-live-action-param-id="{{ n.id }}">×
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="border-t px-3 py-2 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">{{ initials ?: 'ME' }}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium text-workshop-brown truncate">{{ app.user.name ?? app.user.email }}</div>
+                    <div class="text-xs text-muted-foreground truncate">{{ app.user.email }}</div>
+                </div>
+            </div>
+
+            <div class="border-t p-1 text-sm">
+                <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown"
+                   href="{{ path('dashboard') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3h7v7H3z"/>
+                        <path d="M14 3h7v7h-7z"/>
+                        <path d="M14 14h7v7h-7z"/>
+                        <path d="M3 14h7v7H3z"/>
+                    </svg>
+                    {{ 'notifications.my_bookings'|trans }}
+                </a>
+                <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown"
+                   href="{{ path('profile') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    {{ 'notifications.profile_settings'|trans }}
+                </a>
+                {% if is_granted('IS_IMPERSONATOR') %}
+                    <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-green-50 text-green-700"
+                       href="{{ path('homepage', {'_switch_user': '_exit'}) }}" data-turbo="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 3 21 3 21 9"/>
+                            <path d="M10 14 21 3"/>
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4"/>
+                        </svg>
+                        {{ 'notifications.stop_impersonation'|trans }}
+                    </a>
+                {% elseif is_granted('ROLE_ADMIN') %}
+                    <details class="mt-1">
+                        <summary
+                                class="list-none cursor-pointer w-full flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 relative top-px"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 9s3-4 10-4 10 4 10 4-3 4-10 4S2 9 2 9Z"/>
+                                <path d="M8 10h.01"/>
+                                <path d="M16 10h.01"/>
+                            </svg>
+                            {{ 'notifications.impersonate'|trans }}
+                        </summary>
+                        <div class="mt-2" >
+                            <input id="impersonate-inputsdfsdfsdfsdf" type="text" class="w-full rounded border px-2 py-1 text-sm"
+                                   placeholder="{{ 'notifications.impersonate_placeholder'|trans }}" autocomplete="off"
+                                   data-model="query" data-action="input->live#action" data-live-action-param="suggest">
+                            {% if this.suggestions is not empty %}
+                                <div id="impersonate-suggestions"
+                                     class="mt-1 max-h-56 overflow-auto rounded border bg-white shadow">
+                                    {% for s in this.suggestions %}
+                                        <a href="{{ path('dashboard', {'_switch_user': s.email}) }}"
+                                           class="block w-full text-left px-3 py-2 hover:bg-muted/50"
+                                           data-turbo="false">
+                                            <div class="font-medium text-workshop-brown">{{ s.name ?? s.email }}</div>
+                                            <div class="text-xs text-muted-foreground">{{ s.email }}</div>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </details>
+                {% endif %}
+
+                <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-red-50 text-red-600"
+                   href="{{ path('app_logout') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    {{ 'notifications.logout'|trans }}
+                </a>
+            </div>
+        </div>
+    </details>
+</div>
