@@ -7,9 +7,11 @@ namespace App\UserInterface\Http\Component;
 use App\Entity\User;
 use App\Entity\Notification;
 use App\Repository\NotificationRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -20,6 +22,7 @@ final class NotificationTrayComponent extends AbstractController
     public function __construct(
         private readonly NotificationRepository $notifications,
         private readonly EntityManagerInterface $em,
+        private readonly UserRepository $users,
     ) {}
 
     #[Route('/u/notifications/tray', name: 'notifications_tray', methods: ['GET'])]
@@ -75,5 +78,21 @@ final class NotificationTrayComponent extends AbstractController
             $this->em->flush();
         }
         return new Response(status: Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/u/impersonation/suggest', name: 'impersonation_suggest', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function suggest(Request $request): JsonResponse
+    {
+        $q = trim((string) $request->query->get('q', ''));
+        if ($q === '' || mb_strlen($q) < 2) {
+            return $this->json([]);
+        }
+        $results = $this->users->findAllMatching($q);
+        $results = array_slice($results, 0, 10);
+        return $this->json(array_map(static fn(User $u) => [
+            'email' => $u->getUserIdentifier(),
+            'name' => $u->getName(),
+        ], $results));
     }
 }

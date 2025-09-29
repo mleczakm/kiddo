@@ -30,7 +30,8 @@ security:
             # https://symfony.com/doc/current/security.html#the-firewall
 
             # https://symfony.com/doc/current/security/impersonating_user.html
-            switch_user: true
+            switch_user:
+                role: 'ROLE_ADMIN'
 
             remember_me:
                 lifetime: 31536000

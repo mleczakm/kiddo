@@ -34,14 +34,6 @@ async function loadTray(){
   if(res.ok){ list.innerHTML = await res.text(); attachItemHandlers(); }
 }
 
-function toggleTray(){
-  const tray = $('#notif-tray');
-  if(!tray) return;
-  const isHidden = tray.classList.contains('hidden');
-  document.querySelectorAll('#notif-tray').forEach(el=>el.classList.add('hidden'));
-  if(isHidden){ tray.classList.remove('hidden'); loadTray(); }
-}
-
 function attachItemHandlers(){
   document.querySelectorAll('#notif-list .notif-item').forEach(a=>{
     a.addEventListener('click', async (e)=>{
@@ -63,14 +55,68 @@ function attachItemHandlers(){
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  const btn = $('#notif-btn');
-  if(btn){
-    btn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleTray(); });
-    document.addEventListener('click', (e)=>{
-      const tray = $('#notif-tray');
-      if(tray && !tray.contains(e.target) && e.target!==btn){ tray.classList.add('hidden'); }
-    });
+  const details = document.getElementById('notif-details');
+  if(details){
+    details.addEventListener('toggle', ()=>{ if(details.open){ loadTray(); } });
     refreshUnreadBadge();
     setInterval(refreshUnreadBadge, 30000);
+  }
+
+  // Impersonation UX inside tray
+  document.addEventListener('click', (e)=>{
+    const toggle = document.getElementById('impersonate-btn');
+    if(toggle && e.target === toggle){
+      e.preventDefault(); e.stopPropagation();
+      const box = document.getElementById('impersonate-box');
+      const input = document.getElementById('impersonate-input');
+      if(box && input){ box.classList.remove('hidden'); toggle.classList.add('hidden'); input.focus(); }
+    }
+  });
+
+  async function fetchSuggestions(q){
+    const res = await fetch(`/u/impersonation/suggest?q=${encodeURIComponent(q)}`, {credentials:'same-origin'});
+    if(!res.ok) return [];
+    return await res.json();
+  }
+
+  function renderSuggestions(list){
+    const cont = document.getElementById('impersonate-suggestions');
+    if(!cont) return;
+    cont.innerHTML='';
+    if(!list || list.length===0){ cont.classList.add('hidden'); return; }
+    list.forEach(item=>{
+      const el = createNode(`<button type="button" class="w-full text-left px-3 py-2 hover:bg-muted/50" data-email="${item.email}"><div class="font-medium text-workshop-brown">${item.name||item.email}</div><div class="text-xs text-muted-foreground">${item.email}</div></button>`);
+      el.addEventListener('click', ()=>{
+        const url = new URL(window.location.href);
+        url.searchParams.set('_switch_user', item.email);
+        window.location.assign(url.toString());
+      });
+      cont.appendChild(el);
+    });
+    cont.classList.remove('hidden');
+  }
+
+  const input = document.getElementById('impersonate-input');
+  if(input){
+    let lastQ=''; let timer=null;
+    input.addEventListener('input', ()=>{
+      const q=input.value.trim();
+      if(q.length<2){ renderSuggestions([]); return; }
+      lastQ=q;
+      clearTimeout(timer);
+      timer=setTimeout(async ()=>{
+        if(lastQ!==q) return;
+        try{ const data = await fetchSuggestions(q); renderSuggestions(data); }catch(_){ }
+      }, 200);
+    });
+    input.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){
+        const box=document.getElementById('impersonate-box');
+        const toggle=document.getElementById('impersonate-btn');
+        const cont=document.getElementById('impersonate-suggestions');
+        if(box&&toggle){ box.classList.add('hidden'); toggle.classList.remove('hidden'); }
+        if(cont){ cont.classList.add('hidden'); }
+      }
+    });
   }
 });

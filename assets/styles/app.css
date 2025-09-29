@@ -7,6 +7,11 @@
 @source "vendor/tales-from-a-dev/flowbite-bundle/templates/**/*.html.twig";
 @source "vendor/symfony/twig-bridge/Resources/views/Form/*.html.twig";
 
+/* Notification tray via <details>/<summary> */
+details#notif-details > summary { list-style: none; }
+details#notif-details > summary::-webkit-details-marker { display: none; }
+details#notif-details:not([open]) #notif-tray { display: none; }
+
 :root {
     --background: 44 86% 93%;
     --foreground: 30 76% 18%;

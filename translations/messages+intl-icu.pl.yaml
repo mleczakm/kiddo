@@ -61,6 +61,9 @@ notifications:
   profile_settings: Ustawienia profilu
   admin_panel: Panel administracyjny
   logout: Wyloguj się
+  impersonate: Podszyj się
+  impersonate_placeholder: Email użytkownika
+  stop_impersonation: Powrót do mojego konta
 
 # Workshop related translations
 workshop:
