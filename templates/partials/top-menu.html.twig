@@ -54,9 +54,9 @@
                                class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
                                 {{ 'page.admin_dashboard'|trans }}</a>
                         {% endif %}
-                        <a href="{{ path('profile') }}"
-                           class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">
-                            {{ 'page.profile'|trans }}</a>
+                        <div class="relative">
+                            {{ include('components/notification/button.html.twig') }}
+                        </div>
                     {% else %}
                         <a href="{{ path('app_login') }}"
                            class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">{{ 'page.login'|trans }}</a>

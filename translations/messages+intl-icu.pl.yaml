@@ -52,6 +52,16 @@ page:
   admin_dashboard: Panel administracyjny
   profile: Profil
 
+notifications:
+  title: Powiadomienia
+  loading: Ładowanie…
+  empty: Brak nowych powiadomień.
+  dismiss: Odrzuć
+  my_bookings: Moje rezerwacje
+  profile_settings: Ustawienia profilu
+  admin_panel: Panel administracyjny
+  logout: Wyloguj się
+
 # Workshop related translations
 workshop:
   fully_booked: 'Brak miejsc'
