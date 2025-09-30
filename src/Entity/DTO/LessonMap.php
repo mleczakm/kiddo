@@ -7,6 +7,7 @@ namespace App\Entity\DTO;
 use Symfony\Component\Clock\Clock;
 use App\Entity\Booking;
 use App\Entity\Lesson;
+use App\Entity\User;
 use Ds\Map;
 use Symfony\Component\Uid\Ulid;
 
@@ -178,37 +179,6 @@ class LessonMap implements \Countable
     }
 
     /**
-     * @return array{lessons: array<string>, active: array<string>, past: array<string>, cancelled: array<string>}
-     */
-    public function jsonSerialize(): array
-    {
-        $this->ensureMapsInitialized();
-        $lessons = [];
-        foreach ($this->lessons as $lesson) {
-            $lessons[] = $lesson->lessonId->toString();
-        }
-        $active = [];
-        foreach ($this->active as $lesson) {
-            $active[] = $lesson->lessonId->toString();
-        }
-        $past = [];
-        foreach ($this->past as $lesson) {
-            $past[] = $lesson->lessonId->toString();
-        }
-        $cancelled = [];
-        foreach ($this->cancelled as $lesson) {
-            $cancelled[] = $lesson->lessonId->toString();
-        }
-
-        return [
-            'lessons' => $lessons,
-            'active' => $active,
-            'past' => $past,
-            'cancelled' => $cancelled,
-        ];
-    }
-
-    /**
      * @return Map<Ulid, BookedLesson>
      */
     public function active(): Map
@@ -294,6 +264,29 @@ class LessonMap implements \Countable
             return true;
         }
         return false;
+    }
+
+    public function rescheduleLesson(Lesson $from, Lesson $to, User $rescheduledBy): void
+    {
+        $this->ensureMapsInitialized();
+
+        $fromId = $from->getId();
+        $toId = $to->getId();
+
+        // Add the new lesson to the main lessons list and active list
+        $this->lessons->put($toId, new BookedLesson($toId));
+        $this->active->put($toId, new BookedLesson($toId));
+
+        // Move the original lesson from active to cancelled
+        if ($this->active->hasKey($fromId)) {
+            $this->active->remove($fromId);
+        }
+
+        // Mark the original lesson as rescheduled in the cancelled map
+        $this->cancelled->put(
+            $fromId,
+            new RescheduledLesson($toId, $fromId, $rescheduledBy->getId() ?? 0, new \DateTimeImmutable())
+        );
     }
 
     public function hasActiveBookedLessons(): bool

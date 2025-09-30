@@ -25,6 +25,12 @@ parameters:
 			path: src/Entity/User.php
 
 		-
+			message: '#^Parameter \#1 \$mapData of closure expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Infrastructure/Doctrine/LessonMapType.php
+
+		-
 			message: '#^Call to an undefined method DirectoryTree\\ImapEngine\\Connection\\ImapQueryBuilder\:\:withHeaders\(\)\.$#'
 			identifier: method.notFound
 			count: 1

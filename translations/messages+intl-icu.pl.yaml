@@ -314,6 +314,7 @@ booking:
   refund: Zwrot środków
   other: Inne
   choose_alternative_workshop: Wybierz alternatywne zajęcia
+  no_alternative_workshops: Brak możliwych terminów do przeniesienia zajęć
   spots: >-
     {count, plural,
       =0 {brak miejsc}
@@ -329,6 +330,8 @@ booking:
   keep_booking: Zachowaj rezerwację
   tell_us_more: "Prosimy o podanie powodu rezygnacji:"
   tell_us_more_footer: Administracja rozpatrzy Twoją prośbę i skontaktuje się z Tobą w ciągu 24 godzin z decyzją.
+  rescheduled: Przełożona
+  cancelled: Anulowana
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"

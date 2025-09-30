@@ -40,7 +40,7 @@ class WorkshopsAction extends AbstractController
         $query = $entityManager->createQuery(<<<DQL
             SELECT l
             FROM App\Entity\Lesson l
-            LEFT JOIN l.bookings b WITH b.status = 'confirmed'
+            LEFT JOIN l.bookings b WITH b.status = 'active'
             WHERE l.metadata.schedule BETWEEN :start AND :end
             AND l.status = 'active'
             ORDER BY l.metadata.schedule ASC

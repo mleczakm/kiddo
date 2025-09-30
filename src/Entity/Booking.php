@@ -7,7 +7,6 @@ namespace App\Entity;
 use Symfony\Component\Clock\Clock;
 use App\Entity\DTO\BookedLesson;
 use App\Entity\DTO\LessonMap;
-use App\Entity\DTO\RescheduledLesson;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,7 +44,7 @@ class Booking
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'json_document', nullable: true)]
+    #[ORM\Column(type: 'lesson_map', nullable: true)]
     private ?LessonMap $lessonsMap = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
@@ -241,27 +240,16 @@ class Booking
     public function rescheduleLesson(Lesson $from, Lesson $to, User $rescheduledBy): void
     {
         // Add the new lesson entity to the Doctrine collection
-        $this->lessons->add($to);
-
-        $lessonMap = $this->getLessonsMap();
-
-        // Ensure the new lesson is present in the lessons and active maps
-        $lessonMap->lessons->put($to->getId(), new BookedLesson($to->getId()));
-        $lessonMap->active->put($to->getId(), new BookedLesson($to->getId()));
-
-        // Safely remove the original lesson from active if present
-        if ($lessonMap->active->hasKey($from->getId())) {
-            $lessonMap->active->remove($from->getId());
+        if (! $this->lessons->contains($to)) {
+            $this->lessons->add($to);
         }
 
-        // Mark the original lesson as cancelled due to reschedule,
-        // keyed by the original (from) lesson id
-        $lessonMap->cancelled->put(
-            $from->getId(),
-            new RescheduledLesson($to->getId(), $from->getId(), $rescheduledBy->getId() ?? 0, new \DateTimeImmutable())
-        );
+        // Clone the lesson map to ensure changes are detected by Doctrine
+        $newLessonMap = clone $this->getLessonsMap();
+        $newLessonMap->rescheduleLesson($from, $to, $rescheduledBy);
+        $this->lessonsMap = $newLessonMap;
 
-        $this->lessonsMap = $lessonMap;
+        $this->updatedAt = Clock::get()->now();
     }
 
     /**
@@ -442,10 +430,13 @@ class Booking
      */
     public function getLessonsMap(): LessonMap
     {
-        if ($this->lessonsMap === null) {
-            // Initialize from current lessons if missing (e.g., legacy records)
-            $this->lessonsMap = LessonMap::createFromBooking($this);
-        }
-        return $this->lessonsMap = clone $this->lessonsMap;
+        return $this->lessonsMap ??= new LessonMap();
+    }
+
+    public function setLessonsMap(LessonMap $lessonsMap): self
+    {
+        $this->lessonsMap = $lessonsMap;
+
+        return $this;
     }
 }

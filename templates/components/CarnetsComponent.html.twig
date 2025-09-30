@@ -16,7 +16,7 @@
                             <div class="space-y-2 text-sm mb-4">
                                 <div class="flex justify-between">
                                     <span class="text-muted-foreground">{{ 'dashboard.sessions_used'|trans }}:</span>
-                                    <span>{{ booking.lessonsMap.getActiveCount() }} z {{ booking.lessonsMap.getTotalCount() }}</span>
+                                    <span>{{ booking.lessonsMap.past.count() }} z {{ booking.lessonsMap.active.count() + booking.lessonsMap.past.count() }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-muted-foreground">{{ 'dashboard.valid_until'|trans }}:</span>
@@ -30,14 +30,14 @@
                                 </div>
                             </div>
                             <div class="bg-muted rounded-lg h-2 mb-1">
-                                {% set progress = (booking.lessonsMap.getTotalCount() > 0) ? (booking.lessonsMap.getPastCount() / booking.lessonsMap.getTotalCount()) * 100 : 0 %}
+                                {% set progress = (booking.lessonsMap.lessons.count() > 0) ? (booking.lessonsMap.active.count()) / (booking.lessonsMap.past.count() + booking.lessonsMap.active.count()) * 100 : 0 %}
                                 <div class="h-2 rounded-lg bg-workshop-green"
                                      style="width: {{ progress }}%;"></div>
                             </div>
                             <p class="text-xs text-right text-muted-foreground">
                                 {{ 'dashboard.sessions_remaining'|trans({
-                                    'count': booking.lessonsMap.getTotalCount() - booking.lessonsMap.getPastCount(),
-                                    '%count%': booking.lessonsMap.getTotalCount() - booking.lessonsMap.getPastCount()
+                                    'count': booking.lessonsMap.active.count(),
+                                    '%count%': booking.lessonsMap.active.count()
                                 }) }}
                             </p>
 
@@ -53,8 +53,9 @@
                                     {% endfor %}
 
                                     {% for session in upcomingSessions %}
-                                        {% set isCancelled = session.booking.lessonsMap.isCancelledLesson(session.lesson.id) %}
-                                        {% set isRescheduled = session.booking.lessonsMap.isRescheduledLesson(session.lesson.id) %}
+                                        {% set cancelled_item = booking.lessonsMap.cancelled.get(session.lesson.id, null) %}
+                                        {% set isCancelled = cancelled_item is not null %}
+                                        {% set isRescheduled = isCancelled and cancelled_item is instanceof('App\\Entity\\DTO\\RescheduledLesson') %}
                                         <li class="flex items-center {{ isCancelled ? 'text-muted-foreground' : '' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  viewBox="0 0 24 24" stroke="currentColor"
@@ -78,7 +79,7 @@
                                             </span>
                                             {% if isCancelled %}
                                                 <span class="ml-2 inline-flex items-center rounded-full bg-red-50 text-red-700 px-2.5 py-0.5 text-xs font-semibold border border-red-200">
-                                                    {{ isRescheduled ? 'rescheduled' : 'cancelled' }}
+                                                    {{ isRescheduled ? 'booking.rescheduled'|trans : 'booking.cancelled'|trans }}
                                                 </span>
                                             {% endif %}
                                         </li>

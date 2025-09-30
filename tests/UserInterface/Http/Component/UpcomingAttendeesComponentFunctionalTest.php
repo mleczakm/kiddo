@@ -27,14 +27,6 @@ class UpcomingAttendeesComponentFunctionalTest extends WebTestCase
 
     private KernelBrowser $client;
 
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        $this->lessonRepository = self::getContainer()->get(LessonRepository::class);
-    }
-
     public function testCanRenderWithUpcomingLessons(): void
     {
 
@@ -49,7 +41,6 @@ class UpcomingAttendeesComponentFunctionalTest extends WebTestCase
 
         // Create and test the component
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
-
         $rendered = (string) $testComponent->render();
         $this->assertStringContainsString($lesson->getMetadata()->title, $rendered);
         $this->assertStringContainsString('5', $rendered); // Check if capacity is displayed
@@ -159,5 +150,13 @@ class UpcomingAttendeesComponentFunctionalTest extends WebTestCase
             'Lesson not found'
         );
         $this->assertEquals(3, $updatedLesson->getMetadata()->capacity);
+    }
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $this->lessonRepository = self::getContainer()->get(LessonRepository::class);
     }
 }
