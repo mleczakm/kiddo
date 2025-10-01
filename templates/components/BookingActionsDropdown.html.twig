@@ -1,0 +1,57 @@
+{% if this.actionsForBookingId and this.actionsForBookingId == (bId ~ '') %}
+    <div class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+        <div class="py-1">
+            {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
+            
+            {% if not isPaid %}
+                <button type="button"
+                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                        data-action="click->live#action"
+                        data-live-action-param="payForBooking"
+                        data-live-booking-id-param="{{ bId }}"
+                        data-live-lesson-id-param="{{ lesson.id }}">
+                    Zapłać
+                </button>
+                <div class="border-t my-1"></div>
+            {% endif %}
+            
+            <!-- Admin Actions Button -->
+            <button type="button"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    data-action="click->live#action"
+                    data-live-action-param="openAdminActions"
+                    data-live-booking-id-param="{{ bId }}"
+                    data-live-lesson-id-param="{{ lesson.id }}">
+                {{ 'admin_dashboard.upcoming_attendees.admin_actions'|trans }}
+            </button>
+            <div class="border-t my-1"></div>
+            
+            <!-- Cancel Booking Button -->
+            <div class="px-1">
+                {{ component('App\\UserInterface\\Http\\Component\\BookingCancellationModal', { booking: booking, lesson: lesson }) }}
+            </div>
+            
+            <!-- Close Button -->
+            <button type="button"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    data-action="click->live#action"
+                    data-live-action-param="closeActions"
+                    data-live-component-id-param="{{ this.componentId }}"
+                    onclick="this.closest('.relative').querySelector('dialog')?.remove()">
+                Zamknij
+            </button>
+            
+            {% if isPaid %}
+                <div class="border-t my-1"></div>
+                <button type="button"
+                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                        data-action="click->live#action"
+                        data-live-action-param="markAttendance"
+                        data-live-booking-id-param="{{ bId }}"
+                        data-live-lesson-id-param="{{ lesson.id }}">
+                    {{ booking.attended ? 'Oznacz jako nieobecny' : 'Oznacz jako obecny' }}
+                </button>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

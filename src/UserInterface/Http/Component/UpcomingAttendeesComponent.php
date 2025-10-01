@@ -76,13 +76,36 @@ final class UpcomingAttendeesComponent extends AbstractController
 
     public ?Money $paymentAmount = null;
 
+    // Admin actions modal state
+    #[LiveProp(writable: true)]
+    public bool $adminModalOpened = false;
+
+    #[LiveProp(writable: true)]
+    public ?string $adminModalBookingId = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $adminModalLessonId = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $adminNote = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $adminAction = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $rescheduleDate = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $rescheduleTime = null;
+
     public function __construct(
         private readonly LessonRepository $lessonRepository,
-        private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly BookingRepository $bookingRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         $this->week = Clock::get()->now()->format('Y-m-d');
+        $this->adminAction = '';
     }
 
     /**
@@ -96,6 +119,28 @@ final class UpcomingAttendeesComponent extends AbstractController
         $lessons = $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, $this->showCancelled);
 
         return $lessons;
+    }
+
+    /**
+     * @return array{carnets: Booking[], single: Booking[]}
+     */
+    public function getGroupedBookings(Lesson $lesson): array
+    {
+        $carnets = [];
+        $single = [];
+
+        foreach ($lesson->getBookings() as $booking) {
+            if ($booking->isCarnet()) {
+                $carnets[] = $booking;
+            } else {
+                $single[] = $booking;
+            }
+        }
+
+        return [
+            'carnets' => $carnets,
+            'single' => $single,
+        ];
     }
 
     public function getWeekEnd(): \DateTimeImmutable
@@ -143,13 +188,156 @@ final class UpcomingAttendeesComponent extends AbstractController
     #[LiveAction]
     public function openActions(#[LiveArg] string $bookingId): void
     {
-        $this->actionsForBookingId = $bookingId;
+        // Repurpose to open admin modal per requirements
+        $this->actionsForBookingId = null;
+        $this->adminModalBookingId = $bookingId;
+        $this->adminModalOpened = true;
+
+        $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
+        if ($booking instanceof Booking) {
+            $this->adminNote = (string) ($booking->getNotes() ?? '');
+        } else {
+            $this->adminNote = null;
+        }
     }
 
     #[LiveAction]
     public function closeActions(): void
     {
         $this->actionsForBookingId = null;
+    }
+
+    #[LiveAction]
+    public function openAdminModal(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
+    {
+        $this->adminModalBookingId = $bookingId;
+        $this->adminModalLessonId = $lessonId;
+        $this->adminModalOpened = true;
+
+        // Preload existing note if any
+        $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
+        if ($booking instanceof Booking) {
+            $this->adminNote = (string) ($booking->getNotes() ?? '');
+        } else {
+            $this->adminNote = null;
+        }
+    }
+
+    #[LiveAction]
+    public function closeAdminModal(): void
+    {
+        $this->adminModalOpened = false;
+        $this->adminModalBookingId = null;
+        $this->adminModalLessonId = null;
+        $this->adminNote = null;
+        $this->adminAction = null;
+        $this->rescheduleDate = null;
+        $this->rescheduleTime = null;
+    }
+
+    #[LiveAction]
+    public function openAdminActions(string $bookingId, string $lessonId): void
+    {
+        $this->adminModalOpened = true;
+        $this->adminModalBookingId = $bookingId;
+        $this->adminModalLessonId = $lessonId;
+        $this->adminAction = null;
+        $this->adminNote = null;
+        $this->errorMessage = null;
+        $this->successMessage = null;
+    }
+
+    #[LiveAction]
+    public function setAdminAction(string $action): void
+    {
+        $this->adminAction = $action;
+        $this->errorMessage = null;
+        $this->successMessage = null;
+
+        if ($action === 'reschedule' && ! $this->rescheduleDate) {
+            $this->rescheduleDate = new \DateTime()
+                ->format('Y-m-d');
+            $this->rescheduleTime = '18:00';
+        }
+    }
+
+    #[LiveAction]
+    public function executeAdminAction(): void
+    {
+        try {
+            $booking = $this->bookingRepository->find($this->adminModalBookingId);
+            $currentLesson = $this->lessonRepository->find($this->adminModalLessonId);
+
+            if (! $booking || ! $currentLesson) {
+                throw new \RuntimeException('Booking or lesson not found');
+            }
+
+            switch ($this->adminAction) {
+                case 'add_note':
+                    $booking->setNotes($this->adminNote);
+                    $this->entityManager->flush();
+                    $this->successMessage = 'Note added successfully';
+                    break;
+
+                case 'cancel':
+                    $booking->cancelLesson($currentLesson->getId()->toString());
+
+                    $this->entityManager->flush();
+                    $this->successMessage = 'Booking cancelled successfully';
+                    break;
+
+                case 'mark_refund':
+                    if ($booking->getPayment()) {
+                        $booking->getPayment()
+                            ->setStatus('refund_requested');
+                        $this->entityManager->flush();
+                    } else {
+                        throw new \RuntimeException('No payment found for this booking');
+                    }
+                    break;
+
+                case 'reschedule':
+                    if (! $this->rescheduleDate || ! $this->rescheduleTime) {
+                        throw new \RuntimeException('Please select a date and time');
+                    }
+
+                    $newDateTime = \DateTime::createFromFormat(
+                        'Y-m-d H:i',
+                        $this->rescheduleDate . ' ' . $this->rescheduleTime
+                    );
+
+                    throw new \RuntimeException('Invalid date or time format');
+
+
+
+                default:
+                    throw new \RuntimeException('Invalid action');
+            }
+        } catch (\Exception $e) {
+            $this->errorMessage = $e->getMessage();
+        }
+    }
+
+    #[LiveAction]
+    public function saveBookingNote(#[LiveArg] string $bookingId): void
+    {
+        $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
+        if (! $booking instanceof Booking) {
+            return;
+        }
+        $booking->setNotes($this->adminNote);
+        $this->entityManager->flush();
+    }
+
+    #[LiveAction]
+    public function markToRefund(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
+    {
+        $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
+        if (! $booking instanceof Booking) {
+            return;
+        }
+        $booking->refundLesson($lessonId, 'Marked to refund by admin');
+        $this->entityManager->flush();
     }
 
     #[LiveAction]

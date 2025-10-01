@@ -140,9 +140,89 @@
                         </div>
 
                         <div class="space-y-2">
-                            {% set activeBookings = this.showCancelled ? lesson.bookings : lesson.bookings|filter(b => b.active and (b.lessonsMap.active.hasKey(lesson.id) or b.lessonsMap.past.hasKey(lesson.id))) %}
-                            {% if activeBookings is not empty %}
-                                {% for booking in activeBookings %}
+                            {% set groupedBookings = this.getGroupedBookings(lesson) %}
+
+                            {% if groupedBookings.carnets is not empty or groupedBookings.single is not empty %}
+                                {# Render Carnets First #}
+                                {% for booking in groupedBookings.carnets %}
+                                    {% set lesson_index = booking.getLessonIndex(lesson) %}
+                                    {% set total_lessons = booking.getTotalLessons() %}
+                                    {% set progress_percentage = (lesson_index / total_lessons) * 100 %}
+                                    <div class="flex items-center justify-between p-2 border rounded" style="background: linear-gradient(90deg, #eaf6ff {{ progress_percentage }}%, transparent {{ progress_percentage }}%);">
+                                        <div>
+                                            <p class="text-sm font-medium">{{ booking.user.name }} (Karnet: {{ lesson_index }}/{{ total_lessons }})</p>
+                                            <p class="text-xs text-muted-foreground">{{ booking.user.email }}</p>
+                                            {% if booking.notes %}
+                                                <p class="text-xs mt-1 italic text-workshop-brown">Notatka: {{ booking.notes }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground' }}">
+                                                {{ booking.payment and booking.payment.status == 'paid' ? 'admin.badges.paid'|trans : 'admin.badges.unpaid'|trans }}
+                                            </span>
+                                            {% set bId = booking.id %}
+                                            <div class="relative">
+                                                <button type="button"
+                                                        disabled
+                                                        data-action="click->live#action"
+                                                        data-live-action-param="openActions"
+                                                        data-live-booking-id-param="{{ bId }}"
+                                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                                                    {{ 'admin_dashboard.upcoming_attendees.actions'|trans }}
+                                                </button>
+                                                {% if this.actionsForBookingId and this.actionsForBookingId == (bId ~ '') %}
+                                                    <div class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                                                        <div class="py-1">
+                                                            {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
+                                                            {% if not isPaid %}
+                                                                <button type="button"
+                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        data-action="click->live#action"
+                                                                        data-live-action-param="payForBooking"
+                                                                        data-live-booking-id-param="{{ bId }}"
+                                                                        data-live-lesson-id-param="{{ lesson.id }}">
+                                                                    Zapłać
+                                                                </button>
+                                                            {% endif %}
+                                                            <div class="border-t my-1"></div>
+                                                            <div class="px-1">
+                                                                {{ component('App\\UserInterface\\Http\\Component\\BookingCancellationModal', { booking: booking, lesson: lesson }) }}
+                                                            </div>
+                                                            <button type="button"
+                                                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                    data-action="click->live#action"
+                                                                    data-live-action-param="closeActions"
+                                                                    onclick="this.closest('.relative').querySelector('dialog')?.remove()">
+                                                                Zamknij
+                                                            </button>
+                                                            <div class="border-t my-1"></div>
+                                                            {% if isPaid %}
+                                                                <button type="button"
+                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        data-action="click->live#action"
+                                                                        data-live-action-param="markUnpaid"
+                                                                        data-live-booking-id-param="{{ bId }}">
+                                                                    Oznacz jako nieopłacone
+                                                                </button>
+                                                            {% else %}
+                                                                <button type="button"
+                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        data-action="click->live#action"
+                                                                        data-live-action-param="markPaid"
+                                                                        data-live-booking-id-param="{{ bId }}">
+                                                                    Oznacz jako opłacone
+                                                                </button>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                {# Then Render Single Bookings #}
+                                {% for booking in groupedBookings.single %}
                                     <div class="flex items-center justify-between p-2 border rounded">
                                         <div>
                                             <p class="text-sm font-medium">{{ booking.user.name }}</p>
@@ -155,8 +235,6 @@
                                             <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground' }}">
                                                 {{ booking.payment and booking.payment.status == 'paid' ? 'admin.badges.paid'|trans : 'admin.badges.unpaid'|trans }}
                                             </span>
-
-                                            {# Actions dropdown #}
                                             {% set bId = booking.id %}
                                             <div class="relative">
                                                 <button type="button"
@@ -181,7 +259,6 @@
                                                                 </button>
                                                             {% endif %}
                                                             <div class="border-t my-1"></div>
-                                                            {# Reschedule/Cancel using embedded modal #}
                                                             <div class="px-1">
                                                                 {{ component('App\\UserInterface\\Http\\Component\\BookingCancellationModal', { booking: booking, lesson: lesson }) }}
                                                             </div>
@@ -189,7 +266,7 @@
                                                                     class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                                                                     data-action="click->live#action"
                                                                     data-live-action-param="closeActions"
-                                                                    data-live-component-id-param="{{ attributes.id }}"
+                                                                    data-live-component-id-param="{{ this.componentId }}"
                                                                     onclick="this.closest('.relative').querySelector('dialog')?.remove()">
                                                                 Zamknij
                                                             </button>

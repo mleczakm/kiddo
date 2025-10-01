@@ -3,6 +3,9 @@ services:
     build:
       dockerfile: .docker/php/Dockerfile
       target: dev-local
+      args:
+        APP_VERSION: "201202121212"
+        APP_REVISION: "dev"
     environment:
       COMPOSER_HOME: /.composer
       PHP_CS_FIXER_IGNORE_ENV: true

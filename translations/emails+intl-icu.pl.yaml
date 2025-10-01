@@ -109,6 +109,20 @@ daily_lessons_schedule:
   user_greeting: 'Cześć {name},'
   user_reminder: 'To szybkie przypomnienie o Twoich dzisiejszych zajęciach w {date}:'
   user_footer: "Do zobaczenia na zajęciach w Warsztatowni Sensorycznej!"
+  table:
+    header:
+      attendee: 'Uczestnik'
+      email: 'Email'
+      progress: 'Postęp'
+      status: 'Status'
+    body:
+      progress: 'Zajęcia {index} z {total}'
+      single_entry: 'Pojedyncze wejście'
+      status:
+        rescheduled: 'Przełożone'
+        cancelled: 'Anulowane'
+        active: 'Aktywne'
+
 login_email_missingnotification:
   subject: "Nie znaleziono konta zarejestrowanego na podany adres email!"
   content: >-    
@@ -133,5 +147,11 @@ booking_cancellation:
 
     Pozdrawiamy,
     Zespół Warsztatowni Sensorycznej
+
+lesson_rescheduled_by_admin_notification:
+  subject: 'Twoje zajęcia zostały przełożone'
+  greeting: 'Cześć {name},'
+  line1: 'Administrator przełożył Twoje zajęcia z {from_day} na {to_day}.'
+  line2: 'Jeśli masz pytania, skontaktuj się z nami.'
 
 at: o

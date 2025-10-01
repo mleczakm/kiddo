@@ -439,4 +439,47 @@ class Booking
 
         return $this;
     }
+
+    public function isCarnet(): bool
+    {
+        return $this->lessons->count() > 1;
+    }
+
+    public function getTotalLessons(): int
+    {
+        return $this->lessons->count();
+    }
+
+    public function isLessonCancelled(Lesson $lesson): bool
+    {
+        return $this->getLessonsMap()
+            ->isCancelledLesson($lesson->getId());
+    }
+
+    public function isLessonRescheduled(Lesson $lesson): bool
+    {
+        return $this->getLessonsMap()
+            ->isRescheduledLesson($lesson->getId());
+    }
+
+    public function getLessonIndex(Lesson $lessonToFind): int
+    {
+        $lessons = $this->getLessons()
+            ->toArray();
+
+        usort(
+            $lessons,
+            static fn(Lesson $a, Lesson $b): int => $a->getMetadata()
+                ->schedule <=> $b->getMetadata()
+                ->schedule
+        );
+
+        foreach ($lessons as $index => $lesson) {
+            if ($lesson->getId()->equals($lessonToFind->getId())) {
+                return $index + 1;
+            }
+        }
+
+        return 0;
+    }
 }

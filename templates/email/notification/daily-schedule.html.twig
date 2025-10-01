@@ -1,23 +1,91 @@
 {% trans_default_domain 'emails' %}
+
+<style>
+    .lesson-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    .lesson-table th, .lesson-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .lesson-table th {
+        background-color: #f2f2f2;
+    }
+    .booking-carnet {
+        background-color: #eaf6ff;
+    }
+    .booking-cancelled {
+        background-color: #ffebee;
+        text-decoration: line-through;
+    }
+    .booking-rescheduled {
+        background-color: #fff9c4;
+        font-style: italic;
+    }
+</style>
+
 {% if lessons is empty %}
-  <p>{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+    <p>{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
 {% else %}
-  <ul>
     {% for lesson in lessons %}
-      <li>
-        <strong>{{ lesson.metadata.title }}</strong>
-        ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})
-        <ul>
-          {% set attendants = lesson.attendants %}
-          {% if attendants|length > 0 %}
-            {% for user in attendants %}
-              <li>{{ user.name }} ({{ user.email }})</li>
-            {% endfor %}
-          {% else %}
-            <li>{{ 'daily_lessons_schedule.no_attendants'|trans() }}</li>
-          {% endif %}
-        </ul>
-      </li>
+        <h2 style="font-family: Arial, sans-serif; color: #333;">
+            {{ lesson.metadata.title }} ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})
+        </h2>
+
+        {% if lesson.bookings is not empty and lesson.bookings.count > 0 %}
+            <table class="lesson-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.attendee'|trans }}</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.email'|trans }}</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.progress'|trans }}</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.status'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in lesson.bookings %}
+                        {% set isCarnet = booking.isCarnet() %}
+                        {% set isCancelled = booking.isLessonCancelled(lesson) %}
+                        {% set isRescheduled = booking.isLessonRescheduled(lesson) %}
+
+                        {% set row_class = '' %}
+                        {% if isCarnet %}{% set row_class = row_class ~ ' booking-carnet' %}{% endif %}
+                        {% if isRescheduled %}{% set row_class = row_class ~ ' booking-rescheduled' %}
+                        {% elseif isCancelled %}{% set row_class = row_class ~ ' booking-cancelled' %}{% endif %}
+
+                        {% set row_style = '' %}
+                        {% if isCarnet %}{% set row_style = row_style ~ ' background-color: #eaf6ff;' %}{% endif %}
+                        {% if isRescheduled %}{% set row_style = row_style ~ ' background-color: #fff9c4; font-style: italic;' %}
+                        {% elseif isCancelled %}{% set row_style = row_style ~ ' background-color: #ffebee; text-decoration: line-through;' %}{% endif %}
+
+                        <tr class="{{ row_class }}" style="{{ row_style }}">
+                            <td style="border: 1px solid #ddd; padding: 8px;">{{ booking.user.name }}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">{{ booking.user.email }}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                {% if isCarnet %}
+                                    {{ 'daily_lessons_schedule.table.body.progress'|trans({'index': booking.getLessonIndex(lesson), 'total': booking.getTotalLessons()}) }}
+                                {% else %}
+                                    {{ 'daily_lessons_schedule.table.body.single_entry'|trans }}
+                                {% endif %}
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                {% if isRescheduled %}
+                                    {{ 'daily_lessons_schedule.table.body.status.rescheduled'|trans }}
+                                {% elseif isCancelled %}
+                                    {{ 'daily_lessons_schedule.table.body.status.cancelled'|trans }}
+                                {% else %}
+                                    {{ 'daily_lessons_schedule.table.body.status.active'|trans }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{{ 'daily_lessons_schedule.no_attendants'|trans }}</p>
+        {% endif %}
     {% endfor %}
-  </ul>
 {% endif %}

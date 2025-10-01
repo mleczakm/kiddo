@@ -44,7 +44,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                     Envelope::wrap(new ImportTransfersFromMail(), [new TenantStamp('warsztatowniasensoryczna.pl')])
                 ),
                 RecurringMessage::cron(
-                    '0 7 * * *',
+                    '45 8 * * *',
                     Envelope::wrap(new DailyLessonsReminder(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
