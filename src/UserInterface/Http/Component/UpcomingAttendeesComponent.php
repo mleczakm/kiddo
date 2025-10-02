@@ -130,6 +130,11 @@ final class UpcomingAttendeesComponent extends AbstractController
         $single = [];
 
         foreach ($lesson->getBookings() as $booking) {
+            // Skip cancelled bookings if not showing them
+            if (! $booking->isActive() && ! $this->showCancelled) {
+                continue;
+            }
+
             if ($booking->isCarnet()) {
                 $carnets[] = $booking;
             } else {

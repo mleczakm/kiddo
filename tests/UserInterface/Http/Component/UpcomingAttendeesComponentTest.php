@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 #[Group('functional')]
-class UpcomingAttendeesComponentFunctionalTest extends WebTestCase
+class UpcomingAttendeesComponentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
@@ -150,6 +150,76 @@ class UpcomingAttendeesComponentFunctionalTest extends WebTestCase
             'Lesson not found'
         );
         $this->assertEquals(3, $updatedLesson->getMetadata()->capacity);
+    }
+
+    public function testDoNotShowCancelledBookingsWhenFilterNotEnabled(): void
+    {
+        // Create test data with both active and cancelled bookings
+        $futureDate = new \DateTimeImmutable('+1 day');
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->assemble();
+
+        $user = UserAssembler::new()->assemble();
+
+        // Active booking
+        $activeBooking = BookingAssembler::new()
+            ->withStatus('active')
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->assemble();
+
+        // Cancelled booking
+        $cancelledBooking = BookingAssembler::new()
+            ->withStatus('cancelled')
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->assemble();
+
+        $lesson->addBooking($activeBooking);
+        $lesson->addBooking($cancelledBooking);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($activeBooking);
+        $this->entityManager->persist($cancelledBooking);
+        $this->entityManager->persist($lesson);
+        $this->entityManager->flush();
+
+        // Create and test the component with showCancelled = false (default)
+        $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
+
+        // Render the component and check the output
+        $rendered = (string) $testComponent->render();
+
+        // Verify active booking is shown
+        $this->assertStringContainsString(
+            (string) $activeBooking->getId(),
+            $rendered,
+            'Active booking should be shown'
+        );
+
+        // Verify cancelled booking is not shown by default
+        $this->assertStringNotContainsString(
+            (string) $cancelledBooking->getId(),
+            $rendered,
+            'Cancelled booking should not be shown by default'
+        );
+
+        // Now enable showCancelled and verify both bookings are returned
+        $testComponent->set('showCancelled', true);
+        $rendered = (string) $testComponent->render();
+
+        // Verify both bookings are shown when showCancelled is true
+        $this->assertStringContainsString(
+            (string) $activeBooking->getId(),
+            $rendered,
+            'Active booking should be shown when showCancelled is true'
+        );
+        $this->assertStringContainsString(
+            (string) $cancelledBooking->getId(),
+            $rendered,
+            'Cancelled booking should be shown when showCancelled is true'
+        );
     }
 
     protected function setUp(): void
