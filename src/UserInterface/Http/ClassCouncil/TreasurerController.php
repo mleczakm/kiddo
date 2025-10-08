@@ -196,9 +196,11 @@ final class TreasurerController extends AbstractController
                 $sid = (string) $sp->getStudent()
                     ->getId();
                 $paymentsByStudent[$sid][] = $sp;
-                $balances[$sid]['required'] = $balances[$sid]['required']->plus($sp->getAmount());
-                if ($sp->getStatus() === StudentPayment::STATUS_PAID) {
-                    $balances[$sid]['paid'] = $balances[$sid]['paid']->plus($sp->getAmount());
+                if (isset($balances[$sid])) {
+                    $balances[$sid]['required'] = $balances[$sid]['required']->plus($sp->getAmount());
+                    if ($sp->getStatus() === StudentPayment::STATUS_PAID) {
+                        $balances[$sid]['paid'] = $balances[$sid]['paid']->plus($sp->getAmount());
+                    }
                 }
             }
             foreach ($balances as $sid => $b) {
