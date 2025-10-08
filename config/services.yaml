@@ -25,11 +25,6 @@ services:
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 
-  # Payment services
-  App\Service\PaymentCodeManager:
-    arguments:
-  #            $paymentCodeLifetime: '%env(int:PAYMENT_CODE_LIFETIME)%'
-
   App\Application\CommandHandler\:
     resource: '../src/Application/CommandHandler/'
     tags: [ 'messenger.message_handler' ]
