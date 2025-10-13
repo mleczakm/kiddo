@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f85bbdc34c75267b01d4add432bb1e17",
+    "content-hash": "786a9d6f824475861a3610adeb7052c3",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -4661,21 +4661,21 @@
         },
         {
             "name": "swoole-bundle/resetter-bundle",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony-swoole/resetter-bundle.git",
-                "reference": "9e03fe4b80096d22d5884a7fe04fa0d5fbeee282"
+                "reference": "cd3475de8316693de553e01f2e0b02c4fee6c005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-swoole/resetter-bundle/zipball/9e03fe4b80096d22d5884a7fe04fa0d5fbeee282",
-                "reference": "9e03fe4b80096d22d5884a7fe04fa0d5fbeee282",
+                "url": "https://api.github.com/repos/symfony-swoole/resetter-bundle/zipball/cd3475de8316693de553e01f2e0b02c4fee6c005",
+                "reference": "cd3475de8316693de553e01f2e0b02c4fee6c005",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^4.0|^3.3",
-                "doctrine/doctrine-bundle": "^2.15.1",
+                "doctrine/doctrine-bundle": "^2.15.1||3.0",
                 "doctrine/orm": "^2.15|^3.0",
                 "php": ">= 8.2",
                 "symfony/config": "^6.4|^7.1",
@@ -4731,9 +4731,9 @@
             "homepage": "https://github.com/swoole-bundle/resetter-bundle",
             "support": {
                 "issues": "https://github.com/symfony-swoole/resetter-bundle/issues",
-                "source": "https://github.com/symfony-swoole/resetter-bundle/tree/1.1.0"
+                "source": "https://github.com/symfony-swoole/resetter-bundle/tree/1.1.1"
             },
-            "time": "2025-08-13T23:33:07+00:00"
+            "time": "2025-10-12T12:07:12+00:00"
         },
         {
             "name": "swoole-bundle/swoole-bundle",
