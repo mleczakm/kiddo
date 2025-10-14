@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c305dc948dc28f7e752f21c11b806a78",
+    "content-hash": "13ada28d2b52ef5128994ed7a7537d2a",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1950,16 +1950,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "9.0.15",
+            "version": "9.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "6d0853d6cf4c7ea85dd6715c2742e2ab16210f32"
+                "reference": "c513a04df3824e9f19082d935bb8f331741252d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/6d0853d6cf4c7ea85dd6715c2742e2ab16210f32",
-                "reference": "6d0853d6cf4c7ea85dd6715c2742e2ab16210f32",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c513a04df3824e9f19082d935bb8f331741252d1",
+                "reference": "c513a04df3824e9f19082d935bb8f331741252d1",
                 "shasum": ""
             },
             "require": {
@@ -2022,7 +2022,7 @@
                 "issues": "https://github.com/giggsey/libphonenumber-for-php/issues",
                 "source": "https://github.com/giggsey/libphonenumber-for-php"
             },
-            "time": "2025-09-26T07:21:32+00:00"
+            "time": "2025-10-10T10:55:56+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -3411,25 +3411,25 @@
         },
         {
             "name": "odolbeau/phone-number-bundle",
-            "version": "v4.2.4",
+            "version": "v4.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/odolbeau/phone-number-bundle.git",
-                "reference": "743b9a8d0deb143c8dd41b59d5eb0e62e16a14a7"
+                "reference": "b7da3dfae7fb455cdd891dcd3d912cdcbdfac6cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/743b9a8d0deb143c8dd41b59d5eb0e62e16a14a7",
-                "reference": "743b9a8d0deb143c8dd41b59d5eb0e62e16a14a7",
+                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/b7da3dfae7fb455cdd891dcd3d912cdcbdfac6cb",
+                "reference": "b7da3dfae7fb455cdd891dcd3d912cdcbdfac6cb",
                 "shasum": ""
             },
             "require": {
                 "giggsey/libphonenumber-for-php": "^9.0.2",
                 "php": ">=8.1",
-                "symfony/config": "^6.4 || ^7.2",
+                "symfony/config": "^6.4 || ^7.2 || ^8.0",
                 "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/framework-bundle": "^6.4 || ^7.2",
-                "symfony/intl": "^6.4 || ^7.2",
+                "symfony/framework-bundle": "^6.4 || ^7.2 || ^8.0",
+                "symfony/intl": "^6.4 || ^7.2 || ^8.0",
                 "symfony/polyfill-mbstring": "^1.28"
             },
             "replace": {
@@ -3440,12 +3440,12 @@
                 "phpspec/prophecy": "^1.20",
                 "phpspec/prophecy-phpunit": "^2.3",
                 "phpunit/phpunit": "^9.6.11",
-                "symfony/form": "^6.4 || ^7.2",
-                "symfony/phpunit-bridge": "^7.2",
-                "symfony/property-access": "^6.4 || ^7.2",
-                "symfony/serializer": "^6.4 || ^7.2",
-                "symfony/twig-bundle": "^6.4 || ^7.2",
-                "symfony/validator": "^6.4 || ^7.2"
+                "symfony/form": "^6.4 || ^7.2 || ^8.0",
+                "symfony/phpunit-bridge": "^7.2 || ^8.0",
+                "symfony/property-access": "^6.4 || ^7.2 || ^8.0",
+                "symfony/serializer": "^6.4 || ^7.2 || ^8.0",
+                "symfony/twig-bundle": "^6.4 || ^7.2 || ^8.0",
+                "symfony/validator": "^6.4 || ^7.2 || ^8.0"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "Add a DBAL mapping type",
@@ -3481,9 +3481,9 @@
             ],
             "support": {
                 "issues": "https://github.com/odolbeau/phone-number-bundle/issues",
-                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v4.2.4"
+                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v4.2.5"
             },
-            "time": "2025-10-06T20:13:59+00:00"
+            "time": "2025-10-14T19:52:30+00:00"
         },
         {
             "name": "php-di/invoker",
