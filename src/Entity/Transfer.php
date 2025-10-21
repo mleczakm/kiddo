@@ -41,7 +41,28 @@ class Transfer
 
     public function setPayment(?Payment $payment): self
     {
+        if ($this->payment === $payment) {
+            return $this;
+        }
+
+        // Detach from previous payment's collection
+        if ($this->payment !== null) {
+            $prev = $this->payment;
+            // Use getter to access collection and remove without triggering recursion
+            if ($prev->getTransfers()->contains($this)) {
+                $prev->getTransfers()
+                    ->removeElement($this);
+            }
+        }
+
         $this->payment = $payment;
+
+        // Attach to new payment's collection to keep bidirectional sync
+        if ($payment !== null && ! $payment->getTransfers()->contains($this)) {
+            $payment->getTransfers()
+                ->add($this);
+        }
+
         return $this;
     }
 

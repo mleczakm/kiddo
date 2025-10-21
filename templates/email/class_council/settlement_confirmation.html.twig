@@ -1,12 +1,53 @@
 {% extends '@email/base_plain.html.twig' %}
 
-{% block body %}
-<p>Potwierdzenie rozliczenia płatności w systemie {{ tenant_name() ?? 'Kiddo' }}.</p>
-<p>Twoja płatność została zaksięgowana. Rozliczono następujące składki:</p>
-<ul>
-  {% for item in items %}
-    <li>{{ item.student }} — {{ item.label }}: <strong>{{ item.amount|money }}</strong></li>
-  {% endfor %}
-</ul>
-<p>Dziękujemy za terminowe wpłaty.</p>
+{% block content %}
+  <h2 style="margin:0 0 12px 0; font-size:20px; color:#111;">
+    Potwierdzenie płatności — {{ tenant_name() ?? 'Kiddo' }}
+  </h2>
+  <p style="margin:0 0 16px 0; color:#333;">
+    Dziękujemy! Twoja płatność została zaksięgowana. Poniżej znajdziesz szczegóły rozliczenia składek.
+  </p>
+
+  <h3 style="margin:16px 0 8px 0; font-size:16px; color:#111;">Rozliczone składki</h3>
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse; margin-bottom:12px;">
+    <thead>
+    <tr>
+      <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 0; font-weight:600; color:#111;">Uczeń</th>
+      <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 0; font-weight:600; color:#111;">Składka</th>
+      <th align="right" style="border-bottom:1px solid #e5e7eb; padding:8px 0; font-weight:600; color:#111;">Kwota</th>
+      <th align="right" style="border-bottom:1px solid #e5e7eb; padding:8px 0; font-weight:600; color:#111;">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+      <tr>
+        <td style="padding:6px 0; color:#111;">{{ item.student }}</td>
+        <td style="padding:6px 0; color:#111;">{{ item.label }}</td>
+        <td align="right" style="padding:6px 0; color:#111; white-space:nowrap;">{{ item.amount|money }}</td>
+        <td align="right" style="padding:6px 0; color:#6b7280; white-space:nowrap;">{{ item.progress.paid }}/{{ item.progress.total }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h3 style="margin:16px 0 8px 0; font-size:16px; color:#111;">Poprzednie wpłaty</h3>
+  {% if previousPayments is defined and previousPayments is not empty %}
+    <ul style="margin:0 0 12px 0; padding-left:18px; color:#111;">
+      {% for p in previousPayments %}
+        <li>
+          <span style="color:#6b7280;">{{ p.date|date('Y-m-d') }}:</span>
+          <strong>{{ p.amount|money }}</strong>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p style="margin:0 0 12px 0; color:#6b7280;">Brak wcześniejszych wpłat.</p>
+  {% endif %}
+
+  <div style="border-top:1px solid #e5e7eb; padding-top:10px; margin-top:10px;">
+    <p style="margin:0; color:#111;">Suma poprzednich wpłat: <strong>{{ sumPrevious|money }}</strong></p>
+    <p style="margin:4px 0 0 0; color:#111;">Łącznie z tą wpłatą: <strong>{{ sumIncludingCurrent|money }}</strong></p>
+  </div>
+
+  <p style="margin:16px 0 0 0; color:#333;">Dziękujemy za terminowe wpłaty i wsparcie!</p>
 {% endblock %}

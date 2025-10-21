@@ -155,3 +155,5 @@ lesson_rescheduled_by_admin_notification:
   line2: 'Jeśli masz pytania, skontaktuj się z nami.'
 
 at: o
+emails:
+  footer_unbranded: 'Kiddo'

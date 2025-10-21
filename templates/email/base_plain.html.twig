@@ -40,7 +40,9 @@
 <body>
 <div class="container">
     {# Unbranded email wrapper: render provided content block #}
+    {% block content %}
     {{ content|raw }}
+    {% endblock %}
     <div class="footer">
         {{ 'emails.footer_unbranded'|trans({}, 'emails')|default('') }}
     </div>

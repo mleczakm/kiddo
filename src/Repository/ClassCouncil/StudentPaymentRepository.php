@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\ClassCouncil;
 
+use App\Entity\ClassCouncil\ClassRoom;
 use App\Entity\ClassCouncil\Student;
 use App\Entity\ClassCouncil\StudentPayment;
 use App\Entity\Payment;
@@ -85,5 +86,41 @@ class StudentPaymentRepository extends ServiceEntityRepository
             ->setParameter('payment', $payment->getId(), 'ulid')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Return total and paid counts for a given class and label
+     * @return array{total:int, paid:int}
+     */
+    public function getCountsForClassAndLabel(ClassRoom $classRoom, string $label): array
+    {
+        // total
+        $qb = $this->createQueryBuilder('sp')
+            ->select('COUNT(sp.id) AS total')
+            ->innerJoin('sp.student', 's')
+            ->andWhere('s.classRoom = :class')
+            ->andWhere('sp.label = :label')
+            ->setParameter('class', $classRoom->getId(), 'ulid')
+            ->setParameter('label', $label);
+        $total = (int) $qb->getQuery()
+            ->getSingleScalarResult();
+
+        // paid
+        $qb2 = $this->createQueryBuilder('sp')
+            ->select('COUNT(sp.id) AS paid')
+            ->innerJoin('sp.student', 's')
+            ->andWhere('s.classRoom = :class')
+            ->andWhere('sp.label = :label')
+            ->andWhere('sp.status = :paid')
+            ->setParameter('class', $classRoom->getId(), 'ulid')
+            ->setParameter('label', $label)
+            ->setParameter('paid', StudentPayment::STATUS_PAID);
+        $paid = (int) $qb2->getQuery()
+            ->getSingleScalarResult();
+
+        return [
+            'total' => $total,
+            'paid' => $paid,
+        ];
     }
 }

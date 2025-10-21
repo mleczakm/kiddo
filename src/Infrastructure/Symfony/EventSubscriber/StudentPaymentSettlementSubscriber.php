@@ -6,7 +6,9 @@ namespace App\Infrastructure\Symfony\EventSubscriber;
 
 use App\Entity\Payment;
 use App\Repository\ClassCouncil\StudentPaymentRepository;
-use Doctrine\ORM\EntityManagerInterface; // not used but keep for clarity
+use Brick\Money\Money;
+use Doctrine\ORM\EntityManagerInterface;
+// not used but keep for clarity
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Mailer\MailerInterface;
@@ -57,34 +59,65 @@ final readonly class StudentPaymentSettlementSubscriber
 
         $this->em->flush();
 
-        // Send confirmation email to the payer
-        try {
-            $user = $subject->getUser();
-            $to = method_exists($user, 'getEmail') ? $user->getEmail() : null;
-            if ($to) {
-                $list = [];
-                foreach ($items as $sp) {
-                    $student = $sp->getStudent();
-                    $list[] = [
-                        'student' => $student->getFirstName() . ' ' . $student->getLastName(),
-                        'label' => $sp->getLabel(),
-                        'amount' => $sp->getAmount(),
-                    ];
-                }
+        $user = $subject->getUser();
+        $to = method_exists($user, 'getEmail') ? $user->getEmail() : null;
+        if ($to) {
+            $list = [];
+            foreach ($items as $sp) {
+                $student = $sp->getStudent();
+                $classRoom = $student->getClassRoom();
+                $counts = $this->studentPayments->getCountsForClassAndLabel($classRoom, $sp->getLabel());
 
-                $html = $this->twig->render('email/class_council/settlement_confirmation.html.twig', [
-                    'items' => $list,
-                ]);
-
-                $email = new Email()
-                    ->to($to)
-                    ->subject('Potwierdzenie rozliczenia składek')
-                    ->html($html);
-
-                $this->mailer->send($email);
+                $list[] = [
+                    'student' => $student->getFirstName() . ' ' . $student->getLastName(),
+                    'label' => $sp->getLabel(),
+                    'amount' => $sp->getAmount(),
+                    'progress' => $counts, // ['paid'=>N,'total'=>M]
+                ];
             }
-        } catch (\Throwable) {
-            // ignore mail errors for now
+
+            // Previous payments for this user (paid only), excluding current
+            /** @var array<Payment> $previous */
+            $previous = $this->em->getRepository(Payment::class)
+                ->createQueryBuilder('p')
+                ->andWhere('p.user = :user')
+                ->andWhere('p.status = :status')
+                ->andWhere('p.id != :currentId')
+                ->setParameter('user', $user->getId())
+                ->setParameter('status', Payment::STATUS_PAID)
+                ->setParameter('currentId', $subject->getId(), 'ulid')
+                ->addOrderBy('p.paidAt', 'DESC')
+                ->addOrderBy('p.createdAt', 'DESC')
+                ->setMaxResults(10)
+                ->getQuery()
+                ->getResult();
+
+            $previousList = [];
+            $previousSum = Money::of(0, 'PLN');
+            foreach ($previous as $pp) {
+                $previousList[] = [
+                    'date' => $pp->getPaidAt() ?? $pp->getCreatedAt(),
+                    'amount' => $pp->getAmount(),
+                ];
+                $previousSum = $previousSum->plus($pp->getAmount());
+            }
+
+            $includingCurrent = $previousSum->plus($subject->getAmount());
+
+            $html = $this->twig->render('email/class_council/settlement_confirmation.html.twig', [
+                'items' => $list,
+                'previousPayments' => $previousList,
+                'sumPrevious' => $previousSum,
+                'sumIncludingCurrent' => $includingCurrent,
+            ]);
+
+            $email = new Email()
+                ->to($to)
+                ->subject('Potwierdzenie rozliczenia składek')
+                ->html($html);
+
+            $this->mailer->send($email);
         }
+
     }
 }
