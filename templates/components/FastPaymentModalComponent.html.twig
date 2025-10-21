@@ -1,12 +1,15 @@
-<div {{ attributes }}
-     {% if modalOpened %}data-modal-state="open"{% else %}data-modal-state="closed"{% endif %}
-     {{ stimulus_controller('live', {
-        url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\FastPaymentModalComponent' })
-     }) }}>
-
+<div {{ attributes }}{% set sizeClasses = {
+    'sm': 'rounded-sm text-xs py-1 px-2',
+    'md': 'rounded-md text-sm py-2 px-4',
+    'lg': 'rounded-md text-md py-2 px-4'
+} %}{% if modalOpened %}data-modal-state="open" {% else %}data-modal-state="closed"{% endif %}
+        {{ stimulus_controller('live', {
+            url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\FastPaymentModalComponent' })
+        }) }}
+>
     <button data-action="live#action"
             data-live-action-param="openModal"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90">
+            class="{{ sizeClasses[this.size] }} inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-workshop-red text-white hover:bg-workshop-red/90">
         Szybka płatność
     </button>
 
@@ -17,13 +20,35 @@
 
     <dialog {% if modalOpened %}open{% endif %}
             class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
-        {% if paymentCode is not empty and paymentAmount is not empty %}
+        {% if generated is not empty %}
+            <div class="space-y-6">
+                {% for item in generated %}
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6">
+                        <div class="text-2xl font-bold text-workshop-brown mb-2">
+                            {{ 'blik.instruction'|trans }} <span
+                                    class="text-workshop-red whitespace-nowrap"> {{ tenant_phone() ?? ('blik.phone'|trans) }}</span>
+                        </div>
+                        <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span
+                                    class="text-workshop-red whitespace-nowrap">{{ item.amount|money }}</span>. {{ 'blik.instruction_3'|trans }}
+                        </div>
+                        <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-2 select-all tracking-widest text-workshop-red">{{ item.code }}</div>
+                        <div class="text-muted-foreground text-sm mb-2">{{ 'blik.info'|trans }}</div>
+                        <div class="text-muted-foreground text-sm border-t pt-2 mt-2">
+                            {{ 'blik.alt_transfer'|trans({'title': item.code,'account': '<span class="text-workshop-red whitespace-nowrap">' ~ (tenant_account() ?? '46 2490 0005 0000 4000 1897 5420') ~ '</span>'})|raw }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elseif paymentCode is not empty and paymentAmount is not empty %}
             <div class="flex flex-col items-center justify-center min-h-[300px]">
                 <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
                     <div class="text-2xl font-bold text-workshop-brown mb-4">
-                        {{ 'blik.instruction'|trans }} <span class="text-workshop-red whitespace-nowrap"> {{ tenant_phone() ?? ('blik.phone'|trans) }}</span>
+                        {{ 'blik.instruction'|trans }} <span
+                                class="text-workshop-red whitespace-nowrap"> {{ tenant_phone() ?? ('blik.phone'|trans) }}</span>
                     </div>
-                    <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span class="text-workshop-red whitespace-nowrap">{{ paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}</div>
+                    <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span
+                                class="text-workshop-red whitespace-nowrap">{{ paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
+                    </div>
                     <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
                     <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
                     <div class="text-muted-foreground text-sm border-t pt-4 mt-4">

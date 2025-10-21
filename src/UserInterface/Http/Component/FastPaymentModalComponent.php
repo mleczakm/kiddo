@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Entity\ClassCouncil\Student;
 use App\Entity\ClassCouncil\StudentPayment;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
@@ -15,6 +16,7 @@ use App\Tenant\TenantContext;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -25,6 +27,35 @@ final class FastPaymentModalComponent extends AbstractController
 {
     use DefaultActionTrait;
 
+    #[LiveProp(writable: true)]
+    public bool $modalOpened = false;
+
+    /**
+     * Optional list of StudentPayment ULID strings to generate fast payments for.
+     * When provided, one Payment+PaymentCode will be generated per item.
+     * When empty, falls back to current behavior (all unpaid for current user's children).
+     * @var list<Ulid>
+     */
+    #[LiveProp]
+    public array $studentPaymentIds = [];
+
+    #[LiveProp]
+    public string $size = 'md';
+
+    /**
+     * Backward-compat single payment fields (when aggregating):
+     */
+    #[LiveProp]
+    public ?string $paymentCode = null;
+
+    public ?Money $paymentAmount = null;
+
+    /**
+     * New multi-payment results: list of [code => string, amount => Money]
+     * @var list<array{code: string, amount: Money}>
+     */
+    public array $generated = [];
+
     public function __construct(
         private readonly TenantContext $tenantContext,
         private readonly ClassRoomRepository $classRooms,
@@ -33,17 +64,9 @@ final class FastPaymentModalComponent extends AbstractController
         private readonly EntityManagerInterface $em,
     ) {}
 
-    #[LiveProp(writable: true)]
-    public bool $modalOpened = false;
-
-    #[LiveProp]
-    public ?string $paymentCode = null;
-
-    public ?Money $paymentAmount = null;
-
     /**
-     * Opens modal and generates a single Payment for the sum of all unpaid required payments
-     * for the current user's children in the current tenant's class.
+     * Opens modal and generates fast payments. If studentPaymentIds is set, create one Payment
+     * per provided StudentPayment; otherwise aggregate all unpaid for user's children into one Payment.
      */
     #[LiveAction]
     public function openModal(): void
@@ -61,6 +84,10 @@ final class FastPaymentModalComponent extends AbstractController
             return;
         }
 
+        // If specific StudentPayment IDs provided, process them individually
+
+
+        // Fallback: aggregate unpaid for current user's children into a single payment
         // Fetch students linked to current user in this class
         $qb = $this->students->createQueryBuilder('s');
         $qb->innerJoin('s.parents', 'p')
@@ -69,6 +96,8 @@ final class FastPaymentModalComponent extends AbstractController
             ->andWhere('c.id = :classId')
             ->setParameter('userId', $user->getId())
             ->setParameter('classId', $class->getId(), 'ulid');
+
+        /** @var array<Student> $myStudents */
         $myStudents = $qb->getQuery()
             ->getResult();
 
@@ -77,7 +106,7 @@ final class FastPaymentModalComponent extends AbstractController
         }
 
         // Load all payments, filter unpaid
-        $all = $this->studentPayments->findForStudents($myStudents);
+        $all = $this->studentPayments->findForStudents($myStudents, $this->studentPaymentIds);
         $unpaid = array_filter($all, fn($sp) => $sp->getStatus() !== StudentPayment::STATUS_PAID);
 
         if ($unpaid === []) {

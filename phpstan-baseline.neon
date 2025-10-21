@@ -61,12 +61,6 @@ parameters:
 			path: src/Repository/ClassCouncil/StudentPaymentRepository.php
 
 		-
-			message: '#^Method App\\Repository\\ClassCouncil\\StudentPaymentRepository\:\:findForStudents\(\) has parameter \$students with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/ClassCouncil/StudentPaymentRepository.php
-
-		-
 			message: '#^Method App\\Repository\\ClassCouncil\\StudentPaymentRepository\:\:findForStudents\(\) should return array\<int, App\\Entity\\ClassCouncil\\StudentPayment\> but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -131,12 +125,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: src/UserInterface/Http/ClassCouncil/TreasurerController.php
-
-		-
-			message: '#^Parameter \#1 \$students of method App\\Repository\\ClassCouncil\\StudentPaymentRepository\:\:findForStudents\(\) expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/UserInterface/Http/Component/FastPaymentModalComponent.php
 
 		-
 			message: '#^Generator expects value type DirectoryTree\\ImapEngine\\MessageQueryInterface, DirectoryTree\\ImapEngine\\MessageInterface given\.$#'

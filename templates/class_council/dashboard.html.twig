@@ -1,89 +1,93 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<main class="flex-grow container mx-auto px-4 py-8">
-  <h1 class="text-2xl font-display font-bold text-workshop-brown mb-6">Rada Klasowa – Panel</h1>
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-display font-bold text-workshop-brown mb-6">Rada Klasowa – Panel</h1>
 
-  {% if classRoom %}
-    <div class="mb-6">Klasa: <strong>{{ classRoom.name }}</strong></div>
+        {% if classRoom %}
+            <div class="mb-6">Klasa: <strong>{{ classRoom.name }}</strong></div>
 
-    {# Payments overview for current user's children #}
-    {% if students is defined and students|length > 0 %}
-      <section class="mb-10">
-        <h2 class="text-xl font-semibold mb-4">Moje dzieci i wymagane składki</h2>
-        {% for s in students %}
-          {% set key = s.id ~ '' %}
-          {% set payments = (paymentsByStudent is defined and paymentsByStudent[key] is defined) ? paymentsByStudent[key] : [] %}
-          <div class="mb-6 border rounded-xl bg-white p-4">
-            <div class="font-medium mb-2">{{ s.firstName }} {{ s.lastName }}</div>
-            {% if payments|length > 0 %}
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr class="border-b">
-                      <th class="text-left py-2 px-2">Składka</th>
-                      <th class="text-left py-2 px-2">Kwota</th>
-                      <th class="text-left py-2 px-2">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for p in payments %}
-                      <tr class="border-b">
-                        <td class="py-2 px-2">{{ p.label }}</td>
-                        <td class="py-2 px-2">{{ p.amount|money }}</td>
-                        <td class="py-2 px-2">
-                          {% set status = p.status %}
-                          {% if status == 'paid' %}
-                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700">opłacona</span>
-                          {% elseif status == 'partial' %}
-                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-700">częściowa</span>
-                          {% else %}
-                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700">nieopłacona</span>
-                          {% endif %}
-                        </td>
-                      </tr>
+            {# Payments overview for current user's children #}
+            {% if students is defined and students|length > 0 %}
+                <section class="mb-10">
+                    <h2 class="text-xl font-semibold mb-4">Moje dzieci i wymagane składki</h2>
+                    {% for s in students %}
+                        {% set key = s.id ~ '' %}
+                        {% set payments = (paymentsByStudent is defined and paymentsByStudent[key] is defined) ? paymentsByStudent[key] : [] %}
+                        <div class="mb-6 border rounded-xl bg-white p-4">
+                            <div class="font-medium mb-2">{{ s.firstName }} {{ s.lastName }}</div>
+                            {% if payments|length > 0 %}
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm">
+                                        <thead>
+                                        <tr class="border-b">
+                                            <th class="text-left py-2 px-2">Składka</th>
+                                            <th class="text-left py-2 px-2">Kwota</th>
+                                            <th class="text-left py-2 px-2">Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for p in payments %}
+                                            <tr class="border-b">
+                                                <td class="py-2 px-2">{{ p.label }}</td>
+                                                <td class="py-2 px-2">{{ p.amount|money }}</td>
+                                                <td class="py-2 px-2">
+                                                    {% set status = p.status %}
+                                                    {% if status == 'paid' %}
+                                                        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700">opłacona</span>
+                                                    {% elseif status == 'partial' %}
+                                                        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-700">częściowa</span>
+                                                    {% else %}
+                                                        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700">nieopłacona</span>
+                                                        {{ component('FastPaymentModalComponent', {studentPaymentIds: [p.id], class: "inline-flex", size: 'sm'}) }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-muted-foreground text-sm">Brak zdefiniowanych składek dla tej klasy.
+                                </div>
+                            {% endif %}
+                        </div>
                     {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+                </section>
+
+                {% if hasMissingPayments %}
+                    <div class="p-4 border rounded-xl bg-yellow-50 flex items-center justify-between gap-4">
+                        <div>
+                            <div class="font-medium mb-1">Masz nieopłacone składki</div>
+                            <div class="text-sm text-muted-foreground">Możesz skorzystać z szybkiej płatności i opłacić
+                                wszystkie wymagane składki jedną transakcją.
+                            </div>
+                        </div>
+                        {{ component('FastPaymentModalComponent') }}
+                    </div>
+                {% endif %}
             {% else %}
-              <div class="text-muted-foreground text-sm">Brak zdefiniowanych składek dla tej klasy.</div>
+                <div class="p-4 border rounded-xl bg-white">
+                    <h2 class="text-lg font-semibold mb-3">Dodaj dziecko</h2>
+                    <form method="post" action="{{ path('cc_students') }}" class="space-y-4 max-w-xl">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Imię</label>
+                                <input name="first_name" type="text" class="w-full border rounded px-3 py-2" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Nazwisko</label>
+                                <input name="last_name" type="text" class="w-full border rounded px-3 py-2" required>
+                            </div>
+                        </div>
+                        <button class="btn-primary" type="submit">Dodaj</button>
+                    </form>
+                </div>
             {% endif %}
-          </div>
-        {% endfor %}
-      </section>
 
-      {% if hasMissingPayments %}
-        <div class="p-4 border rounded-xl bg-yellow-50 flex items-center justify-between gap-4">
-          <div>
-            <div class="font-medium mb-1">Masz nieopłacone składki</div>
-            <div class="text-sm text-muted-foreground">Możesz skorzystać z szybkiej płatności i opłacić wszystkie wymagane składki jedną transakcją.</div>
-          </div>
-          {{ component('FastPaymentModalComponent') }}
-        </div>
-      {% endif %}
-    {% else %}
-      <div class="p-4 border rounded-xl bg-white">
-        <h2 class="text-lg font-semibold mb-3">Dodaj dziecko</h2>
-        <form method="post" action="{{ path('cc_students') }}" class="space-y-4 max-w-xl">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Imię</label>
-              <input name="first_name" type="text" class="w-full border rounded px-3 py-2" required>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Nazwisko</label>
-              <input name="last_name" type="text" class="w-full border rounded px-3 py-2" required>
-            </div>
-          </div>
-          <button class="btn-primary" type="submit">Dodaj</button>
-        </form>
-      </div>
-    {% endif %}
-
-  {% else %}
-    <p>Nie utworzono jeszcze klasy.</p>
-    <a class="btn-primary" href="{{ path('cc_create_class') }}">Utwórz klasę</a>
-  {% endif %}
-</main>
+        {% else %}
+            <p>Nie utworzono jeszcze klasy.</p>
+            <a class="btn-primary" href="{{ path('cc_create_class') }}">Utwórz klasę</a>
+        {% endif %}
+    </main>
 {% endblock %}

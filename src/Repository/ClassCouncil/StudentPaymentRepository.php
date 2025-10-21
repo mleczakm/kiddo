@@ -11,6 +11,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Ds\Set;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * @extends ServiceEntityRepository<StudentPayment>
@@ -23,14 +24,17 @@ class StudentPaymentRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<Student> $students
+     * @param array<Ulid> $studentPaymentIds
      * @return array<int, StudentPayment>
      */
-    public function findForStudents(array $students): array
+    public function findForStudents(array $students, array $studentPaymentIds = []): array
     {
         if ($students === []) {
             return [];
         }
-        return $this->createQueryBuilder('sp')
+
+        $qb = $this->createQueryBuilder('sp')
             ->innerJoin('sp.student', 's')
             ->andWhere('s.id IN (:students)')
             ->setParameter(
@@ -40,7 +44,20 @@ class StudentPaymentRepository extends ServiceEntityRepository
                     ->toArray(),
                 ArrayParameterType::BINARY
             )
-            ->orderBy('sp.label', 'ASC')
+            ->orderBy('sp.label', 'ASC');
+
+        if ($studentPaymentIds !== []) {
+            $qb->andWhere('sp.id IN (:studentPaymentIds)')
+                ->setParameter(
+                    'studentPaymentIds',
+                    new Set($studentPaymentIds)
+                        ->map(fn(Ulid $id): string => $id->toBinary())
+                        ->toArray(),
+                    ArrayParameterType::BINARY
+                );
+        }
+
+        return $qb
             ->getQuery()
             ->getResult();
     }
