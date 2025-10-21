@@ -13688,12 +13688,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "960ccb49b6f273fa566a23fd2e8968f81ad207dd"
+                "reference": "d76fe05e57166d21b7b1e3da6f7f3895c3c5db46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/960ccb49b6f273fa566a23fd2e8968f81ad207dd",
-                "reference": "960ccb49b6f273fa566a23fd2e8968f81ad207dd",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d76fe05e57166d21b7b1e3da6f7f3895c3c5db46",
+                "reference": "d76fe05e57166d21b7b1e3da6f7f3895c3c5db46",
                 "shasum": ""
             },
             "conflict": {
@@ -14288,7 +14288,7 @@
                 "prestashop/ps_facetedsearch": "<3.4.1",
                 "prestashop/ps_linklist": "<3.1",
                 "privatebin/privatebin": "<1.4|>=1.5,<1.7.4",
-                "processwire/processwire": "<=3.0.229",
+                "processwire/processwire": "<=3.0.246",
                 "propel/propel": ">=2.0.0.0-alpha1,<=2.0.0.0-alpha7",
                 "propel/propel1": ">=1,<=1.7.1",
                 "pterodactyl/panel": "<=1.11.10",
@@ -14660,7 +14660,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-10-21T18:07:19+00:00"
+            "time": "2025-10-21T21:05:51+00:00"
         },
         {
             "name": "rregeer/phpunit-coverage-check",
