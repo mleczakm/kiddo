@@ -141,7 +141,7 @@ class AdminBookingModal extends AbstractController
                 return [];
             }
             /** @var list<string> $ids */
-            $ids = array_values(array_filter($decoded, static fn($v) => is_string($v)));
+            $ids = array_values(array_filter($decoded, is_string(...)));
             return $ids;
         } catch (\Exception) {
             return [];
@@ -159,7 +159,7 @@ class AdminBookingModal extends AbstractController
             return [];
         }
 
-        $ulidIds = array_map(fn($id) => Ulid::fromString($id), $ids);
+        $ulidIds = array_map(Ulid::fromString(...), $ids);
         return $this->lessonRepository->findBy([
             'id' => $ulidIds,
         ]);

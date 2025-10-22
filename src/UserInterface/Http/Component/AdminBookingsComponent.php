@@ -498,7 +498,7 @@ class AdminBookingsComponent extends AbstractController
         if ($idStrings === []) {
             return [];
         }
-        $ids = array_map(static fn(string $s) => Ulid::fromString($s), $idStrings);
+        $ids = array_map(Ulid::fromString(...), $idStrings);
 
         /** @var Lesson[] $lessons */
         $lessons = $this->lessonRepository->findBy([
