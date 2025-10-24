@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7423c3c0509810201840d012f77e3426",
+    "content-hash": "114435c043e7f49d75fc35e09df6aac9",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2974,16 +2974,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v3.5.1",
+            "version": "v3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "5d1621e48edd7c7306cf2b9e73e374727867d6af"
+                "reference": "70a6675f1225583072fb8c1d766985eafc26f716"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/5d1621e48edd7c7306cf2b9e73e374727867d6af",
-                "reference": "5d1621e48edd7c7306cf2b9e73e374727867d6af",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/70a6675f1225583072fb8c1d766985eafc26f716",
+                "reference": "70a6675f1225583072fb8c1d766985eafc26f716",
                 "shasum": ""
             },
             "require": {
@@ -2997,13 +2997,13 @@
                 "deptrac/deptrac": "^4.0",
                 "doctrine/orm": "~2.14||~3.0",
                 "ekino/phpstan-banned-code": "^3.0",
-                "friendsofphp/php-cs-fixer": "^3.87.1",
-                "phpstan/phpstan": "^2.1.22",
+                "friendsofphp/php-cs-fixer": "^3.88.2",
+                "phpstan/phpstan": "^2.1.31",
                 "phpstan/phpstan-deprecation-rules": "^2.0.3",
-                "phpstan/phpstan-doctrine": "^2.0.4",
+                "phpstan/phpstan-doctrine": "^2.0.10",
                 "phpstan/phpstan-phpunit": "^2.0.7",
-                "phpunit/phpunit": "^10.5.53",
-                "rector/rector": "^2.1.5",
+                "phpunit/phpunit": "^10.5.58",
+                "rector/rector": "^2.2.3",
                 "symfony/cache": "^6.4||^7.0"
             },
             "suggest": {
@@ -3042,7 +3042,7 @@
             ],
             "support": {
                 "issues": "https://github.com/martin-georgiev/postgresql-for-doctrine/issues",
-                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v3.5.1"
+                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v3.6.0"
             },
             "funding": [
                 {
@@ -3054,7 +3054,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-12T10:54:26+00:00"
+            "time": "2025-10-23T08:57:22+00:00"
         },
         {
             "name": "monolog/monolog",
