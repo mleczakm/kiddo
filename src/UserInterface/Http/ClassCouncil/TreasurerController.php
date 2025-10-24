@@ -520,8 +520,12 @@ final class TreasurerController extends AbstractController
             $spentAtStr = (string) $request->request->get('spent_at', '');
             if ($label !== '' && $amountStr !== '') {
                 $amount = Money::of($amountStr, 'PLN');
-                $spentAt = $spentAtStr !== '' ? new \DateTimeImmutable($spentAtStr) : null;
-                $expense = new ClassExpense($class, $label, $amount, $spentAt);
+                if ($spentAtStr !== '') {
+                    $spentAt = new \DateTimeImmutable($spentAtStr);
+                    $expense = new ClassExpense($class, $label, $amount, $spentAt);
+                } else {
+                    $expense = new ClassExpense($class, $label, $amount);
+                }
                 $this->em->persist($expense);
                 $this->em->flush();
                 $this->addFlash('success', 'Wydatek dodany');

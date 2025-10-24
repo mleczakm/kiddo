@@ -18,9 +18,6 @@ class ClassExpense
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'datetime_immutable')]
-    private \DateTimeImmutable $spentAt;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $attachmentPath = null;
 
@@ -35,10 +32,10 @@ class ClassExpense
         private string $label,
         #[ORM\Column(type: 'json_document')]
         private Money $amount,
-        ?\DateTimeImmutable $spentAt = null
+        #[ORM\Column(type: 'datetime_immutable')]
+        private \DateTimeImmutable $spentAt = new \DateTimeImmutable()
     ) {
         $this->id = new Ulid();
-        $this->spentAt = $spentAt ?? new \DateTimeImmutable();
         $this->createdAt = new \DateTimeImmutable();
     }
 
