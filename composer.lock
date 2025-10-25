@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "114435c043e7f49d75fc35e09df6aac9",
+    "content-hash": "494ca4c015f95b4022e576f359b387ab",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -4737,16 +4737,16 @@
         },
         {
             "name": "swoole-bundle/swoole-bundle",
-            "version": "dev-master",
+            "version": "v0.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony-swoole/swoole-bundle.git",
-                "reference": "211a324e8921dfaf9e46d0e0181a5d529d1f744c"
+                "reference": "91fd8a6a33b8520dcb155fe01fcf384a0d9217be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/211a324e8921dfaf9e46d0e0181a5d529d1f744c",
-                "reference": "211a324e8921dfaf9e46d0e0181a5d529d1f744c",
+                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/91fd8a6a33b8520dcb155fe01fcf384a0d9217be",
+                "reference": "91fd8a6a33b8520dcb155fe01fcf384a0d9217be",
                 "shasum": ""
             },
             "require": {
@@ -4833,7 +4833,7 @@
                 "rector/rector": "^2.0",
                 "slevomat/coding-standard": "^8.14",
                 "squizlabs/php_codesniffer": "^3.8",
-                "swoole-bundle/resetter-bundle": "^1.0",
+                "swoole-bundle/resetter-bundle": "^1.1",
                 "swoole-bundle/z-engine": "^8.2.1|^8.3|^8.4",
                 "swoole/ide-helper": "^6.0.0",
                 "symfony/debug-bundle": "^6.4|^7.2",
@@ -4907,7 +4907,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony-swoole/swoole-bundle/issues",
-                "source": "https://github.com/symfony-swoole/swoole-bundle/tree/v0.24.1"
+                "source": "https://github.com/symfony-swoole/swoole-bundle/tree/v0.25.0"
             },
             "funding": [
                 {
@@ -4919,7 +4919,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-21T20:43:38+00:00"
+            "time": "2025-08-14T23:38:43+00:00"
         },
         {
             "name": "symfony/asset",
@@ -16722,19 +16722,11 @@
             "time": "2025-07-14T14:31:41+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "swoole-bundle/swoole-bundle",
-            "version": "9999999-dev",
-            "alias": "0.24.1",
-            "alias_normalized": "0.24.1.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "logdash/php-sdk": 20,
-        "roave/security-advisories": 20,
-        "swoole-bundle/swoole-bundle": 20
+        "roave/security-advisories": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
