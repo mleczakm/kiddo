@@ -482,4 +482,13 @@ class Booking
 
         return 0;
     }
+
+    public function getTextSummary(): string
+    {
+        return $this->getLessons()
+            ->reduce(fn(string $carry, Lesson $lesson) => $carry === ''
+                ? $lesson->getMetadata()
+                    ->title . $lesson->getMetadata()->schedule->format(' (H:i) d.m')
+                : $carry . $lesson->getMetadata()->schedule->format(', d.m'), '');
+    }
 }

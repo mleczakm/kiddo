@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\ClassCouncil;
 
-use App\Entity\Tenant;
-use App\Entity\User;
 use App\Entity\ClassCouncil\ClassMembership;
 use App\Entity\ClassCouncil\ClassRole;
 use App\Entity\ClassCouncil\ClassRoom;
+use App\Entity\Tenant;
+use App\Entity\User;
+use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -23,6 +24,20 @@ final class SecurityTest extends WebTestCase
     }
 
     private string $host = 'classpay.test';
+
+    public function testDashboardRequiresLogin(): void
+    {
+        $client = static::createClient(server: [
+            'HTTP_HOST' => $this->host,
+        ]);
+
+        $this->ensureTenantAndClass();
+
+        $client->request('GET', '/');
+
+        self::assertTrue(in_array($client->getResponse()->getStatusCode(), [302, 303], true), 'Should redirect');
+        self::assertStringContainsString('/login', (string) $client->getResponse()->headers->get('Location'));
+    }
 
     private function ensureTenantAndClass(): ClassRoom
     {
@@ -44,39 +59,21 @@ final class SecurityTest extends WebTestCase
         return $reloaded;
     }
 
-    public function testDashboardRequiresLogin(): void
-    {
-        $client = static::createClient(server: [
-            'HTTP_HOST' => $this->host,
-        ]);
-
-        $this->ensureTenantAndClass();
-
-        $client->request('GET', '/');
-
-        self::assertTrue(in_array($client->getResponse()->getStatusCode(), [302, 303], true), 'Should redirect');
-        self::assertStringContainsString('/login', (string) $client->getResponse()->headers->get('Location'));
-    }
-
     public function testStudentsRequiresLogin(): void
     {
-        $this->markTestIncomplete();
         $client = static::createClient(server: [
             'HTTP_HOST' => $this->host,
         ]);
 
         $this->ensureTenantAndClass();
-
 
         $client->request('GET', '/students');
 
-        self::assertTrue(in_array($client->getResponse()->getStatusCode(), [302, 303], true));
-        self::assertStringContainsString('/login', (string) $client->getResponse()->headers->get('Location'));
+        self::assertResponseStatusCodeSame(401);
     }
 
     public function testTreasurerOnlyEndpointsForbiddenForNonTreasurer(): void
     {
-        $this->markTestIncomplete();
         $client = static::createClient(server: [
             'HTTP_HOST' => $this->host,
         ]);
@@ -93,21 +90,20 @@ final class SecurityTest extends WebTestCase
         $client->loginUser($user);
 
         // Treasurer overview
-        $client->request('GET', '/cc/treasurer');
+        $client->request('GET', '/treasurer');
         self::assertSame(403, $client->getResponse()->getStatusCode(), 'Non-treasurer should get 403');
 
         // Expenses page
-        $client->request('GET', '/cc/expenses');
+        $client->request('GET', '/expenses');
         self::assertSame(403, $client->getResponse()->getStatusCode(), 'Non-treasurer should get 403');
 
         // Payment templates
-        $client->request('GET', '/cc/payments/templates');
+        $client->request('GET', '/payments/templates');
         self::assertSame(403, $client->getResponse()->getStatusCode(), 'Non-treasurer should get 403');
     }
 
     public function testTreasurerHasAccess(): void
     {
-        $this->markTestIncomplete();
         $client = static::createClient(server: [
             'HTTP_HOST' => $this->host,
         ]);
@@ -115,7 +111,7 @@ final class SecurityTest extends WebTestCase
         $class = $this->ensureTenantAndClass();
 
         // Create treasurer
-        $treasurer = new User('treasurer@example.com', 'Treasurer');
+        $treasurer = UserAssembler::new()->assemble();
         $this->em->persist($treasurer);
         $this->em->persist(new ClassMembership($treasurer, $class, ClassRole::TREASURER));
         $this->em->flush();

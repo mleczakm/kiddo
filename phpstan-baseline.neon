@@ -131,9 +131,3 @@ parameters:
 			identifier: generator.valueType
 			count: 1
 			path: tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 3
-			path: tests/Functional/ClassCouncil/SecurityTest.php

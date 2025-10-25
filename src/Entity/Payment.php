@@ -106,11 +106,6 @@ class Payment
         return $this->user;
     }
 
-    public function getAmount(): Money
-    {
-        return $this->amount;
-    }
-
     public function getStatus(): string
     {
         return $this->status;
@@ -227,6 +222,11 @@ class Payment
         return $this;
     }
 
+    public function isPaid(): bool
+    {
+        return $this->amount->isLessThanOrEqualTo($this->getAmountPaid());
+    }
+
     public function getAmountPaid(): Money
     {
         return $this->transfers->map(
@@ -236,15 +236,20 @@ class Payment
         )->reduce(fn(Money $carry, Money $transfer) => $carry->plus($transfer), Money::zero('PLN'));
     }
 
-    public function isPaid(): bool
-    {
-        return $this->amount->isLessThanOrEqualTo($this->getAmountPaid());
-    }
-
     public function amountMatch(Transfer $transfer): bool
     {
         return $this->amount->isEqualTo(
             TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount)->getAmount()
         );
+    }
+
+    public function getAmount(): Money
+    {
+        return $this->amount;
+    }
+
+    public function getBookingsSummary(): string
+    {
+        return implode(', ', $this->bookings->map(fn(Booking $booking) => $booking->getTextSummary()) ->toArray());
     }
 }

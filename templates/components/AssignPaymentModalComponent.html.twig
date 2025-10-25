@@ -4,12 +4,21 @@
                 data-action="live#action"
                 data-live-action-param="openModal"
                 class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 px-3 bg-workshop-green text-white hover:bg-workshop-green/90">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-big w-4 h-4 mr-1" data-lov-id="src/pages/Admin.tsx:1219:30" data-lov-name="CheckCircle" data-component-path="src/pages/Admin.tsx" data-component-line="1219" data-component-file="Admin.tsx" data-component-name="CheckCircle" data-component-content="%7B%22className%22%3A%22w-4%20h-4%20mr-1%22%7D"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-circle-check-big w-4 h-4 mr-1" data-lov-id="src/pages/Admin.tsx:1219:30"
+                 data-lov-name="CheckCircle" data-component-path="src/pages/Admin.tsx" data-component-line="1219"
+                 data-component-file="Admin.tsx" data-component-name="CheckCircle"
+                 data-component-content="%7B%22className%22%3A%22w-4%20h-4%20mr-1%22%7D">
+                <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
+                <path d="m9 11 3 3L22 4"></path>
+            </svg>
             {{ 'payment.approve'|trans }}
         </button>
     {% else %}
         {# Overlay #}
-        <div data-action="click->live#action" data-live-action-param="closeModal" class="fixed inset-0 z-50 bg-black/80"></div>
+        <div data-action="click->live#action" data-live-action-param="closeModal"
+             class="fixed inset-0 z-50 bg-black/80"></div>
 
         {# Dialog #}
         <div role="dialog"
@@ -48,7 +57,8 @@
                     </div>
 
                     <div>
-                        <label class="text-base font-semibold" for="payment-search">{{ 'payment.select_payment'|trans }}</label>
+                        <label class="text-base font-semibold"
+                               for="payment-search">{{ 'payment.select_payment'|trans }}</label>
                         <p class="text-sm text-muted-foreground mb-4">{{ 'payment.select_payment_help'|trans }}</p>
                         <input
                                 id="payment-search"
@@ -62,21 +72,21 @@
                         <div class="space-y-2 max-h-64 overflow-y-auto">
                             {% for payment in this.payments %}
                                 <div
-                                    data-action="click->live#action"
-                                    data-live-action-param="selectPayment"
-                                    data-live-payment-id-param="{{ payment.id }}"
-                                    class="p-3 border rounded-lg cursor-pointer transition-all border-border hover:border-workshop-blue/50 {{ this.selectedPaymentId == payment.id ? 'bg-blue-100 border-workshop-blue' : '' }}"
+                                        data-action="click->live#action"
+                                        data-live-action-param="selectPayment"
+                                        data-live-payment-id-param="{{ payment.id }}"
+                                        class="p-3 border rounded-lg cursor-pointer transition-all border-border hover:border-workshop-blue/50 {{ this.selectedPaymentId == payment.id ? 'bg-blue-100 border-workshop-blue' : '' }}"
                                 >
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
                                             <div class="flex items-center gap-2 mb-1">
-                                                <p class="font-medium">{{ payment.user.name }}</p>
+                                                <p class="font-bold">{{ payment.paymentCode ? payment.paymentCode.code : '' }}</p>
                                                 <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground text-xs">{{ payment.amount }}</div>
                                                 {% if payment.amountMatch(this.transfer) %}
                                                     <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent hover:bg-secondary/80 text-xs bg-green-100 text-green-700">{{ 'payment.amount_match'|trans }}</div>
                                                 {% endif %}
                                             </div>
-                                            <p class="text-sm text-muted-foreground">{{ payment.user.email }}</p>
+                                            <p class="text-sm text-muted-foreground">{{ payment.bookingsSummary }} {{ payment.user.name }} {{ payment.user.email }}</p>
                                             <p class="text-xs text-muted-foreground">{{ 'payment.booked'|trans({'{date}': payment.createdAt|date('d.m.Y')}) }}</p>
                                         </div>
                                         <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 text-xs">{{ 'payment.status_pending'|trans }}</div>
@@ -92,17 +102,17 @@
 
                     <div class="flex justify-end gap-2">
                         <button
-                            data-action="click->live#action"
-                            data-live-action-param="closeModal"
-                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                                data-action="click->live#action"
+                                data-live-action-param="closeModal"
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
                         >
                             {{ 'action.cancel'|trans }}
                         </button>
                         <button
-                            data-action="click->live#action"
-                            data-live-action-param="confirmAssignment"
-                            {{ this.selectedPaymentId is null ? 'disabled' : '' }}
-                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-workshop-green text-white hover:bg-workshop-green/90"
+                                data-action="click->live#action"
+                                data-live-action-param="confirmAssignment"
+                                {{ this.selectedPaymentId is null ? 'disabled' : '' }}
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-workshop-green text-white hover:bg-workshop-green/90"
                         >
                             {{ 'action.confirm_and_merge'|trans }}
                         </button>
@@ -110,8 +120,14 @@
                 </div>
             {% endif %}
 
-            <button type="button" data-action="click->live#action" data-live-action-param="closeModal" class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            <button type="button" data-action="click->live#action" data-live-action-param="closeModal"
+                    class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="h-4 w-4">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
                 <span class="sr-only">{{ 'action.close'|trans }}</span>
             </button>
         </div>
