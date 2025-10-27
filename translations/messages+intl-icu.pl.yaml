@@ -258,7 +258,7 @@ lesson:
   spots_available: >-
     {spots, plural,
       =0 {brak miejsc}
-      one {# miejsce dostępne}
+      one {Ostatnie miejsce!}
       few {# miejsca dostępne}
       many {# miejsc dostępnych}
       other {# miejsc dostępnych}

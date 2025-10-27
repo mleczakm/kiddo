@@ -1,22 +1,18 @@
 {#
-  Displays a badge showing the current capacity status of a lesson/workshop.
-  
-  @param int current The current number of attendees
-  @param int capacity The maximum capacity
-  @param string size The size of the badge (sm, md, lg)
+Displays a badge showing the current capacity status of a lesson/workshop.
+
+@param int available The current number of attendees
+@param int capacity The maximum capacity
+@param string size The size of the badge (sm, md, lg)
 #}
 
-{% set usedPercentage = (current / capacity) * 100 %}
-{% set available = capacity - current %}
 
-{% if usedPercentage < 33.33 %}
-    {% set badgeClass = 'bg-green-100 text-green-800 border-green-200' %}
-{% elseif usedPercentage < 50 %}
-    {% set badgeClass = 'bg-yellow-100 text-yellow-800 border-yellow-200' %}
-{% elseif usedPercentage < 75 %}
-    {% set badgeClass = 'bg-orange-100 text-orange-800 border-orange-200' %}
+{% if available > 4 %}
+    {% set badgeClass = 'text-green-700' %}
+{% elseif available > 2 %}
+    {% set badgeClass = 'text-yellow-600' %}
 {% else %}
-    {% set badgeClass = 'bg-red-100 text-red-800 border-red-200' %}
+    {% set badgeClass = 'text-red-600' %}
 {% endif %}
 
 {% set sizeClasses = {
@@ -25,7 +21,7 @@
     'lg': 'px-3 py-1.5 text-base'
 } %}
 
-<span class="inline-flex items-center rounded-full border font-medium {{ badgeClass }} {{ sizeClasses[size]|default(sizeClasses['md']) }}" 
-      title="{{ 'lesson.capacity.available'|trans({'%available%': available, '%capacity%': capacity}) }}">
-    {{ 'lesson.capacity.remaining'|trans({'%available%': available, '%capacity%': capacity}) }}
+<span class="spot-badge items-center rounded-full font-bold {{ badgeClass }} {{ sizeClasses[size|default('md')] }}"
+      title="{{ 'lesson.spots_available'|trans({spots: available }) }}">
+    {{ 'lesson.spots_available'|trans({spots: available }) }}
 </span>
