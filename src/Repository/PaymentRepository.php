@@ -62,4 +62,14 @@ class PaymentRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    public function countPendingPayments(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.status = :status')
+            ->setParameter('status', Payment::STATUS_PENDING)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

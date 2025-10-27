@@ -27,6 +27,32 @@ class PaymentRepositoryTest extends KernelTestCase
 
     public function testFindPendingWithSearch(): void
     {
+        $this->preparePendingPayment();
+
+        // Test cases
+        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('Test User'), 'Search by name');
+        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('test@example.com'), 'Search by email');
+        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('1234'), 'Search by payment code');
+        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('150'), 'Search by amount');
+        $this->assertCount(
+            1,
+            $this->paymentRepository->findPendingWithSearch(''),
+            'Empty search should return all pending'
+        );
+        $this->assertCount(0, $this->paymentRepository->findPendingWithSearch('nonexistent'), 'Search with no match');
+    }
+
+    public function testCountPendingPayments(): void
+    {
+        self::assertSame(0, $this->paymentRepository->countPendingPayments());
+
+        $this->preparePendingPayment();
+
+        self::assertSame(1, $this->paymentRepository->countPendingPayments());
+    }
+
+    private function preparePendingPayment(): void
+    {
         $em = self::getContainer()->get('doctrine')->getManager();
         // Setup test data
         $user = UserAssembler::new()
@@ -49,17 +75,5 @@ class PaymentRepositoryTest extends KernelTestCase
         $em->persist($payment);
 
         $em->flush();
-
-        // Test cases
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('Test User'), 'Search by name');
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('test@example.com'), 'Search by email');
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('1234'), 'Search by payment code');
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('150'), 'Search by amount');
-        $this->assertCount(
-            1,
-            $this->paymentRepository->findPendingWithSearch(''),
-            'Empty search should return all pending'
-        );
-        $this->assertCount(0, $this->paymentRepository->findPendingWithSearch('nonexistent'), 'Search with no match');
     }
 }

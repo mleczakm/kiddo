@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
 use App\Tests\Assembler\PaymentAssembler;
+use App\Tests\Assembler\PaymentCodeAssembler;
 use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -28,15 +29,6 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
 
     private MessageBusInterface $messageBus;
-
-    protected function setUp(): void
-    {
-        self::bootKernel();
-        $container = self::getContainer();
-
-        $this->entityManager = $container->get(EntityManagerInterface::class);
-        $this->messageBus = $container->get(MessageBusInterface::class);
-    }
 
     /**
      * @return array<string, array{string, string}>
@@ -67,6 +59,17 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         return [
             'empty title' => [''],
             'title with only spaces' => ['   '],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function noMatchingCodeProvider(): array
+    {
+        return [
+            'no code in title' => ['Transfer without any payment code'],
+            'non-existent code' => ['Transfer with NONEXISTENT code'],
         ];
     }
 
@@ -346,17 +349,6 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
     }
 
-    /**
-     * @return array<string, array{string}>
-     */
-    public static function noMatchingCodeProvider(): array
-    {
-        return [
-            'no code in title' => ['Transfer without any payment code'],
-            'non-existent code' => ['Transfer with NONEXISTENT code'],
-        ];
-    }
-
     #[Test]
     #[DataProvider('noMatchingCodeProvider')]
     public function dispatchesTransferNotMatchedWhenNoMatchingCodeFound(string $title): void
@@ -373,6 +365,7 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
             ->withAccountNumber($accountNumber)
             ->assemble();
         $this->entityManager->persist($transfer);
+        $this->setupPendingPayment();
         $this->entityManager->flush();
 
         // Act
@@ -385,6 +378,26 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->bus()
             ->dispatched()
             ->assertContains(TransferNotMatchedCommand::class);
+    }
+
+    public function testDoNotSendNotificationIfNoPendingPayments(): void
+    {
+        // Arrange
+        $transfer = TransferAssembler::new()
+            ->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        // Act
+        $command = new MatchPaymentForTransfer($transfer);
+        $this->messageBus->dispatch($command);
+
+        // Assert
+        $this->entityManager->refresh($transfer);
+
+        $this->bus()
+            ->dispatched()
+            ->assertNotContains(TransferNotMatchedCommand::class);
     }
 
     #[Test]
@@ -402,6 +415,7 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
             ->withAccountNumber($accountNumber)
             ->assemble();
         $this->entityManager->persist($transfer);
+        $this->setupPendingPayment();
         $this->entityManager->flush();
 
         // Act
@@ -414,5 +428,36 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->bus()
             ->dispatched()
             ->assertContains(TransferNotMatchedCommand::class);
+    }
+
+    protected function setUp(): void
+    {
+        self::bootKernel();
+        $container = self::getContainer();
+
+        $this->entityManager = $container->get(EntityManagerInterface::class);
+        $this->messageBus = $container->get(MessageBusInterface::class);
+    }
+
+    private function setupPendingPayment(): void
+    {
+        $user = UserAssembler::new()
+            ->withName('Test User')
+            ->withEmail('test@example.com')
+            ->assemble();
+        $this->entityManager->persist($user);
+
+        $paymentCode = PaymentCodeAssembler::new()
+            ->withCode('1234')
+            ->assemble();
+        $this->entityManager->persist($paymentCode);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withPaymentCode($paymentCode)
+            ->withAmount(Money::of(150, 'PLN')) // 150.00 PLN
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
     }
 }
