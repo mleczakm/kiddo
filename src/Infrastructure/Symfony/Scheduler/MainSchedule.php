@@ -61,7 +61,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                     new \DateTimeZone('Europe/Warsaw')
                 ),
                 RecurringMessage::cron(
-                    '35 17 * * *',
+                    '59 17 * * *',
                     Envelope::wrap(new ExtendSeriesSchedule(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
