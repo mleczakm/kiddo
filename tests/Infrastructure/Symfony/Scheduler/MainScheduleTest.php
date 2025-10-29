@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Symfony\Scheduler;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Infrastructure\Symfony\Scheduler\MainSchedule;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\NullAdapter;
 
@@ -17,6 +17,6 @@ class MainScheduleTest extends TestCase
         $schedule = new MainSchedule(new NullAdapter())
             ->getSchedule();
 
-        self::assertCount(6, $schedule->getRecurringMessages());
+        self::assertCount(7, $schedule->getRecurringMessages());
     }
 }

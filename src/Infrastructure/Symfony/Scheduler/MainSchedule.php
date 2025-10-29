@@ -7,6 +7,7 @@ namespace App\Infrastructure\Symfony\Scheduler;
 use App\Application\Command\CheckBookingsToMarkPast;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Command\CheckExpiredPayments;
+use App\Application\Command\ExtendSeriesSchedule;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Command\TriggerMatchPaymentForTransferForPastTransfers;
@@ -57,6 +58,11 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 RecurringMessage::cron(
                     '5 * * * *',
                     Envelope::wrap(new CheckBookingsToMarkPast(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
+                    new \DateTimeZone('Europe/Warsaw')
+                ),
+                RecurringMessage::cron(
+                    '50 14 * * *',
+                    Envelope::wrap(new ExtendSeriesSchedule(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
             );
