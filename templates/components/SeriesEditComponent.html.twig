@@ -1,0 +1,77 @@
+<div {{ attributes }} class="rounded-md border p-4">
+  <div class="flex items-center justify-between mb-3">
+    <div class="font-semibold">Edytuj bilety serii</div>
+    <div class="space-x-2">
+      <button type="button"
+              data-action="live#action"
+              data-live-action-param="save"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-green-600 text-white hover:bg-green-700 h-9 rounded-md px-3">
+        Zapisz
+      </button>
+      <button type="button"
+              data-action="click->live#action"
+              data-live-action-param="cancelEdit"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3">
+        Anuluj
+      </button>
+    </div>
+  </div>
+
+  <div class="space-y-3">
+    {% for i, opt in this.options %}
+      <div class="grid md:grid-cols-5 gap-2 items-end border-b pb-3">
+        <div>
+          <label class="block text-xs text-muted-foreground mb-1">Typ</label>
+          <select class="w-full border rounded-md px-2 py-1.5"
+                  data-model="options[{{ i }}][type]">
+            {% for t in this.ticketTypes %}
+              <option value="{{ t }}" {{ opt.type == t ? 'selected' : '' }}>{{ ('lesson.' ~ t)|trans }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-muted-foreground mb-1">Kwota</label>
+          <input type="text" class="w-full border rounded-md px-2 py-1.5" data-model="options[{{ i }}][amount]" value="{{ opt.amount }}" placeholder="60.00" />
+        </div>
+        <div>
+          <label class="block text-xs text-muted-foreground mb-1">Waluta</label>
+          <input type="text" class="w-full border rounded-md px-2 py-1.5" data-model="options[{{ i }}][currency]" value="{{ opt.currency }}" placeholder="PLN" />
+        </div>
+        <div>
+          <label class="block text-xs text-muted-foreground mb-1">Opis</label>
+          <input type="text" class="w-full border rounded-md px-2 py-1.5" data-model="options[{{ i }}][description]" value="{{ opt.description }}" placeholder="Opis" />
+        </div>
+        <div class="flex gap-2 items-end">
+          <div class="flex-1">
+            <label class="block text-xs text-muted-foreground mb-1">Przepisanie</label>
+            <select class="w-full border rounded-md px-2 py-1.5"
+                    data-model="options[{{ i }}][reschedulePolicy]">
+              {% for p in this.reschedulePolicies %}
+                <option value="{{ p }}" {{ opt.reschedulePolicy == p ? 'selected' : '' }}>{{ ('lesson.policy.' ~ p)|trans }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="button"
+                  title="Usuń"
+                  data-action="live#action"
+                  data-live-action-param="removeOption"
+                  data-live-index-param="{{ i }}"
+                  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3">
+            Usuń
+          </button>
+        </div>
+      </div>
+    {% else %}
+      <div class="text-muted-foreground">Brak opcji biletów dla tej serii.</div>
+    {% endfor %}
+
+    <div>
+      <button type="button"
+              data-action="live#action"
+              data-live-action-param="addOption"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3">
+        Dodaj opcję
+      </button>
+    </div>
+  </div>
+</div>

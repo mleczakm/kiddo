@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
@@ -20,7 +22,8 @@ readonly class RescheduleLessonBookingHandler
         private LessonRepository $lessonRepository,
         private LoggerInterface $logger,
         #[Autowire(service: 'state_machine.booking')]
-        private WorkflowInterface $bookingStateMachine
+        private WorkflowInterface $bookingStateMachine,
+        private MessageBusInterface $bus,
     ) {}
 
     public function __invoke(RescheduleLessonBooking $command): void
@@ -87,5 +90,14 @@ readonly class RescheduleLessonBookingHandler
 
         // Perform domain reschedule operation on lessons map
         $booking->rescheduleLesson($oldLesson, $newLesson, $command->getRescheduledBy());
+
+        // Notify admins about reschedule
+        $this->bus->dispatch(new SendRescheduleAdminNotificationCommand(
+            booking: $booking,
+            oldLesson: $oldLesson,
+            newLesson: $newLesson,
+            rescheduledBy: $command->getRescheduledBy(),
+            reason: $command->getReason(),
+        ));
     }
 }

@@ -66,3 +66,17 @@ booking_cancellation:
 
     Best regards,
     The Sensory Workshop Team
+
+# Reschedule admin notification
+reschedule:
+  notification:
+    admin:
+      subject: 'New reschedule — {user}'
+      info: 'Information about a booking reschedule.'
+      labels:
+        user: 'User'
+        email: 'Email'
+        from: 'From'
+        to: 'To'
+        reason: 'Reason'
+      footer: 'Log in to the admin panel to verify the details.'

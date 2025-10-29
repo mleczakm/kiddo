@@ -1,0 +1,21 @@
+{% trans_default_domain 'emails' %}
+{% set from = oldLesson.metadata %}
+{% set to = newLesson.metadata %}
+
+<p>{{ 'reschedule.notification.admin.info'|trans }}</p>
+
+<p>
+  {{ 'reschedule.notification.admin.labels.user'|trans }}: <strong>{{ user.name ?: user.emailString }}</strong><br>
+  {{ 'reschedule.notification.admin.labels.email'|trans }}: <strong>{{ user.emailString }}</strong>
+</p>
+
+<p>
+  {{ 'reschedule.notification.admin.labels.from'|trans }}: <strong>{{ from.title }}</strong>, {{ from.schedule|format_datetime(pattern='EEE dd MMM HH:mm') }}<br>
+  {{ 'reschedule.notification.admin.labels.to'|trans }}: <strong>{{ to.title }}</strong>, {{ to.schedule|format_datetime(pattern='EEE dd MMM HH:mm') }}
+</p>
+
+{% if reason %}
+  <p>{{ 'reschedule.notification.admin.labels.reason'|trans }}: {{ reason }}</p>
+{% endif %}
+
+<p>{{ 'reschedule.notification.admin.footer'|trans }}</p>

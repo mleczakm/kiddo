@@ -157,3 +157,16 @@ lesson_rescheduled_by_admin_notification:
 at: o
 emails:
   footer_unbranded: 'Kiddo'
+
+reschedule:
+  notification:
+    admin:
+      subject: 'Nowe przełożenie zajęć — {user}'
+      info: 'Informacja o przełożeniu rezerwacji.'
+      labels:
+        user: 'Użytkownik'
+        email: 'Email'
+        from: 'Z'
+        to: 'Na'
+        reason: 'Powód'
+      footer: 'Zaloguj się do panelu administracyjnego, aby zweryfikować szczegóły.'
