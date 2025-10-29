@@ -22,7 +22,8 @@ final readonly class MainSchedule implements ScheduleProviderInterface
 {
     public function __construct(
         private CacheInterface $cache,
-    ) {}
+    ) {
+    }
 
     public function getSchedule(): Schedule
     {
@@ -61,7 +62,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                     new \DateTimeZone('Europe/Warsaw')
                 ),
                 RecurringMessage::cron(
-                    '50 14 * * *',
+                    '35 17 * * *',
                     Envelope::wrap(new ExtendSeriesSchedule(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
