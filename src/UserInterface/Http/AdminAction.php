@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http;
 
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -62,6 +63,18 @@ class AdminAction extends AbstractController
     {
         return $this->render('admin/dashboard.html.twig', [
             'activeTab' => 'users',
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/uzytkownicy/{id}', name: 'app_admin_user_view', requirements: [
+        'id' => '\\d+',
+    ])]
+    public function userView(User $user): Response
+    {
+        return $this->render('admin/user.html.twig', [
+            'activeTab' => 'users',
+            'user' => $user,
         ]);
     }
 
