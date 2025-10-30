@@ -1,0 +1,67 @@
+<aside class="hidden md:block w-64 shrink-0 border-r bg-card text-card-foreground min-h-screen">
+    <div class="p-4 border-b">
+        <h2 class="font-bold text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Admin CRM
+        </h2>
+    </div>
+    <nav aria-label="Admin navigation" class="p-2">
+        <ul class="space-y-1" data-testid="admin-menu">
+            <li>
+                <a href="{{ path('app_admin_dashboard') }}"
+                   class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors {{ activeTab == 'dashboard' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60' }}"
+                   aria-current="{{ activeTab == 'dashboard' ? 'page' : 'false' }}">
+                    <span class="i-lucide-layout-dashboard size-4"></span>
+                    <span>{{ 'admin.tabs.dashboard'|trans }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('app_admin_lessons') }}"
+                   class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors {{ activeTab == 'lessons' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60' }}"
+                   aria-current="{{ activeTab == 'lessons' ? 'page' : 'false' }}">
+                    <span class="i-lucide-book-open size-4"></span>
+                    <span>{{ 'admin.tabs.lessons'|trans }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('app_admin_schedule') }}"
+                   class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors {{ activeTab == 'schedule' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60' }}"
+                   aria-current="{{ activeTab == 'schedule' ? 'page' : 'false' }}">
+                    <span class="i-lucide-calendar size-4"></span>
+                    <span>{{ 'admin.tabs.schedule'|trans }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('app_admin_transfers') }}"
+                   class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors {{ activeTab == 'transfers' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60' }}"
+                   aria-current="{{ activeTab == 'transfers' ? 'page' : 'false' }}">
+                    <span class="i-lucide-wallet size-4"></span>
+                    <span>{{ 'admin.tabs.transfers'|trans }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('app_admin_bookings') }}"
+                   class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors {{ activeTab == 'bookings' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60' }}"
+                   aria-current="{{ activeTab == 'bookings' ? 'page' : 'false' }}">
+                    <span class="i-lucide-ticket size-4"></span>
+                    <span>{{ 'admin.tabs.bookings'|trans }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('app_admin_users') }}"
+                   class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors {{ activeTab == 'users' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60' }}"
+                   aria-current="{{ activeTab == 'users' ? 'page' : 'false' }}" data-testid="admin-menu-users-link">
+                    <span class="i-lucide-users size-4"></span>
+                    <span>{{ 'admin.tabs.users'|trans }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('app_admin_messages') }}"
+                   class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors {{ activeTab == 'messages' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60' }}"
+                   aria-current="{{ activeTab == 'messages' ? 'page' : 'false' }}">
+                    <span class="i-lucide-message-square size-4"></span>
+                    <span>{{ 'admin.tabs.messages'|trans }}</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>

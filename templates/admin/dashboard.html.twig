@@ -5,18 +5,22 @@
 {% block head_styles %}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap');
-        body {
-            background-color: hsl(var(--background));
-        }
-        .admin-panel-title {
-            font-family: 'Lora', serif;
-        }
+        body { background-color: hsl(var(--background)); }
+        .admin-panel-title { font-family: 'Lora', serif; }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-4xl font-bold mb-8 font-display text-workshop-brown">{{ 'admin.title'|trans }}</h1>
-        {{ component('AdminDashboardComponent', { activeTab: activeTab|default('dashboard') }) }}
+    <div class="min-h-screen flex w-full bg-background">
+        {# Sidebar / Admin Menu #}
+        {% include 'components/AdminMenu.html.twig' with { activeTab: activeTab|default('dashboard') } %}
+
+        {# Main content area #}
+        <main class="flex-1">
+            <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl font-bold mb-8 font-display text-workshop-brown">{{ 'admin.title'|trans }}</h1>
+                {{ component('AdminDashboardComponent', { activeTab: activeTab|default('dashboard') }) }}
+            </div>
+        </main>
     </div>
 {% endblock %}
