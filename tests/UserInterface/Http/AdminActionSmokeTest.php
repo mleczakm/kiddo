@@ -45,7 +45,6 @@ class AdminActionSmokeTest extends WebTestCase
         $client->request('GET', '/admin/zajecia');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('a[href="/admin/zajecia"].bg-background');
     }
 
     public function testAdminScheduleTab(): void

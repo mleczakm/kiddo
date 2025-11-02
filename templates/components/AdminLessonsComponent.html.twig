@@ -71,21 +71,27 @@
           {% for lesson in this.lessons %}
             <tr class="border-b transition-colors hover:bg-muted/50 {{ lesson.status == 'cancelled' ? 'opacity-60' : '' }}">
               <td class="p-4 align-middle">
-                {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                <a class="hover:underline text-foreground" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'Open lesson'|trans }}">
+                  {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                </a>
               </td>
               <td class="p-4 align-middle">
                 <div>
-                  <div class="font-medium {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : '' }}">{{ lesson.metadata.title }}</div>
+                  <a class="font-medium hover:underline {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : '' }}" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">
+                    {{ lesson.metadata.title }}
+                  </a>
                   <div class="text-xs text-muted-foreground">{{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }}</div>
                 </div>
               </td>
               <td class="p-4 align-middle">
-                {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
+                <a class="hover:underline text-foreground" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'Open lesson'|trans }}">
+                  {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
+                </a>
               </td>
               <td class="p-4 align-middle">
-                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
+                <a class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }} hover:opacity-90" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'Open lesson'|trans }}">
                   {{ lesson.status == 'active' ? ('admin.lessons.status.active'|trans) : ('admin.lessons.status.cancelled'|trans) }}
-                </div>
+                </a>
               </td>
               <td class="p-4 align-middle">
                 <button

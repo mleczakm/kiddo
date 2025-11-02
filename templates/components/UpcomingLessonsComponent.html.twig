@@ -62,14 +62,16 @@
                     <div class="flex items-center justify-between p-4 border rounded-lg {{ lesson.status == 'cancelled' ? 'bg-red-50 border-red-200 opacity-60' : '' }}">
                         <div class="flex-1">
                             <h4 class="font-medium {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : '' }}">
-                                {{ lesson.metadata.title }}
+                                <a class="hover:underline" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">{{ lesson.metadata.title }}</a>
                                 {% if lesson.status == 'cancelled' %}
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 ml-2">
                                         Cancelled
                                     </span> 
                                 {% endif %}
                             </h4>
-                            <p class="text-sm text-muted-foreground">{{ lesson.metadata.schedule|format_datetime('medium', 'short') }}</p>
+                            <p class="text-sm text-muted-foreground">
+                                <a class="hover:underline" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">{{ lesson.metadata.schedule|format_datetime('medium', 'short') }}</a>
+                            </p>
 
                             {# Show attendees list when showCancelled is enabled #}
                             {% if this.showCancelled %}

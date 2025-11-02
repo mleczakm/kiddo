@@ -89,7 +89,7 @@
                   {{ status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
                 </div>
               </td>
-              <td class="p-4 align-middle">
+              <td class="p-4 align-middle space-x-2">
                 {% if series.status == 'active' %}
                   <button data-action="click->live#action"
                           data-live-action-param="cancelSeries"
@@ -105,8 +105,21 @@
                     {{ 'admin.schedule.actions.activate'|trans }}
                   </button>
                 {% endif %}
+                <button data-action="click->live#action"
+                        data-live-action-param="startEdit"
+                        data-live-series-id-param="{{ series.id }}"
+                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-blue-600 text-blue-600 hover:bg-blue-600/10">
+                  {{ 'Edit'|trans }}
+                </button>
               </td>
             </tr>
+            {% if this.editSeriesId == series.id %}
+              <tr class="bg-white border-t">
+                <td colspan="5" class="p-4">
+                  {{ component('SeriesEditComponent', { seriesId: series.id }) }}
+                </td>
+              </tr>
+            {% endif %}
           {% else %}
             <tr>
               <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.schedule.empty'|trans }}</td>

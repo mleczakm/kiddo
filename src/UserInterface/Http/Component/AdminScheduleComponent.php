@@ -32,6 +32,9 @@ final class AdminScheduleComponent extends AbstractController
     #[LiveProp(writable: true, url: true)]
     public bool $showCancelled = false;
 
+    #[LiveProp(writable: true)]
+    public ?string $editSeriesId = null;
+
     public function mount(): void
     {
         $this->week ??= Clock::get()->now()->format('Y-m-d');
@@ -70,6 +73,18 @@ final class AdminScheduleComponent extends AbstractController
             $types[] = $opt->type->value;
         }
         return $types;
+    }
+
+    #[LiveAction]
+    public function startEdit(#[LiveArg] string $seriesId): void
+    {
+        $this->editSeriesId = $seriesId;
+    }
+
+    #[LiveAction]
+    public function cancelEdit(): void
+    {
+        $this->editSeriesId = null;
     }
 
     #[LiveAction]
