@@ -7,7 +7,7 @@ EXPOSE 9501
 CMD bin/console swoole:server:run
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions apcu intl ds pcntl pdo_pgsql sysvsem swoole-^6.0.2 xsl
+    install-php-extensions apcu intl ds pcntl pdo_pgsql sysvsem swoole-^6.1 xsl
 
 COPY .docker/php/ini/zz-php.ini /usr/local/etc/php/conf.d/zz-php.ini
 
