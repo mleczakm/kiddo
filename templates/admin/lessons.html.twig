@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'admin.title'|trans }} — {{ 'admin.tabs.lessons'|trans }}{% endblock %}
+
+{% block head_styles %}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap');
+        body { background-color: hsl(var(--background)); }
+        .admin-panel-title { font-family: 'Lora', serif; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex w-full bg-background">
+        {# Sidebar / Admin Menu #}
+        {% include 'components/AdminMenu.html.twig' with { activeTab: activeTab|default('lessons') } %}
+
+        {# Main content area #}
+        <main class="flex-1">
+            <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl font-bold mb-8 font-display text-workshop-brown">{{ 'admin.tabs.lessons'|trans }}</h1>
+                {{ component('AdminLessonsComponent') }}
+            </div>
+        </main>
+    </div>
+{% endblock %}
