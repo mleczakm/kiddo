@@ -70,7 +70,7 @@
         "symfony/yaml": "7.3.*",
         "symfonycasts/tailwind-bundle": "^0.10.1",
         "tales-from-a-dev/flowbite-bundle": "^0.8.1",
-        "twig/cssinliner-extra": "^3.21",
+        "twig/cssinliner-extra": "^3.22",
         "twig/extra-bundle": "^3.21",
         "twig/inky-extra": "^3.21",
         "twig/intl-extra": "^3.21",
