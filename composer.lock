@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ccf82300d57ebc8b38c7877ee7a9f96c",
+    "content-hash": "c9956e1a7d20b4405543ebaec19d6929",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -16475,16 +16475,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v2.7.7",
+            "version": "v2.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "90ba647ef705757644db81dabfa6ad0152d2f39a"
+                "reference": "acc7d7a290f5efadeeb9ea1fbd61749430f5b23a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/90ba647ef705757644db81dabfa6ad0152d2f39a",
-                "reference": "90ba647ef705757644db81dabfa6ad0152d2f39a",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/acc7d7a290f5efadeeb9ea1fbd61749430f5b23a",
+                "reference": "acc7d7a290f5efadeeb9ea1fbd61749430f5b23a",
                 "shasum": ""
             },
             "require": {
@@ -16503,7 +16503,6 @@
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8",
-                "brianium/paratest": "^6|^7",
                 "dama/doctrine-test-bundle": "^8.0",
                 "doctrine/collections": "^1.7|^2.0",
                 "doctrine/common": "^3.2.2",
@@ -16514,7 +16513,6 @@
                 "doctrine/orm": "^2.16|^3.0",
                 "doctrine/persistence": "^2.0|^3.0|^4.0",
                 "phpunit/phpunit": "^9.5.0 || ^10.0 || ^11.0 || ^12.0",
-                "rector/rector": "^2.2",
                 "symfony/browser-kit": "^6.4|^7.0|^8.0",
                 "symfony/console": "^6.4|^7.0|^8.0",
                 "symfony/dotenv": "^6.4|^7.0|^8.0",
@@ -16579,7 +16577,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v2.7.7"
+                "source": "https://github.com/zenstruck/foundry/tree/v2.7.8"
             },
             "funding": [
                 {
@@ -16591,7 +16589,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-23T06:51:50+00:00"
+            "time": "2025-11-05T09:34:18+00:00"
         },
         {
             "name": "zenstruck/mailer-test",
