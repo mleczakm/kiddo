@@ -70,11 +70,11 @@
         "symfony/yaml": "7.3.*",
         "symfonycasts/tailwind-bundle": "^0.10.1",
         "tales-from-a-dev/flowbite-bundle": "^0.8.1",
-        "twig/cssinliner-extra": "^3.21",
-        "twig/extra-bundle": "^3.21",
-        "twig/inky-extra": "^3.21",
-        "twig/intl-extra": "^3.21",
-        "twig/twig": "^2.12|^3.22.0"
+        "twig/cssinliner-extra": "^3.22",
+        "twig/extra-bundle": "^3.22",
+        "twig/inky-extra": "^3.22",
+        "twig/intl-extra": "^3.22",
+        "twig/twig": "^3.22.0"
     },
     "config": {
         "allow-plugins": {
