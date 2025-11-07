@@ -173,7 +173,8 @@
             "number_of_concurrent_updates": 2,
             "one_pull_request_per_package": 1,
             "bundled_packages": {
-                "symfony/asset": [
+                "symfony/framework-bundle": [
+                    "symfony/asset",
                     "symfony/asset-mapper",
                     "symfony/brevo-mailer",
                     "symfony/browser-kit",
@@ -224,6 +225,7 @@
               ]
             },
             "blocklist": [
+              "symfony/asset",
               "symfony/asset-mapper",
               "symfony/brevo-mailer",
               "symfony/browser-kit",
@@ -235,7 +237,6 @@
               "symfony/event-dispatcher",
               "symfony/expression-language",
               "symfony/form",
-              "symfony/framework-bundle",
               "symfony/http-client",
               "symfony/intl",
               "symfony/lock",
