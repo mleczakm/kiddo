@@ -6,9 +6,10 @@ namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\AddBooking;
 use App\Application\Service\BookingFactory;
-use App\Entity\PaymentFactory;
 use App\Entity\Lesson;
+use App\Entity\PaymentFactory;
 use App\Entity\User;
+use App\Repository\ChildRepository;
 use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -61,9 +62,13 @@ class LessonModal extends AbstractController
     #[LiveProp(writable: true)]
     public bool $paymentModal = false;
 
+    #[LiveProp(writable: true)]
+    public ?string $selectedChildId = null;
+
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly BookingFactory $bookingFactory,
+        private readonly ChildRepository $childRepository,
     ) {}
 
     #[LiveAction]
@@ -185,6 +190,26 @@ class LessonModal extends AbstractController
         return (bool) $this->lesson->getSeries()?->getLessonsLt($this->lesson);
     }
 
+    /**
+     * @return array<array{id: non-empty-string, name: string, birthday: non-falsy-string|null}>
+     */
+    public function getChildren(): array
+    {
+        /** @var ?User $user */
+        $user = $this->getUser();
+        if (! $user) {
+            return [];
+        }
+        return array_map(
+            static fn($c) => [
+                'id' => (string) $c->getId(),
+                'name' => $c->getName(),
+                'birthday' => $c->getBirthday()?->format('Y-m-d'),
+            ],
+            $this->childRepository->findByOwner($user)
+        );
+    }
+
     #[LiveAction]
     public function processPayment(): void
     {
@@ -200,6 +225,14 @@ class LessonModal extends AbstractController
             $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
 
             $booking = $this->bookingFactory->createFrom($this->lesson, $selected, $user);
+
+            if ($this->selectedChildId) {
+                $child = $this->childRepository->find($this->selectedChildId);
+                if ($child && $child->getOwner()->getId() === $user->getId()) {
+                    $booking->setChild($child);
+                }
+            }
+
             $payment = new PaymentFactory()
                 ->create($user, $selected->price);
             $booking->setPayment($payment);

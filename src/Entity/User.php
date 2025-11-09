@@ -66,11 +66,18 @@ class User implements UserInterface
     #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'user')]
     private Collection $bookings;
 
+    /**
+     * @var Collection<int, Child>
+     */
+    #[ORM\OneToMany(targetEntity: Child::class, mappedBy: 'owner', cascade: ['remove'])]
+    private Collection $children;
+
     public function __construct(?string $email = null, ?string $name = null)
     {
         $this->createdAt = Clock::get()->now();
         $this->tenants = new ArrayCollection();
         $this->bookings = new ArrayCollection();
+        $this->children = new ArrayCollection();
         if ($email !== null) {
             $this->setEmail($email);
         }
@@ -82,6 +89,14 @@ class User implements UserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return Collection<int, Child>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
     }
 
     /**

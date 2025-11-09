@@ -119,6 +119,21 @@
                                                 {% endif %}
                                             </div>
                                         </div>
+                                        {% if booking.child %}
+                                            <div class="flex items-center space-x-2 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-baby w-4 h-4 mr-1 text-workshop-red">
+                                                    <path d="M9 12h.01"></path>
+                                                    <path d="M15 12h.01"></path>
+                                                    <path d="M7 20a5 5 0 0 0 10 0"></path>
+                                                    <path d="M12 18v2"></path>
+                                                    <circle cx="12" cy="8" r="5"></circle>
+                                                </svg>
+                                                <span class="font-medium">{{ booking.child.name }}</span>
+                                                {% if booking.child.ageYears is not null %}
+                                                    <span class="text-muted-foreground">• {{ booking.child.ageYears }} {{ 'profile.children.years'|trans({'default':'years'}) }}</span>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="p-6 flex items-center justify-center md:w-60">

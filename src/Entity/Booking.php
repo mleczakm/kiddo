@@ -57,6 +57,10 @@ class Booking
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $notes = null;
 
+    #[ORM\ManyToOne(targetEntity: Child::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Child $child = null;
+
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
         #[ORM\JoinColumn(nullable: false)]
@@ -490,5 +494,16 @@ class Booking
                 ? $lesson->getMetadata()
                     ->title . $lesson->getMetadata()->schedule->format(' (H:i) d.m')
                 : $carry . $lesson->getMetadata()->schedule->format(', d.m'), '');
+    }
+
+    public function getChild(): ?Child
+    {
+        return $this->child;
+    }
+
+    public function setChild(?Child $child): self
+    {
+        $this->child = $child;
+        return $this;
     }
 }

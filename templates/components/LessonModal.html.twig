@@ -400,6 +400,24 @@
                                 <span class="text-lg font-bold">{{ activeTicketOption.price }}</span>
                             </div>
                             <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>
+
+                            <div class="mt-4">
+                                <label class="text-sm font-medium leading-none block mb-1">{{ 'booking.child.label'|trans({'default':'Child (optional)'}) }}</label>
+                                {% set children = this.getChildren %}
+                                {% if children is not empty %}
+                                    <select data-model="selectedChildId" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                                        <option value="">{{ 'booking.child.none'|trans({'default':'No child'}) }}</option>
+                                        {% for c in children %}
+                                            <option value="{{ c.id }}">{{ c.name }}{% if c.birthday %} ({{ c.birthday }}){% endif %}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <div class="text-sm text-muted-foreground">
+                                        {{ 'booking.child.no_children'|trans({'default':'You have no children added in your profile.'}) }}
+                                        <a href="{{ path('profile') }}" class="text-workshop-red hover:underline">{{ 'booking.child.add_now'|trans({'default':'Add now'}) }}</a>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>

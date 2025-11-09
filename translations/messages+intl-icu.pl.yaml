@@ -289,11 +289,43 @@ lesson:
   fully_booked: Brak wolnych miejsc
   no_lessons_found: W wybranym okresie brak zajęć spełniających kryteria.
 
+profile:
+  children:
+    title: 'Moje dzieci'
+    lead: 'Zarządzaj danymi swoich dzieci'
+    name: 'Imię'
+    birthday: 'Data urodzenia'
+    add: 'Dodaj dziecko'
+    list: 'Lista dzieci'
+    empty: 'Brak dodanych dzieci'
+    years: 'lat'
+    delete: 'Usuń'
+  title: 'Mój profil'
+  personal_data:
+    title: 'Dane osobowe'
+  user_roles: Uprawnienia użytkownika
+  section_heading: Informacje o użytkowniku
+  name: Imie
+  email: Adres e-mail
+  edit_profile: Edytuj profil
+  account_actions: Akcje dostępne na koncie
+  update_success: Profil został pomyślnie zaktualizowany.
+  save_changes: Zapisz zmiany
+  cancel: Anuluj
+  name.not_blank: Imię nie może być puste.
+  name.min_length: Imię musi mieć co najmniej 2 znaki.
+  email.not_blank: Adres e-mail nie może być pusty.
+  email.invalid: Wprowadź poprawny adres e-mail.
+
 booking:
   cancel: Anuluj rezerwację
   cancel_booking: Anuluj rezerwację
   cancel_confirmation: 'Czy na pewno chcesz anulować tę rezerwację?'
   reason_for_cancellation: 'Powód anulowania:'
+  child:
+    label: 'Dziecko'
+    no_children: 'Brak dodanych dzieci'
+    add_now: 'Dodaj teraz'
   reason_refund_description: 'Otrzymasz zwrot środków zgodnie z naszą polityką zwrotów'
   no_available_lessons: 'Brak dostępnych terminów do przełożenia'
   available_lessons_count: 'Dostępne terminy: {count}'
@@ -564,23 +596,6 @@ admin:
       activate: "Aktywuj serię"
     empty: "Brak serii w wybranym tygodniu"
 
-profile:
-  title: 'Mój profil'
-  personal_data:
-    title: 'Dane osobowe'
-  user_roles: Uprawnienia użytkownika
-  section_heading: Informacje o użytkowniku
-  name: Imie
-  email: Adres e-mail
-  edit_profile: Edytuj profil
-  account_actions: Akcje dostępne na koncie
-  update_success: Profil został pomyślnie zaktualizowany.
-  save_changes: Zapisz zmiany
-  cancel: Anuluj
-  name.not_blank: Imię nie może być puste.
-  name.min_length: Imię musi mieć co najmniej 2 znaki.
-  email.not_blank: Adres e-mail nie może być pusty.
-  email.invalid: Wprowadź poprawny adres e-mail.
 
 ROLE_USER: Użytkownik
 ROLE_ADMIN: Administrator
