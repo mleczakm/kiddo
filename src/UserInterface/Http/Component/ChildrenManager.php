@@ -40,8 +40,7 @@ class ChildrenManager extends AbstractController
     public function __construct(
         private readonly ChildRepository $childRepository,
         private readonly EntityManagerInterface $em,
-    ) {
-    }
+    ) {}
 
     public function mount(): void
     {
@@ -54,7 +53,7 @@ class ChildrenManager extends AbstractController
         $user = $this->getUser();
         $this->children = array_map(
             static fn(Child $c) => [
-                'id' => (string)$c->getId(),
+                'id' => (string) $c->getId(),
                 'name' => $c->getName(),
                 'birthday' => $c->getBirthday()?->format('Y-m-d'),
                 'age' => $c->getAgeYears(),
@@ -73,7 +72,7 @@ class ChildrenManager extends AbstractController
 
         $birthday = null;
         if ($this->childBirthday) {
-            $birthday = \DateTimeImmutable::createFromFormat('Y-m-d', (string)$this->childBirthday) ?: null;
+            $birthday = \DateTimeImmutable::createFromFormat('Y-m-d', (string) $this->childBirthday) ?: null;
             if ($birthday === null) {
                 $this->addFlash('error', 'Invalid birthday format.');
                 return;
@@ -99,7 +98,7 @@ class ChildrenManager extends AbstractController
         $child = $this->childRepository->find($id);
         if ($child instanceof Child && $child->getOwner()->getId() === $user->getId()) {
             $this->em->remove($child);
-            $this->em->flush() ;
+            $this->em->flush();
             $this->addFlash('success', 'Child removed.');
         }
         $this->reload();
