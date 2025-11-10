@@ -13,7 +13,7 @@
         "ext-swoole": "*",
         "bgalati/monolog-sentry-handler": "^2.1",
         "brick/money": "^0.10.3",
-        "directorytree/imapengine": "^1.18.4",
+        "directorytree/imapengine": "^1.18.6",
         "doctrine/dbal": "^3.10.3",
         "doctrine/doctrine-bundle": "^2.18.1",
         "doctrine/doctrine-migrations-bundle": "^3.6.0",
