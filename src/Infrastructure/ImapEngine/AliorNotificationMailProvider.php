@@ -20,7 +20,7 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
     public function __invoke(): iterable
     {
         try {
-            yield from $this->mailbox->inbox()
+            yield from @$this->mailbox->inbox()
                 ->messages()
                 ->from('powiadomienia@alior.pl')
                 ->withHeaders()
@@ -28,7 +28,6 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
                 ->unseen()
                 ->get();
         } catch (\Throwable) {
-            return [];
         }
     }
 }

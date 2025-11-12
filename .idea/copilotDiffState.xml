@@ -20,6 +20,14 @@
             </PendingDiffInfo>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/templates/email/class_council/treasurer_payment_notification.html.twig">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/templates/email/class_council/treasurer_payment_notification.html.twig" />
+              <option name="updatedContent" value="{% extends 'email/base_plain.html.twig' %}&#10;&#10;{% block content %}&#10;&lt;h2&gt;Podsumowanie zaległości w klasie&lt;/h2&gt;&#10;&lt;p&gt;Klasa: &lt;strong&gt;{{ classRoomName }}&lt;/strong&gt;&lt;/p&gt;&#10;&lt;p&gt;Rodzic: &lt;strong&gt;{{ parentName }}&lt;/strong&gt; ({{ parentEmail }})&lt;/p&gt;&#10;&lt;ul&gt;&#10;    {% for item in items %}&#10;        &lt;li&gt;&#10;            &lt;strong&gt;{{ item.student }}&lt;/strong&gt;: {{ item.label }} - {{ item.amount.getAmount() }} PLN, status: {{ item.status }}&#10;            {% if item.paidAt %} (opłacono: {{ item.paidAt|date('Y-m-d') }}){% endif %}&#10;            {% if item.dueAt %} (termin: {{ item.dueAt|date('Y-m-d') }}){% endif %}&#10;        &lt;/li&gt;&#10;    {% endfor %}&#10;&lt;/ul&gt;&#10;&lt;p&gt;Łączna kwota zaległości: &lt;strong&gt;{{ missingAmount }} PLN&lt;/strong&gt;&lt;/p&gt;&#10;{% endblock %}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
