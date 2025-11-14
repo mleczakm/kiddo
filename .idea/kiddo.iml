@@ -215,6 +215,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/zenstruck/messenger-test" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php85" />
       <excludeFolder url="file://$MODULE_DIR$/public/bundles" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/gedmo/doctrine-extensions" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
