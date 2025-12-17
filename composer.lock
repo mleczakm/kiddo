@@ -12282,16 +12282,16 @@
         },
         {
             "name": "upscale/ext-swoole",
-            "version": "v6.1.1",
+            "version": "v6.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/upscalesoftware/ext-swoole.git",
-                "reference": "64e360490787f7f69f4f378fa715c5e461deeae2"
+                "reference": "cc90a2cc70d0fd825021772a57188b82d0d8a5f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/upscalesoftware/ext-swoole/zipball/64e360490787f7f69f4f378fa715c5e461deeae2",
-                "reference": "64e360490787f7f69f4f378fa715c5e461deeae2",
+                "url": "https://api.github.com/repos/upscalesoftware/ext-swoole/zipball/cc90a2cc70d0fd825021772a57188b82d0d8a5f3",
+                "reference": "cc90a2cc70d0fd825021772a57188b82d0d8a5f3",
                 "shasum": ""
             },
             "require": {
@@ -12316,9 +12316,9 @@
             ],
             "support": {
                 "issues": "https://github.com/upscalesoftware/ext-swoole/issues",
-                "source": "https://github.com/upscalesoftware/ext-swoole/tree/v6.1.1"
+                "source": "https://github.com/upscalesoftware/ext-swoole/tree/v6.1.4"
             },
-            "time": "2025-10-01T00:20:10+00:00"
+            "time": "2025-12-01T00:23:28+00:00"
         },
         {
             "name": "webmozart/assert",
