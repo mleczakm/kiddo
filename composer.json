@@ -275,7 +275,7 @@
         }
     },
     "require-dev": {
-        "dama/doctrine-test-bundle": "^8.4.0",
+        "dama/doctrine-test-bundle": "^8.4.1",
         "kodus/mock-cache": "^2.1",
         "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^2.1.32",
