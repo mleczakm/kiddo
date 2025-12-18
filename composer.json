@@ -14,7 +14,7 @@
         "bgalati/monolog-sentry-handler": "^2.1",
         "brick/money": "^0.10.3",
         "directorytree/imapengine": "^1.19.0",
-        "doctrine/dbal": "^3.10.3",
+        "doctrine/dbal": "^3.10.4",
         "doctrine/doctrine-bundle": "^2.18.1",
         "doctrine/doctrine-migrations-bundle": "^3.7.0",
         "doctrine/orm": "^3.5.7",
