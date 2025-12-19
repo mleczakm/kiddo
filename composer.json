@@ -20,7 +20,7 @@
         "doctrine/orm": "^3.5.8",
         "dragonmantank/cron-expression": "^3.6",
         "dunglas/doctrine-json-odm": "^1.4.2",
-        "gedmo/doctrine-extensions": "^3.21",
+        "gedmo/doctrine-extensions": "^3.22",
         "logdash/php-sdk": "dev-main",
         "macpaw/symfony-health-check-bundle": "^1.7",
         "martin-georgiev/postgresql-for-doctrine": "^3.6.1",
