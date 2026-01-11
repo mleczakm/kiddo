@@ -12285,7 +12285,7 @@
         },
         {
             "name": "upscale/ext-swoole",
-            "version": "v6.1.4",
+            "version": "v6.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/upscalesoftware/ext-swoole.git",
@@ -12319,7 +12319,7 @@
             ],
             "support": {
                 "issues": "https://github.com/upscalesoftware/ext-swoole/issues",
-                "source": "https://github.com/upscalesoftware/ext-swoole/tree/v6.1.4"
+                "source": "https://github.com/upscalesoftware/ext-swoole/tree/v6.1.6"
             },
             "time": "2025-12-01T00:23:28+00:00"
         },
