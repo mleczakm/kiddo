@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f853116afe0488c8c4522dbe27a03d5e",
+    "content-hash": "86163d9cd68b8e79357b2f79b5e6c08b",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3395,16 +3395,16 @@
         },
         {
             "name": "novaway/feature-flag-bundle",
-            "version": "3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/novaway/NovawayFeatureFlagBundle.git",
-                "reference": "24852e2f54ca4d034ed25610fd4ea6d8600f625f"
+                "reference": "43be20ba1ca606c121cae5cf38e6292f33358e67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/novaway/NovawayFeatureFlagBundle/zipball/24852e2f54ca4d034ed25610fd4ea6d8600f625f",
-                "reference": "24852e2f54ca4d034ed25610fd4ea6d8600f625f",
+                "url": "https://api.github.com/repos/novaway/NovawayFeatureFlagBundle/zipball/43be20ba1ca606c121cae5cf38e6292f33358e67",
+                "reference": "43be20ba1ca606c121cae5cf38e6292f33358e67",
                 "shasum": ""
             },
             "require": {
@@ -3456,9 +3456,9 @@
             ],
             "support": {
                 "issues": "https://github.com/novaway/NovawayFeatureFlagBundle/issues",
-                "source": "https://github.com/novaway/NovawayFeatureFlagBundle/tree/3.0.0"
+                "source": "https://github.com/novaway/NovawayFeatureFlagBundle/tree/3.0.1"
             },
-            "time": "2025-02-21T18:35:01+00:00"
+            "time": "2025-11-24T20:24:52+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -8037,16 +8037,16 @@
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v7.3.3",
+            "version": "v7.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver.git",
-                "reference": "0ff2f5c3df08a395232bbc3c2eb7e84912df911d"
+                "reference": "772dfbe01306d03f759d492f6796dd8c9260bb5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/0ff2f5c3df08a395232bbc3c2eb7e84912df911d",
-                "reference": "0ff2f5c3df08a395232bbc3c2eb7e84912df911d",
+                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/772dfbe01306d03f759d492f6796dd8c9260bb5c",
+                "reference": "772dfbe01306d03f759d492f6796dd8c9260bb5c",
                 "shasum": ""
             },
             "require": {
@@ -8084,7 +8084,7 @@
                 "options"
             ],
             "support": {
-                "source": "https://github.com/symfony/options-resolver/tree/v7.3.3"
+                "source": "https://github.com/symfony/options-resolver/tree/v7.3.8"
             },
             "funding": [
                 {
@@ -8104,7 +8104,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-05T10:16:07+00:00"
+            "time": "2025-11-12T15:21:00+00:00"
         },
         {
             "name": "symfony/password-hasher",
