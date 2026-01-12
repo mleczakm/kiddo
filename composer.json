@@ -15,7 +15,7 @@
         "brick/money": "^0.10.3",
         "directorytree/imapengine": "^1.19.2",
         "doctrine/dbal": "^3.10.4",
-        "doctrine/doctrine-bundle": "^2.18.1",
+        "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7.0",
         "doctrine/orm": "^3.6.1",
         "dragonmantank/cron-expression": "^3.6",
