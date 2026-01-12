@@ -23,7 +23,7 @@
         "gedmo/doctrine-extensions": "^3.22",
         "logdash/php-sdk": "dev-main",
         "macpaw/symfony-health-check-bundle": "^1.7",
-        "martin-georgiev/postgresql-for-doctrine": "^3.6.1",
+        "martin-georgiev/postgresql-for-doctrine": "^3.7.0",
         "novaway/feature-flag-bundle": "^3.0.0",
         "nyholm/psr7": "^1.8.2",
         "odolbeau/phone-number-bundle": "^4.2.5",
