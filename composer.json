@@ -281,7 +281,7 @@
         "phpstan/phpstan": "^2.1.33",
         "phpstan/phpstan-doctrine": "^2.0.12",
         "phpstan/phpstan-symfony": "^2.0.9",
-        "phpunit/phpunit": "^11.5.44",
+        "phpunit/phpunit": "^11.5.46",
         "rector/rector": "^2.2.8",
         "roave/security-advisories": "dev-latest",
         "rregeer/phpunit-coverage-check": "^0.3.1",
