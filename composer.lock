@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1fd4a16517a7c4cad5327a0d056933bf",
+    "content-hash": "8c89bb5a26a2399b9fbe500b01ddc9e0",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3187,16 +3187,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "3.9.0",
+            "version": "3.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "10d85740180ecba7896c87e06a166e0c95a0e3b6"
+                "reference": "b321dd6749f0bf7189444158a3ce785cc16d69b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/10d85740180ecba7896c87e06a166e0c95a0e3b6",
-                "reference": "10d85740180ecba7896c87e06a166e0c95a0e3b6",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/b321dd6749f0bf7189444158a3ce785cc16d69b0",
+                "reference": "b321dd6749f0bf7189444158a3ce785cc16d69b0",
                 "shasum": ""
             },
             "require": {
@@ -3214,7 +3214,7 @@
                 "graylog2/gelf-php": "^1.4.2 || ^2.0",
                 "guzzlehttp/guzzle": "^7.4.5",
                 "guzzlehttp/psr7": "^2.2",
-                "mongodb/mongodb": "^1.8",
+                "mongodb/mongodb": "^1.8 || ^2.0",
                 "php-amqplib/php-amqplib": "~2.4 || ^3",
                 "php-console/php-console": "^3.1.8",
                 "phpstan/phpstan": "^2",
@@ -3274,7 +3274,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/3.9.0"
+                "source": "https://github.com/Seldaek/monolog/tree/3.10.0"
             },
             "funding": [
                 {
@@ -3286,7 +3286,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-24T10:02:05+00:00"
+            "time": "2026-01-02T08:56:05+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -4865,23 +4865,23 @@
         },
         {
             "name": "swoole-bundle/swoole-bundle",
-            "version": "v0.25.0",
+            "version": "v0.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony-swoole/swoole-bundle.git",
-                "reference": "91fd8a6a33b8520dcb155fe01fcf384a0d9217be"
+                "reference": "1c18e2ba75d7671052d1ba07104747bebcbf6bab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/91fd8a6a33b8520dcb155fe01fcf384a0d9217be",
-                "reference": "91fd8a6a33b8520dcb155fe01fcf384a0d9217be",
+                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/1c18e2ba75d7671052d1ba07104747bebcbf6bab",
+                "reference": "1c18e2ba75d7671052d1ba07104747bebcbf6bab",
                 "shasum": ""
             },
             "require": {
                 "beberlei/assert": "^3.3.3",
                 "ext-json": "*",
                 "laminas/laminas-code": "^4.7||^4.8",
-                "monolog/monolog": "^3.3",
+                "monolog/monolog": "^3.6",
                 "php": "^8.2",
                 "symfony/cache": "^6.4|^7.2",
                 "symfony/config": "^6.4|^7.2",
@@ -4962,7 +4962,7 @@
                 "slevomat/coding-standard": "^8.14",
                 "squizlabs/php_codesniffer": "^3.8",
                 "swoole-bundle/resetter-bundle": "^1.1",
-                "swoole-bundle/z-engine": "^8.2.1|^8.3|^8.4",
+                "swoole-bundle/z-engine": "8.2.3||8.3.1||8.4.1",
                 "swoole/ide-helper": "^6.0.0",
                 "symfony/debug-bundle": "^6.4|^7.2",
                 "symfony/doctrine-messenger": "^6.4|^7.2",
@@ -5035,7 +5035,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony-swoole/swoole-bundle/issues",
-                "source": "https://github.com/symfony-swoole/swoole-bundle/tree/v0.25.0"
+                "source": "https://github.com/symfony-swoole/swoole-bundle/tree/v0.25.1"
             },
             "funding": [
                 {
@@ -5047,7 +5047,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-14T23:38:43+00:00"
+            "time": "2025-11-30T18:51:21+00:00"
         },
         {
             "name": "symfony/asset",
@@ -7154,16 +7154,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v7.3.7",
+            "version": "v7.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "db488a62f98f7a81d5746f05eea63a74e55bb7c4"
+                "reference": "6dc98931a559065ff8f968ae0e461e600a321291"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/db488a62f98f7a81d5746f05eea63a74e55bb7c4",
-                "reference": "db488a62f98f7a81d5746f05eea63a74e55bb7c4",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/6dc98931a559065ff8f968ae0e461e600a321291",
+                "reference": "6dc98931a559065ff8f968ae0e461e600a321291",
                 "shasum": ""
             },
             "require": {
@@ -7213,7 +7213,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v7.3.7"
+                "source": "https://github.com/symfony/http-foundation/tree/v7.3.9"
             },
             "funding": [
                 {
@@ -7233,20 +7233,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-08T16:41:12+00:00"
+            "time": "2025-12-19T08:58:15+00:00"
         },
         {
             "name": "symfony/http-kernel",
-            "version": "v7.3.7",
+            "version": "v7.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "10b8e9b748ea95fa4539c208e2487c435d3c87ce"
+                "reference": "b319fe1248b4df79adb7b2b1f0954fdecf08f0b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/10b8e9b748ea95fa4539c208e2487c435d3c87ce",
-                "reference": "10b8e9b748ea95fa4539c208e2487c435d3c87ce",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/b319fe1248b4df79adb7b2b1f0954fdecf08f0b2",
+                "reference": "b319fe1248b4df79adb7b2b1f0954fdecf08f0b2",
                 "shasum": ""
             },
             "require": {
@@ -7331,7 +7331,7 @@
             "description": "Provides a structured process for converting a Request into a Response",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-kernel/tree/v7.3.7"
+                "source": "https://github.com/symfony/http-kernel/tree/v7.3.9"
             },
             "funding": [
                 {
@@ -7351,7 +7351,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-12T11:38:40+00:00"
+            "time": "2025-12-31T08:34:55+00:00"
         },
         {
             "name": "symfony/intl",
