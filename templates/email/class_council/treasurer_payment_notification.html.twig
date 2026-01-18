@@ -1,7 +1,9 @@
 {% extends 'email/base_plain.html.twig' %}
 
 {% block content %}
-<h2>Potwierdzenie rozliczenia składek</h2>
+<h2>Podsumowanie zaległości w klasie</h2>
+<p>Klasa: <strong>{{ classRoomName }}</strong></p>
+<p>Rodzic: <strong>{{ parentName }}</strong> ({{ parentEmail }})</p>
 <ul>
     {% for item in items %}
         <li>
@@ -11,5 +13,6 @@
         </li>
     {% endfor %}
 </ul>
-<p>Data płatności: {{ paymentDate|date('Y-m-d') }}</p>
+<p>Łączna kwota zaległości: <strong>{{ missingAmount }} PLN</strong></p>
 {% endblock %}
+
