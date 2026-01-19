@@ -72,10 +72,10 @@
         "symfonycasts/tailwind-bundle": "^0.10.1",
         "tales-from-a-dev/flowbite-bundle": "^0.8.1",
         "twig/cssinliner-extra": "^3.22",
-        "twig/extra-bundle": "^3.22.1",
+        "twig/extra-bundle": "^3.22.2",
         "twig/inky-extra": "^3.22",
         "twig/intl-extra": "^3.22.1",
-        "twig/twig": "^3.22.0"
+        "twig/twig": "^3.22.2"
     },
     "config": {
         "allow-plugins": {
