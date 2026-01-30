@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Entity\ClassCouncil\ClassMembership;
+use App\Entity\ClassCouncil\ClassRole;
 use PHPUnit\Framework\Attributes\Group;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
@@ -56,6 +58,8 @@ class SettlementConfirmationEmailFunctionalTest extends WebTestCase
             ->assemble();
         $em->persist($payment);
 
+
+
         // Create and persist Student, ClassRoom, StudentPayment
         $tenant = $em->getRepository(Tenant::class)->findOneBy([]) ?? new Tenant('TestTenant', 'tenant.test');
         $em->persist($tenant);
@@ -69,6 +73,9 @@ class SettlementConfirmationEmailFunctionalTest extends WebTestCase
         $studentPayment->setPayment($payment);
         $em->persist($studentPayment);
 
+        $classMembership = new ClassMembership($user, $classRoom, ClassRole::TREASURER);
+        $em->persist($classMembership);
+
         $em->flush();
 
         $handler = $container->get(SendSettlementConfirmationEmailHandler::class);
@@ -79,7 +86,6 @@ class SettlementConfirmationEmailFunctionalTest extends WebTestCase
 
         $handler->__invoke($command);
 
-        // Assert that an email was sent (using Symfony Mailer assertions or checking DB/log)
-        $this->assertTrue(true, 'Settlement confirmation email handler executed with real data.');
+        $this->assertQueuedEmailCount(1);
     }
 }
