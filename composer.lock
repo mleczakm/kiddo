@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c09ce3ebdc46045dce84c19a2f4aaa7b",
+    "content-hash": "f124edb61d1bee7c1baff8ebd7f0db51",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -16525,20 +16525,20 @@
         },
         {
             "name": "zenstruck/assert",
-            "version": "v1.6.0",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/assert.git",
-                "reference": "f333d554e9f8e275e221f5b27bdbdc1b0aadbf02"
+                "reference": "1e32d48847d4e82c345112ca226b21a1a792af0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/assert/zipball/f333d554e9f8e275e221f5b27bdbdc1b0aadbf02",
-                "reference": "f333d554e9f8e275e221f5b27bdbdc1b0aadbf02",
+                "url": "https://api.github.com/repos/zenstruck/assert/zipball/1e32d48847d4e82c345112ca226b21a1a792af0a",
+                "reference": "1e32d48847d4e82c345112ca226b21a1a792af0a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0",
+                "php": ">=8.1",
                 "symfony/polyfill-php81": "^1.23",
                 "symfony/var-exporter": "^5.4|^6.0|^7.0|^8.0"
             },
@@ -16572,7 +16572,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/assert/issues",
-                "source": "https://github.com/zenstruck/assert/tree/v1.6.0"
+                "source": "https://github.com/zenstruck/assert/tree/v1.7.0"
             },
             "funding": [
                 {
@@ -16584,7 +16584,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-02T14:41:16+00:00"
+            "time": "2025-12-07T01:59:12+00:00"
         },
         {
             "name": "zenstruck/callback",
@@ -16644,39 +16644,39 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v2.8.0",
+            "version": "v2.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "62a1c63a000c4886f1d7222ab8bec32a502828b2"
+                "reference": "6b2c338241148ad1e8ee980b38d40703514cd685"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/62a1c63a000c4886f1d7222ab8bec32a502828b2",
-                "reference": "62a1c63a000c4886f1d7222ab8bec32a502828b2",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/6b2c338241148ad1e8ee980b38d40703514cd685",
+                "reference": "6b2c338241148ad1e8ee980b38d40703514cd685",
                 "shasum": ""
             },
             "require": {
-                "fakerphp/faker": "^1.23",
+                "fakerphp/faker": "^1.24",
                 "php": ">=8.1",
                 "symfony/deprecation-contracts": "^2.2|^3.0",
                 "symfony/polyfill-php84": "^1.32",
+                "symfony/polyfill-php85": "^1.33",
                 "symfony/property-access": "^6.4|^7.0|^8.0",
                 "symfony/property-info": "^6.4|^7.0|^8.0",
                 "symfony/var-exporter": "^6.4.9|~7.0.9|^7.1.2|^8.0",
                 "zenstruck/assert": "^1.4"
             },
             "conflict": {
-                "doctrine/persistence": "<2.0",
-                "symfony/event-dispatcher": "<6.4",
-                "symfony/framework-bundle": "<6.4"
+                "doctrine/cache": "<1.12.1",
+                "doctrine/persistence": "<2.0"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8",
                 "dama/doctrine-test-bundle": "^8.0",
                 "doctrine/collections": "^1.7|^2.0",
                 "doctrine/common": "^3.2.2",
-                "doctrine/doctrine-bundle": "^2.10",
+                "doctrine/doctrine-bundle": "^2.10|^3.0",
                 "doctrine/doctrine-migrations-bundle": "^2.2|^3.0",
                 "doctrine/mongodb-odm": "^2.4",
                 "doctrine/mongodb-odm-bundle": "^4.6|^5.0",
@@ -16686,10 +16686,11 @@
                 "symfony/browser-kit": "^6.4|^7.0|^8.0",
                 "symfony/console": "^6.4|^7.0|^8.0",
                 "symfony/dotenv": "^6.4|^7.0|^8.0",
-                "symfony/event-dispatcher": "^6.4|^7.0",
+                "symfony/event-dispatcher": "^6.4|^7.0|^8.0",
+                "symfony/flex": "^2.10",
                 "symfony/framework-bundle": "^6.4|^7.0|^8.0",
                 "symfony/maker-bundle": "^1.55",
-                "symfony/phpunit-bridge": "^6.4|^7.0|^8.0",
+                "symfony/phpunit-bridge": "^6.4.26|^7.0|^8.0",
                 "symfony/routing": "^6.4|^7.0|^8.0",
                 "symfony/runtime": "^6.4|^7.0|^8.0",
                 "symfony/translation-contracts": "^3.4",
@@ -16702,6 +16703,9 @@
             "extra": {
                 "psalm": {
                     "pluginClass": "Zenstruck\\Foundry\\Psalm\\FoundryPlugin"
+                },
+                "symfony": {
+                    "allow-contrib": false
                 },
                 "bamarni-bin": {
                     "bin-links": true,
@@ -16748,7 +16752,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v2.8.0"
+                "source": "https://github.com/zenstruck/foundry/tree/v2.8.6"
             },
             "funding": [
                 {
@@ -16760,7 +16764,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-09T13:01:31+00:00"
+            "time": "2026-01-20T19:53:12+00:00"
         },
         {
             "name": "zenstruck/mailer-test",
