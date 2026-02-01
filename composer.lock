@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "178db48ec1e06f7fa1c0f6fbd367ee3e",
+    "content-hash": "76b948121f03e8285532a1e58833ee56",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -7611,16 +7611,16 @@
         },
         {
             "name": "symfony/messenger",
-            "version": "v7.3.6",
+            "version": "v7.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/messenger.git",
-                "reference": "58a7efa3bebadbe4cdd8f7577c5856f0e3ea3978"
+                "reference": "6e140779edbbea9d81d17a4b4f1862a89bf74561"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/messenger/zipball/58a7efa3bebadbe4cdd8f7577c5856f0e3ea3978",
-                "reference": "58a7efa3bebadbe4cdd8f7577c5856f0e3ea3978",
+                "url": "https://api.github.com/repos/symfony/messenger/zipball/6e140779edbbea9d81d17a4b4f1862a89bf74561",
+                "reference": "6e140779edbbea9d81d17a4b4f1862a89bf74561",
                 "shasum": ""
             },
             "require": {
@@ -7680,7 +7680,7 @@
             "description": "Helps applications send and receive messages to/from other applications or via message queues",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/messenger/tree/v7.3.6"
+                "source": "https://github.com/symfony/messenger/tree/v7.3.10"
             },
             "funding": [
                 {
@@ -7700,7 +7700,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-06T11:17:34+00:00"
+            "time": "2026-01-07T22:25:05+00:00"
         },
         {
             "name": "symfony/mime",
@@ -16851,35 +16851,32 @@
         },
         {
             "name": "zenstruck/messenger-test",
-            "version": "v1.12.0",
+            "version": "v1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/messenger-test.git",
-                "reference": "d889c26683c6a85eedb8eeb354105d860f5030c8"
+                "reference": "bb2446c9fa50d513a896dcb914392bac1f052f82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/d889c26683c6a85eedb8eeb354105d860f5030c8",
-                "reference": "d889c26683c6a85eedb8eeb354105d860f5030c8",
+                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/bb2446c9fa50d513a896dcb914392bac1f052f82",
+                "reference": "bb2446c9fa50d513a896dcb914392bac1f052f82",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "symfony/deprecation-contracts": "^2.2|^3.0",
-                "symfony/framework-bundle": "^5.4.44|^6.0|^7.0|^8.0",
-                "symfony/messenger": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/framework-bundle": "^6.4.15|^7.0|^8.0",
+                "symfony/messenger": "^6.4|^7.0|^8.0",
                 "zenstruck/assert": "^1.0"
             },
-            "conflict": {
-                "symfony/framework-bundle": "5.4.5|6.0.5"
-            },
             "require-dev": {
-                "phpstan/phpstan": "^1.4",
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^9.6.0",
-                "symfony/browser-kit": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/clock": "^6.3|^7.0|^8.0",
-                "symfony/phpunit-bridge": "^5.4|^6.0|^7.0|^8.0",
-                "symfony/yaml": "^5.4|^6.0|^7.0"
+                "symfony/browser-kit": "^6.4|^7.0|^8.0",
+                "symfony/clock": "^6.4|^7.0|^8.0",
+                "symfony/phpunit-bridge": "^6.4|^7.0|^8.0",
+                "symfony/yaml": "^6.4|^7.0|^8.0"
             },
             "suggest": {
                 "symfony/clock": "A PSR-20 clock implementation in order to support DelayStamp."
@@ -16911,7 +16908,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/messenger-test/issues",
-                "source": "https://github.com/zenstruck/messenger-test/tree/v1.12.0"
+                "source": "https://github.com/zenstruck/messenger-test/tree/v1.13.0"
             },
             "funding": [
                 {
@@ -16923,7 +16920,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-02T16:49:54+00:00"
+            "time": "2025-12-06T23:12:43+00:00"
         }
     ],
     "aliases": [],
