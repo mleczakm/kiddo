@@ -295,6 +295,6 @@
         "symplify/easy-coding-standard": "^12.6.2",
         "zenstruck/foundry": "^2.8.6",
         "zenstruck/mailer-test": "^1.5.0",
-        "zenstruck/messenger-test": "^1.12"
+        "zenstruck/messenger-test": "^1.13"
     }
 }
