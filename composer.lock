@@ -13841,12 +13841,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "8457f2008fc6396be788162c4e04228028306534"
+                "reference": "38aab21fe2915c6f3df6d482f75b8a74efca8b15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/8457f2008fc6396be788162c4e04228028306534",
-                "reference": "8457f2008fc6396be788162c4e04228028306534",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/38aab21fe2915c6f3df6d482f75b8a74efca8b15",
+                "reference": "38aab21fe2915c6f3df6d482f75b8a74efca8b15",
                 "shasum": ""
             },
             "conflict": {
@@ -14098,7 +14098,7 @@
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1-dev|>=2.5,<2.5.15",
                 "ezyang/htmlpurifier": "<=4.2",
                 "facade/ignition": "<1.16.15|>=2,<2.4.2|>=2.5,<2.5.2",
-                "facturascripts/facturascripts": "<=2025.4|==2025.11|==2025.41|==2025.43",
+                "facturascripts/facturascripts": "<2025.81",
                 "fastly/magento2": "<1.2.26",
                 "feehi/cms": "<=2.1.1",
                 "feehi/feehicms": "<=2.1.1",
@@ -14849,7 +14849,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-30T22:06:58+00:00"
+            "time": "2026-02-02T18:14:40+00:00"
         },
         {
             "name": "rregeer/phpunit-coverage-check",
