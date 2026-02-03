@@ -16,7 +16,7 @@ services:
 
     user: 1000:1000
     ports:
-      - 9501:9501
+      - "9501:9501"
     restart: unless-stopped
 
   db:
