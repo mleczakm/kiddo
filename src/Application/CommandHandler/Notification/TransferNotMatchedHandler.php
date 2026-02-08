@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\TransferNotMatchedCommand;
+use App\Repository\PaymentRepository;
 use App\Repository\UserRepository;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -25,6 +26,7 @@ final readonly class TransferNotMatchedHandler
         private UserRepository $userRepository,
         private TranslatorInterface $translator,
         private CacheItemPoolInterface $cache,
+        private PaymentRepository $paymentRepository,
     ) {}
 
     public function __invoke(TransferNotMatchedCommand $command): void
@@ -32,41 +34,50 @@ final readonly class TransferNotMatchedHandler
         $transfer = $command->transfer;
         $cacheKey = self::CACHE_PREFIX . $transfer->getId();
 
-        // Check if we've already sent a notification for this transfer today
-        if ($this->cache->hasItem($cacheKey)) {
-            return;
+        try {
+            // Check if we've already sent a notification for this transfer today
+            if ($this->cache->hasItem($cacheKey)) {
+                return;
+            }
+
+            if ($this->paymentRepository->countPendingPayments() === 0) {
+                return;
+            }
+
+
+            // Get all admin users
+            $admins = $this->userRepository->findByRole('ROLE_ADMIN');
+            if (empty($admins)) {
+                return;
+            }
+
+            // Prepare notification
+            $subject = $this->translator->trans('transfer.notification.not_matched.subject', [], 'emails');
+            $content = $this->translator->trans('transfer.notification.not_matched.content', [
+                'amount' => $transfer->amount,
+                'sender' => $transfer->getSender(),
+                'title'  => $transfer->title,
+                'date'   => $transfer->getTransferredAt()
+                    ->format('Y-m-d H:i'),
+            ], 'emails');
+
+            $notification = new Notification()
+                ->importance('')
+                ->subject($subject)
+                ->content($content);
+
+            // Send it to all admins
+            foreach ($admins as $admin) {
+                $this->notifier->send($notification, new Recipient($admin->getEmailString()));
+            }
+
+        } finally {
+            // Cache the notification for today
+            $cacheItem = $this->cache->getItem($cacheKey);
+            $cacheItem->set(true);
+            $cacheItem->expiresAfter(self::CACHE_TTL);
+            $this->cache->save($cacheItem);
         }
 
-        // Get all admin users
-        $admins = $this->userRepository->findByRole('ROLE_ADMIN');
-        if (empty($admins)) {
-            return;
-        }
-
-        // Prepare notification
-        $subject = $this->translator->trans('transfer.notification.not_matched.subject', [], 'emails');
-        $content = $this->translator->trans('transfer.notification.not_matched.content', [
-            'amount' => $transfer->amount,
-            'sender' => $transfer->getSender(),
-            'title' => $transfer->title,
-            'date' => $transfer->getTransferredAt()
-                ->format('Y-m-d H:i'),
-        ], 'emails');
-
-        $notification = new Notification()
-            ->importance('')
-            ->subject($subject)
-            ->content($content);
-
-        // Send it to all admins
-        foreach ($admins as $admin) {
-            $this->notifier->send($notification, new Recipient($admin->getEmailString()));
-        }
-
-        // Cache the notification for today
-        $cacheItem = $this->cache->getItem($cacheKey);
-        $cacheItem->set(true);
-        $cacheItem->expiresAfter(self::CACHE_TTL);
-        $this->cache->save($cacheItem);
     }
 }

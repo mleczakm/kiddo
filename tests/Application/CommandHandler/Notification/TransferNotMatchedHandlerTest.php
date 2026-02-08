@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler\Notification;
 
+use App\Entity\Payment;
+use App\Tests\Assembler\PaymentAssembler;
+use Brick\Money\Money;
 use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Application\CommandHandler\Notification\TransferNotMatchedHandler;
@@ -11,6 +14,7 @@ use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Clock\Clock;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
 
 #[Group('functional')]
@@ -55,10 +59,17 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
             ->withSender('John Doe')
             ->withTitle('Test transfer')
             ->withAmount('100.00')
-            ->withTransferredAt(new \DateTimeImmutable('2025-01-01 12:00:00'))
+            ->withTransferredAt($now = Clock::get()->now())
             ->assemble();
 
         $em = self::getContainer()->get('doctrine')->getManager();
+        $payment = PaymentAssembler::new()
+            ->withUser($admin1)
+            ->withAmount(Money::of(100, 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $em->persist($payment);
+
         $em->persist($admin1);
         $em->persist($admin2);
         $em->persist($transfer);
@@ -87,7 +98,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         );
         $email->assertContains('John Doe');
         $email->assertContains('100.00');
-        $email->assertContains('2025-01-01 12:00');
+        $email->assertContains($now->format('Y-m-d H:i'));
 
         // Test caching - should not send another notification
         $this->mailer()

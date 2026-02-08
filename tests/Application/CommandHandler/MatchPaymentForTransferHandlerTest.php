@@ -380,26 +380,6 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
             ->assertContains(TransferNotMatchedCommand::class);
     }
 
-    public function testDoNotSendNotificationIfNoPendingPayments(): void
-    {
-        // Arrange
-        $transfer = TransferAssembler::new()
-            ->assemble();
-        $this->entityManager->persist($transfer);
-        $this->entityManager->flush();
-
-        // Act
-        $command = new MatchPaymentForTransfer($transfer);
-        $this->messageBus->dispatch($command);
-
-        // Assert
-        $this->entityManager->refresh($transfer);
-
-        $this->bus()
-            ->dispatched()
-            ->assertNotContains(TransferNotMatchedCommand::class);
-    }
-
     #[Test]
     #[DataProvider('invalidTitleProvider')]
     public function handlesInvalidTitles(string $title): void

@@ -7,7 +7,6 @@ namespace App\Application\CommandHandler;
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Entity\PaymentCode;
-use App\Repository\PaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -18,7 +17,6 @@ final readonly class MatchPaymentForTransferHandler
         private EntityManagerInterface $entityManager,
         private WorkflowInterface $paymentStateMachine,
         private MessageBusInterface $messageBus,
-        private PaymentRepository $paymentRepository,
     ) {}
 
     public function __invoke(MatchPaymentForTransfer $command): void
@@ -42,10 +40,6 @@ final readonly class MatchPaymentForTransferHandler
 
                 return;
             }
-        }
-
-        if ($this->paymentRepository->countPendingPayments() === 0) {
-            return;
         }
 
         $this->messageBus->dispatch(new TransferNotMatchedCommand($transfer));
