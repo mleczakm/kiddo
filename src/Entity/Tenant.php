@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Ulid;
 class Tenant
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'ulid')]
+    #[ORM\Column(type: 'ulid', length: 16, unique: true)]
     private Ulid $id;
 
     /**

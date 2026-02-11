@@ -53,7 +53,7 @@ class Payment
     ];
 
     #[ORM\Id]
-    #[ORM\Column(type: 'ulid', unique: true)]
+    #[ORM\Column(type: 'ulid', length: 16, unique: true)]
     private Ulid $id;
 
     #[ORM\Column(type: 'string', length: 20)]
