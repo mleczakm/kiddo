@@ -37,7 +37,11 @@ class LessonMapType extends JsonType
 
         $lessonMap = new LessonMap();
 
-        $deserializeMap = function (array $mapData): Map {
+        $deserializeMap = function (mixed $mapData): Map {
+            if (!is_array($mapData)) {
+                return new Map();
+            }
+            
             $map = new Map();
             foreach ($mapData as $key => $itemData) {
                 $ulid = is_string($key) ? Ulid::fromString($key) : Ulid::fromString(
