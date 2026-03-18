@@ -45,7 +45,10 @@ class StudentPaymentRepository extends ServiceEntityRepository
                     ->toArray(),
                 ArrayParameterType::BINARY
             )
-            ->orderBy('sp.label', 'ASC');
+
+            ->addOrderBy('sp.createdAt', 'DESC') // newest first
+            ->addOrderBy('sp.status', 'ASC') // pending/partial before paid
+        ;
 
         if ($studentPaymentIds !== []) {
             $qb->andWhere('sp.id IN (:studentPaymentIds)')

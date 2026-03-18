@@ -39,6 +39,7 @@
             <th class="text-left py-2 px-2">Składka</th>
             <th class="text-left py-2 px-2">Kwota</th>
             <th class="text-left py-2 px-2">Status</th>
+            <th class="text-left py-2 px-2">Kod płatności</th>
             <th class="text-left py-2 px-2">Akcje</th>
           </tr>
         </thead>
@@ -59,6 +60,11 @@
               {% endif %}
             </td>
             <td class="py-2 px-2">
+              {% if sp.payment and sp.payment.paymentCode and status != 'paid' %}
+                <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{{ sp.payment.paymentCode.code }}</span>
+              {% endif %}
+            </td>
+            <td class="py-2 px-2">
               <div class="flex gap-2">
                 {% if not sp.payment %}
                 <form method="post" action="{{ path('cc_generate_payment', {id: sp.id}) }}">
@@ -75,7 +81,7 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="5" class="py-4 text-center text-muted-foreground">Brak danych</td>
+            <td colspan="6" class="py-4 text-center text-muted-foreground">Brak danych</td>
           </tr>
         {% endfor %}
         </tbody>
