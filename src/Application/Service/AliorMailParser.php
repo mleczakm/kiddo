@@ -18,7 +18,7 @@ class AliorMailParser implements TransferNotificationMailParserInterface
             '/kwotą ([0-9., ]+) PLN.*?Nadawca: (.*?)<br.*?Tytuł zlecenia: (.*?)<br/us',
             $content,
             $matches
-        ) || !isset($matches[1], $matches[2], $matches[3])) {
+        )) {
             return null;
         }
 

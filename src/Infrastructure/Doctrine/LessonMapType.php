@@ -38,21 +38,25 @@ class LessonMapType extends JsonType
         $lessonMap = new LessonMap();
 
         $deserializeMap = function (mixed $mapData): Map {
-            if (!is_array($mapData)) {
+            if (! is_array($mapData)) {
                 return new Map();
             }
-            
+
             $map = new Map();
             foreach ($mapData as $key => $itemData) {
                 $ulid = is_string($key) ? Ulid::fromString($key) : Ulid::fromString(
-                    is_string($itemData) ? $itemData : $itemData['lessonId']
+                    is_string($itemData) ? $itemData : (is_array(
+                        $itemData
+                    ) && isset($itemData['lessonId']) ? (string) $itemData['lessonId'] : '')
                 );
-                if (isset($itemData['rescheduledFrom'])) {
+                if (is_array($itemData) && isset($itemData['rescheduledFrom'])) {
                     $map->put($ulid, new RescheduledLesson(
-                        Ulid::fromString($itemData['lessonId']),
-                        Ulid::fromString($itemData['rescheduledFrom']),
-                        $itemData['rescheduledBy'],
-                        isset($itemData['rescheduledAt']) ? new \DateTimeImmutable($itemData['rescheduledAt']) : null
+                        Ulid::fromString(isset($itemData['lessonId']) ? (string) $itemData['lessonId'] : ''),
+                        Ulid::fromString((string) $itemData['rescheduledFrom']),
+                        isset($itemData['rescheduledBy']) ? (int) $itemData['rescheduledBy'] : 0,
+                        isset($itemData['rescheduledAt']) ? new \DateTimeImmutable(
+                            (string) $itemData['rescheduledAt']
+                        ) : null
                     ));
                 } else {
                     $map->put($ulid, new BookedLesson($ulid));

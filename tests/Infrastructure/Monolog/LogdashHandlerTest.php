@@ -21,7 +21,7 @@ class LogdashHandlerTest extends TestCase
     private $logMethod;
 
     /**
-     * @var list<string>
+     * @var list<array<int|string, mixed>|string>
      */
     private array $logRecords = [];
 
@@ -56,9 +56,12 @@ class LogdashHandlerTest extends TestCase
         $handler->handle($logRecord);
 
         self::assertCount(1, $this->logRecords);
-        foreach ($this->logRecords as $logRecord) {
-            self::assertStringContainsString('Test log message', $logRecord[0]);
-            self::assertStringContainsString('DEBUG', $logRecord[0]);
+        if (! empty($this->logRecords)) {
+            foreach ($this->logRecords as $logRecord) {
+                $message = is_array($logRecord) && isset($logRecord[0]) ? (string) $logRecord[0] : '';
+                self::assertStringContainsString('Test log message', $message);
+                self::assertStringContainsString('DEBUG', $message);
+            }
         }
     }
 
@@ -85,9 +88,12 @@ class LogdashHandlerTest extends TestCase
         $this->assertTrue($handler->isHandling($logRecord));
         $handler->handle($logRecord);
         self::assertCount(1, $this->logRecords);
-        foreach ($this->logRecords as $logRecord) {
-            self::assertStringContainsString('Test log message', $logRecord[0]);
-            self::assertStringContainsString($levelName, $logRecord[0]);
+        if (! empty($this->logRecords)) {
+            foreach ($this->logRecords as $logRecord) {
+                $message = is_array($logRecord) && isset($logRecord[0]) ? (string) $logRecord[0] : '';
+                self::assertStringContainsString('Test log message', $message);
+                self::assertStringContainsString($levelName, $message);
+            }
         }
     }
 

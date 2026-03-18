@@ -36,7 +36,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                         // Common shapes produced by nested normalizers
                         $candidate = $lessonData['lessonId']
                             ?? ($lessonData['id'] ?? null)
-                            ?? ($lessonData['lesson']['id'] ?? null);
+                            ?? (is_array($lessonData['lesson'] ?? null) ? ($lessonData['lesson']['id'] ?? null) : null);
                     } elseif (is_string($lessonData) && Ulid::isValid($lessonData)) {
                         // Handle legacy form: list of ULID strings with numeric keys
                         $candidate = $lessonData;

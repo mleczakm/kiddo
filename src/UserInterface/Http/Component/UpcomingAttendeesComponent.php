@@ -556,8 +556,8 @@ final class UpcomingAttendeesComponent extends AbstractController
 
         $this->entityManager->flush();
 
-        $this->paymentCode = $booking->payment?->getPaymentCode()?->getCode();
-        $this->paymentAmount = $booking->payment?->getAmount();
+        $this->paymentCode = $booking->payment->getPaymentCode()?->getCode();
+        $this->paymentAmount = $booking->payment->getAmount();
         $this->paymentModalOpened = true;
         $this->actionsForBookingId = null;
     }
