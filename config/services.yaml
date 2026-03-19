@@ -102,3 +102,9 @@ services:
   # Class Council Twig helpers
   App\Infrastructure\Symfony\Twig\ClassCouncilExtension:
     tags: [ 'twig.extension' ]
+
+  # Gedmo SoftDeleteable listener
+  Gedmo\SoftDeleteable\SoftDeleteableListener:
+    tags:
+      - { name: 'doctrine.event_listener', event: 'onFlush' }
+      - { name: 'doctrine.event_listener', event: 'loadClassMetadata' }
