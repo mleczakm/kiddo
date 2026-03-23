@@ -4,8 +4,14 @@ swoole:
     services:
       trust_all_proxies_handler: true
     trusted_proxies: '*'
+    settings:
+      worker_count: 4
   task_worker:
     services:
       reset_handler: true
     settings:
-      worker_count: auto
+      worker_count: 4
+  platform:
+    coroutines:
+      enabled: false
+      stateful_services: [ ]
