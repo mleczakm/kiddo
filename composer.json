@@ -33,7 +33,7 @@
         "sentry/sentry-symfony": "^5.8.3",
         "swoole-bundle/resetter-bundle": "^1.1.1",
         "swoole-bundle/swoole-bundle": "^0.25.1",
-        "swoole-bundle/z-engine": "*",
+        "swoole-bundle/z-engine": "^8.5.1",
         "symfony/asset": "7.3.*",
         "symfony/asset-mapper": "7.3.*",
         "symfony/brevo-mailer": "7.3.*",
