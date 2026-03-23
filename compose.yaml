@@ -9,6 +9,7 @@ services:
     environment:
       COMPOSER_HOME: /.composer
       PHP_CS_FIXER_IGNORE_ENV: true
+      SWOOLE_ALLOW_XDEBUG: 1
     volumes:
       - .:/app
       - ~/.composer:/.composer
