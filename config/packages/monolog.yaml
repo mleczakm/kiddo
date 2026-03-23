@@ -52,7 +52,7 @@ when@prod:
                 buffer_size: 0 # No limit
             grouped_main:
                 type: whatfailuregroup
-                members: [main, logdash]
+                members: [main]
             main:
                 type: fingers_crossed
                 action_level: error
@@ -73,10 +73,6 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
-            logdash:
-                type: service
-                id: App\Infrastructure\Monolog\LogdashHandler
-                level: debug
             sentry:
                 type: fingers_crossed
                 action_level: error
