@@ -1,4 +1,4 @@
-FROM php:8.4-cli-alpine AS base
+FROM php:8.5-cli-alpine AS base
 
 WORKDIR /app
 ENV APP_ENV=prod
