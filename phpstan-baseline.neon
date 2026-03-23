@@ -137,27 +137,3 @@ parameters:
 			identifier: generator.valueType
 			count: 1
 			path: tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php
-
-		-
-			message: '#^Call to function is_array\(\) with \*NEVER\* will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: tests/Infrastructure/Monolog/LogdashHandlerTest.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 1
-			path: tests/Infrastructure/Monolog/LogdashHandlerTest.php
-
-		-
-			message: '#^Offset 0 on \*NEVER\* in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: tests/Infrastructure/Monolog/LogdashHandlerTest.php
-
-		-
-			message: '#^Result of && is always true\.$#'
-			identifier: booleanAnd.alwaysTrue
-			count: 1
-			path: tests/Infrastructure/Monolog/LogdashHandlerTest.php
