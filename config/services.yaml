@@ -78,7 +78,13 @@ services:
   SymfonyHealthCheckBundle\Check\DoctrineORMCheck:
     alias: symfony_health_check.doctrine_check
 
+  # Sentry services for Monolog handler
+  Sentry\State\HubInterface:
+    factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
+
   BGalati\MonologSentryHandler\SentryHandler:
+    arguments:
+      $hub: '@Sentry\State\HubInterface'
   Sentry\Integration\RequestIntegration:
   Sentry\Integration\EnvironmentIntegration:
   Sentry\Integration\FrameContextifierIntegration:
