@@ -94,6 +94,12 @@ services:
   Symfony\Contracts\Service\ResetInterface:
     alias: services_resetter
 
+  App\Infrastructure\Doctrine\EntityManagerResetter:
+    public: true
+
+  App\Infrastructure\ImapEngine\ConnectionCloserOnResetSubscriber:
+    public: true
+
   Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
     arguments:
       - '%env(DATABASE_URL)%'
