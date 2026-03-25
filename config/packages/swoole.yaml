@@ -3,9 +3,13 @@ swoole:
     static: advanced
     services:
       trust_all_proxies_handler: true
+      access_log:
+        enabled: true
+        format: '%a %l %u %t "%r" %>s %O "%{Referer}i" "%{User-Agent}i" %T %D'
     trusted_proxies: '*'
     settings:
       worker_count: 4
+      log_file: '/proc/self/fd/2'
   task_worker:
     services:
       reset_handler: true
