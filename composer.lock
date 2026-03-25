@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "625d8ed434a6acf132d4cffba9f41a95",
+    "content-hash": "06612ff164547191ad9cdbb8bd71b242",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -399,16 +399,16 @@
         },
         {
             "name": "directorytree/imapengine",
-            "version": "v1.22.3",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/ImapEngine.git",
-                "reference": "87fca56affd9527e6907a705e6d600c5174d9a5a"
+                "reference": "703ef29f6279c38a6c74b5aaa528d016b74cfbf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/ImapEngine/zipball/87fca56affd9527e6907a705e6d600c5174d9a5a",
-                "reference": "87fca56affd9527e6907a705e6d600c5174d9a5a",
+                "url": "https://api.github.com/repos/DirectoryTree/ImapEngine/zipball/703ef29f6279c38a6c74b5aaa528d016b74cfbf8",
+                "reference": "703ef29f6279c38a6c74b5aaa528d016b74cfbf8",
                 "shasum": ""
             },
             "require": {
@@ -449,7 +449,7 @@
             ],
             "support": {
                 "issues": "https://github.com/DirectoryTree/ImapEngine/issues",
-                "source": "https://github.com/DirectoryTree/ImapEngine/tree/v1.22.3"
+                "source": "https://github.com/DirectoryTree/ImapEngine/tree/v1.24.0"
             },
             "funding": [
                 {
@@ -457,7 +457,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-03T15:43:20+00:00"
+            "time": "2026-03-23T01:03:59+00:00"
         },
         {
             "name": "doctrine/collections",
