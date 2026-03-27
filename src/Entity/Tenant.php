@@ -10,7 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity]
-#[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_tenant_domain', columns: ['domain'])])]
+#[ORM\Table]
+#[ORM\UniqueConstraint(name: 'uniq_tenant_domain', columns: ['domain'])]
 class Tenant
 {
     #[ORM\Id]
