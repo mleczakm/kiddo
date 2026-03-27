@@ -76,7 +76,7 @@ services:
     alias: Symfony\Component\Cache\Psr16Cache
 
   SymfonyHealthCheckBundle\Check\DoctrineORMCheck:
-    alias: symfony_health_check.doctrine_check
+    alias: symfony_health_check.doctrine_orm_check
 
   # Sentry services for Monolog handler
   Sentry\State\HubInterface:
