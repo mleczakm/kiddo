@@ -23,7 +23,7 @@ class LessonMapType extends JsonType
     }
 
     #[\Override]
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?LessonMap
     {
         if ($value === null || $value === '') {
             return null;
@@ -74,7 +74,7 @@ class LessonMapType extends JsonType
     }
 
     #[\Override]
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (! $value instanceof LessonMap) {
             return null;

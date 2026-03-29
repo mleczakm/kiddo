@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Ulid;
 class Notification
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'ulid')]
+    #[ORM\Column(type: 'ulid', length: 16)]
     private Ulid $id;
 
     #[ORM\Column(type: 'datetime_immutable')]
