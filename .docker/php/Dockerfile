@@ -50,7 +50,7 @@ ARG APP_REVISION
 ENV APP_VERSION=${APP_VERSION}
 ENV APP_REVISION=${APP_REVISION}
 
-HEALTHCHECK --start-period=5s --interval=5s --timeout=1s --retries=3 CMD curl -sS localhost:9501/health || exit 1
+HEALTHCHECK --start-period=2s --interval=5s --timeout=5s --retries=5 CMD curl -sS localhost:9501/health || exit 1
 
 COPY composer.json composer.lock ./
 
