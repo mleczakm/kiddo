@@ -128,7 +128,7 @@ final class TenantMiddlewareFunctionalTest extends KernelTestCase
 
         $middleware = new TenantMiddleware($this->tenantContext, $this->tenantRepository);
 
-        $envelope = (new Envelope(new \stdClass()))
+        $envelope = new Envelope(new \stdClass())
             ->with(new TenantStamp((string) $tenant->getId()))
             ->with(new ReceivedStamp('async'));
 
@@ -144,6 +144,9 @@ final class TenantMiddlewareFunctionalTest extends KernelTestCase
 
         Assert::assertTrue($asserted, 'Handler was called and tenant context was set');
         // After handling, context should be cleared (null)
-        Assert::assertNull($this->tenantContext->getTenant(), 'TenantContext should be cleared after handling when no request');
+        Assert::assertNull(
+            $this->tenantContext->getTenant(),
+            'TenantContext should be cleared after handling when no request'
+        );
     }
 }
