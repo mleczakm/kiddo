@@ -111,4 +111,39 @@ final class TenantMiddlewareFunctionalTest extends KernelTestCase
         Assert::assertTrue($asserted);
         Assert::assertSame((string) $tenantA->getId(), (string) $this->tenantContext->getTenant()?->getId());
     }
+
+    public function testSchedulerTaskSetsTenantContextWithoutHttpRequest(): void
+    {
+        // Do NOT push a request to the RequestStack (simulate no HTTP request)
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $tenant = new Tenant('SchedulerTenant', 'scheduler.test');
+        $em->persist($tenant);
+        $em->flush();
+
+        // Clear any request from the stack
+        $rs = self::getContainer()->get(RequestStack::class);
+        while ($rs->getCurrentRequest()) {
+            $rs->pop();
+        }
+
+        $middleware = new TenantMiddleware($this->tenantContext, $this->tenantRepository);
+
+        $envelope = (new Envelope(new \stdClass()))
+            ->with(new TenantStamp((string) $tenant->getId()))
+            ->with(new ReceivedStamp('async'));
+
+        $asserted = false;
+        $stack = $this->makeStack(function () use (&$asserted, $tenant): void {
+            $current = $this->tenantContext->getTenant();
+            Assert::assertNotNull($current, 'TenantContext should be set from TenantStamp');
+            Assert::assertSame((string) $tenant->getId(), (string) $current->getId());
+            $asserted = true;
+        });
+
+        $middleware->handle($envelope, $stack);
+
+        Assert::assertTrue($asserted, 'Handler was called and tenant context was set');
+        // After handling, context should be cleared (null)
+        Assert::assertNull($this->tenantContext->getTenant(), 'TenantContext should be cleared after handling when no request');
+    }
 }
