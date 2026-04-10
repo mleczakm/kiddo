@@ -138,7 +138,7 @@ class BookingCancellationModal extends AbstractController
                     $this->lesson->getId(),
                     $newLesson->getId(),
                     $securityUser,
-                    $this->cancellationReason ?? ''
+                    $this->cancellationReason
                 ));
                 break;
 
@@ -147,7 +147,7 @@ class BookingCancellationModal extends AbstractController
                     $this->booking->getId(),
                     $this->lesson->getId(),
                     $securityUser,
-                    $this->cancellationReason ?? ''
+                    $this->cancellationReason
                 ));
                 break;
 
@@ -157,7 +157,7 @@ class BookingCancellationModal extends AbstractController
                     $this->booking->getId(),
                     $this->lesson->getId(),
                     $securityUser,
-                    $this->cancellationReason ?? ''
+                    $this->cancellationReason
                 ));
                 break;
         }
