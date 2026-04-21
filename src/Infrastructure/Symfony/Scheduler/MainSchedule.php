@@ -16,6 +16,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
+use Symfony\Component\Scheduler\Trigger\CallbackMessageProvider;
 use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class MainSchedule implements ScheduleProviderInterface
@@ -38,7 +39,14 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 ),
                 RecurringMessage::every(
                     '60 minutes',
-                    Envelope::wrap(new CheckExpiredBookings(), [new TenantStamp('warsztatowniasensoryczna.pl')])
+                    new CallbackMessageProvider(
+                        static function (): iterable {
+                            yield Envelope::wrap(
+                                new CheckExpiredBookings(),
+                                [new TenantStamp('warsztatowniasensoryczna.pl')]
+                            );
+                        }
+                    ),
                 ),
                 RecurringMessage::every(
                     30,
@@ -46,7 +54,14 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 ),
                 RecurringMessage::cron(
                     '45 8 * * *',
-                    Envelope::wrap(new DailyLessonsReminder(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
+                    new CallbackMessageProvider(
+                        static function (): iterable {
+                            yield Envelope::wrap(
+                                new DailyLessonsReminder(),
+                                [new TenantStamp('warsztatowniasensoryczna.pl')]
+                            );
+                        }
+                    ),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
                 RecurringMessage::every(
