@@ -11,6 +11,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
 use Symfony\Component\Messenger\Stamp\ReceivedStamp;
+use Symfony\Component\Messenger\Stamp\ConsumedByWorkerStamp;
 use Symfony\Component\Uid\Ulid;
 
 /**
@@ -25,7 +26,8 @@ final readonly class TenantMiddleware implements MiddlewareInterface
 
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-        $isReceiving = $envelope->last(ReceivedStamp::class) !== null;
+        $isReceiving = $envelope->last(ReceivedStamp::class) !== null
+            || $envelope->last(ConsumedByWorkerStamp::class) !== null;
 
         if ($isReceiving) {
             // Worker side: set tenant in context based on stamp for the duration of handling
