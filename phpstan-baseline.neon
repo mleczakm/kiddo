@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: src/Application/CommandHandler/ImportTransfersFromMailHandler.php
-
-		-
 			message: '#^PHPDoc tag @var with type DirectoryTree\\ImapEngine\\Message is not subtype of native type DirectoryTree\\ImapEngine\\MessageQueryInterface\.$#'
 			identifier: varTag.nativeType
 			count: 1

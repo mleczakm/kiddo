@@ -27,10 +27,10 @@ readonly class ImportTransfersFromMailHandler
         $transfers = [];
         /** @var Message $incomingNotification */
         foreach (($this->incomingNotificationMailQuery)() as $incomingNotification) {
-            if (str_starts_with($incomingNotification->subject() ?? '', 'Uznanie rachunku')) {
+            if (str_starts_with($incomingNotification->subject() ?: '', 'Uznanie rachunku')) {
                 $parsed = $this->mailParser->fromMailSubjectAndContent(
-                    $incomingNotification->subject() ?? '',
-                    $incomingNotification->html() ?? ','
+                    $incomingNotification->subject() ?: '',
+                    $incomingNotification->html() ?: ','
                 );
                 if ($parsed) {
                     $transfers[] = new Transfer(
@@ -41,12 +41,9 @@ readonly class ImportTransfersFromMailHandler
                         Clock::get()->now()
                     );
                 }
-
             }
-
             $incomingNotification->markSeen();
         }
-
         foreach ($transfers as $transfer) {
             $this->messageBus->dispatch(new SaveTransfer($transfer));
         }
