@@ -16,7 +16,7 @@
     "directorytree/imapengine": "^1.24.0",
     "doctrine/dbal": "^3.10.5",
     "doctrine/doctrine-bundle": "^2.18.2",
-    "doctrine/orm": "^3.6.3",
+    "doctrine/orm": "^3.6.4",
     "dragonmantank/cron-expression": "^3.6",
     "dunglas/doctrine-json-odm": "^1.4.2",
     "gedmo/doctrine-extensions": "^3.22",
