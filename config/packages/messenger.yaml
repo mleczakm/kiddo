@@ -20,10 +20,11 @@ framework:
         buses:
             messenger.bus.default:
                 middleware:
-                    - 'App\Infrastructure\Symfony\Messenger\TenantMiddleware'
                     - messenger.middleware.doctrine_close_connection
+                    - messenger.middleware.doctrine_open_transaction_logger
                     - messenger.middleware.doctrine_transaction
                     - messenger.middleware.validation
+                    - 'App\Infrastructure\Symfony\Messenger\TenantMiddleware'
 
         routing:
             # Route your messages to the transports
