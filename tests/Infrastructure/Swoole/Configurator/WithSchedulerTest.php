@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use Swoole\Http\Server;
 use Swoole\Timer;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\Service\ResetInterface;
 
 #[Group('unit')]
 final class WithSchedulerTest extends TestCase
@@ -20,8 +19,7 @@ final class WithSchedulerTest extends TestCase
     {
         self::assertEmpty(iterator_to_array(Timer::list()));
         ($withScheduler = new WithScheduler(
-            new Scheduler($this->createMock(MessageBusInterface::class), []),
-            $this->createMock(ResetInterface::class)
+            new Scheduler($this->createMock(MessageBusInterface::class), [])
         ))->configure($this->createMock(Server::class));
 
         $ticks = iterator_to_array(Timer::list());

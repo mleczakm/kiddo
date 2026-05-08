@@ -8,7 +8,6 @@ use App\Infrastructure\Symfony\Scheduler;
 use Swoole\Http\Server;
 use Swoole\Timer;
 use SwooleBundle\SwooleBundle\Server\Configurator\Configurator;
-use Symfony\Contracts\Service\ResetInterface;
 
 final class WithScheduler implements Configurator
 {
@@ -16,7 +15,6 @@ final class WithScheduler implements Configurator
 
     public function __construct(
         private readonly Scheduler $scheduler,
-        private readonly ResetInterface $reset,
     ) {}
 
     public function __destruct()
@@ -28,7 +26,6 @@ final class WithScheduler implements Configurator
     {
         $this->tickId = Timer::tick(1000, function (): void {
             $this->scheduler->run();
-            $this->reset->reset();
         });
 
         $server->on('shutdown', function (): void {
