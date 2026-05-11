@@ -17,9 +17,15 @@ class TransferMoneyParser
 
         // Remove all non-digit and non-comma characters
         $cleaned = preg_replace('/[^\d,]/', '', $amount);
+        // Replace multiple commas with a single one
+        $cleaned = preg_replace('/,+/', ',', $cleaned ?? '');
+
+        if ($cleaned === '' || $cleaned === ',') {
+            return Money::of('0.00', 'PLN');
+        }
 
         // Replace comma with dot to create a valid decimal number
-        $number = str_replace(',', '.', $cleaned ?? '');
+        $number = str_replace(',', '.', $cleaned);
 
         // If the number starts with a dot, add leading zero
         if (str_starts_with($number, '.')) {
@@ -33,12 +39,16 @@ class TransferMoneyParser
 
         // Ensure exactly 2 decimal places
         $parts = explode('.', $number, 2);
+
         if (strlen($parts[1]) > 2) {
             // If more than 2 decimal places, we'll let Money handle the rounding
             $number = $parts[0] . '.' . substr($parts[1], 0, 2);
         } elseif (strlen($parts[1]) === 1) {
             // If only 1 decimal place, add a trailing zero
             $number .= '0';
+        } elseif (strlen($parts[1]) === 0) {
+            // If there's no decimal part, add 00
+            $number .= '00';
         }
 
         return Money::of($number, 'PLN');
