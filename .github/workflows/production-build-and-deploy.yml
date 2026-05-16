@@ -86,6 +86,6 @@ jobs:
             
             # Run database migrations
             echo "Running database migrations..."
-            docker compose exec kiddo bin/console doctrine:schema:update --force --no-interaction
+            docker compose exec kiddo bin/console doctrine:schema:update --dump-sql --no-interaction
             
             echo "Deployment completed successfully!"
