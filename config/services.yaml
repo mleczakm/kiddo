@@ -82,9 +82,7 @@ services:
   Sentry\State\HubInterface:
     factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
 
-  BGalati\MonologSentryHandler\SentryHandler:
-    arguments:
-      $hub: '@Sentry\State\HubInterface'
+  BGalati\MonologSentryHandler\SentryHandler: ~
   Sentry\Integration\RequestIntegration:
   Sentry\Integration\EnvironmentIntegration:
   Sentry\Integration\FrameContextifierIntegration:
@@ -111,9 +109,6 @@ services:
   App\Infrastructure\Symfony\Twig\TenantExtension:
     tags: [ 'twig.extension' ]
 
-  # Class Council Twig helpers
-  App\Infrastructure\Symfony\Twig\ClassCouncilExtension:
-    tags: [ 'twig.extension' ]
 
   # Gedmo SoftDeleteable listener
   Gedmo\SoftDeleteable\SoftDeleteableListener:

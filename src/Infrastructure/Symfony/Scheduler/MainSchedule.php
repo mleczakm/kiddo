@@ -11,8 +11,6 @@ use App\Application\Command\ExtendSeriesSchedule;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Command\TriggerMatchPaymentForTransferForPastTransfers;
-use App\Infrastructure\Symfony\Messenger\TenantStamp;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
@@ -31,55 +29,24 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->with(
-                RecurringMessage::every(
-                    '5 minutes',
-                    Envelope::wrap(new CheckExpiredPayments(expirationMinutes: 24 * 60), [
-                        new TenantStamp('warsztatowniasensoryczna.pl'),
-                    ])
-                ),
+                RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 24 * 60)),
                 RecurringMessage::every(
                     '60 minutes',
-                    new CallbackMessageProvider(
-                        static function (): iterable {
-                            yield Envelope::wrap(
-                                new CheckExpiredBookings(),
-                                [new TenantStamp('warsztatowniasensoryczna.pl')]
-                            );
-                        }
-                    ),
+                    new CallbackMessageProvider(fn() => [new CheckExpiredBookings()]),
                 ),
-                RecurringMessage::every(
-                    30,
-                    Envelope::wrap(new ImportTransfersFromMail(), [new TenantStamp('warsztatowniasensoryczna.pl')])
-                ),
+                RecurringMessage::every(30, new ImportTransfersFromMail()),
                 RecurringMessage::cron(
                     '45 8 * * *',
-                    new CallbackMessageProvider(
-                        static function (): iterable {
-                            yield Envelope::wrap(
-                                new DailyLessonsReminder(),
-                                [new TenantStamp('warsztatowniasensoryczna.pl')]
-                            );
-                        }
-                    ),
+                    new CallbackMessageProvider(fn() => [new DailyLessonsReminder()]),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
-                RecurringMessage::every(
-                    60,
-                    Envelope::wrap(new TriggerMatchPaymentForTransferForPastTransfers(), [
-                        new TenantStamp('warsztatowniasensoryczna.pl'),
-                    ])
-                ),
+                RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers()),
                 RecurringMessage::cron(
                     '5 * * * *',
-                    Envelope::wrap(new CheckBookingsToMarkPast(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
+                    new CheckBookingsToMarkPast(),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
-                RecurringMessage::cron(
-                    '1 0 * * *',
-                    Envelope::wrap(new ExtendSeriesSchedule(), [new TenantStamp('warsztatowniasensoryczna.pl')]),
-                    new \DateTimeZone('Europe/Warsaw')
-                ),
+                RecurringMessage::cron('1 0 * * *', new ExtendSeriesSchedule(), new \DateTimeZone('Europe/Warsaw')),
             );
     }
 }

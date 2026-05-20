@@ -71,24 +71,3 @@ framework:
                     from: pending
                     to: expired
 
-        student_payment:
-            type: 'state_machine'
-            audit_trail:
-                enabled: true
-            marking_store:
-                type: 'method'
-                property: 'status'
-            supports:
-                - App\Entity\ClassCouncil\StudentPayment
-            initial_marking: pending
-            places:
-                - pending
-                - partial
-                - paid
-            transitions:
-                settle_partial:
-                    from: pending
-                    to: partial
-                settle:
-                    from: [pending, partial]
-                    to: paid

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Uid\Ulid;
 use App\Entity\Payment;
 use App\Entity\Transfer;
 use App\Repository\PaymentRepository;
-use App\Repository\ClassCouncil\StudentPaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -40,9 +38,6 @@ class AssignPaymentModalComponent extends AbstractController
         private readonly PaymentRepository $paymentRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly WorkflowInterface $paymentStateMachine,
-        private readonly StudentPaymentRepository $studentPayments,
-        #[Autowire(service: 'state_machine.student_payment')]
-        private readonly WorkflowInterface $studentPaymentStateMachine,
     ) {}
 
     /**
@@ -80,13 +75,6 @@ class AssignPaymentModalComponent extends AbstractController
         $this->transfer->setPayment($payment);
         if ($this->paymentStateMachine->can($payment, 'pay')) {
             $this->paymentStateMachine->apply($payment, 'pay');
-        }
-
-        // If there are any Class Council student payments linked to this Payment, use workflow to settle them
-        foreach ($this->studentPayments->findByPayment($payment) as $sp) {
-            if ($this->studentPaymentStateMachine->can($sp, 'settle')) {
-                $this->studentPaymentStateMachine->apply($sp, 'settle');
-            }
         }
 
         $this->entityManager->flush();
