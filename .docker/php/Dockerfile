@@ -2,6 +2,7 @@ FROM php:8.5-cli AS base
 
 WORKDIR /app
 ENV APP_ENV=prod
+ENV APP_RUNTIME_MODE="web=1&worker=1"
 EXPOSE 9501
 
 CMD bin/console swoole:server:run
