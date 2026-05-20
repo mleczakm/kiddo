@@ -25,8 +25,9 @@
         }
 
         .logo {
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .logo span {
@@ -97,13 +98,14 @@
 <body>
 <div class="email-container">
     <div class="header">
-        <span class="logo">{{ tenant_name() ?? 'Kiddo' }}</span>
+        <span class="logo">
+            <span class="red">K</span><span class="green">i</span><span class="yellow">d</span><span class="blue">d</span><span class="pink">o</span>
+        </span>
     </div>
-</div>
-{{ content|trans({}, 'email') }}
-<div class="footer">
-    {{ 'footer'|trans({}, 'email') }}
-</div>
+    {{ content|trans({}, 'email') }}
+    <div class="footer">
+        {{ 'footer'|trans({}, 'email') }}
+    </div>
 </div>
 </body>
 </html>

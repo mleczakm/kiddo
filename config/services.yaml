@@ -105,10 +105,6 @@ services:
   App\Infrastructure\Twig\MoneyExtension:
     tags: [ 'twig.extension' ]
 
-  # Tenant-aware Twig helpers
-  App\Infrastructure\Symfony\Twig\TenantExtension:
-    tags: [ 'twig.extension' ]
-
 
   # Gedmo SoftDeleteable listener
   Gedmo\SoftDeleteable\SoftDeleteableListener:

@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center">
             <a class="flex items-center gap-2" href="{{ path('homepage') }}"
                title="{{ 'last_update'|trans }}{{ last_release()|format_date(pattern: 'HH:mm, dd MMM') }}">
-                <span class="font-display text-2xl font-bold text-workshop-brown">{{ tenant_name() ?? 'Warsztatownia Sensoryczna' }}</span>
+                <span class="font-display text-2xl font-bold text-workshop-brown">{{ 'page.default.header'|trans }}</span>
             </a>
             <nav class="hidden md:flex items-center gap-8">
                 <a

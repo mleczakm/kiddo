@@ -30,9 +30,6 @@ class Notification
     private NotificationSeverity $severity = NotificationSeverity::Info;
 
     public function __construct(
-        #[ORM\ManyToOne(targetEntity: Tenant::class)]
-        #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-        private Tenant $tenant,
         #[ORM\ManyToOne(targetEntity: User::class)]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         private User $user,
@@ -54,11 +51,6 @@ class Notification
     public function getId(): Ulid
     {
         return $this->id;
-    }
-
-    public function getTenant(): Tenant
-    {
-        return $this->tenant;
     }
 
     public function getUser(): User

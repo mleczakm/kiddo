@@ -26,10 +26,6 @@ class Setting
     ])]
     private mixed $content = [];
 
-    #[ORM\ManyToOne(targetEntity: Tenant::class, inversedBy: 'settings')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Tenant $tenant = null;
-
     public function __construct()
     {
         $this->id = new Ulid();
@@ -64,15 +60,5 @@ class Setting
     public function setContent(array $content): void
     {
         $this->content = $content;
-    }
-
-    public function getTenant(): ?Tenant
-    {
-        return $this->tenant;
-    }
-
-    public function setTenant(?Tenant $tenant): void
-    {
-        $this->tenant = $tenant;
     }
 }

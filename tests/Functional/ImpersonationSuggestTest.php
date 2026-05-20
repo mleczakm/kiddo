@@ -7,7 +7,6 @@ namespace App\Tests\Functional;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 use App\UserInterface\Http\Component\NotificationTrayLiveComponent;
-use App\Tests\Assembler\TenantAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -26,12 +25,6 @@ final class ImpersonationSuggestTest extends WebTestCase
 
     public function testAdminCanGetSuggestions(): void
     {
-        $tenant = TenantAssembler::new()
-            ->withName('Kiddo')
-            ->withDomain('t1.test')
-            ->assemble();
-        $this->em->persist($tenant);
-
         $admin = UserAssembler::new()
             ->withEmail('admin@example.com')
             ->withName('Admin One')
@@ -67,12 +60,6 @@ final class ImpersonationSuggestTest extends WebTestCase
 
     public function testNonAdminHasNoSuggestions(): void
     {
-        $tenant = TenantAssembler::new()
-            ->withName('Kiddo')
-            ->withDomain('t2.test')
-            ->assemble();
-        $this->em->persist($tenant);
-
         $user = UserAssembler::new()
             ->withEmail('user2@example.com')
             ->withName('User Two')

@@ -364,6 +364,7 @@ booking:
   tell_us_more_footer: Administracja rozpatrzy Twoją prośbę i skontaktuje się z Tobą w ciągu 24 godzin z decyzją.
   rescheduled: Przełożona
   cancelled: Anulowana
+  accept_terms_and_close: Zaakceptuj i zamknij
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
@@ -419,7 +420,7 @@ dashboard:
     carnet: "Karnet"
 
 admin_dashboard:
-  title: Kiddo System Rezerwacji Warsztatów - 2025
+  title: Warsztatownia Sensoryczna - Panel administracyjny
   frontpage: Strona główna
   upcoming_lessons:
     title: 'Nadchodzące zajęcia'

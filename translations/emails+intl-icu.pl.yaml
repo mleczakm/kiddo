@@ -1,4 +1,3 @@
-footer: <p>&copy; 2025. Wszystkie prawa zastrzeżone.</p>
 exception: Załączony ślad stosu wyjątku.
 
 link_warning_upper: Jeśli powyższy przycisk nie działa, możesz skopiować i wkleić poniższy link do swojej przeglądarki
@@ -156,7 +155,7 @@ lesson_rescheduled_by_admin_notification:
 
 at: o
 emails:
-  footer_unbranded: 'Kiddo'
+  footer: 'Warsztatownia Sensoryczna'
 
 reschedule:
   notification:

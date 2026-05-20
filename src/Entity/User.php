@@ -55,12 +55,6 @@ class User implements UserInterface
     private ?\DateTimeImmutable $confirmedAt = null;
 
     /**
-     * @var Collection<int, Tenant>
-     */
-    #[ORM\ManyToMany(targetEntity: Tenant::class, mappedBy: 'users')]
-    private Collection $tenants;
-
-    /**
      * @var Collection<int, Booking>
      */
     #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'user')]
@@ -75,7 +69,6 @@ class User implements UserInterface
     public function __construct(?string $email = null, ?string $name = null)
     {
         $this->createdAt = Clock::get()->now();
-        $this->tenants = new ArrayCollection();
         $this->bookings = new ArrayCollection();
         $this->children = new ArrayCollection();
         if ($email !== null) {
@@ -206,30 +199,6 @@ class User implements UserInterface
     public function setConfirmedAt(?\DateTimeImmutable $confirmedAt): void
     {
         $this->confirmedAt = $confirmedAt;
-    }
-
-    /**
-     * @return Collection<int, Tenant>
-     */
-    public function getTenants(): Collection
-    {
-        return $this->tenants;
-    }
-
-    public function addTenant(Tenant $tenant): void
-    {
-        if (! $this->tenants->contains($tenant)) {
-            $this->tenants->add($tenant);
-            $tenant->addUser($this);
-        }
-    }
-
-    public function removeTenant(Tenant $tenant): void
-    {
-        if ($this->tenants->contains($tenant)) {
-            $this->tenants->removeElement($tenant);
-            $tenant->removeUser($this);
-        }
     }
 
     /**

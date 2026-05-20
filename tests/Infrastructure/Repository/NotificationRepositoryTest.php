@@ -7,7 +7,6 @@ namespace App\Tests\Infrastructure\Repository;
 use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Notification;
 use App\Entity\NotificationSeverity;
-use App\Entity\Tenant;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,26 +34,24 @@ final class NotificationRepositoryTest extends KernelTestCase
 
     public function testCountUnreadAndFindRecentFiltersAndOrders(): void
     {
-        $tenant = new Tenant('Kiddo', 'repo.test');
         $user = new User('repo@example.com', 'Repo User');
-        $this->persist($tenant);
         $this->persist($user);
 
-        $n1 = new Notification($tenant, $user, 'First', null, null, NotificationSeverity::Info); // unread
+        $n1 = new Notification($user, 'First', null, null, NotificationSeverity::Info); // unread
         $this->persist($n1);
         // older
-        $nOld = new Notification($tenant, $user, 'Old', null, null, NotificationSeverity::Warning);
+        $nOld = new Notification($user, 'Old', null, null, NotificationSeverity::Warning);
         // manually backdate
         $ref = new \ReflectionProperty(Notification::class, 'createdAt');
         $ref->setValue($nOld, (new \DateTimeImmutable('-2 days')));
         $this->persist($nOld);
 
-        $nRead = new Notification($tenant, $user, 'Read', null, null, NotificationSeverity::Success);
+        $nRead = new Notification($user, 'Read', null, null, NotificationSeverity::Success);
         $this->persist($nRead);
         $nRead->markRead();
         $this->em->flush();
 
-        $nDeleted = new Notification($tenant, $user, 'Deleted', null, null, NotificationSeverity::Error);
+        $nDeleted = new Notification($user, 'Deleted', null, null, NotificationSeverity::Error);
         $this->persist($nDeleted);
         $nDeleted->softDelete();
         $this->em->flush();

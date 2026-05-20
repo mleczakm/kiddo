@@ -6,13 +6,10 @@ namespace App\Tests\Assembler;
 
 use App\Entity\Notification;
 use App\Entity\NotificationSeverity;
-use App\Entity\Tenant;
 use App\Entity\User;
 
 final class NotificationAssembler
 {
-    private ?Tenant $tenant = null;
-
     private ?User $user = null;
 
     private string $title = 'Notification';
@@ -30,12 +27,6 @@ final class NotificationAssembler
     public static function new(): self
     {
         return new self();
-    }
-
-    public function withTenant(Tenant $tenant): self
-    {
-        $this->tenant = $tenant;
-        return $this;
     }
 
     public function withUser(User $user): self
@@ -77,10 +68,9 @@ final class NotificationAssembler
     public function assemble(): Notification
     {
         // Provide defaults if not set
-        $tenant = $this->tenant ?? TenantAssembler::new()->assemble();
         $user = $this->user ?? UserAssembler::new()->assemble();
 
-        $n = new Notification($tenant, $user, $this->title, $this->body, $this->url, $this->severity);
+        $n = new Notification($user, $this->title, $this->body, $this->url, $this->severity);
 
         if ($this->createdAt !== null) {
             $ref = new \ReflectionClass($n);
