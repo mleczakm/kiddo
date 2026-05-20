@@ -19,29 +19,52 @@ class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
 
     public function check(): Response
     {
-        $this->cache->set($key = 'doctrine_inside_task_worker', false, 5);
-
-        $this->bus->dispatch(new DoctrineInsideTaskWorkerCheck($key));
-
         $retry = 0;
-        while (! $this->cache->get('doctrine_inside_task_worker')) {
-            $retry++;
+        try {
+            $this->cache->delete('doctrine_inside_task_worker');
 
-            if ($retry <= 5) {
-                continue;
+            $this->bus->dispatch(new DoctrineInsideTaskWorkerCheck('doctrine_inside_task_worker'));
+
+            while (($result = $this->cache->get('doctrine_inside_task_worker')) === null) {
+                $retry++;
+
+                if ($retry <= 5) {
+                    usleep(100000); // 100ms
+                    continue;
+                }
+
+                return new Response(
+                    'doctrine_inside_task_worker',
+                    false,
+                    'Doctrine inside task worker is not healthy (timeout)',
+                    [
+                        'retry' => $retry,
+                    ]
+                );
             }
 
+            if (! $result) {
+                return new Response(
+                    'doctrine_inside_task_worker',
+                    false,
+                    'Doctrine inside task worker is not healthy (handler reported failure)',
+                    [
+                        'retry' => $retry,
+                    ]
+                );
+            }
+
+            $this->cache->delete('doctrine_inside_task_worker');
+        } catch (\Throwable $e) {
             return new Response(
                 'doctrine_inside_task_worker',
                 false,
-                'Doctrine inside task worker is not healthy',
+                'Doctrine inside task worker check failed: ' . $e->getMessage(),
                 [
                     'retry' => $retry,
                 ]
             );
         }
-
-        $this->cache->delete('doctrine_inside_task_worker');
 
         return new Response('doctrine_inside_task_worker', true, 'Doctrine inside task worker is healthy');
     }
