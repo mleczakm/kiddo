@@ -13,6 +13,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Message\RedispatchMessage;
 use Symfony\Component\Scheduler\Generator\MessageGenerator;
 
 #[Group('unit')]
@@ -42,6 +43,10 @@ class MainScheduleTest extends TestCase
         // Generate messages multiple times to simulate dynamic creation
         for ($i = 0; $i < 5; $i++) {
             foreach ($messageGenerator->getMessages() as $message) {
+                if ($message instanceof RedispatchMessage) {
+                    $message = $message->envelope;
+                }
+
                 if ($message instanceof Envelope) {
                     $message = $message->getMessage();
                 }

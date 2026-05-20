@@ -11,6 +11,7 @@ use App\Application\Command\ExtendSeriesSchedule;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Command\TriggerMatchPaymentForTransferForPastTransfers;
+use Symfony\Component\Messenger\Message\RedispatchMessage;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
@@ -29,24 +30,24 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->with(
-                RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 24 * 60)),
+                RecurringMessage::every('5 minutes', new RedispatchMessage(new CheckExpiredPayments(expirationMinutes: 24 * 60), 'async')),
                 RecurringMessage::every(
                     '60 minutes',
-                    new CallbackMessageProvider(fn() => [new CheckExpiredBookings()]),
+                    new CallbackMessageProvider(fn() => [new RedispatchMessage(new CheckExpiredBookings(), 'async')]),
                 ),
-                RecurringMessage::every(30, new ImportTransfersFromMail()),
+                RecurringMessage::every(30, new RedispatchMessage(new ImportTransfersFromMail(), 'async')),
                 RecurringMessage::cron(
                     '45 8 * * *',
-                    new CallbackMessageProvider(fn() => [new DailyLessonsReminder()]),
+                    new CallbackMessageProvider(fn() => [new RedispatchMessage(new DailyLessonsReminder(), 'async')]),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
-                RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers()),
+                RecurringMessage::every(60, new RedispatchMessage(new TriggerMatchPaymentForTransferForPastTransfers(), 'async')),
                 RecurringMessage::cron(
                     '5 * * * *',
-                    new CheckBookingsToMarkPast(),
+                    new RedispatchMessage(new CheckBookingsToMarkPast(), 'async'),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
-                RecurringMessage::cron('1 0 * * *', new ExtendSeriesSchedule(), new \DateTimeZone('Europe/Warsaw')),
+                RecurringMessage::cron('1 0 * * *', new RedispatchMessage(new ExtendSeriesSchedule(), 'async'), new \DateTimeZone('Europe/Warsaw')),
             );
     }
 }
