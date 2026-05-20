@@ -30,7 +30,10 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->with(
-                RecurringMessage::every('5 minutes', new RedispatchMessage(new CheckExpiredPayments(expirationMinutes: 24 * 60), 'async')),
+                RecurringMessage::every(
+                    '5 minutes',
+                    new RedispatchMessage(new CheckExpiredPayments(expirationMinutes: 24 * 60), 'async')
+                ),
                 RecurringMessage::every(
                     '60 minutes',
                     new CallbackMessageProvider(fn() => [new RedispatchMessage(new CheckExpiredBookings(), 'async')]),
@@ -41,13 +44,20 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                     new CallbackMessageProvider(fn() => [new RedispatchMessage(new DailyLessonsReminder(), 'async')]),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
-                RecurringMessage::every(60, new RedispatchMessage(new TriggerMatchPaymentForTransferForPastTransfers(), 'async')),
+                RecurringMessage::every(
+                    60,
+                    new RedispatchMessage(new TriggerMatchPaymentForTransferForPastTransfers(), 'async')
+                ),
                 RecurringMessage::cron(
                     '5 * * * *',
                     new RedispatchMessage(new CheckBookingsToMarkPast(), 'async'),
                     new \DateTimeZone('Europe/Warsaw')
                 ),
-                RecurringMessage::cron('1 0 * * *', new RedispatchMessage(new ExtendSeriesSchedule(), 'async'), new \DateTimeZone('Europe/Warsaw')),
+                RecurringMessage::cron(
+                    '1 0 * * *',
+                    new RedispatchMessage(new ExtendSeriesSchedule(), 'async'),
+                    new \DateTimeZone('Europe/Warsaw')
+                ),
             );
     }
 }
