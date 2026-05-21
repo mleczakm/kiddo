@@ -25,6 +25,7 @@ class MainScheduleTest extends TestCase
             ->getSchedule();
 
         self::assertCount(7, $schedule->getRecurringMessages());
+        self::assertNotNull($schedule->getState());
     }
 
     public function testRecurringMessagesWithDatesAreCreatedDynamically(): void
