@@ -82,7 +82,9 @@ services:
   Sentry\State\HubInterface:
     factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
 
-  BGalati\MonologSentryHandler\SentryHandler: ~
+  BGalati\MonologSentryHandler\SentryHandler:
+    arguments:
+      $hub: '@Sentry\State\HubInterface'
   Sentry\Integration\RequestIntegration:
   Sentry\Integration\EnvironmentIntegration:
   Sentry\Integration\FrameContextifierIntegration:
