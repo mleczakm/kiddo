@@ -12,6 +12,11 @@ doctrine:
 
     profiling_collect_backtrace: '%kernel.debug%'
     use_savepoints: true
+    
+    # Connection keep-alive settings for long-running processes
+    options:
+      'PDO::ATTR_TIMEOUT': 30
+      'PDO::ATTR_EMULATE_PREPARES': false
   orm:
     auto_generate_proxy_classes: true
     enable_lazy_ghost_objects: true
