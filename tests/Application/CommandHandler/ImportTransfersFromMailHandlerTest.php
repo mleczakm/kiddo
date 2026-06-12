@@ -9,7 +9,9 @@ use App\Application\Command\ImportTransfersFromMail;
 use App\Application\CommandHandler\ImportTransfersFromMailHandler;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
 use App\Application\Service\AliorMailParser;
+use App\Repository\SettingRepository;
 use App\Tests\Util\MessengerFake;
+use Doctrine\ORM\EntityManagerInterface;
 use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
 use DirectoryTree\ImapEngine\Testing\FakeMessage;
@@ -20,10 +22,15 @@ class ImportTransfersFromMailHandlerTest extends TestCase
 {
     public function testFetchProperlyEmailsFromMailbox(): void
     {
+        $settingRepository = $this->createMock(SettingRepository::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+
         new ImportTransfersFromMailHandler(
             new AliorMailParser(),
             $messengerFake = new MessengerFake(),
             new FakeQuery(),
+            $settingRepository,
+            $entityManager,
         )(new ImportTransfersFromMail());
 
         self::assertNotEmpty($messengerFake->dispatched);

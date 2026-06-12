@@ -87,6 +87,14 @@ dashboard:
   browse_workshops: Browse available workshops
   payment:
     paid: Paid
+    pending_transfers: 'Pending Payment Transfers'
+    sender: 'Customer'
+    title: 'Workshop'
+    amount: 'Amount'
+    date: 'Date'
+    approve: 'Approve'
+    reject: 'Reject'
+    last_successful_import: 'Last successful import'
   confirm_cancel: Are you sure you want to cancel this booking?
   single_session: Single Session
   actions:

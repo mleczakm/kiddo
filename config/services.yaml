@@ -113,3 +113,11 @@ services:
     tags:
       - { name: 'doctrine.event_listener', event: 'onFlush' }
       - { name: 'doctrine.event_listener', event: 'loadClassMetadata' }
+
+  # Decorator for IncomingNotificationMailQuery to track last successful import
+  App\Application\CommandHandler\IncomingNotificationMailQueryWithLastSuccessfulImportDecorator:
+    decorates: App\Infrastructure\ImapEngine\AliorNotificationMailProvider
+    arguments:
+      $decorated: '@.inner'
+
+  App\Application\CommandHandler\IncomingNotificationMailQuery: '@App\Application\CommandHandler\IncomingNotificationMailQueryWithLastSuccessfulImportDecorator'

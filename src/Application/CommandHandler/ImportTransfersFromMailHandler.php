@@ -7,8 +7,11 @@ namespace App\Application\CommandHandler;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\SaveTransfer;
 use App\Application\Service\TransferNotificationMailParserInterface;
+use App\Entity\Setting;
 use App\Entity\Transfer;
+use App\Repository\SettingRepository;
 use DirectoryTree\ImapEngine\Message;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -20,6 +23,8 @@ readonly class ImportTransfersFromMailHandler
         private TransferNotificationMailParserInterface $mailParser,
         private MessageBusInterface $messageBus,
         private IncomingNotificationMailQuery $incomingNotificationMailQuery,
+        private SettingRepository $settingRepository,
+        private EntityManagerInterface $entityManager,
     ) {}
 
     public function __invoke(ImportTransfersFromMail $message): void
@@ -47,5 +52,25 @@ readonly class ImportTransfersFromMailHandler
         foreach ($transfers as $transfer) {
             $this->messageBus->dispatch(new SaveTransfer($transfer));
         }
+
+        if (count($transfers) > 0) {
+            $this->updateLastSuccessfulImportDate();
+        }
+    }
+
+    private function updateLastSuccessfulImportDate(): void
+    {
+        $setting = $this->settingRepository->findOneByKey('last_successful_transfer_import');
+        if ($setting === null) {
+            $setting = new Setting();
+            $setting->setKey('last_successful_transfer_import');
+        }
+
+        $setting->setContent([
+            'date' => Clock::get()->now()->format('Y-m-d H:i:s'),
+        ]);
+
+        $this->entityManager->persist($setting);
+        $this->entityManager->flush();
     }
 }

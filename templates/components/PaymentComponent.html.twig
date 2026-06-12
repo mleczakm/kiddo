@@ -10,6 +10,11 @@
                 </svg>
                 {{ 'payment.pending_transfers'|trans }} ({{ this.transfers|length }})
             </h3>
+            {% if this.lastSuccessfulImportDate %}
+                <p class="text-sm text-muted-foreground">
+                    {{ 'payment.last_successful_import'|trans }}: {{ this.lastSuccessfulImportDate|date('d.m.Y H:i') }}
+                </p>
+            {% endif %}
         </div>
         <div class="p-6 pt-0">
             <div class="relative w-full overflow-auto">

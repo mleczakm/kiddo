@@ -640,6 +640,7 @@ payment:
   amount_match: "Kwota zgodna"
   booked: "Utworzono: {date}"
   status_pending: "Oczekująca"
+  last_successful_import: "Ostatni udany import"
 
 
 action:

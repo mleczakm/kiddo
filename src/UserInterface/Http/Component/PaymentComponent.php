@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Entity\Transfer;
+use App\Repository\SettingRepository;
 use App\Repository\TransferRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +21,8 @@ final class PaymentComponent extends AbstractController
 
     public function __construct(
         private readonly TransferRepository $transferRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SettingRepository $settingRepository,
     ) {}
 
     /**
@@ -33,6 +35,25 @@ final class PaymentComponent extends AbstractController
         ], [
             'transferredAt' => 'DESC',
         ]);
+    }
+
+    public function getLastSuccessfulImportDate(): ?\DateTimeImmutable
+    {
+        $setting = $this->settingRepository->findOneByKey('last_successful_transfer_import');
+        if ($setting === null) {
+            return null;
+        }
+
+        $content = $setting->getContent();
+        if (! isset($content['date']) || ! is_string($content['date'])) {
+            return null;
+        }
+
+        try {
+            return new \DateTimeImmutable($content['date']);
+        } catch (\Exception) {
+            return null;
+        }
     }
 
     #[LiveAction]
