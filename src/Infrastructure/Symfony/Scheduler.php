@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony;
 
+use App\Infrastructure\Doctrine\ConnectionEnsurerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\ClockInterface;
@@ -32,7 +33,8 @@ class Scheduler
         private readonly MessageBusInterface $bus,
         array $scheduleProviders,
         private readonly ClockInterface $clock = new Clock(),
-        private readonly ?EventDispatcherInterface $dispatcher = null
+        private readonly ?EventDispatcherInterface $dispatcher = null,
+        private readonly ?ConnectionEnsurerInterface $connectionResetter = null
     ) {
 
         foreach ($scheduleProviders as $scheduleProvider) {
@@ -52,6 +54,11 @@ class Scheduler
 
     public function run(): void
     {
+        // Ensure database connection is alive before any checkpoint cache access
+        if ($this->connectionResetter) {
+            $this->connectionResetter->ensureConnection();
+        }
+
         foreach ($this->generators as $generator) {
             foreach ($generator->getMessages() as $context => $message) {
                 if (! $this->dispatcher) {

@@ -19,11 +19,6 @@ class SchedulerConnectionResetterTest extends TestCase
     {
         $connection = $this->createMock(Connection::class);
         $connection->expects($this->once())
-            ->method('isConnected')
-            ->willReturn(false);
-        $connection->expects($this->once())
-            ->method('connect');
-        $connection->expects($this->once())
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturn($this->createMock(Result::class));
@@ -38,11 +33,6 @@ class SchedulerConnectionResetterTest extends TestCase
     {
         $connection = $this->createMock(Connection::class);
         $connection->expects($this->once())
-            ->method('isConnected')
-            ->willReturn(true);
-        $connection->expects($this->never())
-            ->method('connect');
-        $connection->expects($this->once())
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturn($this->createMock(Result::class));
@@ -56,11 +46,9 @@ class SchedulerConnectionResetterTest extends TestCase
     public function testOnPreRunRetriesOnConnectionFailure(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->exactly(5))
+        $connection->expects($this->exactly(2))
             ->method('isConnected')
-            ->willReturnOnConsecutiveCalls(false, true, false, true, false);
-        $connection->expects($this->exactly(3))
-            ->method('connect');
+            ->willReturnOnConsecutiveCalls(true, true);
         $connection->expects($this->exactly(3))
             ->method('executeQuery')
             ->with('SELECT 1')
@@ -84,11 +72,9 @@ class SchedulerConnectionResetterTest extends TestCase
         $this->expectExceptionMessage('no connection to the server');
 
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->exactly(5))
+        $connection->expects($this->exactly(2))
             ->method('isConnected')
-            ->willReturnOnConsecutiveCalls(false, true, false, true, false);
-        $connection->expects($this->exactly(3))
-            ->method('connect');
+            ->willReturnOnConsecutiveCalls(true, true);
         $connection->expects($this->exactly(3))
             ->method('executeQuery')
             ->with('SELECT 1')

@@ -22,22 +22,15 @@ framework:
                 middleware:
                     - messenger.middleware.router_context
                     - messenger.middleware.doctrine_close_connection
-                    - messenger.middleware.doctrine_open_transaction_logger
                     - messenger.middleware.doctrine_transaction
                     - messenger.middleware.validation
 
         routing:
-            # Route scheduler-dispatched messages to async
-            'App\Application\Command\CheckExpiredPayments': async
-            'App\Application\Command\CheckExpiredBookings': async
-            'App\Application\Command\ImportTransfersFromMail': async
-            'App\Application\Command\Notification\DailyLessonsReminder': async
-            'App\Application\Command\TriggerMatchPaymentForTransferForPastTransfers': async
-            'App\Application\Command\CheckBookingsToMarkPast': async
-            'App\Application\Command\ExtendSeriesSchedule': async
             # Keep messages dispatched from handlers as sync to avoid async-from-async issues
             'App\Application\Command\SaveTransfer': sync
             'App\Application\Command\MatchPaymentForTransfer': sync
+            # Route everything else to async
+            '*': async
 
 when@test:
     framework:
