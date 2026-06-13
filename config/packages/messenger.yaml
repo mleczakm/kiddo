@@ -26,9 +26,13 @@ framework:
                     - messenger.middleware.validation
 
         routing:
+            'Symfony\Component\Notifier\Message\MessageInterface': sync
+            'Symfony\Component\Mailer\Messenger\SendEmailMessage': sync
             # Keep messages dispatched from handlers as sync to avoid async-from-async issues
             'App\Application\Command\SaveTransfer': sync
             'App\Application\Command\MatchPaymentForTransfer': sync
+            'App\Application\Command\SendLoginNotification': sync
+            'App\Application\Command\SendReservationNotification': sync
             # Route everything else to async
             '*': async
 
