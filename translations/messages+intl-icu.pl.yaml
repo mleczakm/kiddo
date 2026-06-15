@@ -547,12 +547,30 @@ admin:
     bookings: 'Rezerwacje'
     users: 'Użytkownicy'
     reports: 'Raporty'
-    settings: 'Ustawienia'
     lessons: Zajęcia
     schedule: Harmonogram
     transfers: Płatności
     messages: Wiadomości
+    settings: Ustawienia
     coming_soon: 'Sekcja "{tab}" wkrótce dostępna'
+  billing:
+    alert_title: 'Zaległe płatności'
+    alert_description: 'Zalegasz z opłatą za platformę za miesiąc {month} w kwocie {amount} PLN. Opłać teraz, aby uniknąć przerw w działaniu serwisu.'
+    pay_now: 'Opłać teraz'
+  settings:
+    tabs:
+      general: 'Ogólne'
+      team: 'Zespół'
+      billing: 'Płatności'
+      seo: 'SEO'
+    general:
+      title: 'Ustawienia ogólne'
+    team:
+      title: 'Zarządzanie zespołem'
+    billing:
+      title: 'Rozliczenia i historia'
+    seo:
+      title: 'Ustawienia SEO'
   payments:
     title: "Płatności"
     headers:

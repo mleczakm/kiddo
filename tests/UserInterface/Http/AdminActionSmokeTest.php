@@ -56,7 +56,7 @@ class AdminActionSmokeTest extends WebTestCase
         $client->request('GET', '/admin/harmonogram');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('a[href="/admin/harmonogram"].bg-background');
+        $this->assertSelectorExists('a[href="/admin/harmonogram"].bg-indigo-600');
     }
 
     public function testAdminTransfersTab(): void
@@ -68,7 +68,7 @@ class AdminActionSmokeTest extends WebTestCase
         $client->request('GET', '/admin/platnosci');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('a[href="/admin/platnosci"].bg-background');
+        $this->assertSelectorExists('a[href="/admin/platnosci"].bg-indigo-600');
     }
 
     public function testAdminBookingsTab(): void
@@ -80,7 +80,7 @@ class AdminActionSmokeTest extends WebTestCase
         $client->request('GET', '/admin/rezerwacje');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('a[href="/admin/rezerwacje"].bg-background');
+        $this->assertSelectorExists('a[href="/admin/rezerwacje"].bg-indigo-600');
     }
 
     public function testAdminUsersTab(): void
@@ -92,7 +92,20 @@ class AdminActionSmokeTest extends WebTestCase
         $client->request('GET', '/admin/uzytkownicy');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('a[href="/admin/uzytkownicy"].bg-background');
+        $this->assertSelectorExists('a[href="/admin/uzytkownicy"].bg-indigo-600');
+    }
+
+    public function testAdminSettingsTab(): void
+    {
+        $client = static::createClient();
+        $admin = $this->createAdminUser($client);
+        $client->loginUser($admin);
+
+        $client->request('GET', '/admin/ustawienia');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('a[href="/admin/ustawienia"].bg-indigo-600');
+        $this->assertSelectorExists('button[data-value="general"]');
     }
 
     public function testAdminMessagesTab(): void
@@ -104,7 +117,7 @@ class AdminActionSmokeTest extends WebTestCase
         $client->request('GET', '/admin/wiadomosci');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('a[href="/admin/wiadomosci"].bg-background');
+        $this->assertSelectorExists('a[href="/admin/wiadomosci"].bg-indigo-600');
         $this->assertSelectorTextContains('h3', 'Wiadomości od użytkowników');
     }
 
@@ -122,6 +135,7 @@ class AdminActionSmokeTest extends WebTestCase
             '/admin/rezerwacje',
             '/admin/uzytkownicy',
             '/admin/wiadomosci',
+            '/admin/ustawienia',
         ];
 
         foreach ($adminRoutes as $route) {
@@ -149,6 +163,7 @@ class AdminActionSmokeTest extends WebTestCase
         $this->assertSelectorExists('a[href="/admin/rezerwacje"]');
         $this->assertSelectorExists('a[href="/admin/uzytkownicy"]');
         $this->assertSelectorExists('a[href="/admin/wiadomosci"]');
+        $this->assertSelectorExists('a[href="/admin/ustawienia"]');
     }
 
     private function createAdminUser(KernelBrowser $client): User

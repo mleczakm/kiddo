@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{{ 'admin.title'|trans }}{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    {% block stylesheets %}
+        <style>
+            /* Force professional Inter font family for all elements in the admin CRM, overriding kids style */
+            #root, #root h1, #root h2, #root h3, #root h4, #root h5, #root h6, 
+            #root p, #root span, #root a, #root button, #root div, #root input, #root select, #root textarea,
+            .modal-content, [role="dialog"], [role="tabpanel"], .modal, .modal-open {
+                font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            }
+            
+            /* Force light-grey background on html and body, removing any cream tint */
+            html, body, body.bg-slate-50, #root {
+                background-color: rgb(248, 250, 252) !important; /* #F8FAFC */
+            }
+            
+            /* Force pure white background for all input boxes, selects, and textareas inside admin */
+            #root input, #root select, #root textarea,
+            .modal-content input, .modal-content select, .modal-content textarea,
+            [role="dialog"] input, [role="dialog"] select, [role="dialog"] textarea {
+                background-color: #ffffff !important;
+                border: 1px solid rgb(226, 232, 240) !important; /* border-slate-200 */
+                color: rgb(30, 41, 59) !important; /* text-slate-800 */
+                border-radius: 12px !important;
+                padding-top: 0.75rem !important;
+                padding-bottom: 0.75rem !important;
+                font-size: 0.875rem !important;
+            }
+            
+            /* Modern indigo focus rings for all input fields */
+            #root input:focus, #root select:focus, #root textarea:focus,
+            .modal-content input:focus, [role="dialog"] input:focus {
+                border-color: rgb(99, 102, 241) !important; /* border-indigo-500 */
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+                outline: none !important;
+            }
+            
+            /* Clean up any playful/cream backgrounds to professional white/slate inside admin */
+            #root .bg-beige, .modal-open .bg-beige, [role="dialog"], .modal-content, .bg-card, [role="tabpanel"], .workshop-card {
+                background-color: #ffffff !important;
+                border-color: rgb(226, 232, 240) !important; /* border-slate-200 */
+            }
+            
+            #root .bg-stone-50, #root .bg-stone-100, #root .bg-slate-50/50, .bg-muted, .bg-muted/50 {
+                background-color: rgb(248, 250, 252) !important; /* bg-slate-50 */
+            }
+        </style>
+    {% endblock %}
+
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+    <div id="root" class="flex w-full min-h-screen">
+        {# Sidebar #}
+        {% block sidebar %}
+            {{ include('components/AdminMenu.html.twig', { activeTab: activeTab|default('dashboard') }) }}
+        {% endblock %}
+
+        {# Main Content #}
+        <div class="flex-1 flex flex-col overflow-hidden h-screen relative">
+            {# Topbar #}
+            {% block topbar %}
+                {{ include('admin/partials/topbar.html.twig', { activeTab: activeTab|default('dashboard') }) }}
+            {% endblock %}
+
+            {# Dynamic Content #}
+            <main class="flex-1 overflow-auto bg-slate-50/50 p-6">
+                <div class="max-w-7xl mx-auto space-y-6">
+                    {# Unified Breadcrumb Navigator #}
+                    <nav aria-label="breadcrumb" class="mb-6 shrink-0">
+                        <ol class="flex flex-wrap items-center gap-1.5 break-words text-xs font-semibold text-slate-400 sm:gap-2.5">
+                            <li class="inline-flex items-center gap-1.5">
+                                <a href="{{ path('app_admin_dashboard') }}" class="cursor-pointer hover:text-indigo-600 transition-colors">Admin</a>
+                                <span class="text-slate-300" aria-hidden="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
+                            </li>
+                            {% if activeTab == 'dashboard' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Pulpit</span>
+                                </li>
+                            {% elseif activeTab == 'lessons' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="text-slate-400">Warsztaty i Grafik</span>
+                                    <span class="text-slate-300" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                    </span>
+                                </li>
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Lista Zajęć</span>
+                                </li>
+                            {% elseif activeTab == 'schedule' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="text-slate-400">Warsztaty i Grafik</span>
+                                    <span class="text-slate-300" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                    </span>
+                                </li>
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Harmonogram</span>
+                                </li>
+                            {% elseif activeTab == 'users' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="text-slate-400">Baza Klientów (CRM)</span>
+                                    <span class="text-slate-300" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                    </span>
+                                </li>
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Klienci</span>
+                                </li>
+                            {% elseif activeTab == 'bookings' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="text-slate-400">Baza Klientów (CRM)</span>
+                                    <span class="text-slate-300" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                    </span>
+                                </li>
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Rezerwacje</span>
+                                </li>
+                            {% elseif activeTab == 'transfers' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Przelewy / Finanse</span>
+                                </li>
+                            {% elseif activeTab == 'messages' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Wiadomości</span>
+                                </li>
+                            {% elseif activeTab == 'settings' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Ustawienia Systemu</span>
+                                </li>
+                            {% else %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">{{ page_title|default('Kiddo') }}</span>
+                                </li>
+                            {% endif %}
+                            
+                            {# Sub-breadcrumbs for detailed views (passed as variable) #}
+                            {% for sub in sub_breadcrumbs|default([]) %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="text-slate-300" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                    </span>
+                                    <span class="{{ loop.last ? 'font-bold text-slate-700' : 'text-slate-400' }}">{{ sub.label }}</span>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    </nav>
+
+                    {% block body %}
+                    {% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

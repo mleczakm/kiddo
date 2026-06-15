@@ -1,0 +1,108 @@
+<div {{ attributes }} class="from-slate-800 to-slate-900 p-5 rounded-2xl shadow-lg text-white md:col-span-2 relative overflow-hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-[-20px] bottom-[-20px] w-32 h-32 opacity-10 text-white" aria-hidden="true">
+        <rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect>
+        <path d="M9 22v-4h6v4"></path>
+        <path d="M8 6h.01"></path>
+        <path d="M16 6h.01"></path>
+        <path d="M12 6h.01"></path>
+        <path d="M12 10h.01"></path>
+        <path d="M12 14h.01"></path>
+        <path d="M16 10h.01"></path>
+        <path d="M16 14h.01"></path>
+        <path d="M8 10h.01"></path>
+        <path d="M8 14h.01"></path>
+    </svg>
+    <div class="flex justify-between items-start">
+        <div>
+            <div class="text-sm font-semibold text-slate-300 mb-1">Opłata systemowa (2% prowizji)</div>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-black text-white">{{ this.getCurrentDue()|number_format(2) }} zł</span>
+                <span class="text-xs text-slate-400">Prognoza za bieżący miesiąc</span>
+            </div>
+        </div>
+        <div class="bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/50 backdrop-blur-sm">
+            <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Zaległość</div>
+            <div class="flex items-center gap-1.5 text-sm font-bold">
+                {% if this.hasPastDue() %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+                    </svg>
+                    <span class="text-red-400">Zaległość {{ this.getPastDue()|number_format(2) }} zł</span>
+                {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
+                    </svg>
+                    <span class="text-green-400">Brak zaległości</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if this.hasPastDue() %}
+        <div class="mt-4 flex gap-2">
+            <button
+                data-action="live#action"
+                data-live-action-param="setPastDueAsPaid"
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm"
+            >
+                Oznacz zaległość jako opłaconą
+            </button>
+            <button
+                data-action="live#action"
+                data-live-action-param="openModal"
+                class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm"
+            >
+                Wpłać inną kwotę
+            </button>
+        </div>
+    {% endif %}
+
+    <p class="text-[10px] text-slate-400 mt-4 leading-tight max-w-[80%]">Naliczane tylko dla płatności automatycznie dopasowanych. Ręczne przypisania w panelu Przelewów = 0% prowizji.</p>
+
+    {% if successMessage %}
+        <div class="mt-4 bg-green-50 border border-green-200 rounded-xl p-4 text-green-800 text-sm font-medium">
+            {{ successMessage }}
+        </div>
+    {% endif %}
+
+    {% if errorMessage %}
+        <div class="mt-4 bg-red-50 border border-red-200 rounded-xl p-4 text-red-800 text-sm font-medium">
+            {{ errorMessage }}
+        </div>
+    {% endif %}
+
+    {% if showModal %}
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Wpłata na zaległość</h3>
+
+                {{ form_start(form) }}
+                    <div class="space-y-4">
+                        <div>
+                            {{ form_label(form.amount, null, {'label_attr': {'class': 'block text-sm font-medium text-slate-700 mb-1'}}) }}
+                            {{ form_widget(form.amount, {'attr': {'class': 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'}}) }}
+                            {% if form.amount.vars.errors|length > 0 %}
+                                <div class="text-red-500 text-xs mt-1">
+                                    {{ form_errors(form.amount) }}
+                                </div>
+                            {% endif %}
+                            <p class="text-xs text-slate-500 mt-1">Aktualna zaległość: {{ this.getPastDue()|number_format(2) }} zł</p>
+                        </div>
+
+                        <div class="flex gap-2">
+                            {{ form_widget(form.submit, {'attr': {'class': 'flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-sm'}}) }}
+                            <button
+                                type="button"
+                                data-action="live#action"
+                                data-live-action-param="closeModal"
+                                class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold transition"
+                            >
+                                Anuluj
+                            </button>
+                        </div>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    {% endif %}
+</div>

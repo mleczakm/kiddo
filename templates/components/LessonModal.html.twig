@@ -20,8 +20,8 @@
     {# Dialog #}
     <dialog {% if modalOpened %}open{% endif %}
             data-modal-target="dialog"
-            class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
-        <div class="grid">
+            class="fixed inset-x-0 bottom-0 md:top-1/2 md:left-1/2 z-50 w-full md:-translate-x-1/2 md:-translate-y-1/2 gap-4 border bg-background p-0 md:p-6 shadow-lg duration-200 rounded-t-2xl md:rounded-lg max-w-full md:max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
+        <div class="grid p-6 md:p-0">
             {% if termsOpened %}
                 <div class="flex flex-col space-y-2 text-center sm:text-left mb-6 h-[80vh]">
                     <object
@@ -56,6 +56,24 @@
             {% elseif paymentCode is not empty and paymentAmount is not empty %}
                 <div class="flex flex-col items-center justify-center min-h-[300px]">
                     <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
+                        {# Stepper for Mobile #}
+                        <div class="md:hidden flex justify-between mb-8">
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-green-500 text-white">✓</div>
+                                <span class="text-[10px] uppercase font-bold text-stone-500">Termin</span>
+                            </div>
+                            <div class="flex-grow border-t-2 border-green-500 mt-3 mx-2"></div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-green-500 text-white">✓</div>
+                                <span class="text-[10px] uppercase font-bold text-stone-500">Dziecko</span>
+                            </div>
+                            <div class="flex-grow border-t-2 border-green-500 mt-3 mx-2"></div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-workshop-red text-white">3</div>
+                                <span class="text-[10px] uppercase font-bold text-stone-500">Płatność</span>
+                            </div>
+                        </div>
+
                         <div class="text-2xl font-bold text-workshop-brown mb-4">
                             {{ 'blik.instruction'|trans }} <span
                                     class="text-workshop-red whitespace-nowrap"> {{ 'blik.phone'|trans }}</span>
@@ -76,6 +94,25 @@
                         {{ lesson.metadata.title }}</h2>
                     <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
                 </div>
+                
+                {# Stepper for Mobile #}
+                <div class="md:hidden flex justify-between mb-6">
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold {{ not paymentModal ? 'bg-workshop-red text-white' : 'bg-stone-200 text-stone-500' }}">1</div>
+                        <span class="text-[10px] uppercase font-bold text-stone-500">Termin</span>
+                    </div>
+                    <div class="flex-grow border-t-2 border-dashed border-stone-200 mt-4 mx-2"></div>
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold {{ paymentModal ? 'bg-workshop-red text-white' : 'bg-stone-200 text-stone-500' }}">2</div>
+                        <span class="text-[10px] uppercase font-bold text-stone-500">Dziecko</span>
+                    </div>
+                    <div class="flex-grow border-t-2 border-dashed border-stone-200 mt-4 mx-2"></div>
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-stone-200 text-stone-500">3</div>
+                        <span class="text-[10px] uppercase font-bold text-stone-500">Płatność</span>
+                    </div>
+                </div>
+
                 <div class="space-y-6 mt-6">
                     <div class="w-full h-48 md:h-60 rounded-lg bg-cover bg-center"
                          style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>
@@ -302,11 +339,29 @@
     <div class="fixed inset-0 z-50 bg-black/80" aria-hidden="true"></div>
 
     <div role="dialog"
-         class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/4 -translate-y-1/4 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg sm:max-w-[500px]"
+         class="fixed inset-x-0 bottom-0 md:top-1/2 md:left-1/2 z-50 w-full md:-translate-x-1/2 md:-translate-y-1/2 grid w-full max-w-full md:max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 rounded-t-2xl md:rounded-lg sm:max-w-[500px]"
          tabindex="-1">
         <div class="flex flex-col space-y-1.5 text-center sm:text-left"><h2
                     class="tracking-tight text-xl font-bold font-display text-workshop-brown">{{ lesson.metadata.title }}</h2>
             <p class="text-sm text-muted-foreground">{{ 'booking.select_date'|trans }}</p>
+        </div>
+        
+        {# Stepper for Mobile #}
+        <div class="md:hidden flex justify-between mb-2">
+            <div class="flex flex-col items-center gap-1">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-green-500 text-white">✓</div>
+                <span class="text-[10px] uppercase font-bold text-stone-500">Termin</span>
+            </div>
+            <div class="flex-grow border-t-2 border-stone-200 mt-3 mx-2"></div>
+            <div class="flex flex-col items-center gap-1">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-workshop-red text-white">2</div>
+                <span class="text-[10px] uppercase font-bold text-stone-500">Dziecko</span>
+            </div>
+            <div class="flex-grow border-t-2 border-dashed border-stone-200 mt-3 mx-2"></div>
+            <div class="flex flex-col items-center gap-1">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-stone-200 text-stone-500">3</div>
+                <span class="text-[10px] uppercase font-bold text-stone-500">Płatność</span>
+            </div>
         </div>
         <div class="space-y-4 py-2">
             <div class="bg-muted/50 p-4 rounded-lg">

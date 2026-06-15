@@ -11,17 +11,37 @@
         {% block importmap %}{{ importmap('app') }}{% endblock %}
     {% endblock %}
 </head>
-<body>
+<body class="bg-beige text-stone-800 font-sans antialiased">
 <div id="root">
     <div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events: none;">
         <ol tabindex="-1"
             class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol>
     </div>
-    <div class="min-h-screen flex flex-col bg-beige">
+    <div class="min-h-screen flex flex-col bg-beige pb-16 md:pb-0">
         {{ include('partials/top-menu.html.twig') }}
         {% block body %}
         {% endblock %}
         {{ include('partials/footer.html.twig') }}
+        
+        {# Mobile Bottom Navigation #}
+        {% set current_route = app.request.attributes.get('_route') %}
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 px-4 py-3 flex justify-around items-center shadow-[0_-8px_30px_rgba(0,0,0,0.05)]">
+            <a href="{{ path('workshops') }}" 
+               class="flex flex-col items-center gap-1 {{ current_route == 'workshops' ? 'text-workshop-red font-bold' : 'text-workshop-brown hover:text-workshop-red' }} transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <span class="text-[10px] font-bold tracking-tight">{{ 'mobile_nav.workshops'|trans({default: 'Zajęcia'}) }}</span>
+            </a>
+            <a href="{{ path('dashboard') }}" 
+               class="flex flex-col items-center gap-1 {{ current_route == 'dashboard' and activeTab|default('') != 'profile' ? 'text-workshop-red font-bold' : 'text-workshop-brown hover:text-workshop-red' }} transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ticket"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+                <span class="text-[10px] font-bold tracking-tight">{{ 'mobile_nav.tickets'|trans({default: 'Bilety'}) }}</span>
+            </a>
+            <a href="{{ path('profile') }}" 
+               class="flex flex-col items-center gap-1 {{ current_route == 'profile' ? 'text-workshop-red font-bold' : 'text-workshop-brown hover:text-workshop-red' }} transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="text-[10px] font-bold tracking-tight">{{ 'mobile_nav.account'|trans({default: 'Konto'}) }}</span>
+            </a>
+        </nav>
     </div>
 </div>
 </body>

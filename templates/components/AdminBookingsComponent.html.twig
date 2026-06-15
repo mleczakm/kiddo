@@ -1,7 +1,7 @@
 {# templates/components/AdminBookingsComponent.html.twig #}
 <div {{ attributes }} data-controller="live">
     <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-        <div class="flex flex-col space-y-1.5 p-6">
+        <div class="p-6 border-b border-slate-100 bg-slate-50 shrink-0 flex flex-col space-y-1.5">
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar w-5 h-5">
@@ -155,7 +155,7 @@
                 <div class="relative w-full overflow-auto">
                     <table class="w-full caption-bottom text-sm">
                         <thead class="[&_tr]:border-b">
-                            <tr class="border-b transition-colors hover:bg-muted/50">
+                            <tr class="border-b transition-colors hover:bg-slate-50">
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.client'|trans }} <span class="sr-only">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }} {{ 'admin_dashboard.bookings.table.headers.amount'|trans }} {{ 'admin_dashboard.bookings.table.headers.payment'|trans }} {{ 'admin_dashboard.bookings.table.headers.booking_status'|trans }} {{ 'admin_dashboard.bookings.table.headers.created_at'|trans }} {{ 'admin_dashboard.bookings.table.headers.actions'|trans }}</span></th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-8"></th>
                                 <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }}</th>
@@ -173,7 +173,7 @@
                                 {% set isExpanded = this.isBookingExpanded(bookingId) %}
 
                                 {# Main booking row #}
-                                <tr class="border-b transition-colors hover:bg-muted/50 cursor-pointer">
+                                <tr class="border-b transition-colors hover:bg-slate-50 cursor-pointer">
                                     <td class="p-4 align-middle">
                                         <div>
                                             <p class="font-medium">{{ booking.user.name }}</p>
@@ -312,7 +312,7 @@
                                                     <div class="relative w-full overflow-auto">
                                                         <table class="w-full caption-bottom text-sm">
                                                             <thead class="[&_tr]:border-b">
-                                                                <tr class="border-b transition-colors hover:bg-muted/50">
+                                                                <tr class="border-b transition-colors hover:bg-slate-50">
                                                                     <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.lesson'|trans }}</th>
                                                                     <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.date_time'|trans }}</th>
                                                                     <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.amount'|trans }}</th>
@@ -325,7 +325,7 @@
                                                                     {% set lessonStatus = this.getLessonStatusBadge(lesson, booking) %}
                                                                     {% set canModify = this.canLessonBeModified(lesson, booking) %}
 
-                                                                    <tr class="border-b transition-colors hover:bg-muted/50 text-sm">
+                                                                    <tr class="border-b transition-colors hover:bg-slate-50 text-sm">
                                                                         <td class="p-4 align-middle text-xs">
                                                                             <p class="font-medium">{{ lesson.metadata.title ?? 'Workshop' }}</p>
                                                                             {% if lesson.series %}
