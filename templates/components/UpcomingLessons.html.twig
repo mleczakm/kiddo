@@ -1,63 +1,94 @@
-{# templates/components/LessonSearch.html.twig #}
+{# templates/components/UpcomingLessons.html.twig #}
 <div {{ attributes }}>
     {% if this.showSearch %}
-        <div class="mb-8 bg-white p-6 rounded-xl shadow-sm">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-grow">
+        <div class="mb-6 bg-white p-5 rounded-2xl shadow-workshop border border-stone-100">
+            <div class="flex flex-col gap-4">
+                {# Search Input #}
+                <div class="relative flex items-center">
+                    <span class="absolute left-4 text-stone-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </span>
                     <input
                             type="text"
-                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm input-styled"
+                            class="flex h-12 w-full rounded-xl border border-stone-200 bg-stone-50 pl-11 pr-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-workshop-red/30 focus-visible:border-workshop-red disabled:cursor-not-allowed disabled:opacity-50 font-medium"
                             placeholder="{{ 'lesson.search'|trans }}"
                             value="{{ this.query }}"
                             data-model="query"
                     >
                 </div>
-                <div class="w-full md:w-40">
-                    <input
-                            type="number"
-                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm input-styled"
-                            placeholder="{{ 'lesson.age'|trans }}"
-                            min="0"
-                            max="99"
-                            value="{{ this.age }}"
-                            data-model="age"
-                    >
-                </div>
             </div>
         </div>
+        
+        {# Scrollable Age Filters Mockup style #}
+        <div class="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-none md:mx-0 md:px-0 mb-6">
+            <button
+                    type="button"
+                    data-model="age"
+                    data-value=""
+                    data-action="live#update"
+                    class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ this.age == '' ? 'bg-workshop-red text-white border-transparent shadow-md shadow-workshop-red/20' : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50' }}"
+            >
+                Wszystkie wieki
+            </button>
+            <button
+                    type="button"
+                    data-model="age"
+                    data-value="2"
+                    data-action="live#update"
+                    class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ this.age == '2' ? 'bg-workshop-red text-white border-transparent shadow-md shadow-workshop-red/20' : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50' }}"
+            >
+                0 - 3 lat
+            </button>
+            <button
+                    type="button"
+                    data-model="age"
+                    data-value="4"
+                    data-action="live#update"
+                    class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ this.age == '4' ? 'bg-workshop-red text-white border-transparent shadow-md shadow-workshop-red/20' : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50' }}"
+            >
+                3 - 6 lat
+            </button>
+            <button
+                    type="button"
+                    data-model="age"
+                    data-value="8"
+                    data-action="live#update"
+                    class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border {{ this.age == '8' ? 'bg-workshop-red text-white border-transparent shadow-md shadow-workshop-red/20' : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50' }}"
+            >
+                6+ lat
+            </button>
+        </div>
     {% endif %}
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <h1 class="text-3xl font-bold">{{ 'page.workshops'|trans }}</h1>
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h2 class="text-xl md:text-2xl font-black font-display text-workshop-brown">{{ 'page.workshops'|trans }}</h2>
         {% if this.showSearch %}
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto pb-1 scrollbar-none">
                 <button
                         type="button"
                         data-model="week"
                         data-value="{{ this.week|date_modify('-7 days')|date('Y-m-d') }}"
                         data-action="live#update"
-                        class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+                        class="px-3 py-2 bg-white border border-stone-200 rounded-xl hover:bg-stone-50 flex items-center text-xs font-bold text-stone-700 shrink-0"
                 >
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 19l-7-7 7-7"></path>
+                    <svg class="w-3.5 h-3.5 mr-1 text-stone-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
                     </svg>
                     {{ 'lesson.previous_week'|trans }}
                 </button>
-                <span class="px-3 py-1.5 text-sm bg-gray-100 rounded-md whitespace-nowrap">
-                {{ this.weekStart|format_date('medium') }} - {{ this.weekEnd|format_date('medium') }}
-            </span>
+                <span class="px-3 py-2 text-xs bg-stone-100 text-stone-700 font-bold rounded-xl whitespace-nowrap shrink-0">
+                    {{ this.weekStart|format_date('medium') }} - {{ this.weekEnd|format_date('medium') }}
+                </span>
                 <button
                         type="button"
                         data-model="week"
                         data-value="{{ this.week|date_modify('+7 days')|date('Y-m-d') }}"
                         data-action="live#update"
-                        class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm"
+                        class="px-3 py-2 bg-white border border-stone-200 rounded-xl hover:bg-stone-50 flex items-center text-xs font-bold text-stone-700 shrink-0"
                 >
                     {{ 'lesson.next_week'|trans }}
-                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    <svg class="w-3.5 h-3.5 ml-1 text-stone-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                     </svg>
                 </button>
                 {% if this.weekStart.format('Y-m-d') != this.currentWeek|date('Y-m-d') %}
@@ -66,7 +97,7 @@
                             data-model="week"
                             data-value="{{ this.currentWeek|date('Y-m-d') }}"
                             data-action="live#update"
-                            class="px-3 py-1.5 text-sm border rounded-md hover:bg-gray-50 whitespace-nowrap"
+                            class="px-3 py-2 text-xs bg-white border border-stone-200 rounded-xl hover:bg-stone-50 font-bold text-stone-700 whitespace-nowrap shrink-0"
                     >
                         {{ 'lesson.current_week'|trans }}
                     </button>
@@ -75,79 +106,56 @@
         {% endif %}
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for lesson in this.workshops %}
-            <div class="workshop-card">
+            <div class="workshop-card overflow-hidden rounded-3xl bg-white shadow-workshop transition-all border border-stone-100 hover:shadow-lg relative flex flex-col h-full">
                 {% include "components/CapacityBadge.html.twig" with {'capacity': lesson.metadata.capacity, 'available': lesson.availableSpots } %}
-                <div class="rounded-lg bg-white shadow-sm h-full flex flex-col">
-                    <div class="h-48 bg-cover bg-center rounded-t-lg"
-                         style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none; border-top-left-radius: 12px; border-top-right-radius: 12px;"></div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold font-display">{{ lesson.metadata.title }}</h3>
-                            <span class="text-sm font-medium text-workshop-red">{{ lesson.defaultTicketOption.price|money }}</span>
-                        </div>
-                        <p class="text-sm text-muted-foreground mb-4">{{ lesson.metadata.lead }}</p>
-                        <div class="mt-auto space-y-3">
-                            <div class="flex items-center text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                
+                {# Card Image block with theme color + overlays #}
+                <div class="h-40 md:h-44 bg-cover bg-center relative p-4 shrink-0"
+                     style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;">
+                    {# Overlay Age Badge #}
+                    <span class="absolute top-4 left-4 px-3.5 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-black text-workshop-brown shadow-sm">
+                        {{ lesson.metadata.ageRange.max
+                        ? 'lesson.age_range_short'|trans({min: lesson.metadata.ageRange.min, max: lesson.metadata.ageRange.max, default: lesson.metadata.ageRange.min ~ '-' ~ lesson.metadata.ageRange.max ~ ' lat'})
+                        : 'lesson.age_above_short'|trans({min: lesson.metadata.ageRange.min, default: lesson.metadata.ageRange.min ~ '+ lat'}) }}
+                    </span>
+                </div>
+                
+                {# Details Block #}
+                <div class="p-5 md:p-6 flex flex-col flex-grow">
+                    <div class="flex justify-between items-start mb-2 gap-2">
+                        <h3 class="text-lg md:text-xl font-black font-display text-workshop-brown leading-tight">{{ lesson.metadata.title }}</h3>
+                        <span class="text-base md:text-lg font-black text-workshop-red whitespace-nowrap bg-workshop-red/5 border border-workshop-red/10 px-2 py-0.5 rounded-lg">
+                            {{ lesson.defaultTicketOption.price|money }}
+                        </span>
+                    </div>
+                    <p class="text-sm text-stone-500 mb-4 line-clamp-2 leading-relaxed font-medium">{{ lesson.metadata.lead }}</p>
+                    
+                    <div class="mt-auto space-y-4 pt-2 border-t border-stone-50">
+                        <div class="flex flex-wrap gap-y-2 gap-x-4">
+                            <div class="flex items-center text-xs md:text-sm text-stone-600 font-semibold">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                                      stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-calendar w-4 h-4 mr-2 text-workshop-red">
+                                     class="lucide lucide-calendar w-4 h-4 mr-1.5 text-workshop-red shrink-0">
                                     <path d="M8 2v4"></path>
                                     <path d="M16 2v4"></path>
                                     <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                                     <path d="M3 10h18"></path>
                                 </svg>
                                 <span>
-                                    {% if lesson.series and lesson.series.type.value == 'weekly' %}
-                                        {{ 'lesson.every'|trans({
-                                            'day': lesson.metadata.schedule|date('l'),
-                                            'hour': lesson.metadata.schedule|date('H:i')
-                                        }) }}
-                                    {% else %}
-                                        {{ 'lesson.once'|trans({
-                                            'day': lesson.metadata.schedule|date('l'),
-                                            'date': lesson.metadata.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
-                                            'hour': lesson.metadata.schedule|date('H:i')
-                                        }) }}
-                                    {% endif %}
+                                    {{ lesson.metadata.schedule|format_datetime(pattern: 'd MMMM') }}, {{ lesson.metadata.schedule|date('H:i') }}
                                 </span>
                             </div>
-                            <div class="flex items-center text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                     stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-clock w-4 h-4 mr-2 text-workshop-blue">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
-                                <span>{{ 'lesson.minutes'|trans({minutes: lesson.metadata.duration}) }}</span>
-                            </div>
-                            <div class="flex items-center text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                     stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-users w-4 h-4 mr-2 text-workshop-green">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                                <span>
-                                    {{ lesson.metadata.ageRange.max
-                                    ? 'lesson.age_range'|trans({min: lesson.metadata.ageRange.min, max: lesson.metadata.ageRange.max, top: lesson.metadata.ageRange.max})
-                                    : 'lesson.age_above'|trans({min: lesson.metadata.ageRange.min}) }}
-                                </span>
-                            </div>
-                            {{ component('LessonModal', {lesson: lesson}) }}
                         </div>
+                        {{ component('LessonModal', {lesson: lesson}) }}
                     </div>
                 </div>
             </div>
         {% else %}
-            <div class="col-span-3 text-center py-12">
-                <p class="text-muted-foreground">{{ 'lesson.no_lessons_found'|trans }}</p>
+            <div class="col-span-full text-center py-16 bg-white rounded-3xl border border-dashed border-stone-200">
+                <p class="text-stone-400 font-bold italic">{{ 'lesson.no_lessons_found'|trans }}</p>
             </div>
         {% endfor %}
     </div>

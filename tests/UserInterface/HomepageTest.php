@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface;
 
+use App\Entity\Child;
+use App\Tests\Assembler\LessonAssembler;
+use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -80,6 +83,40 @@ class HomepageTest extends WebTestCase
 
         $client->loginUser($user);
         $client->request('GET', '/admin');
+
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    /**
+     * Test parent dashboard with active bookings and child profiles.
+     */
+    public function testParentDashboardWithBookingsAndChildren(): void
+    {
+        $client = static::createClient();
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()
+            ->withRoles('ROLE_USER')
+            ->assemble();
+        $em->persist($user);
+
+        $child = new Child($user, 'Antoś', new \DateTimeImmutable('2020-01-01'));
+        $em->persist($child);
+
+        $lesson = LessonAssembler::new()->assemble();
+        $em->persist($lesson);
+
+        $booking = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->assemble();
+        $booking->setChild($child);
+        $em->persist($booking);
+
+        $em->flush();
+
+        $client->loginUser($user);
+        $client->request('GET', '/panel');
 
         $this->assertResponseStatusCodeSame(200);
     }

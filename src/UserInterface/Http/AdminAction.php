@@ -71,6 +71,15 @@ class AdminAction extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/ustawienia', name: 'app_admin_settings')]
+    public function settings(): Response
+    {
+        return $this->render('admin/dashboard.html.twig', [
+            'activeTab' => 'settings',
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/uzytkownicy/{id}', name: 'app_admin_user_view', requirements: [
         'id' => '\\d+',
     ])]
