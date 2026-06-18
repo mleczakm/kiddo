@@ -1,0 +1,8 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.tabs.transfers'|trans }}{% endblock %}
+
+{% block body %}
+    {{ component('PaymentsListComponent') }}
+    {{ component('PaymentComponent') }}
+{% endblock %}

@@ -6,21 +6,21 @@
             </a>
         {% endif %}
         
-        {% if activeTab == 'dashboard' %}
+        {% if app.request.attributes.get('_route') == 'app_admin_dashboard' %}
             {{ 'admin.title'|trans }}
-        {% elseif activeTab == 'lessons' %}
+        {% elseif app.request.attributes.get('_route') in ['app_admin_lessons', 'app_admin_lesson_view', 'app_admin_lesson_toggle'] %}
             {{ 'admin.tabs.lessons'|trans }}
-        {% elseif activeTab == 'schedule' %}
+        {% elseif app.request.attributes.get('_route') == 'app_admin_schedule' %}
             {{ 'admin.tabs.schedule'|trans }}
-        {% elseif activeTab == 'transfers' %}
+        {% elseif app.request.attributes.get('_route') == 'app_admin_transfers' %}
             {{ 'admin.tabs.transfers'|trans }}
-        {% elseif activeTab == 'bookings' %}
+        {% elseif app.request.attributes.get('_route') == 'app_admin_bookings' %}
             {{ 'admin.tabs.bookings'|trans }}
-        {% elseif activeTab == 'users' %}
+        {% elseif app.request.attributes.get('_route') in ['app_admin_users', 'app_admin_user_view'] %}
             {{ 'admin.tabs.users'|trans }}
-        {% elseif activeTab == 'messages' %}
+        {% elseif app.request.attributes.get('_route') == 'app_admin_messages' %}
             {{ 'admin.tabs.messages'|trans }}
-        {% elseif activeTab == 'settings' %}
+        {% elseif app.request.attributes.get('_route') == 'app_admin_settings' %}
             {{ 'admin.tabs.settings'|trans }}
         {% else %}
             {{ page_title|default('Kiddo Admin') }}

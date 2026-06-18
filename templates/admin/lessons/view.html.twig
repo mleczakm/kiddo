@@ -1,0 +1,11 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.tabs.lessons'|trans }}{% endblock %}
+
+{% block body %}
+    {% set sub_breadcrumbs = [
+        { label: lesson.title|default('Lesson') }
+    ] %}
+    
+    {{ include('admin/lesson_show.html.twig') }}
+{% endblock %}

@@ -1,0 +1,25 @@
+<div {{ attributes }}>
+    {% set kpi = this.getKpiStats() %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        {# KPI 1: Reservations #}
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between h-40">
+            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rezerwacje (Czerwiec)</h4>
+            <div class="text-4xl font-black text-slate-800 tracking-tight mb-2">{{ kpi.bookingsCount }}</div>
+            <div class="text-xs text-slate-400 font-medium">Zarejestrowane rezerwacje</div>
+        </div>
+        
+        {# KPI 2: Revenue #}
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between h-40">
+            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Przychód (Czerwiec)</h4>
+            <div class="text-4xl font-black text-slate-800 tracking-tight mb-2">{{ kpi.revenue }}</div>
+            <div class="text-xs text-slate-400 font-medium">Suma opłaconych rezerwacji</div>
+        </div>
+        
+        {# KPI 3: Occupancy #}
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between h-40">
+            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Średnia zajętość</h4>
+            <div class="text-4xl font-black text-slate-800 tracking-tight mb-2">{{ kpi.occupancyRate }}</div>
+            <div class="text-xs text-slate-400 font-medium">Średnia zajętość zajęć</div>
+        </div>
+    </div>
+</div>

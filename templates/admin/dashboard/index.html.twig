@@ -1,0 +1,22 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.title'|trans }}{% endblock %}
+
+{% block body %}
+    {# Platform Billing Component #}
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        {{ component('PlatformBillingComponent') }}
+    </div>
+
+    {# KPI Statistics #}
+    {{ component('AdminKpiStatsComponent') }}
+
+    {# Dashboard Widgets Grid #}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {# Calendar Lessons #}
+        {{ component('AdminCalendarLessonsComponent') }}
+        
+        {# Activity Log #}
+        {{ component('AdminActivityLogComponent') }}
+    </div>
+{% endblock %}
