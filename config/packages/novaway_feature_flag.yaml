@@ -6,6 +6,7 @@ novaway_feature_flag:
       options:
         features:
           cart: false
+          platform_billing_widget: false
 
 when@test:
   novaway_feature_flag:
