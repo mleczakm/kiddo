@@ -1,3 +1,5 @@
+{% set current_route = app.request.attributes.get('_route') %}
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -63,14 +65,14 @@
     <div id="root" class="flex w-full min-h-screen">
         {# Sidebar #}
         {% block sidebar %}
-            {{ include('components/AdminMenu.html.twig', { activeTab: activeTab|default('dashboard') }) }}
+            {{ include('components/AdminMenu.html.twig') }}
         {% endblock %}
 
         {# Main Content #}
         <div class="flex-1 flex flex-col overflow-hidden h-screen relative">
             {# Topbar #}
             {% block topbar %}
-                {{ include('admin/partials/topbar.html.twig', { activeTab: activeTab|default('dashboard') }) }}
+                {{ include('admin/partials/topbar.html.twig') }}
             {% endblock %}
 
             {# Dynamic Content #}
@@ -85,11 +87,11 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
                                 </span>
                             </li>
-                            {% if activeTab == 'dashboard' %}
+                            {% if current_route == 'app_admin_dashboard' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Pulpit</span>
                                 </li>
-                            {% elseif activeTab == 'lessons' %}
+                            {% elseif current_route in ['app_admin_lessons', 'app_admin_lesson_view', 'app_admin_lesson_toggle'] %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="text-slate-400">Warsztaty i Grafik</span>
                                     <span class="text-slate-300" aria-hidden="true">
@@ -99,7 +101,7 @@
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Lista Zajęć</span>
                                 </li>
-                            {% elseif activeTab == 'schedule' %}
+                            {% elseif current_route == 'app_admin_schedule' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="text-slate-400">Warsztaty i Grafik</span>
                                     <span class="text-slate-300" aria-hidden="true">
@@ -109,7 +111,7 @@
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Harmonogram</span>
                                 </li>
-                            {% elseif activeTab == 'users' %}
+                            {% elseif current_route in ['app_admin_users', 'app_admin_user_view'] %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="text-slate-400">Baza Klientów (CRM)</span>
                                     <span class="text-slate-300" aria-hidden="true">
@@ -119,7 +121,7 @@
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Klienci</span>
                                 </li>
-                            {% elseif activeTab == 'bookings' %}
+                            {% elseif current_route == 'app_admin_bookings' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="text-slate-400">Baza Klientów (CRM)</span>
                                     <span class="text-slate-300" aria-hidden="true">
@@ -129,15 +131,15 @@
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Rezerwacje</span>
                                 </li>
-                            {% elseif activeTab == 'transfers' %}
+                            {% elseif current_route == 'app_admin_transfers' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Przelewy / Finanse</span>
                                 </li>
-                            {% elseif activeTab == 'messages' %}
+                            {% elseif current_route == 'app_admin_messages' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Wiadomości</span>
                                 </li>
-                            {% elseif activeTab == 'settings' %}
+                            {% elseif current_route == 'app_admin_settings' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Ustawienia Systemu</span>
                                 </li>

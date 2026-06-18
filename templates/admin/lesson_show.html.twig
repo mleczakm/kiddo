@@ -1,17 +1,8 @@
-{% extends 'admin/base.html.twig' %}
 {% set activeTab = 'lessons' %}
 {% set sub_breadcrumbs = [
     {'label': lesson.metadata.title},
     {'label': lesson.metadata.schedule|date('Y-m-d H:i')}
 ] %}
-
-{% block title %}{{ 'admin.title'|trans }} — {{ lesson.metadata.title }}{% endblock %}
-
-{% block topbar %}
-    {{ include('admin/partials/topbar.html.twig', { activeTab: 'lessons', back_url: path('app_admin_lessons') }) }}
-{% endblock %}
-
-{% block body %}
     {# Breadcrumbs #}
     
 
@@ -138,4 +129,3 @@
             </div>
         </aside>
     </div>
-{% endblock %}

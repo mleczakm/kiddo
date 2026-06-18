@@ -1,0 +1,11 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.tabs.users'|trans }}{% endblock %}
+
+{% block body %}
+    {% set sub_breadcrumbs = [
+        { label: user.email|default('User') }
+    ] %}
+    
+    {{ include('admin/user.html.twig') }}
+{% endblock %}
