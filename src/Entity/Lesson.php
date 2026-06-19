@@ -32,6 +32,13 @@ class Lesson
     #[ORM\ManyToMany(targetEntity: Booking::class, mappedBy: 'lessons')]
     private Collection $bookings;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'lesson_instructor')]
+    private Collection $instructors;
+
     public function __construct(
         #[ORM\Embedded(class: LessonMetadata::class, columnPrefix: false)]
         private LessonMetadata $metadata,
@@ -47,6 +54,7 @@ class Lesson
         $this->id = new Ulid();
         $this->status = 'active';
         $this->bookings = new ArrayCollection();
+        $this->instructors = new ArrayCollection();
     }
 
     public function getId(): Ulid
@@ -177,5 +185,54 @@ class Lesson
     public function isPending(): bool
     {
         return $this->status === 'pending';
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getInstructors(): Collection
+    {
+        return $this->instructors;
+    }
+
+    public function addInstructor(User $instructor): self
+    {
+        if (! $this->instructors->contains($instructor)) {
+            $this->instructors->add($instructor);
+        }
+
+        return $this;
+    }
+
+    public function removeInstructor(User $instructor): self
+    {
+        $this->instructors->removeElement($instructor);
+
+        return $this;
+    }
+
+    /**
+     * Get all instructors (from lesson itself and from series)
+     * @return User[]
+     */
+    public function getAllInstructors(): array
+    {
+        $instructors = $this->instructors->toArray();
+        if ($this->series) {
+            $instructors = array_merge($instructors, $this->series->getInstructors()->toArray());
+        }
+
+        // Remove duplicates
+        $uniqueInstructors = [];
+        $seen = [];
+        foreach ($instructors as $instructor) {
+            $id = $instructor->getId();
+            if (! in_array($id, $seen, true)) {
+                $seen[] = $id;
+                $uniqueInstructors[] = $instructor;
+            }
+        }
+
+        return $uniqueInstructors;
     }
 }

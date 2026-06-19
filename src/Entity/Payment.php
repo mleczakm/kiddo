@@ -88,12 +88,15 @@ class Payment
         #[ORM\JoinColumn(nullable: false)]
         private User $user,
         #[ORM\Column(type: 'json_document')]
-        private Money $amount
+        private Money $amount,
+        #[ORM\Column(type: 'string', enumType: PaymentMethod::class, nullable: true)]
+        private ?PaymentMethod $method = null
     ) {
         $this->id = new Ulid();
         $this->createdAt = new \DateTimeImmutable();
         $this->bookings = new ArrayCollection();
         $this->transfers = new ArrayCollection();
+        $this->method = PaymentMethod::ONLINE;
     }
 
     public function getId(): Ulid
@@ -251,5 +254,21 @@ class Payment
     public function getBookingsSummary(): string
     {
         return implode(', ', $this->bookings->map(fn(Booking $booking) => $booking->getTextSummary()) ->toArray());
+    }
+
+    public function getMethod(): ?PaymentMethod
+    {
+        return $this->method;
+    }
+
+    public function setMethod(PaymentMethod $method): self
+    {
+        $this->method = $method;
+        return $this;
+    }
+
+    public function requiresApproval(): bool
+    {
+        return $this->method === PaymentMethod::PAY_ON_PLACE;
     }
 }

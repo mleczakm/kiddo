@@ -23,6 +23,8 @@ class Booking
 
     public const STATUS_PAST = 'past';
 
+    public const STATUS_WAITING_APPROVAL = 'waiting_approval';
+
     // Add missing constants for compatibility
     public const STATUS_CONFIRMED = 'active'; // Alias for active
 
@@ -60,6 +62,13 @@ class Booking
     #[ORM\ManyToOne(targetEntity: Child::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Child $child = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $approvedBy = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $approvedAt = null;
 
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
@@ -137,7 +146,13 @@ class Booking
     {
         if (! in_array(
             $status,
-            [self::STATUS_PENDING, self::STATUS_ACTIVE, self::STATUS_CANCELLED, self::STATUS_PAST],
+            [
+                self::STATUS_PENDING,
+                self::STATUS_ACTIVE,
+                self::STATUS_CANCELLED,
+                self::STATUS_PAST,
+                self::STATUS_WAITING_APPROVAL,
+            ],
             true
         )) {
             throw new \InvalidArgumentException('Invalid booking status: ' . $status);
@@ -151,7 +166,7 @@ class Booking
 
     public function canBeConfirmed(): bool
     {
-        return $this->status === self::STATUS_PENDING;
+        return $this->status === self::STATUS_PENDING || $this->status === self::STATUS_WAITING_APPROVAL;
     }
 
     public function canBeCancelled(): bool
@@ -505,5 +520,51 @@ class Booking
     {
         $this->child = $child;
         return $this;
+    }
+
+    public function getApprovedBy(): ?User
+    {
+        return $this->approvedBy;
+    }
+
+    public function setApprovedBy(?User $approvedBy): self
+    {
+        $this->approvedBy = $approvedBy;
+        return $this;
+    }
+
+    public function getApprovedAt(): ?\DateTimeImmutable
+    {
+        return $this->approvedAt;
+    }
+
+    public function setApprovedAt(?\DateTimeImmutable $approvedAt): self
+    {
+        $this->approvedAt = $approvedAt;
+        return $this;
+    }
+
+    public function isWaitingApproval(): bool
+    {
+        return $this->status === self::STATUS_WAITING_APPROVAL;
+    }
+
+    public function approve(User $approvedBy): self
+    {
+        if (! $this->isWaitingApproval()) {
+            throw new \LogicException('Can only approve bookings waiting for approval');
+        }
+
+        $this->status = self::STATUS_ACTIVE;
+        $this->approvedBy = $approvedBy;
+        $this->approvedAt = Clock::get()->now();
+        $this->updatedAt = Clock::get()->now();
+
+        return $this;
+    }
+
+    public function requiresApproval(): bool
+    {
+        return $this->payment?->requiresApproval() ?? false;
     }
 }
