@@ -3,51 +3,5 @@
 {% block title %}{{ 'admin.tabs.settings'|trans }}{% endblock %}
 
 {% block body %}
-    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div class="flex border-b border-slate-200 bg-slate-50">
-            <button 
-                data-action="live#update" 
-                data-model="settingsTab" 
-                data-value="general"
-                class="px-6 py-4 font-bold text-sm transition-all border-b-2 {{ settingsTab == 'general' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800' }}"
-            >
-                {{ 'admin.settings.tabs.general'|trans }}
-            </button>
-            <button 
-                data-action="live#update" 
-                data-model="settingsTab" 
-                data-value="team"
-                class="px-6 py-4 font-bold text-sm transition-all border-b-2 {{ settingsTab == 'team' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800' }}"
-            >
-                {{ 'admin.settings.tabs.team'|trans }}
-            </button>
-            <button 
-                data-action="live#update" 
-                data-model="settingsTab" 
-                data-value="billing"
-                class="px-6 py-4 font-bold text-sm transition-all border-b-2 {{ settingsTab == 'billing' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800' }}"
-            >
-                {{ 'admin.settings.tabs.billing'|trans }}
-            </button>
-            <button 
-                data-action="live#update" 
-                data-model="settingsTab" 
-                data-value="seo"
-                class="px-6 py-4 font-bold text-sm transition-all border-b-2 {{ settingsTab == 'seo' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800' }}"
-            >
-                {{ 'admin.settings.tabs.seo'|trans }}
-            </button>
-        </div>
-        <div class="p-6">
-            {% if settingsTab == 'general' %}
-                <h3 class="text-lg font-black text-slate-800 mb-4">{{ 'admin.settings.general.title'|trans }}</h3>
-            {% elseif settingsTab == 'team' %}
-                <h3 class="text-lg font-black text-slate-800 mb-4">{{ 'admin.settings.team.title'|trans }}</h3>
-            {% elseif settingsTab == 'billing' %}
-                <h3 class="text-lg font-black text-slate-800 mb-4">{{ 'admin.settings.billing.title'|trans }}</h3>
-            {% elseif settingsTab == 'seo' %}
-                <h3 class="text-lg font-black text-slate-800 mb-4">{{ 'admin.settings.seo.title'|trans }}</h3>
-            {% endif %}
-        </div>
-    </div>
+    {{ component('AdminSettings') }}
 {% endblock %}

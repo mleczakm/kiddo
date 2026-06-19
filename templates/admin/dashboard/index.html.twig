@@ -4,7 +4,7 @@
 
 {% block body %}
     {# Platform Billing Component #}
-    {% if feature_is_enabled('platform_billing_widget') %}
+    {% if isFeatureEnabled('platform_billing_widget') %}
         <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
             {{ component('PlatformBillingComponent') }}
         </div>

@@ -35,6 +35,12 @@ class Series
             'default' => 'active',
         ])]
         public string $status = 'active',
+        /**
+         * @var Collection<int, User>
+         */
+        #[ORM\ManyToMany(targetEntity: User::class)]
+        #[ORM\JoinTable(name: 'series_instructor')]
+        public Collection $instructors = new ArrayCollection(),
     ) {
         $this->id = new Ulid();
     }
@@ -136,5 +142,29 @@ class Series
     public function activate(): void
     {
         $this->status = 'active';
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getInstructors(): Collection
+    {
+        return $this->instructors;
+    }
+
+    public function addInstructor(User $instructor): self
+    {
+        if (! $this->instructors->contains($instructor)) {
+            $this->instructors->add($instructor);
+        }
+
+        return $this;
+    }
+
+    public function removeInstructor(User $instructor): self
+    {
+        $this->instructors->removeElement($instructor);
+
+        return $this;
     }
 }

@@ -1,0 +1,213 @@
+<div {{ attributes }}>
+    {% set series = getSeries() %}
+    {% if series is null %}
+        <div class="p-8 text-center text-slate-500 bg-white rounded-3xl border border-slate-200">
+            Series not found
+        </div>
+    {% else %}
+        <div class="space-y-6 animate-in fade-in duration-300">
+            <!-- HEADER WARSZTATU -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-2 bg-indigo-500"></div>
+                <div class="pl-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-100 text-indigo-600">
+                            {{ series.lessons.first.metadata.ageRange.min }}-{{ series.lessons.first.metadata.ageRange.max }} lat
+                        </span>
+                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                            Prowadzący: 
+                            {% for instructor in series.instructors %}
+                                {{ instructor.name }}{% if not loop.last %}, {% endif %}
+                            {% else %}
+                                Brak prowadzących
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <h1 class="text-2xl font-black text-slate-800">{{ series.lessons.first.metadata.title }}</h1>
+                    <p class="text-sm text-slate-500 mt-1 max-w-2xl">{{ series.lessons.first.metadata.description }}</p>
+                </div>
+                <div class="flex gap-2 shrink-0">
+                    <button class="px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl text-sm font-bold flex items-center gap-2 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        Edytuj szablon
+                    </button>
+                </div>
+            </div>
+
+            <!-- OŚ CZASU (Wystąpienia) -->
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        Harmonogram i Rezerwacje
+                    </h3>
+                    {% if not showPast and hasPastLessons() %}
+                        <button 
+                            data-action="live#action" data-live-action-param="toggleShowPast"
+                            class="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                            Załaduj historyczne zajęcia ({{ getPastLessons()|length }})
+                        </button>
+                    {% endif %}
+                </div>
+
+                <div class="p-6 relative">
+                    <!-- Linia osi czasu -->
+                    <div class="absolute left-10 top-6 bottom-6 w-0.5 bg-slate-200 hidden md:block"></div>
+
+                    <div class="space-y-6 relative">
+                        {% for lesson in getLessons() %}
+                            {% set isPast = lesson.metadata.schedule < date() %}
+                            {% set isExpanded = isLessonExpanded(lesson) %}
+                            {% set activeBookings = getActiveBookingsForLesson(lesson) %}
+                            {% set waitingApproval = getWaitingApprovalBookingsForLesson(lesson) %}
+                            {% set paidCount = getPaidCountForLesson(lesson) %}
+
+                            <div class="relative md:pl-16">
+                                <!-- Kropka osi czasu -->
+                                <div class="absolute left-[-26px] top-5 w-4 h-4 rounded-full border-4 border-white hidden md:block {{ isPast ? 'bg-slate-300' : 'bg-indigo-500' }}"></div>
+
+                                <div class="border-2 rounded-2xl transition-all duration-300 overflow-hidden {{ isExpanded ? 'border-indigo-300 shadow-md ring-4 ring-indigo-50' : 'border-slate-200 hover:border-indigo-200' }} {{ isPast and not isExpanded ? 'opacity-75 bg-slate-50' : 'bg-white' }}">
+                                    
+                                    <!-- Nagłówek Wystąpienia -->
+                                    <div 
+                                        class="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:bg-slate-50 {{ isExpanded ? 'bg-indigo-50/30' : '' }}"
+                                        data-action="live#action" data-live-action-param="expandLesson" data-live-action-param-lessonId="{{ lesson.id }}"
+                                    >
+                                        <div class="flex items-center gap-4">
+                                            <div class="p-3 rounded-xl font-bold text-center min-w-[70px] {{ isPast ? 'bg-slate-200 text-slate-600' : 'bg-indigo-50 text-indigo-700' }}">
+                                                {{ lesson.metadata.schedule|date('H:i') }}
+                                            </div>
+                                            <div>
+                                                <div class="font-black text-lg text-slate-800">
+                                                    {{ lesson.metadata.schedule|date('d.m.Y') }}
+                                                    {% if isPast %}<span class="text-xs text-slate-400 font-normal ml-2">(Zakończone)</span>{% endif %}
+                                                </div>
+                                                <div class="text-sm font-medium text-slate-500">Zajętość: {{ activeBookings|length }} / {{ lesson.metadata.capacity }} miejsc</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 w-full sm:w-auto">
+                                            <!-- Mini pasek postępu -->
+                                            <div class="flex-1 sm:w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                {% set occupancy = (activeBookings|length / lesson.metadata.capacity) * 100 %}
+                                                <div class="h-full {{ occupancy >= 100 ? 'bg-red-500' : 'bg-green-500' }}" style="width: {{ occupancy }}%"></div>
+                                            </div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 transition-transform {{ isExpanded ? '-rotate-90' : 'rotate-180' }}"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sekcja Rozwinięta: Rezerwacje -->
+                                    {% if isExpanded %}
+                                        <div class="border-t border-slate-100 bg-slate-50">
+                                            <div class="p-3 border-b border-slate-100 flex justify-between items-center bg-slate-100/50">
+                                                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider pl-2">Lista obecności ({{ activeBookings|length }})</span>
+                                                <button class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 bg-white px-2 py-1 rounded border border-indigo-100 shadow-sm transition">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                    Skopiuj maile grupy (BCC)
+                                                </button>
+                                            </div>
+                                            
+                                            <div class="divide-y divide-slate-100">
+                                                {% for booking in activeBookings %}
+                                                    <div class="p-3 pl-5 flex flex-col md:flex-row justify-between md:items-center gap-3 hover:bg-white transition group">
+                                                        <div class="flex items-center gap-3">
+                                                            <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs shrink-0">
+                                                                {{ booking.child.name|first|default('U') }}
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-bold text-sm text-slate-800">
+                                                                    {{ booking.child.name|default('Brak dziecka') }}
+                                                                    <span class="text-xs text-slate-400 font-normal">({{ booking.child.birthDate|date('Y')|default('—') }})</span>
+                                                                </div>
+                                                                <!-- Hover dla danych rodzica -->
+                                                                <div class="relative group/parent inline-block">
+                                                                    <span class="text-[10px] text-slate-500 cursor-help border-b border-dashed border-slate-300">
+                                                                        Rodzic: {{ booking.user.name }}
+                                                                    </span>
+                                                                    <div class="absolute left-0 bottom-full mb-1 hidden group-hover/parent:block z-10 w-48 bg-slate-800 text-white p-2 rounded-lg shadow-xl text-xs space-y-1">
+                                                                        <div class="flex items-center gap-1">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                                                            {{ booking.user.email }}
+                                                                        </div>
+                                                                        <div class="flex items-center gap-1">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                                                            {{ booking.user.phone|default('Brak') }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="flex flex-wrap items-center gap-3">
+                                                            <div class="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-1 rounded">
+                                                                {{ booking.isCarnet ? 'Karnet' : 'Jednorazowe' }}
+                                                            </div>
+                                                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase {{ getStatusBadgeClass(booking.status) }}">
+                                                                {{ getStatusLabel(booking.status) }}
+                                                            </span>
+                                                            
+                                                            <!-- Akcje per rezerwacja -->
+                                                            <div class="flex gap-1 ml-auto opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                {% if booking.isWaitingApproval() %}
+                                                                    <button 
+                                                                        data-action="live#action" data-live-action-param="approveBooking" data-live-action-param-bookingId="{{ booking.id }}"
+                                                                        class="text-[10px] font-bold bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded hover:bg-green-100 flex items-center gap-1"
+                                                                        title="Potwierdź płatność na miejscu"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                                        Zatwierdź
+                                                                    </button>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="p-4 text-center text-sm text-slate-500">Brak aktywnych rezerwacji.</div>
+                                                {% endfor %}
+                                            </div>
+
+                                            <!-- Sekcja Oczekujących na akceptację -->
+                                            {% if waitingApproval|length > 0 %}
+                                                <div class="mt-2 border-t border-purple-100 bg-purple-50/50">
+                                                    <div class="p-2 border-b border-purple-100 pl-4 text-xs font-bold text-purple-700 uppercase tracking-wider flex items-center gap-2">
+                                                        Oczekujące na akceptację ({{ waitingApproval|length }})
+                                                        <span class="bg-purple-100 px-1.5 py-0.5 rounded text-[9px] lowercase font-medium">płatność na miejscu</span>
+                                                    </div>
+                                                    <div class="divide-y divide-purple-50">
+                                                        {% for booking in waitingApproval %}
+                                                            <div class="p-3 pl-5 flex justify-between items-center gap-3 hover:bg-purple-50 transition">
+                                                                <div>
+                                                                    <div class="font-bold text-sm text-slate-800">{{ booking.child.name|default('Brak dziecka') }}</div>
+                                                                    <div class="text-[10px] text-slate-500">{{ booking.user.name }} • {{ booking.user.phone|default('Brak') }}</div>
+                                                                </div>
+                                                                <button 
+                                                                    data-action="live#action" data-live-action-param="approveBooking" data-live-action-param-bookingId="{{ booking.id }}"
+                                                                    class="text-[10px] font-bold bg-white text-purple-600 border border-purple-200 px-3 py-1.5 rounded-lg shadow-sm hover:bg-purple-600 hover:text-white transition"
+                                                                >
+                                                                    Zatwierdź
+                                                                </button>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="p-8 text-center text-slate-500">
+                                {% if showPast %}
+                                    Brak zajęć w historii
+                                {% else %}
+                                    Brak nadchodzących zajęć
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
