@@ -29,10 +29,15 @@ framework:
             'Symfony\Component\Notifier\Message\MessageInterface': sync
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': sync
             # Keep messages dispatched from handlers as sync to avoid async-from-async issues
+            # (Swoole task workers cannot call Server->task() again)
             'App\Application\Command\SaveTransfer': sync
             'App\Application\Command\MatchPaymentForTransfer': sync
             'App\Application\Command\SendLoginNotification': sync
             'App\Application\Command\SendReservationNotification': sync
+            'App\Application\Command\Notification\TransferNotMatchedCommand': sync
+            'App\Application\Command\Notification\SendPaymentNotificationCommand': sync
+            'App\Application\Command\Notification\SendRescheduleAdminNotificationCommand': sync
+            'App\Application\Command\Notification\SendBookingCancellationNotificationCommand': sync
             # Route everything else to async
             '*': async
 
