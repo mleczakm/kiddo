@@ -63,7 +63,7 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
         );
         $this->assertStringContainsString(
             $paymentAmount->getAmount()
-                ->getIntegralPart() . ' zł',
+                ->toScale(0) . ' zł',
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody())
         );
         $this->assertStringContainsString(

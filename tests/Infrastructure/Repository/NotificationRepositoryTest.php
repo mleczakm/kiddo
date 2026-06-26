@@ -37,21 +37,25 @@ final class NotificationRepositoryTest extends KernelTestCase
         $user = new User('repo@example.com', 'Repo User');
         $this->persist($user);
 
+        $createdAt = new \ReflectionProperty(Notification::class, 'createdAt');
+        $base = new \DateTimeImmutable('2025-06-15 12:00:00');
+
         $n1 = new Notification($user, 'First', null, null, NotificationSeverity::Info); // unread
+        $createdAt->setValue($n1, $base);
         $this->persist($n1);
-        // older
+
         $nOld = new Notification($user, 'Old', null, null, NotificationSeverity::Warning);
-        // manually backdate
-        $ref = new \ReflectionProperty(Notification::class, 'createdAt');
-        $ref->setValue($nOld, (new \DateTimeImmutable('-2 days')));
+        $createdAt->setValue($nOld, $base->modify('-2 days'));
         $this->persist($nOld);
 
         $nRead = new Notification($user, 'Read', null, null, NotificationSeverity::Success);
+        $createdAt->setValue($nRead, $base->modify('+1 hour'));
         $this->persist($nRead);
         $nRead->markRead();
         $this->em->flush();
 
         $nDeleted = new Notification($user, 'Deleted', null, null, NotificationSeverity::Error);
+        $createdAt->setValue($nDeleted, $base->modify('+2 hours'));
         $this->persist($nDeleted);
         $nDeleted->softDelete();
         $this->em->flush();
@@ -60,9 +64,8 @@ final class NotificationRepositoryTest extends KernelTestCase
 
         $recent = $this->repo->findRecentForUser($user, 10);
         self::assertCount(3, $recent); // deleted filtered out
-        // Order by createdAt desc: last persisted (Deleted) will have now but removed; so nRead, n1, nOld
-        self::assertSame('First', $recent[0]->getTitle());
-        self::assertSame('Read', $recent[1]->getTitle());
+        self::assertSame('Read', $recent[0]->getTitle());
+        self::assertSame('First', $recent[1]->getTitle());
         self::assertSame('Old', $recent[2]->getTitle());
     }
 }

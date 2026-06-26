@@ -57,7 +57,7 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
 
         $payment = PaymentAssembler::new()
             ->withUser($user)
-            ->withAmount(Money::of(123.45, 'PLN'))
+            ->withAmount(Money::of('123.45', 'PLN'))
             ->withCreatedAt(new DateTimeImmutable('2025-08-24 12:00:00'))
             ->assemble();
         $payment->addBooking($booking);

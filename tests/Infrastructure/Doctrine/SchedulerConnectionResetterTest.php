@@ -48,15 +48,19 @@ class SchedulerConnectionResetterTest extends TestCase
         $connection = $this->createMock(Connection::class);
         $connection->expects($this->exactly(2))
             ->method('isConnected')
-            ->willReturnOnConsecutiveCalls(true, true);
+            ->willReturn(true, true);
         $connection->expects($this->exactly(3))
             ->method('executeQuery')
             ->with('SELECT 1')
-            ->will($this->onConsecutiveCalls(
-                $this->throwException(new Exception('no connection to the server')),
-                $this->throwException(new Exception('no connection to the server')),
-                $this->createMock(Result::class)
-            ));
+            ->willReturnCallback(function () {
+                static $calls = 0;
+                ++$calls;
+
+                return match ($calls) {
+                    1, 2 => throw new Exception('no connection to the server'),
+                    default => $this->createMock(Result::class),
+                };
+            });
         $connection->expects($this->exactly(2))
             ->method('close');
 
@@ -74,15 +78,13 @@ class SchedulerConnectionResetterTest extends TestCase
         $connection = $this->createMock(Connection::class);
         $connection->expects($this->exactly(2))
             ->method('isConnected')
-            ->willReturnOnConsecutiveCalls(true, true);
+            ->willReturn(true, true);
         $connection->expects($this->exactly(3))
             ->method('executeQuery')
             ->with('SELECT 1')
-            ->will($this->onConsecutiveCalls(
-                $this->throwException(new Exception('no connection to the server')),
-                $this->throwException(new Exception('no connection to the server')),
-                $this->throwException(new Exception('no connection to the server'))
-            ));
+            ->willReturnCallback(function (): void {
+                throw new Exception('no connection to the server');
+            });
         $connection->expects($this->exactly(2))
             ->method('close');
 
