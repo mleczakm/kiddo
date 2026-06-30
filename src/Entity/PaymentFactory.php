@@ -18,10 +18,10 @@ class PaymentFactory
         return $code;
     }
 
-    public function create(User $user, Money $amount): Payment
+    public function create(User $user, Money $amount, ?string $code = null): Payment
     {
         $payment = new Payment($user, $amount);
-        new PaymentCode($payment);
+        new PaymentCode($payment, $code);
 
         return $payment;
     }

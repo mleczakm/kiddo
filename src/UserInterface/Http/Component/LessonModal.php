@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\AddBooking;
-use App\Application\Service\BookingFactory;
 use App\Entity\Lesson;
 use App\Entity\PaymentFactory;
 use App\Entity\User;
@@ -67,7 +66,6 @@ class LessonModal extends AbstractController
 
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly BookingFactory $bookingFactory,
         private readonly ChildRepository $childRepository,
     ) {}
 
@@ -222,24 +220,26 @@ class LessonModal extends AbstractController
         $user = $this->getUser();
 
         if ($this->lesson && $user) {
-            $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
-
-            $booking = $this->bookingFactory->createFrom($this->lesson, $selected, $user);
-
-            if ($this->selectedChildId) {
-                $child = $this->childRepository->find($this->selectedChildId);
-                if ($child && $child->getOwner()->getId() === $user->getId()) {
-                    $booking->setChild($child);
-                }
+            $userId = $user->getId();
+            if ($userId === null) {
+                $this->paymentStatus = 'error';
+                return;
             }
 
-            $payment = new PaymentFactory()
-                ->create($user, $selected->price);
-            $booking->setPayment($payment);
+            $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
 
-            $this->bus->dispatch(new AddBooking($booking));
+            $paymentCode = new PaymentFactory()
+                ->generateCode();
 
-            $this->paymentCode = $payment->getPaymentCode()?->getCode();
+            $this->bus->dispatch(new AddBooking(
+                userId: $userId,
+                lessonId: (string) $this->lesson->getId(),
+                ticketType: $this->selectedTicketType,
+                childId: $this->selectedChildId,
+                paymentCode: $paymentCode,
+            ));
+
+            $this->paymentCode = $paymentCode;
             $this->paymentAmount = $selected->price;
             $this->paymentStatus = 'awaiting_payment';
             $this->paymentModal = false;

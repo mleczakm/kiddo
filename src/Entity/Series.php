@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\SeriesRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
@@ -53,7 +54,7 @@ class Series
             ->where(Criteria::expr()->gte('metadata.schedule', $lesson->getMetadata()->schedule))
             ->setMaxResults($limit)
             ->orderBy([
-                'id' => 'ASC',
+                'id' => Order::Ascending,
             ]);
 
         return $this->lessons->matching($criteria)
@@ -66,7 +67,7 @@ class Series
             ->where(Criteria::expr()->gt('metadata.schedule', $lesson->getMetadata()->schedule))
             ->setMaxResults(1)
             ->orderBy([
-                'id' => 'ASC',
+                'id' => Order::Ascending,
             ]);
 
         return $this->lessons->matching($criteria)
@@ -79,7 +80,7 @@ class Series
             ->where(Criteria::expr()->lt('metadata.schedule', $lesson->getMetadata()->schedule))
             ->setMaxResults(1)
             ->orderBy([
-                'id' => 'DESC',
+                'id' => Order::Descending,
             ]);
 
         return $this->lessons->matching($criteria)

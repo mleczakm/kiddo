@@ -29,11 +29,17 @@ class PaymentCode
     public function __construct(
         #[ORM\OneToOne(targetEntity: Payment::class, inversedBy: 'paymentCode')]
         #[ORM\JoinColumn(nullable: false)]
-        private Payment $payment
+        private Payment $payment,
+        ?string $code = null,
     ) {
         $this->payment->setPaymentCode($this);
         $this->createdAt = new \DateTimeImmutable();
-        $this->generateCode();
+
+        if ($code !== null) {
+            $this->code = $code;
+        } else {
+            $this->generateCode();
+        }
     }
 
     public function getId(): ?int
