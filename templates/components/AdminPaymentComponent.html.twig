@@ -1,0 +1,61 @@
+<div {{ attributes }}>
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col h-full">
+        <div class="p-6 border-b border-slate-100 bg-slate-50 shrink-0 flex flex-col space-y-1.5">
+            <h3 class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="lucide lucide-wallet w-5 h-5 text-indigo-600">
+                    <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                    <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+                </svg>
+                {{ 'payment.title'|trans }}
+            </h3>
+        </div>
+        <div class="p-6 pt-0">
+            <div class="relative w-full overflow-auto">
+                <table class="w-full caption-bottom text-sm">
+                    <thead class="[&_tr]:border-b">
+                    <tr class="border-b transition-colors hover:bg-slate-50 data-[state=selected]:bg-muted">
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                            {{ 'payment.sender'|trans }}
+                        </th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            {{ 'payment.amount'|trans }}
+                        </th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            {{ 'payment.date'|trans }}
+                        </th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                            {{ 'payment.status'|trans }}
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody class="[&_tr:last-child]:border-0">
+                    {% for transfer in this.transfers %}
+                        <tr class="border-b transition-colors hover:bg-slate-50 data-[state=selected]:bg-muted">
+                            <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                                <div class="font-medium">{{ transfer.sender }}</div>
+                            </td>
+                            <td class="p-4 align-middle font-medium">
+                                {{ transfer.amount|money }}
+                            </td>
+                            <td class="p-4 align-middle">
+                                {{ transfer.date|date('Y-m-d H:i') }}
+                            </td>
+                            <td class="p-4 align-middle">
+                                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ transfer.status == 'matched' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-yellow-500 text-white' }}">
+                                    {{ transfer.status }}
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="p-4 text-center text-muted-foreground">{{ 'payment.no_transfers'|trans }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

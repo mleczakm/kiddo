@@ -1,0 +1,107 @@
+<div {{ attributes }} class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col h-full">
+  <div class="p-6 border-b border-slate-100 bg-slate-50 shrink-0 flex flex-col space-y-1.5">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+      <h3 class="flex items-center gap-3 text-lg font-black text-slate-800">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card w-5 h-5 text-indigo-600"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        <span>{{ 'admin.payments.title'|trans }}</span>
+      </h3>
+      <div class="flex items-center gap-2">
+        <button
+            type="button"
+            data-model="week"
+            data-value="{{ this.week|date_modify('-7 days')|date('Y-m-d') }}"
+            data-action="live#update"
+            class="h-9 w-9 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 flex items-center justify-center text-slate-700 transition"
+            title="{{ 'lesson.previous_week'|trans }}"
+        >
+          <span class="sr-only">{{ 'lesson.previous_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <span class="h-9 px-3.5 flex items-center text-xs bg-slate-100 text-slate-700 font-bold rounded-xl whitespace-nowrap">
+          {{ this.weekStart|date('d.m') }} - {{ this.weekEnd|date('d.m') }}
+        </span>
+        <button
+            type="button"
+            data-model="week"
+            data-value="{{ this.week|date_modify('+7 days')|date('Y-m-d') }}"
+            data-action="live#update"
+            class="h-9 w-9 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 flex items-center justify-center text-slate-700 transition"
+            title="{{ 'lesson.next_week'|trans }}"
+        >
+          <span class="sr-only">{{ 'lesson.next_week'|trans }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="p-6 pt-0">
+    <div class="relative w-full overflow-auto">
+      <table class="w-full caption-bottom text-sm">
+        <thead class="[&_tr]:border-b">
+          <tr class="border-b transition-colors hover:bg-slate-50">
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.date'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.user'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.amount'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.method'|trans }}</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.payments.headers.status'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody class="[&_tr:last-child]:border-0">
+          {% for payment in this.payments %}
+            {% set booking = payment.bookings|first %}
+            <tr class="border-b transition-colors hover:bg-slate-50">
+              <td class="p-4 align-middle">
+                {% if payment.paidAt %}
+                  {{ payment.paidAt|date('Y-m-d H:i') }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td class="p-4 align-middle">
+                {% if booking and booking.user %}
+                  <div class="font-medium">{{ booking.user.name }}</div>
+                  <div class="text-xs text-muted-foreground">{{ booking.user.email }}</div>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td class="p-4 align-middle font-medium">
+                {{ payment.amount|money }}
+              </td>
+              <td class="p-4 align-middle">
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-slate-100 text-slate-700">
+                  {{ payment.method|default('transfer') }}
+                </div>
+              </td>
+              <td class="p-4 align-middle">
+                {% if payment.status == 'paid' %}
+                  <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-green-500 text-white">
+                    {{ 'admin.payments.status.paid'|trans }}
+                  </div>
+                {% elseif payment.status == 'pending' %}
+                  <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-yellow-500 text-white">
+                    {{ 'admin.payments.status.pending'|trans }}
+                  </div>
+                {% else %}
+                  <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-slate-500 text-white">
+                    {{ payment.status }}
+                  </div>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.payments.no_payments'|trans }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
