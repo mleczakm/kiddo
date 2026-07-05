@@ -75,7 +75,7 @@
     "twig/extra-bundle": "^3.24.0",
     "twig/inky-extra": "^3.26",
     "twig/intl-extra": "^3.26.0",
-    "twig/twig": "^3.27.1",
+    "twig/twig": "^3.28.0",
     "ext-zlib": "*"
   },
   "config": {
@@ -279,11 +279,11 @@
     "dama/doctrine-test-bundle": "^8.6.0",
     "kodus/mock-cache": "^2.1",
     "phpstan/extension-installer": "^1.4.3",
-    "phpstan/phpstan": "^2.2.3",
+    "phpstan/phpstan": "^2.2.5",
     "phpstan/phpstan-doctrine": "^2.0.27",
     "phpstan/phpstan-symfony": "^2.0.20",
     "phpunit/phpunit": "^11.5.55",
-    "rector/rector": "^2.5.2",
+    "rector/rector": "^2.5.3",
     "roave/security-advisories": "dev-latest",
     "rregeer/phpunit-coverage-check": "^0.3.1",
     "symfony/browser-kit": "7.4.*",
