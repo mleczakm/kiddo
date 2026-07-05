@@ -135,9 +135,15 @@ services:
   # Decorate TaskHandler with higher priority (-9996) than both ExceptionLoggingTransportHandler (-9998)
   # and ServiceResettingTransportHandler (-9997) to replace exception handling entirely
   SwooleBundle\SwooleBundle\Bridge\Symfony\Messenger\ExceptionLoggingTransportHandler:
-    class: App\Infrastructure\Swoole\WorkerRestartingTaskHandler
     decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
-    arguments:
-      $logger: '@logger'
+    decoration_priority: -9996
     tags:
       - { name: monolog.logger, channel: swoole }
+
+# Test-specific service overrides
+when@test:
+  services:
+    # Use test implementation of CurrentWorkerRestarterInterface to track restart calls
+    App\Infrastructure\Swoole\CurrentWorkerRestarterInterface:
+      class: App\Tests\Infrastructure\Swoole\TestCurrentWorkerRestarter
+      public: true

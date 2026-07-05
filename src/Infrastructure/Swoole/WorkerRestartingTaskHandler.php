@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Swoole;
 
+use Swoole\Server\Task;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
 use SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler;
@@ -17,7 +18,7 @@ final readonly class WorkerRestartingTaskHandler implements TaskHandler
         private TaskHandler $innerHandler,
     ) {}
 
-    public function handle(Server $server, Server\Task $task): void
+    public function handle(Server $server, Task $task): void
     {
         try {
             $this->innerHandler->handle($server, $task);
