@@ -25,7 +25,8 @@ final class DoctrineConnectionResetMiddlewareTest extends MiddlewareTestCase
         $connection->expects(self::exactly(2))
             ->method('close');
         $connection->expects(self::once())
-            ->method('connect');
+            ->method('executeQuery')
+            ->with('SELECT 1');
 
         $taskWorkerContext = $this->createMock(TaskWorkerContextInterface::class);
         $taskWorkerContext->expects(self::exactly(2))

@@ -28,8 +28,8 @@ final readonly class DoctrineConnectionResetMiddleware implements MiddlewareInte
         // Only reset connection in Swoole task workers
         if ($this->taskWorkerContext->isInTaskWorker() && $this->connection->isConnected()) {
             $this->connection->close();
-            // Reconnect to ensure a fresh connection for the transaction middleware
-            $this->connection->connect();
+            // Execute a simple query to trigger auto-reconnect (Connection::connect() is deprecated)
+            $this->connection->executeQuery('SELECT 1');
         }
 
         try {
