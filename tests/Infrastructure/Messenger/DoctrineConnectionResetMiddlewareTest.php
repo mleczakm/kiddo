@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Messenger;
 
+use Doctrine\DBAL\Result;
 use App\Infrastructure\Messenger\DoctrineConnectionResetMiddleware;
 use App\Infrastructure\Messenger\TaskWorkerContextInterface;
 use Doctrine\DBAL\Connection;
@@ -26,7 +27,8 @@ final class DoctrineConnectionResetMiddlewareTest extends MiddlewareTestCase
             ->method('close');
         $connection->expects(self::once())
             ->method('executeQuery')
-            ->with('SELECT 1');
+            ->with('SELECT 1')
+            ->willReturn($this->createMock(Result::class));
 
         $taskWorkerContext = $this->createMock(TaskWorkerContextInterface::class);
         $taskWorkerContext->expects(self::exactly(2))
@@ -48,7 +50,7 @@ final class DoctrineConnectionResetMiddlewareTest extends MiddlewareTestCase
             ->method('close');
 
         $taskWorkerContext = $this->createMock(TaskWorkerContextInterface::class);
-        $taskWorkerContext->expects(self::once())
+        $taskWorkerContext->expects(self::exactly(2))
             ->method('isInTaskWorker')
             ->willReturn(false);
 
@@ -61,14 +63,14 @@ final class DoctrineConnectionResetMiddlewareTest extends MiddlewareTestCase
     public function testDoesNotCloseConnectionWhenNotConnected(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects(self::once())
+        $connection->expects(self::exactly(2))
             ->method('isConnected')
             ->willReturn(false);
         $connection->expects(self::never())
             ->method('close');
 
         $taskWorkerContext = $this->createMock(TaskWorkerContextInterface::class);
-        $taskWorkerContext->expects(self::once())
+        $taskWorkerContext->expects(self::exactly(2))
             ->method('isInTaskWorker')
             ->willReturn(true);
 
