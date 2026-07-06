@@ -13,7 +13,7 @@ swoole:
     services:
       reset_handler: true
     settings:
-      worker_count: 4
+      worker_count: 8
 
 when@prod:
   swoole_bundle_resetter:
