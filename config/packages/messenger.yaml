@@ -23,7 +23,6 @@ framework:
                     - messenger.middleware.router_context
                     - App\Infrastructure\Messenger\PreventAsyncDispatchInTaskWorkerMiddleware
                     - App\Infrastructure\Messenger\DoctrineConnectionResetMiddleware
-                    - messenger.middleware.doctrine_close_connection
                     - messenger.middleware.doctrine_transaction
                     - messenger.middleware.validation
 

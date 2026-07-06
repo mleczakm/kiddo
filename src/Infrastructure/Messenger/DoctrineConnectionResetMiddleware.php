@@ -32,7 +32,14 @@ final readonly class DoctrineConnectionResetMiddleware implements MiddlewareInte
             $this->connection->connect();
         }
 
-        return $stack->next()
-            ->handle($envelope, $stack);
+        try {
+            return $stack->next()
+                ->handle($envelope, $stack);
+        } finally {
+            // Close connection after handling in task workers to prevent connection state corruption
+            if ($this->taskWorkerContext->isInTaskWorker() && $this->connection->isConnected()) {
+                $this->connection->close();
+            }
+        }
     }
 }
