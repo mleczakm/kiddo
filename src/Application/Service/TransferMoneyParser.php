@@ -18,6 +18,7 @@ class TransferMoneyParser
         // Remove all non-digit and non-comma characters
         $cleaned = preg_replace('/[^\d,]/', '', $amount);
         // Replace multiple commas with a single one
+        /** @var string $cleaned */
         $cleaned = preg_replace('/,+/', ',', $cleaned ?? '');
 
         if ($cleaned === '' || $cleaned === ',') {
