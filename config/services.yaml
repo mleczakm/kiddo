@@ -135,6 +135,12 @@ services:
     decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
     decoration_priority: -9996
 
+  App\Infrastructure\Swoole\TaskWorkerConnectionEnsuringHandler:
+    decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
+    decoration_priority: -9995
+    arguments:
+      $innerHandler: '@.inner'
+
 # Test-specific service overrides
 when@test:
   services:
