@@ -4,87 +4,55 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\EventSubscriber;
 
-use App\Infrastructure\ZipBomb\ZipBombGenerator;
+use App\Infrastructure\Security\HoneypotResponder;
+use App\Infrastructure\Security\MaliciousRequestPathMatcher;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final readonly class MaliciousRequestSubscriber
 {
-    private const array MALICIOUS_PATTERNS = [
-        // PHP info/debugging files
-        '/phpinfo(\.php)?$/i',
-        '/test\.php$/i',
-        '/info\.php$/i',
-        '/php\.php$/i',
-        '/php_info\.php$/i',
-        '/i\.php$/i',
-        '/pi\.php$/i',
-        '/pinfo\.php$/i',
-        '/phpinfo2\.php$/i',
-        '/php_version\.php$/i',
-        '/version\.php$/i',
-        '/server-info\.php$/i',
-        '/env\.php$/i',
-        '/init\.php$/i',
-        // Environment files
-        '/\.env(\..*)?$/i',
-        '/\.aws\//i',
-        // WordPress paths
-        '/wp-.*/i',
-        // Config files
-        '/backup_web_config\.txt$/i',
-        '/sftp-config\.json$/i',
-        '/\.vscode\//i',
-        // Database dumps
-        '/\.sql$/i',
-        // Development files
-        '/app_dev\.php\//i',
-    ];
+    private const int REQUEST_PRIORITY = 512;
+
+    private const int EXCEPTION_PRIORITY = 512;
 
     public function __construct(
-        private ZipBombGenerator $zipBombGenerator
+        private MaliciousRequestPathMatcher $pathMatcher,
+        private HoneypotResponder $honeypotResponder,
     ) {}
 
-    #[AsEventListener(event: 'kernel.exception', priority: 200)]
-    public function onKernelException(ExceptionEvent $event): void
+    #[AsEventListener(event: 'kernel.request', priority: self::REQUEST_PRIORITY)]
+    public function onKernelRequest(RequestEvent $event): void
     {
-        $exception = $event->getThrowable();
-
-        if (! $exception instanceof NotFoundHttpException) {
+        if (! $event->isMainRequest()) {
             return;
         }
 
-        $request = $event->getRequest();
-        $path = $request->getPathInfo();
-
-        if ($this->isMaliciousPattern($path)) {
-            // Return zip bomb for malicious patterns
-            $event->setResponse($this->createZipBomb());
-            $event->allowCustomResponseCode();
+        if (! $this->pathMatcher->matches($event->getRequest()->getPathInfo())) {
+            return;
         }
+
+        $event->setResponse($this->honeypotResponder->createResponse());
     }
 
-    private function isMaliciousPattern(string $path): bool
+    #[AsEventListener(event: 'kernel.exception', priority: self::EXCEPTION_PRIORITY)]
+    public function onKernelException(ExceptionEvent $event): void
     {
-        return array_any(self::MALICIOUS_PATTERNS, fn($pattern) => preg_match($pattern, $path) === 1);
-    }
+        if (! $event->isMainRequest()) {
+            return;
+        }
 
-    private function createZipBomb(): Response
-    {
-        // Generate advanced zip bomb based on USENIX WOOT 2019 paper techniques
-        // Creates overlapping files with quoted headers for maximum compression ratio
-        $zipData = $this->zipBombGenerator->generate(
-            numFiles: 10,
-            kernelSize: 100000,
-            alphabet: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        );
+        if (! $event->getThrowable() instanceof NotFoundHttpException) {
+            return;
+        }
 
-        return new Response($zipData, Response::HTTP_OK, [
-            'Content-Type' => 'application/zip',
-            'Content-Disposition' => 'attachment; filename="backup.zip"',
-            'Content-Length' => strlen($zipData),
-        ]);
+        if (! $this->pathMatcher->matches($event->getRequest()->getPathInfo())) {
+            return;
+        }
+
+        $event->setResponse($this->honeypotResponder->createResponse());
+        $event->allowCustomResponseCode();
+        $event->stopPropagation();
     }
 }
