@@ -44,9 +44,6 @@ services:
       $scheduleProviders:
         - '@App\Infrastructure\Symfony\Scheduler\MainSchedule'
 
-  App\Infrastructure\Messenger\TaskWorkerContextInterface:
-    alias: App\Infrastructure\Messenger\SwooleTaskWorkerContext
-
   App\Infrastructure\Swoole\Configurator\WithScheduler:
     tags:
       - 'swoole_bundle.server_configurator'
