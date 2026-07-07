@@ -61,6 +61,10 @@ class Scheduler
 
         foreach ($this->generators as $generator) {
             foreach ($generator->getMessages() as $context => $message) {
+                if ($this->connectionResetter) {
+                    $this->connectionResetter->ensureConnection();
+                }
+
                 if (! $this->dispatcher) {
                     $this->bus->dispatch($message);
 
