@@ -97,6 +97,19 @@ services:
   App\Infrastructure\Doctrine\EntityManagerResetter:
     public: true
 
+  doctrine.dbal.cache_connection:
+    class: Doctrine\DBAL\Connection
+    factory: ['@doctrine.dbal.connection_factory', 'createConnection']
+    arguments:
+      -
+        url: '%env(resolve:DATABASE_URL)%'
+        use_savepoints: true
+        options:
+          'PDO::ATTR_TIMEOUT': 30
+          'PDO::ATTR_EMULATE_PREPARES': false
+      - '@doctrine.dbal.default_connection.configuration'
+    lazy: true
+
   App\Infrastructure\ImapEngine\ConnectionCloserOnResetSubscriber:
     public: true
 
