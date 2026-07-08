@@ -75,4 +75,35 @@ class NewUserHandlerTest extends KernelTestCase
             }
         }
     }
+
+    public function testDoesNotSendEmailsIfUserAlreadyConfirmed(): void
+    {
+        // Arrange
+        $user = UserAssembler::new()
+            ->withEmail('user@example.com')
+            ->withRoles('ROLE_USER')
+            ->assemble();
+        $admin1 = UserAssembler::new()
+            ->withEmail('admin1@example.com')
+            ->withRoles('ROLE_ADMIN')
+            ->assemble();
+
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->persist($user);
+        $em->persist($admin1);
+        $em->flush();
+
+        // Simulate user already confirmed (e.g., from previous login)
+        $user->setConfirmedAt(new \DateTimeImmutable());
+        $em->flush();
+
+        $handler = self::getContainer()->get(NewUserHandler::class);
+
+        // Act
+        $handler(new NewUser($user));
+
+        // Assert - no emails should be sent
+        $this->mailer()
+            ->assertSentEmailCount(0);
+    }
 }

@@ -26,6 +26,12 @@ readonly class NewUserHandler
     public function __invoke(NewUser $command): void
     {
         $user = $command->user;
+
+        // Prevent duplicate email sending if user is already confirmed
+        if ($user->getConfirmedAt() !== null) {
+            return;
+        }
+
         $user->setConfirmedAt(Clock::get()->now());
 
         $this->sendUserConfirmation($user);
