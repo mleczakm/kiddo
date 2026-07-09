@@ -18,7 +18,8 @@ class DoctrineDbalCacheHealthcheck implements CheckInterface
     {
         try {
             $this->cacheConnection->executeQuery(
-                $this->cacheConnection->getDatabasePlatform()->getDummySelectSQL()
+                $this->cacheConnection->getDatabasePlatform()
+                    ->getDummySelectSQL()
             )->free();
         } catch (\Throwable $e) {
             return new Response(
