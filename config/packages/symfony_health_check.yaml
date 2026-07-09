@@ -3,6 +3,7 @@ symfony_health_check:
         - id: symfony_health_check.environment_check
         - id: symfony_health_check.status_up_check
         - id: symfony_health_check.doctrine_orm_check
+        - id: App\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheck
         - id: App\Infrastructure\Healthcheck\DoctrineInsideTaskWorkerHealthcheck
     ping_checks:
         - id: symfony_health_check.status_up_check
