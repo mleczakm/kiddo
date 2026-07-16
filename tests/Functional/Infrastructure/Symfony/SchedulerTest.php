@@ -37,7 +37,13 @@ final class SchedulerTest extends KernelTestCase
     public function testSchedulerHasConnectionResetter(): void
     {
         $container = self::getContainer();
-        $this->assertTrue($container->has(SchedulerConnectionResetter::class));
-        $this->assertTrue($container->has(ConnectionEnsurerInterface::class));
+        $this->assertInstanceOf(
+            SchedulerConnectionResetter::class,
+            $container->get(SchedulerConnectionResetter::class)
+        );
+        $this->assertInstanceOf(
+            ConnectionEnsurerInterface::class,
+            $container->get(ConnectionEnsurerInterface::class)
+        );
     }
 }

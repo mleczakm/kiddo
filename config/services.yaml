@@ -167,7 +167,7 @@ services:
         - '@App\Infrastructure\Doctrine\CacheConnectionEnsurer'
 
   App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
-    alias: '@App\Infrastructure\Doctrine\CompositeConnectionEnsurer'
+    alias: App\Infrastructure\Doctrine\CompositeConnectionEnsurer
 
 # Test-specific service overrides
 when@test:
@@ -178,5 +178,5 @@ when@test:
       public: true
 
     App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
-      alias: '@App\Infrastructure\Doctrine\CompositeConnectionEnsurer'
+      alias: App\Infrastructure\Doctrine\CompositeConnectionEnsurer
       public: true
