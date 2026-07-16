@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Infrastructure\Symfony;
 
+use App\Infrastructure\Doctrine\ConnectionEnsurerInterface;
+use App\Infrastructure\Doctrine\SchedulerConnectionResetter;
 use App\Infrastructure\Symfony\Scheduler;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -30,5 +32,12 @@ final class SchedulerTest extends KernelTestCase
         // even if no messages are due to be dispatched
         $this->expectNotToPerformAssertions();
         $this->scheduler->run();
+    }
+
+    public function testSchedulerHasConnectionResetter(): void
+    {
+        $container = self::getContainer();
+        $this->assertTrue($container->has(SchedulerConnectionResetter::class));
+        $this->assertTrue($container->has(ConnectionEnsurerInterface::class));
     }
 }

@@ -43,6 +43,7 @@ services:
     arguments:
       $scheduleProviders:
         - '@App\Infrastructure\Symfony\Scheduler\MainSchedule'
+      $connectionResetter: '@App\Infrastructure\Doctrine\ConnectionEnsurerInterface'
 
   App\Infrastructure\Swoole\Configurator\WithScheduler:
     tags:
@@ -99,6 +100,7 @@ services:
 
   doctrine.dbal.cache_connection:
     class: Doctrine\DBAL\Connection
+    public: true
     factory: ['@doctrine.dbal.connection_factory', 'createConnection']
     arguments:
       -
@@ -141,18 +143,31 @@ services:
 
   App\Application\CommandHandler\IncomingNotificationMailQuery: '@App\Application\CommandHandler\IncomingNotificationMailQueryWithLastSuccessfulImportDecorator'
 
-  # Decorate TaskHandler with WorkerRestartingTaskHandler with higher priority (-9996)
-  # than both ExceptionLoggingTransportHandler (-9998) and ServiceResettingTransportHandler (-9997)
-  # to restart worker on exception instead of just logging
+  # Outer decorator must restart the worker on any task failure, including connection ensure failures.
+  # Higher decoration_priority = outer. Restart wraps ensure so thrown ensure errors still restart.
   App\Infrastructure\Swoole\WorkerRestartingTaskHandler:
     decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
-    decoration_priority: -9996
+    decoration_priority: -9995
 
   App\Infrastructure\Swoole\TaskWorkerConnectionEnsuringHandler:
     decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
-    decoration_priority: -9995
+    decoration_priority: -9996
     arguments:
       $innerHandler: '@.inner'
+
+  App\Infrastructure\Doctrine\CacheConnectionEnsurer:
+    arguments:
+      $connection: '@doctrine.dbal.cache_connection'
+
+  # Ensure both the default ORM connection and the dedicated cache DBAL connection.
+  App\Infrastructure\Doctrine\CompositeConnectionEnsurer:
+    arguments:
+      $ensurers:
+        - '@App\Infrastructure\Doctrine\DoctrineConnectionEnsurer'
+        - '@App\Infrastructure\Doctrine\CacheConnectionEnsurer'
+
+  App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
+    alias: '@App\Infrastructure\Doctrine\CompositeConnectionEnsurer'
 
 # Test-specific service overrides
 when@test:
@@ -160,4 +175,8 @@ when@test:
     # Use test implementation of CurrentWorkerRestarterInterface to track restart calls
     App\Infrastructure\Swoole\CurrentWorkerRestarterInterface:
       class: App\Tests\Infrastructure\Swoole\TestCurrentWorkerRestarter
+      public: true
+
+    App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
+      alias: '@App\Infrastructure\Doctrine\CompositeConnectionEnsurer'
       public: true
