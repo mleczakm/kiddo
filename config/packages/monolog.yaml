@@ -73,17 +73,16 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
+            # Point fingers_crossed directly at SentryHandler (no intermediate BufferHandler).
+            # BufferHandler only flushes on close()/reset(), and under Swoole shutdown never runs
+            # per request — so events sat in memory and never reached Sentry.
             sentry:
                 type: fingers_crossed
-                action_level: error
-                handler: sentry_buffer
-                include_stacktraces: true
-                channels: [ "!event" ]
-            sentry_buffer:
-                type: buffer
+                action_level: warning
                 handler: sentry_handler
-                level: info
+                include_stacktraces: true
                 process_psr_3_messages: true
+                channels: [ "!event" ]
             sentry_handler:
                 type: service
                 id: BGalati\MonologSentryHandler\SentryHandler
