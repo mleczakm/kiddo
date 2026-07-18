@@ -25,7 +25,12 @@ readonly class NewUserHandler
 
     public function __invoke(NewUser $command): void
     {
-        $user = $command->user;
+        // Async transport serializes the User as a detached instance; reload so Doctrine
+        // transaction middleware can flush confirmedAt when the handler succeeds.
+        $user = $this->userRepository->find($command->user->getId());
+        if ($user === null) {
+            return;
+        }
 
         // Prevent duplicate email sending if user is already confirmed
         if ($user->getConfirmedAt() !== null) {

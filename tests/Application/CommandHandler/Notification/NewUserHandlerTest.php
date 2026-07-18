@@ -7,6 +7,7 @@ namespace App\Tests\Application\CommandHandler\Notification;
 use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\NewUser;
 use App\Application\CommandHandler\Notification\NewUserHandler;
+use App\Entity\User;
 use App\Tests\Assembler\UserAssembler;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\NotificationAssertionsTrait;
@@ -50,7 +51,11 @@ class NewUserHandlerTest extends KernelTestCase
         $this->mailer()
             ->assertSentEmailCount(3);
 
-        self::assertNotEmpty($user->getConfirmedAt());
+        $userId = $user->getId();
+        $em->clear();
+        $persistedUser = $em->find(User::class, $userId);
+        self::assertNotNull($persistedUser);
+        self::assertNotEmpty($persistedUser->getConfirmedAt());
 
         $emails = $this->mailer()
             ->sentEmails();
@@ -61,9 +66,8 @@ class NewUserHandlerTest extends KernelTestCase
         $this->assertContains('admin2@example.com', $recipients);
 
         // Assert admin email content contains user data
-        $userId = $user->getId();
-        $userEmail = $user->getEmail();
-        $userName = $user->getName();
+        $userEmail = $persistedUser->getEmail();
+        $userName = $persistedUser->getName();
         foreach ($emails as $email) {
             $to = $email->getTo()[0]
                 ->getAddress();
