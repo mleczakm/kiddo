@@ -98,20 +98,6 @@ services:
   App\Infrastructure\Doctrine\EntityManagerResetter:
     public: true
 
-  doctrine.dbal.cache_connection:
-    class: Doctrine\DBAL\Connection
-    public: true
-    factory: ['@doctrine.dbal.connection_factory', 'createConnection']
-    arguments:
-      -
-        url: '%env(resolve:DATABASE_URL)%'
-        use_savepoints: true
-        options:
-          'PDO::ATTR_TIMEOUT': 30
-          'PDO::ATTR_EMULATE_PREPARES': false
-      - '@doctrine.dbal.default_connection.configuration'
-    lazy: true
-
   App\Infrastructure\ImapEngine\ConnectionCloserOnResetSubscriber:
     public: true
 
@@ -158,6 +144,10 @@ services:
   App\Infrastructure\Doctrine\CacheConnectionEnsurer:
     arguments:
       $connection: '@doctrine.dbal.cache_connection'
+
+  App\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheck:
+    arguments:
+      $cacheConnection: '@doctrine.dbal.cache_connection'
 
   # Ensure both the default ORM connection and the dedicated cache DBAL connection.
   App\Infrastructure\Doctrine\CompositeConnectionEnsurer:

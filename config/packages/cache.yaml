@@ -13,7 +13,7 @@ framework:
 
         # APCu (not recommended with heavy random-write workloads as memory fragmentation can cause perf issues)
         app: cache.adapter.doctrine_dbal
-        # Dedicated DBAL connection service (see doctrine.dbal.cache_connection in services.yaml).
+        # Dedicated DBAL connection (see doctrine.dbal.connections.cache in doctrine.yaml).
         default_doctrine_dbal_provider: doctrine.dbal.cache_connection
 
 when@test:
