@@ -44,12 +44,6 @@ RUN bin/console cache:warmup \
 
 FROM base AS prod
 
-ARG APP_VERSION
-ARG APP_REVISION
-
-ENV APP_VERSION=${APP_VERSION}
-ENV APP_REVISION=${APP_REVISION}
-
 HEALTHCHECK --start-period=2s --interval=5s --timeout=5s --retries=5 CMD curl -sS localhost:9501/health || exit 1
 
 COPY composer.json composer.lock ./
@@ -65,6 +59,13 @@ COPY src/ src/
 COPY templates/ templates/
 COPY translations/ translations/
 COPY .env .env.prod importmap.php ./
+
+# Set after composer install so tag/sha changes do not bust the vendor layer.
+# Must be before cache:warmup — prod config requires APP_VERSION / APP_REVISION.
+ARG APP_VERSION
+ARG APP_REVISION
+ENV APP_VERSION=${APP_VERSION}
+ENV APP_REVISION=${APP_REVISION}
 
 RUN bin/console cache:warmup  \
     && bin/console tailwind:build --minify  \
