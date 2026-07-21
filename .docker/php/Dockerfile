@@ -28,6 +28,7 @@ RUN composer install --prefer-dist --no-scripts --no-interaction --no-progress -
 COPY assets/ assets/
 COPY bin/ bin/
 COPY config/ config/
+COPY migrations/ migrations/
 COPY public/ public/
 COPY src/ src/
 COPY templates/ templates/
@@ -54,6 +55,7 @@ RUN --mount=type=bind,from=composer/composer:2-bin,source=/composer,target=/usr/
 COPY assets/ assets/
 COPY bin/ bin/
 COPY config/ config/
+COPY migrations/ migrations/
 COPY public/ public/
 COPY src/ src/
 COPY templates/ templates/
