@@ -16,6 +16,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\Clock\NativeClock;
 
 #[Group('unit')]
 class UpcomingLessonsTest extends TestCase
@@ -32,7 +33,8 @@ class UpcomingLessonsTest extends TestCase
 
     protected function tearDown(): void
     {
-        // Don't reset clock to avoid errors - let it use system clock
+        Clock::set(new NativeClock());
+        parent::tearDown();
     }
 
     public function testDefaultWeekIsCurrentDate(): void

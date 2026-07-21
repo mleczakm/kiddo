@@ -14,10 +14,17 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\Clock\NativeClock;
 
 #[Group('functional')]
 final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
 {
+    protected function tearDown(): void
+    {
+        Clock::set(new NativeClock());
+        parent::tearDown();
+    }
+
     public function testHomepageRendersWorkshopSlugLinksForUpcomingLessons(): void
     {
         Clock::set(new MockClock('2024-02-20 08:00:00'));

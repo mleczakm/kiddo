@@ -13,11 +13,18 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\Clock\NativeClock;
 
 #[Group('functional')]
 final class WorkshopsPageResponseSizeTest extends WebTestCase
 {
     private const int SWOOLE_DEFAULT_OUTPUT_BUFFER = 2_097_152;
+
+    protected function tearDown(): void
+    {
+        Clock::set(new NativeClock());
+        parent::tearDown();
+    }
 
     public function testWorkshopsPageStaysBelowSwooleDefaultOutputBuffer(): void
     {

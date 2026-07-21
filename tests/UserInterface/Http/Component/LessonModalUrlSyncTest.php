@@ -14,12 +14,19 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\Clock\NativeClock;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 #[Group('functional')]
 final class LessonModalUrlSyncTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
+
+    protected function tearDown(): void
+    {
+        Clock::set(new NativeClock());
+        parent::tearDown();
+    }
 
     public function testOpenModalDispatchesWorkshopUrlChangeEvent(): void
     {
