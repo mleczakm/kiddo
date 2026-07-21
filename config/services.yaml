@@ -60,6 +60,11 @@ services:
         host: '%env(MAILBOX_HOST)%'
     public: true
 
+  App\Infrastructure\ImapEngine\AliorNotificationMailProvider:
+    arguments:
+      $mailboxUsername: '%env(MAILBOX_USERNAME)%'
+      $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
+
   logdash:
     class: Logdash\Logdash
     factory: [ 'Logdash\Logdash', 'create' ]

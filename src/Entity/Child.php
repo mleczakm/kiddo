@@ -21,7 +21,7 @@ class Child
     private \DateTimeImmutable $createdAt;
 
     public function __construct(
-        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'children')]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         private User $owner,
         #[ORM\Column(length: 120)]

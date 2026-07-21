@@ -12,19 +12,25 @@ use App\Repository\ChildRepository;
 use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent]
 class LessonModal extends AbstractController
 {
     use DefaultActionTrait;
+    use ComponentToolsTrait;
 
     #[LiveProp]
     public ?Lesson $lesson = null;
+
+    #[LiveProp]
+    public string $closeUrl = '/';
 
     #[LiveProp(writable: true)]
     public bool $modalOpened = false;
@@ -67,6 +73,7 @@ class LessonModal extends AbstractController
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly ChildRepository $childRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     #[LiveAction]
@@ -78,6 +85,8 @@ class LessonModal extends AbstractController
             $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
             $this->selectedTicketType = $ticketOptions[$this->activeTabIndex]->type->value;
         }
+
+        $this->syncBrowserUrl();
     }
 
     #[LiveAction]
@@ -104,6 +113,28 @@ class LessonModal extends AbstractController
     {
         $this->modalOpened = false;
         $this->paymentModal = false;
+        $this->syncBrowserUrl();
+    }
+
+    private function syncBrowserUrl(): void
+    {
+        $this->dispatchBrowserEvent('workshop:url-change', [
+            'url' => $this->modalOpened ? $this->workshopUrl() : $this->closeUrl,
+        ]);
+    }
+
+    private function workshopUrl(): string
+    {
+        $metadata = $this->lesson?->getMetadata();
+        if ($metadata === null || $metadata->slug === null || $metadata->slug === '') {
+            return $this->closeUrl;
+        }
+
+        return $this->urlGenerator->generate('workshop_by_slug', [
+            'slug' => $metadata->slug,
+            'date' => $metadata->schedule->format('Y-m-d'),
+            'hour' => $metadata->schedule->format('H:i'),
+        ]);
     }
 
     #[LiveAction]

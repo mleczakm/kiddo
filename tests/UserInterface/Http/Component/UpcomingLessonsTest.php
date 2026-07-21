@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\LessonMetadata;
+use App\Entity\AgeRange;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -131,6 +133,34 @@ class UpcomingLessonsTest extends TestCase
 
         $this->assertSame($expectedLessons, $result);
         $this->assertCount(3, $result);
+    }
+
+    public function testShouldOpenModalMatchesSlugDateAndHour(): void
+    {
+        $metadata = new LessonMetadata(
+            title: 'Bałaganki',
+            lead: 'Lead',
+            visualTheme: '#fff',
+            description: 'Desc',
+            capacity: 10,
+            schedule: new \DateTimeImmutable('2024-02-21 10:30:00'),
+            duration: 60,
+            ageRange: new AgeRange(0, 3),
+            category: 'test',
+            slug: 'balaganki',
+        );
+        $lesson = $this->createMock(Lesson::class);
+        $lesson->method('getMetadata')
+            ->willReturn($metadata);
+
+        $this->component->openSlug = 'balaganki';
+        $this->component->openDate = '2024-02-21';
+        $this->component->openHour = '10:30';
+
+        $this->assertTrue($this->component->shouldOpenModal($lesson));
+
+        $this->component->openHour = '11:00';
+        $this->assertFalse($this->component->shouldOpenModal($lesson));
     }
 
     public function testGetWorkshopsWithLimit(): void

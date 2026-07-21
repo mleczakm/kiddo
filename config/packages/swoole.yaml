@@ -9,6 +9,8 @@ swoole:
     settings:
       worker_count: 4
       log_file: '/proc/self/fd/2'
+      # Default 2MiB is too small for heavy pages (e.g. workshops with many LiveComponents).
+      buffer_output_size: 8388608
   task_worker:
     services:
       reset_handler: true

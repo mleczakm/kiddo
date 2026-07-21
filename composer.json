@@ -13,9 +13,10 @@
     "ext-swoole": "*",
     "bgalati/monolog-sentry-handler": "^2.1",
     "brick/money": "^0.10.3",
-    "directorytree/imapengine": "^1.25.1",
+    "directorytree/imapengine": "^1.25.3",
     "doctrine/dbal": "^3.10.5",
     "doctrine/doctrine-bundle": "^2.18.3",
+    "doctrine/doctrine-migrations-bundle": "^3.7",
     "doctrine/orm": "^3.6.7",
     "dragonmantank/cron-expression": "^3.6",
     "dunglas/doctrine-json-odm": "^1.5.0",
@@ -150,7 +151,7 @@
     },
     "tests:functional:setup": {
       "Functional tests setup": "bin/console doctrine:database:create --if-not-exists --env=test",
-      "Functional tests schema": "bin/console doctrine:schema:update --force --env=test"
+      "Functional tests schema": "bin/console doctrine:migrations:migrate --no-interaction --env=test"
     },
     "qa:fix": [
       "@sa:fix"
@@ -295,7 +296,7 @@
     "symfony/stopwatch": "7.4.*",
     "symfony/web-profiler-bundle": "7.4.*",
     "symplify/easy-coding-standard": "^12.6.2",
-    "zenstruck/foundry": "^2.10.1",
+    "zenstruck/foundry": "^2.10.3",
     "zenstruck/mailer-test": "^1.5.0",
     "zenstruck/messenger-test": "^1.14"
   }

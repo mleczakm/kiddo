@@ -1,24 +1,30 @@
-<div {{ attributes }}
-        {% if modalOpened %}data-modal-state="open" {% else %}data-modal-state="closed"{% endif %}
-        {{ stimulus_controller('live', {
-            url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\LessonModal' })
-        }) }}>
+<div
+        {% if modalOpened %}data-modal-state="open"{% else %}data-modal-state="closed"{% endif %}
+        {% set workshopUrl = lesson and lesson.metadata.slug
+            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
+            : closeUrl %}
+        {{ attributes.defaults(stimulus_controller('workshop-url', {
+            openUrl: workshopUrl,
+            closeUrl: closeUrl,
+        })) }}
+>
 
-    <button data-action="live#action"
+    <button data-action="live#action click->workshop-url#pushOpen"
             data-live-action-param="openModal"
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10 mb-4"
             type="button">{{ 'lesson.details'|trans }}
     </button>
 
+    {% if modalOpened %}
     {# Overlay #}
     <div
-            data-action="click->live#action"
+            data-action="click->live#action click->workshop-url#pushClose"
             data-live-action-param="closeModal"
-            class="{% if not modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
+            class="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
             style="pointer-events: auto;" aria-hidden="true"></div>
 
     {# Dialog #}
-    <dialog {% if modalOpened %}open{% endif %}
+    <dialog open
             data-modal-target="dialog"
             class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
         <div class="grid">
@@ -238,7 +244,7 @@
                                class="text-sm text-muted-foreground">{{ 'lesson.accept_terms'|trans|raw }}</label>
                     </div>
                     <button type="button"
-                            data-action="live#action"
+                            data-action="live#action click->workshop-url#pushClose"
                             data-live-action-param="closeModal"
                             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
                         {{ 'lesson.cancel'|trans }}
@@ -283,7 +289,7 @@
                 </div>
 
                 <button type="button"
-                        data-action="live#action"
+                        data-action="live#action click->workshop-url#pushClose"
                         data-live-action-param="closeModal"
                         class="absolute right-4 top-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -465,4 +471,5 @@
                 </button>
             </div>
         {% endif %}
+    {% endif %}
 </div>

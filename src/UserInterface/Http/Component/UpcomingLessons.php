@@ -31,6 +31,15 @@ class UpcomingLessons
     #[LiveProp]
     public ?int $limit = null;
 
+    #[LiveProp]
+    public ?string $openSlug = null;
+
+    #[LiveProp]
+    public ?string $openDate = null;
+
+    #[LiveProp]
+    public ?string $openHour = null;
+
     public function __construct(
         private LessonRepository $lessonRepository
     ) {
@@ -43,6 +52,25 @@ class UpcomingLessons
     public function getWorkshops(): array
     {
         return $this->lessonRepository->findByFilters($this->query, $this->age, $this->week, $this->limit);
+    }
+
+    public function shouldOpenModal(Lesson $lesson): bool
+    {
+        if ($this->openSlug === null || $this->openSlug === '') {
+            return false;
+        }
+
+        $metadata = $lesson->getMetadata();
+        if ($metadata->slug !== $this->openSlug) {
+            return false;
+        }
+
+        if ($this->openDate === null || $this->openHour === null) {
+            return true;
+        }
+
+        return $metadata->schedule->format('Y-m-d') === $this->openDate
+            && $metadata->schedule->format('H:i') === $this->openHour;
     }
 
     public function getCurrentWeek(): string
