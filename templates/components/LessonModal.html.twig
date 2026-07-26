@@ -6,12 +6,16 @@
         {{ attributes.defaults(stimulus_controller('workshop-url', {
             openUrl: workshopUrl,
             closeUrl: closeUrl,
-        })) }}
+        })).defaults(
+            paymentStatus == 'awaiting_payment' and paymentCode
+                ? {'data-poll': 'delay(3000)|refreshPaymentStatus'}
+                : {}
+        ) }}
 >
 
     <button data-action="live#action click->workshop-url#pushOpen"
             data-live-action-param="openModal"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10 mb-4"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10"
             type="button">{{ 'lesson.details'|trans }}
     </button>
 
@@ -59,15 +63,33 @@
                         </button>
                     </div>
                 </div>
-            {% elseif paymentCode is not empty and paymentAmount is not empty %}
+            {% elseif paymentStatus == 'paid' %}
+                <div class="flex flex-col items-center justify-center min-h-[300px]">
+                    <div class="bg-white border border-green-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
+                        <div class="text-2xl font-bold text-green-700 mb-4">
+                            {{ 'payment.paid_success'|trans }}
+                        </div>
+                        <div class="text-muted-foreground mb-4">{{ 'payment.paid_message'|trans }}</div>
+                        <button type="button"
+                                data-action="live#action click->workshop-url#pushClose"
+                                data-live-action-param="closeModal"
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-green-50 h-10 px-4 py-2 border border-green-200 text-green-700">
+                            {{ 'lesson.close'|trans }}
+                        </button>
+                    </div>
+                </div>
+            {% elseif paymentCode is not empty and this.paymentAmount is not empty %}
                 <div class="flex flex-col items-center justify-center min-h-[300px]">
                     <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
+                        {% if paymentStatus == 'awaiting_payment' %}
+                            <div class="text-sm text-muted-foreground mb-4">{{ 'payment.awaiting'|trans }}</div>
+                        {% endif %}
                         <div class="text-2xl font-bold text-workshop-brown mb-4">
                             {{ 'blik.instruction'|trans }} <span
                                     class="text-workshop-red whitespace-nowrap"> {{ 'blik.phone'|trans }}</span>
                         </div>
                         <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span
-                                    class="text-workshop-red whitespace-nowrap">{{ paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
+                                    class="text-workshop-red whitespace-nowrap">{{ this.paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
                         </div>
                         <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
                         <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
@@ -82,6 +104,41 @@
                         {{ lesson.metadata.title }}</h2>
                     <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
                 </div>
+
+                {% set existingBookings = this.getExistingBookings() %}
+                {% if existingBookings is not empty %}
+                    <div class="bg-muted/50 p-4 rounded-lg mb-6">
+                        <h3 class="font-semibold mb-3">{{ 'booking.existing_bookings'|trans }}</h3>
+                        <div class="space-y-2">
+                            {% for booking in existingBookings %}
+                                <div class="flex items-center justify-between p-3 bg-white rounded border">
+                                    <div>
+                                        <span class="font-medium">{{ booking.child ? booking.child.name : 'booking.no_child'|trans }}</span>
+                                        <span class="mx-2 text-muted-foreground">•</span>
+                                        {% if booking.payment and booking.payment.status == 'paid' %}
+                                            <span class="inline-flex items-center rounded-full border bg-green-50 border-green-200 text-green-700 px-2 py-0.5 text-xs font-semibold">
+                                                {{ 'admin.badges.paid'|trans }}
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center rounded-full border bg-gray-50 border-gray-200 text-gray-600 px-2 py-0.5 text-xs font-semibold">
+                                                {{ 'admin.badges.unpaid'|trans }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    {% if booking.payment and booking.payment.status != 'paid' and booking.payment.paymentCode %}
+                                        <button type="button"
+                                                data-action="live#action"
+                                                data-live-action-param="resumePayment"
+                                                data-live-bookingId-param="{{ booking.id }}"
+                                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-8 px-3 bg-workshop-red text-white">
+                                            {{ 'booking.resume_payment'|trans }}
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="space-y-6 mt-6">
                     <div class="w-full h-48 md:h-60 rounded-lg bg-cover bg-center"
                          style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>

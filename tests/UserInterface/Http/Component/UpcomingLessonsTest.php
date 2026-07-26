@@ -10,10 +10,12 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use App\Entity\Lesson;
+use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use App\UserInterface\Http\Component\UpcomingLessons;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Clock\NativeClock;
@@ -23,12 +25,18 @@ class UpcomingLessonsTest extends TestCase
 {
     private LessonRepository&MockObject $lessonRepository;
 
+    private BookingRepository&MockObject $bookingRepository;
+
+    private Security&MockObject $security;
+
     private UpcomingLessons $component;
 
     protected function setUp(): void
     {
         $this->lessonRepository = $this->createMock(LessonRepository::class);
-        $this->component = new UpcomingLessons($this->lessonRepository);
+        $this->bookingRepository = $this->createMock(BookingRepository::class);
+        $this->security = $this->createMock(Security::class);
+        $this->component = new UpcomingLessons($this->lessonRepository, $this->bookingRepository, $this->security);
     }
 
     protected function tearDown(): void
@@ -42,9 +50,43 @@ class UpcomingLessonsTest extends TestCase
         $mockClock = new MockClock('2024-02-20 14:30:00');
         Clock::set($mockClock);
 
-        $component = new UpcomingLessons($this->lessonRepository);
+        $component = new UpcomingLessons($this->lessonRepository, $this->bookingRepository, $this->security);
 
         $this->assertEquals('2024-02-20', $component->week);
+    }
+
+    public function testDefaultViewIsGrid(): void
+    {
+        $this->assertEquals('grid', $this->component->view);
+    }
+
+    public function testCanSetViewToCalendar(): void
+    {
+        $this->component->view = 'calendar';
+        $this->assertEquals('calendar', $this->component->view);
+    }
+
+    public function testGetUserBookingsByLessonReturnsEmptyWhenGuest(): void
+    {
+        $this->security->method('getUser')
+            ->willReturn(null);
+        $this->bookingRepository->expects($this->never())
+            ->method('findForUserAndLessons');
+
+        $this->assertSame([], $this->component->getUserBookingsByLesson());
+    }
+
+    public function testGetWorkshopsByDayReturnsSevenDays(): void
+    {
+        $this->component->week = '2024-02-19';
+        $this->lessonRepository->method('findByFilters')
+            ->willReturn([]);
+
+        $days = $this->component->getWorkshopsByDay();
+
+        $this->assertCount(7, $days);
+        $this->assertEquals('2024-02-19', $days[0]['date']);
+        $this->assertEquals('2024-02-25', $days[6]['date']);
     }
 
     public function testDefaultShowSearchIsTrue(): void

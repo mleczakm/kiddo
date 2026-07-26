@@ -5,14 +5,22 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\AddBooking;
+use App\Entity\Booking;
 use App\Entity\Lesson;
+use App\Entity\Payment;
+use App\Entity\PaymentCode;
 use App\Entity\PaymentFactory;
 use App\Entity\User;
+use App\Repository\BookingRepository;
 use App\Repository\ChildRepository;
+use App\Repository\PaymentCodeRepository;
+use App\Repository\PaymentRepository;
 use Brick\Money\Money;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -50,7 +58,20 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $paymentCode = null;
 
-    public ?Money $paymentAmount = null;
+    /**
+     * @var numeric-string|null
+     */
+    #[LiveProp]
+    public ?string $paymentAmountMinor = null;
+
+    #[LiveProp]
+    public ?string $paymentCurrency = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $resumedBookingId = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $watchedPaymentId = null;
 
     #[LiveProp]
     public bool $termsOpened = false;
@@ -74,6 +95,10 @@ class LessonModal extends AbstractController
         private readonly MessageBusInterface $bus,
         private readonly ChildRepository $childRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly BookingRepository $bookingRepository,
+        private readonly PaymentCodeRepository $paymentCodeRepository,
+        private readonly PaymentRepository $paymentRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     #[LiveAction]
@@ -113,6 +138,12 @@ class LessonModal extends AbstractController
     {
         $this->modalOpened = false;
         $this->paymentModal = false;
+        $this->paymentCode = null;
+        $this->paymentAmountMinor = null;
+        $this->paymentCurrency = null;
+        $this->paymentStatus = null;
+        $this->resumedBookingId = null;
+        $this->watchedPaymentId = null;
         $this->syncBrowserUrl();
     }
 
@@ -229,6 +260,7 @@ class LessonModal extends AbstractController
         if (! $user) {
             return [];
         }
+
         return array_map(
             static fn($c) => [
                 'id' => (string) $c->getId(),
@@ -271,17 +303,175 @@ class LessonModal extends AbstractController
             ));
 
             $this->paymentCode = $paymentCode;
-            $this->paymentAmount = $selected->price;
+            $this->setPaymentAmount($selected->price);
             $this->paymentStatus = 'awaiting_payment';
             $this->paymentModal = false;
+            $this->watchedPaymentId = $this->resolvePaymentIdByCode($paymentCode);
 
             return;
         }
         $this->paymentStatus = 'error';
     }
 
+    private function setPaymentAmount(Money $amount): void
+    {
+        $this->paymentAmountMinor = (string) $amount->getMinorAmount()
+            ->toInt();
+        $this->paymentCurrency = $amount->getCurrency()
+            ->getCurrencyCode();
+    }
+
+    public function getPaymentAmount(): ?Money
+    {
+        if ($this->paymentAmountMinor === null || $this->paymentCurrency === null) {
+            return null;
+        }
+
+        return Money::ofMinor((int) $this->paymentAmountMinor, $this->paymentCurrency);
+    }
+
+    private function resolvePaymentIdByCode(string $code): ?string
+    {
+        $paymentCode = $this->paymentCodeRepository->findOneByCode($code);
+
+        return $paymentCode !== null ? (string) $paymentCode->getPayment()
+            ->getId() : null;
+    }
+
     public function getPaymentCode(): ?string
     {
         return $this->paymentCode;
+    }
+
+    /**
+     * @return array<Booking>
+     */
+    public function getExistingBookings(): array
+    {
+        if ($this->lesson === null) {
+            return [];
+        }
+
+        /** @var ?User $user */
+        $user = $this->getUser();
+        if (! $user instanceof User) {
+            return [];
+        }
+
+        return $this->bookingRepository->findForUserAndLesson($user, $this->lesson);
+    }
+
+    #[LiveAction]
+    public function resumePayment(#[LiveArg] string $bookingId): void
+    {
+        if ($this->lesson === null) {
+            return;
+        }
+
+        /** @var ?User $user */
+        $user = $this->getUser();
+        if (! $user instanceof User) {
+            return;
+        }
+
+        try {
+            $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
+        } catch (\Throwable) {
+            return;
+        }
+
+        if (! $booking instanceof Booking) {
+            return;
+        }
+
+        $bookingUserId = $booking->getUser()
+            ->getId();
+        $currentUserId = $user->getId();
+        if ($bookingUserId === null || $currentUserId === null || $bookingUserId !== $currentUserId) {
+            return;
+        }
+
+        $lessonId = $this->lesson->getId();
+        $belongsToLesson = false;
+        foreach ($booking->getLessons() as $bookedLesson) {
+            if ($bookedLesson->getId()->equals($lessonId)) {
+                $belongsToLesson = true;
+                break;
+            }
+        }
+        if (! $belongsToLesson) {
+            return;
+        }
+
+        $payment = $booking->getPayment();
+        if (! $payment instanceof Payment) {
+            return;
+        }
+
+        if ($payment->getStatus() === Payment::STATUS_PAID) {
+            return;
+        }
+
+        $paymentCode = $payment->getPaymentCode();
+        if ($paymentCode === null) {
+            $paymentCode = new PaymentCode($payment);
+            $this->entityManager->persist($paymentCode);
+            $this->entityManager->flush();
+        }
+
+        $this->resumedBookingId = $bookingId;
+        $this->paymentCode = $paymentCode->getCode();
+        $this->setPaymentAmount($payment->getAmount());
+        $this->paymentStatus = 'awaiting_payment';
+        $this->paymentModal = false;
+        $this->watchedPaymentId = (string) $payment->getId();
+    }
+
+    #[LiveAction]
+    public function refreshPaymentStatus(): void
+    {
+        if ($this->paymentStatus !== 'awaiting_payment') {
+            return;
+        }
+
+        $payment = $this->resolveWatchedPayment();
+        if ($payment === null) {
+            return;
+        }
+
+        if ($payment->getStatus() === Payment::STATUS_PAID) {
+            $this->paymentStatus = 'paid';
+            $this->paymentCode = null;
+            $this->resumedBookingId = null;
+            $this->watchedPaymentId = null;
+        }
+    }
+
+    private function resolveWatchedPayment(): ?Payment
+    {
+        if ($this->watchedPaymentId !== null && $this->watchedPaymentId !== '') {
+            try {
+                $payment = $this->paymentRepository->find(Ulid::fromString($this->watchedPaymentId));
+            } catch (\Throwable) {
+                $payment = null;
+            }
+            if ($payment instanceof Payment) {
+                return $payment;
+            }
+        }
+
+        if ($this->paymentCode === null) {
+            return null;
+        }
+
+        $paymentCode = $this->paymentCodeRepository->findOneByCode($this->paymentCode);
+        if ($paymentCode === null) {
+            return null;
+        }
+
+        $this->watchedPaymentId = (string) $paymentCode->getPayment()
+            ->getId();
+
+        return $paymentCode->getPayment();
     }
 }

@@ -365,6 +365,9 @@ booking:
   rescheduled: Przełożona
   cancelled: Anulowana
   accept_terms_and_close: Zaakceptuj i zamknij
+  existing_bookings: 'Istniejące rezerwacje'
+  no_child: 'Brak przypisanego dziecka'
+  resume_payment: 'Zapłać'
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
@@ -641,6 +644,9 @@ payment:
   booked: "Utworzono: {date}"
   status_pending: "Oczekująca"
   last_successful_import: "Ostatni udany import"
+  paid_success: "Płatność zaksięgowana!"
+  paid_message: "Dziękujemy za płatność. Twoja rezerwacja została potwierdzona."
+  awaiting: "Oczekiwanie na zaksięgowanie płatności..."
 
 
 action:
@@ -653,3 +659,18 @@ ticket:
     unlimited_24h: Możliwość <b>wielokrotnego</b> przełożenia zajęć do 24h przed rozpoczęciem
     onetime_24h: Możliwość <b>jednorazowego</b> przełożenia zajęć do 24h przed rozpoczęciem
 last_update: "Ostatnia aktualizacja: "
+
+view:
+  grid: Siatka
+  calendar: Kalendarz
+  week_of: Tydzień od
+  today: Dzisiaj
+
+day:
+  Monday: Poniedziałek
+  Tuesday: Wtorek
+  Wednesday: Środa
+  Thursday: Czwartek
+  Friday: Piątek
+  Saturday: Sobota
+  Sunday: Niedziela

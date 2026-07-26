@@ -65,6 +65,29 @@ booking:
   payment_failed: Payment Failed
   payment_pending: Payment Pending
   payment_verification: Verifying your payment...
+  existing_bookings: 'Existing bookings'
+  no_child: 'No child assigned'
+  resume_payment: 'Pay'
+
+payment:
+  paid_success: "Payment received!"
+  paid_message: "Thank you for your payment. Your booking has been confirmed."
+  awaiting: "Waiting for payment confirmation..."
+
+view:
+  grid: Grid
+  calendar: Calendar
+  week_of: Week of
+  today: Today
+
+day:
+  Monday: Monday
+  Tuesday: Tuesday
+  Wednesday: Wednesday
+  Thursday: Thursday
+  Friday: Friday
+  Saturday: Saturday
+  Sunday: Sunday
 
 dashboard:
   status:
