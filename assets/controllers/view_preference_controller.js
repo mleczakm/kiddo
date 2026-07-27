@@ -2,7 +2,6 @@ import { Controller } from '@hotwired/stimulus';
 
 /**
  * Manages view preference (grid/calendar) using localStorage.
- * Syncs preference with LiveComponent on connect and toggle.
  */
 export default class extends Controller {
     static values = {
@@ -16,19 +15,9 @@ export default class extends Controller {
     toggle(event) {
         const button = event.currentTarget;
         const newView = button.dataset.view;
-        
+
         if (newView && (newView === 'grid' || newView === 'calendar')) {
             this.#saveToStorage(newView);
-            
-            // Trigger LiveComponent update
-            const liveComponent = this.element.closest('[data-controller*="live"]');
-            if (liveComponent) {
-                const viewInput = liveComponent.querySelector('[data-model="view"]');
-                if (viewInput) {
-                    viewInput.value = newView;
-                    viewInput.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-            }
         }
     }
 

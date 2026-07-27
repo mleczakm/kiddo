@@ -65,6 +65,11 @@ services:
       $mailboxUsername: '%env(MAILBOX_USERNAME)%'
       $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
 
+  App\Application\CommandHandler\ImportTransfersFromMailHandler:
+    arguments:
+      $mailboxUsername: '%env(MAILBOX_USERNAME)%'
+      $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
+
   logdash:
     class: Logdash\Logdash
     factory: [ 'Logdash\Logdash', 'create' ]

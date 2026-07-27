@@ -1,0 +1,53 @@
+<div {{ attributes }}>
+    {% set bookings = this.getBookings() %}
+    {% if bookings is not empty %}
+        <div class="bg-muted/50 p-4 rounded-lg mb-6">
+            <h3 class="font-semibold mb-3 text-sm">{{ 'booking.existing_bookings'|trans }}</h3>
+            <div class="space-y-2">
+                {% for booking in bookings %}
+                    {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
+                    <div class="flex items-center justify-between p-3 bg-white rounded border {{ isCancelled ? 'opacity-70' : '' }}">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-medium text-sm truncate">{{ booking.child ? booking.child.name : 'booking.no_child'|trans }}</span>
+                                {% if booking.lessons|length > 1 %}
+                                    <span class="inline-flex items-center rounded-full border border-workshop-blue text-workshop-blue px-2 py-0.5 text-xs font-semibold">
+                                        {{ 'dashboard.booking.carnet'|trans }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                {% if booking.payment %}
+                                    {% set statusClass =
+                                        booking.payment.status == 'paid' ? 'border-green-600 bg-green-600 text-white' :
+                                        (booking.payment.status == 'pending' ? 'border-yellow-500 bg-yellow-500 text-white' :
+                                        (booking.payment.status == 'failed' ? 'border-red-600 bg-red-600 text-white' :
+                                        (booking.payment.status == 'refunded' ?  'border-blue-600 bg-blue-600 text-white' :
+                                        'border-gray-400 bg-gray-200 text-gray-700'))) %}
+                                    <div class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 {{ statusClass }}">
+                                        {{ ('dashboard.payment.' ~ booking.payment.status)|trans }}
+                                    </div>
+                                {% else %}
+                                    <span class="inline-flex items-center rounded-full border border-gray-400 bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold">
+                                        {{ 'admin.badges.unpaid'|trans }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 ml-4">
+                            {% if booking.payment and booking.payment.status != 'paid' and booking.payment.paymentCode %}
+                                <button type="button"
+                                        data-action="live#action"
+                                        data-live-action-param="resumePayment"
+                                        data-live-bookingId-param="{{ booking.id }}"
+                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-8 px-3 bg-workshop-red text-white">
+                                    {{ 'booking.pay'|trans }} {{ booking.payment.amount|money }}
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>

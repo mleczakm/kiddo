@@ -12,6 +12,8 @@ use App\Repository\LessonRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\Clock;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -53,6 +55,15 @@ class UpcomingLessons
         private Security $security,
     ) {
         $this->week = Clock::get()->now()->format('Y-m-d');
+    }
+
+    #[LiveAction]
+    public function setView(#[LiveArg('view')] string $newView): void
+    {
+        $this->view = $newView;
+        $this->openSlug = null;
+        $this->openDate = null;
+        $this->openHour = null;
     }
 
     /**

@@ -30,6 +30,7 @@ framework:
             'Symfony\Component\Notifier\Message\MessageInterface': sync
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': sync
             # Keep handler-dispatched commands on sync; nested async is also blocked by PreventAsyncDispatchInTaskWorkerMiddleware
+            'App\Application\Command\AddBooking': sync
             'App\Application\Command\SaveTransfer': sync
             'App\Application\Command\MatchPaymentForTransfer': sync
             'App\Application\Command\SendLoginNotification': sync

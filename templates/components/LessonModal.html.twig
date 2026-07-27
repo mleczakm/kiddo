@@ -105,43 +105,8 @@
                     <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
                 </div>
 
-                {% set existingBookings = this.getExistingBookings() %}
-                {% if existingBookings is not empty %}
-                    <div class="bg-muted/50 p-4 rounded-lg mb-6">
-                        <h3 class="font-semibold mb-3">{{ 'booking.existing_bookings'|trans }}</h3>
-                        <div class="space-y-2">
-                            {% for booking in existingBookings %}
-                                <div class="flex items-center justify-between p-3 bg-white rounded border">
-                                    <div>
-                                        <span class="font-medium">{{ booking.child ? booking.child.name : 'booking.no_child'|trans }}</span>
-                                        <span class="mx-2 text-muted-foreground">•</span>
-                                        {% if booking.payment and booking.payment.status == 'paid' %}
-                                            <span class="inline-flex items-center rounded-full border bg-green-50 border-green-200 text-green-700 px-2 py-0.5 text-xs font-semibold">
-                                                {{ 'admin.badges.paid'|trans }}
-                                            </span>
-                                        {% else %}
-                                            <span class="inline-flex items-center rounded-full border bg-gray-50 border-gray-200 text-gray-600 px-2 py-0.5 text-xs font-semibold">
-                                                {{ 'admin.badges.unpaid'|trans }}
-                                            </span>
-                                        {% endif %}
-                                    </div>
-                                    {% if booking.payment and booking.payment.status != 'paid' and booking.payment.paymentCode %}
-                                        <button type="button"
-                                                data-action="live#action"
-                                                data-live-action-param="resumePayment"
-                                                data-live-bookingId-param="{{ booking.id }}"
-                                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-8 px-3 bg-workshop-red text-white">
-                                            {{ 'booking.resume_payment'|trans }}
-                                        </button>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
+                {{ component('BookingPreviewComponent', {lesson: lesson}) }}
                 <div class="space-y-6 mt-6">
-                    <div class="w-full h-48 md:h-60 rounded-lg bg-cover bg-center"
-                         style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     </div>
 
@@ -471,7 +436,7 @@
                                     <select data-model="selectedChildId" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                         <option value="">{{ 'booking.child.none'|trans({'default':'No child'}) }}</option>
                                         {% for c in children %}
-                                            <option value="{{ c.id }}">{{ c.name }}{% if c.birthday %} ({{ c.birthday }}){% endif %}</option>
+                                            <option value="{{ c.id }}" {% if selectedChildId == c.id %}selected{% endif %}>{{ c.name }}{% if c.birthday %} ({{ c.birthday }}){% endif %}</option>
                                         {% endfor %}
                                     </select>
                                 {% else %}

@@ -324,6 +324,7 @@ booking:
   reason_for_cancellation: 'Powód anulowania:'
   child:
     label: 'Dziecko'
+    none: 'Brak dziecka'
     no_children: 'Brak dodanych dzieci'
     add_now: 'Dodaj teraz'
   reason_refund_description: 'Otrzymasz zwrot środków zgodnie z naszą polityką zwrotów'
@@ -368,6 +369,7 @@ booking:
   existing_bookings: 'Istniejące rezerwacje'
   no_child: 'Brak przypisanego dziecka'
   resume_payment: 'Zapłać'
+  pay: 'Zapłać'
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"

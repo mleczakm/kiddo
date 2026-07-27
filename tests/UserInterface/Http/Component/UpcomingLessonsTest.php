@@ -432,4 +432,42 @@ class UpcomingLessonsTest extends TestCase
         $attributes = $limitProperty->getAttributes();
         $this->assertNotEmpty($attributes);
     }
+
+    public function testSetViewResetsModalProperties(): void
+    {
+        // Set up modal properties
+        $this->component->openSlug = 'balaganki';
+        $this->component->openDate = '2024-02-21';
+        $this->component->openHour = '10:30';
+        $this->component->view = 'grid';
+
+        // Call setView
+        $this->component->setView('calendar');
+
+        // Verify view changed
+        $this->assertEquals('calendar', $this->component->view);
+
+        // Verify modal properties reset
+        $this->assertNull($this->component->openSlug);
+        $this->assertNull($this->component->openDate);
+        $this->assertNull($this->component->openHour);
+    }
+
+    public function testSetViewDoesNotAffectOtherProperties(): void
+    {
+        $this->component->query = 'test query';
+        $this->component->age = 5;
+        $this->component->week = '2024-02-20';
+        $this->component->limit = 3;
+        $this->component->showSearch = false;
+
+        $this->component->setView('calendar');
+
+        // These should remain unchanged
+        $this->assertEquals('test query', $this->component->query);
+        $this->assertEquals(5, $this->component->age);
+        $this->assertEquals('2024-02-20', $this->component->week);
+        $this->assertEquals(3, $this->component->limit);
+        $this->assertFalse($this->component->showSearch);
+    }
 }

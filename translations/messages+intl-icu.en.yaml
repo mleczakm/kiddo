@@ -21,6 +21,11 @@ form:
 booking:
   cancel:
   cancel_booking: Cancel Booking
+  child:
+    label: Child
+    none: No child
+    no_children: No children added
+    add_now: Add now
   cancel_confirmation: Are you sure you want to cancel this booking?
   reason_for_cancellation: Reason for Cancellation
   reason_reschedule: Reschedule to another lesson
@@ -68,6 +73,7 @@ booking:
   existing_bookings: 'Existing bookings'
   no_child: 'No child assigned'
   resume_payment: 'Pay'
+  pay: 'Pay'
 
 payment:
   paid_success: "Payment received!"
