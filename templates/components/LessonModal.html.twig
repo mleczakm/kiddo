@@ -434,10 +434,10 @@
                                 {% set children = this.getChildren %}
                                 {% if children is not empty %}
                                     <select data-model="selectedChildId" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                                        <option value="">{{ 'booking.child.none'|trans({'default':'No child'}) }}</option>
                                         {% for c in children %}
-                                            <option value="{{ c.id }}" {% if selectedChildId == c.id %}selected{% endif %}>{{ c.name }}{% if c.birthday %} ({{ c.birthday }}){% endif %}</option>
+                                            <option value="{{ c.id }}" {% if selectedChildId == c.id or (selectedChildId is null and loop.first) %}selected{% endif %}>{{ c.name }}{% if c.birthday %} ({{ c.birthday }}){% endif %}</option>
                                         {% endfor %}
+                                        <option value="">{{ 'booking.child.none'|trans({'default':'No child'}) }}</option>
                                     </select>
                                 {% else %}
                                     <div class="text-sm text-muted-foreground">
