@@ -6,7 +6,7 @@
   "name": "mleczakm/kiddo",
   "description": "App for bookings",
   "require": {
-    "php": ">=8.4",
+    "php": ">=8.5",
     "ext-ctype": "*",
     "ext-ds": "*",
     "ext-iconv": "*",
