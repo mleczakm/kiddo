@@ -327,6 +327,8 @@ booking:
     none: 'Brak dziecka'
     no_children: 'Brak dodanych dzieci'
     add_now: 'Dodaj teraz'
+    optional: 'Dziecko (opcjonalnie)'
+    select: '-- Wybierz dziecko --'
   reason_refund_description: 'Otrzymasz zwrot środków zgodnie z naszą polityką zwrotów'
   no_available_lessons: 'Brak dostępnych terminów do przełożenia'
   available_lessons_count: 'Dostępne terminy: {count}'
@@ -536,6 +538,11 @@ admin_users:
     role: Rola
     status: Status
     actions: Akcje
+    children: Dzieci
+  children:
+    title: Dzieci
+    empty: Brak zarejestrowanych dzieci
+    no_birthday: Brak daty urodzenia
   status:
     active: Aktywny
   actions:

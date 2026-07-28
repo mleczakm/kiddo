@@ -105,7 +105,7 @@
                                 <table class="w-full caption-bottom text-sm">
                                     <thead class="[&_tr]:border-b">
                                     <tr class="border-b">
-                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'User'|trans }}</th>
+                                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.upcoming_lessons.attendees'|trans }}</th>
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'Status'|trans }}</th>
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'Attendance'|trans }}</th>
                                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'Notes'|trans }}</th>
@@ -115,8 +115,7 @@
                                     {% for booking in lesson.bookings %}
                                         <tr class="border-b">
                                             <td class="p-4 align-middle">
-                                                {{ booking.user.name }}
-                                                <div class="text-xs text-muted-foreground">{{ booking.user.email }}</div>
+                                                {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
                                             </td>
                                             <td class="p-4 align-middle">
                                                 {% set status = booking.status %}

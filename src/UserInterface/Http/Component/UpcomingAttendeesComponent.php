@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Entity\Booking;
+use App\Entity\Child;
 use App\Entity\Lesson;
-use App\Entity\User;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
+use App\Entity\User;
+use App\Repository\BookingRepository;
+use App\Repository\ChildRepository;
 use App\Repository\LessonRepository;
 use App\Repository\UserRepository;
-use App\Repository\BookingRepository;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,6 +49,9 @@ final class UpcomingAttendeesComponent extends AbstractController
 
     #[LiveProp(writable: true)]
     public ?string $selectedUserId = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $selectedChildId = null;
 
     #[LiveProp(writable: true)]
     public string $customerEmail = '';
@@ -102,6 +107,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         private readonly LessonRepository $lessonRepository,
         private readonly UserRepository $userRepository,
         private readonly BookingRepository $bookingRepository,
+        private readonly ChildRepository $childRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
         $this->week = Clock::get()->now()->format('Y-m-d');
@@ -387,6 +393,24 @@ final class UpcomingAttendeesComponent extends AbstractController
         return $result;
     }
 
+    /**
+     * @return array<int, Child>
+     */
+    public function getSelectedUserChildren(): array
+    {
+        if (! $this->selectedUserId) {
+            return [];
+        }
+
+        $user = $this->userRepository->find((int) $this->selectedUserId);
+        if (! $user instanceof User) {
+            return [];
+        }
+
+        return $user->getChildren()
+            ->toArray();
+    }
+
     #[LiveAction]
     public function selectExistingUser(#[LiveArg] int $userId): void
     {
@@ -396,6 +420,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             return;
         }
         $this->selectedUserId = (string) $user->getId();
+        $this->selectedChildId = null;
 
         $this->customerEmail = $user->getEmail();
         $this->customerName = $user->getName();
@@ -407,6 +432,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     public function clearSelectedUser(): void
     {
         $this->selectedUserId = null;
+        $this->selectedChildId = null;
         $this->userSearch = null;
         $this->customerEmail = '';
         $this->customerName = '';
@@ -465,6 +491,14 @@ final class UpcomingAttendeesComponent extends AbstractController
         if ($this->notes !== '') {
             $booking->setNotes($this->notes);
         }
+
+        if ($this->selectedChildId) {
+            $child = $this->childRepository->find(Ulid::fromString($this->selectedChildId));
+            if ($child instanceof Child && $child->getOwner()->getId() === $user->getId()) {
+                $booking->setChild($child);
+            }
+        }
+
         $booking->setStatus(Booking::STATUS_ACTIVE);
 
         $this->entityManager->persist($booking);

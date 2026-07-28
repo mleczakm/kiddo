@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Assembler;
 
 use App\Entity\Booking;
+use App\Entity\Child;
 use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\User;
@@ -44,6 +45,11 @@ class BookingAssembler extends EntityAssembler
         return $this->with('notes', $notes);
     }
 
+    public function withChild(?Child $child): static
+    {
+        return $this->with('child', $child);
+    }
+
     public function withCreatedAt(\DateTimeImmutable $createdAt): static
     {
         return $this->with('createdAt', $createdAt);
@@ -81,6 +87,12 @@ class BookingAssembler extends EntityAssembler
             /** @var string|null $notes */
             $notes = $this->properties['notes'];
             $booking->setNotes($notes);
+        }
+
+        if (array_key_exists('child', $this->properties)) {
+            /** @var Child|null $child */
+            $child = $this->properties['child'];
+            $booking->setChild($child);
         }
 
         if (isset($this->properties['createdAt'])) {

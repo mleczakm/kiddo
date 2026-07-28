@@ -3,9 +3,13 @@
 
 <ul>
     {% for lesson in lessons %}
+        {% set booking = bookings|filter(b => b.lessons.contains(lesson))|first %}
         <li>
             <strong>{{ lesson.metadata.title }}</strong>
             ({{ lesson.metadata.schedule|format_datetime(pattern='EEEE, HH:mm, dd MMM') }})
+            {% if booking and booking.child %}
+                - {{ booking.child.name }}{% if booking.child.ageYears %} ({{ booking.child.ageYears }} {{ 'profile.children.years'|trans({}, 'messages') }}){% endif %}
+            {% endif %}
         </li>
     {% endfor %}
 </ul>

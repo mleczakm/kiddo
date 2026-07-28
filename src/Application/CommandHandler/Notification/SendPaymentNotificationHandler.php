@@ -63,6 +63,7 @@ readonly class SendPaymentNotificationHandler
             'payment' => $payment,
             'reference' => $firstBooking->getId(),
             'lessons' => $lessons,
+            'bookings' => $bookings,
         ]);
         $notification = new Notification()
             ->importance('')
@@ -92,6 +93,7 @@ readonly class SendPaymentNotificationHandler
                 'user' => $firstBooking->getUser(),
                 'payment' => $payment,
                 'lessons' => $lessons,
+                'bookings' => $bookings,
             ]);
             $notification = new Notification()
                 ->importance('')
