@@ -37,9 +37,9 @@
                         <div class="flex items-center gap-2 ml-4">
                             {% if booking.payment and booking.payment.status != 'paid' and booking.payment.paymentCode %}
                                 <button type="button"
-                                        data-action="live#action"
-                                        data-live-action-param="resumePayment"
-                                        data-live-bookingId-param="{{ booking.id }}"
+                                        data-action="live#emitUp"
+                                        data-live-event-param="resumePayment"
+                                        data-live-booking-id-param="{{ booking.id }}"
                                         class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-8 px-3 bg-workshop-red text-white">
                                     {{ 'booking.pay'|trans }} {{ booking.payment.amount|money }}
                                 </button>

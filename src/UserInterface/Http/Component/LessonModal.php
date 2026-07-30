@@ -24,6 +24,7 @@ use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -362,6 +363,7 @@ class LessonModal extends AbstractController
     }
 
     #[LiveAction]
+    #[LiveListener('resumePayment')]
     public function resumePayment(#[LiveArg] string $bookingId): void
     {
         if ($this->lesson === null) {
