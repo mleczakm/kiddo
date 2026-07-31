@@ -28,7 +28,16 @@ booking:
     add_now: Add now
     optional: Child (optional)
     select: '-- Select child --'
+    empty_title: Add a child to your profile
+    empty_hint: You can assign a child name to the booking — it helps with attendance lists.
+  phone:
+    label: Phone number
+    placeholder: e.g. 500 600 700
+    required: Phone number is required when purchasing a ticket.
+    invalid: Enter a valid phone number.
   cancel_confirmation: Are you sure you want to cancel this booking?
+  late_cancel_warning: 'The lesson starts in less than 24 hours. You can still cancel, but there will be no refund.'
+  late_cancel_confirm: 'I understand there will be no refund'
   reason_for_cancellation: Reason for Cancellation
   reason_reschedule: Reschedule to another lesson
   reason_refund: Request a refund
@@ -80,11 +89,66 @@ booking:
 profile:
   children:
     years: 'years'
+  phone: Phone number
+  phone.empty: Not provided
+  phone.placeholder: e.g. 500 600 700
+  phone.invalid: Enter a valid phone number.
 
 payment:
   paid_success: "Payment received!"
   paid_message: "Thank you for your payment. Your booking has been confirmed."
   awaiting: "Waiting for payment confirmation..."
+
+notifications:
+  title: Notifications
+  loading: Loading…
+  empty: No new notifications.
+  dismiss: Dismiss
+  my_bookings: My bookings
+  profile_settings: Profile settings
+  admin_panel: Admin panel
+  logout: Log out
+  impersonate: Impersonate
+  impersonate_placeholder: User email
+  stop_impersonation: Return to my account
+  in_app:
+    reservation:
+      title: Booking created
+      body: 'Your booking is awaiting payment. Code: <strong>{code}</strong> ({amount} PLN).'
+    payment:
+      user:
+        title: Payment confirmed
+        body: 'We received your payment of <strong>{amount} PLN</strong> for <em>{lesson}</em>.'
+      admin:
+        title: New payment
+        body: 'User <strong>{email}</strong> paid <strong>{amount} PLN</strong> for <em>{lesson}</em>.'
+    cancellation:
+      title: Booking cancelled
+      body: 'Booking for <strong>{lesson}</strong> ({date}) was cancelled.'
+    cancellation_admin:
+      title: Booking cancelled (no payment)
+      body: 'Booking for <strong>{lesson}</strong> ({date}) by <strong>{email}</strong> was automatically cancelled due to no payment.'
+    new_user:
+      user:
+        title: Welcome!
+        body: 'Your account is active. You can start booking workshops.'
+      admin:
+        title: New user
+        body: '<strong>{name}</strong> (<em>{email}</em>) just registered.'
+    reschedule:
+      admin:
+        title: Booking rescheduled
+        body: 'User <strong>{email}</strong> moved a booking from <em>{from}</em> to <em>{to}</em>.'
+    transfer_not_matched:
+      title: Unmatched transfer
+      body: 'Transfer <strong>{amount}</strong> from <em>{sender}</em> ({title}) was not matched.'
+    daily_reminder:
+      user:
+        title: Workshop reminder
+        body: 'Today ({date}) you have: <strong>{lessons}</strong>.'
+      admin:
+        title: Daily schedule
+        body: 'There are <strong>{count}</strong> lessons scheduled for today ({date}).'
 
 view:
   grid: Grid

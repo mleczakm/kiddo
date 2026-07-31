@@ -64,6 +64,44 @@ notifications:
   impersonate: Podszyj się
   impersonate_placeholder: Email użytkownika
   stop_impersonation: Powrót do mojego konta
+  in_app:
+    reservation:
+      title: Rezerwacja utworzona
+      body: 'Twoja rezerwacja czeka na płatność. Kod: <strong>{code}</strong> ({amount} zł).'
+    payment:
+      user:
+        title: Płatność potwierdzona
+        body: 'Otrzymaliśmy płatność <strong>{amount} zł</strong> za <em>{lesson}</em>.'
+      admin:
+        title: Nowa płatność
+        body: 'Użytkownik <strong>{email}</strong> zapłacił <strong>{amount} zł</strong> za <em>{lesson}</em>.'
+    cancellation:
+      title: Rezerwacja anulowana
+      body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) została anulowana.'
+    cancellation_admin:
+      title: Rezerwacja anulowana (brak wpłaty)
+      body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) użytkownika <strong>{email}</strong> została automatycznie anulowana z powodu braku płatności.'
+    new_user:
+      user:
+        title: Witamy!
+        body: 'Konto zostało aktywowane. Możesz już rezerwować zajęcia.'
+      admin:
+        title: Nowy użytkownik
+        body: 'Zarejestrował się <strong>{name}</strong> (<em>{email}</em>).'
+    reschedule:
+      admin:
+        title: Przeniesienie rezerwacji
+        body: 'Użytkownik <strong>{email}</strong> przeniósł rezerwację z <em>{from}</em> na <em>{to}</em>.'
+    transfer_not_matched:
+      title: Nieprzypisany przelew
+      body: 'Przelew <strong>{amount}</strong> od <em>{sender}</em> ({title}) nie został dopasowany.'
+    daily_reminder:
+      user:
+        title: Przypomnienie o zajęciach
+        body: 'Dziś ({date}) masz: <strong>{lessons}</strong>.'
+      admin:
+        title: Harmonogram dnia
+        body: 'Na dziś ({date}) zaplanowano <strong>{count}</strong> zajęć.'
 
 # Workshop related translations
 workshop:
@@ -307,6 +345,10 @@ profile:
   section_heading: Informacje o użytkowniku
   name: Imie
   email: Adres e-mail
+  phone: Numer telefonu
+  phone.empty: Nie podano
+  phone.placeholder: np. 500 600 700
+  phone.invalid: Wprowadź poprawny numer telefonu.
   edit_profile: Edytuj profil
   account_actions: Akcje dostępne na koncie
   update_success: Profil został pomyślnie zaktualizowany.
@@ -321,6 +363,8 @@ booking:
   cancel: Anuluj rezerwację
   cancel_booking: Anuluj rezerwację
   cancel_confirmation: 'Czy na pewno chcesz anulować tę rezerwację?'
+  late_cancel_warning: 'Zajęcia zaczynają się za mniej niż 24 godziny. Anulowanie jest możliwe, ale bez zwrotu kosztów.'
+  late_cancel_confirm: 'Potwierdzam, że rozumiem brak zwrotu kosztów'
   reason_for_cancellation: 'Powód anulowania:'
   child:
     label: 'Dziecko'
@@ -329,6 +373,13 @@ booking:
     add_now: 'Dodaj teraz'
     optional: 'Dziecko (opcjonalnie)'
     select: '-- Wybierz dziecko --'
+    empty_title: 'Dodaj dziecko do profilu'
+    empty_hint: 'Możesz przypisać imię dziecka do rezerwacji — ułatwia to listę obecności.'
+  phone:
+    label: 'Numer telefonu'
+    placeholder: 'np. 500 600 700'
+    required: 'Numer telefonu jest wymagany przy zakupie biletu.'
+    invalid: 'Wprowadź poprawny numer telefonu.'
   reason_refund_description: 'Otrzymasz zwrot środków zgodnie z naszą polityką zwrotów'
   no_available_lessons: 'Brak dostępnych terminów do przełożenia'
   available_lessons_count: 'Dostępne terminy: {count}'
@@ -552,6 +603,7 @@ admin:
   badges:
     paid: 'Opłacone'
     unpaid: 'Nieopłacone'
+    pending: 'Oczekuje na płatność'
   title: 'Panel Administratora'
   tabs:
     dashboard: 'Pulpit'
@@ -667,6 +719,7 @@ ticket:
   reschedule:
     unlimited_24h: Możliwość <b>wielokrotnego</b> przełożenia zajęć do 24h przed rozpoczęciem
     onetime_24h: Możliwość <b>jednorazowego</b> przełożenia zajęć do 24h przed rozpoczęciem
+    not_allowed: Brak możliwości przełożenia zajęć
 last_update: "Ostatnia aktualizacja: "
 
 view:

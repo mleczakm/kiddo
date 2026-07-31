@@ -26,6 +26,7 @@ reservation:
   payment_title: 'W tytule przelewu wpisz poniższy kod:'
   confirmation_after_payment: 'Rezerwacja zostanie potwierdzona po zaksięgowaniu płatności.'
   bank_transfer_option: 'Jeśli wolisz, możesz dokonać przelewu na konto: <span style="color: #e34646; white-space: nowrap;">{bankAccountNumber}</span>.'
+  child: 'Dziecko: {childName}'
 
 importance:
   high: uwaga
@@ -146,6 +147,16 @@ booking_cancellation:
 
     Pozdrawiamy,
     Zespół Warsztatowni Sensorycznej
+  admin:
+    subject: 'Rezerwacja anulowana (brak wpłaty) - {user} - {date}'
+    content: |
+      Dzień dobry,
+
+      Rezerwacja użytkownika {user} ({email}) na zajęcia {lesson} w dniu {date} została automatycznie anulowana z powodu braku płatności.
+
+      ID rezerwacji: {booking_id}
+
+      Zaloguj się do panelu administracyjnego, aby zobaczyć szczegóły.
 
 lesson_rescheduled_by_admin_notification:
   subject: 'Twoje zajęcia zostały przełożone'
