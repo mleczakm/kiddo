@@ -18,7 +18,6 @@ use App\Repository\PaymentRepository;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
-use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -116,7 +115,6 @@ class LessonModal extends AbstractController
     {
         $this->modalOpened = true;
         $this->phoneError = null;
-        $this->prefillPhone();
 
         if ($this->lesson !== null && $this->selectedTicketType === null) {
             $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
@@ -185,7 +183,6 @@ class LessonModal extends AbstractController
     {
         $this->paymentModal = true;
         $this->phoneError = null;
-        $this->prefillPhone();
     }
 
     #[LiveAction]
@@ -303,7 +300,7 @@ class LessonModal extends AbstractController
                 return;
             }
 
-            if (! $this->persistPhone($user)) {
+            if (! $this->ensurePhoneOnAccount($user)) {
                 return;
             }
 
@@ -331,24 +328,22 @@ class LessonModal extends AbstractController
         $this->paymentStatus = 'error';
     }
 
-    private function prefillPhone(): void
+    public function needsPhone(): bool
     {
-        if ($this->phone !== '') {
-            return;
-        }
-
         /** @var ?User $user */
         $user = $this->getUser();
-        if (! $user instanceof User || $user->getPhone() === null) {
-            return;
-        }
 
-        $this->phone = PhoneNumberUtil::getInstance()->format($user->getPhone(), PhoneNumberFormat::NATIONAL);
+        return $user instanceof User && $user->getPhone() === null;
     }
 
-    private function persistPhone(User $user): bool
+    private function ensurePhoneOnAccount(User $user): bool
     {
         $this->phoneError = null;
+
+        if ($user->getPhone() !== null) {
+            return true;
+        }
+
         $raw = trim($this->phone);
         if ($raw === '') {
             $this->phoneError = 'booking.phone.required';

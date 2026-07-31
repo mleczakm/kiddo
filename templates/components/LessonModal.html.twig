@@ -430,6 +430,7 @@
                             <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>
 
                             <div class="mt-4 space-y-4">
+                                {% if this.needsPhone %}
                                 <div>
                                     <label class="text-sm font-medium leading-none block mb-1" for="booking-phone">{{ 'booking.phone.label'|trans }}</label>
                                     <input
@@ -440,10 +441,12 @@
                                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                                         required
                                     >
+                                    <p class="text-xs text-muted-foreground mt-1">{{ 'booking.phone.account_hint'|trans }}</p>
                                     {% if phoneError %}
                                         <p class="text-sm text-red-600 mt-1">{{ phoneError|trans }}</p>
                                     {% endif %}
                                 </div>
+                                {% endif %}
                                 <div>
                                     <label class="text-sm font-medium leading-none block mb-1">{{ 'booking.child.optional'|trans }}</label>
                                     {% set children = this.getChildren %}

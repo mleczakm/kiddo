@@ -260,7 +260,7 @@
                 {% if this.canShowCancelTab %}
                 <div role="tabpanel" class="space-y-4 {{ not this.isTabActive('cancel') ? 'hidden' : '' }}"
                      data-state="{{ this.getTabState('cancel') }}">
-                    {% if this.isLateCancellation %}
+                    {% if this.requiresLateCancelAcknowledgment %}
                         <div class="rounded-lg border border-workshop-red/40 bg-workshop-red/5 p-4 text-sm text-workshop-brown">
                             <p class="font-medium mb-3">{{ 'booking.late_cancel_warning'|trans }}</p>
                             <label class="flex items-start gap-2 cursor-pointer">

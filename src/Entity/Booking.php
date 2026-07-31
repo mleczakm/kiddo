@@ -429,7 +429,9 @@ class Booking
 
     public function canRequestRefundForLesson(Lesson $lesson): bool
     {
-        return $this->canRequestRefund() && $lesson->cancellationAvailable();
+        return $this->canRequestRefund()
+            && $lesson->cancellationAvailable()
+            && $this->hasPaidPayment();
     }
 
     public function canCancelLesson(Lesson $lesson): bool
@@ -438,6 +440,18 @@ class Booking
             && $lesson->future()
             && $this->getLessonsMap()
                 ->isActiveLesson($lesson->getId());
+    }
+
+    public function requiresNoRefundCancelWarning(Lesson $lesson): bool
+    {
+        return $this->canCancelLesson($lesson)
+            && ! $lesson->cancellationAvailable()
+            && $this->hasPaidPayment();
+    }
+
+    public function hasPaidPayment(): bool
+    {
+        return $this->payment?->getStatus() === Payment::STATUS_PAID;
     }
 
     public function isCancelled(): bool
