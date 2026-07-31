@@ -37,6 +37,7 @@ class ProfileComponent extends AbstractController
     public string $email = '';
 
     #[LiveProp(writable: true)]
+    #[Assert\NotBlank(message: 'profile.phone.required')]
     public string $phone = '';
 
     #[LiveProp]
@@ -82,19 +83,20 @@ class ProfileComponent extends AbstractController
 
         $rawPhone = trim($this->phone);
         if ($rawPhone === '') {
-            $user->setPhone(null);
-        } else {
-            try {
-                $parsed = PhoneNumberUtil::getInstance()->parse($rawPhone, 'PL');
-                if (! PhoneNumberUtil::getInstance()->isValidNumber($parsed)) {
-                    $this->phoneError = 'profile.phone.invalid';
-                    return;
-                }
-                $user->setPhone($parsed);
-            } catch (NumberParseException) {
+            $this->phoneError = 'profile.phone.required';
+            return;
+        }
+
+        try {
+            $parsed = PhoneNumberUtil::getInstance()->parse($rawPhone, 'PL');
+            if (! PhoneNumberUtil::getInstance()->isValidNumber($parsed)) {
                 $this->phoneError = 'profile.phone.invalid';
                 return;
             }
+            $user->setPhone($parsed);
+        } catch (NumberParseException) {
+            $this->phoneError = 'profile.phone.invalid';
+            return;
         }
 
         $this->entityManager->flush();

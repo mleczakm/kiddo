@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Entity;
 
 use App\Entity\Booking;
+use App\Entity\Payment;
 use App\Entity\TicketOption;
 use App\Entity\TicketReschedulePolicy;
 use App\Entity\TicketType;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
+use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
 use PHPUnit\Framework\Attributes\Group;
@@ -43,6 +45,7 @@ final class BookingReschedulePolicyTest extends TestCase
             ->withUser(UserAssembler::new()->assemble())
             ->withLessons($lesson)
             ->withStatus(Booking::STATUS_ACTIVE)
+            ->withPayment(PaymentAssembler::new() ->withStatus(Payment::STATUS_PAID) ->assemble())
             ->assemble();
 
         self::assertTrue($booking->canRescheduleLesson($lesson));
@@ -119,10 +122,31 @@ final class BookingReschedulePolicyTest extends TestCase
         $booking = BookingAssembler::new()
             ->withLessons($lesson)
             ->withStatus(Booking::STATUS_ACTIVE)
+            ->withPayment(PaymentAssembler::new() ->withStatus(Payment::STATUS_PAID) ->assemble())
             ->assemble();
 
         self::assertTrue($booking->canCancelLesson($lesson));
         self::assertFalse($booking->canRequestRefundForLesson($lesson));
         self::assertFalse($booking->canRescheduleLesson($lesson));
+        self::assertTrue($booking->requiresNoRefundCancelWarning($lesson));
+    }
+
+    #[Test]
+    public function unpaidLateCancelDoesNotRequireNoRefundWarning(): void
+    {
+        self::mockTime('2026-07-10 09:00:00');
+
+        $lesson = LessonAssembler::new()
+            ->withSchedule(new \DateTimeImmutable('2026-07-10 18:00:00'))
+            ->assemble();
+
+        $booking = BookingAssembler::new()
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_PENDING)
+            ->assemble();
+
+        self::assertTrue($booking->canCancelLesson($lesson));
+        self::assertFalse($booking->requiresNoRefundCancelWarning($lesson));
+        self::assertFalse($booking->canRequestRefundForLesson($lesson));
     }
 }

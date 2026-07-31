@@ -98,6 +98,13 @@ class BookingCancellationModal extends AbstractController
         return $this->lesson !== null && ! $this->lesson->cancellationAvailable();
     }
 
+    public function requiresLateCancelAcknowledgment(): bool
+    {
+        return $this->booking !== null
+            && $this->lesson !== null
+            && $this->booking->requiresNoRefundCancelWarning($this->lesson);
+    }
+
     public function canShowRescheduleTab(): bool
     {
         return $this->canBeRescheduled();
@@ -106,6 +113,10 @@ class BookingCancellationModal extends AbstractController
     public function canShowRefundTab(): bool
     {
         if (! $this->booking || ! $this->lesson) {
+            return false;
+        }
+
+        if (! $this->booking->hasPaidPayment()) {
             return false;
         }
 
@@ -160,7 +171,7 @@ class BookingCancellationModal extends AbstractController
             throw new \RuntimeException('User not authenticated or invalid user type');
         }
 
-        if ($typeParam === 'cancel' && $this->isLateCancellation() && ! $this->lateCancelAcknowledged && ! $this->isAdmin()) {
+        if ($typeParam === 'cancel' && $this->requiresLateCancelAcknowledgment() && ! $this->lateCancelAcknowledged && ! $this->isAdmin()) {
             throw new \RuntimeException('Late cancellation must be acknowledged');
         }
 
@@ -247,7 +258,7 @@ class BookingCancellationModal extends AbstractController
             return $this->selectedLessonId === null;
         }
 
-        if ($this->selectedOption === 'cancel' && $this->isLateCancellation() && ! $this->isAdmin()) {
+        if ($this->selectedOption === 'cancel' && $this->requiresLateCancelAcknowledgment() && ! $this->isAdmin()) {
             return ! $this->lateCancelAcknowledged;
         }
 

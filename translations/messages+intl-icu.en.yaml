@@ -33,7 +33,8 @@ booking:
   phone:
     label: Phone number
     placeholder: e.g. 500 600 700
-    required: Phone number is required when purchasing a ticket.
+    required: Enter a phone number to complete the order.
+    account_hint: The number will be saved to your account.
     invalid: Enter a valid phone number.
   cancel_confirmation: Are you sure you want to cancel this booking?
   late_cancel_warning: 'The lesson starts in less than 24 hours. You can still cancel, but there will be no refund.'
@@ -92,6 +93,7 @@ profile:
   phone: Phone number
   phone.empty: Not provided
   phone.placeholder: e.g. 500 600 700
+  phone.required: Phone number is required.
   phone.invalid: Enter a valid phone number.
 
 payment:
