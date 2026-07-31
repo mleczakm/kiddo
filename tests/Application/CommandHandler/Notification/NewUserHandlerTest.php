@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler\Notification;
 
+use App\Entity\Notification;
 use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\NewUser;
 use App\Application\CommandHandler\Notification\NewUserHandler;
@@ -78,6 +79,9 @@ class NewUserHandlerTest extends KernelTestCase
                 $this->assertStringContainsString($userName, $body);
             }
         }
+
+        $notifications = $em->getRepository(Notification::class)->findAll();
+        self::assertCount(3, $notifications);
     }
 
     public function testDoesNotSendEmailsIfUserAlreadyConfirmed(): void

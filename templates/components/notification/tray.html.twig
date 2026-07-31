@@ -1,11 +1,12 @@
-{# List of notifications. Expect 'items' variable. #}
+{# List of notifications. Expect 'items' variable. Prefer NotificationTrayLiveComponent. #}
 {% if items is empty %}
   <div class="text-sm text-muted-foreground p-3">{{ 'notifications.empty'|trans }}</div>
 {% else %}
   {% for n in items %}
     {% set sev = n.severity.value ?? 'info' %}
-    {% set color = sev == 'success' ? 'text-green-600' : (sev == 'warning' ? 'text-yellow-600' : (sev == 'error' ? 'text-red-600' : 'text-blue-600')) %}
-    <div class="p-2 rounded-md transition-colors hover:bg-muted/50 flex items-start gap-2" data-id="{{ n.id }}" data-severity="{{ sev }}">
+    {% set unread = n.unread %}
+    {% set color = sev == 'success' ? 'text-green-500' : (sev == 'warning' ? 'text-yellow-500' : (sev == 'error' ? 'text-red-500' : 'text-blue-500')) %}
+    <div class="p-2 rounded-md transition-colors flex items-start gap-2 {{ unread ? 'bg-accent/20 hover:bg-accent/30' : 'hover:bg-accent/50' }}" data-id="{{ n.id }}" data-severity="{{ sev }}">
       <div class="mt-0.5 {{ color }}">
         {% if sev == 'success' %}
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
@@ -17,18 +18,16 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
         {% endif %}
       </div>
-      <div class="flex-1">
-        {% if n.url %}
-          <a href="{{ n.url }}" class="block text-sm font-medium text-workshop-brown notif-item" data-action="open" data-id="{{ n.id }}">{{ n.title }}</a>
-        {% else %}
-          <div class="block text-sm font-medium text-workshop-brown">{{ n.title }}</div>
-        {% endif %}
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-1">
+          <p class="text-sm font-medium truncate">{{ n.title }}</p>
+          {% if unread %}<span class="w-2 h-2 bg-primary rounded-full shrink-0"></span>{% endif %}
+        </div>
         {% if n.body %}
-          <div class="text-sm text-muted-foreground">{{ n.body }}</div>
+          <div class="text-xs text-muted-foreground mt-1 line-clamp-2">{{ n.body|raw }}</div>
         {% endif %}
         <div class="text-xs text-muted-foreground mt-1">{{ n.createdAt|format_datetime(pattern: 'dd MMM, HH:mm') }}</div>
       </div>
-      <button class="text-muted-foreground hover:text-red-600 notif-delete" title="{{ 'notifications.dismiss'|trans }}" data-id="{{ n.id }}">×</button>
     </div>
   {% endfor %}
 {% endif %}

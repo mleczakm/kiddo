@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler\Notification;
 
+use App\Entity\Notification;
 use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
 use App\Application\CommandHandler\Notification\SendPaymentNotificationHandler;
@@ -92,5 +93,11 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         self::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
         self::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
         self::assertStringContainsString('niedziela 24 sie', (string) $userEmail->getHtmlBody());
+
+        $notifications = $em->getRepository(Notification::class)->findAll();
+        self::assertCount(3, $notifications); // user + 2 admins
+        $titles = array_map(static fn(Notification $n) => $n->getTitle(), $notifications);
+        self::assertContains('Płatność potwierdzona', $titles);
+        self::assertContains('Nowa płatność', $titles);
     }
 }

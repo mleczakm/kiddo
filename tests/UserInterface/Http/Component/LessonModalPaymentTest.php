@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
 use App\Entity\WorkshopType;
@@ -98,6 +99,126 @@ final class LessonModalPaymentTest extends WebTestCase
         $this->assertSame('awaiting_payment', $lessonModal->paymentStatus);
         $this->assertNotNull($lessonModal->getPaymentAmount());
         $this->assertSame((string) $booking->getId(), $lessonModal->resumedBookingId);
+    }
+
+    public function testResumePaymentViaEventFromBookingPreview(): void
+    {
+        Clock::set(new MockClock('2024-02-20 08:00:00'));
+
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()->assemble();
+        $series = SeriesAssembler::new()
+            ->withType(WorkshopType::ONE_TIME)
+            ->assemble();
+        $lesson = LessonAssembler::new()
+            ->withMetadata(
+                LessonMetadataAssembler::new()
+                    ->withTitle('Sensory')
+                    ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+                    ->assemble()
+            )
+            ->assemble();
+        $lesson->setSeries($series);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of(45, 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $paymentCode = new PaymentCode($payment, 'XY99');
+        $booking = BookingAssembler::new()
+            ->withUser($user)
+            ->withPayment($payment)
+            ->withLessons($lesson)
+            ->assemble();
+
+        $em->persist($user);
+        $em->persist($series);
+        $em->persist($lesson);
+        $em->persist($payment);
+        $em->persist($paymentCode);
+        $em->persist($booking);
+        $em->flush();
+
+        $client->loginUser($user);
+
+        $component = $this->createLiveComponent(
+            name: LessonModal::class,
+            data: [
+                'lesson' => $lesson,
+                'modalOpened' => true,
+                'closeUrl' => '/warsztaty',
+            ],
+            client: $client,
+        );
+
+        $html = (string) $component->render();
+        $this->assertStringContainsString('data-action="live#emitUp"', $html);
+        $this->assertStringContainsString('data-live-event-param="resumePayment"', $html);
+        // Stimulus maps data-live-booking-id-param → bookingId (HTML attrs are case-insensitive,
+        // so data-live-bookingId-param becomes bookingid and fails LiveArg resolution).
+        $this->assertStringContainsString('data-live-booking-id-param="' . $booking->getId() . '"', $html);
+        $this->assertStringNotContainsString('data-live-bookingId-param=', $html);
+
+        $component->emit('resumePayment', [
+            'bookingId' => (string) $booking->getId(),
+        ]);
+
+        /** @var LessonModal $lessonModal */
+        $lessonModal = $component->component();
+        $this->assertSame('XY99', $lessonModal->paymentCode);
+        $this->assertSame('awaiting_payment', $lessonModal->paymentStatus);
+        $this->assertSame((string) $booking->getId(), $lessonModal->resumedBookingId);
+    }
+
+    public function testResumePaymentRejectsMissingBookingIdArgument(): void
+    {
+        Clock::set(new MockClock('2024-02-20 08:00:00'));
+
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()->assemble();
+        $series = SeriesAssembler::new()
+            ->withType(WorkshopType::ONE_TIME)
+            ->assemble();
+        $lesson = LessonAssembler::new()
+            ->withMetadata(
+                LessonMetadataAssembler::new()
+                    ->withTitle('Sensory')
+                    ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+                    ->assemble()
+            )
+            ->assemble();
+        $lesson->setSeries($series);
+
+        $em->persist($user);
+        $em->persist($series);
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($user);
+        $client->catchExceptions(false);
+
+        $component = $this->createLiveComponent(
+            name: LessonModal::class,
+            data: [
+                'lesson' => $lesson,
+                'modalOpened' => true,
+                'closeUrl' => '/warsztaty',
+            ],
+            client: $client,
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches('/Could not resolve argument \$bookingId/');
+
+        // Mimics Stimulus receiving data-live-bookingId-param (HTML-lowercased to bookingid).
+        $component->call('resumePayment', [
+            'bookingid' => '01ARZ3NDEKTSV4RRFFQ69G5FAV',
+        ]);
     }
 
     public function testRefreshPaymentStatusMarksPaidWhenTransferMatched(): void
