@@ -93,7 +93,7 @@ final class SeriesEditComponent extends AbstractController
             'amount' => '0.00',
             'currency' => 'PLN',
             'description' => '',
-            'reschedulePolicy' => TicketReschedulePolicy::UNLIMITED_24H_BEFORE->value,
+            'reschedulePolicy' => TicketReschedulePolicy::ONETIME_24H_BEFORE->value,
         ];
     }
 

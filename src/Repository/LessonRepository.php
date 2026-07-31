@@ -205,7 +205,7 @@ class LessonRepository extends ServiceEntityRepository
         if (! $showCancelled) {
             $qb->andWhere('l.status = :status')
                 ->setParameter('status', 'active')
-                ->setParameter('bookingStatus', [Booking::STATUS_ACTIVE]);
+                ->setParameter('bookingStatus', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE]);
         } else {
             $qb->setParameter(
                 'bookingStatus',

@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="p-6 flex items-center justify-center md:w-60">
                                     {% set canModify = (not isCancelled) and (not isRescheduled) and isFuture %}
-                                    {% if canModify and lesson.cancellationAvailable() %}
+                                    {% if canModify %}
                                         {{ component('BookingCancellationModal', {booking: booking, lesson: lesson}) }}
                                     {% else %}
                                         <span class="text-sm text-muted-foreground text-center">

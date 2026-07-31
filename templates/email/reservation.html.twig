@@ -1,6 +1,28 @@
 {% trans_default_domain 'emails' %}
 
 <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem; max-width: 32rem; text-align: center;">
+    {% if lessonTitle %}
+        <div style="font-size: 1.125rem; font-weight: 600; color: #4c2e11; margin-bottom: 0.5rem;">
+            {{ lessonTitle }}
+        </div>
+    {% endif %}
+    {% if lessonSchedule %}
+        <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.25rem;">
+            {{ lessonSchedule|date('d.m.Y H:i') }}
+        </div>
+    {% endif %}
+    {% if ticketType %}
+        <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.25rem;">
+            {{ ('lesson.' ~ ticketType)|trans({}, 'messages') }}
+        </div>
+    {% endif %}
+    {% if childName %}
+        <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+            {{ 'reservation.child'|trans({'childName': childName}) }}
+        </div>
+    {% else %}
+        <div style="margin-bottom: 1rem;"></div>
+    {% endif %}
     <div style="font-size: 1.5rem; font-weight: bold; color: #4c2e11; margin-bottom: 1rem;">
         {{ 'reservation.blik_transfer'|trans({'blikPhoneNumber': blikPhoneNumber})|raw }}
     </div>

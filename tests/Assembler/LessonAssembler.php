@@ -132,7 +132,7 @@ class LessonAssembler extends EntityAssembler
                 TicketType::ONE_TIME,
                 Money::of(50, 'PLN'),
                 'Bilet jednorazowy',
-                TicketReschedulePolicy::UNLIMITED_24H_BEFORE
+                TicketReschedulePolicy::ONETIME_24H_BEFORE
             )]);
         }
 
