@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
+use App\Entity\Notification;
 use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\SendReservationNotification;
 use App\Tests\Assembler\BookingAssembler;
@@ -25,6 +26,10 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
         self::bootKernel();
 
         $user = UserAssembler::new()->assemble();
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->persist($user);
+        $em->flush();
+
         BookingAssembler::new()
             ->withPayment(
                 $payment = PaymentAssembler::new()
@@ -74,5 +79,13 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
             '46 2490 0005 0000 4000 1897 5420',
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody())
         );
+
+        $inApp = $em->getRepository(Notification::class)->findBy([
+            'user' => $user,
+        ]);
+        self::assertCount(1, $inApp);
+        self::assertSame('Rezerwacja utworzona', $inApp[0]->getTitle());
+        self::assertStringContainsString('<strong>TEST123</strong>', (string) $inApp[0]->getBody());
+        self::assertNotNull($inApp[0]->getUrl());
     }
 }

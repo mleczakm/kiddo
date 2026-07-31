@@ -157,8 +157,14 @@
                                             {% endif %}
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground' }}">
-                                                {{ booking.payment and booking.payment.status == 'paid' ? 'admin.badges.paid'|trans : 'admin.badges.unpaid'|trans }}
+                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.isPending ? 'border-transparent bg-amber-100 text-amber-900' : (booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground') }}">
+                                                {% if booking.isPending %}
+                                                    {{ 'admin.badges.pending'|trans }}
+                                                {% elseif booking.payment and booking.payment.status == 'paid' %}
+                                                    {{ 'admin.badges.paid'|trans }}
+                                                {% else %}
+                                                    {{ 'admin.badges.unpaid'|trans }}
+                                                {% endif %}
                                             </span>
                                             {% set bId = booking.id %}
                                             <div class="relative">
@@ -231,8 +237,14 @@
                                             {% endif %}
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground' }}">
-                                                {{ booking.payment and booking.payment.status == 'paid' ? 'admin.badges.paid'|trans : 'admin.badges.unpaid'|trans }}
+                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.isPending ? 'border-transparent bg-amber-100 text-amber-900' : (booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground') }}">
+                                                {% if booking.isPending %}
+                                                    {{ 'admin.badges.pending'|trans }}
+                                                {% elseif booking.payment and booking.payment.status == 'paid' %}
+                                                    {{ 'admin.badges.paid'|trans }}
+                                                {% else %}
+                                                    {{ 'admin.badges.unpaid'|trans }}
+                                                {% endif %}
                                             </span>
                                             {% set bId = booking.id %}
                                             <div class="relative">

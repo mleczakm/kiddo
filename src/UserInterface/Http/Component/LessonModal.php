@@ -17,6 +17,9 @@ use App\Repository\PaymentCodeRepository;
 use App\Repository\PaymentRepository;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -92,6 +95,12 @@ class LessonModal extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $selectedChildId = null;
 
+    #[LiveProp(writable: true)]
+    public string $phone = '';
+
+    #[LiveProp]
+    public ?string $phoneError = null;
+
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly ChildRepository $childRepository,
@@ -106,6 +115,8 @@ class LessonModal extends AbstractController
     public function openModal(): void
     {
         $this->modalOpened = true;
+        $this->phoneError = null;
+        $this->prefillPhone();
 
         if ($this->lesson !== null && $this->selectedTicketType === null) {
             $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
@@ -173,6 +184,8 @@ class LessonModal extends AbstractController
     public function openPaymentModal(): void
     {
         $this->paymentModal = true;
+        $this->phoneError = null;
+        $this->prefillPhone();
     }
 
     #[LiveAction]
@@ -290,6 +303,10 @@ class LessonModal extends AbstractController
                 return;
             }
 
+            if (! $this->persistPhone($user)) {
+                return;
+            }
+
             $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
 
             $paymentCode = new PaymentFactory()
@@ -312,6 +329,47 @@ class LessonModal extends AbstractController
             return;
         }
         $this->paymentStatus = 'error';
+    }
+
+    private function prefillPhone(): void
+    {
+        if ($this->phone !== '') {
+            return;
+        }
+
+        /** @var ?User $user */
+        $user = $this->getUser();
+        if (! $user instanceof User || $user->getPhone() === null) {
+            return;
+        }
+
+        $this->phone = PhoneNumberUtil::getInstance()->format($user->getPhone(), PhoneNumberFormat::NATIONAL);
+    }
+
+    private function persistPhone(User $user): bool
+    {
+        $this->phoneError = null;
+        $raw = trim($this->phone);
+        if ($raw === '') {
+            $this->phoneError = 'booking.phone.required';
+            return false;
+        }
+
+        try {
+            $parsed = PhoneNumberUtil::getInstance()->parse($raw, 'PL');
+            if (! PhoneNumberUtil::getInstance()->isValidNumber($parsed)) {
+                $this->phoneError = 'booking.phone.invalid';
+                return false;
+            }
+        } catch (NumberParseException) {
+            $this->phoneError = 'booking.phone.invalid';
+            return false;
+        }
+
+        $user->setPhone($parsed);
+        $this->entityManager->flush();
+
+        return true;
     }
 
     private function setPaymentAmount(Money $amount): void

@@ -136,8 +136,8 @@ final class UpcomingAttendeesComponent extends AbstractController
         $single = [];
 
         foreach ($lesson->getBookings() as $booking) {
-            // Skip cancelled bookings if not showing them
-            if (! $booking->isActive() && ! $this->showCancelled) {
+            // Skip cancelled bookings if not showing them; pending holds a seat and must be visible
+            if (! $booking->occupiesSeat() && ! $this->showCancelled) {
                 continue;
             }
 

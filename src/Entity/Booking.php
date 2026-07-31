@@ -376,6 +376,11 @@ class Booking
         return $this->status === self::STATUS_ACTIVE;
     }
 
+    public function occupiesSeat(): bool
+    {
+        return $this->isPending() || $this->isActive();
+    }
+
     public function isPast(): bool
     {
         return $this->status === self::STATUS_PAST;
@@ -389,6 +394,50 @@ class Booking
     public function canRequestRefund(): bool
     {
         return in_array($this->status, [self::STATUS_PENDING, self::STATUS_ACTIVE], true);
+    }
+
+    public function getReschedulePolicyFor(Lesson $lesson): TicketReschedulePolicy
+    {
+        $type = $this->isCarnet() ? TicketType::CARNET_4 : TicketType::ONE_TIME;
+        foreach ($lesson->getTicketOptions() as $option) {
+            if ($option->type === $type) {
+                return $option->reschedulePolicy;
+            }
+        }
+
+        return TicketReschedulePolicy::NOT_ALLOWED;
+    }
+
+    public function hasBeenRescheduled(): bool
+    {
+        return $this->getLessonsMap()
+            ->getRescheduled() !== [];
+    }
+
+    public function canRescheduleLesson(Lesson $lesson): bool
+    {
+        if (! $this->canBeRescheduled() || ! $lesson->cancellationAvailable()) {
+            return false;
+        }
+
+        return match ($this->getReschedulePolicyFor($lesson)) {
+            TicketReschedulePolicy::NOT_ALLOWED => false,
+            TicketReschedulePolicy::ONETIME_24H_BEFORE => ! $this->hasBeenRescheduled(),
+            TicketReschedulePolicy::UNLIMITED_24H_BEFORE => true,
+        };
+    }
+
+    public function canRequestRefundForLesson(Lesson $lesson): bool
+    {
+        return $this->canRequestRefund() && $lesson->cancellationAvailable();
+    }
+
+    public function canCancelLesson(Lesson $lesson): bool
+    {
+        return $this->occupiesSeat()
+            && $lesson->future()
+            && $this->getLessonsMap()
+                ->isActiveLesson($lesson->getId());
     }
 
     public function isCancelled(): bool
@@ -446,7 +495,9 @@ class Booking
 
     public function isCarnet(): bool
     {
-        return $this->lessons->count() > 1;
+        $summary = $this->getLessonStatusSummary();
+
+        return ($summary['total'] - count($this->getLessonsMap()->getRescheduled())) > 1;
     }
 
     public function getTotalLessons(): int

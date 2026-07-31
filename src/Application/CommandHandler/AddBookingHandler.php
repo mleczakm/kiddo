@@ -67,6 +67,12 @@ final readonly class AddBookingHandler
                 $user->getName(),
                 $command->paymentCode,
                 $payment?->getAmount() ?? Money::zero(Currency::of('PLN')),
+                lessonTitle: $lesson->getMetadata()
+                    ->title,
+                lessonSchedule: $lesson->getMetadata()
+                    ->schedule,
+                ticketType: $ticketOption->type->value,
+                childName: $booking->getChild()?->getName(),
             ))->with(new DispatchAfterCurrentBusStamp())
         );
     }

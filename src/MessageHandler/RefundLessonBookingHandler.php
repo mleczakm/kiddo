@@ -48,6 +48,27 @@ class RefundLessonBookingHandler
             return;
         }
 
+        $lesson = null;
+        foreach ($booking->getLessons() as $booked) {
+            if ($booked->getId()->equals($command->getLessonId())) {
+                $lesson = $booked;
+                break;
+            }
+        }
+
+        $isAdmin = in_array('ROLE_ADMIN', $command->getRefundedBy()->getRoles(), true);
+        if ($lesson !== null && ! $isAdmin && ! $booking->canRequestRefundForLesson($lesson)) {
+            $this->logger->warning('Refund blocked within 24h of the lesson', [
+                'bookingId' => $booking->getId()
+                    ->toRfc4122(),
+                'lessonId' => $command->getLessonId()
+                    ->toRfc4122(),
+                'refundedById' => $command->getRefundedBy()
+                    ->getId(),
+            ]);
+            throw new \RuntimeException('Refund is not available within 24h of the lesson');
+        }
+
         // Check if we can request a refund
         if (! $this->bookingStateMachine->can($booking, 'request_refund')) {
             $this->logger->error('Cannot apply refund transition to booking', [
