@@ -26,10 +26,6 @@
         font-style: italic;
     }
 </style>
-
-{% if lessons is empty %}
-    <p>{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
-{% else %}
     {% for lesson in lessons %}
         <h2 style="font-family: Arial, sans-serif; color: #333;">
             {{ lesson.metadata.title }} ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})
@@ -96,4 +92,3 @@
             <p>{{ 'daily_lessons_schedule.no_attendants'|trans }}</p>
         {% endif %}
     {% endfor %}
-{% endif %}
