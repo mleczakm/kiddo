@@ -75,10 +75,11 @@ class ProfileComponentTest extends WebTestCase
             (string) $testComponent->render()
         );
 
-        // Set new values
+        // Set new values (phone is required on profile save)
         $testComponent
             ->set('name', 'New Name')
-            ->set('email', 'new.email@example.com');
+            ->set('email', 'new.email@example.com')
+            ->set('phone', '500 600 700');
 
         // Save changes
         $testComponent->call('save');
@@ -93,10 +94,12 @@ class ProfileComponentTest extends WebTestCase
 
         $this->assertSame('New Name', $updatedUser->getName());
         $this->assertSame('new.email@example.com', $updatedUser->getEmail());
+        $this->assertNotNull($updatedUser->getPhone());
 
         // Check if the view is updated
         $rendered = (string) $testComponent->render();
         $this->assertStringContainsString('New Name', $rendered);
         $this->assertStringContainsString('new.email@example.com', $rendered);
+        $this->assertStringContainsString('500 600 700', $rendered);
     }
 }
