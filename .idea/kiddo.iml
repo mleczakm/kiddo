@@ -213,6 +213,14 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php86" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/doctrine-migrations-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mcp/sdk" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/opis/json-schema" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/opis/string" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/opis/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/discovery" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-server-handler" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-server-middleware" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/mcp-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

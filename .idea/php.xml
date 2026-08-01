@@ -119,7 +119,6 @@
       <path value="$PROJECT_DIR$/vendor/symfony/notifier" />
       <path value="$PROJECT_DIR$/vendor/symfony/clock" />
       <path value="$PROJECT_DIR$/vendor/symfony/serializer" />
-      <path value="$PROJECT_DIR$/vendor/symfony/cache" />
       <path value="$PROJECT_DIR$/vendor/symplify/easy-coding-standard" />
       <path value="$PROJECT_DIR$/vendor/beberlei/assert" />
       <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
@@ -425,6 +424,15 @@
       <path value="$PROJECT_DIR$/../ClassyCash/vendor/symfony/contracts" />
       <path value="$PROJECT_DIR$/vendor/doctrine/migrations" />
       <path value="$PROJECT_DIR$/vendor/doctrine/doctrine-migrations-bundle" />
+      <path value="$PROJECT_DIR$/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mcp-bundle" />
+      <path value="$PROJECT_DIR$/vendor/opis/string" />
+      <path value="$PROJECT_DIR$/vendor/opis/uri" />
+      <path value="$PROJECT_DIR$/vendor/opis/json-schema" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-server-handler" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-server-middleware" />
+      <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
+      <path value="$PROJECT_DIR$/vendor/mcp/sdk" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -496,7 +504,7 @@
       </interpreter>
     </phpInfoCache>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.4">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.5">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpRuntimeConfiguration">

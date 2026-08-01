@@ -4,8 +4,16 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+  env(ELEVENLABS_API_KEY): ''
+  env(ELEVENLABS_AGENT_ID): ''
+  env(ELEVENLABS_ADMIN_AGENT_ID): ''
+  env(KIDDO_MCP_SERVICE_KEY): ''
+  env(TELEGRAM_BOT_TOKEN): ''
+  env(TELEGRAM_WEBHOOK_SECRET): ''
 
 services:
+  App\Application\Telegram\TelegramLinkServiceInterface: '@App\Application\Telegram\TelegramLinkService'
+
   # default configuration for services in *this* file
   _defaults:
     autowire: true      # Automatically injects dependencies in your services.

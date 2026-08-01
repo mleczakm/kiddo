@@ -11,6 +11,7 @@
     "ext-ds": "*",
     "ext-iconv": "*",
     "ext-swoole": "*",
+    "ext-zlib": "*",
     "bgalati/monolog-sentry-handler": "^2.1",
     "brick/money": "^0.10.3",
     "directorytree/imapengine": "^1.25.3",
@@ -49,6 +50,7 @@
     "symfony/intl": "7.4.*",
     "symfony/lock": "7.4.*",
     "symfony/mailer": "7.4.*",
+    "symfony/mcp-bundle": "^0.12.0",
     "symfony/mime": "7.4.*",
     "symfony/monolog-bundle": "^3.11.2",
     "symfony/notifier": "7.4.*",
@@ -76,8 +78,7 @@
     "twig/extra-bundle": "^3.24.0",
     "twig/inky-extra": "^3.26",
     "twig/intl-extra": "^3.26.0",
-    "twig/twig": "^3.28.0",
-    "ext-zlib": "*"
+    "twig/twig": "^3.28.0"
   },
   "config": {
     "allow-plugins": {

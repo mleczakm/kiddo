@@ -226,6 +226,32 @@ homepage:
     subtitle: 'Creative, fun, and educational workshops for children to explore their senses and develop their skills through play and imagination.'
     explore_workshops: 'Explore Workshops'
     register_now: 'Register Now'
+  chat_hero:
+    image_alt: 'Sensoryczna Workshops chat guide'
+    title: 'Ask anything, book in a message'
+    subtitle: "Tell us your child's age and free days — the guide finds the right sensory workshop, creates your account and books the place, right here in the chat."
+    guide_label: 'Workshop guide'
+    admin_label: 'Admin assistant'
+    new_conversation: 'New conversation'
+    welcome: 'Hi! I know every workshop, schedule and price. What would you like to find for your child?'
+    placeholder: "e.g. My son is 5 and free on Saturdays — what do you recommend?"
+    placeholder_short: 'Write a message…'
+    no_account: 'No account needed to start'
+    signed_in: 'Signed in as {name}'
+    prefer_browsing: 'Prefer browsing?'
+    see_workshops: 'See all workshops'
+    create_account: 'Create an account'
+    send: 'Send'
+    close: 'Close chat'
+    chat_button: 'Chat'
+    login_hint: 'Sign in to use the booking assistant.'
+    suggestions:
+      age: 'Which workshop suits a 4-year-old?'
+      saturday: 'What is on this Saturday?'
+      book: 'Book Art & Creativity for my daughter'
+      carnet: 'How does the monthly carnet work?'
+    status:
+      idle: 'Ready'
   popular_workshops:
     title: 'Popular Workshops'
     subtitle: 'Join our most beloved creative sessions where children can explore, learn, and have fun.'

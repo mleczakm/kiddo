@@ -3,6 +3,9 @@
 {% block body %}
     <main class="flex-grow">
         <div>
+            {% if isFeatureEnabled('chat_assistant') %}
+                {{ include('partials/chat_assistant.html.twig', { variant: 'hero' }) }}
+            {% else %}
             <section class="relative py-16 md:py-24 overflow-hidden">
                 <div class="absolute top-10 left-10 w-24 h-24 rounded-full bg-workshop-blue/20 animate-bounce-slight"
                      style="animation-delay: 0s;"></div>
@@ -36,6 +39,7 @@
                     </div>
                 </div>
             </section>
+            {% endif %}
             <section class="py-16 bg-dot-pattern">
                 <div class="container mx-auto px-4">
                     <div class="text-center mb-12">
