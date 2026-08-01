@@ -1,0 +1,751 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Application\Chat;
+
+use App\Application\Command\AddBooking;
+use App\Entity\Child;
+use App\Entity\MessageType;
+use App\Entity\PaymentFactory;
+use App\Entity\UserMessage;
+use App\Message\CancelLessonBooking;
+use App\Message\RefundLessonBooking;
+use App\Message\RescheduleLessonBooking;
+use App\Repository\BookingRepository;
+use App\Repository\ChildRepository;
+use App\Repository\LessonRepository;
+use App\Repository\NotificationRepository;
+use App\Repository\PaymentCodeRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Uid\Ulid;
+
+#[AutoconfigureTag('app.chat_tool_provider')]
+final readonly class UserChatTools implements ChatToolProviderInterface
+{
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private MessageBusInterface $bus,
+        private LessonRepository $lessonRepository,
+        private BookingRepository $bookingRepository,
+        private ChildRepository $childRepository,
+        private NotificationRepository $notificationRepository,
+        private PaymentCodeRepository $paymentCodeRepository,
+        private LessonPresenter $presenter,
+    ) {}
+
+    public function definitions(): array
+    {
+        $confirm = [
+            'confirm' => [
+                'type' => 'boolean',
+                'description' => 'Must be true to execute the mutation',
+            ],
+        ];
+
+        return [
+            new ToolDefinition('user.me', 'Return the authenticated parent profile summary.', [
+                'type' => 'object',
+                'properties' => new \stdClass(),
+            ]),
+            new ToolDefinition('user.update_profile', 'Update parent name, email and/or phone.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'name' => [
+                        'type' => 'string',
+                    ],
+                    'email' => [
+                        'type' => 'string',
+                    ],
+                    'phone' => [
+                        'type' => 'string',
+                        'description' => 'Polish phone number',
+                    ],
+                ],
+                'required' => ['confirm'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.list_children', 'List children on the parent account.', [
+                'type' => 'object',
+                'properties' => new \stdClass(),
+            ]),
+            new ToolDefinition('user.add_child', 'Add a child to the parent account.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'name' => [
+                        'type' => 'string',
+                    ],
+                    'birthday' => [
+                        'type' => 'string',
+                        'description' => 'YYYY-MM-DD optional',
+                    ],
+                ],
+                'required' => ['confirm', 'name'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.delete_child', 'Delete a child from the parent account.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'child_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['confirm', 'child_id'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.list_upcoming_lessons', 'Find matching workshops/lessons by query, age and week start date.', [
+                'type' => 'object',
+                'properties' => [
+                    'query' => [
+                        'type' => 'string',
+                    ],
+                    'age' => [
+                        'type' => 'integer',
+                    ],
+                    'week' => [
+                        'type' => 'string',
+                        'description' => 'Week start YYYY-MM-DD; defaults to today',
+                    ],
+                    'limit' => [
+                        'type' => 'integer',
+                    ],
+                ],
+            ]),
+            new ToolDefinition('user.get_lesson', 'Get lesson details, seats and ticket options.', [
+                'type' => 'object',
+                'properties' => [
+                    'lesson_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['lesson_id'],
+            ]),
+            new ToolDefinition('user.create_booking', 'Book a lesson for the parent (creates pending payment + code).', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'lesson_id' => [
+                        'type' => 'string',
+                    ],
+                    'ticket_type' => [
+                        'type' => 'string',
+                        'enum' => ['one_time', 'carnet_4'],
+                    ],
+                    'child_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['confirm', 'lesson_id', 'ticket_type'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.get_payment_instructions', 'Return bank-transfer payment code and amount for a booking or payment code.', [
+                'type' => 'object',
+                'properties' => [
+                    'booking_id' => [
+                        'type' => 'string',
+                    ],
+                    'payment_code' => [
+                        'type' => 'string',
+                    ],
+                ],
+            ]),
+            new ToolDefinition('user.list_bookings', 'List parent bookings, optionally filtered by status.', [
+                'type' => 'object',
+                'properties' => [
+                    'status' => [
+                        'type' => 'string',
+                        'enum' => ['pending', 'active', 'cancelled', 'past'],
+                    ],
+                ],
+            ]),
+            new ToolDefinition('user.get_booking', 'Get one booking owned by the parent.', [
+                'type' => 'object',
+                'properties' => [
+                    'booking_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['booking_id'],
+            ]),
+            new ToolDefinition('user.list_carnets', 'List multi-lesson (carnet) bookings for the parent.', [
+                'type' => 'object',
+                'properties' => new \stdClass(),
+            ]),
+            new ToolDefinition('user.list_reschedule_targets', 'List alternative lessons available to reschedule a booked lesson.', [
+                'type' => 'object',
+                'properties' => [
+                    'booking_id' => [
+                        'type' => 'string',
+                    ],
+                    'lesson_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['booking_id', 'lesson_id'],
+            ]),
+            new ToolDefinition('user.reschedule_lesson', 'Reschedule a booked lesson to another lesson in the series.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'booking_id' => [
+                        'type' => 'string',
+                    ],
+                    'lesson_id' => [
+                        'type' => 'string',
+                    ],
+                    'new_lesson_id' => [
+                        'type' => 'string',
+                    ],
+                    'reason' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['confirm', 'booking_id', 'lesson_id', 'new_lesson_id'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.cancel_lesson', 'Cancel a lesson on a booking without refund.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'booking_id' => [
+                        'type' => 'string',
+                    ],
+                    'lesson_id' => [
+                        'type' => 'string',
+                    ],
+                    'reason' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['confirm', 'booking_id', 'lesson_id'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.request_refund', 'Request a refund for a paid lesson on a booking.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'booking_id' => [
+                        'type' => 'string',
+                    ],
+                    'lesson_id' => [
+                        'type' => 'string',
+                    ],
+                    'reason' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['confirm', 'booking_id', 'lesson_id'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.list_notifications', 'List recent in-app notifications for the parent.', [
+                'type' => 'object',
+                'properties' => [
+                    'limit' => [
+                        'type' => 'integer',
+                    ],
+                ],
+            ]),
+            new ToolDefinition('user.mark_notification_read', 'Mark a notification as read.', [
+                'type' => 'object',
+                'properties' => [
+                    'notification_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['notification_id'],
+            ]),
+            new ToolDefinition('user.delete_notification', 'Soft-delete a notification.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'notification_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['confirm', 'notification_id'],
+            ], requiresConfirm: true),
+            new ToolDefinition('user.create_message', 'Open a support ticket / message for admins.', [
+                'type' => 'object',
+                'properties' => [
+                    ...$confirm,
+                    'subject' => [
+                        'type' => 'string',
+                    ],
+                    'message' => [
+                        'type' => 'string',
+                    ],
+                    'type' => [
+                        'type' => 'string',
+                        'enum' => array_map(static fn(MessageType $t) => $t->value, MessageType::cases()),
+                    ],
+                ],
+                'required' => ['confirm', 'subject', 'message'],
+            ], requiresConfirm: true),
+        ];
+    }
+
+    public function supports(string $name): bool
+    {
+        return str_starts_with($name, 'user.');
+    }
+
+    public function call(string $name, ChatActor $actor, array $arguments): ToolResult
+    {
+        try {
+            $args = new ToolArguments($arguments);
+
+            return match ($name) {
+                'user.me' => $this->me($actor),
+                'user.update_profile' => $this->updateProfile($actor, $args),
+                'user.list_children' => $this->listChildren($actor),
+                'user.add_child' => $this->addChild($actor, $args),
+                'user.delete_child' => $this->deleteChild($actor, $args),
+                'user.list_upcoming_lessons' => $this->listUpcomingLessons($args),
+                'user.get_lesson' => $this->getLesson($args),
+                'user.create_booking' => $this->createBooking($actor, $args),
+                'user.get_payment_instructions' => $this->getPaymentInstructions($actor, $args),
+                'user.list_bookings' => $this->listBookings($actor, $args),
+                'user.get_booking' => $this->getBooking($actor, $args),
+                'user.list_carnets' => $this->listCarnets($actor),
+                'user.list_reschedule_targets' => $this->listRescheduleTargets($actor, $args),
+                'user.reschedule_lesson' => $this->rescheduleLesson($actor, $args),
+                'user.cancel_lesson' => $this->cancelLesson($actor, $args),
+                'user.request_refund' => $this->requestRefund($actor, $args),
+                'user.list_notifications' => $this->listNotifications($actor, $args),
+                'user.mark_notification_read' => $this->markNotificationRead($actor, $args),
+                'user.delete_notification' => $this->deleteNotification($actor, $args),
+                'user.create_message' => $this->createMessage($actor, $args),
+                default => ToolResult::failure(sprintf('Unknown user tool: %s', $name)),
+            };
+        } catch (\InvalidArgumentException $e) {
+            return ToolResult::failure($e->getMessage());
+        }
+    }
+
+    private function me(ChatActor $actor): ToolResult
+    {
+        $data = $this->presenter->userSummary($actor->user);
+
+        return ToolResult::success(sprintf('Profil: %s (%s)', $data['name'], $data['email']), $data);
+    }
+
+    private function updateProfile(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $user = $actor->user;
+        if ($args->has('name')) {
+            $user->setName($args->requireString('name'));
+        }
+        if ($args->has('email')) {
+            $user->setEmail($args->requireString('email'));
+        }
+        if ($args->has('phone')) {
+            try {
+                $phone = PhoneNumberUtil::getInstance()->parse($args->requireString('phone'), 'PL');
+                $user->setPhone($phone);
+            } catch (NumberParseException $e) {
+                return ToolResult::failure('Invalid phone number: ' . $e->getMessage());
+            }
+        }
+        $this->entityManager->flush();
+
+        return ToolResult::success('Profil zaktualizowany.', $this->presenter->userSummary($user));
+    }
+
+    private function listChildren(ChatActor $actor): ToolResult
+    {
+        $children = [];
+        foreach ($actor->user->getChildren() as $child) {
+            $children[] = [
+                'id' => (string) $child->getId(),
+                'name' => $child->getName(),
+                'birthday' => $child->getBirthday()?->format('Y-m-d'),
+                'age_years' => $child->getAgeYears(),
+            ];
+        }
+
+        return ToolResult::success(
+            sprintf('Masz %d dzieci na koncie.', count($children)),
+            [
+                'children' => $children,
+            ]
+        );
+    }
+
+    private function addChild(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $name = trim($args->string('name') ?? '');
+        if ($name === '') {
+            return ToolResult::failure('Child name is required');
+        }
+        $birthday = null;
+        if ($args->has('birthday')) {
+            $birthday = new \DateTimeImmutable($args->requireString('birthday'));
+        }
+        $child = new Child($actor->user, $name, $birthday);
+        $this->entityManager->persist($child);
+        $this->entityManager->flush();
+
+        return ToolResult::success(
+            sprintf('Dodano dziecko %s.', $name),
+            [
+                'child_id' => (string) $child->getId(),
+                'name' => $name,
+            ]
+        );
+    }
+
+    private function deleteChild(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $child = $this->childRepository->find(Ulid::fromString($args->requireString('child_id')));
+        if (! $child instanceof Child || $child->getOwner()->getId() !== $actor->userId()) {
+            return ToolResult::failure('Child not found');
+        }
+        $name = $child->getName();
+        $this->entityManager->remove($child);
+        $this->entityManager->flush();
+
+        return ToolResult::success(sprintf('Usunięto dziecko %s.', $name));
+    }
+
+    private function listUpcomingLessons(ToolArguments $args): ToolResult
+    {
+        $week = $args->string('week') ?? new \DateTimeImmutable('today')
+            ->format('Y-m-d');
+        $query = $args->string('query');
+        $age = $args->int('age');
+        $limit = $args->int('limit', 20) ?? 20;
+
+        $lessons = $this->lessonRepository->findByFilters($query, $age, $week, $limit);
+        $items = array_map($this->presenter->lesson(...), $lessons);
+
+        return ToolResult::success(
+            sprintf('Znaleziono %d zajęć (tydzień od %s).', count($items), $week),
+            [
+                'week' => $week,
+                'lessons' => $items,
+            ]
+        );
+    }
+
+    private function getLesson(ToolArguments $args): ToolResult
+    {
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        if ($lesson === null) {
+            return ToolResult::failure('Lesson not found');
+        }
+        $data = $this->presenter->lesson($lesson);
+
+        return ToolResult::success(
+            sprintf(
+                '%s — %s, wolne miejsca: %d',
+                $data['title'],
+                new \DateTimeImmutable($data['schedule'])->format('d.m.Y H:i'),
+                $data['available_spots']
+            ),
+            $data
+        );
+    }
+
+    private function createBooking(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $lessonId = $args->requireString('lesson_id');
+        $ticketType = $args->requireString('ticket_type');
+        $childId = $args->string('child_id');
+
+        $lesson = $this->lessonRepository->find(Ulid::fromString($lessonId));
+        if ($lesson === null) {
+            return ToolResult::failure('Lesson not found');
+        }
+        if ($lesson->getAvailableSpots() <= 0) {
+            return ToolResult::failure('No available spots on this lesson');
+        }
+
+        $paymentCode = new PaymentFactory()
+            ->generateCode();
+        $this->bus->dispatch(new AddBooking(
+            userId: $actor->userId(),
+            lessonId: $lessonId,
+            ticketType: $ticketType,
+            childId: $childId,
+            paymentCode: $paymentCode,
+        ));
+
+        return ToolResult::success(
+            sprintf('Rezerwacja utworzona. Opłać przelewem z tytułem zawierającym kod %s.', $paymentCode),
+            [
+                'payment_code' => $paymentCode,
+                'lesson_id' => $lessonId,
+                'ticket_type' => $ticketType,
+            ]
+        );
+    }
+
+    private function getPaymentInstructions(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $payment = null;
+        if ($args->has('booking_id')) {
+            $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
+            if ($booking === null || $booking->getUser()->getId() !== $actor->userId()) {
+                return ToolResult::failure('Booking not found');
+            }
+            $payment = $booking->getPayment();
+        } elseif ($args->has('payment_code')) {
+            $code = $this->paymentCodeRepository->findOneBy([
+                'code' => strtoupper($args->requireString('payment_code')),
+            ]);
+            $payment = $code?->getPayment();
+            if ($payment !== null && $payment->getUser()->getId() !== $actor->userId()) {
+                return ToolResult::failure('Payment not found');
+            }
+        }
+
+        if ($payment === null) {
+            return ToolResult::failure('Provide booking_id or payment_code');
+        }
+
+        $data = $this->presenter->payment($payment);
+
+        return ToolResult::success(
+            sprintf(
+                'Przelew: %s %s, tytuł z kodem %s, status: %s.',
+                $data['amount'],
+                $data['currency'],
+                $data['code'] ?? '—',
+                $data['status']
+            ),
+            $data
+        );
+    }
+
+    private function listBookings(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $status = $args->string('status');
+        $bookings = [];
+        foreach ($actor->user->getBookings() as $booking) {
+            if ($status !== null && $booking->getStatus() !== $status) {
+                continue;
+            }
+            $bookings[] = $this->presenter->booking($booking);
+        }
+
+        return ToolResult::success(
+            sprintf('Znaleziono %d rezerwacji.', count($bookings)),
+            [
+                'bookings' => $bookings,
+            ]
+        );
+    }
+
+    private function getBooking(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
+        if ($booking === null || $booking->getUser()->getId() !== $actor->userId()) {
+            return ToolResult::failure('Booking not found');
+        }
+        $data = $this->presenter->booking($booking);
+
+        return ToolResult::success(sprintf('Rezerwacja %s, status %s.', $data['id'], $data['status']), $data);
+    }
+
+    private function listCarnets(ChatActor $actor): ToolResult
+    {
+        $carnets = [];
+        foreach ($actor->user->getBookings() as $booking) {
+            if (! $booking->isCarnet()) {
+                continue;
+            }
+            $carnets[] = $this->presenter->booking($booking);
+        }
+
+        return ToolResult::success(sprintf('Karnety: %d.', count($carnets)), [
+            'carnets' => $carnets,
+        ]);
+    }
+
+    private function listRescheduleTargets(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        if ($booking === null || $lesson === null || $booking->getUser()->getId() !== $actor->userId()) {
+            return ToolResult::failure('Booking or lesson not found');
+        }
+        $series = $lesson->getSeries();
+        if ($series === null) {
+            return ToolResult::failure('Lesson has no series — cannot reschedule');
+        }
+
+        $available = $this->lessonRepository->findAvailableLessonsForReschedule(
+            $series,
+            $lesson->getMetadata()
+                ->schedule,
+        );
+        $targets = [];
+        foreach ($available as $candidate) {
+            if ($candidate->getId()->equals($lesson->getId())) {
+                continue;
+            }
+            if ($booking->getLessons()->contains($candidate)) {
+                continue;
+            }
+            if ($candidate->getAvailableSpots() <= 0) {
+                continue;
+            }
+            $targets[] = $this->presenter->lesson($candidate);
+        }
+
+        return ToolResult::success(
+            sprintf('Dostępnych terminów do przełożenia: %d.', count($targets)),
+            [
+                'targets' => $targets,
+            ]
+        );
+    }
+
+    private function rescheduleLesson(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        $newLesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('new_lesson_id')));
+        if ($booking === null || $lesson === null || $newLesson === null) {
+            return ToolResult::failure('Booking or lesson not found');
+        }
+        if ($booking->getUser()->getId() !== $actor->userId() && ! $actor->isAdmin()) {
+            return ToolResult::failure('Booking not found');
+        }
+        if (! $booking->canRescheduleLesson($lesson) && ! $actor->isAdmin()) {
+            return ToolResult::failure('Reschedule is not allowed for this booking/lesson');
+        }
+
+        $this->bus->dispatch(new RescheduleLessonBooking(
+            $booking->getId(),
+            $lesson->getId(),
+            $newLesson->getId(),
+            $actor->user,
+            $args->string('reason'),
+        ));
+
+        return ToolResult::success('Lekcja została przełożona.');
+    }
+
+    private function cancelLesson(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        if ($booking === null || $lesson === null) {
+            return ToolResult::failure('Booking or lesson not found');
+        }
+        if ($booking->getUser()->getId() !== $actor->userId() && ! $actor->isAdmin()) {
+            return ToolResult::failure('Booking not found');
+        }
+
+        $this->bus->dispatch(new CancelLessonBooking(
+            $booking->getId(),
+            $lesson->getId(),
+            $actor->user,
+            $args->string('reason'),
+        ));
+
+        return ToolResult::success('Lekcja została odwołana z rezerwacji.');
+    }
+
+    private function requestRefund(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        if ($booking === null || $lesson === null) {
+            return ToolResult::failure('Booking or lesson not found');
+        }
+        if ($booking->getUser()->getId() !== $actor->userId() && ! $actor->isAdmin()) {
+            return ToolResult::failure('Booking not found');
+        }
+        if (! $booking->canRequestRefundForLesson($lesson) && ! $actor->isAdmin()) {
+            return ToolResult::failure('Refund is not available within 24h of the lesson');
+        }
+
+        $this->bus->dispatch(new RefundLessonBooking(
+            $booking->getId(),
+            $lesson->getId(),
+            $actor->user,
+            $args->string('reason'),
+        ));
+
+        return ToolResult::success('Wysłano prośbę o zwrot.');
+    }
+
+    private function listNotifications(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $limit = $args->int('limit', 20) ?? 20;
+        $notifications = $this->notificationRepository->findRecentForUser($actor->user, $limit);
+        $items = [];
+        foreach ($notifications as $notification) {
+            $items[] = [
+                'id' => (string) $notification->getId(),
+                'title' => $notification->getTitle(),
+                'body' => $notification->getBody(),
+                'url' => $notification->getUrl(),
+                'unread' => $notification->isUnread(),
+                'created_at' => $notification->getCreatedAt()
+                    ->format(\DateTimeInterface::ATOM),
+            ];
+        }
+
+        return ToolResult::success(
+            sprintf(
+                'Powiadomienia: %d (nieprzeczytane: %d).',
+                count($items),
+                $this->notificationRepository->countUnreadForUser($actor->user)
+            ),
+            [
+                'notifications' => $items,
+            ]
+        );
+    }
+
+    private function markNotificationRead(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $notification = $this->notificationRepository->find(Ulid::fromString($args->requireString('notification_id')));
+        if ($notification === null || $notification->getUser()->getId() !== $actor->userId()) {
+            return ToolResult::failure('Notification not found');
+        }
+        $notification->markRead();
+        $this->entityManager->flush();
+
+        return ToolResult::success('Powiadomienie oznaczone jako przeczytane.');
+    }
+
+    private function deleteNotification(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $notification = $this->notificationRepository->find(Ulid::fromString($args->requireString('notification_id')));
+        if ($notification === null || $notification->getUser()->getId() !== $actor->userId()) {
+            return ToolResult::failure('Notification not found');
+        }
+        $notification->softDelete();
+        $this->entityManager->flush();
+
+        return ToolResult::success('Powiadomienie usunięte.');
+    }
+
+    private function createMessage(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $type = MessageType::GENERAL;
+        $typeValue = $args->string('type');
+        if ($typeValue !== null) {
+            $type = MessageType::from($typeValue);
+        }
+        $message = new UserMessage(
+            $actor->user,
+            $args->requireString('subject'),
+            $args->requireString('message'),
+            $type,
+        );
+        $this->entityManager->persist($message);
+        $this->entityManager->flush();
+
+        return ToolResult::success(
+            'Wiadomość do administracji została utworzona.',
+            [
+                'message_id' => (string) $message->getId(),
+            ]
+        );
+    }
+}

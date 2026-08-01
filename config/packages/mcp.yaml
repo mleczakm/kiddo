@@ -1,0 +1,22 @@
+mcp:
+    app: kiddo
+    version: '1.0.0'
+    description: 'Kiddo workshop booking tools for parents and admins'
+    instructions: |
+        Use Kiddo tools for lesson discovery, bookings, payments, and admin ops.
+        Always confirm mutations with the user; mutating tools require confirm=true.
+        Never invent availability — call tools for seats and prices.
+        After booking, return the payment code and bank-transfer instructions.
+        Admin tools require a chat token with ROLE_ADMIN.
+    client_transports:
+        stdio: true
+        http: true
+    http:
+        # Public URL for ElevenLabs custom MCP server
+        path: /api/mcp
+        # Allow non-localhost hosts (production / tunnels). Set concrete hosts in env-specific overrides if needed.
+        allowed_hosts: false
+        session:
+            # Default pool `cache.mcp.sessions` is a PSR-16 wrapper around cache.app
+            store: cache
+            ttl: 3600
