@@ -40,6 +40,11 @@ final readonly class McpAuthSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // CORS / MCP preflight must not require the service key.
+        if ($request->isMethod('OPTIONS')) {
+            return;
+        }
+
         if (! $this->featureManager->isEnabled('chat_assistant')) {
             $event->setResponse(new JsonResponse([
                 'error' => 'Chat assistant is disabled',
@@ -54,6 +59,13 @@ final readonly class McpAuthSubscriber implements EventSubscriberInterface
 
         $key = $request->headers->get('X-Kiddo-Mcp-Key')
             ?? $request->headers->get('X-Api-Key');
+        if (! is_string($key) || $key === '') {
+            $authorization = $request->headers->get('Authorization');
+            if (is_string($authorization) && preg_match('/^Bearer\s+(\S+)/i', $authorization, $matches) === 1) {
+                $key = $matches[1];
+            }
+        }
+
         if (! is_string($key) || ! hash_equals($this->serviceKey, $key)) {
             $event->setResponse(new JsonResponse([
                 'error' => 'Invalid MCP service key',
