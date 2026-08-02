@@ -177,6 +177,23 @@ services:
   App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
     alias: App\Infrastructure\Doctrine\CompositeConnectionEnsurer
 
+  # Replace Symfony MCP Bundle controller: rebuild PSR-7 body from buffered content
+  # so Streamable HTTP clients (ElevenLabs) do not hit JSON-RPC -32700 on empty body.
+  mcp.server.controller:
+    class: App\Infrastructure\Mcp\KiddoMcpController
+    public: true
+    arguments:
+      - '@mcp.server'
+      - '@mcp.psr_http_factory'
+      - '@mcp.http_foundation_factory'
+      - '@mcp.psr17_factory'
+      - '@mcp.psr17_factory'
+      - '@mcp.middleware_factory'
+      - '@logger'
+    tags:
+      - controller.service_arguments
+      - { name: monolog.logger, channel: mcp }
+
 # Test-specific service overrides
 when@test:
   services:
