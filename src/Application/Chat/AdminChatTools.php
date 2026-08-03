@@ -662,7 +662,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         $this->bus->dispatch(new CancelLessonBooking(
             $booking->getId(),
             $lesson->getId(),
-            $actor->user,
+            $actor->requireUser(),
             $args->string('reason'),
         ));
 
@@ -679,7 +679,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         $this->bus->dispatch(new RefundLessonBooking(
             $booking->getId(),
             $lesson->getId(),
-            $actor->user,
+            $actor->requireUser(),
             $args->string('reason'),
         ));
 
@@ -698,7 +698,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             $booking->getId(),
             $lesson->getId(),
             $newLesson->getId(),
-            $actor->user,
+            $actor->requireUser(),
             $args->string('reason'),
         ));
 
@@ -875,7 +875,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             $status = MessageStatus::from($args->requireString('status'));
             $message->setStatus($status);
             if ($status === MessageStatus::READ && $message->getReadAt() === null) {
-                $message->markAsRead($actor->user);
+                $message->markAsRead($actor->requireUser());
             }
         }
         $adminNotes = $args->string('admin_notes');

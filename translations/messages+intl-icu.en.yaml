@@ -244,7 +244,7 @@ homepage:
     send: 'Send'
     close: 'Close chat'
     chat_button: 'Chat'
-    login_hint: 'Sign in to use the booking assistant.'
+    login_hint: 'Sign in to book, manage bookings, or view your account. Guests can still browse workshops.'
     suggestions:
       age: 'Which workshop suits a 4-year-old?'
       saturday: 'What is on this Saturday?'

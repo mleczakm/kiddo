@@ -140,7 +140,7 @@ homepage:
     send: 'Wyślij'
     close: 'Zamknij czat'
     chat_button: 'Chat'
-    login_hint: 'Zaloguj się, aby korzystać z asystenta rezerwacji.'
+    login_hint: 'Zaloguj się, aby rezerwować, zarządzać zapisami lub zobaczyć swoje konto. Goście mogą przeglądać ofertę zajęć.'
     suggestions:
       age: 'Jaki warsztat dla 4-latka?'
       saturday: 'Co jest w tę sobotę?'

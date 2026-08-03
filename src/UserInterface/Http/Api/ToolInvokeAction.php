@@ -89,7 +89,8 @@ final class ToolInvokeAction extends AbstractController
         $result = $this->registry->call($name, $actor, $arguments);
         $this->logger->info('Chat tool invoked', [
             'tool' => $name,
-            'user_id' => $actor->userId(),
+            'user_id' => $actor->isGuest() ? null : $actor->userId(),
+            'guest' => $actor->isGuest(),
             'ok' => $result->ok,
             'args_hash' => hash('xxh3', json_encode($arguments, JSON_THROW_ON_ERROR)),
             'error' => $result->error,

@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Mcp;
 
+use Symfony\Component\HttpFoundation\Request;
 use App\Application\Chat\ChatActorResolver;
 use App\Application\Chat\ChatToolRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Executes Kiddo chat tools for MCP handlers (auth via chat token headers).
+ * Executes Kiddo chat tools for MCP handlers.
+ *
+ * Identity: conversation-scoped chat token only (`X-Kiddo-Chat-Token` or tool arg).
+ * Do not reuse `Authorization` — that header carries the MCP service key for ElevenLabs.
  */
 final readonly class KiddoMcpToolInvoker
 {
@@ -35,27 +39,42 @@ final readonly class KiddoMcpToolInvoker
             throw new \RuntimeException('MCP tool call requires an HTTP request context');
         }
 
-        $token = $request->headers->get('X-Kiddo-Chat-Token');
-        if (! is_string($token) || $token === '') {
-            $auth = $request->headers->get('Authorization');
-            if (is_string($auth) && str_starts_with($auth, 'Bearer ')) {
-                $token = substr($auth, 7);
-            }
-        }
-        if (! is_string($token) || $token === '') {
-            throw new \InvalidArgumentException('Missing X-Kiddo-Chat-Token or Authorization Bearer chat token');
-        }
+        $token = $this->resolveChatToken($request, $arguments);
+        unset($arguments['kiddo_chat_token'], $arguments['chat_token']);
 
         $actor = $this->actorResolver->fromTokenString($token);
         $result = $this->registry->call($toolName, $actor, $arguments);
 
         $this->logger->info('MCP tool invoked', [
             'tool' => $toolName,
-            'user_id' => $actor->userId(),
+            'user_id' => $actor->isGuest() ? null : $actor->userId(),
+            'guest' => $actor->isGuest(),
             'ok' => $result->ok,
             'args_hash' => hash('xxh3', json_encode($arguments, JSON_THROW_ON_ERROR)),
         ]);
 
         return $result->toArray();
+    }
+
+    /**
+     * @param array<string, mixed> $arguments
+     */
+    private function resolveChatToken(Request $request, array $arguments): string
+    {
+        $candidates = [
+            $request->headers->get('X-Kiddo-Chat-Token'),
+            $arguments['kiddo_chat_token'] ?? null,
+            $arguments['chat_token'] ?? null,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && $candidate !== '') {
+                return $candidate;
+            }
+        }
+
+        throw new \InvalidArgumentException(
+            'Missing chat identity. Configure MCP request header X-Kiddo-Chat-Token={{kiddo_chat_token}} (dynamic variable from signed-url).'
+        );
     }
 }

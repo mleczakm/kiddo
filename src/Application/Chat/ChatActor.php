@@ -12,9 +12,28 @@ final readonly class ChatActor
      * @param list<string> $roles
      */
     public function __construct(
-        public User $user,
+        public ?User $user,
         public array $roles,
     ) {}
+
+    public static function guest(): self
+    {
+        return new self(null, []);
+    }
+
+    public function isGuest(): bool
+    {
+        return $this->user === null;
+    }
+
+    public function requireUser(): User
+    {
+        if ($this->user === null) {
+            throw new \LogicException('This action requires a logged-in user');
+        }
+
+        return $this->user;
+    }
 
     public function isAdmin(): bool
     {
@@ -24,7 +43,8 @@ final readonly class ChatActor
 
     public function userId(): int
     {
-        $id = $this->user->getId();
+        $id = $this->requireUser()
+            ->getId();
         if ($id === null) {
             throw new \LogicException('Chat actor user must be persisted');
         }

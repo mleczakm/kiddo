@@ -31,6 +31,7 @@ export default class extends Controller {
         this.dynamicVariables = {};
         this.signedUrl = null;
         this.configured = false;
+        this.isGuest = false;
         this.initiated = false;
         this.loadHistory();
         this.renderMessages();
@@ -78,6 +79,7 @@ export default class extends Controller {
             });
 
             if (response.status === 401 || response.status === 403) {
+                // Admin chat still requires an authenticated admin session.
                 this.updateStatus('login_required');
                 if (this.hasLoginHintTarget) {
                     this.loginHintTarget.classList.remove('hidden');
@@ -94,6 +96,13 @@ export default class extends Controller {
             this.dynamicVariables = data.dynamic_variables || {};
             this.signedUrl = data.signed_url;
             this.configured = Boolean(data.configured && data.signed_url);
+            this.isGuest = Boolean(data.guest || this.dynamicVariables.kiddo_is_guest === 'true');
+
+            if (this.isGuest && this.hasLoginHintTarget) {
+                this.loginHintTarget.classList.remove('hidden');
+            } else if (this.hasLoginHintTarget) {
+                this.loginHintTarget.classList.add('hidden');
+            }
 
             if (!this.configured) {
                 this.updateStatus('unconfigured');
@@ -118,6 +127,7 @@ export default class extends Controller {
             this.ws.onopen = () => {
                 this.initiated = false;
                 this.sendInit();
+                this.sendIdentityContext();
                 this.sendContextualUpdate();
                 this.updateStatus('connected');
                 resolve();
@@ -151,6 +161,43 @@ export default class extends Controller {
             })
         );
         this.initiated = true;
+    }
+
+    sendIdentityContext() {
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+            return;
+        }
+        const isGuest =
+            this.isGuest || this.dynamicVariables.kiddo_is_guest === 'true';
+        if (isGuest) {
+            this.ws.send(
+                JSON.stringify({
+                    type: 'contextual_update',
+                    text:
+                        'Gość (niezalogowany) w Kiddo.\n' +
+                        'Możesz od razu pokazać ofertę: user.list_upcoming_lessons i user.get_lesson.\n' +
+                        'Nie wywołuj user.me / list_children / rezerwacji — zamiast tego poproś o zalogowanie (/login) i odświeżenie czatu.',
+                })
+            );
+            return;
+        }
+        const name = this.dynamicVariables.kiddo_user_name || '';
+        const email = this.dynamicVariables.kiddo_user_email || '';
+        const userId = this.dynamicVariables.kiddo_user_id || '';
+        if (!userId && !email) {
+            return;
+        }
+        this.ws.send(
+            JSON.stringify({
+                type: 'contextual_update',
+                text:
+                    'Zalogowany rodzic w Kiddo:\n' +
+                    `- imię: ${name || '(brak)'}\n` +
+                    `- e-mail: ${email || '(brak)'}\n` +
+                    `- user_id: ${userId || '(brak)'}\n` +
+                    'Na starcie wywołaj tool user.me i user.list_children. Nie pytaj ponownie o imię/e-mail, jeśli są już znane.',
+            })
+        );
     }
 
     sendContextualUpdate() {

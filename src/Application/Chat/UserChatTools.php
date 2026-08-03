@@ -97,7 +97,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 'required' => ['confirm', 'child_id'],
             ], requiresConfirm: true),
-            new ToolDefinition('user.list_upcoming_lessons', 'Find matching workshops/lessons by query, age and week start date.', [
+            new ToolDefinition('user.list_upcoming_lessons', 'Find matching workshops/lessons by query, age and week start date. Public catalog — works for guests.', [
                 'type' => 'object',
                 'properties' => [
                     'query' => [
@@ -114,8 +114,8 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                         'type' => 'integer',
                     ],
                 ],
-            ]),
-            new ToolDefinition('user.get_lesson', 'Get lesson details, seats and ticket options.', [
+            ], requiresAuth: false),
+            new ToolDefinition('user.get_lesson', 'Get lesson details, seats and ticket options. Public catalog — works for guests.', [
                 'type' => 'object',
                 'properties' => [
                     'lesson_id' => [
@@ -123,7 +123,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                 ],
                 'required' => ['lesson_id'],
-            ]),
+            ], requiresAuth: false),
             new ToolDefinition('user.create_booking', 'Book a lesson for the parent (creates pending payment + code).', [
                 'type' => 'object',
                 'properties' => [
@@ -324,14 +324,14 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
     private function me(ChatActor $actor): ToolResult
     {
-        $data = $this->presenter->userSummary($actor->user);
+        $data = $this->presenter->userSummary($actor->requireUser());
 
         return ToolResult::success(sprintf('Profil: %s (%s)', $data['name'], $data['email']), $data);
     }
 
     private function updateProfile(ChatActor $actor, ToolArguments $args): ToolResult
     {
-        $user = $actor->user;
+        $user = $actor->requireUser();
         if ($args->has('name')) {
             $user->setName($args->requireString('name'));
         }
@@ -354,7 +354,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     private function listChildren(ChatActor $actor): ToolResult
     {
         $children = [];
-        foreach ($actor->user->getChildren() as $child) {
+        foreach ($actor->requireUser()->getChildren() as $child) {
             $children[] = [
                 'id' => (string) $child->getId(),
                 'name' => $child->getName(),
@@ -381,7 +381,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         if ($args->has('birthday')) {
             $birthday = new \DateTimeImmutable($args->requireString('birthday'));
         }
-        $child = new Child($actor->user, $name, $birthday);
+        $child = new Child($actor->requireUser(), $name, $birthday);
         $this->entityManager->persist($child);
         $this->entityManager->flush();
 
@@ -521,7 +521,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     {
         $status = $args->string('status');
         $bookings = [];
-        foreach ($actor->user->getBookings() as $booking) {
+        foreach ($actor->requireUser()->getBookings() as $booking) {
             if ($status !== null && $booking->getStatus() !== $status) {
                 continue;
             }
@@ -550,7 +550,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     private function listCarnets(ChatActor $actor): ToolResult
     {
         $carnets = [];
-        foreach ($actor->user->getBookings() as $booking) {
+        foreach ($actor->requireUser()->getBookings() as $booking) {
             if (! $booking->isCarnet()) {
                 continue;
             }
@@ -620,7 +620,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             $booking->getId(),
             $lesson->getId(),
             $newLesson->getId(),
-            $actor->user,
+            $actor->requireUser(),
             $args->string('reason'),
         ));
 
@@ -641,7 +641,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $this->bus->dispatch(new CancelLessonBooking(
             $booking->getId(),
             $lesson->getId(),
-            $actor->user,
+            $actor->requireUser(),
             $args->string('reason'),
         ));
 
@@ -665,7 +665,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $this->bus->dispatch(new RefundLessonBooking(
             $booking->getId(),
             $lesson->getId(),
-            $actor->user,
+            $actor->requireUser(),
             $args->string('reason'),
         ));
 
@@ -675,7 +675,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     private function listNotifications(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $limit = $args->int('limit', 20) ?? 20;
-        $notifications = $this->notificationRepository->findRecentForUser($actor->user, $limit);
+        $notifications = $this->notificationRepository->findRecentForUser($actor->requireUser(), $limit);
         $items = [];
         foreach ($notifications as $notification) {
             $items[] = [
@@ -693,7 +693,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             sprintf(
                 'Powiadomienia: %d (nieprzeczytane: %d).',
                 count($items),
-                $this->notificationRepository->countUnreadForUser($actor->user)
+                $this->notificationRepository->countUnreadForUser($actor->requireUser())
             ),
             [
                 'notifications' => $items,
@@ -733,7 +733,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             $type = MessageType::from($typeValue);
         }
         $message = new UserMessage(
-            $actor->user,
+            $actor->requireUser(),
             $args->requireString('subject'),
             $args->requireString('message'),
             $type,

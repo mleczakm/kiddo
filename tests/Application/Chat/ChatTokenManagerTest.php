@@ -25,6 +25,19 @@ final class ChatTokenManagerTest extends TestCase
         self::assertSame(42, $parsed->userId);
         self::assertContains('ROLE_USER', $parsed->roles);
         self::assertFalse($parsed->isExpired());
+        self::assertFalse($parsed->isGuest());
+    }
+
+    public function testMintAndParseGuestToken(): void
+    {
+        $manager = new ChatTokenManager('test-secret');
+        $token = $manager->mintGuest(600);
+        $parsed = $manager->parse($token);
+
+        self::assertNull($parsed->userId);
+        self::assertTrue($parsed->isGuest());
+        self::assertSame([], $parsed->roles);
+        self::assertFalse($parsed->isExpired());
     }
 
     public function testRejectsTamperedToken(): void

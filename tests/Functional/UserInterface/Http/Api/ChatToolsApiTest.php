@@ -80,12 +80,47 @@ final class ChatToolsApiTest extends WebTestCase
         self::assertSame('kiddo', $payload['result']['serverInfo']['name']);
     }
 
-    public function testSignedUrlRequiresAuthentication(): void
+    public function testSignedUrlWorksForGuests(): void
     {
         $client = static::createClient();
-        $client->request('POST', '/api/chat/signed-url');
-        $status = $client->getResponse()
-            ->getStatusCode();
-        self::assertContains($status, [401, 302, 403]);
+        $client->request('POST', '/api/chat/signed-url', server: [
+            'CONTENT_TYPE' => 'application/json',
+        ], content: '{}');
+
+        self::assertResponseIsSuccessful();
+        /** @var array{guest: bool, chat_token: string, dynamic_variables: array{kiddo_is_guest: string}} $payload */
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertTrue($payload['guest']);
+        self::assertSame('true', $payload['dynamic_variables']['kiddo_is_guest']);
+        self::assertNotEmpty($payload['chat_token']);
+    }
+
+    public function testGuestTokenCanListPublicToolsButNotUserProfile(): void
+    {
+        $client = static::createClient();
+
+        /** @var ChatTokenManager $tokens */
+        $tokens = static::getContainer()->get(ChatTokenManager::class);
+        $token = $tokens->mintGuest();
+
+        $client->request('GET', '/api/v1/tools', server: [
+            'HTTP_X_KIDDO_CHAT_TOKEN' => $token,
+        ]);
+        self::assertResponseIsSuccessful();
+
+        $client->request(
+            'POST',
+            '/api/v1/tools/user.me',
+            server: [
+                'HTTP_X_KIDDO_CHAT_TOKEN' => $token,
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: '{}'
+        );
+        self::assertResponseStatusCodeSame(422);
+        /** @var array{ok: bool, summary: string} $payload */
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertFalse($payload['ok']);
+        self::assertStringContainsString('zalogować', $payload['summary']);
     }
 }

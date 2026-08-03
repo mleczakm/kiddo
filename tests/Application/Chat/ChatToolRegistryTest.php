@@ -89,4 +89,43 @@ final class ChatToolRegistryTest extends TestCase
         self::assertContains('user.me', $names);
         self::assertNotContains('admin.today_schedule', $names);
     }
+
+    public function testGuestCannotCallAuthToolsButCanCallPublicCatalog(): void
+    {
+        $provider = new class implements ChatToolProviderInterface {
+            public function definitions(): array
+            {
+                return [
+                    new ToolDefinition('user.me', 'me', [
+                        'type' => 'object',
+                        'properties' => new \stdClass(),
+                    ]),
+                    new ToolDefinition('user.list_upcoming_lessons', 'lessons', [
+                        'type' => 'object',
+                        'properties' => new \stdClass(),
+                    ], requiresAuth: false),
+                ];
+            }
+
+            public function supports(string $name): bool
+            {
+                return true;
+            }
+
+            public function call(string $name, ChatActor $actor, array $arguments): ToolResult
+            {
+                return ToolResult::success($name);
+            }
+        };
+
+        $registry = new ChatToolRegistry([$provider]);
+        $guest = ChatActor::guest();
+
+        $denied = $registry->call('user.me', $guest, []);
+        self::assertFalse($denied->ok);
+        self::assertStringContainsString('zalogować', (string) $denied->summary);
+
+        $ok = $registry->call('user.list_upcoming_lessons', $guest, []);
+        self::assertTrue($ok->ok);
+    }
 }

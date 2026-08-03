@@ -55,6 +55,12 @@ final readonly class ChatToolRegistry
                 if ($definition->requiresAdmin && ! $actor->isAdmin()) {
                     return ToolResult::failure('This tool requires ROLE_ADMIN');
                 }
+                if ($definition->requiresAuth && $actor->isGuest()) {
+                    return ToolResult::failure(
+                        'Authentication required. Ask the user to log in, then refresh the chat.',
+                        'Aby zobaczyć te dane lub wykonać tę akcję, musisz się zalogować. Otwórz /login, a po zalogowaniu odśwież czat.',
+                    );
+                }
                 if ($definition->requiresConfirm && ($arguments['confirm'] ?? false) !== true) {
                     return ToolResult::failure(
                         'Mutation not confirmed. Call again with confirm=true after user approval.',

@@ -23,20 +23,23 @@ final readonly class ChatTokenManager
             throw new \InvalidArgumentException('Cannot mint chat token for unsaved user');
         }
 
-        $ttl = $ttlSeconds ?? self::DEFAULT_TTL_SECONDS;
-        $expiresAt = time() + $ttl;
-        $payload = [
+        return $this->encode([
             'uid' => $userId,
             'roles' => array_values($user->getRoles()),
-            'exp' => $expiresAt,
+            'exp' => time() + ($ttlSeconds ?? self::DEFAULT_TTL_SECONDS),
             'jti' => bin2hex(random_bytes(16)),
-        ];
+        ]);
+    }
 
-        $json = json_encode($payload, JSON_THROW_ON_ERROR);
-        $body = rtrim(strtr(base64_encode($json), '+/', '-_'), '=');
-        $signature = $this->sign($body);
-
-        return $body . '.' . $signature;
+    public function mintGuest(?int $ttlSeconds = null): string
+    {
+        return $this->encode([
+            'uid' => null,
+            'guest' => true,
+            'roles' => [],
+            'exp' => time() + ($ttlSeconds ?? self::DEFAULT_TTL_SECONDS),
+            'jti' => bin2hex(random_bytes(16)),
+        ]);
     }
 
     public function parse(string $token): ChatToken
@@ -58,7 +61,7 @@ final readonly class ChatTokenManager
 
         $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         if (! is_array($decoded)
-            || ! isset($decoded['uid'], $decoded['roles'], $decoded['exp'], $decoded['jti'])
+            || ! isset($decoded['roles'], $decoded['exp'], $decoded['jti'])
             || ! is_array($decoded['roles'])
         ) {
             throw new \InvalidArgumentException('Invalid chat token payload');
@@ -67,8 +70,14 @@ final readonly class ChatTokenManager
         /** @var list<string> $roles */
         $roles = array_values(array_filter($decoded['roles'], is_string(...)));
 
+        $uidRaw = $decoded['uid'] ?? null;
+        $isGuest = ($decoded['guest'] ?? false) === true
+            || $uidRaw === null
+            || $uidRaw === 0;
+        $userId = $isGuest ? null : (int) $uidRaw;
+
         $chatToken = new ChatToken(
-            userId: (int) $decoded['uid'],
+            userId: $userId,
             roles: $roles,
             expiresAt: new \DateTimeImmutable()
                 ->setTimestamp((int) $decoded['exp']),
@@ -80,6 +89,18 @@ final readonly class ChatTokenManager
         }
 
         return $chatToken;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function encode(array $payload): string
+    {
+        $json = json_encode($payload, JSON_THROW_ON_ERROR);
+        $body = rtrim(strtr(base64_encode($json), '+/', '-_'), '=');
+        $signature = $this->sign($body);
+
+        return $body . '.' . $signature;
     }
 
     private function sign(string $body): string

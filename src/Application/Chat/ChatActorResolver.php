@@ -17,6 +17,10 @@ final readonly class ChatActorResolver
     public function fromTokenString(string $token): ChatActor
     {
         $chatToken = $this->tokenManager->parse($token);
+        if ($chatToken->isGuest()) {
+            return ChatActor::guest();
+        }
+
         $user = $this->userRepository->find($chatToken->userId);
         if (! $user instanceof User) {
             throw new \InvalidArgumentException('Chat token user not found');
