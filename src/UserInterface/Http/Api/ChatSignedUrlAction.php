@@ -31,20 +31,9 @@ final class ChatSignedUrlAction extends AbstractController
             ], Response::HTTP_NOT_FOUND);
         }
 
-        /** @var array{admin?: bool} $payload */
-        $payload = json_decode($request->getContent() ?: '{}', true) ?? [];
-        $wantAdmin = (bool) ($payload['admin'] ?? false);
         $user = $this->getUser();
         $isLoggedIn = $user instanceof User;
         $isAdmin = $isLoggedIn && $this->isGranted('ROLE_ADMIN');
-
-        if ($wantAdmin && ! $isAdmin) {
-            return $this->json([
-                'error' => $isLoggedIn
-                    ? 'Admin agent requires ROLE_ADMIN'
-                    : 'Admin chat requires login',
-            ], $isLoggedIn ? Response::HTTP_FORBIDDEN : Response::HTTP_UNAUTHORIZED);
-        }
 
         if ($isLoggedIn) {
             $chatToken = $this->chatTokenManager->mint($user);
@@ -84,7 +73,7 @@ final class ChatSignedUrlAction extends AbstractController
         }
 
         try {
-            $signed = $this->elevenLabsClient->getSignedUrl($wantAdmin, $dynamicVariables);
+            $signed = $this->elevenLabsClient->getSignedUrl($dynamicVariables);
         } catch (\Throwable $e) {
             return $this->json([
                 'error' => $e->getMessage(),

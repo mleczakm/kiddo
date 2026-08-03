@@ -6,7 +6,6 @@
 parameters:
   env(ELEVENLABS_API_KEY): ''
   env(ELEVENLABS_AGENT_ID): ''
-  env(ELEVENLABS_ADMIN_AGENT_ID): ''
   env(KIDDO_MCP_SERVICE_KEY): ''
   env(TELEGRAM_BOT_TOKEN): ''
   env(TELEGRAM_WEBHOOK_SECRET): ''

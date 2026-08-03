@@ -6,7 +6,6 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static values = {
         signedUrlEndpoint: { type: String, default: '/api/chat/signed-url' },
-        admin: { type: Boolean, default: false },
         hero: { type: Boolean, default: false },
         storageKey: { type: String, default: 'kiddo_chat_history' },
     };
@@ -75,11 +74,10 @@ export default class extends Controller {
                     Accept: 'application/json',
                 },
                 credentials: 'same-origin',
-                body: JSON.stringify({ admin: this.adminValue }),
+                body: '{}',
             });
 
             if (response.status === 401 || response.status === 403) {
-                // Admin chat still requires an authenticated admin session.
                 this.updateStatus('login_required');
                 if (this.hasLoginHintTarget) {
                     this.loginHintTarget.classList.remove('hidden');
@@ -176,7 +174,7 @@ export default class extends Controller {
                     text:
                         'Gość (niezalogowany) w Kiddo.\n' +
                         'Możesz od razu pokazać ofertę: user.list_upcoming_lessons i user.get_lesson.\n' +
-                        'Nie wywołuj user.me / list_children / rezerwacji — zamiast tego poproś o zalogowanie (/login) i odświeżenie czatu.',
+                        'Nie wywołuj user.me / list_children / rezerwacji / admin.* — zamiast tego poproś o zalogowanie (/login) i odświeżenie czatu.',
                 })
             );
             return;
@@ -184,7 +182,23 @@ export default class extends Controller {
         const name = this.dynamicVariables.kiddo_user_name || '';
         const email = this.dynamicVariables.kiddo_user_email || '';
         const userId = this.dynamicVariables.kiddo_user_id || '';
+        const isAdmin = this.dynamicVariables.kiddo_is_admin === 'true';
         if (!userId && !email) {
+            return;
+        }
+        if (isAdmin) {
+            this.ws.send(
+                JSON.stringify({
+                    type: 'contextual_update',
+                    text:
+                        'Zalogowany administrator w Kiddo:\n' +
+                        `- imię: ${name || '(brak)'}\n` +
+                        `- e-mail: ${email || '(brak)'}\n` +
+                        `- user_id: ${userId || '(brak)'}\n` +
+                        'Możesz używać tooli admin.* (harmonogram, rezerwacje, płatności, użytkownicy, skrzynka) oraz user.* gdy potrzeba.\n' +
+                        'Mutacje admin zawsze z confirm=true po wyraźnej zgodzie.',
+                })
+            );
             return;
         }
         this.ws.send(
@@ -195,7 +209,8 @@ export default class extends Controller {
                     `- imię: ${name || '(brak)'}\n` +
                     `- e-mail: ${email || '(brak)'}\n` +
                     `- user_id: ${userId || '(brak)'}\n` +
-                    'Na starcie wywołaj tool user.me i user.list_children. Nie pytaj ponownie o imię/e-mail, jeśli są już znane.',
+                    'Na starcie wywołaj tool user.me i user.list_children. Nie pytaj ponownie o imię/e-mail, jeśli są już znane.\n' +
+                    'Nie używaj tooli admin.* — wymagają ROLE_ADMIN.',
             })
         );
     }
