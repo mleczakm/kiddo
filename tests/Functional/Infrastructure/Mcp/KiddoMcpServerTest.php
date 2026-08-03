@@ -75,6 +75,9 @@ final class KiddoMcpServerTest extends KernelTestCase
         self::assertSame(200, $initResponse->getStatusCode(), (string) $initResponse->getContent());
         $sessionId = $initResponse->headers->get('Mcp-Session-Id');
         self::assertNotEmpty($sessionId);
+        /** @var array{result: array{protocolVersion: string}} $initPayload */
+        $initPayload = json_decode((string) $initResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('2025-03-26', $initPayload['result']['protocolVersion']);
         if ($kernel instanceof TerminableInterface) {
             $kernel->terminate($init, $initResponse);
         }

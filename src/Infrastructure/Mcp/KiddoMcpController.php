@@ -38,6 +38,29 @@ final readonly class KiddoMcpController
     {
         $content = $this->normalizeBody($request->getContent());
 
+        if ($request->isMethod('POST') && trim($content) === '') {
+            $this->logger->warning('MCP HTTP request with empty body', [
+                'content_type' => $request->headers->get('Content-Type'),
+                'accept' => $request->headers->get('Accept'),
+                'has_session' => $request->headers->has('Mcp-Session-Id'),
+            ]);
+
+            return new Response(
+                json_encode([
+                    'jsonrpc' => '2.0',
+                    'id' => null,
+                    'error' => [
+                        'code' => -32600,
+                        'message' => 'MCP POST requires a JSON-RPC body (e.g. initialize / tools/list). Empty body is not valid.',
+                    ],
+                ], JSON_THROW_ON_ERROR),
+                400,
+                [
+                    'Content-Type' => 'application/json',
+                ]
+            );
+        }
+
         $this->logger->info('MCP HTTP request', [
             'method' => $request->getMethod(),
             'body_bytes' => strlen($content),
@@ -49,6 +72,12 @@ final readonly class KiddoMcpController
                 '['
             ),
         ]);
+
+        // Spec allows GET SSE; the PHP SDK returns 405. Accept GET so clients that open an
+        // SSE listener in parallel with POST do not fail the whole handshake.
+        if ($request->isMethod('GET')) {
+            return $this->emptySseResponse($request);
+        }
 
         $psrRequest = $this->httpMessageFactory
             ->createRequest($request)
@@ -66,6 +95,25 @@ final readonly class KiddoMcpController
         $streamed = strtolower($psrResponse->getHeaderLine('Content-Type')) === 'text/event-stream';
 
         return $this->httpFoundationFactory->createResponse($psrResponse, $streamed);
+    }
+
+    private function emptySseResponse(Request $request): Response
+    {
+        $this->logger->info('MCP HTTP GET accepted as empty SSE stream');
+
+        $response = new Response(": connected\n\n", 200, [
+            'Content-Type' => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'Connection' => 'keep-alive',
+            'X-Accel-Buffering' => 'no',
+        ]);
+
+        $sessionId = $request->headers->get('Mcp-Session-Id');
+        if (is_string($sessionId) && $sessionId !== '') {
+            $response->headers->set('Mcp-Session-Id', $sessionId);
+        }
+
+        return $response;
     }
 
     private function normalizeBody(string $content): string
