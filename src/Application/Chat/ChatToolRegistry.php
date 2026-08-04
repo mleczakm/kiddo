@@ -54,10 +54,6 @@ final readonly class ChatToolRegistry
      */
     public function mcpPublicName(ToolDefinition $definition): string
     {
-        if ($definition->mcpAliases !== []) {
-            return $definition->mcpAliases[0];
-        }
-
         return str_replace('.', '_', $definition->name);
     }
 
@@ -77,7 +73,7 @@ final readonly class ChatToolRegistry
         $canonical = $this->resolveCanonicalName($name);
         if ($canonical === null) {
             return ToolResult::failure(sprintf(
-                'Unknown tool: %s. To list workshops call browse_workshops.',
+                'Unknown tool: %s. To list workshops call user.list_upcoming_lessons.',
                 $name
             ));
         }
@@ -125,12 +121,7 @@ final readonly class ChatToolRegistry
         foreach ($this->providers as $provider) {
             foreach ($provider->definitions() as $definition) {
                 $canonical = $definition->name;
-                $candidates = [
-                    $canonical,
-                    str_replace('.', '_', $canonical),
-                    $this->mcpPublicName($definition),
-                    ...$definition->mcpAliases,
-                ];
+                $candidates = [$canonical, str_replace('.', '_', $canonical)];
                 foreach ($candidates as $alias) {
                     if ($alias === '') {
                         continue;

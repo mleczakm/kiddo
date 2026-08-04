@@ -25,7 +25,7 @@ final class KiddoMcpServerTest extends KernelTestCase
         $registry = static::getContainer()->get('mcp.registry');
         $names = array_map(static fn(object $tool): string => $tool->name, [...$registry->getTools()->references]);
 
-        self::assertContains('browse_workshops', $names);
+        self::assertContains('user_list_upcoming_lessons', $names);
         self::assertContains('user_me', $names);
         self::assertContains('admin_list_unmatched_transfers', $names);
         self::assertNotContains('create_lesson', $names);
@@ -113,9 +113,9 @@ final class KiddoMcpServerTest extends KernelTestCase
         $names = array_column($payload['result']['tools'], 'name');
 
         self::assertNull($payload['result']['nextCursor'] ?? null, 'tools/list must fit on one page for ElevenLabs');
-        self::assertContains('browse_workshops', $names);
-        self::assertContains('get_workshop', $names);
-        self::assertSame('browse_workshops', $names[0]);
+        self::assertContains('user_list_upcoming_lessons', $names);
+        self::assertContains('user_get_lesson', $names);
+        self::assertSame('user_list_upcoming_lessons', $names[0]);
         self::assertContains('user_me', $names);
         self::assertContains('admin_list_unmatched_transfers', $names);
         if ($kernel instanceof TerminableInterface) {

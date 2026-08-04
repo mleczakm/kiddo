@@ -121,17 +121,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                 ],
                 requiresAuth: false,
-                mcpAliases: [
-                    'browse_workshops',
-                    'list_available_workshops',
-                    'list_upcoming_lessons',
-                    'user.list_upcoming_lessons',
-                    'user_list_upcoming_lessons',
-                ],
             ),
             new ToolDefinition(
                 'user.get_lesson',
-                'Get one workshop/lesson details, seats and ticket options. Pass lesson_id from browse_workshops.',
+                'Get one workshop/lesson details, seats and ticket options. Pass lesson_id from user.list_upcoming_lessons.',
                 [
                     'type' => 'object',
                     'properties' => [
@@ -143,7 +136,6 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     'required' => ['lesson_id'],
                 ],
                 requiresAuth: false,
-                mcpAliases: ['get_workshop', 'user.get_lesson', 'user_get_lesson'],
             ),
             new ToolDefinition('user.create_booking', 'Book a lesson for the parent (creates pending payment + code).', [
                 'type' => 'object',
@@ -197,7 +189,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             ]),
             new ToolDefinition(
                 'user.booking_reschedule_options',
-                'List alternative dates when rescheduling an EXISTING booking. Requires real booking_id and lesson_id ULIDs. Not for browsing the workshop catalog — use browse_workshops instead.',
+                'List alternative dates when rescheduling an EXISTING booking. Requires real booking_id and lesson_id ULIDs. Not for browsing the workshop catalog — use user.list_upcoming_lessons instead.',
                 [
                     'type' => 'object',
                     'properties' => [
@@ -212,7 +204,6 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['booking_id', 'lesson_id'],
                 ],
-                mcpAliases: ['booking_reschedule_options'],
             ),
             new ToolDefinition('user.reschedule_lesson', 'Reschedule a booked lesson to another lesson in the series.', [
                 'type' => 'object',
@@ -596,8 +587,8 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $lessonId = $args->requireString('lesson_id');
         if (! $this->looksLikeUlid($bookingId) || ! $this->looksLikeUlid($lessonId)) {
             return ToolResult::failure(
-                'Invalid booking_id/lesson_id. This tool is only for rescheduling an existing booking. To list available workshops call browse_workshops (user.list_upcoming_lessons).',
-                'To nie jest przegląd oferty. Do listy zajęć użyj browse_workshops. Ten tool wymaga prawdziwych ULID rezerwacji i lekcji.',
+                'Invalid booking_id/lesson_id. This tool is only for rescheduling an existing booking. To list available workshops call user.list_upcoming_lessons.',
+                'To nie jest przegląd oferty. Do listy zajęć użyj user.list_upcoming_lessons. Ten tool wymaga prawdziwych ULID rezerwacji i lekcji.',
             );
         }
 

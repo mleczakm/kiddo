@@ -79,7 +79,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
     }
 
     /**
-     * @return array{type: 'object', properties: array<string, mixed>, required: list<string>|null}
+     * @return array{type: 'object', properties: array<string, mixed>, required: list<string>}
      */
     private function normalizeInputSchema(ToolDefinition $definition): array
     {
@@ -92,7 +92,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
             $properties = [];
         }
 
-        $required = null;
+        $required = [];
         if (isset($schema['required']) && is_array($schema['required'])) {
             /** @var list<string> $required */
             $required = array_values(array_filter($schema['required'], is_string(...)));

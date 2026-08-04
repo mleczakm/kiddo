@@ -70,8 +70,8 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         'description' => 'YYYY-MM-DD, defaults to today',
                     ],
                 ],
-            ], requiresAdmin: true, mcpAliases: ['admin_today_schedule']),
-            new ToolDefinition('admin.list_lessons', 'List lessons for a week (admin ops). Optional query/week. For age-filtered public catalog use browse_workshops.', [
+            ], requiresAdmin: true),
+            new ToolDefinition('admin.list_lessons', 'List lessons for a week (admin ops). Optional query/week. For age-filtered public catalog use user.list_upcoming_lessons.', [
                 'type' => 'object',
                 'properties' => [
                     'week' => [
@@ -88,7 +88,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         'type' => 'integer',
                     ],
                 ],
-            ], requiresAdmin: true, mcpAliases: ['admin_list_lessons']),
+            ], requiresAdmin: true),
             new ToolDefinition('admin.get_lesson', 'Get lesson details for admin ops.', [
                 'type' => 'object',
                 'properties' => [
@@ -176,7 +176,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             ], requiresAdmin: true, requiresConfirm: true),
             new ToolDefinition(
                 'admin.clone_template_lesson',
-                'Create a new lesson occurrence by cloning a template lesson. Requires template_lesson_id ULID, schedule (ISO datetime), confirm=true. Not for listing workshops — use browse_workshops.',
+                'Create a new lesson occurrence by cloning a template lesson. Requires template_lesson_id ULID, schedule (ISO datetime), confirm=true. Not for listing workshops — use user.list_upcoming_lessons.',
                 [
                     'type' => 'object',
                     'properties' => [

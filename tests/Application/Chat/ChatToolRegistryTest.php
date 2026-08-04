@@ -129,7 +129,7 @@ final class ChatToolRegistryTest extends TestCase
         self::assertTrue($ok->ok);
     }
 
-    public function testResolvesExplicitCatalogAliases(): void
+    public function testResolvesCanonicalNames(): void
     {
         $provider = new class implements ChatToolProviderInterface {
             public function definitions(): array
@@ -143,7 +143,6 @@ final class ChatToolRegistryTest extends TestCase
                             'properties' => new \stdClass(),
                         ],
                         requiresAuth: false,
-                        mcpAliases: ['browse_workshops', 'list_upcoming_lessons'],
                     ),
                     new ToolDefinition(
                         'admin.create_booking',
@@ -172,9 +171,10 @@ final class ChatToolRegistryTest extends TestCase
         $registry = new ChatToolRegistry([$provider]);
         $guest = ChatActor::guest();
 
-        foreach (['browse_workshops', 'list_upcoming_lessons', 'user_list_upcoming_lessons'] as $alias) {
-            $result = $registry->call($alias, $guest, []);
-            self::assertTrue($result->ok, $alias);
+        // Canonical name and underscore variant both work
+        foreach (['user.list_upcoming_lessons', 'user_list_upcoming_lessons'] as $name) {
+            $result = $registry->call($name, $guest, []);
+            self::assertTrue($result->ok, $name);
             self::assertSame('user.list_upcoming_lessons', $result->summary);
         }
 
@@ -186,10 +186,9 @@ final class ChatToolRegistryTest extends TestCase
                 'properties' => new \stdClass(),
             ],
             requiresAuth: false,
-            mcpAliases: ['browse_workshops', 'list_upcoming_lessons'],
         );
-        self::assertSame(['browse_workshops'], $registry->mcpNamesFor($catalog));
-        self::assertSame('browse_workshops', $registry->mcpPublicName($catalog));
+        self::assertSame(['user_list_upcoming_lessons'], $registry->mcpNamesFor($catalog));
+        self::assertSame('user_list_upcoming_lessons', $registry->mcpPublicName($catalog));
 
         $booking = new ToolDefinition(
             'admin.create_booking',

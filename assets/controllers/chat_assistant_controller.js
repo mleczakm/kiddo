@@ -201,7 +201,7 @@ export default class extends Controller {
                     type: 'contextual_update',
                     text:
                         'Gość (niezalogowany) w Kiddo.\n' +
-                        'Możesz od razu pokazać ofertę: browse_workshops / user.list_upcoming_lessons.\n' +
+                        'Możesz od razu pokazać ofertę: user.list_upcoming_lessons.\n' +
                         'Nie wywołuj user.me / rezerwacji / admin.* — poproś o zalogowanie (/login) i odświeżenie czatu.',
                 })
             );
@@ -223,8 +223,8 @@ export default class extends Controller {
                         `- imię: ${name || '(brak)'}\n` +
                         `- e-mail: ${email || '(brak)'}\n` +
                         `- user_id: ${userId || '(brak)'}\n` +
-                        'LISTA dostępnych zajęć → browse_workshops (user.list_upcoming_lessons).\n' +
-                        'Szczegóły terminu → get_workshop.\n' +
+                        'LISTA dostępnych zajęć → user.list_upcoming_lessons.\n' +
+                        'Szczegóły terminu → user.get_lesson.\n' +
                         'Nowe wystąpienie w grafiku → admin.clone_template_lesson (nie do listowania oferty).\n' +
                         'Mutacje admin z confirm=true po wyraźnej zgodzie.',
                 })
