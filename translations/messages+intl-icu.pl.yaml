@@ -736,6 +736,7 @@ payment:
   paid_success: "Płatność zaksięgowana!"
   paid_message: "Dziękujemy za płatność. Twoja rezerwacja została potwierdzona."
   awaiting: "Oczekiwanie na zaksięgowanie płatności..."
+  blik_instruction: "Wykonaj przelew BLIK na telefon {blik_phone} na kwotę {amount} {currency}. W tytule przelewu wpisz dokładnie kod: {code}. Kod jest ważny ok. {valid_hours} godzin (do {expires_at}). Alternatywnie: klasyczny przelew na konto {bank_account} z tym samym tytułem. Po zaksięgowaniu rezerwacja zostanie potwierdzona automatycznie."
 
 
 action:

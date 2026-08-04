@@ -239,7 +239,8 @@ export default class extends Controller {
                     `- imię: ${name || '(brak)'}\n` +
                     `- e-mail: ${email || '(brak)'}\n` +
                     `- user_id: ${userId || '(brak)'}\n` +
-                    'Na starcie wywołaj tool user.me i user.list_children. Nie pytaj ponownie o imię/e-mail, jeśli są już znane.\n' +
+                    'NIE pytaj o imię/e-mail/telefon — są w koncie. Przed rezerwacją: user.me + user.list_children.\n' +
+                    'Rezerwacja: user.create_booking (confirm=true) → przekaż instrukcję BLIK z odpowiedzi toola (telefon, kwota, kod, ~24h).\n' +
                     'Nie używaj tooli admin.* — wymagają ROLE_ADMIN.',
             })
         );

@@ -9,9 +9,21 @@ use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\TicketOption;
 use App\Entity\User;
+use App\Repository\SettingRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class LessonPresenter
+final readonly class LessonPresenter
 {
+    /**
+     * Matches CheckExpiredPayments(expirationMinutes: 24 * 60) in MainSchedule.
+     */
+    public const int PAYMENT_CODE_VALID_HOURS = 24;
+
+    public function __construct(
+        private SettingRepository $settingRepository,
+        private TranslatorInterface $translator,
+    ) {}
+
     /**
      * @return array{
      *     id: string,
@@ -89,15 +101,7 @@ final class LessonPresenter
      *     child_id: string|null,
      *     child_name: string|null,
      *     notes: string|null,
-     *     payment: array{
-     *         id: string,
-     *         status: string,
-     *         amount: string,
-     *         currency: string,
-     *         code: string|null,
-     *         created_at: string,
-     *         paid_at: string|null
-     *     }|null,
+     *     payment: array<string, mixed>|null,
      *     lessons: array<int, array{
      *         id: string,
      *         title: string,
@@ -132,7 +136,7 @@ final class LessonPresenter
                 ->getId() : null,
             'child_name' => $booking->getChild()?->getName(),
             'notes' => $booking->getNotes(),
-            'payment' => $payment !== null ? $this->payment($payment) : null,
+            'payment' => $payment !== null ? $this->paymentInstructions($payment) : null,
             'lessons' => $lessons,
         ];
     }
@@ -167,6 +171,57 @@ final class LessonPresenter
     }
 
     /**
+     * Full BLIK / transfer copy for chat agents and APIs.
+     *
+     * @return array{
+     *     id: string,
+     *     status: string,
+     *     amount: string,
+     *     currency: string,
+     *     code: string|null,
+     *     created_at: string,
+     *     paid_at: string|null,
+     *     method: string,
+     *     blik_phone: string,
+     *     bank_account: string,
+     *     expires_at: string,
+     *     valid_hours: int,
+     *     instruction_pl: string
+     * }
+     */
+    public function paymentInstructions(Payment $payment): array
+    {
+        $base = $this->payment($payment);
+        $blikPhone = $this->paymentSetting('blik_phone');
+        $bankAccount = $this->paymentSetting('bank_account');
+        $expiresAt = $payment->getCreatedAt()
+            ->modify(sprintf('+%d hours', self::PAYMENT_CODE_VALID_HOURS));
+        $code = $base['code'] ?? '—';
+        $amount = $base['amount'];
+        $currency = $base['currency'];
+
+        $instruction = $this->translator->trans('payment.blik_instruction', [
+            'blik_phone' => $blikPhone,
+            'amount' => $amount,
+            'currency' => $currency,
+            'code' => $code,
+            'valid_hours' => self::PAYMENT_CODE_VALID_HOURS,
+            'expires_at' => $expiresAt->format('d.m.Y H:i'),
+            'bank_account' => $bankAccount,
+        ], 'messages');
+
+        return [
+            ...$base,
+            'method' => 'blik_phone_transfer',
+            'blik_phone' => $blikPhone,
+            'bank_account' => $bankAccount,
+            'expires_at' => $expiresAt->format(\DateTimeInterface::ATOM),
+            'valid_hours' => self::PAYMENT_CODE_VALID_HOURS,
+            'instruction_pl' => $instruction,
+        ];
+    }
+
+    /**
      * @return array{
      *     id: int|null,
      *     name: string,
@@ -187,5 +242,22 @@ final class LessonPresenter
             'children_count' => $user->getChildren()
                 ->count(),
         ];
+    }
+
+    private function paymentSetting(string $key): string
+    {
+        $setting = $this->settingRepository->findOneByKey('payment');
+        $content = $setting?->getContent();
+        if (! is_array($content)) {
+            throw new \RuntimeException('Payment settings not configured');
+        }
+
+        $value = $content[$key] ?? null;
+
+        if (! is_string($value) || $value === '') {
+            throw new \RuntimeException(sprintf('Payment setting %s not configured', $key));
+        }
+
+        return $value;
     }
 }

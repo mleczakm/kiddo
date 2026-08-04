@@ -48,10 +48,14 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ];
 
         return [
-            new ToolDefinition('user.me', 'Return the authenticated parent profile summary.', [
-                'type' => 'object',
-                'properties' => new \stdClass(),
-            ]),
+            new ToolDefinition(
+                'user.me',
+                'Return the logged-in parent profile (name, email, phone, children_count). Call instead of asking the user for personal data already stored on the account.',
+                [
+                    'type' => 'object',
+                    'properties' => new \stdClass(),
+                ],
+            ),
             new ToolDefinition('user.update_profile', 'Update parent name, email and/or phone.', [
                 'type' => 'object',
                 'properties' => [
@@ -69,10 +73,14 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 'required' => ['confirm'],
             ], requiresConfirm: true),
-            new ToolDefinition('user.list_children', 'List children on the parent account.', [
-                'type' => 'object',
-                'properties' => new \stdClass(),
-            ]),
+            new ToolDefinition(
+                'user.list_children',
+                'List children (id, name, birthday) on the parent account. Use before booking when assigning child_id; do not invent children or ask for names already returned here.',
+                [
+                    'type' => 'object',
+                    'properties' => new \stdClass(),
+                ],
+            ),
             new ToolDefinition('user.add_child', 'Add a child to the parent account.', [
                 'type' => 'object',
                 'properties' => [
@@ -137,34 +145,45 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresAuth: false,
             ),
-            new ToolDefinition('user.create_booking', 'Book a lesson for the parent (creates pending payment + code).', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'lesson_id' => [
-                        'type' => 'string',
+            new ToolDefinition(
+                'user.create_booking',
+                'Book a workshop for the logged-in parent. Uses account data from the chat token — do NOT ask for name/email/phone. Pass lesson_id + ticket_type (one_time|carnet_4) + confirm=true. Optional child_id from user.list_children. Returns BLIK payment instructions (phone, amount, title code, ~24h validity). Guests must log in first.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'lesson_id' => [
+                            'type' => 'string',
+                            'description' => 'ULID from user.list_upcoming_lessons / user.get_lesson',
+                        ],
+                        'ticket_type' => [
+                            'type' => 'string',
+                            'enum' => ['one_time', 'carnet_4'],
+                        ],
+                        'child_id' => [
+                            'type' => 'string',
+                            'description' => 'Optional ULID from user.list_children; omit if not needed',
+                        ],
                     ],
-                    'ticket_type' => [
-                        'type' => 'string',
-                        'enum' => ['one_time', 'carnet_4'],
-                    ],
-                    'child_id' => [
-                        'type' => 'string',
+                    'required' => ['confirm', 'lesson_id', 'ticket_type'],
+                ],
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'user.get_payment_instructions',
+                'BLIK-to-phone payment details for a pending booking: phone number, amount, payment title code, validity (~24h), optional bank account. Prefer booking_id or payment_code from user.create_booking. Logged-in parent only.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                        'payment_code' => [
+                            'type' => 'string',
+                        ],
                     ],
                 ],
-                'required' => ['confirm', 'lesson_id', 'ticket_type'],
-            ], requiresConfirm: true),
-            new ToolDefinition('user.get_payment_instructions', 'Return bank-transfer payment code and amount for a booking or payment code.', [
-                'type' => 'object',
-                'properties' => [
-                    'booking_id' => [
-                        'type' => 'string',
-                    ],
-                    'payment_code' => [
-                        'type' => 'string',
-                    ],
-                ],
-            ]),
+            ),
             new ToolDefinition('user.list_bookings', 'List parent bookings, optionally filtered by status.', [
                 'type' => 'object',
                 'properties' => [
@@ -489,14 +508,35 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             paymentCode: $paymentCode,
         ));
 
-        return ToolResult::success(
-            sprintf('Rezerwacja utworzona. Opłać przelewem z tytułem zawierającym kod %s.', $paymentCode),
-            [
+        $codeEntity = $this->paymentCodeRepository->findOneBy([
+            'code' => strtoupper($paymentCode),
+        ]);
+        $payment = $codeEntity?->getPayment();
+        $booking = $payment !== null
+            ? $this->bookingRepository->findOneBy([
+                'payment' => $payment,
+            ])
+            : null;
+        if ($payment !== null) {
+            $instructions = $this->presenter->paymentInstructions($payment);
+            $summary = $instructions['instruction_pl'];
+        } else {
+            $instructions = [
                 'payment_code' => $paymentCode,
-                'lesson_id' => $lessonId,
-                'ticket_type' => $ticketType,
-            ]
-        );
+            ];
+            $summary = sprintf(
+                'Rezerwacja utworzona. Opłać przelewem BLIK z tytułem zawierającym kod %s.',
+                $paymentCode
+            );
+        }
+
+        return ToolResult::success($summary, [
+            'payment_code' => $paymentCode,
+            'booking_id' => $booking !== null ? (string) $booking->getId() : null,
+            'lesson_id' => $lessonId,
+            'ticket_type' => $ticketType,
+            'payment' => $instructions,
+        ]);
     }
 
     private function getPaymentInstructions(ChatActor $actor, ToolArguments $args): ToolResult
@@ -522,18 +562,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             return ToolResult::failure('Provide booking_id or payment_code');
         }
 
-        $data = $this->presenter->payment($payment);
+        $data = $this->presenter->paymentInstructions($payment);
 
-        return ToolResult::success(
-            sprintf(
-                'Przelew: %s %s, tytuł z kodem %s, status: %s.',
-                $data['amount'],
-                $data['currency'],
-                $data['code'] ?? '—',
-                $data['status']
-            ),
-            $data
-        );
+        return ToolResult::success($data['instruction_pl'], $data);
     }
 
     private function listBookings(ChatActor $actor, ToolArguments $args): ToolResult

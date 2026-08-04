@@ -6,11 +6,12 @@ mcp:
     pagination_limit: 1000
     instructions: |
         Use Kiddo tools for lesson discovery, bookings, payments, and admin ops.
+        Guests: only user.list_upcoming_lessons and user.get_lesson; ask them to /login to book.
+        Logged-in parents: never ask for name/email/phone already on the account — use user.me and user.list_children.
         Always confirm mutations with the user; mutating tools require confirm=true.
         Never invent availability — call tools for seats and prices.
-        After booking, return the payment code and bank-transfer instructions.
+        After user.create_booking, relay the returned BLIK-to-phone instructions (phone, amount, title code, ~24h validity) verbatim.
         Admin tools require a chat token with ROLE_ADMIN.
-        Prefer browse_workshops to list available lessons.
     client_transports:
         stdio: true
         http: true
