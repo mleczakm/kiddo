@@ -25,9 +25,14 @@ final class KiddoMcpServerTest extends KernelTestCase
         $registry = static::getContainer()->get('mcp.registry');
         $names = array_map(static fn(object $tool): string => $tool->name, [...$registry->getTools()->references]);
 
-        self::assertContains('user.me', $names);
-        self::assertContains('user.create_booking', $names);
-        self::assertContains('admin.list_unmatched_transfers', $names);
+        self::assertContains('browse_workshops', $names);
+        self::assertContains('user_me', $names);
+        self::assertContains('admin_list_unmatched_transfers', $names);
+        self::assertNotContains('create_lesson', $names);
+        self::assertNotContains('admincreate_lesson', $names);
+        // One public name per tool — no alias explosion for ElevenLabs.
+        self::assertSame(count($names), count(array_unique($names)));
+        self::assertLessThan(80, count($names));
     }
 
     public function testHttpInitializeThenToolsList(): void
@@ -103,49 +108,16 @@ final class KiddoMcpServerTest extends KernelTestCase
         $listResponse = $kernel->handle($list);
         self::assertSame(200, $listResponse->getStatusCode(), (string) $listResponse->getContent());
 
-        /** @var array{result: array{tools: list<array{name: string}>, nextCursor: ?string}} $payload */
+        /** @var array{result: array{tools: list<array{name: string}>, nextCursor?: ?string}} $payload */
         $payload = json_decode((string) $listResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $names = array_column($payload['result']['tools'], 'name');
 
-        // Fetch all pages if pagination is used
-        $cursor = $payload['result']['nextCursor'] ?? null;
-        while ($cursor !== null) {
-            $paginatedList = Request::create(
-                '/api/mcp',
-                'POST',
-                server: [
-                    'CONTENT_TYPE' => 'application/json',
-                    'HTTP_ACCEPT' => 'application/json',
-                    'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-                    'HTTP_HOST' => 'localhost',
-                    'HTTP_MCP_SESSION_ID' => (string) $sessionId,
-                    'HTTP_MCP_PROTOCOL_VERSION' => '2025-03-26',
-                ],
-                content: json_encode([
-                    'jsonrpc' => '2.0',
-                    'id' => 2,
-                    'method' => 'tools/list',
-                    'params' => [
-                        'cursor' => $cursor,
-                    ],
-                ], JSON_THROW_ON_ERROR)
-            );
-
-            $paginatedResponse = $kernel->handle($paginatedList);
-            self::assertSame(200, $paginatedResponse->getStatusCode(), (string) $paginatedResponse->getContent());
-
-            /** @var array{result: array{tools: list<array{name: string}>, nextCursor: ?string}} $paginatedPayload */
-            $paginatedPayload = json_decode((string) $paginatedResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-            $names = array_merge($names, array_column($paginatedPayload['result']['tools'], 'name'));
-            $cursor = $paginatedPayload['result']['nextCursor'] ?? null;
-
-            if ($kernel instanceof TerminableInterface) {
-                $kernel->terminate($paginatedList, $paginatedResponse);
-            }
-        }
-
-        self::assertContains('user.me', $names);
-        self::assertContains('admin.list_unmatched_transfers', $names);
+        self::assertNull($payload['result']['nextCursor'] ?? null, 'tools/list must fit on one page for ElevenLabs');
+        self::assertContains('browse_workshops', $names);
+        self::assertContains('get_workshop', $names);
+        self::assertSame('browse_workshops', $names[0]);
+        self::assertContains('user_me', $names);
+        self::assertContains('admin_list_unmatched_transfers', $names);
         if ($kernel instanceof TerminableInterface) {
             $kernel->terminate($list, $listResponse);
         }

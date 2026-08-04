@@ -8,6 +8,7 @@ final readonly class ToolDefinition
 {
     /**
      * @param array<string, mixed> $inputSchema JSON Schema object
+     * @param list<string> $mcpAliases Extra MCP/LLM names that map to this tool (e.g. browse_workshops)
      */
     public function __construct(
         public string $name,
@@ -16,6 +17,7 @@ final readonly class ToolDefinition
         public bool $requiresAdmin = false,
         public bool $requiresConfirm = false,
         public bool $requiresAuth = true,
+        public array $mcpAliases = [],
     ) {}
 
     /**

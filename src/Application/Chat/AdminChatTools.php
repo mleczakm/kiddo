@@ -62,7 +62,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ];
 
         return [
-            new ToolDefinition('admin.today_schedule', '[READ] List today’s lessons with attendee counts. Use for “co dziś w grafiku”. Not for age-filtered public catalog — that is user.list_upcoming_lessons.', [
+            new ToolDefinition('admin.today_schedule', 'List today’s lessons with attendee counts (admin schedule).', [
                 'type' => 'object',
                 'properties' => [
                     'date' => [
@@ -70,8 +70,8 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         'description' => 'YYYY-MM-DD, defaults to today',
                     ],
                 ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.list_lessons', '[READ] Admin week overview of lessons (ops, includes cancelled when asked). Optional query/week. For parent-style catalog “zajęcia dla 2-latka / dostępne warsztaty” prefer user.list_upcoming_lessons (supports age filter).', [
+            ], requiresAdmin: true, mcpAliases: ['admin_today_schedule']),
+            new ToolDefinition('admin.list_lessons', 'List lessons for a week (admin ops). Optional query/week. For age-filtered public catalog use browse_workshops.', [
                 'type' => 'object',
                 'properties' => [
                     'week' => [
@@ -88,7 +88,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         'type' => 'integer',
                     ],
                 ],
-            ], requiresAdmin: true),
+            ], requiresAdmin: true, mcpAliases: ['admin_list_lessons']),
             new ToolDefinition('admin.get_lesson', 'Get lesson details for admin ops.', [
                 'type' => 'object',
                 'properties' => [
@@ -174,24 +174,30 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 ],
                 'required' => ['confirm', 'series_id'],
             ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.create_lesson', '[MUTATION ONLY] Clone an existing template lesson into a NEW occurrence at a new schedule. Requires real template_lesson_id ULID + schedule + confirm=true. NEVER use to list/browse available workshops — for “jakie zajęcia / lista warsztatów” call user.list_upcoming_lessons or admin.list_lessons / admin.today_schedule.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'template_lesson_id' => [
-                        'type' => 'string',
-                        'description' => 'ULID of an existing lesson to copy. Never pass "any", age, or free text.',
+            new ToolDefinition(
+                'admin.clone_template_lesson',
+                'Create a new lesson occurrence by cloning a template lesson. Requires template_lesson_id ULID, schedule (ISO datetime), confirm=true. Not for listing workshops — use browse_workshops.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'template_lesson_id' => [
+                            'type' => 'string',
+                            'description' => 'ULID of an existing lesson to copy',
+                        ],
+                        'schedule' => [
+                            'type' => 'string',
+                            'description' => 'ISO datetime for the new occurrence',
+                        ],
+                        'capacity' => [
+                            'type' => 'integer',
+                        ],
                     ],
-                    'schedule' => [
-                        'type' => 'string',
-                        'description' => 'ISO datetime for the new occurrence',
-                    ],
-                    'capacity' => [
-                        'type' => 'integer',
-                    ],
+                    'required' => ['confirm', 'template_lesson_id', 'schedule'],
                 ],
-                'required' => ['confirm', 'template_lesson_id', 'schedule'],
-            ], requiresAdmin: true, requiresConfirm: true),
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
             new ToolDefinition('admin.list_bookings', 'Search bookings by status or user email fragment.', [
                 'type' => 'object',
                 'properties' => [
@@ -424,7 +430,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'admin.update_lesson_capacity' => $this->updateCapacity($args),
                 'admin.list_series' => $this->listSeries($args),
                 'admin.update_series' => $this->updateSeries($args),
-                'admin.create_lesson' => $this->createLesson($args),
+                'admin.clone_template_lesson' => $this->cloneTemplateLesson($args),
                 'admin.list_bookings' => $this->listBookings($args),
                 'admin.create_booking' => $this->createBooking($args),
                 'admin.mark_booking_paid' => $this->markBookingPaid($args),
@@ -984,17 +990,13 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
-    private function createLesson(ToolArguments $args): ToolResult
+    private function cloneTemplateLesson(ToolArguments $args): ToolResult
     {
         $templateId = $args->requireString('template_lesson_id');
-        if (! Ulid::isValid(trim($templateId)) || in_array(
-            strtolower(trim($templateId)),
-            ['any', 'all', 'none', '*'],
-            true
-        )) {
+        if (! Ulid::isValid(trim($templateId))) {
             return ToolResult::failure(
-                'Wrong tool for listing workshops. Call user.list_upcoming_lessons (catalog) or admin.list_lessons / admin.today_schedule (ops). admin.create_lesson only clones a template and needs a real template_lesson_id ULID + schedule + confirm=true.',
-                'To nie jest lista zajęć. Aby pokazać ofertę, wywołaj user.list_upcoming_lessons albo admin.list_lessons / admin.today_schedule. admin.create_lesson tylko tworzy nowy termin z szablonu (prawdziwy ULID template_lesson_id).',
+                'Invalid template_lesson_id ULID. To list workshops use user.list_upcoming_lessons. To create a lesson use admin.clone_template_lesson with a real ULID.',
+                'Niepoprawny ULID szablonu. Lista zajęć: user.list_upcoming_lessons. Tworzenie: admin.clone_template_lesson z prawdziwym ULID.',
             );
         }
 

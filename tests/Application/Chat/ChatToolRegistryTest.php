@@ -129,22 +129,38 @@ final class ChatToolRegistryTest extends TestCase
         self::assertTrue($ok->ok);
     }
 
-    public function testResolvesShortAndUnderscoreAliases(): void
+    public function testResolvesExplicitCatalogAliases(): void
     {
         $provider = new class implements ChatToolProviderInterface {
             public function definitions(): array
             {
                 return [
-                    new ToolDefinition('user.list_upcoming_lessons', 'lessons', [
-                        'type' => 'object',
-                        'properties' => new \stdClass(),
-                    ], requiresAuth: false),
+                    new ToolDefinition(
+                        'user.list_upcoming_lessons',
+                        'lessons',
+                        [
+                            'type' => 'object',
+                            'properties' => new \stdClass(),
+                        ],
+                        requiresAuth: false,
+                        mcpAliases: ['browse_workshops', 'list_upcoming_lessons'],
+                    ),
+                    new ToolDefinition(
+                        'admin.create_booking',
+                        'create',
+                        [
+                            'type' => 'object',
+                            'properties' => new \stdClass(),
+                        ],
+                        requiresAdmin: true,
+                        requiresConfirm: true,
+                    ),
                 ];
             }
 
             public function supports(string $name): bool
             {
-                return $name === 'user.list_upcoming_lessons';
+                return true;
             }
 
             public function call(string $name, ChatActor $actor, array $arguments): ToolResult
@@ -156,22 +172,36 @@ final class ChatToolRegistryTest extends TestCase
         $registry = new ChatToolRegistry([$provider]);
         $guest = ChatActor::guest();
 
-        foreach ([
-            'list_upcoming_lessons',
-            'user_list_upcoming_lessons',
-            'Warsztatownia_list_upcoming_lessons',
-        ] as $alias) {
+        foreach (['browse_workshops', 'list_upcoming_lessons', 'user_list_upcoming_lessons'] as $alias) {
             $result = $registry->call($alias, $guest, []);
             self::assertTrue($result->ok, $alias);
             self::assertSame('user.list_upcoming_lessons', $result->summary);
         }
 
-        self::assertSame('user.list_upcoming_lessons', $registry->resolveCanonicalName('list_upcoming_lessons'));
-        self::assertContains('list_upcoming_lessons', $registry->mcpNamesFor(
-            new ToolDefinition('user.list_upcoming_lessons', 'x', [
+        $catalog = new ToolDefinition(
+            'user.list_upcoming_lessons',
+            'x',
+            [
                 'type' => 'object',
                 'properties' => new \stdClass(),
-            ], requiresAuth: false)
-        ));
+            ],
+            requiresAuth: false,
+            mcpAliases: ['browse_workshops', 'list_upcoming_lessons'],
+        );
+        self::assertSame(['browse_workshops'], $registry->mcpNamesFor($catalog));
+        self::assertSame('browse_workshops', $registry->mcpPublicName($catalog));
+
+        $booking = new ToolDefinition(
+            'admin.create_booking',
+            'x',
+            [
+                'type' => 'object',
+                'properties' => new \stdClass(),
+            ],
+            requiresAdmin: true,
+            requiresConfirm: true,
+        );
+        self::assertSame(['admin_create_booking'], $registry->mcpNamesFor($booking));
+        self::assertNull($registry->resolveCanonicalName('create_lesson'));
     }
 }

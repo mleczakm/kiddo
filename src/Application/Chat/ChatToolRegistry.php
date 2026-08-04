@@ -39,32 +39,34 @@ final readonly class ChatToolRegistry
     }
 
     /**
-     * Resolve ElevenLabs / LLM aliases to the canonical tool name (e.g. list_upcoming_lessons → user.list_upcoming_lessons).
+     * Resolve MCP / LLM tool names to the canonical registry name.
      */
     public function resolveCanonicalName(string $name): ?string
     {
         $normalized = $this->normalizeIncomingName($name);
-        $aliases = $this->aliasMap();
+        $map = $this->aliasMap();
 
-        return $aliases[$normalized] ?? null;
+        return $map[$normalized] ?? $map[str_replace('.', '_', $normalized)] ?? null;
     }
 
     /**
-     * @return list<string> All MCP-visible names for a canonical tool (canonical + aliases).
+     * Single public MCP name per tool (ElevenLabs truncates large catalogs).
+     */
+    public function mcpPublicName(ToolDefinition $definition): string
+    {
+        if ($definition->mcpAliases !== []) {
+            return $definition->mcpAliases[0];
+        }
+
+        return str_replace('.', '_', $definition->name);
+    }
+
+    /**
+     * @return list<string>
      */
     public function mcpNamesFor(ToolDefinition $definition): array
     {
-        $shortCounts = [];
-        foreach ($this->providers as $provider) {
-            foreach ($provider->definitions() as $candidate) {
-                $short = $this->shortName($candidate->name);
-                if ($short !== null) {
-                    $shortCounts[$short] = ($shortCounts[$short] ?? 0) + 1;
-                }
-            }
-        }
-
-        return $this->mcpNamesForDefinition($definition->name, $shortCounts);
+        return [$this->mcpPublicName($definition)];
     }
 
     /**
@@ -75,7 +77,7 @@ final readonly class ChatToolRegistry
         $canonical = $this->resolveCanonicalName($name);
         if ($canonical === null) {
             return ToolResult::failure(sprintf(
-                'Unknown tool: %s. For workshops/catalog use user.list_upcoming_lessons (aliases: list_upcoming_lessons, user_list_upcoming_lessons).',
+                'Unknown tool: %s. To list workshops call browse_workshops.',
                 $name
             ));
         }
@@ -113,26 +115,26 @@ final readonly class ChatToolRegistry
     }
 
     /**
+     * Incoming aliases accepted on call (not all are advertised on MCP).
+     *
      * @return array<string, string> alias → canonical
      */
     private function aliasMap(): array
     {
         $map = [];
-        $shortCounts = [];
-
-        foreach ($this->providers as $provider) {
-            foreach ($provider->definitions() as $definition) {
-                $short = $this->shortName($definition->name);
-                if ($short !== null) {
-                    $shortCounts[$short] = ($shortCounts[$short] ?? 0) + 1;
-                }
-            }
-        }
-
         foreach ($this->providers as $provider) {
             foreach ($provider->definitions() as $definition) {
                 $canonical = $definition->name;
-                foreach ($this->mcpNamesForDefinition($canonical, $shortCounts) as $alias) {
+                $candidates = [
+                    $canonical,
+                    str_replace('.', '_', $canonical),
+                    $this->mcpPublicName($definition),
+                    ...$definition->mcpAliases,
+                ];
+                foreach ($candidates as $alias) {
+                    if ($alias === '') {
+                        continue;
+                    }
                     $map[$this->normalizeIncomingName($alias)] = $canonical;
                 }
             }
@@ -141,42 +143,9 @@ final readonly class ChatToolRegistry
         return $map;
     }
 
-    /**
-     * @param array<string, int> $shortCounts
-     *
-     * @return list<string>
-     */
-    private function mcpNamesForDefinition(string $canonical, array $shortCounts): array
-    {
-        $names = [$canonical, str_replace('.', '_', $canonical)];
-
-        // user.list_upcoming_lessons → userlist_upcoming_lessons (dots stripped)
-        $names[] = str_replace('.', '', $canonical);
-
-        $short = $this->shortName($canonical);
-        if ($short !== null && ($shortCounts[$short] ?? 0) === 1) {
-            $names[] = $short;
-        }
-
-        return array_values(array_unique($names));
-    }
-
-    private function shortName(string $canonical): ?string
-    {
-        if (str_starts_with($canonical, 'user.')) {
-            return substr($canonical, strlen('user.'));
-        }
-        if (str_starts_with($canonical, 'admin.')) {
-            return substr($canonical, strlen('admin.'));
-        }
-
-        return null;
-    }
-
     private function normalizeIncomingName(string $name): string
     {
         $name = trim($name);
-        // ElevenLabs sometimes prefixes with the MCP server label.
         foreach (['Warsztatownia_', 'Kiddo_', 'kiddo_'] as $prefix) {
             if (str_starts_with($name, $prefix)) {
                 $name = substr($name, strlen($prefix));

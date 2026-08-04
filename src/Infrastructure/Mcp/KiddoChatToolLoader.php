@@ -13,10 +13,7 @@ use Mcp\Schema\Tool;
 use Mcp\Schema\ToolAnnotations;
 
 /**
- * Registers Kiddo ChatToolRegistry definitions with the Symfony MCP Bundle registry.
- *
- * Also registers aliases (underscores / short names) so ElevenLabs / LLMs that drop
- * the `user.` prefix still hit the same handler.
+ * Registers exactly one MCP name per Kiddo chat tool (avoids ElevenLabs truncation).
  */
 final readonly class KiddoChatToolLoader implements LoaderInterface
 {
@@ -27,8 +24,12 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
 
     public function load(RegistryInterface $registry): void
     {
-        foreach ($this->chatToolRegistry->definitions(null, includeAll: true) as $definition) {
+        $definitions = $this->chatToolRegistry->definitions(null, includeAll: true);
+        usort($definitions, $this->registrationOrder(...));
+
+        foreach ($definitions as $definition) {
             $canonical = $definition->name;
+            $mcpName = $this->chatToolRegistry->mcpPublicName($definition);
             $invoker = $this->invoker;
             $handler = \Closure::bind(
                 static fn(array $arguments): mixed => $invoker->invoke($canonical, $arguments),
@@ -36,24 +37,45 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
                 ReferenceHandler::class
             );
 
-            foreach ($this->chatToolRegistry->mcpNamesFor($definition) as $mcpName) {
-                $registry->registerTool(
-                    new Tool(
-                        name: $mcpName,
-                        title: $canonical,
-                        inputSchema: $this->normalizeInputSchema($definition),
-                        description: $this->description($definition, $mcpName, $canonical),
-                        annotations: new ToolAnnotations(
-                            readOnlyHint: ! $definition->requiresConfirm,
-                            destructiveHint: $definition->requiresConfirm,
-                            idempotentHint: ! $definition->requiresConfirm,
-                            openWorldHint: false,
-                        ),
+            $registry->registerTool(
+                new Tool(
+                    name: $mcpName,
+                    title: $mcpName,
+                    inputSchema: $this->normalizeInputSchema($definition),
+                    description: $this->description($definition),
+                    annotations: new ToolAnnotations(
+                        readOnlyHint: ! $definition->requiresConfirm,
+                        destructiveHint: $definition->requiresConfirm,
+                        idempotentHint: ! $definition->requiresConfirm,
+                        openWorldHint: false,
                     ),
-                    $handler,
-                );
-            }
+                ),
+                $handler,
+            );
         }
+    }
+
+    /**
+     * Catalog / read tools first so they survive client-side tool-list limits.
+     */
+    private function registrationOrder(ToolDefinition $a, ToolDefinition $b): int
+    {
+        return $this->priority($a) <=> $this->priority($b);
+    }
+
+    private function priority(ToolDefinition $definition): int
+    {
+        if (in_array($definition->name, ['user.list_upcoming_lessons', 'user.get_lesson'], true)) {
+            return 0;
+        }
+        if (! $definition->requiresConfirm && ! $definition->requiresAdmin) {
+            return 1;
+        }
+        if (! $definition->requiresConfirm) {
+            return 2;
+        }
+
+        return 3;
     }
 
     /**
@@ -84,20 +106,17 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         ];
     }
 
-    private function description(ToolDefinition $definition, string $mcpName, string $canonical): string
+    private function description(ToolDefinition $definition): string
     {
         $description = $definition->description;
-        if ($mcpName !== $canonical) {
-            $description = sprintf('Alias of %s. %s', $canonical, $description);
-        }
         if ($definition->requiresConfirm) {
-            $description .= ' Requires confirm=true in arguments before mutation.';
+            $description .= ' Requires confirm=true before mutation.';
         }
         if ($definition->requiresAdmin) {
-            $description .= ' Requires ROLE_ADMIN chat token.';
+            $description .= ' Requires ROLE_ADMIN.';
         }
         if (! $definition->requiresAuth) {
-            $description .= ' Available without login (public catalog).';
+            $description .= ' Public (no login).';
         }
 
         return $description;
