@@ -32,12 +32,16 @@ export default class extends Controller {
         this.configured = false;
         this.isGuest = false;
         this.initiated = false;
+        this.expectingAgentReply = false;
+        this.sessionPromise = null;
         this.loadHistory();
         this.renderMessages();
         this.updateStatus('idle');
 
+        // Prefetch token/URL only — do not open WebSocket until the user writes or taps a suggestion,
+        // so the empty-state chips stay visible (ElevenLabs otherwise greets immediately).
         if (this.heroValue) {
-            this.bootstrapSession();
+            this.prefetchSession();
         }
     }
 
@@ -50,8 +54,8 @@ export default class extends Controller {
             return;
         }
         this.panelTarget.classList.toggle('hidden');
-        if (!this.panelTarget.classList.contains('hidden') && !this.ws) {
-            this.bootstrapSession();
+        if (!this.panelTarget.classList.contains('hidden')) {
+            this.prefetchSession();
         }
     }
 
@@ -64,58 +68,83 @@ export default class extends Controller {
         this.send(event);
     }
 
-    async bootstrapSession() {
+    /**
+     * Fetch signed URL + chat token without opening the ConvAI WebSocket.
+     */
+    async prefetchSession() {
+        if (this.chatToken || this.sessionPromise) {
+            return this.sessionPromise;
+        }
+
         this.updateStatus('connecting');
-        try {
-            const response = await fetch(this.signedUrlEndpointValue, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                },
-                credentials: 'same-origin',
-                body: '{}',
+        this.sessionPromise = this.fetchSignedUrl()
+            .then(() => {
+                if (this.configured) {
+                    this.updateStatus('idle');
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                this.updateStatus('error');
+            })
+            .finally(() => {
+                this.sessionPromise = null;
             });
 
-            if (response.status === 401 || response.status === 403) {
-                this.updateStatus('login_required');
-                if (this.hasLoginHintTarget) {
-                    this.loginHintTarget.classList.remove('hidden');
-                }
-                return;
-            }
+        return this.sessionPromise;
+    }
 
-            if (!response.ok) {
-                throw new Error('Signed URL request failed (' + response.status + ')');
-            }
+    async fetchSignedUrl() {
+        const response = await fetch(this.signedUrlEndpointValue, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+            credentials: 'same-origin',
+            body: '{}',
+        });
 
-            const data = await response.json();
-            this.chatToken = data.chat_token;
-            this.dynamicVariables = data.dynamic_variables || {};
-            this.signedUrl = data.signed_url;
-            this.configured = Boolean(data.configured && data.signed_url);
-            this.isGuest = Boolean(data.guest || this.dynamicVariables.kiddo_is_guest === 'true');
-
-            if (this.isGuest && this.hasLoginHintTarget) {
+        if (response.status === 401 || response.status === 403) {
+            this.updateStatus('login_required');
+            if (this.hasLoginHintTarget) {
                 this.loginHintTarget.classList.remove('hidden');
-            } else if (this.hasLoginHintTarget) {
-                this.loginHintTarget.classList.add('hidden');
             }
-
-            if (!this.configured) {
-                this.updateStatus('unconfigured');
-                this.pushAgent(
-                    'Asystent jest skonfigurowany po stronie Kiddo (token OK), ale brakuje kluczy ElevenLabs. Możesz już wołać narzędzia przez /api/v1/tools z tokenem czatu.'
-                );
-                return;
-            }
-
-            await this.connectSocket(this.signedUrl);
-        } catch (error) {
-            console.error(error);
-            this.updateStatus('error');
-            this.pushAgent('Nie udało się połączyć z asystentem. Spróbuj ponownie za chwilę.');
+            return;
         }
+
+        if (!response.ok) {
+            throw new Error('Signed URL request failed (' + response.status + ')');
+        }
+
+        const data = await response.json();
+        this.chatToken = data.chat_token;
+        this.dynamicVariables = data.dynamic_variables || {};
+        this.signedUrl = data.signed_url;
+        this.configured = Boolean(data.configured && data.signed_url);
+        this.isGuest = Boolean(data.guest || this.dynamicVariables.kiddo_is_guest === 'true');
+
+        if (this.isGuest && this.hasLoginHintTarget) {
+            this.loginHintTarget.classList.remove('hidden');
+        } else if (this.hasLoginHintTarget) {
+            this.loginHintTarget.classList.add('hidden');
+        }
+
+        if (!this.configured) {
+            this.updateStatus('unconfigured');
+        }
+    }
+
+    async ensureConnected() {
+        await this.prefetchSession();
+        if (!this.configured || !this.signedUrl) {
+            return false;
+        }
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            return true;
+        }
+        await this.connectSocket(this.signedUrl);
+        return Boolean(this.ws && this.ws.readyState === WebSocket.OPEN);
     }
 
     connectSocket(url) {
@@ -125,8 +154,7 @@ export default class extends Controller {
             this.ws.onopen = () => {
                 this.initiated = false;
                 this.sendInit();
-                this.sendIdentityContext();
-                this.sendContextualUpdate();
+                // Identity / history only after the first user turn — avoids an automatic greeting.
                 this.updateStatus('connected');
                 resolve();
             };
@@ -173,8 +201,8 @@ export default class extends Controller {
                     type: 'contextual_update',
                     text:
                         'Gość (niezalogowany) w Kiddo.\n' +
-                        'Możesz od razu pokazać ofertę: user.list_upcoming_lessons i user.get_lesson.\n' +
-                        'Nie wywołuj user.me / list_children / rezerwacji / admin.* — zamiast tego poproś o zalogowanie (/login) i odświeżenie czatu.',
+                        'Możesz od razu pokazać ofertę: browse_workshops / user.list_upcoming_lessons.\n' +
+                        'Nie wywołuj user.me / rezerwacji / admin.* — poproś o zalogowanie (/login) i odświeżenie czatu.',
                 })
             );
             return;
@@ -195,10 +223,10 @@ export default class extends Controller {
                         `- imię: ${name || '(brak)'}\n` +
                         `- e-mail: ${email || '(brak)'}\n` +
                         `- user_id: ${userId || '(brak)'}\n` +
-                        'LISTA zajęc/warsztatów → TYLKO user.list_upcoming_lessons (lub admin.list_lessons / admin.today_schedule).\n' +
-                        'NIGDY admin.create_lesson ani user.booking_reschedule_options do przeglądania oferty.\n' +
-                        'admin.create_lesson tylko gdy admin chce UTWORZYĆ nowy termin (ULID szablonu + confirm).\n' +
-                        'Mutacje admin zawsze z confirm=true po wyraźnej zgodzie.',
+                        'LISTA dostępnych zajęć → browse_workshops (user.list_upcoming_lessons).\n' +
+                        'Szczegóły terminu → get_workshop.\n' +
+                        'Nowe wystąpienie w grafiku → admin.clone_template_lesson (nie do listowania oferty).\n' +
+                        'Mutacje admin z confirm=true po wyraźnej zgodzie.',
                 })
             );
             return;
@@ -239,6 +267,11 @@ export default class extends Controller {
             data = JSON.parse(event.data);
         } catch (e) {
             console.error('Failed to parse chat message', e);
+            return;
+        }
+
+        // Keep suggestion chips until the user has actually sent something.
+        if (!this.expectingAgentReply) {
             return;
         }
 
@@ -283,23 +316,34 @@ export default class extends Controller {
             return;
         }
 
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-            await this.bootstrapSession();
-        }
-        if (!this.configured || !this.ws || this.ws.readyState !== WebSocket.OPEN) {
+        try {
+            const connected = await this.ensureConnected();
+            if (!connected) {
+                this.pushUser(text);
+                this.inputTarget.value = '';
+                if (this.chatToken && !this.configured) {
+                    this.pushAgent(
+                        'Brak połączenia WebSocket z ElevenLabs. Token czatu jest gotowy — skonfiguruj ELEVENLABS_* w .env.'
+                    );
+                } else if (!this.chatToken) {
+                    this.pushAgent('Nie udało się połączyć z asystentem. Spróbuj ponownie za chwilę.');
+                }
+                return;
+            }
+        } catch (error) {
+            console.error(error);
             this.pushUser(text);
             this.inputTarget.value = '';
-            if (this.chatToken) {
-                this.pushAgent(
-                    'Brak połączenia WebSocket z ElevenLabs. Token czatu jest gotowy — skonfiguruj ELEVENLABS_* w .env.'
-                );
-            }
+            this.pushAgent('Nie udało się połączyć z asystentem. Spróbuj ponownie za chwilę.');
             return;
         }
 
         this.pushUser(text);
         this.inputTarget.value = '';
         this.sendInit();
+        this.sendIdentityContext();
+        this.sendContextualUpdate();
+        this.expectingAgentReply = true;
         this.ws.send(
             JSON.stringify({
                 type: 'user_message',
@@ -311,12 +355,13 @@ export default class extends Controller {
     clear() {
         this.messages = [];
         this.currentAgentMessage = '';
+        this.expectingAgentReply = false;
         localStorage.removeItem(this.storageKeyValue);
         this.renderMessages();
         this.closeSocket();
         this.updateStatus('idle');
         if (this.heroValue || (this.hasPanelTarget && !this.panelTarget.classList.contains('hidden'))) {
-            this.bootstrapSession();
+            this.prefetchSession();
         }
     }
 
