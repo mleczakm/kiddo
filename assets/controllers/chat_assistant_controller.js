@@ -195,7 +195,9 @@ export default class extends Controller {
                         `- imię: ${name || '(brak)'}\n` +
                         `- e-mail: ${email || '(brak)'}\n` +
                         `- user_id: ${userId || '(brak)'}\n` +
-                        'Możesz używać tooli admin.* (harmonogram, rezerwacje, płatności, użytkownicy, skrzynka) oraz user.* gdy potrzeba.\n' +
+                        'LISTA zajęc/warsztatów → TYLKO user.list_upcoming_lessons (lub admin.list_lessons / admin.today_schedule).\n' +
+                        'NIGDY admin.create_lesson ani user.booking_reschedule_options do przeglądania oferty.\n' +
+                        'admin.create_lesson tylko gdy admin chce UTWORZYĆ nowy termin (ULID szablonu + confirm).\n' +
                         'Mutacje admin zawsze z confirm=true po wyraźnej zgodzie.',
                 })
             );
