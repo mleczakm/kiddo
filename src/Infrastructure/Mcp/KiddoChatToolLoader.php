@@ -14,6 +14,9 @@ use Mcp\Schema\ToolAnnotations;
 
 /**
  * Registers Kiddo ChatToolRegistry definitions with the Symfony MCP Bundle registry.
+ *
+ * Also registers aliases (underscores / short names) so ElevenLabs / LLMs that drop
+ * the `user.` prefix still hit the same handler.
  */
 final readonly class KiddoChatToolLoader implements LoaderInterface
 {
@@ -25,31 +28,31 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
     public function load(RegistryInterface $registry): void
     {
         foreach ($this->chatToolRegistry->definitions(null, includeAll: true) as $definition) {
-            $toolName = $definition->name;
+            $canonical = $definition->name;
             $invoker = $this->invoker;
-
-            // Bound to ReferenceHandler scope so the SDK passes the raw argument bag.
             $handler = \Closure::bind(
-                static fn(array $arguments): mixed => $invoker->invoke($toolName, $arguments),
+                static fn(array $arguments): mixed => $invoker->invoke($canonical, $arguments),
                 null,
                 ReferenceHandler::class
             );
 
-            $registry->registerTool(
-                new Tool(
-                    name: $definition->name,
-                    title: $definition->name,
-                    inputSchema: $this->normalizeInputSchema($definition),
-                    description: $this->description($definition),
-                    annotations: new ToolAnnotations(
-                        readOnlyHint: ! $definition->requiresConfirm,
-                        destructiveHint: $definition->requiresConfirm,
-                        idempotentHint: ! $definition->requiresConfirm,
-                        openWorldHint: false,
+            foreach ($this->chatToolRegistry->mcpNamesFor($definition) as $mcpName) {
+                $registry->registerTool(
+                    new Tool(
+                        name: $mcpName,
+                        title: $canonical,
+                        inputSchema: $this->normalizeInputSchema($definition),
+                        description: $this->description($definition, $mcpName, $canonical),
+                        annotations: new ToolAnnotations(
+                            readOnlyHint: ! $definition->requiresConfirm,
+                            destructiveHint: $definition->requiresConfirm,
+                            idempotentHint: ! $definition->requiresConfirm,
+                            openWorldHint: false,
+                        ),
                     ),
-                ),
-                $handler,
-            );
+                    $handler,
+                );
+            }
         }
     }
 
@@ -81,14 +84,20 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         ];
     }
 
-    private function description(ToolDefinition $definition): string
+    private function description(ToolDefinition $definition, string $mcpName, string $canonical): string
     {
         $description = $definition->description;
+        if ($mcpName !== $canonical) {
+            $description = sprintf('Alias of %s. %s', $canonical, $description);
+        }
         if ($definition->requiresConfirm) {
             $description .= ' Requires confirm=true in arguments before mutation.';
         }
         if ($definition->requiresAdmin) {
             $description .= ' Requires ROLE_ADMIN chat token.';
+        }
+        if (! $definition->requiresAuth) {
+            $description .= ' Available without login (public catalog).';
         }
 
         return $description;
