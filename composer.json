@@ -147,6 +147,7 @@
       "Smoke tests": "bin/phpunit --group smoke"
     },
     "tests:functional": {
+      "Disable timeout": "Composer\\Config::disableProcessTimeout",
       "Setup": "@tests:functional:setup",
       "Functional tests": "bin/phpunit --group functional"
     },
