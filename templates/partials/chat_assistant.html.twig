@@ -8,7 +8,7 @@
             data-controller="chat-assistant"
             data-chat-assistant-hero-value="true"
             data-chat-assistant-storage-key-value="kiddo_chat_history"
-            class="relative overflow-hidden bg-gradient-to-b from-workshop-blue/10 via-beige to-beige py-10 md:py-16"
+            class="relative overflow-hidden bg-gradient-to-b from-workshop-blue/10 via-beige to-beige"
         >
             <div class="absolute top-10 left-6 h-20 w-20 rounded-full bg-workshop-pink/20 animate-bounce-slight"></div>
             <div class="absolute bottom-16 right-10 h-14 w-14 rounded-full bg-workshop-yellow/25 animate-bounce-slight"></div>
@@ -25,7 +25,11 @@
                         {{ 'homepage.chat_hero.title'|trans }}
                     </h1>
                     <p class="text-lg text-muted-foreground">
-                        {{ 'homepage.chat_hero.subtitle'|trans }}
+                        {% if app.user %}
+                            {{ 'homepage.chat_hero.subtitle_user'|trans }}
+                        {% else %}
+                            {{ 'homepage.chat_hero.subtitle_guest'|trans }}
+                        {% endif %}
                     </p>
                 </div>
 
