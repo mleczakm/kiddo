@@ -156,16 +156,17 @@ final class ChatToolRegistryTest extends TestCase
         $registry = new ChatToolRegistry([$provider]);
         $guest = ChatActor::guest();
 
-        foreach (['list_upcoming_lessons', 'user_list_upcoming_lessons', 'Warsztatownia_list_upcoming_lessons'] as $alias) {
+        foreach ([
+            'list_upcoming_lessons',
+            'user_list_upcoming_lessons',
+            'Warsztatownia_list_upcoming_lessons',
+        ] as $alias) {
             $result = $registry->call($alias, $guest, []);
             self::assertTrue($result->ok, $alias);
             self::assertSame('user.list_upcoming_lessons', $result->summary);
         }
 
-        self::assertSame(
-            'user.list_upcoming_lessons',
-            $registry->resolveCanonicalName('list_upcoming_lessons')
-        );
+        self::assertSame('user.list_upcoming_lessons', $registry->resolveCanonicalName('list_upcoming_lessons'));
         self::assertContains('list_upcoming_lessons', $registry->mcpNamesFor(
             new ToolDefinition('user.list_upcoming_lessons', 'x', [
                 'type' => 'object',

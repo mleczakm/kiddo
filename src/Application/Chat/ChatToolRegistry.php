@@ -148,10 +148,7 @@ final readonly class ChatToolRegistry
      */
     private function mcpNamesForDefinition(string $canonical, array $shortCounts): array
     {
-        $names = [
-            $canonical,
-            str_replace('.', '_', $canonical),
-        ];
+        $names = [$canonical, str_replace('.', '_', $canonical)];
 
         // user.list_upcoming_lessons → userlist_upcoming_lessons (dots stripped)
         $names[] = str_replace('.', '', $canonical);
