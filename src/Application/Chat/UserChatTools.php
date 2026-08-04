@@ -97,29 +97,32 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 'required' => ['confirm', 'child_id'],
             ], requiresConfirm: true),
-            new ToolDefinition('user.list_upcoming_lessons', 'Find matching workshops/lessons by query, age and week start date. Public catalog — works for guests.', [
+            new ToolDefinition('user.list_upcoming_lessons', '[CATALOG] PRIMARY tool to list available workshops for browsing/booking. Use for “jakie zajęcia”, “dla 2-latka”, “przyszły tydzień”, “any age”. Args: optional age (int years), week (Monday YYYY-MM-DD), query, limit. Not for rescheduling. Public — guests, parents and admins.', [
                 'type' => 'object',
                 'properties' => [
                     'query' => [
                         'type' => 'string',
+                        'description' => 'Optional free-text filter (title/theme)',
                     ],
                     'age' => [
                         'type' => 'integer',
+                        'description' => 'Child age in years, e.g. 2. Omit for any age.',
                     ],
                     'week' => [
                         'type' => 'string',
-                        'description' => 'Week start YYYY-MM-DD; defaults to today',
+                        'description' => 'Week start Monday YYYY-MM-DD; defaults to today',
                     ],
                     'limit' => [
                         'type' => 'integer',
                     ],
                 ],
             ], requiresAuth: false),
-            new ToolDefinition('user.get_lesson', 'Get lesson details, seats and ticket options. Public catalog — works for guests.', [
+            new ToolDefinition('user.get_lesson', '[CATALOG] Details for one lesson_id from user.list_upcoming_lessons (seats, tickets). Public.', [
                 'type' => 'object',
                 'properties' => [
                     'lesson_id' => [
                         'type' => 'string',
+                        'description' => 'ULID of the lesson',
                     ],
                 ],
                 'required' => ['lesson_id'],
@@ -174,7 +177,22 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'type' => 'object',
                 'properties' => new \stdClass(),
             ]),
-            new ToolDefinition('user.list_reschedule_targets', 'List alternative lessons available to reschedule a booked lesson.', [
+            new ToolDefinition('user.booking_reschedule_options', '[RESCHEDULE ONLY] Alternatives for moving an EXISTING booking to another date in the same series. Requires real booking_id + lesson_id ULIDs from user.list_bookings / user.get_booking. Forbidden for catalog browsing — for “available workshops / any age / next week” call user.list_upcoming_lessons.', [
+                'type' => 'object',
+                'properties' => [
+                    'booking_id' => [
+                        'type' => 'string',
+                        'description' => 'ULID of an existing booking (26-char Crockford base32). Never pass "any", age, or week.',
+                    ],
+                    'lesson_id' => [
+                        'type' => 'string',
+                        'description' => 'ULID of the lesson being moved. Never pass "any", age, or week.',
+                    ],
+                ],
+                'required' => ['booking_id', 'lesson_id'],
+            ]),
+            // Legacy alias — keep callable so old agent configs fail with a redirect, not Invalid ULID.
+            new ToolDefinition('user.list_reschedule_targets', 'DEPRECATED alias of user.booking_reschedule_options. Do not use for catalog search — call user.list_upcoming_lessons instead.', [
                 'type' => 'object',
                 'properties' => [
                     'booking_id' => [
@@ -308,6 +326,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'user.get_booking' => $this->getBooking($actor, $args),
                 'user.list_carnets' => $this->listCarnets($actor),
                 'user.list_reschedule_targets' => $this->listRescheduleTargets($actor, $args),
+                'user.booking_reschedule_options' => $this->listRescheduleTargets($actor, $args),
                 'user.reschedule_lesson' => $this->rescheduleLesson($actor, $args),
                 'user.cancel_lesson' => $this->cancelLesson($actor, $args),
                 'user.request_refund' => $this->requestRefund($actor, $args),
@@ -564,8 +583,17 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
     private function listRescheduleTargets(ChatActor $actor, ToolArguments $args): ToolResult
     {
-        $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
-        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        $bookingId = $args->requireString('booking_id');
+        $lessonId = $args->requireString('lesson_id');
+        if (! $this->looksLikeUlid($bookingId) || ! $this->looksLikeUlid($lessonId)) {
+            return ToolResult::failure(
+                'Wrong tool for browsing workshops. Call user.list_upcoming_lessons with optional age, week (YYYY-MM-DD Monday), query. user.booking_reschedule_options needs real booking_id and lesson_id ULIDs from an existing reservation.',
+                'To nie jest katalog zajęć. Aby zobaczyć ofertę, wywołaj user.list_upcoming_lessons (np. age=2, week=poniedziałek YYYY-MM-DD). Ten tool służy wyłącznie do przełożenia istniejącej rezerwacji i wymaga prawdziwych ULID booking_id oraz lesson_id — nie podawaj „any”.',
+            );
+        }
+
+        $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
+        $lesson = $this->lessonRepository->find(Ulid::fromString($lessonId));
         if ($booking === null || $lesson === null || $booking->getUser()->getId() !== $actor->userId()) {
             return ToolResult::failure('Booking or lesson not found');
         }
@@ -599,6 +627,18 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'targets' => $targets,
             ]
         );
+    }
+
+    private function looksLikeUlid(string $value): bool
+    {
+        $trimmed = trim($value);
+        if ($trimmed === '' || ! Ulid::isValid($trimmed)) {
+            return false;
+        }
+
+        $blocked = ['any', 'all', 'none', 'null', 'undefined', 'n/a', '*'];
+
+        return ! in_array(strtolower($trimmed), $blocked, true);
     }
 
     private function rescheduleLesson(ChatActor $actor, ToolArguments $args): ToolResult

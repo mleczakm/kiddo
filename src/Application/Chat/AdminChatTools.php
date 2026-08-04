@@ -71,7 +71,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                 ],
             ], requiresAdmin: true),
-            new ToolDefinition('admin.list_lessons', 'List lessons for a week (including cancelled when asked).', [
+            new ToolDefinition('admin.list_lessons', 'Admin week overview of lessons (ops). Optional query/week; does NOT filter by child age. For parent-style “zajęcia dla 2-latka” catalog search use user.list_upcoming_lessons instead.', [
                 'type' => 'object',
                 'properties' => [
                     'week' => [
