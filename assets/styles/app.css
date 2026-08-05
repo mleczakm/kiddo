@@ -348,13 +348,6 @@ h1, h2, h3, h4, h5, h6 {
     padding: 2rem 1rem;
 }
 
-*, :before, :after {
-    box-sizing: border-box;
-    border-width: 0;
-    border-style: solid;
-    border-color: #e5e7eb
-}
-
 :before, :after {
     --tw-content: ""
 }
@@ -511,10 +504,6 @@ ol, ul, menu {
 
 dialog {
     padding: 0
-}
-
-textarea {
-    resize: vertical
 }
 
 input::-moz-placeholder, textarea::-moz-placeholder {
