@@ -58,6 +58,12 @@ class User implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $confirmedAt = null;
 
+    #[ORM\Column]
+    private bool $newsletterSubscribed = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $newsletterConsentDate = null;
+
     /**
      * @var Collection<int, Booking>
      */
@@ -216,6 +222,30 @@ class User implements UserInterface
     public function setConfirmedAt(?\DateTimeImmutable $confirmedAt): void
     {
         $this->confirmedAt = $confirmedAt;
+    }
+
+    public function isNewsletterSubscribed(): bool
+    {
+        return $this->newsletterSubscribed;
+    }
+
+    public function setNewsletterSubscribed(bool $newsletterSubscribed): static
+    {
+        $this->newsletterSubscribed = $newsletterSubscribed;
+
+        return $this;
+    }
+
+    public function getNewsletterConsentDate(): ?\DateTimeImmutable
+    {
+        return $this->newsletterConsentDate;
+    }
+
+    public function setNewsletterConsentDate(?\DateTimeImmutable $newsletterConsentDate): static
+    {
+        $this->newsletterConsentDate = $newsletterConsentDate;
+
+        return $this;
     }
 
     /**
