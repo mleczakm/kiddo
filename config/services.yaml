@@ -204,3 +204,12 @@ when@test:
     App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
       alias: App\Infrastructure\Doctrine\CompositeConnectionEnsurer
       public: true
+
+    # Publish Brevo services so tests can swap them via container->set().
+    App\Infrastructure\Brevo\BrevoNewsletterService:
+      autowire: true
+      public: true
+
+    App\Application\Newsletter\NewsletterSubscriptionManager:
+      autowire: true
+      public: true
