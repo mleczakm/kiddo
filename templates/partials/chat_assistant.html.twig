@@ -101,6 +101,7 @@
                             <div class="transition-[color,box-shadow] group/input-group border-input dark:bg-input/30 shadow-xs relative flex w-full items-center rounded-md border outline-none transition-[color,box-shadow] has-[>textarea]:h-auto has-[>[data-align=inline-start]]:[&>input]:pl-2 has-[>[data-align=inline-end]]:[&>input]:pr-2 has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 overflow-hidden flex-col">
                                 <textarea
                                         data-chat-assistant-target="input"
+                                        data-slot="input-group-control"
                                         class="resize-none flex w-full border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1 resize-none rounded-none border-b-0 focus:border-b focus:border-muted bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent field-sizing-content max-h-48 min-h-16"
                                         name="message"
                                         placeholder="{{ 'homepage.chat_hero.placeholder'|trans }}"
@@ -194,14 +195,16 @@
                         </p>
                     </div>
                 </div>
+
                 <form
                     data-chat-assistant-target="form"
                     data-action="submit->chat-assistant#send"
                     class="w-full p-3 border-t border-muted bg-white"
                 >
-                    <div class="relative flex w-full items-center rounded-md border border-input outline-none transition-[color,box-shadow] has-[>textarea]:h-auto overflow-hidden">
+                    <div class="relative flex w-full items-center rounded-md border border-input outline-none transition-[color,box-shadow] has-[>textarea]:h-auto has-[[data-slot=input-group-control]:focus-visible]:ring-ring has-[[data-slot=input-group-control]:focus-visible]:ring-1 overflow-hidden">
                         <textarea
                                 data-chat-assistant-target="input"
+                                data-slot="input-group-control"
                                 class="flex w-full border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1 resize-none rounded-none border-b-0 focus:border-b focus:border-muted bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent field-sizing-content max-h-48 min-h-16"
                                 name="message"
                                 placeholder="{{ 'homepage.chat_hero.placeholder_short'|trans }}"
