@@ -8,6 +8,7 @@ use App\Application\Chat\ChatActor;
 use App\Application\Chat\ChatToolRegistry;
 use App\Entity\TicketType;
 use App\Tests\Assembler\LessonAssembler;
+use App\Tests\Assembler\SettingAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -27,8 +28,12 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $user = UserAssembler::new()->assemble();
         $lesson = LessonAssembler::new()->assemble();
+        $paymentSettings = SettingAssembler::new()
+            ->asPayment()
+            ->assemble();
         $em->persist($user);
         $em->persist($lesson);
+        $em->persist($paymentSettings);
         $em->flush();
 
         /** @var ChatToolRegistry $registry */
