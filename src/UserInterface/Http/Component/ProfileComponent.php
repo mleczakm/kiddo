@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Newsletter\NewsletterSubscriptionManager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
@@ -43,10 +44,14 @@ class ProfileComponent extends AbstractController
     #[LiveProp]
     public ?string $phoneError = null;
 
+    #[LiveProp(writable: true)]
+    public bool $newsletterSubscribed = false;
+
     private User $user;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly NewsletterSubscriptionManager $newsletterSubscriptionManager,
     ) {}
 
     #[LiveAction]
@@ -59,6 +64,7 @@ class ProfileComponent extends AbstractController
         $this->phone = $user->getPhone() !== null
             ? PhoneNumberUtil::getInstance()->format($user->getPhone(), PhoneNumberFormat::NATIONAL)
             : '';
+        $this->newsletterSubscribed = $user->isNewsletterSubscribed();
         $this->phoneError = null;
         $this->isEditing = true;
     }
@@ -98,6 +104,12 @@ class ProfileComponent extends AbstractController
             $this->phoneError = 'profile.phone.invalid';
             return;
         }
+
+        $this->newsletterSubscriptionManager->applyTransition(
+            $user,
+            $user->isNewsletterSubscribed(),
+            $this->newsletterSubscribed,
+        );
 
         $this->entityManager->flush();
 

@@ -13,6 +13,7 @@ form:
     already_have_account: "Masz już konto?"
     login: "Zaloguj się"
     name: "Imię"
+    newsletter: "Chcę otrzymywać informacje o nowych warsztatach i ofertach (Newsletter)"
     success:
       title: "Rejestracja zakończona pomyślnie!"
       message: "Dziękujemy za rejestrację. Na podany adres e-mail wysłaliśmy link do logowania."
@@ -162,37 +163,39 @@ homepage:
       description: 'Odkryj naszą różnorodną ofertę kreatywnych warsztatów zaprojektowanych dla różnych grup wiekowych i zainteresowań.'
     step2:
       number: '2'
-      title: 'Wybierz plan'
-      description: 'Wybierz pojedyncze zajęcia lub miesięczny karnet na regularne uczestnictwo.'
+      title: 'Zarezerwuj miejsce'
+      description: 'Wybierz odpowiedni termin i zarezerwuj miejsce dla swojego dziecka. Proces jest szybki i bezpieczny.'
     step3:
       number: '3'
-      title: 'Zarezerwuj i zapłać'
-      description: 'Zarezerwuj miejsce dla swojego dziecka, dokonując rezerwacji i płatności.'
+      title: 'Przyjdź i baw się'
+      description: 'Przyjdź na warsztaty i pozwól swojemu dziecku odkrywać, uczyć się i świetnie się bawić w kreatywnym środowisku.'
     step4:
       number: '4'
-      title: 'Ciesz się warsztatami'
-      description: 'Przyjdź ze swoim dzieckiem, aby doświadczyć kreatywnej nauki i zabawy sensorycznej!'
+      title: 'Pamiętaj wspomnienia'
+      description: 'Zabierz ze sobą wspaniałe wspomnienia i stworzone dzieła. Każdy warsztat to nowa przygoda.'
   testimonials:
-    title: 'Co mówią rodzice'
-    subtitle: 'Opinie rodzin, które uczestniczyły w naszych warsztatach'
+    title: 'Opinie rodziców'
+    subtitle: 'Zobacz, co mówią o nas rodzice, którzy uczestniczyli w naszych warsztatach.'
     testimonial1:
-      quote: '„Moja córka uwielbia warsztaty sztuki sensorycznej. To wspaniałe obserwować, jak jej kreatywność rozkwita każdego tygodnia!"'
-      author: 'Anna K.'
-      role: 'Mama 5-latki'
+      quote: 'Moja córka uwielbia te warsztaty! Zawsze wraca szczęśliwa i pełna nowych pomysłów.'
+      author: 'Anna Kowalska'
+      role: 'Mama 5-letniej Zosi'
     testimonial2:
-      quote: '„Miesięczny karnet to świetna oferta. Mój syn nie może się doczekać swoich sobotnich porannych warsztatów."'
-      author: 'Michał K.'
-      role: 'Tata 7-latka'
+      quote: 'Fantastyczne miejsce! Zajęcia są bardzo dobrze zorganizowane, a prowadzący są cierpliwi i kreatywni.'
+      author: 'Piotr Nowak'
+      role: 'Tata 7-letniego Jakuba'
     testimonial3:
-      quote: '„System rezerwacji jest bardzo prosty w obsłudze i uwielbiam, że mogę zarządzać wszystkimi zajęciami w jednym miejscu."'
-      author: 'Zofia L.'
-      role: 'Mama bliźniąt'
+      quote: 'Najlepsze warsztaty sensoryczne w okolicy. Polecam każdemu rodzicowi!'
+      author: 'Magda Wiśniewska'
+      role: 'Mama 4-letniej Mai'
   newsletter:
-    title: 'Bądź na bieżąco'
-    subtitle: 'Zapisz się do naszego newslettera, aby otrzymywać informacje o nowych warsztatach, specjalnych ofertach i kreatywnych zajęciach dla dzieci.'
-    email_placeholder: 'Twój adres email'
-    subscribe: 'Zapisz się'
-    subscription_disabled: 'Subskrypcja na newsletter dostępna już wkrótce!'
+    title: "Bądź na bieżąco"
+    subtitle: "Zapisz się na newsletter, aby otrzymywać informacje o nowych warsztatach i ofertach."
+    email_placeholder: "Twój adres e-mail"
+    subscribe: "Zapisz się"
+    sending: "Wysyłanie..."
+    confirmation_sent: "Dziękujemy! Sprawdź swoją skrzynkę pocztową, aby potwierdzić zapis."
+    error: "Wystąpił błąd. Spróbuj ponownie później."
 
 lesson:
   terms: "Regulamin"
@@ -386,6 +389,15 @@ profile:
   name.min_length: Imię musi mieć co najmniej 2 znaki.
   email.not_blank: Adres e-mail nie może być pusty.
   email.invalid: Wprowadź poprawny adres e-mail.
+  newsletter: "Chcę otrzymywać informacje o nowych warsztatach i ofertach (Newsletter)"
+
+newsletter:
+  subscribed: "Zapisany"
+  not_subscribed: "Nie zapisany"
+  confirmed:
+    title: "Zapis potwierdzony!"
+    message: "Dziękujemy za zapisanie się na nasz newsletter. Będziesz otrzymywać informacje o nowych warsztatach i ofertach."
+    back_home: "Powrót na stronę główną"
 
 booking:
   cancel: Anuluj rezerwację
