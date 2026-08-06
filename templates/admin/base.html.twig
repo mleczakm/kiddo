@@ -1,5 +1,24 @@
 {% set current_route = app.request.attributes.get('_route') %}
 
+{% set admin_tour_step_targets = [
+    { target: 'sidebar-nav', key: 'sidebar_nav' },
+    { target: 'dashboard-kpis', key: 'dashboard_kpis' },
+    { target: 'add-workshop', key: 'add_workshop' },
+    { target: 'booking-actions', key: 'booking_actions' },
+    { target: 'messages-inbox', key: 'messages_inbox' },
+    { target: 'notif-bell', key: 'notif_bell' },
+    { target: 'settings-link', key: 'settings_link' },
+] %}
+{% set admin_tour_steps = [] %}
+{% for step in admin_tour_step_targets %}
+    {% set admin_tour_steps = admin_tour_steps|merge([{
+        target: step.target,
+        title: ('admin.tour.steps.' ~ step.key ~ '.title')|trans,
+        body: ('admin.tour.steps.' ~ step.key ~ '.body')|trans,
+        counter: 'admin.tour.step_counter'|trans({current: loop.index, total: admin_tour_step_targets|length}),
+    }]) %}
+{% endfor %}
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -62,7 +81,13 @@
     {% endblock %}
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
-    <div id="root" class="flex w-full min-h-screen" data-controller="admin-sidebar">
+    <div id="root" class="flex w-full min-h-screen"
+         data-controller="admin-sidebar admin-tour"
+         data-admin-tour-steps-value="{{ admin_tour_steps|json_encode }}"
+         data-admin-tour-label-next-value="{{ 'admin.tour.next'|trans }}"
+         data-admin-tour-label-back-value="{{ 'admin.tour.back'|trans }}"
+         data-admin-tour-label-skip-value="{{ 'admin.tour.skip'|trans }}"
+         data-admin-tour-label-finish-value="{{ 'admin.tour.finish'|trans }}">
         {# Sidebar #}
         {% block sidebar %}
             {{ include('components/AdminMenu.html.twig') }}

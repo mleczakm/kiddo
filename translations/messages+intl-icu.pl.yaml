@@ -670,6 +670,35 @@ admin:
   title: 'Panel Administratora'
   menu:
     toggle: 'Otwórz menu'
+  tour:
+    start_button: 'Jak korzystać z panelu?'
+    next: 'Dalej'
+    back: 'Wstecz'
+    skip: 'Pomiń'
+    finish: 'Zakończ'
+    step_counter: 'Krok {current} z {total}'
+    steps:
+      sidebar_nav:
+        title: 'Menu nawigacyjne'
+        body: 'Tutaj przełączasz się między pulpitem, harmonogramem, rezerwacjami, klientami, płatnościami i wiadomościami.'
+      dashboard_kpis:
+        title: 'Kluczowe wskaźniki'
+        body: 'Szybki podgląd najważniejszych statystyk — liczby rezerwacji, przychodów i alertów wymagających uwagi.'
+      add_workshop:
+        title: 'Dodawanie zajęć'
+        body: 'Ten przycisk otwiera kreator warsztatów — ustawisz tu podstawowe informacje, harmonogram i bilety.'
+      booking_actions:
+        title: 'Zarządzanie rezerwacją'
+        body: 'Stąd zmienisz termin zajęć klienta lub anulujesz rezerwację — klient zostanie o tym automatycznie powiadomiony.'
+      messages_inbox:
+        title: 'Skrzynka wiadomości'
+        body: 'Tu trafiają wiadomości od klientów, w tym automatyczne powiadomienia o anulowaniach i zmianach terminu.'
+      notif_bell:
+        title: 'Powiadomienia'
+        body: 'Dzwonek pokazuje najnowsze zdarzenia w systemie wymagające Twojej uwagi.'
+      settings_link:
+        title: 'Ustawienia'
+        body: 'Skonfigurujesz tu dane zespołu, płatności i ustawienia SEO.'
   tabs:
     dashboard: 'Pulpit'
     workshops: 'Warsztaty'

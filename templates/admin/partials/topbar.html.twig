@@ -34,8 +34,15 @@
     </h1>
     
     <div class="flex items-center gap-2 md:gap-4 shrink-0">
+        <button type="button"
+                class="hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition"
+                data-action="admin-tour#start">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            {{ 'admin.tour.start_button'|trans }}
+        </button>
+
         {# Notification Bell #}
-        <div class="relative">
+        <div class="relative" data-tour-target="notif-bell">
             {{ component('NotificationTrayLiveComponent') }}
         </div>
 

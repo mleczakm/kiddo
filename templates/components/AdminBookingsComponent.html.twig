@@ -398,7 +398,7 @@
                         <div class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold {{ lessonStatus.class }}">{{ lessonStatus.text }}</div>
                     </div>
                     {% if canModify %}
-                        <div class="flex gap-1.5 shrink-0">
+                        <div class="flex gap-1.5 shrink-0" data-tour-target="booking-actions">
                             <button
                                 data-action="live#action"
                                 data-live-action-param="startReschedule"
