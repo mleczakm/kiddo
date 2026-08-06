@@ -31,9 +31,11 @@ readonly class BookingWorkflowSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Only send notification if booking was cancelled due to non-payment
-        if ($booking->getStatus() === Booking::STATUS_CANCELLED) {
-            $this->messageBus->dispatch(new SendBookingCancellationNotificationCommand($booking));
-        }
+        // This listener only runs for the "cancel" transition, so the transition is
+        // already known to be happening here. Note: the workflow component dispatches
+        // this "transition" event *before* updating the subject's marking (status), so
+        // $booking->getStatus() is still the pre-transition value at this point — it
+        // cannot be used to gate this notification.
+        $this->messageBus->dispatch(new SendBookingCancellationNotificationCommand($booking));
     }
 }
