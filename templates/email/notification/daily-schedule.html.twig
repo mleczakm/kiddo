@@ -60,7 +60,7 @@
                         <tr class="{{ row_class }}" style="{{ row_style }}">
                             <td style="border: 1px solid #ddd; padding: 8px;">
                                 {% if booking.child %}
-                                    <strong>{{ booking.child.name }}</strong>{% if booking.child.ageYears %} ({{ booking.child.ageYears }} {{ 'profile.children.years'|trans({}, 'messages') }}){% endif %}<br>
+                                    <strong>{{ booking.child.name }}</strong>{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}<br>
                                     <small style="color: #666;">{{ booking.user.name }}</small>
                                 {% else %}
                                     <em style="color: #999;">—</em><br>

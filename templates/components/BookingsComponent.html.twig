@@ -130,7 +130,7 @@
                                                 </svg>
                                                 <span class="font-medium">{{ booking.child.name }}</span>
                                                 {% if booking.child.ageYears is not null %}
-                                                    <span class="text-muted-foreground">• {{ booking.child.ageYears }} {{ 'profile.children.years'|trans({'default':'years'}) }}</span>
+                                                    <span class="text-muted-foreground">• {{ 'profile.children.years'|trans({count: booking.child.ageYears}) }}</span>
                                                 {% endif %}
                                             </div>
                                         {% endif %}

@@ -11,7 +11,7 @@
     <p class="text-sm font-medium">
         {{ booking.child.name }}
         {% if booking.child.ageYears is not null %}
-            <span class="text-muted-foreground">• {{ booking.child.ageYears }} {{ 'profile.children.years'|trans }}</span>
+            <span class="text-muted-foreground">• {{ 'profile.children.years'|trans({count: booking.child.ageYears}) }}</span>
         {% endif %}
     </p>
     {% if show_parent %}

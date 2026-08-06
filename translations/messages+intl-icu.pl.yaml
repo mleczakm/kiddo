@@ -261,12 +261,12 @@ lesson:
     }
 
   details: Zobacz więcej
-  age_above: Więcej niż >-
-    {min, plural,
+  age_above: >-
+    Więcej niż {min, plural,
     =0 {brak}
     one {# rok}
-    few {# lat}
-    many {# lata}
+    few {# lata}
+    many {# lat}
     other {# lata}
     }
 
@@ -375,7 +375,13 @@ profile:
     add: 'Dodaj dziecko'
     list: 'Lista dzieci'
     empty: 'Brak dodanych dzieci'
-    years: 'lat'
+    years: >-
+      {count, plural,
+        one {# rok}
+        few {# lata}
+        many {# lat}
+        other {# lata}
+      }
     delete: 'Usuń'
   title: 'Mój profil'
   personal_data:
@@ -805,7 +811,13 @@ admin:
     notes: "Notatki"
     children_profiles: "Profile dzieci"
     birthday_unknown: "Nieznana data urodzenia"
-    years_old: "{age} lat"
+    years_old: >-
+      {age, plural,
+        one {# rok}
+        few {# lata}
+        many {# lat}
+        other {# lata}
+      }
     no_children: "Brak zarejestrowanych dzieci."
     recent_bookings: "Ostatnie rezerwacje"
     headers:

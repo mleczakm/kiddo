@@ -44,7 +44,7 @@
                                     <div class="text-xs text-muted-foreground">
                                         {% if c.birthday %}{{ c.birthday }}{% endif %}
                                         {% if c.birthday and c.age is not null %} • {% endif %}
-                                        {% if c.age is not null %}{{ c.age }} {{ 'profile.children.years'|trans({'default':'years'}) }}{% endif %}
+                                        {% if c.age is not null %}{{ 'profile.children.years'|trans({count: c.age}) }}{% endif %}
                                     </div>
                                 {% endif %}
                             </div>

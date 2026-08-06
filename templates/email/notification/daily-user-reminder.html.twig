@@ -10,7 +10,7 @@
       ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})
       {% for booking in lesson.bookings|filter(b => b.user.id == user.id) %}
         {% if booking.child %}
-          - {{ booking.child.name }}{% if booking.child.ageYears %} ({{ booking.child.ageYears }} {{ 'profile.children.years'|trans({}, 'messages') }}){% endif %}
+          - {{ booking.child.name }}{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}
         {% endif %}
       {% endfor %}
     </li>

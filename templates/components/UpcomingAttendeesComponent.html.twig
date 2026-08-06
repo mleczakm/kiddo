@@ -382,7 +382,7 @@
                     <option value="">{{ 'booking.child.select'|trans }}</option>
                     {% for child in this.getSelectedUserChildren() %}
                         <option value="{{ child.id }}" {{ this.selectedChildId == (child.id ~ '') ? 'selected' : '' }}>
-                            {{ child.name }}{% if child.ageYears %} ({{ child.ageYears }} {{ 'profile.children.years'|trans }}){% endif %}
+                            {{ child.name }}{% if child.ageYears %} ({{ 'profile.children.years'|trans({count: child.ageYears}) }}){% endif %}
                         </option>
                     {% endfor %}
                 </select>
