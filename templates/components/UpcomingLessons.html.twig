@@ -135,9 +135,9 @@
                     <span>{{ 'view.week_of'|trans }} {{ this.weekStart|format_date('medium') }}</span>
                 </h2>
             </div>
-            <div class="grid grid-cols-7 gap-4 overflow-x-auto">
+            <div class="grid grid-cols-7 gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-4">
                 {% for dayData in this.getWorkshopsByDay() %}
-                    <div class="day-column min-w-[140px]">
+                    <div class="day-column min-w-[140px] snap-start">
                         <div class="day-header p-2 bg-muted rounded-t-lg text-center font-medium">
                             <div>{{ ('day.' ~ dayData.weekday)|trans }}</div>
                             <div class="text-xs text-muted-foreground">{{ dayData.date|format_date('short') }}</div>
