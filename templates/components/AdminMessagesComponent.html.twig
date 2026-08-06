@@ -105,10 +105,16 @@
 
     <!-- Message Detail Modal -->
     {% if this.selectedMessage %}
-        <div data-action="click->live#action"
+        <div data-controller="modal-transition">
+        <div data-modal-transition-target="overlay"
+             data-state="open"
+             data-action="click->modal-transition#close click->live#action"
              data-live-action-param="closeMessage"
-             class="fixed inset-0 z-50 bg-black/60"></div>
-        <dialog open class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 gap-4 border bg-white p-6 shadow-lg duration-200 rounded-lg max-w-2xl max-h-[80vh] overflow-y-auto">
+             class="fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"></div>
+        <dialog open
+                data-modal-transition-target="panel"
+                data-state="open"
+                class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 gap-4 border bg-white p-6 shadow-lg duration-200 rounded-lg max-w-2xl max-h-[80vh] overflow-y-auto data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
             <div class="flex justify-between items-start mb-4">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
@@ -120,7 +126,7 @@
                     </div>
                 </div>
                 <button type="button"
-                        data-action="live#action"
+                        data-action="click->modal-transition#close click->live#action"
                         data-live-action-param="closeMessage"
                         class="text-slate-400 hover:text-slate-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -155,5 +161,6 @@
                 </div>
             </div>
         </dialog>
+        </div>
     {% endif %}
 </div>

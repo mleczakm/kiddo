@@ -2,7 +2,7 @@
         {% if modalOpened %}data-modal-state="open" {% else %}data-modal-state="closed"{% endif %}
         {{ stimulus_controller('live', {
             url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\BookingCancellationModal' })
-        }) }}
+        }) | stimulus_controller('modal-transition', { mode: 'toggle' }) }}
         data-action="live:action:success->live#update">
 
     <button data-action="live#action"
@@ -21,17 +21,21 @@
 
     {# Overlay #}
     <div
-            data-action="click->live#action"
+            data-modal-transition-target="overlay"
+            data-state="{{ modalOpened ? 'open' : 'closed' }}"
+            data-action="click->modal-transition#close click->live#action"
             data-live-action-param="closeModal"
-            class="{% if not modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
+            class="{% if not modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
             style="pointer-events: auto;" aria-hidden="true"></div>
 
     {# Dialog #}
     <dialog {% if modalOpened %}open{% endif %}
             data-modal-target="dialog"
-            class="fixed left-1/2 top-1/2 z-50 max-w-[90vw] sm:max-w-md -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 rounded-lg max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
+            data-modal-transition-target="panel"
+            data-state="{{ modalOpened ? 'open' : 'closed' }}"
+            class="fixed left-1/2 top-1/2 z-50 max-w-[90vw] sm:max-w-md -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 rounded-lg max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
         <button type="button"
-                data-action="live#action"
+                data-action="click->modal-transition#close click->live#action"
                 data-live-action-param="closeModal"
                 class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -293,7 +297,7 @@
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t border-border">
                 <button
                         type="button"
-                        data-action="live#action"
+                        data-action="click->modal-transition#close click->live#action"
                         data-live-action-param="closeModal"
                         class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                 >

@@ -72,8 +72,13 @@
     {% endif %}
 
     {% if showModal %}
-        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+        <div data-controller="modal-transition"
+             data-modal-transition-target="overlay"
+             data-state="open"
+             class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
+            <div data-modal-transition-target="panel"
+                 data-state="open"
+                 class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
                 <h3 class="text-lg font-bold text-slate-800 mb-4">Wpłata na zaległość</h3>
 
                 {{ form_start(form) }}
@@ -93,7 +98,7 @@
                             {{ form_widget(form.submit, {'attr': {'class': 'flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-sm'}}) }}
                             <button
                                 type="button"
-                                data-action="live#action"
+                                data-action="click->modal-transition#close click->live#action"
                                 data-live-action-param="closeModal"
                                 class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold transition"
                             >
