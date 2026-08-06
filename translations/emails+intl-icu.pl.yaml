@@ -133,6 +133,19 @@ login_email_missingnotification:
     
     Zespół Warsztatowni Sensorycznej
 
+admin_message_reply:
+  subject: 'Re: {subject}'
+  content: |
+    Cześć {name},
+
+    Otrzymałeś odpowiedź od zespołu Warsztatowni Sensorycznej dotyczącą wiadomości "{subject}":
+
+    {reply}
+
+
+    Pozdrawiamy,
+    Zespół Warsztatowni Sensorycznej
+
 booking_cancellation:
   subject: 'Anulowanie rezerwacji - {lesson} {date}'
   content: |

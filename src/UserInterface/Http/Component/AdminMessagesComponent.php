@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Service\InAppNotificationService;
 use App\Entity\MessageStatus;
+use App\Entity\NotificationSeverity;
 use App\Entity\User;
 use App\Entity\UserMessage;
 use App\Repository\UserMessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\NotifierInterface;
+use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -24,7 +31,11 @@ class AdminMessagesComponent extends AbstractController
 
     public function __construct(
         private readonly UserMessageRepository $userMessageRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly InAppNotificationService $inAppNotifications,
+        private readonly NotifierInterface $notifier,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     #[LiveProp(writable: true)]
@@ -111,10 +122,37 @@ class AdminMessagesComponent extends AbstractController
         $message->setStatus($messageStatus);
 
         if ($this->replyContent) {
-            // In a real implementation, you would send the reply here
-            // For now, we'll just add it as admin notes
+            // Keep an internal audit trail...
             $currentNotes = $message->getAdminNotes();
             $message->setAdminNotes($currentNotes . "\n\nAdmin Reply: " . $this->replyContent);
+
+            // ...and actually deliver the reply to the user, by email and in-app.
+            $recipient = $message->getUser();
+
+            $subject = $this->translator->trans('admin_message_reply.subject', [
+                'subject' => $message->getSubject(),
+            ], 'emails');
+            $content = $this->translator->trans('admin_message_reply.content', [
+                'name' => $recipient->getName(),
+                'subject' => $message->getSubject(),
+                'reply' => $this->replyContent,
+            ], 'emails');
+
+            $notification = new Notification()
+                ->importance('')
+                ->subject($subject)
+                ->content($content);
+            $this->notifier->send($notification, new Recipient($recipient->getEmail()));
+
+            $this->inAppNotifications->notify(
+                $recipient,
+                $this->translator->trans('notifications.in_app.admin_reply.title', [], 'messages'),
+                $this->translator->trans('notifications.in_app.admin_reply.body', [
+                    'subject' => $message->getSubject(),
+                ], 'messages'),
+                $this->urlGenerator->generate('dashboard'),
+                NotificationSeverity::Info,
+            );
         }
 
         $this->entityManager->flush();

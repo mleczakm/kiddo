@@ -89,7 +89,7 @@
                                 </span>
                             {% endif %}
                         </div>
-                        <p class="text-sm text-slate-700 line-clamp-2">{{ message.content }}</p>
+                        <p class="text-sm text-slate-700 line-clamp-2">{{ message.message }}</p>
                     </div>
                 {% else %}
                     <div class="text-center py-12 text-slate-500">
@@ -132,7 +132,7 @@
             
             <div class="mb-6">
                 <div class="text-sm text-slate-500 mb-2">{{ this.selectedMessage.createdAt|date('Y-m-d H:i') }}</div>
-                <p class="text-slate-700 whitespace-pre-wrap">{{ this.selectedMessage.content }}</p>
+                <p class="text-slate-700 whitespace-pre-wrap">{{ this.selectedMessage.message }}</p>
             </div>
 
             <div class="border-t border-slate-200 pt-4">

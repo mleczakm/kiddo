@@ -96,6 +96,9 @@ notifications:
       admin:
         title: Przeniesienie rezerwacji
         body: 'Użytkownik <strong>{email}</strong> przeniósł rezerwację z <em>{from}</em> na <em>{to}</em>.'
+    admin_reply:
+      title: Odpowiedź od zespołu
+      body: 'Otrzymałeś odpowiedź dotyczącą wiadomości "{subject}".'
     transfer_not_matched:
       title: Nieprzypisany przelew
       body: 'Przelew <strong>{amount}</strong> od <em>{sender}</em> ({title}) nie został dopasowany.'
