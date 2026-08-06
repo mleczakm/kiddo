@@ -45,14 +45,5 @@
         <div class="relative" data-tour-target="notif-bell">
             {{ component('NotificationTrayLiveComponent') }}
         </div>
-
-        <div class="flex items-center gap-2 pl-2 md:pl-4 md:border-l border-slate-200">
-            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-sm shrink-0">
-                {{ app.user ? app.user.email|slice(0, 1)|upper : 'A' }}
-            </div>
-            <span class="hidden sm:inline text-sm font-medium text-slate-700">
-                {{ app.user ? app.user.email : 'Administrator' }}
-            </span>
-        </div>
     </div>
 </header>
