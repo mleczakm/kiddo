@@ -176,12 +176,12 @@
                                                     {{ 'admin_dashboard.upcoming_attendees.actions'|trans }}
                                                 </button>
                                                 {% if this.actionsForBookingId and this.actionsForBookingId == (bId ~ '') %}
-                                                    <div class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                                                        <div class="py-1">
+                                                    <div class="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-200 bg-white shadow-xl z-20 overflow-hidden">
+                                                        <div class="py-1.5">
                                                             {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
                                                             {% if not isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="payForBooking"
                                                                         data-live-booking-id-param="{{ bId }}"
@@ -189,21 +189,21 @@
                                                                     Zapłać
                                                                 </button>
                                                             {% endif %}
-                                                            <div class="border-t my-1"></div>
+                                                            <div class="border-t border-slate-100 my-1"></div>
                                                             <div class="px-1">
                                                                 {{ component('App\\UserInterface\\Http\\Component\\BookingCancellationModal', { booking: booking, lesson: lesson }) }}
                                                             </div>
                                                             <button type="button"
-                                                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                    class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                     data-action="click->live#action"
                                                                     data-live-action-param="closeActions"
                                                                     onclick="this.closest('.relative').querySelector('dialog')?.remove()">
                                                                 Zamknij
                                                             </button>
-                                                            <div class="border-t my-1"></div>
+                                                            <div class="border-t border-slate-100 my-1"></div>
                                                             {% if isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markUnpaid"
                                                                         data-live-booking-id-param="{{ bId }}">
@@ -211,7 +211,7 @@
                                                                 </button>
                                                             {% else %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markPaid"
                                                                         data-live-booking-id-param="{{ bId }}">
@@ -255,12 +255,12 @@
                                                     {{ 'admin_dashboard.upcoming_attendees.actions'|trans }}
                                                 </button>
                                                 {% if this.actionsForBookingId and this.actionsForBookingId == (bId ~ '') %}
-                                                    <div class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                                                        <div class="py-1">
+                                                    <div class="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-200 bg-white shadow-xl z-20 overflow-hidden">
+                                                        <div class="py-1.5">
                                                             {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
                                                             {% if not isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="payForBooking"
                                                                         data-live-booking-id-param="{{ bId }}"
@@ -268,21 +268,21 @@
                                                                     Zapłać
                                                                 </button>
                                                             {% endif %}
-                                                            <div class="border-t my-1"></div>
+                                                            <div class="border-t border-slate-100 my-1"></div>
                                                             <div class="px-1">
                                                                 {{ component('App\\UserInterface\\Http\\Component\\BookingCancellationModal', { booking: booking, lesson: lesson }) }}
                                                             </div>
                                                             <button type="button"
-                                                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                    class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                     data-action="click->live#action"
                                                                     data-live-action-param="closeActions"
                                                                     onclick="this.closest('.relative').querySelector('dialog')?.remove()">
                                                                 Zamknij
                                                             </button>
-                                                            <div class="border-t my-1"></div>
+                                                            <div class="border-t border-slate-100 my-1"></div>
                                                             {% if isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markUnpaid"
                                                                         data-live-booking-id-param="{{ bId }}">
@@ -290,7 +290,7 @@
                                                                 </button>
                                                             {% else %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markPaid"
                                                                         data-live-booking-id-param="{{ bId }}">
