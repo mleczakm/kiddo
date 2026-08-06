@@ -62,7 +62,7 @@
     {% endblock %}
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
-    <div id="root" class="flex w-full min-h-screen">
+    <div id="root" class="flex w-full min-h-screen" data-controller="admin-sidebar">
         {# Sidebar #}
         {% block sidebar %}
             {{ include('components/AdminMenu.html.twig') }}

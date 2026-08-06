@@ -647,6 +647,8 @@ admin:
     unpaid: 'Nieopłacone'
     pending: 'Oczekuje na płatność'
   title: 'Panel Administratora'
+  menu:
+    toggle: 'Otwórz menu'
   tabs:
     dashboard: 'Pulpit'
     workshops: 'Warsztaty'

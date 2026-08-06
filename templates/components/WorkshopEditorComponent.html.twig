@@ -10,7 +10,7 @@
                     <p class="text-sm text-slate-500">Dodaj lub edytuj wydarzenie i zasady sprzedaży</p>
                 </div>
                 <button
-                    data-action="live#action live#emitUp" data-live-action-param="closeModal" data-live-event-param="workshopEditorClosed"
+                    data-action="live#emitUp" data-live-event-param="workshopEditorClosed"
                     class="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -300,18 +300,6 @@
                                         <span class="text-sm text-slate-500">zł</span>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-32 text-sm font-bold text-slate-700">Karnet 8 wejść</div>
-                                    <div class="flex-1 flex items-center gap-2">
-                                        <input 
-                                            type="number" 
-                                            data-model="carnet8Price"
-                                            placeholder="380" 
-                                            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none" 
-                                        />
-                                        <span class="text-sm text-slate-500">zł</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -367,7 +355,7 @@
             <!-- Footer -->
             <div class="p-6 border-t border-slate-100 bg-white flex justify-end gap-3 rounded-b-2xl">
                 <button
-                    data-action="live#action live#emitUp" data-live-action-param="closeModal" data-live-event-param="workshopEditorClosed"
+                    data-action="live#emitUp" data-live-event-param="workshopEditorClosed"
                     class="px-6 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
                 >
                     Anuluj

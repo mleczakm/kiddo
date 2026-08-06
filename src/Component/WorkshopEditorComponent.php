@@ -11,6 +11,7 @@ use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Entity\Series;
 use App\Entity\TicketOption;
+use App\Entity\TicketReschedulePolicy;
 use App\Entity\TicketType;
 use App\Entity\User;
 use App\Entity\WorkshopType;
@@ -37,58 +38,77 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveProp]
     public ?Ulid $editingSeriesId = null;
 
-    #[LiveProp]
+    #[LiveProp(writable: true)]
     public string $activeTab = 'general';
 
     // General tab fields
+    #[LiveProp(writable: true)]
     public ?string $title = null;
 
+    #[LiveProp(writable: true)]
     public ?string $category = null;
 
+    #[LiveProp(writable: true)]
     public ?string $description = null;
 
+    #[LiveProp(writable: true)]
     public ?string $lead = null;
 
+    #[LiveProp(writable: true)]
     public ?string $visualTheme = null;
 
+    #[LiveProp(writable: true)]
     public ?int $ageMin = null;
 
+    #[LiveProp(writable: true)]
     public ?int $ageMax = null;
 
+    #[LiveProp(writable: true)]
     public ?int $capacity = null;
 
+    #[LiveProp(writable: true)]
     public ?int $duration = null;
 
     // Schedule tab fields
+    #[LiveProp(writable: true)]
     public string $scheduleType = 'recurring';
 
+    #[LiveProp(writable: true)]
     public ?string $dayOfWeek = null;
 
+    #[LiveProp(writable: true)]
     public ?string $startTime = null;
 
+    #[LiveProp(writable: true)]
     public ?string $endTime = null;
 
+    #[LiveProp(writable: true)]
     public ?\DateTimeImmutable $startDate = null;
 
+    #[LiveProp(writable: true)]
     public ?\DateTimeImmutable $endDate = null;
 
+    #[LiveProp(writable: true)]
     public bool $skipHolidays = true;
 
     // Tickets tab fields
+    #[LiveProp(writable: true)]
     public bool $allowPayOnPlace = false;
 
+    #[LiveProp(writable: true)]
     public ?string $singleTicketPrice = null;
 
+    #[LiveProp(writable: true)]
     public ?string $carnet4Price = null;
-
-    public ?string $carnet8Price = null;
 
     // Instructors
     /**
      * @var array<int, string>
      */
+    #[LiveProp(writable: true)]
     public array $instructorIds = [];
 
+    #[LiveProp(writable: true)]
     public ?string $newInstructorId = null;
 
     private ?Series $editingSeries = null;
@@ -140,12 +160,10 @@ class WorkshopEditorComponent extends AbstractController
 
         // Load ticket options
         foreach ($this->editingSeries->ticketOptions as $option) {
-            if ($option->type === TicketType::SINGLE) {
+            if ($option->type === TicketType::ONE_TIME) {
                 $this->singleTicketPrice = (string) $option->price->getMinorAmount();
             } elseif ($option->type === TicketType::CARNET_4) {
                 $this->carnet4Price = (string) $option->price->getMinorAmount();
-            } elseif ($option->type === TicketType::CARNET_8) {
-                $this->carnet8Price = (string) $option->price->getMinorAmount();
             }
         }
     }
@@ -188,12 +206,6 @@ class WorkshopEditorComponent extends AbstractController
             'Saturday' => 'Sobota',
             'Sunday' => 'Niedziela',
         ];
-    }
-
-    #[LiveAction]
-    public function closeModal(): void
-    {
-        $this->isModalOpen = false;
     }
 
     #[LiveAction]
@@ -250,15 +262,19 @@ class WorkshopEditorComponent extends AbstractController
         $ticketOptions = [];
         if ($this->singleTicketPrice !== null) {
             $ticketOptions[] = new TicketOption(
-                TicketType::SINGLE,
-                Money::ofMinor($this->singleTicketPrice, 'PLN')
+                TicketType::ONE_TIME,
+                Money::ofMinor($this->singleTicketPrice, 'PLN'),
+                'Wejście jednorazowe',
+                TicketReschedulePolicy::UNLIMITED_24H_BEFORE,
             );
         }
         if ($this->carnet4Price !== null) {
-            $ticketOptions[] = new TicketOption(TicketType::CARNET_4, Money::ofMinor($this->carnet4Price, 'PLN'));
-        }
-        if ($this->carnet8Price !== null) {
-            $ticketOptions[] = new TicketOption(TicketType::CARNET_8, Money::ofMinor($this->carnet8Price, 'PLN'));
+            $ticketOptions[] = new TicketOption(
+                TicketType::CARNET_4,
+                Money::ofMinor($this->carnet4Price, 'PLN'),
+                'Karnet: 4 wejścia',
+                TicketReschedulePolicy::ONETIME_24H_BEFORE,
+            );
         }
         $series->ticketOptions = $ticketOptions;
 
