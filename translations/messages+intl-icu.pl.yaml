@@ -707,6 +707,7 @@ admin:
       cancelled: "Anulowane"
   schedule:
     title: "Harmonogram"
+    add_workshop: "Dodaj zajęcia"
     headers:
       type: "Typ serii"
       tickets: "Rodzaje biletów"

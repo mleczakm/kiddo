@@ -8,6 +8,13 @@
       <div class="flex flex-wrap items-center gap-2">
         <button type="button"
                 data-action="live#action"
+                data-live-action-param="openAddModal"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 h-9 rounded-xl text-sm font-bold flex items-center gap-2 transition shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          {{ 'admin.schedule.add_workshop'|trans }}
+        </button>
+        <button type="button"
+                data-action="live#action"
                 data-live-action-param="toggleCancelled"
                 class="px-3 py-1.5 border rounded-md hover:bg-gray-50 flex items-center text-sm {{ this.showCancelled ? 'bg-gray-100 border-gray-400' : 'bg-white' }}"
                 title="{{ this.showCancelled ? 'admin.lessons.hide_cancelled'|trans : 'admin.lessons.show_cancelled'|trans }}">
@@ -113,13 +120,6 @@
                 </button>
               </td>
             </tr>
-            {% if this.editSeriesId == series.id %}
-              <tr class="bg-white border-t">
-                <td colspan="5" class="p-4">
-                  {{ component('SeriesEditComponent', { seriesId: series.id }) }}
-                </td>
-              </tr>
-            {% endif %}
           {% else %}
             <tr>
               <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.schedule.empty'|trans }}</td>
@@ -129,4 +129,10 @@
       </table>
     </div>
   </div>
+
+  {% if this.showAddModal %}
+    {{ component('WorkshopEditor') }}
+  {% elseif this.editSeriesId %}
+    {{ component('WorkshopEditor', { seriesId: this.editSeriesId }) }}
+  {% endif %}
 </div>

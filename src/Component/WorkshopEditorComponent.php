@@ -292,5 +292,6 @@ class WorkshopEditorComponent extends AbstractController
 
         $this->addFlash('success', 'Warsztat został zapisany pomyślnie.');
         $this->isModalOpen = false;
+        $this->emitUp('workshopEditorSaved');
     }
 }

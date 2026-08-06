@@ -13,6 +13,7 @@ use Symfony\Component\Clock\Clock;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -33,7 +34,10 @@ final class AdminScheduleComponent extends AbstractController
     public bool $showCancelled = false;
 
     #[LiveProp(writable: true)]
-    public ?string $editSeriesId = null;
+    public ?Ulid $editSeriesId = null;
+
+    #[LiveProp(writable: true)]
+    public bool $showAddModal = false;
 
     public function mount(): void
     {
@@ -78,13 +82,21 @@ final class AdminScheduleComponent extends AbstractController
     #[LiveAction]
     public function startEdit(#[LiveArg] string $seriesId): void
     {
-        $this->editSeriesId = $seriesId;
+        $this->editSeriesId = Ulid::fromString($seriesId);
     }
 
     #[LiveAction]
-    public function cancelEdit(): void
+    public function openAddModal(): void
+    {
+        $this->showAddModal = true;
+    }
+
+    #[LiveListener('workshopEditorClosed')]
+    #[LiveListener('workshopEditorSaved')]
+    public function onWorkshopEditorClosed(): void
     {
         $this->editSeriesId = null;
+        $this->showAddModal = false;
     }
 
     #[LiveAction]

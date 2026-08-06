@@ -126,6 +126,41 @@ final class AdminScheduleComponentTest extends WebTestCase
         self::assertStringContainsString('Anulowane', $html);
     }
 
+    public function testOpenAddModalRendersWorkshopEditor(): void
+    {
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client);
+
+        $component->call('openAddModal');
+
+        $html = (string) $component->render();
+        self::assertStringContainsString('Kreator Warsztatów', $html);
+    }
+
+    public function testStartEditRendersWorkshopEditorPrefilledWithSeriesData(): void
+    {
+        $weekStart = new \DateTimeImmutable('2025-01-06');
+        $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY, []);
+        $this->em->persist($series);
+
+        $l1 = $this->createLesson('Editable Series Title', $weekStart->modify('+1 day'));
+        $l1->setSeries($series);
+        $this->em->persist($l1);
+        $this->em->flush();
+
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+
+        $component->call('startEdit', [
+            'seriesId' => (string) $series->getId(),
+        ]);
+
+        $html = (string) $component->render();
+        self::assertStringContainsString('Kreator Warsztatów', $html);
+        // Confirms the series id was correctly resolved to a Ulid and its data loaded
+        self::assertStringContainsString('Editable Series Title', $html);
+    }
+
     private function createLesson(string $title, \DateTimeImmutable $schedule): Lesson
     {
         $metadata = new LessonMetadata(

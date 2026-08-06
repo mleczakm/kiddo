@@ -9,8 +9,8 @@
                     <h2 class="text-xl font-black text-slate-800">Kreator Warsztatów</h2>
                     <p class="text-sm text-slate-500">Dodaj lub edytuj wydarzenie i zasady sprzedaży</p>
                 </div>
-                <button 
-                    data-action="live#action" data-live-action-param="closeModal"
+                <button
+                    data-action="live#action live#emitUp" data-live-action-param="closeModal" data-live-event-param="workshopEditorClosed"
                     class="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -76,7 +76,7 @@
                                     class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                 >
                                     <option value="">Wybierz kategorię...</option>
-                                    {% for cat in getCategories() %}
+                                    {% for cat in this.getCategories() %}
                                         <option value="{{ cat }}" {{ category == cat ? 'selected' : '' }}>{{ cat }}</option>
                                     {% endfor %}
                                 </select>
@@ -192,7 +192,7 @@
                                         class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                     >
                                         <option value="">Wybierz dzień...</option>
-                                        {% for dayKey, dayLabel in getDaysOfWeek() %}
+                                        {% for dayKey, dayLabel in this.getDaysOfWeek() %}
                                             <option value="{{ dayKey }}" {{ dayOfWeek == dayKey ? 'selected' : '' }}>{{ dayLabel }}</option>
                                         {% endfor %}
                                     </select>
@@ -327,7 +327,7 @@
                                     class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 >
                                     <option value="">Wybierz prowadzącego...</option>
-                                    {% for user in getUsers() %}
+                                    {% for user in this.getUsers() %}
                                         {% if user.id not in instructorIds %}
                                             <option value="{{ user.id }}">{{ user.name }} ({{ user.email }})</option>
                                         {% endif %}
@@ -341,7 +341,7 @@
                                 </button>
                             </div>
                             
-                            {% for user in getInstructors() %}
+                            {% for user in this.getInstructors() %}
                                 <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200">
                                     <div>
                                         <div class="font-bold text-sm text-slate-800">{{ user.name }}</div>
@@ -366,13 +366,13 @@
 
             <!-- Footer -->
             <div class="p-6 border-t border-slate-100 bg-white flex justify-end gap-3 rounded-b-2xl">
-                <button 
-                    data-action="live#action" data-live-action-param="closeModal"
+                <button
+                    data-action="live#action live#emitUp" data-live-action-param="closeModal" data-live-event-param="workshopEditorClosed"
                     class="px-6 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
                 >
                     Anuluj
                 </button>
-                <button 
+                <button
                     data-action="live#action" data-live-action-param="save"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition"
                 >
