@@ -57,7 +57,8 @@
     </div>
   </div>
   <div class="p-6 pt-0">
-    <div class="relative w-full overflow-auto">
+    {# Desktop table (md and up) #}
+    <div class="hidden md:block relative w-full overflow-auto">
       <table class="w-full caption-bottom text-sm">
         <thead class="[&_tr]:border-b">
           <tr class="border-b transition-colors hover:bg-slate-50">
@@ -127,6 +128,59 @@
           {% endfor %}
         </tbody>
       </table>
+    </div>
+
+    {# Mobile cards (below md) #}
+    <div class="md:hidden space-y-3">
+      {% for series in this.series %}
+        <div class="border border-slate-200 rounded-xl p-4 {{ series.status == 'cancelled' ? 'opacity-60' : '' }}">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="font-medium text-slate-800">{{ series.firstLesson.metadata.title }}</div>
+              <div class="text-xs text-muted-foreground mt-0.5">{{ series.type.value == 'weekly' ? 'admin.schedule.type.weekly'|trans : 'admin.schedule.type.one_time'|trans }}</div>
+            </div>
+            {% set status = series.status %}
+            <div class="shrink-0 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
+              {{ status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
+            </div>
+          </div>
+          <div class="text-sm text-slate-500 mt-2">
+            {{ series.firstLesson.metadata.schedule|date('Y-m-d') }} — {{ series.lastLesson.metadata.schedule|date('Y-m-d') }}
+          </div>
+          {% if series.ticketOptions %}
+            <div class="flex flex-wrap gap-1 mt-2">
+              {% for t in this.getTicketTypes(series) %}
+                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-100">{{ ('lesson.' ~ t)|trans }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="flex gap-2 mt-3">
+            {% if series.status == 'active' %}
+              <button data-action="click->live#action"
+                      data-live-action-param="cancelSeries"
+                      data-live-series-id-param="{{ series.id }}"
+                      class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border h-9 rounded-md px-3 border-red-600 text-red-600 hover:bg-red-600/10">
+                {{ 'admin.schedule.actions.cancel'|trans }}
+              </button>
+            {% else %}
+              <button data-action="click->live#action"
+                      data-live-action-param="activateSeries"
+                      data-live-series-id-param="{{ series.id }}"
+                      class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border h-9 rounded-md px-3 border-green-600 text-green-600 hover:bg-green-600/10">
+                {{ 'admin.schedule.actions.activate'|trans }}
+              </button>
+            {% endif %}
+            <button data-action="click->live#action"
+                    data-live-action-param="startEdit"
+                    data-live-series-id-param="{{ series.id }}"
+                    class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border h-9 rounded-md px-3 border-blue-600 text-blue-600 hover:bg-blue-600/10">
+              {{ 'Edit'|trans }}
+            </button>
+          </div>
+        </div>
+      {% else %}
+        <p class="p-4 text-center text-muted-foreground">{{ 'admin.schedule.empty'|trans }}</p>
+      {% endfor %}
     </div>
   </div>
 

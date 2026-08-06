@@ -41,7 +41,8 @@
     </div>
   </div>
   <div class="p-6 pt-0">
-    <div class="relative w-full overflow-auto">
+    {# Desktop table (md and up) #}
+    <div class="hidden md:block relative w-full overflow-auto">
       <table class="w-full caption-bottom text-sm">
         <thead class="[&_tr]:border-b">
           <tr class="border-b transition-colors hover:bg-slate-50">
@@ -97,11 +98,56 @@
             </tr>
           {% else %}
             <tr>
-              <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.payments.no_payments'|trans }}</td>
+              <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.payments.empty'|trans }}</td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
+    </div>
+
+    {# Mobile cards (below md) #}
+    <div class="md:hidden space-y-3">
+      {% for payment in this.payments %}
+        {% set booking = payment.bookings|first %}
+        <div class="border border-slate-200 rounded-xl p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              {% if booking and booking.user %}
+                <div class="font-medium text-slate-800 truncate">{{ booking.user.name }}</div>
+                <div class="text-xs text-muted-foreground truncate">{{ booking.user.email }}</div>
+              {% else %}
+                <div class="font-medium text-slate-400">-</div>
+              {% endif %}
+            </div>
+            <span class="shrink-0 font-medium text-slate-800">{{ payment.amount|money }}</span>
+          </div>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-xs text-slate-500">
+              {{ payment.paidAt ? payment.paidAt|date('Y-m-d H:i') : '-' }}
+            </span>
+            <div class="flex items-center gap-1.5">
+              <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-slate-100 text-slate-700">
+                {{ payment.method|default('transfer') }}
+              </div>
+              {% if payment.status == 'paid' %}
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-green-500 text-white">
+                  {{ 'admin.payments.status.paid'|trans }}
+                </div>
+              {% elseif payment.status == 'pending' %}
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-yellow-500 text-white">
+                  {{ 'admin.payments.status.pending'|trans }}
+                </div>
+              {% else %}
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-slate-500 text-white">
+                  {{ payment.status }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p class="p-4 text-center text-muted-foreground">{{ 'admin.payments.empty'|trans }}</p>
+      {% endfor %}
     </div>
   </div>
 </div>

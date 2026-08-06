@@ -688,6 +688,7 @@ admin:
       what: "Za co"
       status: "Status"
       code: "Kod"
+      method: "Metoda"
     empty: "Brak płatności w wybranym tygodniu"
     carnet: "Karnet"
   lessons:

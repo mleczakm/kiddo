@@ -56,7 +56,8 @@
     </div>
   </div>
   <div class="p-6 pt-0">
-    <div class="relative w-full overflow-auto">
+    {# Desktop table (md and up) #}
+    <div class="hidden md:block relative w-full overflow-auto">
       <table class="w-full caption-bottom text-sm">
         <thead class="[&_tr]:border-b">
           <tr class="border-b transition-colors hover:bg-slate-50">
@@ -112,6 +113,39 @@
           {% endfor %}
         </tbody>
       </table>
+    </div>
+
+    {# Mobile cards (below md) #}
+    <div class="md:hidden space-y-3">
+      {% for lesson in this.lessons %}
+        <div class="border border-slate-200 rounded-xl p-4 {{ lesson.status == 'cancelled' ? 'opacity-60' : '' }}">
+          <div class="flex items-start justify-between gap-3">
+            <a class="font-medium hover:underline {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : 'text-slate-800' }}" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">
+              {{ lesson.metadata.title }}
+            </a>
+            <a class="shrink-0 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">
+              {{ lesson.status == 'active' ? ('admin.lessons.status.active'|trans) : ('admin.lessons.status.cancelled'|trans) }}
+            </a>
+          </div>
+          <a class="block text-sm text-slate-500 mt-1" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">
+            {{ lesson.metadata.schedule|date('Y-m-d H:i') }} &middot; {{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }}
+          </a>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-sm font-medium text-slate-600">{{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}</span>
+            <button
+                type="button"
+                data-action="click->live#action"
+                data-live-action-param="toggleStatus"
+                data-live-lesson-id-param="{{ lesson.id }}"
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors border h-9 rounded-md px-3 {{ lesson.status == 'active' ? 'border-red-600 text-red-600 hover:bg-red-600/10' : 'border-green-600 text-green-600 hover:bg-green-600/10' }}"
+            >
+              {{ lesson.status == 'active' ? ('admin.lessons.actions.deactivate'|trans) : ('admin.lessons.actions.activate'|trans) }}
+            </button>
+          </div>
+        </div>
+      {% else %}
+        <p class="p-4 text-center text-muted-foreground">{{ 'admin.lessons.empty'|trans }}</p>
+      {% endfor %}
     </div>
   </div>
 </div>
