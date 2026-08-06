@@ -17,3 +17,4 @@ when@test:
           features:
             manual_bookings: true
             chat_assistant: true
+            platform_billing_widget: true

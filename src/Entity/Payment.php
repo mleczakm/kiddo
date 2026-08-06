@@ -96,7 +96,7 @@ class Payment
         $this->createdAt = new \DateTimeImmutable();
         $this->bookings = new ArrayCollection();
         $this->transfers = new ArrayCollection();
-        $this->method = PaymentMethod::ONLINE;
+        $this->method ??= PaymentMethod::ONLINE;
     }
 
     public function getId(): Ulid

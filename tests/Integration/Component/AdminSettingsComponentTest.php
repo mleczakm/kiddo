@@ -11,7 +11,7 @@ use App\Repository\FinanceContactRepository;
 use App\Repository\SettingRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 #[\PHPUnit\Framework\Attributes\Group('functional')]
@@ -52,7 +52,6 @@ class AdminSettingsComponentTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        $this->entityManager->rollback();
         parent::tearDown();
     }
 

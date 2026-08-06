@@ -64,7 +64,7 @@ class HomepageTest extends WebTestCase
     {
         return [
             'Panel' => ['/panel'],
-            'Admin' => ['/admin', 302],
+            'Admin' => ['/admin', 403],
         ];
     }
 

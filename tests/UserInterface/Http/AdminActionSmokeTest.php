@@ -105,7 +105,7 @@ class AdminActionSmokeTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('a[href="/admin/ustawienia"].bg-indigo-600');
-        $this->assertSelectorExists('button[data-value="general"]');
+        $this->assertSelectorExists('button[data-value="roles"]');
     }
 
     public function testAdminMessagesTab(): void
@@ -141,7 +141,7 @@ class AdminActionSmokeTest extends WebTestCase
         foreach ($adminRoutes as $route) {
             $client->request('GET', $route);
             $this->assertResponseStatusCodeSame(
-                Response::HTTP_FOUND,
+                Response::HTTP_FORBIDDEN,
                 "Route {$route} should be forbidden for regular users"
             );
         }

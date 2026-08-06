@@ -59,7 +59,6 @@ class PaymentApprovalWorkflowTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        $this->entityManager->rollback();
         parent::tearDown();
     }
 

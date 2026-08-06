@@ -53,7 +53,6 @@ class BookingStatusTransitionsTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        $this->entityManager->rollback();
         parent::tearDown();
     }
 
@@ -124,10 +123,27 @@ class BookingStatusTransitionsTest extends WebTestCase
 
     public function testBookingCanBeCompleted(): void
     {
+        // A booking can only be completed once its lesson has actually happened,
+        // so this test needs a past-scheduled lesson rather than the shared
+        // future-scheduled fixture from setUp().
+        $pastMetadata = new LessonMetadata(
+            title: 'Past Workshop',
+            lead: 'Test lead',
+            visualTheme: 'default',
+            description: 'Test description',
+            capacity: 10,
+            schedule: Clock::get()->now()->modify('-1 day'),
+            duration: 90,
+            ageRange: new AgeRange(0, 10),
+            category: 'Test',
+        );
+        $pastLesson = new Lesson($pastMetadata);
+        $this->entityManager->persist($pastLesson);
+
         $payment = new Payment($this->user, Money::of(55, 'PLN'));
         $this->entityManager->persist($payment);
 
-        $booking = new Booking($this->user, $payment, $this->lesson);
+        $booking = new Booking($this->user, $payment, $pastLesson);
         $booking->confirm();
         $this->entityManager->persist($booking);
         $this->entityManager->flush();

@@ -56,8 +56,8 @@
                                         class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
                                         <option value="">Wybierz użytkownika...</option>
-                                        {% for user in getUsers() %}
-                                            {% if not hasRole(user, 'ROLE_ADMIN') %}
+                                        {% for user in this.getUsers() %}
+                                            {% if not this.hasRole(user, 'ROLE_ADMIN') %}
                                                 <option value="{{ user.id }}">{{ user.name }} ({{ user.email }})</option>
                                             {% endif %}
                                         {% endfor %}
@@ -70,7 +70,7 @@
                                     </button>
                                 </div>
                                 
-                                {% for user in getAdminUsers() %}
+                                {% for user in this.getAdminUsers() %}
                                     <div class="flex justify-between items-center hover:bg-slate-50 p-2 rounded-lg">
                                         <div>
                                             <div class="font-bold text-sm">{{ user.name }}</div>
@@ -99,7 +99,7 @@
                                 Prowadzący Zajęcia
                             </div>
                             <div class="p-4">
-                                {% for user in getInstructorUsers() %}
+                                {% for user in this.getInstructorUsers() %}
                                     <div class="flex justify-between items-center hover:bg-slate-50 p-2 rounded-lg">
                                         <div>
                                             <div class="font-bold text-sm">{{ user.name }}</div>
@@ -129,7 +129,7 @@
                                     class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 >
                                     <option value="">Wybierz użytkownika...</option>
-                                    {% for user in getUsers() %}
+                                    {% for user in this.getUsers() %}
                                         {% if user.id not in financeContactUserIds %}
                                             <option value="{{ user.id }}">{{ user.name }} ({{ user.email }})</option>
                                         {% endif %}
@@ -143,7 +143,7 @@
                                 </button>
                             </div>
                             
-                            {% for user in getFinanceContactUsers() %}
+                            {% for user in this.getFinanceContactUsers() %}
                                 <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                                     <input type="text" value="{{ user.email }}" class="flex-1 bg-transparent text-sm font-bold text-slate-800 outline-none" readonly />
