@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Admin;
 
+use App\Entity\Payment;
 use App\Entity\User;
+use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,8 +27,18 @@ final class UsersController extends AbstractController
     ])]
     public function view(User $user): Response
     {
+        $totalSpent = Money::zero('PLN');
+        foreach ($user->getBookings() as $booking) {
+            $payment = $booking->getPayment();
+            if ($payment !== null && $payment->getStatus() === Payment::STATUS_PAID) {
+                $totalSpent = $totalSpent->plus($payment->getAmount());
+            }
+        }
+
         return $this->render('admin/users/view.html.twig', [
             'user' => $user,
+            'totalSpent' => $totalSpent,
+            'bookingsCount' => $user->getBookings()->count(),
         ]);
     }
 }

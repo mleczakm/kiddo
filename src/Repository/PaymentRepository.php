@@ -72,4 +72,22 @@ class PaymentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return Payment[]
+     */
+    public function findPaidBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
+    {
+        /** @var Payment[] $result */
+        $result = $this->createQueryBuilder('p')
+            ->andWhere('p.status = :status')
+            ->andWhere('COALESCE(p.paidAt, p.createdAt) BETWEEN :start AND :end')
+            ->setParameter('status', Payment::STATUS_PAID)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
 }

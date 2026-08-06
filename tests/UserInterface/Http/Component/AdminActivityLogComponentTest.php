@@ -4,44 +4,68 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\MessageType;
+use App\Entity\UserMessage;
+use App\Tests\Assembler\UserAssembler;
 use App\UserInterface\Http\Component\AdminActivityLogComponent;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
-#[Group('unit')]
-class AdminActivityLogComponentTest extends TestCase
+#[Group('functional')]
+final class AdminActivityLogComponentTest extends WebTestCase
 {
-    public function testCanRender(): void
-    {
-        $component = new AdminActivityLogComponent();
+    use InteractsWithLiveComponents;
 
-        $activityLog = $component->getActivityLog();
-        $this->assertNotEmpty($activityLog);
+    public function testEmptyStateWhenNoCustomerActivity(): void
+    {
+        $client = static::createClient();
+
+        $component = $this->createLiveComponent(name: AdminActivityLogComponent::class, client: $client);
+
+        self::assertSame([], $component->component()->getActivityLog());
     }
 
-    public function testActivityLogReturnsCorrectStructure(): void
+    public function testShowsRecentCancellationAndRescheduleMessages(): void
     {
-        $component = new AdminActivityLogComponent();
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
 
-        $activityLog = $component->getActivityLog();
+        $customer = UserAssembler::new()
+            ->withName('Jan Kowalski')
+            ->assemble();
+        $em->persist($customer);
 
-        $this->assertArrayHasKey('type', $activityLog[0]);
-        $this->assertArrayHasKey('badge', $activityLog[0]);
-        $this->assertArrayHasKey('name', $activityLog[0]);
-        $this->assertArrayHasKey('lesson', $activityLog[0]);
-        $this->assertArrayHasKey('notes', $activityLog[0]);
-    }
+        $em->persist(new UserMessage(
+            user: $customer,
+            subject: 'Anulowano zajęcia: Sensoplastyka',
+            message: 'Zajęcia "Sensoplastyka" zostały anulowane. Powód: choroba dziecka',
+            type: MessageType::CANCELLATION_REQUEST,
+        ));
+        $em->persist(new UserMessage(
+            user: $customer,
+            subject: 'Zmieniono termin: Klub Malucha',
+            message: 'Termin "Klub Malucha" zmieniono na "Klub Malucha - Środa".',
+            type: MessageType::RESCHEDULE_REQUEST,
+        ));
+        $em->flush();
 
-    public function testActivityLogReturnsExpectedData(): void
-    {
-        $component = new AdminActivityLogComponent();
+        $component = $this->createLiveComponent(name: AdminActivityLogComponent::class, client: $client);
+        $log = $component->component()
+            ->getActivityLog();
 
-        $activityLog = $component->getActivityLog();
+        self::assertCount(2, $log);
+        self::assertSame('cancelled', $log[0]['type']);
+        self::assertSame('Odwołane zajęcia', $log[0]['badge']);
+        self::assertSame('Jan Kowalski', $log[0]['name']);
+        self::assertSame('Anulowano zajęcia: Sensoplastyka', $log[0]['lesson']);
 
-        $this->assertCount(2, $activityLog);
-        $this->assertEquals('cancelled', $activityLog[0]['type']);
-        $this->assertEquals('reserved', $activityLog[1]['type']);
-        $this->assertEquals('Odwołana obecność', $activityLog[0]['badge']);
-        $this->assertEquals('Zapis na rezerwową', $activityLog[1]['badge']);
+        self::assertSame('other', $log[1]['type']);
+        self::assertSame('Zmieniono termin', $log[1]['badge']);
+
+        $html = (string) $component->render();
+        self::assertStringContainsString('Jan Kowalski', $html);
+        self::assertStringContainsString('choroba dziecka', $html);
     }
 }

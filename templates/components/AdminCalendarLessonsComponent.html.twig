@@ -11,35 +11,45 @@
         </div>
         
         {# Timeline events list #}
-        <div class="space-y-6 relative pl-4 before:absolute before:left-[21px] before:top-4 before:bottom-4 before:w-0.5 before:bg-slate-100">
-            {# Timeline Date Node #}
-            <div class="space-y-3 relative">
-                <div class="absolute left-[-2px] top-1.5 w-2 h-2 rounded-full bg-indigo-600 z-10"></div>
-                <span class="text-xs font-bold text-slate-400 pl-4">Dziś (15 Czerwca)</span>
-                
-                {% for item in this.getCalendarLessons() %}
-                    <div class="p-4 border border-slate-100 rounded-2xl bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-4 ml-4">
-                        <div class="flex items-start gap-4">
-                            {# Time slot #}
-                            <div class="h-11 w-20 flex items-center justify-center bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-600 shadow-sm shrink-0">
-                                {{ item.time }}
+        {% set days = this.getCalendarDays() %}
+        {% if days is empty %}
+            <p class="text-sm text-slate-400 text-center py-8">Brak zaplanowanych zajęć w najbliższych dniach.</p>
+        {% else %}
+            <div class="space-y-6 relative pl-4 before:absolute before:left-[21px] before:top-4 before:bottom-4 before:w-0.5 before:bg-slate-100">
+                {% for day in days %}
+                    {# Timeline Date Node #}
+                    <div class="space-y-3 relative">
+                        <div class="absolute left-[-2px] top-1.5 w-2 h-2 rounded-full bg-indigo-600 z-10"></div>
+                        <span class="text-xs font-bold text-slate-400 pl-4">
+                            {% if day.date|date('Y-m-d') == 'now'|date('Y-m-d') %}Dziś{% else %}{{ day.date|format_datetime(pattern: 'EEEE') }}{% endif %}
+                            ({{ day.date|format_datetime(pattern: 'd MMMM') }})
+                        </span>
+
+                        {% for item in day.lessons %}
+                            <div class="p-4 border border-slate-100 rounded-2xl bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-4 ml-4">
+                                <div class="flex items-start gap-4">
+                                    {# Time slot #}
+                                    <div class="h-11 w-20 flex items-center justify-center bg-white rounded-xl border border-slate-100 text-xs font-bold text-slate-600 shadow-sm shrink-0">
+                                        {{ item.time }}
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">{{ item.title }}</h4>
+                                        <p class="text-xs text-slate-400 font-medium mt-1">Prowadzi: {{ item.instructor }} • {{ item.age }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 self-end sm:self-auto shrink-0">
+                                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-xl">
+                                        Miejsce: {{ item.capacity }}
+                                    </span>
+                                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/40 px-2 py-1 rounded-lg">
+                                        {{ item.status }}
+                                    </span>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-slate-800">{{ item.title }}</h4>
-                                <p class="text-xs text-slate-400 font-medium mt-1">Prowadzi: {{ item.instructor }} • {{ item.age }}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3 self-end sm:self-auto shrink-0">
-                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-xl">
-                                Miejsce: {{ item.capacity }}
-                            </span>
-                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/40 px-2 py-1 rounded-lg">
-                                {{ item.status }}
-                            </span>
-                        </div>
+                        {% endfor %}
                     </div>
                 {% endfor %}
             </div>
-        </div>
+        {% endif %}
     </div>
 </div>

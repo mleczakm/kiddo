@@ -11,28 +11,33 @@
         </div>
         
         {# Activity feed rows #}
-        <div class="space-y-4">
-            {% for log in this.getActivityLog() %}
-                <div class="p-5 border border-slate-100 rounded-3xl bg-white shadow-sm flex flex-col gap-3 relative overflow-hidden">
-                    {# Colored top border tag #}
-                    <div class="absolute top-0 right-0 left-0 h-1 {{ log.type == 'cancelled' ? 'bg-amber-400' : 'bg-blue-400' }}"></div>
-                    
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <span class="inline-flex items-center rounded-lg px-2.5 py-1 text-[10px] font-bold leading-none tracking-tight {{ log.type == 'cancelled' ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-blue-50 text-blue-700 border border-blue-100' }}">
-                                {{ log.badge }}
-                            </span>
-                            <h4 class="font-bold text-slate-800 text-sm mt-2">{{ log.name }}</h4>
-                            <p class="text-xs text-slate-400 font-medium mt-1">{{ log.lesson }}</p>
+        {% set logs = this.getActivityLog() %}
+        {% if logs is empty %}
+            <p class="text-sm text-slate-400 text-center py-8">Brak ostatnich zmian klientów.</p>
+        {% else %}
+            <div class="space-y-4">
+                {% for log in logs %}
+                    <div class="p-5 border border-slate-100 rounded-3xl bg-white shadow-sm flex flex-col gap-3 relative overflow-hidden">
+                        {# Colored top border tag #}
+                        <div class="absolute top-0 right-0 left-0 h-1 {{ log.type == 'cancelled' ? 'bg-amber-400' : 'bg-blue-400' }}"></div>
+
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="inline-flex items-center rounded-lg px-2.5 py-1 text-[10px] font-bold leading-none tracking-tight {{ log.type == 'cancelled' ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-blue-50 text-blue-700 border border-blue-100' }}">
+                                    {{ log.badge }}
+                                </span>
+                                <h4 class="font-bold text-slate-800 text-sm mt-2">{{ log.name }}</h4>
+                                <p class="text-xs text-slate-400 font-medium mt-1">{{ log.lesson }}</p>
+                            </div>
                         </div>
+                        {% if log.notes %}
+                            <div class="text-[10px] text-slate-400 font-medium bg-slate-50 p-3 rounded-xl border border-slate-100/50 mt-1 leading-relaxed">
+                                {{ log.notes }}
+                            </div>
+                        {% endif %}
                     </div>
-                    {% if log.notes %}
-                        <div class="text-[10px] text-slate-400 font-medium bg-slate-50 p-3 rounded-xl border border-slate-100/50 mt-1 leading-relaxed">
-                            {{ log.notes }}
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 </div>

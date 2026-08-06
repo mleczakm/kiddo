@@ -102,4 +102,17 @@ class BookingRepository extends ServiceEntityRepository
     {
         return $this->findForUserAndLessons($user, [$lesson]);
     }
+
+    public function countCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): int
+    {
+        return (int) $this->createQueryBuilder('b')
+            ->select('COUNT(b.id)')
+            ->where('b.createdAt BETWEEN :start AND :end')
+            ->andWhere('b.status != :cancelled')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('cancelled', Booking::STATUS_CANCELLED)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
