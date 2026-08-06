@@ -72,7 +72,7 @@
           {% for lesson in this.lessons %}
             <tr class="border-b transition-colors hover:bg-slate-50 {{ lesson.status == 'cancelled' ? 'opacity-60' : '' }}">
               <td class="p-4 align-middle">
-                <a class="hover:underline text-foreground" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'Open lesson'|trans }}">
+                <a class="hover:underline text-foreground" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'admin.lessons.open'|trans }}">
                   {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
                 </a>
               </td>
@@ -85,12 +85,12 @@
                 </div>
               </td>
               <td class="p-4 align-middle">
-                <a class="hover:underline text-foreground" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'Open lesson'|trans }}">
+                <a class="hover:underline text-foreground" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'admin.lessons.open'|trans }}">
                   {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
                 </a>
               </td>
               <td class="p-4 align-middle">
-                <a class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }} hover:opacity-90" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'Open lesson'|trans }}">
+                <a class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }} hover:opacity-90" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" title="{{ 'admin.lessons.open'|trans }}">
                   {{ lesson.status == 'active' ? ('admin.lessons.status.active'|trans) : ('admin.lessons.status.cancelled'|trans) }}
                 </a>
               </td>

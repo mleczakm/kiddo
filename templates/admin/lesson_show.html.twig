@@ -28,14 +28,14 @@
                 </button>
             </form>
             <a href="#" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors" aria-disabled="true">
-                {{ 'Reschedule'|trans }}
+                {{ 'admin.lesson_show.reschedule'|trans }}
             </a>
             <a href="#" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors" aria-disabled="true">
-                {{ 'Modify'|trans }}
+                {{ 'admin.lesson_show.modify'|trans }}
             </a>
             {% set emails = lesson.attendants|map(u => u.email)|join(',') %}
             <a href="mailto:?bcc={{ emails|url_encode }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-amber-600 text-amber-700 hover:bg-amber-50 transition-colors">
-                {{ 'Contact attendees'|trans }}
+                {{ 'admin.lesson_show.contact_attendees'|trans }}
             </a>
         </div>
     </div>
@@ -46,14 +46,14 @@
             <div>
                 {% if prevLesson %}
                     <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', { id: prevLesson.id }) }}">
-                        ← {{ 'Previous lesson'|trans }} ({{ prevLesson.metadata.schedule|date('Y-m-d H:i') }})
+                        ← {{ 'admin.lesson_show.previous_lesson'|trans }} ({{ prevLesson.metadata.schedule|date('Y-m-d H:i') }})
                     </a>
                 {% endif %}
             </div>
             <div>
                 {% if nextLesson %}
                     <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', { id: nextLesson.id }) }}">
-                        {{ 'Next lesson'|trans }} ({{ nextLesson.metadata.schedule|date('Y-m-d H:i') }}) →
+                        {{ 'admin.lesson_show.next_lesson'|trans }} ({{ nextLesson.metadata.schedule|date('Y-m-d H:i') }}) →
                     </a>
                 {% endif %}
             </div>
@@ -63,16 +63,16 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 bg-slate-50">
-                <h2 class="text-xl font-black text-slate-800">{{ 'Bookings'|trans }}</h2>
+                <h2 class="text-xl font-black text-slate-800">{{ 'admin.lesson_show.bookings'|trans }}</h2>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm whitespace-nowrap">
                     <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
                         <tr>
                             <th class="px-6 py-4 font-semibold">{{ 'admin_dashboard.upcoming_lessons.attendees'|trans }}</th>
-                            <th class="px-6 py-4 font-semibold">{{ 'Status'|trans }}</th>
-                            <th class="px-6 py-4 font-semibold">{{ 'Attendance'|trans }}</th>
-                            <th class="px-6 py-4 font-semibold">{{ 'Notes'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin.lesson_show.status'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin.lesson_show.attendance'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin.lesson_show.notes'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -88,7 +88,7 @@
                                         {{ status|trans }}
                                     </span>
                                     {% if booking.isLessonRescheduled(lesson) %}
-                                        <span class="ml-2 text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">{{ 'Rescheduled'|trans }}</span>
+                                        <span class="ml-2 text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">{{ 'admin.lesson_show.rescheduled'|trans }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="px-6 py-4">
@@ -100,7 +100,7 @@
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="4" class="px-6 py-8 text-center text-slate-400 font-medium">{{ 'No bookings yet'|trans }}</td>
+                                <td colspan="4" class="px-6 py-8 text-center text-slate-400 font-medium">{{ 'admin.lesson_show.no_bookings'|trans }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -110,19 +110,19 @@
 
         <aside class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden h-fit">
             <div class="p-6 border-b border-slate-100 bg-slate-50">
-                <h2 class="text-xl font-black text-slate-800">{{ 'Summary'|trans }}</h2>
+                <h2 class="text-xl font-black text-slate-800">{{ 'admin.lesson_show.summary'|trans }}</h2>
             </div>
             <div class="p-6 space-y-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-sm font-semibold text-slate-500">{{ 'Capacity'|trans }}</span>
+                    <span class="text-sm font-semibold text-slate-500">{{ 'admin.lesson_show.capacity'|trans }}</span>
                     <span class="text-sm font-black text-slate-800">{{ lesson.metadata.capacity }}</span>
                 </div>
                 <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                    <span class="text-sm font-semibold text-slate-500">{{ 'Booked'|trans }}</span>
+                    <span class="text-sm font-semibold text-slate-500">{{ 'admin.lesson_show.booked'|trans }}</span>
                     <span class="text-sm font-black text-slate-800">{{ lesson.bookings|length }}</span>
                 </div>
                 <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                    <span class="text-sm font-semibold text-slate-500">{{ 'Available'|trans }}</span>
+                    <span class="text-sm font-semibold text-slate-500">{{ 'admin.lesson_show.available'|trans }}</span>
                     <span class="text-sm font-black text-green-600">{{ lesson.getAvailableSpots() }}</span>
                 </div>
             </div>

@@ -668,6 +668,8 @@ admin:
     unpaid: 'Nieopłacone'
     pending: 'Oczekuje na płatność'
   title: 'Panel Administratora'
+  breadcrumb:
+    root: 'Admin'
   menu:
     toggle: 'Otwórz menu'
   tour:
@@ -752,6 +754,7 @@ admin:
     empty: "Brak zajęć w wybranym tygodniu"
     show_cancelled: "Pokaż anulowane"
     hide_cancelled: "Ukryj anulowane"
+    open: "Otwórz zajęcia"
     actions:
       activate: "Aktywuj"
       deactivate: "Dezaktywuj"
@@ -773,11 +776,70 @@ admin:
     actions:
       cancel: "Anuluj serię"
       activate: "Aktywuj serię"
+      edit: "Edytuj"
     empty: "Brak serii w wybranym tygodniu"
+  user_show:
+    kpi:
+      total_spent: "Suma wydatków"
+      across_bookings: "Ze wszystkich rezerwacji"
+      total_bookings: "Liczba rezerwacji"
+      lifetime_reservations: "Wszystkie rezerwacje klienta"
+      status: "Status"
+      current_status: "Bieżący status konta"
+    personal_information: "Dane osobowe"
+    full_name: "Imię i nazwisko"
+    email: "Email"
+    phone: "Telefon"
+    registered: "Data rejestracji"
+    last_login: "Ostatnie logowanie"
+    never: "Nigdy"
+    email_confirmed: "Email potwierdzony"
+    confirmed_on: "Potwierdzony {date}"
+    unconfirmed: "Niepotwierdzony"
+    newsletter: "Newsletter"
+    subscribed: "Zapisany"
+    subscribed_since: "Zapisany od {date}"
+    not_subscribed: "Niezapisany"
+    roles: "Role"
+    notes: "Notatki"
+    children_profiles: "Profile dzieci"
+    birthday_unknown: "Nieznana data urodzenia"
+    years_old: "{age} lat"
+    no_children: "Brak zarejestrowanych dzieci."
+    recent_bookings: "Ostatnie rezerwacje"
+    headers:
+      workshop: "Warsztat"
+      date: "Data"
+      status: "Status"
+      amount: "Kwota"
+    no_bookings: "Brak rezerwacji."
+  lesson_show:
+    reschedule: "Zmień termin"
+    modify: "Modyfikuj"
+    contact_attendees: "Kontakt z uczestnikami"
+    previous_lesson: "Poprzednie zajęcia"
+    next_lesson: "Następne zajęcia"
+    bookings: "Rezerwacje"
+    status: "Status"
+    attendance: "Obecność"
+    notes: "Notatki"
+    rescheduled: "Przełożono"
+    no_bookings: "Brak rezerwacji"
+    summary: "Podsumowanie"
+    capacity: "Pojemność"
+    booked: "Zarezerwowane"
+    available: "Dostępne"
 
 
 ROLE_USER: Użytkownik
 ROLE_ADMIN: Administrator
+
+# Bare Booking::STATUS_* values, translated directly via {{ status|trans }}
+pending: Oczekująca
+active: Aktywna
+cancelled: Anulowana
+past: Zakończona
+waiting_approval: Oczekuje na akceptację
 
 carnets:
   none_found: Nie znaleziono żadnych karnetów.

@@ -17,36 +17,36 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
             <div class="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 class="tracking-tight text-sm font-semibold text-slate-500">Total Spent</h3>
+                <h3 class="tracking-tight text-sm font-semibold text-slate-500">{{ 'admin.user_show.kpi.total_spent'|trans }}</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card text-slate-400 shrink-0"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
             </div>
             <div class="pt-2">
                 <div class="text-2xl font-black text-slate-800">{{ totalSpent|money }}</div>
-                <p class="text-xs text-slate-400 font-medium mt-1">Across bookings</p>
+                <p class="text-xs text-slate-400 font-medium mt-1">{{ 'admin.user_show.kpi.across_bookings'|trans }}</p>
             </div>
         </div>
 
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
             <div class="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 class="tracking-tight text-sm font-semibold text-slate-500">Total Bookings</h3>
+                <h3 class="tracking-tight text-sm font-semibold text-slate-500">{{ 'admin.user_show.kpi.total_bookings'|trans }}</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity text-slate-400 shrink-0"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             </div>
             <div class="pt-2">
                 <div class="text-2xl font-black text-slate-800">{{ bookingsCount }}</div>
-                <p class="text-xs text-slate-400 font-medium mt-1">Lifetime reservations</p>
+                <p class="text-xs text-slate-400 font-medium mt-1">{{ 'admin.user_show.kpi.lifetime_reservations'|trans }}</p>
             </div>
         </div>
 
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
             <div class="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 class="tracking-tight text-sm font-semibold text-slate-500">Status</h3>
+                <h3 class="tracking-tight text-sm font-semibold text-slate-500">{{ 'admin.user_show.kpi.status'|trans }}</h3>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity text-green-500 shrink-0"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             </div>
             <div class="pt-2">
                 <div class="text-2xl font-black text-slate-800">
-                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">active</span>
+                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ 'admin_users.status.active'|trans }}</span>
                 </div>
-                <p class="text-xs text-slate-400 font-medium mt-1">Current account status</p>
+                <p class="text-xs text-slate-400 font-medium mt-1">{{ 'admin.user_show.kpi.current_status'|trans }}</p>
             </div>
         </div>
     </div>
@@ -55,34 +55,58 @@
     <div class="space-y-6">
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 bg-slate-50">
-                <h3 class="text-lg font-black text-slate-800">Personal Information</h3>
+                <h3 class="text-lg font-black text-slate-800">{{ 'admin.user_show.personal_information'|trans }}</h3>
             </div>
             <div class="p-6 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Full Name</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.full_name'|trans }}</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">{{ user.name }}</p>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Email</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.email'|trans }}</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">{{ user.email }}</p>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Phone</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.phone'|trans }}</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">{{ user.getPhone() ? user.getPhone()|phone_number_format : '-' }}</p>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registered</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.registered'|trans }}</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">{{ user.getCreatedAt() ? user.getCreatedAt()|date('Y-m-d H:i') ~ ' UTC' : '-' }}</p>
                     </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.last_login'|trans }}</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1">{{ user.getLastLoginAt() ? user.getLastLoginAt()|date('Y-m-d H:i') ~ ' UTC' : ('admin.user_show.never'|trans) }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.email_confirmed'|trans }}</label>
+                        <p class="text-sm font-bold mt-1">
+                            {% if user.getConfirmedAt() %}
+                                <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ 'admin.user_show.confirmed_on'|trans({ date: user.getConfirmedAt()|date('Y-m-d') }) }}</span>
+                            {% else %}
+                                <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-amber-100 text-amber-700">{{ 'admin.user_show.unconfirmed'|trans }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.newsletter'|trans }}</label>
+                        <p class="text-sm font-bold mt-1">
+                            {% if user.isNewsletterSubscribed() %}
+                                <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ user.getNewsletterConsentDate() ? ('admin.user_show.subscribed_since'|trans({ date: user.getNewsletterConsentDate()|date('Y-m-d') })) : ('admin.user_show.subscribed'|trans) }}</span>
+                            {% else %}
+                                <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ 'admin.user_show.not_subscribed'|trans }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
                     <div class="col-span-1 md:col-span-2">
-                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Roles</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.roles'|trans }}</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">
                             {{ user.roles|map(role => '<span class="px-2 py-0.5 bg-slate-100 rounded text-xs text-slate-600 font-semibold">' ~ role ~ '</span>')|join(' ')|raw }}
                         </p>
                     </div>
                     <div class="col-span-1 md:col-span-2">
-                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notes</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'admin.user_show.notes'|trans }}</label>
                         <p class="text-sm text-slate-500 bg-slate-50 p-4 rounded-xl mt-1 border border-slate-100">—</p>
                     </div>
                 </div>
@@ -92,7 +116,7 @@
         {# Children Profiles #}
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 bg-slate-50">
-                <h3 class="text-lg font-black text-slate-800">Children Profiles</h3>
+                <h3 class="text-lg font-black text-slate-800">{{ 'admin.user_show.children_profiles'|trans }}</h3>
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -104,13 +128,13 @@
                             <div>
                                 <h4 class="font-bold text-slate-800">{{ child.name }}</h4>
                                 <p class="text-xs text-slate-500 mt-0.5">
-                                    {{ child.birthday ? child.birthday|date('Y-m-d') : 'Birthday unknown' }}
-                                    · {{ child.getAgeYears() }} years old
+                                    {{ child.birthday ? child.birthday|date('Y-m-d') : ('admin.user_show.birthday_unknown'|trans) }}
+                                    · {{ 'admin.user_show.years_old'|trans({ age: child.getAgeYears() }) }}
                                 </p>
                             </div>
                         </div>
                     {% else %}
-                        <p class="text-slate-400 font-medium italic col-span-full">No children profiles registered.</p>
+                        <p class="text-slate-400 font-medium italic col-span-full">{{ 'admin.user_show.no_children'|trans }}</p>
                     {% endfor %}
                 </div>
             </div>
@@ -119,31 +143,37 @@
         {# Recent Bookings #}
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 bg-slate-50">
-                <h3 class="text-lg font-black text-slate-800">Recent Bookings</h3>
+                <h3 class="text-lg font-black text-slate-800">{{ 'admin.user_show.recent_bookings'|trans }}</h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm whitespace-nowrap">
                     <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
                         <tr>
-                            <th class="px-6 py-4 font-semibold">Workshop</th>
-                            <th class="px-6 py-4 font-semibold">Date</th>
-                            <th class="px-6 py-4 font-semibold">Status</th>
-                            <th class="px-6 py-4 font-semibold text-right">Amount</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin.user_show.headers.workshop'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin.user_show.headers.date'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin.user_show.headers.status'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold text-right">{{ 'admin.user_show.headers.amount'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for booking in user.bookings|slice(0, 10) %}
                             <tr class="hover:bg-slate-50/50 transition">
-                                <td class="px-6 py-4 font-bold text-slate-800">{{ booking.lesson ? booking.lesson.metadata.title : '—' }}</td>
+                                <td class="px-6 py-4 font-bold text-slate-800">
+                                    {% if booking.lesson %}
+                                        <a href="{{ path('app_admin_lesson_view', { id: booking.lesson.id }) }}" class="hover:text-indigo-600 transition">{{ booking.lesson.metadata.title }}</a>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
                                 <td class="px-6 py-4 font-medium text-slate-600">{{ booking.createdAt|date('Y-m-d') }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ booking.status }}</span>
+                                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ booking.status|trans }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-right font-bold text-slate-800">{{ booking.payment ? booking.payment.amount|money : '—' }}</td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="4" class="px-6 py-8 text-center text-slate-400 font-medium italic">No bookings found.</td>
+                                <td colspan="4" class="px-6 py-8 text-center text-slate-400 font-medium italic">{{ 'admin.user_show.no_bookings'|trans }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
