@@ -342,4 +342,93 @@ class BookingRepositoryTest extends KernelTestCase
         $this->assertEquals(Booking::STATUS_ACTIVE, $updatedBooking->getStatus());
         $this->assertInstanceOf(\DateTimeImmutable::class, $updatedBooking->getUpdatedAt());
     }
+
+    public function testFindForUserAndLessonReturnsMatchingBookings(): void
+    {
+        $user = UserAssembler::new()->assemble();
+        $otherUser = UserAssembler::new()->assemble();
+        $lesson = LessonAssembler::new()->assemble();
+        $otherLesson = LessonAssembler::new()->assemble();
+
+        $matching = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_PENDING)
+            ->assemble();
+        $cancelled = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_CANCELLED)
+            ->assemble();
+        $otherUsersBooking = BookingAssembler::new()
+            ->withUser($otherUser)
+            ->withLessons($lesson)
+            ->assemble();
+        $otherLessonBooking = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($otherLesson)
+            ->assemble();
+
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($otherUser);
+        $this->entityManager->persist($lesson);
+        $this->entityManager->persist($otherLesson);
+        $this->entityManager->persist($matching);
+        $this->entityManager->persist($cancelled);
+        $this->entityManager->persist($otherUsersBooking);
+        $this->entityManager->persist($otherLessonBooking);
+        $this->entityManager->flush();
+
+        $result = $this->bookingRepository->findForUserAndLesson($user, $lesson);
+
+        $this->assertCount(1, $result);
+        $this->assertTrue($result[0]->getId()->equals($matching->getId()));
+    }
+
+    public function testFindForUserAndLessonsReturnsMatchingBookings(): void
+    {
+        $user = UserAssembler::new()->assemble();
+        $lessonA = LessonAssembler::new()->assemble();
+        $lessonB = LessonAssembler::new()->assemble();
+        $lessonC = LessonAssembler::new()->assemble();
+
+        $bookingA = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lessonA)
+            ->assemble();
+        $bookingB = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lessonB)
+            ->assemble();
+        $bookingC = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lessonC)
+            ->assemble();
+
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($lessonA);
+        $this->entityManager->persist($lessonB);
+        $this->entityManager->persist($lessonC);
+        $this->entityManager->persist($bookingA);
+        $this->entityManager->persist($bookingB);
+        $this->entityManager->persist($bookingC);
+        $this->entityManager->flush();
+
+        $result = $this->bookingRepository->findForUserAndLessons($user, [$lessonA, $lessonB]);
+
+        $this->assertCount(2, $result);
+        $ids = array_map(static fn(Booking $b) => (string) $b->getId(), $result);
+        $this->assertContains((string) $bookingA->getId(), $ids);
+        $this->assertContains((string) $bookingB->getId(), $ids);
+        $this->assertNotContains((string) $bookingC->getId(), $ids);
+    }
+
+    public function testFindForUserAndLessonsReturnsEmptyForEmptyIds(): void
+    {
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $this->assertSame([], $this->bookingRepository->findForUserAndLessons($user, []));
+    }
 }

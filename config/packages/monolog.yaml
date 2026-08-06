@@ -52,18 +52,12 @@ when@prod:
                 buffer_size: 0 # No limit
             grouped_main:
                 type: whatfailuregroup
-                members: [main]
+                members: [main, sentry]
             main:
-                type: fingers_crossed
-                action_level: error
-                handler: nested
-                excluded_http_codes: [404, 405]
-                buffer_size: 50 # How many messages should be saved? Prevent memory leaks
-            nested:
                 type: stream
                 path: php://stdout
                 formatter: monolog.formatter.json
-                level: debug
+                level: info
             console:
                 type: console
                 process_psr_3_messages: false
@@ -73,17 +67,16 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
+            # Point fingers_crossed directly at SentryHandler (no intermediate BufferHandler).
+            # BufferHandler only flushes on close()/reset(), and under Swoole shutdown never runs
+            # per request — so events sat in memory and never reached Sentry.
             sentry:
                 type: fingers_crossed
-                action_level: error
-                handler: sentry_buffer
-                include_stacktraces: true
-                channels: [ "!event" ]
-            sentry_buffer:
-                type: buffer
+                action_level: warning
                 handler: sentry_handler
-                level: info
+                include_stacktraces: true
                 process_psr_3_messages: true
+                channels: [ "!event" ]
             sentry_handler:
                 type: service
                 id: BGalati\MonologSentryHandler\SentryHandler

@@ -16,6 +16,8 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
         private MailboxInterface $mailbox,
         private CurrentWorkerRestarterInterface $workerRestarter,
         private LoggerInterface $logger,
+        private string $mailboxUsername,
+        private string $mailboxPassword,
     ) {}
 
     /**
@@ -23,6 +25,12 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
      */
     public function __invoke(): iterable
     {
+        if ($this->mailboxUsername === '' || $this->mailboxPassword === '') {
+            $this->logger->info('Gmail IMAP skipped: mailbox credentials are not configured');
+
+            return;
+        }
+
         try {
             $this->mailbox->reconnect();
 

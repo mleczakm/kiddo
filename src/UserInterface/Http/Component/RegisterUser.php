@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\SendLoginNotification;
+use App\Application\Newsletter\NewsletterSubscriptionManager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -34,6 +36,7 @@ class RegisterUser extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $messageBus,
+        private NewsletterSubscriptionManager $newsletterSubscriptionManager,
     ) {}
 
     /**
@@ -59,6 +62,11 @@ class RegisterUser extends AbstractController
                 'constraints' => [new Assert\NotBlank(), new Assert\Email()],
 
             ])
+            ->add('newsletterSubscribed', CheckboxType::class, [
+                'label' => 'form.register.newsletter',
+                'required' => false,
+                'mapped' => true,
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'form.register.submit',
             ])
@@ -78,10 +86,16 @@ class RegisterUser extends AbstractController
                 ->getData();
             $user->setRoles(['ROLE_USER']);
 
+            $desiredNewsletter = $user->isNewsletterSubscribed();
+            $user->setNewsletterSubscribed(false);
+
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             $this->messageBus->dispatch(new SendLoginNotification($user->getEmail()));
+
+            $this->newsletterSubscriptionManager->applyTransition($user, false, $desiredNewsletter);
+            $this->entityManager->flush();
 
             $this->isSuccessful = true;
             $this->isSubmitted = true;

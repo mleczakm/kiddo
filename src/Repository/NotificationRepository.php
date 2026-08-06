@@ -48,4 +48,16 @@ class NotificationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function hardDeleteOlderThan(\DateTimeImmutable $cutoff): int
+    {
+        $deleted = $this->createQueryBuilder('n')
+            ->delete()
+            ->andWhere('n.createdAt < :cutoff')
+            ->setParameter('cutoff', $cutoff)
+            ->getQuery()
+            ->execute();
+
+        return is_int($deleted) ? $deleted : 0;
+    }
 }

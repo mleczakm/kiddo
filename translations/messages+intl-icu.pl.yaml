@@ -13,6 +13,7 @@ form:
     already_have_account: "Masz już konto?"
     login: "Zaloguj się"
     name: "Imię"
+    newsletter: "Chcę otrzymywać informacje o nowych warsztatach i ofertach (Newsletter)"
     success:
       title: "Rejestracja zakończona pomyślnie!"
       message: "Dziękujemy za rejestrację. Na podany adres e-mail wysłaliśmy link do logowania."
@@ -64,6 +65,44 @@ notifications:
   impersonate: Podszyj się
   impersonate_placeholder: Email użytkownika
   stop_impersonation: Powrót do mojego konta
+  in_app:
+    reservation:
+      title: Rezerwacja utworzona
+      body: 'Twoja rezerwacja czeka na płatność. Kod: <strong>{code}</strong> ({amount} zł).'
+    payment:
+      user:
+        title: Płatność potwierdzona
+        body: 'Otrzymaliśmy płatność <strong>{amount} zł</strong> za <em>{lesson}</em>.'
+      admin:
+        title: Nowa płatność
+        body: 'Użytkownik <strong>{email}</strong> zapłacił <strong>{amount} zł</strong> za <em>{lesson}</em>.'
+    cancellation:
+      title: Rezerwacja anulowana
+      body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) została anulowana.'
+    cancellation_admin:
+      title: Rezerwacja anulowana (brak wpłaty)
+      body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) użytkownika <strong>{email}</strong> została automatycznie anulowana z powodu braku płatności.'
+    new_user:
+      user:
+        title: Witamy!
+        body: 'Konto zostało aktywowane. Możesz już rezerwować zajęcia.'
+      admin:
+        title: Nowy użytkownik
+        body: 'Zarejestrował się <strong>{name}</strong> (<em>{email}</em>).'
+    reschedule:
+      admin:
+        title: Przeniesienie rezerwacji
+        body: 'Użytkownik <strong>{email}</strong> przeniósł rezerwację z <em>{from}</em> na <em>{to}</em>.'
+    transfer_not_matched:
+      title: Nieprzypisany przelew
+      body: 'Przelew <strong>{amount}</strong> od <em>{sender}</em> ({title}) nie został dopasowany.'
+    daily_reminder:
+      user:
+        title: Przypomnienie o zajęciach
+        body: 'Dziś ({date}) masz: <strong>{lessons}</strong>.'
+      admin:
+        title: Harmonogram dnia
+        body: 'Na dziś ({date}) zaplanowano <strong>{count}</strong> zajęć.'
 
 # Workshop related translations
 workshop:
@@ -84,6 +123,33 @@ homepage:
     subtitle: 'Kreatywne, zabawne i edukacyjne warsztaty dla dzieci, które pozwalają odkrywać zmysły i rozwijać umiejętności poprzez zabawę i wyobraźnię.'
     explore_workshops: 'Zobacz warsztaty'
     register_now: 'Zarejestruj się'
+  chat_hero:
+    image_alt: 'Asystent Warsztatowni Sensorycznej'
+    title: 'Wszystko w jednym: zapytaj, zarezerwuj, zarządzaj'
+    subtitle_guest: 'Podaj wiek dziecka i wolne dni — asystent pomoże Ci znaleźć odpowiedni warsztat sensoryczny i założyć konto.'
+    subtitle_user: 'Asystent znajdzie odpowiedni warsztat sensoryczny, zarezerwuje miejsce i pomoże zarządzać Twoimi rezerwacjami, tu w czacie.'
+    guide_label: 'Asystent Warsztatowni'
+    admin_label: 'Asystent admina'
+    new_conversation: 'Nowa rozmowa'
+    welcome: 'Cześć! Znam każdy warsztat, termin i cenę. Czego szukasz dla swojego dziecka?'
+    placeholder: 'np. Szukam zajęć sensorycznych dla dwuletniej córki we wtorki'
+    placeholder_short: 'Napisz wiadomość…'
+    no_account: 'Nie potrzebujesz konta, aby zacząć'
+    signed_in: 'Zalogowano jako {name}'
+    prefer_browsing: 'Wolisz przeglądać?'
+    see_workshops: 'Zobacz wszystkie warsztaty'
+    create_account: 'Załóż konto'
+    send: 'Wyślij'
+    close: 'Zamknij czat'
+    chat_button: 'Chat'
+    login_hint: 'Zaloguj się, aby rezerwować, zarządzać zapisami lub zobaczyć swoje konto. Goście mogą przeglądać ofertę zajęć.'
+    suggestions:
+      age: 'Jaki warsztat dla 4-latka?'
+      saturday: 'Co jest w tę sobotę?'
+      book: 'Zarezerwuj Art & Creativity dla córki'
+      carnet: 'Jak działa miesięczny karnet?'
+    status:
+      idle: 'Gotowy'
   popular_workshops:
     title: 'Popularne warsztaty'
     subtitle: 'Dołącz do naszych ulubionych sesji kreatywnych, w których dzieci mogą odkrywać, uczyć się i świetnie się bawić.'
@@ -97,37 +163,39 @@ homepage:
       description: 'Odkryj naszą różnorodną ofertę kreatywnych warsztatów zaprojektowanych dla różnych grup wiekowych i zainteresowań.'
     step2:
       number: '2'
-      title: 'Wybierz plan'
-      description: 'Wybierz pojedyncze zajęcia lub miesięczny karnet na regularne uczestnictwo.'
+      title: 'Zarezerwuj miejsce'
+      description: 'Wybierz odpowiedni termin i zarezerwuj miejsce dla swojego dziecka. Proces jest szybki i bezpieczny.'
     step3:
       number: '3'
-      title: 'Zarezerwuj i zapłać'
-      description: 'Zarezerwuj miejsce dla swojego dziecka, dokonując rezerwacji i płatności.'
+      title: 'Przyjdź i baw się'
+      description: 'Przyjdź na warsztaty i pozwól swojemu dziecku odkrywać, uczyć się i świetnie się bawić w kreatywnym środowisku.'
     step4:
       number: '4'
-      title: 'Ciesz się warsztatami'
-      description: 'Przyjdź ze swoim dzieckiem, aby doświadczyć kreatywnej nauki i zabawy sensorycznej!'
+      title: 'Pamiętaj wspomnienia'
+      description: 'Zabierz ze sobą wspaniałe wspomnienia i stworzone dzieła. Każdy warsztat to nowa przygoda.'
   testimonials:
-    title: 'Co mówią rodzice'
-    subtitle: 'Opinie rodzin, które uczestniczyły w naszych warsztatach'
+    title: 'Opinie rodziców'
+    subtitle: 'Zobacz, co mówią o nas rodzice, którzy uczestniczyli w naszych warsztatach.'
     testimonial1:
-      quote: '„Moja córka uwielbia warsztaty sztuki sensorycznej. To wspaniałe obserwować, jak jej kreatywność rozkwita każdego tygodnia!"'
-      author: 'Anna K.'
-      role: 'Mama 5-latki'
+      quote: 'Moja córka uwielbia te warsztaty! Zawsze wraca szczęśliwa i pełna nowych pomysłów.'
+      author: 'Anna Kowalska'
+      role: 'Mama 5-letniej Zosi'
     testimonial2:
-      quote: '„Miesięczny karnet to świetna oferta. Mój syn nie może się doczekać swoich sobotnich porannych warsztatów."'
-      author: 'Michał K.'
-      role: 'Tata 7-latka'
+      quote: 'Fantastyczne miejsce! Zajęcia są bardzo dobrze zorganizowane, a prowadzący są cierpliwi i kreatywni.'
+      author: 'Piotr Nowak'
+      role: 'Tata 7-letniego Jakuba'
     testimonial3:
-      quote: '„System rezerwacji jest bardzo prosty w obsłudze i uwielbiam, że mogę zarządzać wszystkimi zajęciami w jednym miejscu."'
-      author: 'Zofia L.'
-      role: 'Mama bliźniąt'
+      quote: 'Najlepsze warsztaty sensoryczne w okolicy. Polecam każdemu rodzicowi!'
+      author: 'Magda Wiśniewska'
+      role: 'Mama 4-letniej Mai'
   newsletter:
-    title: 'Bądź na bieżąco'
-    subtitle: 'Zapisz się do naszego newslettera, aby otrzymywać informacje o nowych warsztatach, specjalnych ofertach i kreatywnych zajęciach dla dzieci.'
-    email_placeholder: 'Twój adres email'
-    subscribe: 'Zapisz się'
-    subscription_disabled: 'Subskrypcja na newsletter dostępna już wkrótce!'
+    title: "Bądź na bieżąco"
+    subtitle: "Zapisz się na newsletter, aby otrzymywać informacje o nowych warsztatach i ofertach."
+    email_placeholder: "Twój adres e-mail"
+    subscribe: "Zapisz się"
+    sending: "Wysyłanie..."
+    confirmation_sent: "Dziękujemy! Sprawdź swoją skrzynkę pocztową, aby potwierdzić zapis."
+    error: "Wystąpił błąd. Spróbuj ponownie później."
 
 lesson:
   terms: "Regulamin"
@@ -307,6 +375,11 @@ profile:
   section_heading: Informacje o użytkowniku
   name: Imie
   email: Adres e-mail
+  phone: Numer telefonu
+  phone.empty: Nie podano
+  phone.placeholder: np. 500 600 700
+  phone.required: Numer telefonu jest wymagany.
+  phone.invalid: Wprowadź poprawny numer telefonu.
   edit_profile: Edytuj profil
   account_actions: Akcje dostępne na koncie
   update_success: Profil został pomyślnie zaktualizowany.
@@ -316,16 +389,38 @@ profile:
   name.min_length: Imię musi mieć co najmniej 2 znaki.
   email.not_blank: Adres e-mail nie może być pusty.
   email.invalid: Wprowadź poprawny adres e-mail.
+  newsletter: "Chcę otrzymywać informacje o nowych warsztatach i ofertach (Newsletter)"
+
+newsletter:
+  subscribed: "Zapisany"
+  not_subscribed: "Nie zapisany"
+  confirmed:
+    title: "Zapis potwierdzony!"
+    message: "Dziękujemy za zapisanie się na nasz newsletter. Będziesz otrzymywać informacje o nowych warsztatach i ofertach."
+    back_home: "Powrót na stronę główną"
 
 booking:
   cancel: Anuluj rezerwację
   cancel_booking: Anuluj rezerwację
   cancel_confirmation: 'Czy na pewno chcesz anulować tę rezerwację?'
+  late_cancel_warning: 'Zajęcia zaczynają się za mniej niż 24 godziny. Anulowanie jest możliwe, ale bez zwrotu kosztów.'
+  late_cancel_confirm: 'Potwierdzam, że rozumiem brak zwrotu kosztów'
   reason_for_cancellation: 'Powód anulowania:'
   child:
     label: 'Dziecko'
+    none: 'Brak dziecka'
     no_children: 'Brak dodanych dzieci'
     add_now: 'Dodaj teraz'
+    optional: 'Dziecko (opcjonalnie)'
+    select: '-- Wybierz dziecko --'
+    empty_title: 'Dodaj dziecko do profilu'
+    empty_hint: 'Możesz przypisać imię dziecka do rezerwacji — ułatwia to listę obecności.'
+  phone:
+    label: 'Numer telefonu'
+    placeholder: 'np. 500 600 700'
+    required: 'Podaj numer telefonu, aby dokończyć zamówienie.'
+    account_hint: 'Numer zostanie zapisany na Twoim koncie.'
+    invalid: 'Wprowadź poprawny numer telefonu.'
   reason_refund_description: 'Otrzymasz zwrot środków zgodnie z naszą polityką zwrotów'
   no_available_lessons: 'Brak dostępnych terminów do przełożenia'
   available_lessons_count: 'Dostępne terminy: {count}'
@@ -365,6 +460,10 @@ booking:
   rescheduled: Przełożona
   cancelled: Anulowana
   accept_terms_and_close: Zaakceptuj i zamknij
+  existing_bookings: 'Istniejące rezerwacje'
+  no_child: 'Brak przypisanego dziecka'
+  resume_payment: 'Zapłać'
+  pay: 'Zapłać'
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"
@@ -531,6 +630,11 @@ admin_users:
     role: Rola
     status: Status
     actions: Akcje
+    children: Dzieci
+  children:
+    title: Dzieci
+    empty: Brak zarejestrowanych dzieci
+    no_birthday: Brak daty urodzenia
   status:
     active: Aktywny
   actions:
@@ -540,6 +644,7 @@ admin:
   badges:
     paid: 'Opłacone'
     unpaid: 'Nieopłacone'
+    pending: 'Oczekuje na płatność'
   title: 'Panel Administratora'
   tabs:
     dashboard: 'Pulpit'
@@ -659,6 +764,10 @@ payment:
   booked: "Utworzono: {date}"
   status_pending: "Oczekująca"
   last_successful_import: "Ostatni udany import"
+  paid_success: "Płatność zaksięgowana!"
+  paid_message: "Dziękujemy za płatność. Twoja rezerwacja została potwierdzona."
+  awaiting: "Oczekiwanie na zaksięgowanie płatności..."
+  blik_instruction: "Wykonaj przelew BLIK na telefon {blik_phone} na kwotę {amount} {currency}. W tytule przelewu wpisz dokładnie kod: {code}. Kod jest ważny ok. {valid_hours} godzin (do {expires_at}). Alternatywnie: klasyczny przelew na konto {bank_account} z tym samym tytułem. Po zaksięgowaniu rezerwacja zostanie potwierdzona automatycznie."
 
 
 action:
@@ -670,4 +779,20 @@ ticket:
   reschedule:
     unlimited_24h: Możliwość <b>wielokrotnego</b> przełożenia zajęć do 24h przed rozpoczęciem
     onetime_24h: Możliwość <b>jednorazowego</b> przełożenia zajęć do 24h przed rozpoczęciem
+    not_allowed: Brak możliwości przełożenia zajęć
 last_update: "Ostatnia aktualizacja: "
+
+view:
+  grid: Siatka
+  calendar: Kalendarz
+  week_of: Tydzień od
+  today: Dzisiaj
+
+day:
+  Monday: Poniedziałek
+  Tuesday: Wtorek
+  Wednesday: Środa
+  Thursday: Czwartek
+  Friday: Piątek
+  Saturday: Sobota
+  Sunday: Niedziela

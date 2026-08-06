@@ -6,20 +6,22 @@
   "name": "mleczakm/kiddo",
   "description": "App for bookings",
   "require": {
-    "php": ">=8.4",
+    "php": ">=8.5",
     "ext-ctype": "*",
     "ext-ds": "*",
     "ext-iconv": "*",
     "ext-swoole": "*",
+    "ext-zlib": "*",
     "bgalati/monolog-sentry-handler": "^2.1",
     "brick/money": "^0.10.3",
-    "directorytree/imapengine": "^1.25.0",
-    "doctrine/dbal": "^3.10.5",
-    "doctrine/doctrine-bundle": "^2.18.3",
+    "directorytree/imapengine": "^1.25.4",
+    "doctrine/dbal": "^3.10.6",
+    "doctrine/doctrine-bundle": "^2.19.0",
+    "doctrine/doctrine-migrations-bundle": "^3.7",
     "doctrine/orm": "^3.6.7",
     "dragonmantank/cron-expression": "^3.6",
     "dunglas/doctrine-json-odm": "^1.5.0",
-    "gedmo/doctrine-extensions": "^3.22",
+    "gedmo/doctrine-extensions": "^3.22.1",
     "logdash/php-sdk": "dev-main",
     "macpaw/symfony-health-check-bundle": "^1.7",
     "martin-georgiev/postgresql-for-doctrine": "^3.7.0",
@@ -27,9 +29,9 @@
     "nyholm/psr7": "^1.8.2",
     "odolbeau/phone-number-bundle": "^4.2.5",
     "phpdocumentor/reflection-docblock": "^5.6.7",
-    "phpstan/phpdoc-parser": "^2.3.2",
+    "phpstan/phpdoc-parser": "^2.3.3",
     "scienta/doctrine-json-functions": "^6.5",
-    "sentry/sentry-symfony": "^5.10.0",
+    "sentry/sentry-symfony": "^5.11.0",
     "swoole-bundle/resetter-bundle": "^1.2.0",
     "swoole-bundle/swoole-bundle": "^0.25.1",
     "swoole-bundle/z-engine": "^8.5.1",
@@ -48,6 +50,7 @@
     "symfony/intl": "7.4.*",
     "symfony/lock": "7.4.*",
     "symfony/mailer": "7.4.*",
+    "symfony/mcp-bundle": "^0.12.0",
     "symfony/mime": "7.4.*",
     "symfony/monolog-bundle": "^3.11.2",
     "symfony/notifier": "7.4.*",
@@ -75,8 +78,7 @@
     "twig/extra-bundle": "^3.24.0",
     "twig/inky-extra": "^3.26",
     "twig/intl-extra": "^3.26.0",
-    "twig/twig": "^3.27.1",
-    "ext-zlib": "*"
+    "twig/twig": "^3.28.0"
   },
   "config": {
     "allow-plugins": {
@@ -145,12 +147,13 @@
       "Smoke tests": "bin/phpunit --group smoke"
     },
     "tests:functional": {
+      "Disable timeout": "Composer\\Config::disableProcessTimeout",
       "Setup": "@tests:functional:setup",
       "Functional tests": "bin/phpunit --group functional"
     },
     "tests:functional:setup": {
       "Functional tests setup": "bin/console doctrine:database:create --if-not-exists --env=test",
-      "Functional tests schema": "bin/console doctrine:schema:update --force --env=test"
+      "Functional tests schema": "bin/console doctrine:migrations:migrate --no-interaction --env=test"
     },
     "qa:fix": [
       "@sa:fix"
@@ -279,11 +282,11 @@
     "dama/doctrine-test-bundle": "^8.6.0",
     "kodus/mock-cache": "^2.1",
     "phpstan/extension-installer": "^1.4.3",
-    "phpstan/phpstan": "^2.2.3",
-    "phpstan/phpstan-doctrine": "^2.0.27",
+    "phpstan/phpstan": "^2.2.8",
+    "phpstan/phpstan-doctrine": "^2.0.28",
     "phpstan/phpstan-symfony": "^2.0.20",
-    "phpunit/phpunit": "^11.5.55",
-    "rector/rector": "^2.5.2",
+    "phpunit/phpunit": "^11.5.56",
+    "rector/rector": "^2.6.1",
     "roave/security-advisories": "dev-latest",
     "rregeer/phpunit-coverage-check": "^0.3.1",
     "symfony/browser-kit": "7.4.*",
@@ -295,8 +298,8 @@
     "symfony/stopwatch": "7.4.*",
     "symfony/web-profiler-bundle": "7.4.*",
     "symplify/easy-coding-standard": "^12.6.2",
-    "zenstruck/foundry": "^2.10.1",
+    "zenstruck/foundry": "^2.11.2",
     "zenstruck/mailer-test": "^1.5.0",
-    "zenstruck/messenger-test": "^1.14"
+    "zenstruck/messenger-test": "^1.15"
   }
 }

@@ -12,6 +12,10 @@ readonly class SendReservationNotification
         public string $email,
         public string $username,
         public string $paymentCode,
-        public Money $paymentAmount
+        public Money $paymentAmount,
+        public ?string $lessonTitle = null,
+        public ?\DateTimeImmutable $lessonSchedule = null,
+        public ?string $ticketType = null,
+        public ?string $childName = null,
     ) {}
 }

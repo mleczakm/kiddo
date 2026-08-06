@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
+use App\Application\Service\InAppNotificationService;
+use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -12,6 +14,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[AsMessageHandler]
@@ -21,6 +25,9 @@ readonly class SendPaymentNotificationHandler
         private NotifierInterface $notifier,
         private UserRepository $userRepository,
         private Environment $twig,
+        private InAppNotificationService $inAppNotifications,
+        private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
     ) {}
 
     public function __invoke(SendPaymentNotificationCommand $command): void
@@ -63,12 +70,27 @@ readonly class SendPaymentNotificationHandler
             'payment' => $payment,
             'reference' => $firstBooking->getId(),
             'lessons' => $lessons,
+            'bookings' => $bookings,
         ]);
         $notification = new Notification()
             ->importance('')
             ->subject($subject)
             ->content($content);
         $this->notifier->send($notification, new Recipient($user->getEmailString()));
+
+        $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()
+            ->title;
+        $this->inAppNotifications->notify(
+            $user,
+            $this->translator->trans('notifications.in_app.payment.user.title', [], 'messages'),
+            $this->translator->trans('notifications.in_app.payment.user.body', [
+                'amount' => (string) $payment->getAmount()
+                    ->getAmount(),
+                'lesson' => $lessonTitle,
+            ], 'messages'),
+            $this->urlGenerator->generate('dashboard'),
+            NotificationSeverity::Success,
+        );
     }
 
     private function sendAdminNotifications(Payment $payment): void
@@ -92,6 +114,7 @@ readonly class SendPaymentNotificationHandler
                 'user' => $firstBooking->getUser(),
                 'payment' => $payment,
                 'lessons' => $lessons,
+                'bookings' => $bookings,
             ]);
             $notification = new Notification()
                 ->importance('')
@@ -99,5 +122,20 @@ readonly class SendPaymentNotificationHandler
                 ->content($content);
             $this->notifier->send($notification, new Recipient($admin->getEmailString()));
         }
+
+        $payer = $firstBooking->getUser();
+        $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()
+            ->title;
+        $this->inAppNotifications->notifyAdmins(
+            $this->translator->trans('notifications.in_app.payment.admin.title', [], 'messages'),
+            $this->translator->trans('notifications.in_app.payment.admin.body', [
+                'email' => $payer->getEmailString(),
+                'amount' => (string) $payment->getAmount()
+                    ->getAmount(),
+                'lesson' => $lessonTitle,
+            ], 'messages'),
+            $this->urlGenerator->generate('app_admin_transfers'),
+            NotificationSeverity::Success,
+        );
     }
 }

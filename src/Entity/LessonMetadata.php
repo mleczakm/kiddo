@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\Embeddable]
 class LessonMetadata
@@ -28,12 +29,29 @@ class LessonMetadata
         public AgeRange $ageRange,
         #[ORM\Column(type: 'string', length: 50)]
         public string $category,
-    ) {}
+        // Not unique: series occurrences share the same title/slug; date+hour distinguish them.
+        #[ORM\Column(type: 'string', length: 255, nullable: true)]
+        public ?string $slug = null,
+    ) {
+        if ($this->slug === null || $this->slug === '') {
+            $this->slug = self::slugify($this->title);
+        }
+    }
+
+    public static function slugify(string $title): string
+    {
+        return new AsciiSlugger()
+            ->slug($title)
+            ->lower()
+            ->toString();
+    }
 
     public function withTitle(string $title): self
     {
         $new = clone $this;
         $new->title = $title;
+        $new->slug = self::slugify($title);
+
         return $new;
     }
 

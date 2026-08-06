@@ -150,15 +150,21 @@
                                     {% set progress_percentage = (lesson_index / total_lessons) * 100 %}
                                     <div class="flex items-center justify-between p-2 border rounded" style="background: linear-gradient(90deg, #eaf6ff {{ progress_percentage }}%, transparent {{ progress_percentage }}%);">
                                         <div>
-                                            <p class="text-sm font-medium">{{ booking.user.name }} (Karnet: {{ lesson_index }}/{{ total_lessons }})</p>
-                                            <p class="text-xs text-muted-foreground">{{ booking.user.email }}</p>
+                                            {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                                            <p class="text-xs text-muted-foreground">(Karnet: {{ lesson_index }}/{{ total_lessons }})</p>
                                             {% if booking.notes %}
                                                 <p class="text-xs mt-1 italic text-workshop-brown">Notatka: {{ booking.notes }}</p>
                                             {% endif %}
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground' }}">
-                                                {{ booking.payment and booking.payment.status == 'paid' ? 'admin.badges.paid'|trans : 'admin.badges.unpaid'|trans }}
+                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.isPending ? 'border-transparent bg-amber-100 text-amber-900' : (booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground') }}">
+                                                {% if booking.isPending %}
+                                                    {{ 'admin.badges.pending'|trans }}
+                                                {% elseif booking.payment and booking.payment.status == 'paid' %}
+                                                    {{ 'admin.badges.paid'|trans }}
+                                                {% else %}
+                                                    {{ 'admin.badges.unpaid'|trans }}
+                                                {% endif %}
                                             </span>
                                             {% set bId = booking.id %}
                                             <div class="relative">
@@ -225,15 +231,20 @@
                                 {% for booking in groupedBookings.single %}
                                     <div class="flex items-center justify-between p-2 border rounded">
                                         <div>
-                                            <p class="text-sm font-medium">{{ booking.user.name }}</p>
-                                            <p class="text-xs text-muted-foreground">{{ booking.user.email }}</p>
+                                            {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
                                             {% if booking.notes %}
                                                 <p class="text-xs mt-1 italic text-workshop-brown">Notatka: {{ booking.notes }}</p>
                                             {% endif %}
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground' }}">
-                                                {{ booking.payment and booking.payment.status == 'paid' ? 'admin.badges.paid'|trans : 'admin.badges.unpaid'|trans }}
+                                            <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ booking.isPending ? 'border-transparent bg-amber-100 text-amber-900' : (booking.payment and booking.payment.status == 'paid' ? 'border-transparent bg-primary text-primary-foreground' : 'border-transparent bg-secondary text-secondary-foreground') }}">
+                                                {% if booking.isPending %}
+                                                    {{ 'admin.badges.pending'|trans }}
+                                                {% elseif booking.payment and booking.payment.status == 'paid' %}
+                                                    {{ 'admin.badges.paid'|trans }}
+                                                {% else %}
+                                                    {{ 'admin.badges.unpaid'|trans }}
+                                                {% endif %}
                                             </span>
                                             {% set bId = booking.id %}
                                             <div class="relative">
@@ -364,6 +375,19 @@
                 <label class="block text-sm font-medium mb-1">Imię i nazwisko</label>
                 <input type="text" class="w-full border rounded px-3 py-2" data-model="customerName" placeholder="Jan Kowalski">
             </div>
+            {% if this.selectedUserId and this.getSelectedUserChildren()|length > 0 %}
+            <div>
+                <label class="block text-sm font-medium mb-1">{{ 'booking.child.optional'|trans }}</label>
+                <select class="w-full border rounded px-3 py-2" data-model="selectedChildId">
+                    <option value="">{{ 'booking.child.select'|trans }}</option>
+                    {% for child in this.getSelectedUserChildren() %}
+                        <option value="{{ child.id }}" {{ this.selectedChildId == (child.id ~ '') ? 'selected' : '' }}>
+                            {{ child.name }}{% if child.ageYears %} ({{ child.ageYears }} {{ 'profile.children.years'|trans }}){% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
             <div>
                 <label class="block text-sm font-medium mb-1">Notatka (opcjonalnie)</label>
                 <textarea class="w-full border rounded px-3 py-2" rows="3" data-model="notes" placeholder="np. prośba o miejsce obok rodzeństwa"></textarea>

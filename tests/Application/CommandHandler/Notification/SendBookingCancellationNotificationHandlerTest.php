@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler\Notification;
 
+use App\Entity\Notification;
+use App\Entity\NotificationSeverity;
 use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\SendBookingCancellationNotificationCommand;
 use App\Application\CommandHandler\Notification\SendBookingCancellationNotificationHandler;
@@ -28,8 +30,14 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
             ->withName('Jan Kowalski')
             ->assemble();
 
+        $admin = UserAssembler::new()
+            ->withEmail('admin@example.com')
+            ->withRoles('ROLE_ADMIN')
+            ->assemble();
+
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
+        $em->persist($admin);
 
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new() ->withTitle('Joga') ->withSchedule($date) ->assemble())
@@ -50,20 +58,61 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
         $handler = self::getContainer()->get(SendBookingCancellationNotificationHandler::class);
         $handler(new SendBookingCancellationNotificationCommand($booking));
 
-        $email = $this->mailer()
-            ->sentEmails()
-            ->first();
+        $this->assertCount(2, $this->mailer()->sentEmails());
 
-        $this->assertSame('"Jan Kowalski" <user@example.com>', $email->getTo()[0]->toString());
+        // Verify user email
+        $userEmail = null;
+        $adminEmail = null;
+        foreach ($this->mailer()->sentEmails()->all() as $email) {
+            foreach ($email->getTo() as $to) {
+                if ($to->getAddress() === 'user@example.com') {
+                    $userEmail = $email;
+                }
+                if ($to->getAddress() === 'admin@example.com') {
+                    $adminEmail = $email;
+                }
+            }
+        }
+
+        $this->assertNotNull($userEmail);
         $this->assertStringContainsString(
             'Anulowanie rezerwacji - Joga ze środy 16.07, o 10:00',
-            (string) $email->getSubject()
+            (string) $userEmail->getSubject()
         );
 
-        $body = (string) ($email->getHtmlBody() ?? $email->getTextBody());
-
+        $body = (string) ($userEmail->getHtmlBody() ?? $userEmail->getTextBody());
         $this->assertStringContainsString('Cześć Jan', $body);
         $this->assertStringContainsString('Twoja rezerwacja na zajęcia Joga ze środy 16.07, o 10:00', $body);
-        $this->assertStringContainsString('z powodu nieotrzymania płatności w wyznaczonym czasie', $body);
+
+        // Verify admin email
+        $this->assertNotNull($adminEmail);
+        $this->assertStringContainsString(
+            'Rezerwacja anulowana (brak wpłaty) - Jan Kowalski - ze środy 16.07, o 10:00',
+            (string) $adminEmail->getSubject()
+        );
+
+        $adminBody = (string) ($adminEmail->getHtmlBody() ?? $adminEmail->getTextBody());
+        $this->assertStringContainsString(
+            'Rezerwacja użytkownika Jan Kowalski (user@example.com) na zajęcia Joga w dniu ze środy 16.07, o 10:00 została automatycznie anulowana',
+            $adminBody
+        );
+
+        // Verify user in-app notification
+        $userNotifications = $em->getRepository(Notification::class)->findBy([
+            'user' => $user,
+        ]);
+        self::assertCount(1, $userNotifications);
+        self::assertSame('Rezerwacja anulowana', $userNotifications[0]->getTitle());
+        self::assertSame(NotificationSeverity::Warning, $userNotifications[0]->getSeverity());
+
+        // Verify admin in-app notification
+        $adminNotifications = $em->getRepository(Notification::class)->findBy([
+            'user' => $admin,
+        ]);
+        self::assertCount(1, $adminNotifications);
+        self::assertSame('Rezerwacja anulowana (brak wpłaty)', $adminNotifications[0]->getTitle());
+        self::assertSame(NotificationSeverity::Warning, $adminNotifications[0]->getSeverity());
+        self::assertNotNull($adminNotifications[0]->getBody());
+        self::assertStringContainsString('user@example.com', $adminNotifications[0]->getBody());
     }
 }

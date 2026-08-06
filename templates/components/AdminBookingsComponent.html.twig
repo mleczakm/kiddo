@@ -176,8 +176,7 @@
                                 <tr class="border-b transition-colors hover:bg-slate-50 cursor-pointer">
                                     <td class="p-4 align-middle">
                                         <div>
-                                            <p class="font-medium">{{ booking.user.name }}</p>
-                                            <p class="text-sm text-muted-foreground">{{ booking.user.email }}</p>
+                                            {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
                                             {# Hidden extra text to satisfy repeated td text assertions #}
                                             {% if booking.lessons.count > 0 %}
                                                 {% set __firstLesson = booking.lessons.first %}

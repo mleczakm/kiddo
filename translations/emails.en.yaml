@@ -66,6 +66,17 @@ booking_cancellation:
 
     Best regards,
     The Sensory Workshop Team
+  admin:
+    subject: 'Booking cancelled (no payment) - {user} - {date}'
+    content: |
+      Hello,
+
+      Booking for {user} ({email}) for the class on {date} has been automatically cancelled due to no payment.
+
+      Booking ID: {booking_id}
+      Lesson: {lesson}
+
+      Log in to the admin panel for more details.
 
 # Reschedule admin notification
 reschedule:

@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\ImportTransfersFromMail;
+use App\Application\Command\MatchPaymentForTransfer;
+use App\Application\Command\SaveTransfer;
 use App\Application\CommandHandler\ImportTransfersFromMailHandler;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
 use App\Application\Service\AliorMailParser;
+use App\Entity\Transfer;
 use App\Repository\SettingRepository;
+use App\Repository\TransferRepository;
 use App\Tests\Util\MessengerFake;
 use Doctrine\ORM\EntityManagerInterface;
 use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
 use DirectoryTree\ImapEngine\Testing\FakeMessage;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 #[Group('unit')]
 class ImportTransfersFromMailHandlerTest extends TestCase
@@ -24,6 +29,8 @@ class ImportTransfersFromMailHandlerTest extends TestCase
     {
         $settingRepository = $this->createMock(SettingRepository::class);
         $entityManager = $this->createMock(EntityManagerInterface::class);
+        $transferRepository = $this->createMock(TransferRepository::class);
+        $logger = $this->createMock(LoggerInterface::class);
 
         new ImportTransfersFromMailHandler(
             new AliorMailParser(),
@@ -31,9 +38,55 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             new FakeQuery(),
             $settingRepository,
             $entityManager,
+            $transferRepository,
+            $logger,
+            mailboxUsername: 'user@example.com',
+            mailboxPassword: 'secret',
         )(new ImportTransfersFromMail());
 
         self::assertNotEmpty($messengerFake->dispatched);
+        self::assertInstanceOf(SaveTransfer::class, $messengerFake->dispatched[0]->getMessage());
+    }
+
+    public function testSkipsImapAndRematchesUnmatchedTransfersWhenCredentialsMissing(): void
+    {
+        $transfer = new Transfer('123', 'Sender', 'WW5J', '60.00', new \DateTimeImmutable());
+
+        $transferRepository = $this->createMock(TransferRepository::class);
+        $transferRepository->expects($this->once())
+            ->method('findBy')
+            ->with([
+                'payment' => null,
+            ])
+            ->willReturn([$transfer]);
+
+        $incomingQuery = $this->createMock(IncomingNotificationMailQuery::class);
+        $incomingQuery->expects($this->never())
+            ->method('__invoke');
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('info')
+            ->with(
+                'Mailbox credentials missing/invalid: skipping IMAP read, rematching unmatched transfers instead'
+            );
+
+        new ImportTransfersFromMailHandler(
+            new AliorMailParser(),
+            $messengerFake = new MessengerFake(),
+            $incomingQuery,
+            $this->createMock(SettingRepository::class),
+            $this->createMock(EntityManagerInterface::class),
+            $transferRepository,
+            $logger,
+            mailboxUsername: '',
+            mailboxPassword: '',
+        )(new ImportTransfersFromMail());
+
+        self::assertCount(1, $messengerFake->dispatched);
+        $message = $messengerFake->dispatched[0]->getMessage();
+        self::assertInstanceOf(MatchPaymentForTransfer::class, $message);
+        self::assertSame($transfer, $message->transfer);
     }
 }
 

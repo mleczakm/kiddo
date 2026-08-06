@@ -29,6 +29,8 @@ use Sentry\SentryBundle\SentryBundle;
 use Zenstruck\Mailer\Test\ZenstruckMailerTestBundle;
 use Novaway\Bundle\FeatureFlagBundle\NovawayFeatureFlagBundle;
 use Zenstruck\Messenger\Test\ZenstruckMessengerTestBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use Symfony\AI\McpBundle\McpBundle;
 
 return [
     FrameworkBundle::class => [
@@ -115,5 +117,11 @@ return [
     ],
     ZenstruckMessengerTestBundle::class => [
         'test' => true,
+    ],
+    DoctrineMigrationsBundle::class => [
+        'all' => true,
+    ],
+    McpBundle::class => [
+        'all' => true,
     ],
 ];

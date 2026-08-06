@@ -1,0 +1,29 @@
+{# Shared partial for displaying booking attendee information #}
+{#
+  Admin/ops: child first (primary), parent second (secondary).
+  Parameters:
+  - booking: Booking entity
+  - show_parent: bool (default true for admin)
+  - muted_empty: bool (default true — show muted "—" when no child)
+#}
+
+{% if booking.child %}
+    <p class="text-sm font-medium">
+        {{ booking.child.name }}
+        {% if booking.child.ageYears is not null %}
+            <span class="text-muted-foreground">• {{ booking.child.ageYears }} {{ 'profile.children.years'|trans }}</span>
+        {% endif %}
+    </p>
+    {% if show_parent %}
+        <p class="text-xs text-muted-foreground">{{ booking.user.name }} • {{ booking.user.email }}</p>
+    {% endif %}
+{% else %}
+    {% if muted_empty|default(true) %}
+        <p class="text-sm font-medium text-muted-foreground">—</p>
+    {% else %}
+        <p class="text-sm font-medium">{{ booking.user.name }}</p>
+    {% endif %}
+    {% if show_parent %}
+        <p class="text-xs text-muted-foreground">{{ booking.user.name }} • {{ booking.user.email }}</p>
+    {% endif %}
+{% endif %}

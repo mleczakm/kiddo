@@ -1,0 +1,5 @@
+mcp:
+    http:
+        session:
+            # Shared in-process store; ChatToolsApiTest disables kernel reboot across the MCP handshake.
+            store: memory

@@ -10,6 +10,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -43,6 +44,7 @@ final class NotificationTrayLiveComponent extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
+
         return $this->notifications->findRecentForUser($user, 30);
     }
 
@@ -50,33 +52,39 @@ final class NotificationTrayLiveComponent extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
+
         return $this->notifications->countUnreadForUser($user);
     }
 
     #[LiveAction]
-    public function markRead(#[LiveArg] string $id): void
+    public function open(#[LiveArg] string $id): ?RedirectResponse
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        /** @var Notification|null $n */
-        $n = $this->em->getRepository(Notification::class)->find($id);
-        if ($n && $n->getUser()->getId() === $user->getId()) {
-            $n->markRead();
-            $this->em->flush();
+        $notification = $this->findOwnedNotification($id);
+        if ($notification === null) {
+            return null;
         }
+
+        $notification->markRead();
+        $this->em->flush();
+
+        $url = $notification->getUrl();
+        if ($url !== null && $url !== '') {
+            return $this->redirect($url);
+        }
+
+        return null;
     }
 
     #[LiveAction]
     public function delete(#[LiveArg] string $id): void
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        /** @var Notification|null $n */
-        $n = $this->em->getRepository(Notification::class)->find($id);
-        if ($n && $n->getUser()->getId() === $user->getId()) {
-            $n->softDelete();
-            $this->em->flush();
+        $notification = $this->findOwnedNotification($id);
+        if ($notification === null) {
+            return;
         }
+
+        $notification->softDelete();
+        $this->em->flush();
     }
 
     #[LiveAction]
@@ -84,11 +92,13 @@ final class NotificationTrayLiveComponent extends AbstractController
     {
         if (! $this->isGranted('ROLE_ADMIN')) {
             $this->suggestions = [];
+
             return;
         }
         $q = trim($this->query);
         if ($q === '' || mb_strlen($q) < 2) {
             $this->suggestions = [];
+
             return;
         }
         $results = $this->users->findAllMatching($q);
@@ -97,5 +107,18 @@ final class NotificationTrayLiveComponent extends AbstractController
             'email' => $u->getUserIdentifier(),
             'name' => $u->getName(),
         ], $results));
+    }
+
+    private function findOwnedNotification(string $id): ?Notification
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        /** @var Notification|null $notification */
+        $notification = $this->em->getRepository(Notification::class)->find($id);
+        if ($notification === null || $notification->getUser()->getId() !== $user->getId()) {
+            return null;
+        }
+
+        return $notification;
     }
 }

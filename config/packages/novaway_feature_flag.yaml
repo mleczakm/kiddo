@@ -7,6 +7,7 @@ novaway_feature_flag:
         features:
           cart: false
           platform_billing_widget: false
+          chat_assistant: true
 
 when@test:
   novaway_feature_flag:
@@ -15,3 +16,4 @@ when@test:
         options:
           features:
             manual_bookings: true
+            chat_assistant: true

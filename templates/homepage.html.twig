@@ -3,6 +3,9 @@
 {% block body %}
     <main class="flex-grow">
         <div>
+            {% if isFeatureEnabled('chat_assistant') %}
+                {{ include('partials/chat_assistant.html.twig', { variant: 'hero' }) }}
+            {% else %}
             <section class="relative py-16 md:py-24 overflow-hidden">
                 <div class="absolute top-10 left-10 w-24 h-24 rounded-full bg-workshop-blue/20 animate-bounce-slight"
                      style="animation-delay: 0s;"></div>
@@ -36,6 +39,7 @@
                     </div>
                 </div>
             </section>
+            {% endif %}
             <section class="py-16 bg-dot-pattern">
                 <div class="container mx-auto px-4">
                     <div class="text-center mb-12">
@@ -161,26 +165,81 @@
                             <p class="text-lg text-muted-foreground mb-8">
                                 {{ 'homepage.newsletter.subtitle'|trans }}
                             </p>
-                            <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
-                                  title="{{ 'homepage.newsletter.subscription_disabled'|trans }}">
+                            <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                                 <input
-                                        disabled
                                         type="email"
+                                        id="newsletter-email"
                                         placeholder="{{ 'homepage.newsletter.email_placeholder'|trans }}"
                                         class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-workshop-blue focus:border-transparent"
+                                        required
+                                >
+                                <input
+                                        type="text"
+                                        name="website"
+                                        class="hidden"
+                                        tabindex="-1"
+                                        autocomplete="off"
                                 >
                                 <button
-                                        disabled
                                         type="submit"
+                                        id="newsletter-submit"
                                         class="bg-workshop-red hover:bg-workshop-red/90 text-white font-medium py-3 px-8 rounded-lg transition-colors whitespace-nowrap"
                                 >
                                     {{ 'homepage.newsletter.subscribe'|trans }}
                                 </button>
                             </form>
+                            <div id="newsletter-message" class="mt-4 text-sm hidden"></div>
                         </div>
                     </div>
                 </div>
             </section>
+            <script>
+                document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const form = this;
+                    const emailInput = document.getElementById('newsletter-email');
+                    const submitBtn = document.getElementById('newsletter-submit');
+                    const messageDiv = document.getElementById('newsletter-message');
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '{{ 'homepage.newsletter.sending'|trans }}';
+                    messageDiv.classList.add('hidden');
+                    
+                    try {
+                        const response = await fetch('{{ path('newsletter_subscribe') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: emailInput.value,
+                                website: form.querySelector('input[name="website"]').value
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        messageDiv.classList.remove('hidden');
+                        
+                        if (response.ok) {
+                            messageDiv.textContent = '{{ 'homepage.newsletter.confirmation_sent'|trans }}';
+                            messageDiv.classList.add('text-green-600');
+                            emailInput.value = '';
+                        } else {
+                            messageDiv.textContent = '{{ 'homepage.newsletter.error'|trans }}';
+                            messageDiv.classList.add('text-red-600');
+                        }
+                    } catch (error) {
+                        messageDiv.classList.remove('hidden');
+                        messageDiv.textContent = '{{ 'homepage.newsletter.error'|trans }}';
+                        messageDiv.classList.add('text-red-600');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '{{ 'homepage.newsletter.subscribe'|trans }}';
+                    }
+                });
+            </script>
         </div>
     </main>
 {% endblock %}

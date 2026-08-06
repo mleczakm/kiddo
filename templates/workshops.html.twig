@@ -10,7 +10,12 @@
                 <h1 class="section-title">{{ 'lesson.page.header'|trans }}</h1>
                 <p class="text-lg text-muted-foreground max-w-2xl mx-auto">{{ 'lesson.page.lead'|trans }}</p>
             </div>
-            {{ component('UpcomingLessons') }}
+            {{ component('UpcomingLessons', {
+                week: week|default(null),
+                openSlug: openSlug|default(null),
+                openDate: openDate|default(null),
+                openHour: openHour|default(null),
+            }) }}
         </div>
     </main>
 {% endblock %}

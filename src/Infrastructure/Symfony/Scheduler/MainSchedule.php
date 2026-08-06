@@ -10,6 +10,7 @@ use App\Application\Command\CheckExpiredPayments;
 use App\Application\Command\ExtendSeriesSchedule;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\Notification\DailyLessonsReminder;
+use App\Application\Command\PurgeOldNotifications;
 use App\Application\Command\TriggerMatchPaymentForTransferForPastTransfers;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -47,6 +48,11 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                     new \DateTimeZone('Europe/Warsaw')
                 ),
                 RecurringMessage::cron('1 0 * * *', new ExtendSeriesSchedule(), new \DateTimeZone('Europe/Warsaw')),
+                RecurringMessage::cron(
+                    '15 3 * * *',
+                    new PurgeOldNotifications(),
+                    new \DateTimeZone('Europe/Warsaw')
+                ),
             );
     }
 }

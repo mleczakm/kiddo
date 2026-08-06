@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Clock\Clock;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 #[Group('functional')]
@@ -29,9 +30,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
 
     public function testCanRenderWithUpcomingLessons(): void
     {
-
-        // Create test data
-        $futureDate = new \DateTimeImmutable('+1 day');
+        $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
             ->assemble();
@@ -39,17 +38,15 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
-        // Create and test the component
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
         $rendered = (string) $testComponent->render();
         $this->assertStringContainsString($lesson->getMetadata()->title, $rendered);
-        $this->assertStringContainsString('5', $rendered); // Check if capacity is displayed
+        $this->assertStringContainsString('5', $rendered);
     }
 
     public function testIncreaseCapacity(): void
     {
-        // Create test data
-        $futureDate = new \DateTimeImmutable('+1 day');
+        $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
             ->assemble();
@@ -57,15 +54,12 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
-        // Create and test the component
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
 
-        // Test increasing capacity
         $testComponent->call('increaseCapacity', [
             'lessonId' => (string) $lesson->getId(),
         ]);
 
-        // Verify the capacity was increased
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
             'Lesson not found'
         );
@@ -74,7 +68,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
 
     public function testDecreaseCapacity(): void
     {
-        $futureDate = new \DateTimeImmutable('+1 day');
+        $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(1)->assemble())
             ->assemble();
@@ -82,15 +76,12 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
-        // Create and test the component
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
 
-        // Test decreasing capacity
         $testComponent->call('decreaseCapacity', [
             'lessonId' => (string) $lesson->getId(),
         ]);
 
-        // Verify the capacity was decreased
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
             'Lesson not found'
         );
@@ -99,8 +90,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
 
     public function testCannotDecreaseCapacityBelowBookings(): void
     {
-        // Create test data with 3 bookings (out of 3 capacity)
-        $futureDate = new \DateTimeImmutable('+1 day');
+        $futureDate = Clock::get()->now()->modify('+1 day');
 
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(3)->assemble())
@@ -133,19 +123,15 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->entityManager->persist($booking2);
         $this->entityManager->persist($booking3);
 
-
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
-        // Create and test the component
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
 
-        // Test decreasing capacity (should not work)
         $testComponent->call('decreaseCapacity', [
             'lessonId' => (string) $lesson->getId(),
         ]);
 
-        // Verify the capacity was NOT decreased (still 3)
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
             'Lesson not found'
         );
@@ -154,22 +140,19 @@ class UpcomingAttendeesComponentTest extends WebTestCase
 
     public function testDoNotShowCancelledBookingsWhenFilterNotEnabled(): void
     {
-        // Create test data with both active and cancelled bookings
-        $futureDate = new \DateTimeImmutable('+1 day');
+        $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
             ->assemble();
 
         $user = UserAssembler::new()->assemble();
 
-        // Active booking
         $activeBooking = BookingAssembler::new()
             ->withStatus('active')
             ->withUser($user)
             ->withLessons($lesson)
             ->assemble();
 
-        // Cancelled booking
         $cancelledBooking = BookingAssembler::new()
             ->withStatus('cancelled')
             ->withUser($user)
@@ -185,31 +168,25 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
-        // Create and test the component with showCancelled = false (default)
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
 
-        // Render the component and check the output
         $rendered = (string) $testComponent->render();
 
-        // Verify active booking is shown
         $this->assertStringContainsString(
             (string) $activeBooking->getId(),
             $rendered,
             'Active booking should be shown'
         );
 
-        // Verify cancelled booking is not shown by default
         $this->assertStringNotContainsString(
             (string) $cancelledBooking->getId(),
             $rendered,
             'Cancelled booking should not be shown by default'
         );
 
-        // Now enable showCancelled and verify both bookings are returned
         $testComponent->set('showCancelled', true);
         $rendered = (string) $testComponent->render();
 
-        // Verify both bookings are shown when showCancelled is true
         $this->assertStringContainsString(
             (string) $activeBooking->getId(),
             $rendered,

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\NewUser;
+use App\Application\Service\InAppNotificationService;
+use App\Entity\NotificationSeverity;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\Clock\Clock;
@@ -12,6 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
@@ -21,11 +24,24 @@ readonly class NewUserHandler
         private NotifierInterface $notifier,
         private UserRepository $userRepository,
         private TranslatorInterface $translator,
+        private InAppNotificationService $inAppNotifications,
+        private UrlGeneratorInterface $urlGenerator,
     ) {}
 
     public function __invoke(NewUser $command): void
     {
-        $user = $command->user;
+        // Async transport serializes the User as a detached instance; reload so Doctrine
+        // transaction middleware can flush confirmedAt when the handler succeeds.
+        $user = $this->userRepository->find($command->user->getId());
+        if ($user === null) {
+            return;
+        }
+
+        // Prevent duplicate email sending if user is already confirmed
+        if ($user->getConfirmedAt() !== null) {
+            return;
+        }
+
         $user->setConfirmedAt(Clock::get()->now());
 
         $this->sendUserConfirmation($user);
@@ -43,6 +59,14 @@ readonly class NewUserHandler
             ->content($content);
 
         $this->notifier->send($notification, new Recipient($user->getEmail()));
+
+        $this->inAppNotifications->notify(
+            $user,
+            $this->translator->trans('notifications.in_app.new_user.user.title', [], 'messages'),
+            $this->translator->trans('notifications.in_app.new_user.user.body', [], 'messages'),
+            $this->urlGenerator->generate('dashboard'),
+            NotificationSeverity::Success,
+        );
     }
 
     private function sendAdminInformation(User $user): void
@@ -65,5 +89,18 @@ readonly class NewUserHandler
         foreach ($admins as $admin) {
             $this->notifier->send($notification, new Recipient($admin->getEmail()));
         }
+
+        $userId = $user->getId();
+        $this->inAppNotifications->notifyAdmins(
+            $this->translator->trans('notifications.in_app.new_user.admin.title', [], 'messages'),
+            $this->translator->trans('notifications.in_app.new_user.admin.body', [
+                'email' => $user->getEmail(),
+                'name' => $user->getName(),
+            ], 'messages'),
+            $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : $this->urlGenerator->generate('app_admin_users'),
+            NotificationSeverity::Info,
+        );
     }
 }

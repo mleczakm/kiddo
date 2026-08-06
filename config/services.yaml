@@ -4,8 +4,15 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+  env(ELEVENLABS_API_KEY): ''
+  env(ELEVENLABS_AGENT_ID): ''
+  env(KIDDO_MCP_SERVICE_KEY): ''
+  env(TELEGRAM_BOT_TOKEN): ''
+  env(TELEGRAM_WEBHOOK_SECRET): ''
 
 services:
+  App\Application\Telegram\TelegramLinkServiceInterface: '@App\Application\Telegram\TelegramLinkService'
+
   # default configuration for services in *this* file
   _defaults:
     autowire: true      # Automatically injects dependencies in your services.
@@ -43,9 +50,7 @@ services:
     arguments:
       $scheduleProviders:
         - '@App\Infrastructure\Symfony\Scheduler\MainSchedule'
-
-  App\Infrastructure\Messenger\TaskWorkerContextInterface:
-    alias: App\Infrastructure\Messenger\SwooleTaskWorkerContext
+      $connectionResetter: '@App\Infrastructure\Doctrine\ConnectionEnsurerInterface'
 
   App\Infrastructure\Swoole\Configurator\WithScheduler:
     tags:
@@ -61,6 +66,16 @@ services:
         password: '%env(MAILBOX_PASSWORD)%'
         host: '%env(MAILBOX_HOST)%'
     public: true
+
+  App\Infrastructure\ImapEngine\AliorNotificationMailProvider:
+    arguments:
+      $mailboxUsername: '%env(MAILBOX_USERNAME)%'
+      $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
+
+  App\Application\CommandHandler\ImportTransfersFromMailHandler:
+    arguments:
+      $mailboxUsername: '%env(MAILBOX_USERNAME)%'
+      $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
 
   logdash:
     class: Logdash\Logdash
@@ -131,13 +146,70 @@ services:
 
   App\Application\CommandHandler\IncomingNotificationMailQuery: '@App\Application\CommandHandler\IncomingNotificationMailQueryWithLastSuccessfulImportDecorator'
 
-  # Override Swoole ExceptionLoggingTransportHandler to restart worker on exception
-  # Decorate TaskHandler with higher priority (-9996) than both ExceptionLoggingTransportHandler (-9998)
-  # and ServiceResettingTransportHandler (-9997) to replace exception handling entirely
-  SwooleBundle\SwooleBundle\Bridge\Symfony\Messenger\ExceptionLoggingTransportHandler:
-    class: App\Infrastructure\Swoole\WorkerRestartingTaskHandler
+  # Outer decorator must restart the worker on any task failure, including connection ensure failures.
+  # Higher decoration_priority = outer. Restart wraps ensure so thrown ensure errors still restart.
+  App\Infrastructure\Swoole\WorkerRestartingTaskHandler:
     decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
+    decoration_priority: -9995
+
+  App\Infrastructure\Swoole\TaskWorkerConnectionEnsuringHandler:
+    decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
+    decoration_priority: -9996
     arguments:
-      $logger: '@logger'
+      $innerHandler: '@.inner'
+
+  App\Infrastructure\Doctrine\CacheConnectionEnsurer:
+    arguments:
+      $connection: '@doctrine.dbal.cache_connection'
+
+  App\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheck:
+    arguments:
+      $cacheConnection: '@doctrine.dbal.cache_connection'
+
+  # Ensure both the default ORM connection and the dedicated cache DBAL connection.
+  App\Infrastructure\Doctrine\CompositeConnectionEnsurer:
+    arguments:
+      $ensurers:
+        - '@App\Infrastructure\Doctrine\DoctrineConnectionEnsurer'
+        - '@App\Infrastructure\Doctrine\CacheConnectionEnsurer'
+
+  App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
+    alias: App\Infrastructure\Doctrine\CompositeConnectionEnsurer
+
+  # Replace Symfony MCP Bundle controller: rebuild PSR-7 body from buffered content
+  # so Streamable HTTP clients (ElevenLabs) do not hit JSON-RPC -32700 on empty body.
+  mcp.server.controller:
+    class: App\Infrastructure\Mcp\KiddoMcpController
+    public: true
+    arguments:
+      - '@mcp.server'
+      - '@mcp.psr_http_factory'
+      - '@mcp.http_foundation_factory'
+      - '@mcp.psr17_factory'
+      - '@mcp.psr17_factory'
+      - '@mcp.middleware_factory'
+      - '@logger'
     tags:
-      - { name: monolog.logger, channel: swoole }
+      - controller.service_arguments
+      - { name: monolog.logger, channel: mcp }
+
+# Test-specific service overrides
+when@test:
+  services:
+    # Use test implementation of CurrentWorkerRestarterInterface to track restart calls
+    App\Infrastructure\Swoole\CurrentWorkerRestarterInterface:
+      class: App\Tests\Infrastructure\Swoole\TestCurrentWorkerRestarter
+      public: true
+
+    App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
+      alias: App\Infrastructure\Doctrine\CompositeConnectionEnsurer
+      public: true
+
+    # Publish Brevo services so tests can swap them via container->set().
+    App\Infrastructure\Brevo\BrevoNewsletterService:
+      autowire: true
+      public: true
+
+    App\Application\Newsletter\NewsletterSubscriptionManager:
+      autowire: true
+      public: true

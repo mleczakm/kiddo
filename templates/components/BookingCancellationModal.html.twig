@@ -89,6 +89,7 @@
             {# Tabs Navigation #}
             <div class="space-y-6">
                 <div role="tablist" class="flex items-center rounded-md bg-muted p-1 text-muted-foreground w-full">
+                    {% if this.canShowRescheduleTab %}
                     <button
                             role="tab"
                             class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
@@ -98,12 +99,11 @@
                             data-live-index-param="0"
                             data-live-option-param="reschedule"
                             aria-selected="{{ this.isTabActive('reschedule') ? 'true' : 'false' }}"
-                            {{ stimulus_controller('submit-button', {
-                                text: 'booking.reschedule'|trans
-                            }) }}
                     >
                         {{ 'booking.reschedule'|trans }}
                     </button>
+                    {% endif %}
+                    {% if this.canShowRefundTab %}
                     <button
                             role="tab"
                             class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
@@ -116,6 +116,8 @@
                     >
                         {{ 'booking.refund'|trans }}
                     </button>
+                    {% endif %}
+                    {% if this.canShowCancelTab %}
                     <button
                             role="tab"
                             class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
@@ -128,9 +130,11 @@
                     >
                         {{ 'booking.other'|trans }}
                     </button>
+                    {% endif %}
                 </div>
 
                 {# Reschedule Tab Content #}
+                {% if this.canShowRescheduleTab %}
                 <div role="tabpanel" class="space-y-4 {{ not this.isTabActive('reschedule') ? 'hidden' : '' }}"
                      data-state="{{ this.getTabState('reschedule') }}">
                     <h4 class="font-semibold">{{ 'booking.choose_alternative_workshop'|trans }}</h4>
@@ -207,8 +211,10 @@
                         </div>
                     {% endif %}
                 </div>
+                {% endif %}
 
                 {# Refund Tab Content #}
+                {% if this.canShowRefundTab %}
                 <div role="tabpanel" class="space-y-4 {{ not this.isTabActive('refund') ? 'hidden' : '' }}"
                      data-state="{{ this.getTabState('refund') }}">
                     <div class="space-y-2">
@@ -248,10 +254,21 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
 
                 {# Other Tab Content #}
+                {% if this.canShowCancelTab %}
                 <div role="tabpanel" class="space-y-4 {{ not this.isTabActive('cancel') ? 'hidden' : '' }}"
                      data-state="{{ this.getTabState('cancel') }}">
+                    {% if this.requiresLateCancelAcknowledgment %}
+                        <div class="rounded-lg border border-workshop-red/40 bg-workshop-red/5 p-4 text-sm text-workshop-brown">
+                            <p class="font-medium mb-3">{{ 'booking.late_cancel_warning'|trans }}</p>
+                            <label class="flex items-start gap-2 cursor-pointer">
+                                <input type="checkbox" data-model="lateCancelAcknowledged" class="mt-1 h-4 w-4 rounded border-input text-workshop-red">
+                                <span>{{ 'booking.late_cancel_confirm'|trans }}</span>
+                            </label>
+                        </div>
+                    {% endif %}
                     <div class="space-y-2">
                         <label for="cancellation-reason" class="block text-sm font-medium">
                             {{ 'booking.tell_us_more'|trans }}
@@ -265,14 +282,11 @@
                                     class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     placeholder="{{ 'booking.please_specify'|trans }}"
                             ></textarea>
-                            <p data-lov-id="src/components/CancellationDialog.tsx:224:16" data-lov-name="p"
-                               data-component-path="src/components/CancellationDialog.tsx" data-component-line="224"
-                               data-component-file="CancellationDialog.tsx" data-component-name="p"
-                               data-component-content="%7B%22text%22%3A%22An%20admin%20will%20review%20your%20request%20and%20contact%20you%20within%2024%20hours.%22%2C%22className%22%3A%22text-xs%20text-muted-foreground%20mt-2%22%7D"
-                               class="text-xs text-muted-foreground mt-2">{{ 'booking.tell_us_more_footer'|trans }}</p>
+                            <p class="text-xs text-muted-foreground mt-2">{{ 'booking.tell_us_more_footer'|trans }}</p>
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
 
             {# Footer Buttons #}
@@ -291,7 +305,7 @@
                         data-live-action-param="processCancellation"
                         data-live-type-param="{{ this.selectedOption }}"
                         class="inline-flex h-10 items-center justify-center rounded-md bg-workshop-red px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-workshop-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-workshop-red focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                        {% if this.selectedOption == 'reschedule' and not this.selectedLessonId %}disabled{% endif %}
+                        {% if this.isButtonDisabled %}disabled{% endif %}
                 >
                     {% if this.selectedOption == 'reschedule' %}
                         {{ 'booking.reschedule'|trans }}

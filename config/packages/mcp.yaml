@@ -1,0 +1,26 @@
+mcp:
+    app: kiddo
+    version: '1.0.0'
+    description: 'Kiddo workshop booking tools for parents and admins'
+    # ElevenLabs (and some MCP clients) ignore tools/list nextCursor — return everything in one page.
+    pagination_limit: 1000
+    instructions: |
+        Use Kiddo tools for lesson discovery, bookings, payments, and admin ops.
+        Guests: only user.list_upcoming_lessons and user.get_lesson; ask them to /login to book.
+        Logged-in parents: never ask for name/email/phone already on the account — use user.me and user.list_children.
+        Always confirm mutations with the user; mutating tools require confirm=true.
+        Never invent availability — call tools for seats and prices.
+        After user.create_booking, relay the returned BLIK-to-phone instructions (phone, amount, title code, ~24h validity) verbatim.
+        Admin tools require a chat token with ROLE_ADMIN.
+    client_transports:
+        stdio: true
+        http: true
+    http:
+        # Public URL for ElevenLabs custom MCP server
+        path: /api/mcp
+        # Allow non-localhost hosts (production / tunnels). Set concrete hosts in env-specific overrides if needed.
+        allowed_hosts: false
+        session:
+            # Default pool `cache.mcp.sessions` is a PSR-16 wrapper around cache.app
+            store: cache
+            ttl: 3600

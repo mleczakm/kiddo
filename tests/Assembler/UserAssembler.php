@@ -7,6 +7,7 @@ namespace App\Tests\Assembler;
 use App\Entity\User;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
+use Symfony\Component\Clock\Clock;
 
 class UserAssembler
 {
@@ -26,6 +27,10 @@ class UserAssembler
     private ?\DateTimeImmutable $createdAt = null;
 
     private ?\DateTimeImmutable $updatedAt = null;
+
+    private bool $newsletterSubscribed = false;
+
+    private ?\DateTimeImmutable $newsletterConsentDate = null;
 
     private function __construct() {}
 
@@ -95,6 +100,16 @@ class UserAssembler
         return $this;
     }
 
+    public function withNewsletterSubscribed(bool $subscribed = true, ?\DateTimeImmutable $consentDate = null): self
+    {
+        $this->newsletterSubscribed = $subscribed;
+        $this->newsletterConsentDate = $subscribed
+            ? ($consentDate ?? Clock::get()->now())
+            : null;
+
+        return $this;
+    }
+
     public function assemble(): User
     {
         $user = new User();
@@ -125,6 +140,9 @@ class UserAssembler
         if ($this->updatedAt !== null) {
             $user->setUpdatedAt($this->updatedAt);
         }
+
+        $user->setNewsletterSubscribed($this->newsletterSubscribed);
+        $user->setNewsletterConsentDate($this->newsletterConsentDate);
 
         return $user;
     }

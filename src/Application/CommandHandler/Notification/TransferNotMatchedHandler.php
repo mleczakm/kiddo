@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\TransferNotMatchedCommand;
+use App\Application\Service\InAppNotificationService;
+use App\Entity\NotificationSeverity;
 use App\Repository\PaymentRepository;
 use App\Repository\UserRepository;
 use Psr\Cache\CacheItemPoolInterface;
@@ -12,6 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
@@ -27,6 +30,8 @@ final readonly class TransferNotMatchedHandler
         private TranslatorInterface $translator,
         private CacheItemPoolInterface $cache,
         private PaymentRepository $paymentRepository,
+        private InAppNotificationService $inAppNotifications,
+        private UrlGeneratorInterface $urlGenerator,
     ) {}
 
     public function __invoke(TransferNotMatchedCommand $command): void
@@ -70,6 +75,17 @@ final readonly class TransferNotMatchedHandler
             foreach ($admins as $admin) {
                 $this->notifier->send($notification, new Recipient($admin->getEmailString()));
             }
+
+            $this->inAppNotifications->notifyAdmins(
+                $this->translator->trans('notifications.in_app.transfer_not_matched.title', [], 'messages'),
+                $this->translator->trans('notifications.in_app.transfer_not_matched.body', [
+                    'amount' => (string) $transfer->amount,
+                    'sender' => $transfer->getSender(),
+                    'title' => $transfer->title,
+                ], 'messages'),
+                $this->urlGenerator->generate('app_admin_transfers'),
+                NotificationSeverity::Warning,
+            );
 
         } finally {
             // Cache the notification for today

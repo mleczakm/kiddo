@@ -67,6 +67,10 @@ class LessonRepository extends ServiceEntityRepository
 
         /** @var Lesson[] $result */
         $result = $this->createQueryBuilder('l')
+            ->leftJoin('l.bookings', 'b')
+            ->leftJoin('b.child', 'c')
+            ->leftJoin('b.user', 'u')
+            ->addSelect('b, c, u')
             ->where('l.metadata.schedule >= :start')
             ->andWhere('l.metadata.schedule <= :end')
             ->andWhere('l.status = :status')
@@ -162,6 +166,9 @@ class LessonRepository extends ServiceEntityRepository
         /** @var Lesson[] $lessons */
         $lessons = $this->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
+            ->leftJoin('b.child', 'c')
+            ->leftJoin('b.user', 'u')
+            ->addSelect('b, c, u')
             ->andWhere('l.metadata.schedule > :since')
             ->andWhere('l.status = :status')
             ->setParameter('status', 'active')
@@ -184,6 +191,9 @@ class LessonRepository extends ServiceEntityRepository
     ): array {
         $qb = $this->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
+            ->leftJoin('b.child', 'c')
+            ->leftJoin('b.user', 'u')
+            ->addSelect('b, c, u')
             ->andWhere('l.metadata.schedule >= :startDate')
             ->andWhere('l.metadata.schedule <= :endDate')
             // include lessons even if they have no bookings
@@ -195,7 +205,7 @@ class LessonRepository extends ServiceEntityRepository
         if (! $showCancelled) {
             $qb->andWhere('l.status = :status')
                 ->setParameter('status', 'active')
-                ->setParameter('bookingStatus', [Booking::STATUS_ACTIVE]);
+                ->setParameter('bookingStatus', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE]);
         } else {
             $qb->setParameter(
                 'bookingStatus',

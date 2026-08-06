@@ -26,10 +26,6 @@
         font-style: italic;
     }
 </style>
-
-{% if lessons is empty %}
-    <p>{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
-{% else %}
     {% for lesson in lessons %}
         <h2 style="font-family: Arial, sans-serif; color: #333;">
             {{ lesson.metadata.title }} ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})
@@ -62,7 +58,15 @@
                         {% elseif isCancelled %}{% set row_style = row_style ~ ' background-color: #ffebee; text-decoration: line-through;' %}{% endif %}
 
                         <tr class="{{ row_class }}" style="{{ row_style }}">
-                            <td style="border: 1px solid #ddd; padding: 8px;">{{ booking.user.name }}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                {% if booking.child %}
+                                    <strong>{{ booking.child.name }}</strong>{% if booking.child.ageYears %} ({{ booking.child.ageYears }} {{ 'profile.children.years'|trans({}, 'messages') }}){% endif %}<br>
+                                    <small style="color: #666;">{{ booking.user.name }}</small>
+                                {% else %}
+                                    <em style="color: #999;">—</em><br>
+                                    <small style="color: #666;">{{ booking.user.name }}</small>
+                                {% endif %}
+                            </td>
                             <td style="border: 1px solid #ddd; padding: 8px;">{{ booking.user.email }}</td>
                             <td style="border: 1px solid #ddd; padding: 8px;">
                                 {% if isCarnet %}
@@ -88,4 +92,3 @@
             <p>{{ 'daily_lessons_schedule.no_attendants'|trans }}</p>
         {% endif %}
     {% endfor %}
-{% endif %}

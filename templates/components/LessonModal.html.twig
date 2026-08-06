@@ -1,24 +1,34 @@
-<div {{ attributes }}
-        {% if modalOpened %}data-modal-state="open" {% else %}data-modal-state="closed"{% endif %}
-        {{ stimulus_controller('live', {
-            url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\LessonModal' })
-        }) }}>
+<div
+        {% if modalOpened %}data-modal-state="open"{% else %}data-modal-state="closed"{% endif %}
+        {% set workshopUrl = lesson and lesson.metadata.slug
+            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
+            : closeUrl %}
+        {{ attributes.defaults(stimulus_controller('workshop-url', {
+            openUrl: workshopUrl,
+            closeUrl: closeUrl,
+        })).defaults(
+            paymentStatus == 'awaiting_payment' and paymentCode
+                ? {'data-poll': 'delay(3000)|refreshPaymentStatus'}
+                : {}
+        ) }}
+>
 
-    <button data-action="live#action"
+    <button data-action="live#action click->workshop-url#pushOpen"
             data-live-action-param="openModal"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10 mb-4"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10"
             type="button">{{ 'lesson.details'|trans }}
     </button>
 
+    {% if modalOpened %}
     {# Overlay #}
     <div
-            data-action="click->live#action"
+            data-action="click->live#action click->workshop-url#pushClose"
             data-live-action-param="closeModal"
-            class="{% if not modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
+            class="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
             style="pointer-events: auto;" aria-hidden="true"></div>
 
     {# Dialog #}
-    <dialog {% if modalOpened %}open{% endif %}
+    <dialog open
             data-modal-target="dialog"
             class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/4 -translate-y-1/4 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto backdrop:bg-slate-600 backdrop:opacity-80 backdrop:backdrop-blur-sm">
         <div class="grid">
@@ -53,15 +63,33 @@
                         </button>
                     </div>
                 </div>
-            {% elseif paymentCode is not empty and paymentAmount is not empty %}
+            {% elseif paymentStatus == 'paid' %}
+                <div class="flex flex-col items-center justify-center min-h-[300px]">
+                    <div class="bg-white border border-green-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
+                        <div class="text-2xl font-bold text-green-700 mb-4">
+                            {{ 'payment.paid_success'|trans }}
+                        </div>
+                        <div class="text-muted-foreground mb-4">{{ 'payment.paid_message'|trans }}</div>
+                        <button type="button"
+                                data-action="live#action click->workshop-url#pushClose"
+                                data-live-action-param="closeModal"
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-green-50 h-10 px-4 py-2 border border-green-200 text-green-700">
+                            {{ 'lesson.close'|trans }}
+                        </button>
+                    </div>
+                </div>
+            {% elseif paymentCode is not empty and this.paymentAmount is not empty %}
                 <div class="flex flex-col items-center justify-center min-h-[300px]">
                     <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
+                        {% if paymentStatus == 'awaiting_payment' %}
+                            <div class="text-sm text-muted-foreground mb-4">{{ 'payment.awaiting'|trans }}</div>
+                        {% endif %}
                         <div class="text-2xl font-bold text-workshop-brown mb-4">
                             {{ 'blik.instruction'|trans }} <span
                                     class="text-workshop-red whitespace-nowrap"> {{ 'blik.phone'|trans }}</span>
                         </div>
                         <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span
-                                    class="text-workshop-red whitespace-nowrap">{{ paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
+                                    class="text-workshop-red whitespace-nowrap">{{ this.paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
                         </div>
                         <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
                         <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
@@ -76,9 +104,9 @@
                         {{ lesson.metadata.title }}</h2>
                     <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
                 </div>
+
+                {{ component('BookingPreviewComponent', {lesson: lesson}) }}
                 <div class="space-y-6 mt-6">
-                    <div class="w-full h-48 md:h-60 rounded-lg bg-cover bg-center"
-                         style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none;"></div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     </div>
 
@@ -238,7 +266,7 @@
                                class="text-sm text-muted-foreground">{{ 'lesson.accept_terms'|trans|raw }}</label>
                     </div>
                     <button type="button"
-                            data-action="live#action"
+                            data-action="live#action click->workshop-url#pushClose"
                             data-live-action-param="closeModal"
                             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
                         {{ 'lesson.cancel'|trans }}
@@ -283,7 +311,7 @@
                 </div>
 
                 <button type="button"
-                        data-action="live#action"
+                        data-action="live#action click->workshop-url#pushClose"
                         data-live-action-param="closeModal"
                         class="absolute right-4 top-4 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -401,22 +429,42 @@
                             </div>
                             <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>
 
-                            <div class="mt-4">
-                                <label class="text-sm font-medium leading-none block mb-1">{{ 'booking.child.label'|trans({'default':'Child (optional)'}) }}</label>
-                                {% set children = this.getChildren %}
-                                {% if children is not empty %}
-                                    <select data-model="selectedChildId" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                                        <option value="">{{ 'booking.child.none'|trans({'default':'No child'}) }}</option>
-                                        {% for c in children %}
-                                            <option value="{{ c.id }}">{{ c.name }}{% if c.birthday %} ({{ c.birthday }}){% endif %}</option>
-                                        {% endfor %}
-                                    </select>
-                                {% else %}
-                                    <div class="text-sm text-muted-foreground">
-                                        {{ 'booking.child.no_children'|trans({'default':'You have no children added in your profile.'}) }}
-                                        <a href="{{ path('profile') }}" class="text-workshop-red hover:underline">{{ 'booking.child.add_now'|trans({'default':'Add now'}) }}</a>
-                                    </div>
+                            <div class="mt-4 space-y-4">
+                                {% if this.needsPhone %}
+                                <div>
+                                    <label class="text-sm font-medium leading-none block mb-1" for="booking-phone">{{ 'booking.phone.label'|trans }}</label>
+                                    <input
+                                        id="booking-phone"
+                                        type="tel"
+                                        data-model="phone"
+                                        placeholder="{{ 'booking.phone.placeholder'|trans }}"
+                                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        required
+                                    >
+                                    <p class="text-xs text-muted-foreground mt-1">{{ 'booking.phone.account_hint'|trans }}</p>
+                                    {% if phoneError %}
+                                        <p class="text-sm text-red-600 mt-1">{{ phoneError|trans }}</p>
+                                    {% endif %}
+                                </div>
                                 {% endif %}
+                                <div>
+                                    <label class="text-sm font-medium leading-none block mb-1">{{ 'booking.child.optional'|trans }}</label>
+                                    {% set children = this.getChildren %}
+                                    {% if children is not empty %}
+                                        <select data-model="selectedChildId" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                                            {% for c in children %}
+                                                <option value="{{ c.id }}" {% if selectedChildId == c.id or (selectedChildId is null and loop.first) %}selected{% endif %}>{{ c.name }}{% if c.birthday %} ({{ c.birthday }}){% endif %}</option>
+                                            {% endfor %}
+                                            <option value="">{{ 'booking.child.none'|trans }}</option>
+                                        </select>
+                                    {% else %}
+                                        <div class="rounded-md border border-dashed border-workshop-yellow/60 bg-workshop-yellow/10 px-3 py-3 text-sm text-workshop-brown">
+                                            <p class="font-medium mb-1">{{ 'booking.child.empty_title'|trans }}</p>
+                                            <p class="text-muted-foreground mb-2">{{ 'booking.child.empty_hint'|trans }}</p>
+                                            <a href="{{ path('profile') }}" class="text-workshop-red hover:underline font-medium">{{ 'booking.child.add_now'|trans }}</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -465,4 +513,5 @@
                 </button>
             </div>
         {% endif %}
+    {% endif %}
 </div>

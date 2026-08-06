@@ -69,7 +69,7 @@
                 <table class="w-full text-left text-sm whitespace-nowrap">
                     <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
                         <tr>
-                            <th class="px-6 py-4 font-semibold">{{ 'User'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin_dashboard.upcoming_lessons.attendees'|trans }}</th>
                             <th class="px-6 py-4 font-semibold">{{ 'Status'|trans }}</th>
                             <th class="px-6 py-4 font-semibold">{{ 'Attendance'|trans }}</th>
                             <th class="px-6 py-4 font-semibold">{{ 'Notes'|trans }}</th>
@@ -79,8 +79,7 @@
                         {% for booking in lesson.bookings %}
                             <tr class="hover:bg-slate-50/50 transition">
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-800">{{ booking.user.name }}</div>
-                                    <div class="text-xs text-slate-400 font-mono mt-0.5">{{ booking.user.email }}</div>
+                                    {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
                                 </td>
                                 <td class="px-6 py-4">
                                     {% set status = booking.status %}

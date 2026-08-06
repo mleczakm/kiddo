@@ -18,6 +18,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.name'|trans }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.email'|trans }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.children'|trans }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.role'|trans }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.status'|trans }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.actions'|trans }}</th>
@@ -40,6 +41,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900">{{ user.email }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    {% if user.children|length > 0 %}
+                                        {{ user.children|map(c => c.name)|join(', ') }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ user.roles|join(', ') }}</span>

@@ -18,12 +18,11 @@ class WorkshopsAction extends AbstractController
         'pl' => 'warsztaty',
         'en' => 'workshops',
     ], name: 'workshops')]
-    public function __invoke(EntityManagerInterface $entityManager, Request $request): Response
+    public function __invoke(Request $request): Response
     {
         $weekParam = $request->query->get('week');
         $now = Clock::get()->now();
 
-        // If the week parameter is provided, use it as the reference date
         if ($weekParam) {
             try {
                 $referenceDate = new \DateTimeImmutable($weekParam);
@@ -34,28 +33,102 @@ class WorkshopsAction extends AbstractController
             $referenceDate = $now;
         }
 
-        $startDate = $referenceDate;
+        return $this->render('workshops.html.twig', [
+            'week' => $referenceDate->format('Y-m-d'),
+        ]);
+    }
+
+    #[Route(path: [
+        'pl' => 'warsztaty/{slug}',
+        'en' => 'workshops/{slug}',
+    ], name: 'workshop_by_slug')]
+    public function workshopBySlug(string $slug, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $lesson = $this->findLessonBySlug($slug, $request, $entityManager);
+
+        if ($lesson === null) {
+            return $this->redirectToRoute('workshops');
+        }
+
+        $schedule = $lesson->getMetadata()
+            ->schedule;
+
+        return $this->render('workshops.html.twig', [
+            'week' => $schedule->format('Y-m-d'),
+            'openSlug' => $lesson->getMetadata()
+                ->slug,
+            'openDate' => $schedule->format('Y-m-d'),
+            'openHour' => $schedule->format('H:i'),
+        ]);
+    }
+
+    private function findLessonBySlug(string $slug, Request $request, EntityManagerInterface $entityManager): ?Lesson
+    {
+        $now = Clock::get()->now();
+        $date = $request->query->get('date');
+        $hour = $request->query->get('hour');
+
+        if ($date && $hour) {
+            try {
+                $schedule = new \DateTimeImmutable($date . ' ' . $hour);
+
+                $query = $entityManager->createQuery(<<<DQL
+                    SELECT l
+                    FROM App\Entity\Lesson l
+                    WHERE l.metadata.slug = :slug
+                    AND l.metadata.schedule = :schedule
+                    AND l.status = 'active'
+                    DQL)
+                    ->setParameter('slug', $slug)
+                    ->setParameter('schedule', $schedule);
+
+                /** @var Lesson|null $lesson */
+                $lesson = $query->getOneOrNullResult();
+
+                if ($lesson) {
+                    return $lesson;
+                }
+            } catch (\Exception) {
+                // Fall through to current-week / next-upcoming lookups.
+            }
+        }
+
+        $startDate = $now;
         $endDate = $startDate->modify('+7 days');
 
         $query = $entityManager->createQuery(<<<DQL
             SELECT l
             FROM App\Entity\Lesson l
-            LEFT JOIN l.bookings b WITH b.status = 'active'
-            WHERE l.metadata.schedule BETWEEN :start AND :end
+            WHERE l.metadata.slug = :slug
+            AND l.metadata.schedule BETWEEN :start AND :end
             AND l.status = 'active'
             ORDER BY l.metadata.schedule ASC
             DQL)
+            ->setParameter('slug', $slug)
             ->setParameter('start', $startDate)
             ->setParameter('end', $endDate);
 
-        /** @var Lesson[] $lessons */
-        $lessons = $query->getResult();
+        /** @var Lesson|null $lesson */
+        $lesson = $query->getOneOrNullResult();
 
-        return $this->render('workshops.html.twig', [
-            'workshops' => $lessons,
-            'weekStart' => $startDate,
-            'weekEnd' => $endDate,
-            'currentWeek' => $now->format('Y-m-d'),
-        ]);
+        if ($lesson) {
+            return $lesson;
+        }
+
+        $query = $entityManager->createQuery(<<<DQL
+            SELECT l
+            FROM App\Entity\Lesson l
+            WHERE l.metadata.slug = :slug
+            AND l.status = 'active'
+            AND l.metadata.schedule >= :now
+            ORDER BY l.metadata.schedule ASC
+            DQL)
+            ->setParameter('slug', $slug)
+            ->setParameter('now', $now);
+
+        /** @var Lesson|null $lesson */
+        $lesson = $query->getOneOrNullResult();
+
+        return $lesson;
     }
 }

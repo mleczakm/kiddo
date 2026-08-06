@@ -9,7 +9,6 @@ use App\Infrastructure\Swoole\CurrentWorkerRestarterInterface;
 use DirectoryTree\ImapEngine\MessageQueryInterface;
 use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -17,18 +16,53 @@ use Psr\Log\LoggerInterface;
 #[Group('unit')]
 class AliorNotificationMailProviderTest extends TestCase
 {
-    #[DoesNotPerformAssertions]
-    public function testDoNotFailOnThrowable(): void
+    public function testSkipsImapWhenCredentialsAreMissing(): void
+    {
+        $mailbox = $this->createMock(FakeMailbox::class);
+        $mailbox->expects($this->never())
+            ->method('reconnect');
+
+        $workerRestarter = $this->createMock(CurrentWorkerRestarterInterface::class);
+        $workerRestarter->expects($this->never())
+            ->method('restart');
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('info')
+            ->with('Gmail IMAP skipped: mailbox credentials are not configured');
+
+        $provider = new AliorNotificationMailProvider(
+            $mailbox,
+            $workerRestarter,
+            $logger,
+            mailboxUsername: '',
+            mailboxPassword: '',
+        );
+
+        $this->assertSame([], iterator_to_array($provider()));
+    }
+
+    public function testRestartsWorkerOnThrowableWhenCredentialsConfigured(): void
     {
         $testMailbox = new FakeMailbox(folders: [new ThrowingFolder('inbox')]);
         $workerRestarter = $this->createMock(CurrentWorkerRestarterInterface::class);
+        $workerRestarter->expects($this->once())
+            ->method('restart');
+
         $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with('Gmail IMAP query failed, restarting worker', $this->arrayHasKey('exception'));
 
-        $provider = new AliorNotificationMailProvider($testMailbox, $workerRestarter, $logger);
+        $provider = new AliorNotificationMailProvider(
+            $testMailbox,
+            $workerRestarter,
+            $logger,
+            mailboxUsername: 'user@example.com',
+            mailboxPassword: 'secret',
+        );
 
-        foreach ($provider() as $message) {
-            $this->fail('No messages should be yielded when an exception occurs.');
-        }
+        $this->assertSame([], iterator_to_array($provider()));
     }
 }
 

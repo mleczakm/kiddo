@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Infrastructure\Symfony;
 
-use App\Infrastructure\Doctrine\ConnectionEnsurerInterface;
 use App\Infrastructure\Symfony\Scheduler;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -14,18 +13,10 @@ final class SchedulerTest extends KernelTestCase
 {
     private Scheduler $scheduler;
 
-    private ConnectionEnsurerInterface $connectionEnsurer;
-
     protected function setUp(): void
     {
         self::bootKernel();
         $this->scheduler = self::getContainer()->get(Scheduler::class);
-        $this->connectionEnsurer = self::getContainer()->get(ConnectionEnsurerInterface::class);
-    }
-
-    public function testSchedulerHasConnectionEnsurer(): void
-    {
-        $this->assertInstanceOf(ConnectionEnsurerInterface::class, $this->connectionEnsurer);
     }
 
     public function testSchedulerCanBeInstantiated(): void

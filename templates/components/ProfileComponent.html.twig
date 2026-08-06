@@ -37,6 +37,24 @@
                                     <p class="text-lg">{{ this.user.email }}</p>
                                 </div>
                             </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="phone">
+                                    {{ 'profile.phone'|trans }}
+                                </label>
+                                <p class="text-lg font-medium">{{ this.formattedPhone ?? ('profile.phone.empty'|trans) }}</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                    {{ 'profile.newsletter'|trans }}
+                                </label>
+                                <p class="text-lg font-medium">
+                                    {% if this.user.newsletterSubscribed %}
+                                        <span class="text-green-600">{{ 'newsletter.subscribed'|trans }}</span>
+                                    {% else %}
+                                        <span class="text-muted-foreground">{{ 'newsletter.not_subscribed'|trans }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
                             {% if is_granted('ROLE_ADMIN') %}
                             <div class="space-y-2">
                                 <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -75,6 +93,20 @@
                                 {% if this.getErrors('email') %}
                                     <p class="text-sm text-red-600">{{ this.getErrors('email')|map(error => error|trans)|join(', ') }}</p>
                                 {% endif %}
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="phone">{{ 'profile.phone'|trans }}</label>
+                                <input type="tel" data-model="phone" required placeholder="{{ 'profile.phone.placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="phone">
+                                {% if this.getErrors('phone') %}
+                                    <p class="text-sm text-red-600">{{ this.getErrors('phone')|map(error => error|trans)|join(', ') }}</p>
+                                {% endif %}
+                                {% if phoneError %}
+                                    <p class="text-sm text-red-600">{{ phoneError|trans }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" data-model="newsletterSubscribed" class="h-4 w-4 rounded border-gray-300 text-workshop-red focus:ring-workshop-red" id="newsletterSubscribed">
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="newsletterSubscribed">{{ 'profile.newsletter'|trans }}</label>
                             </div>
                             <div class="flex gap-3 pt-4 border-t">
                                 <button type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">

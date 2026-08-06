@@ -98,8 +98,8 @@ class AdminBookingsComponent extends AbstractController
 
         // Apply status filter
         if ($this->filter === 'active') {
-            $qb->andWhere('b.status = :status')
-                ->setParameter('status', Booking::STATUS_ACTIVE);
+            $qb->andWhere('b.status IN (:statuses)')
+                ->setParameter('statuses', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE]);
         } elseif ($this->filter === 'completed') {
             $qb->andWhere('b.status = :status')
                 ->setParameter('status', Booking::STATUS_PAST);
@@ -201,8 +201,8 @@ class AdminBookingsComponent extends AbstractController
                 $status = Booking::STATUS_PAST;
             }
 
-            if ($status === Booking::STATUS_ACTIVE) {
-                $result['active'] = $countValue;
+            if ($status === Booking::STATUS_ACTIVE || $status === Booking::STATUS_PENDING) {
+                $result['active'] += $countValue;
             } elseif ($status === Booking::STATUS_PAST) {
                 $result['completed'] = $countValue;
             } elseif ($status === Booking::STATUS_CANCELLED) {

@@ -69,6 +69,27 @@ readonly class RescheduleLessonBookingHandler
             return;
         }
 
+        $isAdmin = in_array('ROLE_ADMIN', $command->getRescheduledBy()->getRoles(), true);
+        if (! $isAdmin && ! $booking->canRescheduleLesson($oldLesson)) {
+            $this->logger->warning('Reschedule blocked by ticket policy or 24h rule', [
+                'bookingId' => $booking->getId(),
+                'oldLessonId' => $command->getOldLessonId(),
+                'policy' => $booking->getReschedulePolicyFor($oldLesson)
+                    ->value,
+                'rescheduledById' => $command->getRescheduledBy()
+                    ->getId(),
+            ]);
+            throw new \RuntimeException('Reschedule is not allowed for this booking');
+        }
+
+        if ($newLesson->getAvailableSpots() <= 0) {
+            $this->logger->warning('Reschedule target lesson has no available spots', [
+                'bookingId' => $booking->getId(),
+                'newLessonId' => $command->getNewLessonId(),
+            ]);
+            throw new \RuntimeException('Selected lesson has no available spots');
+        }
+
         // Check workflow transition first
         if (! $this->bookingStateMachine->can($booking, 'reschedule')) {
             $this->logger->error('Cannot apply reschedule transition to booking', [

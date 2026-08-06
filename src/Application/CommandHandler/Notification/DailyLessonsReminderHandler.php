@@ -6,7 +6,9 @@ namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Query\Lesson\TodayLessonsQuery;
+use App\Application\Service\InAppNotificationService;
 use App\Entity\Lesson;
+use App\Entity\NotificationSeverity;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Ds\Map;
@@ -15,6 +17,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[AsMessageHandler]
@@ -25,6 +29,9 @@ readonly class DailyLessonsReminderHandler
         private UserRepository $userRepository,
         private TodayLessonsQuery $todayLessonsQuery,
         private Environment $twig,
+        private InAppNotificationService $inAppNotifications,
+        private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
     ) {}
 
     public function __invoke(DailyLessonsReminder $command): void
@@ -47,6 +54,16 @@ readonly class DailyLessonsReminderHandler
         foreach ($admins as $admin) {
             $this->notifier->send($notification, new Recipient($admin->getEmail()));
         }
+
+        $this->inAppNotifications->notifyAdmins(
+            $this->translator->trans('notifications.in_app.daily_reminder.admin.title', [], 'messages'),
+            $this->translator->trans('notifications.in_app.daily_reminder.admin.body', [
+                'count' => count($lessons),
+                'date' => $date->format('d.m.Y'),
+            ], 'messages'),
+            $this->urlGenerator->generate('app_admin_schedule'),
+            NotificationSeverity::Info,
+        );
 
         /** @var Map<User, Set<Lesson>> $usersWithLessons */
         $usersWithLessons = new Map();
@@ -72,6 +89,21 @@ readonly class DailyLessonsReminderHandler
                 ->subject($userSubject)
                 ->content($userContent);
             $this->notifier->send($userNotification, new Recipient($user->getEmail()));
+
+            $titles = [];
+            foreach ($userLessons as $lesson) {
+                $titles[] = $lesson->getMetadata()->title;
+            }
+            $this->inAppNotifications->notify(
+                $user,
+                $this->translator->trans('notifications.in_app.daily_reminder.user.title', [], 'messages'),
+                $this->translator->trans('notifications.in_app.daily_reminder.user.body', [
+                    'lessons' => implode(', ', $titles),
+                    'date' => $date->format('d.m.Y'),
+                ], 'messages'),
+                $this->urlGenerator->generate('dashboard'),
+                NotificationSeverity::Info,
+            );
         }
     }
 

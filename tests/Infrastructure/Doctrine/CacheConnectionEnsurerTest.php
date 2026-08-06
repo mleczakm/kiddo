@@ -4,48 +4,54 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Doctrine;
 
-use App\Infrastructure\Doctrine\SchedulerConnectionResetter;
+use App\Infrastructure\Doctrine\CacheConnectionEnsurer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Result;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Scheduler\Event\PreRunEvent;
 
 #[Group('unit')]
-class SchedulerConnectionResetterTest extends TestCase
+final class CacheConnectionEnsurerTest extends TestCase
 {
-    public function testOnPreRunEnsuresConnectionIsConnected(): void
+    public function testEnsureConnectionPingsDatabase(): void
     {
         $connection = $this->createMock(Connection::class);
+        $connection->expects($this->once())
+            ->method('isTransactionActive')
+            ->willReturn(false);
         $connection->expects($this->once())
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturn($this->createMock(Result::class));
 
-        $resetter = new SchedulerConnectionResetter($connection);
-        $event = $this->createMock(PreRunEvent::class);
-
-        $resetter->onPreRun($event);
+        new CacheConnectionEnsurer($connection)
+            ->ensureConnection();
     }
 
-    public function testOnPreRunPingsExistingConnection(): void
+    public function testEnsureConnectionDiscardsActiveTransactionBeforePing(): void
     {
         $connection = $this->createMock(Connection::class);
+        $connection->expects($this->once())
+            ->method('isTransactionActive')
+            ->willReturn(true);
+        $connection->expects($this->once())
+            ->method('rollBack');
         $connection->expects($this->once())
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturn($this->createMock(Result::class));
 
-        $resetter = new SchedulerConnectionResetter($connection);
-        $event = $this->createMock(PreRunEvent::class);
-
-        $resetter->onPreRun($event);
+        new CacheConnectionEnsurer($connection)
+            ->ensureConnection();
     }
 
-    public function testOnPreRunRetriesOnConnectionFailure(): void
+    public function testEnsureConnectionRetriesOnConnectionFailure(): void
     {
         $connection = $this->createMock(Connection::class);
+        $connection->expects($this->once())
+            ->method('isTransactionActive')
+            ->willReturn(false);
         $connection->expects($this->exactly(2))
             ->method('isConnected')
             ->willReturn(true, true);
@@ -64,18 +70,19 @@ class SchedulerConnectionResetterTest extends TestCase
         $connection->expects($this->exactly(2))
             ->method('close');
 
-        $resetter = new SchedulerConnectionResetter($connection);
-        $event = $this->createMock(PreRunEvent::class);
-
-        $resetter->onPreRun($event);
+        new CacheConnectionEnsurer($connection)
+            ->ensureConnection();
     }
 
-    public function testOnPreRunThrowsExceptionAfterMaxRetries(): void
+    public function testEnsureConnectionThrowsExceptionAfterMaxRetries(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('no connection to the server');
 
         $connection = $this->createMock(Connection::class);
+        $connection->expects($this->once())
+            ->method('isTransactionActive')
+            ->willReturn(false);
         $connection->expects($this->exactly(2))
             ->method('isConnected')
             ->willReturn(true, true);
@@ -88,9 +95,7 @@ class SchedulerConnectionResetterTest extends TestCase
         $connection->expects($this->exactly(2))
             ->method('close');
 
-        $resetter = new SchedulerConnectionResetter($connection);
-        $event = $this->createMock(PreRunEvent::class);
-
-        $resetter->onPreRun($event);
+        new CacheConnectionEnsurer($connection)
+            ->ensureConnection();
     }
 }

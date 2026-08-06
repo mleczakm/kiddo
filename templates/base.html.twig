@@ -44,5 +44,8 @@
         </nav>
     </div>
 </div>
+{% if app.request.attributes.get('_route') != 'homepage' %}
+    {{ include('partials/chat_assistant.html.twig', { variant: 'floating' }) }}
+{% endif %}
 </body>
 </html>

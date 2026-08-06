@@ -22,14 +22,15 @@ framework:
                 middleware:
                     - messenger.middleware.router_context
                     - App\Infrastructure\Messenger\PreventAsyncDispatchInTaskWorkerMiddleware
-                    - messenger.middleware.doctrine_close_connection
                     - messenger.middleware.doctrine_transaction
+                    - messenger.middleware.doctrine_close_connection
                     - messenger.middleware.validation
 
         routing:
             'Symfony\Component\Notifier\Message\MessageInterface': sync
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': sync
             # Keep handler-dispatched commands on sync; nested async is also blocked by PreventAsyncDispatchInTaskWorkerMiddleware
+            'App\Application\Command\AddBooking': sync
             'App\Application\Command\SaveTransfer': sync
             'App\Application\Command\MatchPaymentForTransfer': sync
             'App\Application\Command\SendLoginNotification': sync

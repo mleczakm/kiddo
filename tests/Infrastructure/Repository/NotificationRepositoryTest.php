@@ -68,4 +68,26 @@ final class NotificationRepositoryTest extends KernelTestCase
         self::assertSame('First', $recent[1]->getTitle());
         self::assertSame('Old', $recent[2]->getTitle());
     }
+
+    public function testHardDeleteOlderThanRemovesOnlyAgedRows(): void
+    {
+        $user = new User('purge@example.com', 'Purge User');
+        $this->persist($user);
+
+        $createdAt = new \ReflectionProperty(Notification::class, 'createdAt');
+        $old = new Notification($user, 'Old', '<strong>html</strong>', '/dashboard', NotificationSeverity::Info);
+        $createdAt->setValue($old, new \DateTimeImmutable('2024-01-01 00:00:00'));
+        $this->persist($old);
+
+        $fresh = new Notification($user, 'Fresh', null, null, NotificationSeverity::Success);
+        $createdAt->setValue($fresh, new \DateTimeImmutable('2025-06-01 00:00:00'));
+        $this->persist($fresh);
+
+        $deleted = $this->repo->hardDeleteOlderThan(new \DateTimeImmutable('2025-01-01 00:00:00'));
+        self::assertSame(1, $deleted);
+
+        $remaining = $this->repo->findRecentForUser($user, 10);
+        self::assertCount(1, $remaining);
+        self::assertSame('Fresh', $remaining[0]->getTitle());
+    }
 }

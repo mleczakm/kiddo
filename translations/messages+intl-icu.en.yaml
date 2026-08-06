@@ -10,6 +10,7 @@ form:
     already_have_account: Already have an account?
     login: Log in
     name: Name
+    newsletter: "I want to receive information about new workshops and offers (Newsletter)"
     success:
       title: Registration successful!
       message: Thank you for registering. We've sent a login link to your email address.
@@ -21,7 +22,24 @@ form:
 booking:
   cancel:
   cancel_booking: Cancel Booking
+  child:
+    label: Child
+    none: No child
+    no_children: No children added
+    add_now: Add now
+    optional: Child (optional)
+    select: '-- Select child --'
+    empty_title: Add a child to your profile
+    empty_hint: You can assign a child name to the booking — it helps with attendance lists.
+  phone:
+    label: Phone number
+    placeholder: e.g. 500 600 700
+    required: Enter a phone number to complete the order.
+    account_hint: The number will be saved to your account.
+    invalid: Enter a valid phone number.
   cancel_confirmation: Are you sure you want to cancel this booking?
+  late_cancel_warning: 'The lesson starts in less than 24 hours. You can still cancel, but there will be no refund.'
+  late_cancel_confirm: 'I understand there will be no refund'
   reason_for_cancellation: Reason for Cancellation
   reason_reschedule: Reschedule to another lesson
   reason_refund: Request a refund
@@ -65,6 +83,100 @@ booking:
   payment_failed: Payment Failed
   payment_pending: Payment Pending
   payment_verification: Verifying your payment...
+  existing_bookings: 'Existing bookings'
+  no_child: 'No child assigned'
+  resume_payment: 'Pay'
+  pay: 'Pay'
+
+profile:
+  children:
+    years: 'years'
+  phone: Phone number
+  phone.empty: Not provided
+  phone.placeholder: e.g. 500 600 700
+  phone.required: Phone number is required.
+  phone.invalid: Enter a valid phone number.
+  newsletter: "I want to receive information about new workshops and offers (Newsletter)"
+  update_success: Profile updated successfully.
+
+newsletter:
+  subscribed: "Subscribed"
+  not_subscribed: "Not subscribed"
+  confirmed:
+    title: "Subscription confirmed!"
+    message: "Thank you for subscribing to our newsletter. You will receive information about new workshops and offers."
+    back_home: "Back to homepage"
+
+payment:
+  paid_success: "Payment received!"
+  paid_message: "Thank you for your payment. Your booking has been confirmed."
+  awaiting: "Waiting for payment confirmation..."
+
+notifications:
+  title: Notifications
+  loading: Loading…
+  empty: No new notifications.
+  dismiss: Dismiss
+  my_bookings: My bookings
+  profile_settings: Profile settings
+  admin_panel: Admin panel
+  logout: Log out
+  impersonate: Impersonate
+  impersonate_placeholder: User email
+  stop_impersonation: Return to my account
+  in_app:
+    reservation:
+      title: Booking created
+      body: 'Your booking is awaiting payment. Code: <strong>{code}</strong> ({amount} PLN).'
+    payment:
+      user:
+        title: Payment confirmed
+        body: 'We received your payment of <strong>{amount} PLN</strong> for <em>{lesson}</em>.'
+      admin:
+        title: New payment
+        body: 'User <strong>{email}</strong> paid <strong>{amount} PLN</strong> for <em>{lesson}</em>.'
+    cancellation:
+      title: Booking cancelled
+      body: 'Booking for <strong>{lesson}</strong> ({date}) was cancelled.'
+    cancellation_admin:
+      title: Booking cancelled (no payment)
+      body: 'Booking for <strong>{lesson}</strong> ({date}) by <strong>{email}</strong> was automatically cancelled due to no payment.'
+    new_user:
+      user:
+        title: Welcome!
+        body: 'Your account is active. You can start booking workshops.'
+      admin:
+        title: New user
+        body: '<strong>{name}</strong> (<em>{email}</em>) just registered.'
+    reschedule:
+      admin:
+        title: Booking rescheduled
+        body: 'User <strong>{email}</strong> moved a booking from <em>{from}</em> to <em>{to}</em>.'
+    transfer_not_matched:
+      title: Unmatched transfer
+      body: 'Transfer <strong>{amount}</strong> from <em>{sender}</em> ({title}) was not matched.'
+    daily_reminder:
+      user:
+        title: Workshop reminder
+        body: 'Today ({date}) you have: <strong>{lessons}</strong>.'
+      admin:
+        title: Daily schedule
+        body: 'There are <strong>{count}</strong> lessons scheduled for today ({date}).'
+
+view:
+  grid: Grid
+  calendar: Calendar
+  week_of: Week of
+  today: Today
+
+day:
+  Monday: Monday
+  Tuesday: Tuesday
+  Wednesday: Wednesday
+  Thursday: Thursday
+  Friday: Friday
+  Saturday: Saturday
+  Sunday: Sunday
 
 dashboard:
   status:
@@ -125,6 +237,32 @@ homepage:
     subtitle: 'Creative, fun, and educational workshops for children to explore their senses and develop their skills through play and imagination.'
     explore_workshops: 'Explore Workshops'
     register_now: 'Register Now'
+  chat_hero:
+    image_alt: 'Sensoryczna Workshops chat guide'
+    title: 'Ask anything, book in a message'
+    subtitle: "Tell us your child's age and free days — the guide finds the right sensory workshop, creates your account and books the place, right here in the chat."
+    guide_label: 'Workshop guide'
+    admin_label: 'Admin assistant'
+    new_conversation: 'New conversation'
+    welcome: 'Hi! I know every workshop, schedule and price. What would you like to find for your child?'
+    placeholder: "e.g. My son is 5 and free on Saturdays — what do you recommend?"
+    placeholder_short: 'Write a message…'
+    no_account: 'No account needed to start'
+    signed_in: 'Signed in as {name}'
+    prefer_browsing: 'Prefer browsing?'
+    see_workshops: 'See all workshops'
+    create_account: 'Create an account'
+    send: 'Send'
+    close: 'Close chat'
+    chat_button: 'Chat'
+    login_hint: 'Sign in to book, manage bookings, or view your account. Guests can still browse workshops.'
+    suggestions:
+      age: 'Which workshop suits a 4-year-old?'
+      saturday: 'What is on this Saturday?'
+      book: 'Book Art & Creativity for my daughter'
+      carnet: 'How does the monthly carnet work?'
+    status:
+      idle: 'Ready'
   popular_workshops:
     title: 'Popular Workshops'
     subtitle: 'Join our most beloved creative sessions where children can explore, learn, and have fun.'
@@ -150,25 +288,27 @@ homepage:
       description: 'Bring your child to experience creative learning and sensory play!'
   testimonials:
     title: 'What Parents Say'
-    subtitle: 'Hear from families who have experienced our workshops'
+    subtitle: 'Feedback from families who have joined our workshops'
     testimonial1:
-      quote: "\"My daughter absolutely loves the sensory arts workshop. It's been wonderful watching her creativity bloom each week!\""
+      quote: '"My daughter loves the sensory art workshops. It is wonderful to watch her creativity blossom every week!"'
       author: 'Anna K.'
-      role: 'Parent of a 5-year-old'
+      role: 'Mom of a 5-year-old'
     testimonial2:
-      quote: '\"The monthly carnet is such great value. My son looks forward to his Saturday morning workshop every week.\"'
-      author: 'Michael P.'
-      role: 'Parent of a 7-year-old'
+      quote: '"The monthly carnet is a great offer. My son cannot wait for his Saturday morning workshops."'
+      author: 'Michał K.'
+      role: 'Dad of a 7-year-old'
     testimonial3:
-      quote: '\"The booking system is so easy to use, and I love that I can manage all our classes in one place.\"'
-      author: 'Sophie L.'
-      role: 'Parent of twins'
+      quote: '"The booking system is very easy to use and I love that I can manage all my classes in one place."'
+      author: 'Zofia L.'
+      role: 'Mom of twins'
   newsletter:
-    title: 'Stay Updated'
-    subtitle: 'Subscribe to our newsletter to get updates about new workshops, special offers, and creative activities for kids.'
-    email_placeholder: 'Your email address'
-    subscribe: 'Subscribe'
-    subscription_disabled: 'Subscription coming soon!'
+    title: "Stay up to date"
+    subtitle: "Subscribe to our newsletter to receive information about new workshops and offers."
+    email_placeholder: "Your email address"
+    subscribe: "Subscribe"
+    sending: "Sending..."
+    confirmation_sent: "Thank you! Check your inbox to confirm your subscription."
+    error: "An error occurred. Please try again later."
 
 admin_dashboard:
   bookings:
@@ -240,3 +380,11 @@ admin_dashboard:
       select_date_and_time: 'Please select both date and time.'
       invalid_datetime_format: 'Invalid date or time format.'
       invalid_action: 'Invalid action.'
+
+admin_users:
+  table:
+    children: 'Children'
+  children:
+    title: 'Children'
+    empty: 'No children registered'
+    no_birthday: 'No birthday set'

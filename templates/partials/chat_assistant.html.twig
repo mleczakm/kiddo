@@ -1,0 +1,247 @@
+{% if isFeatureEnabled('chat_assistant') %}
+    {% set isAdminChat = is_granted('ROLE_ADMIN') and (admin_chat|default(app.request.pathInfo starts with '/admin')) %}
+    {% set variant = variant|default('floating') %}
+    {% set isHero = variant == 'hero' %}
+
+    {% if isHero %}
+        <section
+            data-controller="chat-assistant"
+            data-chat-assistant-hero-value="true"
+            data-chat-assistant-storage-key-value="kiddo_chat_history"
+            class="relative overflow-hidden bg-gradient-to-b from-workshop-blue/10 via-beige to-beige"
+        >
+            <div class="absolute top-10 left-6 h-20 w-20 rounded-full bg-workshop-pink/20 animate-bounce-slight"></div>
+            <div class="absolute bottom-16 right-10 h-14 w-14 rounded-full bg-workshop-yellow/25 animate-bounce-slight"></div>
+            <div class="container mx-auto px-4">
+                <div class="mx-auto max-w-3xl text-center mb-6">
+                    <img
+                        src="{{ asset('images/chat-guide.png') }}"
+                        alt="{{ 'homepage.chat_hero.image_alt'|trans }}"
+                        width="80"
+                        height="80"
+                        class="mx-auto mb-4 h-20 w-20"
+                    >
+                    <h1 class="font-display text-4xl md:text-5xl font-bold text-workshop-brown mb-3">
+                        {{ 'homepage.chat_hero.title'|trans }}
+                    </h1>
+                    <p class="text-lg text-muted-foreground">
+                        {% if app.user %}
+                            {{ 'homepage.chat_hero.subtitle_user'|trans }}
+                        {% else %}
+                            {{ 'homepage.chat_hero.subtitle_guest'|trans }}
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="mx-auto max-w-3xl rounded-3xl border border-muted bg-white shadow-lg overflow-hidden flex flex-col h-[min(70vh,32rem)] md:h-[26rem]">
+                    <div class="flex items-center justify-between border-b border-muted px-4 py-3 shrink-0">
+                        <div class="flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-workshop-green" data-chat-assistant-target="statusDot"></span>
+                            <span class="text-sm font-medium text-workshop-brown">{{ 'homepage.chat_hero.guide_label'|trans }}</span>
+                            <span class="text-xs text-muted-foreground" data-chat-assistant-target="status">{{ 'homepage.chat_hero.status.idle'|trans }}</span>
+                        </div>
+                        <button
+                            type="button"
+                            data-action="chat-assistant#clear"
+                            class="inline-flex items-center text-sm text-muted-foreground hover:text-workshop-brown transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1.5 h-3.5 w-3.5" aria-hidden="true">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                            {{ 'homepage.chat_hero.new_conversation'|trans }}
+                        </button>
+                    </div>
+
+                    <div
+                        data-chat-assistant-target="loginHint"
+                        class="hidden px-4 py-2 text-xs bg-amber-50 text-amber-900 border-b border-amber-100 shrink-0"
+                    >
+                        {{ 'homepage.chat_hero.login_hint'|trans }}
+                        <a href="{{ path('app_login') }}" class="underline font-medium">{{ 'page.login'|trans }}</a>
+                    </div>
+
+                    <div
+                        data-chat-assistant-target="messages"
+                        class="relative flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-white"
+                    >
+                        <div
+                            data-chat-assistant-target="emptyState"
+                            class="flex h-full flex-col items-center justify-center gap-4 py-8 text-center"
+                        >
+                            <p class="max-w-sm text-muted-foreground">
+                                {{ 'homepage.chat_hero.welcome'|trans }}
+                            </p>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                {% for suggestion in [
+                                    'homepage.chat_hero.suggestions.age',
+                                    'homepage.chat_hero.suggestions.saturday',
+                                    'homepage.chat_hero.suggestions.book',
+                                    'homepage.chat_hero.suggestions.carnet',
+                                ] %}
+                                    <button
+                                        type="button"
+                                        data-action="chat-assistant#suggest"
+                                        data-chat-assistant-suggestion-param="{{ suggestion|trans|e('html_attr') }}"
+                                        class="rounded-full border border-muted bg-beige px-3 py-1.5 text-sm text-workshop-brown transition-colors hover:bg-workshop-blue/15"
+                                    >
+                                        {{ suggestion|trans }}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-muted p-3 shrink-0 bg-white">
+                        <form
+                            data-chat-assistant-target="form"
+                            data-action="submit->chat-assistant#send"
+                            class="w-full"
+                        >
+                            <div class="transition-[color,box-shadow] group/input-group border-input dark:bg-input/30 shadow-xs relative flex w-full items-center rounded-md border outline-none transition-[color,box-shadow] has-[>textarea]:h-auto has-[>[data-align=inline-start]]:[&>input]:pl-2 has-[>[data-align=inline-end]]:[&>input]:pr-2 has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 overflow-hidden flex-col">
+                                <textarea
+                                        data-chat-assistant-target="input"
+                                        data-slot="input-group-control"
+                                        class="resize-none flex w-full border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1 resize-none rounded-none border-b-0 focus:border-b focus:border-muted bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent field-sizing-content max-h-48 min-h-16"
+                                        name="message"
+                                        placeholder="{{ 'homepage.chat_hero.placeholder'|trans }}"
+                                        autocomplete="off"
+                                ></textarea>
+                                <div class="text-muted-foreground flex h-auto cursor-text select-none items-center py-1.5 text-sm font-medium order-last w-full px-3 pb-3 gap-1 justify-between">
+                                    <span class="pl-1 text-xs text-muted-foreground">
+                                        {% if app.user %}
+                                            {{ 'homepage.chat_hero.signed_in'|trans({name: app.user.name ?? app.user.email}) }}
+                                        {% else %}
+                                            {{ 'homepage.chat_hero.no_account'|trans }}
+                                        {% endif %}
+                                    </span>
+                                    <button
+                                            type="submit"
+                                            class="justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 text-sm shadow-none size-8 p-0 has-[>svg]:p-0"
+                                            aria-label="{{ 'homepage.chat_hero.send'|trans }}"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round" class="size-4">
+                                            <polyline points="9 10 4 15 9 20"></polyline>
+                                            <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="mx-auto mt-5 flex max-w-3xl flex-wrap items-center justify-center gap-3 text-sm">
+                    <span class="text-muted-foreground">{{ 'homepage.chat_hero.prefer_browsing'|trans }}</span>
+                    <a href="{{ path('workshops') }}" class="font-medium text-workshop-red hover:underline">
+                        {{ 'homepage.chat_hero.see_workshops'|trans }}
+                    </a>
+                    {% if not app.user %}
+                        <span class="text-muted-foreground">·</span>
+                        <a href="{{ path('user_register') }}" class="font-medium text-workshop-red hover:underline">
+                            {{ 'homepage.chat_hero.create_account'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    {% else %}
+        <div
+            data-controller="chat-assistant"
+            data-chat-assistant-hero-value="false"
+            data-chat-assistant-storage-key-value="{{ isAdminChat ? 'kiddo_admin_chat_history' : 'kiddo_chat_history' }}"
+            class="fixed bottom-4 right-4 z-[90] flex flex-col items-end gap-2"
+        >
+            <div
+                data-chat-assistant-target="panel"
+                class="hidden w-[min(100vw-2rem,24rem)] h-[min(70vh,32rem)] flex flex-col rounded-3xl border border-muted bg-white shadow-lg overflow-hidden"
+            >
+                <div class="flex items-center justify-between border-b border-muted px-4 py-3 bg-white">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2 w-2 rounded-full bg-workshop-green" data-chat-assistant-target="statusDot"></span>
+                        <div>
+                            <p class="text-sm font-medium text-workshop-brown">
+                                {{ isAdminChat ? 'homepage.chat_hero.admin_label'|trans : 'homepage.chat_hero.guide_label'|trans }}
+                            </p>
+                            <p class="text-xs text-muted-foreground" data-chat-assistant-target="status">{{ 'homepage.chat_hero.status.idle'|trans }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" class="text-xs text-muted-foreground hover:text-workshop-brown underline" data-action="chat-assistant#clear">
+                            {{ 'homepage.chat_hero.new_conversation'|trans }}
+                        </button>
+                        <button type="button" class="text-lg leading-none text-workshop-brown" data-action="chat-assistant#toggle" aria-label="{{ 'homepage.chat_hero.close'|trans }}">×</button>
+                    </div>
+                </div>
+                <div
+                    data-chat-assistant-target="loginHint"
+                    class="hidden px-3 py-2 text-xs bg-amber-50 text-amber-900 border-b border-amber-100"
+                >
+                    {{ 'homepage.chat_hero.login_hint'|trans }}
+                    <a href="{{ path('app_login') }}" class="underline font-medium">{{ 'page.login'|trans }}</a>
+                </div>
+                <div
+                    data-chat-assistant-target="messages"
+                    class="relative flex-1 overflow-y-auto px-3 py-3 bg-beige/30"
+                >
+                    <div
+                        data-chat-assistant-target="emptyState"
+                        class="flex h-full flex-col items-center justify-center gap-3 py-6 text-center"
+                    >
+                        <p class="max-w-xs text-sm text-muted-foreground">
+                            {{ 'homepage.chat_hero.welcome'|trans }}
+                        </p>
+                    </div>
+                </div>
+
+                <form
+                    data-chat-assistant-target="form"
+                    data-action="submit->chat-assistant#send"
+                    class="w-full p-3 border-t border-muted bg-white"
+                >
+                    <div class="relative flex w-full items-center rounded-md border border-input outline-none transition-[color,box-shadow] has-[>textarea]:h-auto has-[[data-slot=input-group-control]:focus-visible]:ring-ring has-[[data-slot=input-group-control]:focus-visible]:ring-1 overflow-hidden">
+                        <textarea
+                                data-chat-assistant-target="input"
+                                data-slot="input-group-control"
+                                class="flex w-full border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1 resize-none rounded-none border-b-0 focus:border-b focus:border-muted bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent field-sizing-content max-h-48 min-h-16"
+                                name="message"
+                                placeholder="{{ 'homepage.chat_hero.placeholder_short'|trans }}"
+                                autocomplete="off"
+                        ></textarea>
+                        <div class="text-muted-foreground flex h-auto cursor-text select-none items-center py-1.5 text-sm font-medium order-last w-full px-3 pb-3 gap-1 justify-between">
+                            <span class="pl-1 text-xs text-muted-foreground">
+                                {% if app.user %}
+                                    {{ 'homepage.chat_hero.signed_in'|trans({name: app.user.name ?? app.user.email}) }}
+                                {% else %}
+                                    {{ 'homepage.chat_hero.no_account'|trans }}
+                                {% endif %}
+                            </span>
+                            <button
+                                    type="submit"
+                                    class="justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 text-sm shadow-none size-8 p-0 has-[>svg]:p-0"
+                                    aria-label="{{ 'homepage.chat_hero.send'|trans }}"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" class="size-4">
+                                    <polyline points="9 10 4 15 9 20"></polyline>
+                                    <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <button
+                type="button"
+                data-chat-assistant-target="toggle"
+                data-action="chat-assistant#toggle"
+                class="rounded-full bg-workshop-red text-white shadow-lg px-4 py-3 text-sm font-semibold hover:bg-workshop-red/90"
+            >
+                {{ 'homepage.chat_hero.chat_button'|trans }}
+            </button>
+        </div>
+    {% endif %}
+{% endif %}

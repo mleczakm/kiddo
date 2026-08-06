@@ -14,7 +14,9 @@ use App\Repository\UserRepository;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Uid\Ulid;
 
 final readonly class AddBookingHandler
@@ -58,13 +60,20 @@ final readonly class AddBookingHandler
 
         $this->em->persist($booking);
 
+        // After commit: mailer failures must not roll back the booking/payment code.
         $this->bus->dispatch(
-            new SendReservationNotification(
+            new Envelope(new SendReservationNotification(
                 $user->getEmail(),
                 $user->getName(),
                 $command->paymentCode,
                 $payment?->getAmount() ?? Money::zero(Currency::of('PLN')),
-            )
+                lessonTitle: $lesson->getMetadata()
+                    ->title,
+                lessonSchedule: $lesson->getMetadata()
+                    ->schedule,
+                ticketType: $ticketOption->type->value,
+                childName: $booking->getChild()?->getName(),
+            ))->with(new DispatchAfterCurrentBusStamp())
         );
     }
 }

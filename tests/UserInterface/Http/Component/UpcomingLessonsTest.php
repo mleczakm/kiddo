@@ -4,33 +4,45 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\LessonMetadata;
+use App\Entity\AgeRange;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use App\Entity\Lesson;
+use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use App\UserInterface\Http\Component\UpcomingLessons;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\Clock\NativeClock;
 
 #[Group('unit')]
 class UpcomingLessonsTest extends TestCase
 {
     private LessonRepository&MockObject $lessonRepository;
 
+    private BookingRepository&MockObject $bookingRepository;
+
+    private Security&MockObject $security;
+
     private UpcomingLessons $component;
 
     protected function setUp(): void
     {
         $this->lessonRepository = $this->createMock(LessonRepository::class);
-        $this->component = new UpcomingLessons($this->lessonRepository);
+        $this->bookingRepository = $this->createMock(BookingRepository::class);
+        $this->security = $this->createMock(Security::class);
+        $this->component = new UpcomingLessons($this->lessonRepository, $this->bookingRepository, $this->security);
     }
 
     protected function tearDown(): void
     {
-        // Don't reset clock to avoid errors - let it use system clock
+        Clock::set(new NativeClock());
+        parent::tearDown();
     }
 
     public function testDefaultWeekIsCurrentDate(): void
@@ -38,9 +50,43 @@ class UpcomingLessonsTest extends TestCase
         $mockClock = new MockClock('2024-02-20 14:30:00');
         Clock::set($mockClock);
 
-        $component = new UpcomingLessons($this->lessonRepository);
+        $component = new UpcomingLessons($this->lessonRepository, $this->bookingRepository, $this->security);
 
         $this->assertEquals('2024-02-20', $component->week);
+    }
+
+    public function testDefaultViewIsGrid(): void
+    {
+        $this->assertEquals('grid', $this->component->view);
+    }
+
+    public function testCanSetViewToCalendar(): void
+    {
+        $this->component->view = 'calendar';
+        $this->assertEquals('calendar', $this->component->view);
+    }
+
+    public function testGetUserBookingsByLessonReturnsEmptyWhenGuest(): void
+    {
+        $this->security->method('getUser')
+            ->willReturn(null);
+        $this->bookingRepository->expects($this->never())
+            ->method('findForUserAndLessons');
+
+        $this->assertSame([], $this->component->getUserBookingsByLesson());
+    }
+
+    public function testGetWorkshopsByDayReturnsSevenDays(): void
+    {
+        $this->component->week = '2024-02-19';
+        $this->lessonRepository->method('findByFilters')
+            ->willReturn([]);
+
+        $days = $this->component->getWorkshopsByDay();
+
+        $this->assertCount(7, $days);
+        $this->assertEquals('2024-02-19', $days[0]['date']);
+        $this->assertEquals('2024-02-25', $days[6]['date']);
     }
 
     public function testDefaultShowSearchIsTrue(): void
@@ -131,6 +177,34 @@ class UpcomingLessonsTest extends TestCase
 
         $this->assertSame($expectedLessons, $result);
         $this->assertCount(3, $result);
+    }
+
+    public function testShouldOpenModalMatchesSlugDateAndHour(): void
+    {
+        $metadata = new LessonMetadata(
+            title: 'Bałaganki',
+            lead: 'Lead',
+            visualTheme: '#fff',
+            description: 'Desc',
+            capacity: 10,
+            schedule: new \DateTimeImmutable('2024-02-21 10:30:00'),
+            duration: 60,
+            ageRange: new AgeRange(0, 3),
+            category: 'test',
+            slug: 'balaganki',
+        );
+        $lesson = $this->createMock(Lesson::class);
+        $lesson->method('getMetadata')
+            ->willReturn($metadata);
+
+        $this->component->openSlug = 'balaganki';
+        $this->component->openDate = '2024-02-21';
+        $this->component->openHour = '10:30';
+
+        $this->assertTrue($this->component->shouldOpenModal($lesson));
+
+        $this->component->openHour = '11:00';
+        $this->assertFalse($this->component->shouldOpenModal($lesson));
     }
 
     public function testGetWorkshopsWithLimit(): void
@@ -357,5 +431,43 @@ class UpcomingLessonsTest extends TestCase
         $limitProperty = $reflectionClass->getProperty('limit');
         $attributes = $limitProperty->getAttributes();
         $this->assertNotEmpty($attributes);
+    }
+
+    public function testSetViewResetsModalProperties(): void
+    {
+        // Set up modal properties
+        $this->component->openSlug = 'balaganki';
+        $this->component->openDate = '2024-02-21';
+        $this->component->openHour = '10:30';
+        $this->component->view = 'grid';
+
+        // Call setView
+        $this->component->setView('calendar');
+
+        // Verify view changed
+        $this->assertEquals('calendar', $this->component->view);
+
+        // Verify modal properties reset
+        $this->assertNull($this->component->openSlug);
+        $this->assertNull($this->component->openDate);
+        $this->assertNull($this->component->openHour);
+    }
+
+    public function testSetViewDoesNotAffectOtherProperties(): void
+    {
+        $this->component->query = 'test query';
+        $this->component->age = 5;
+        $this->component->week = '2024-02-20';
+        $this->component->limit = 3;
+        $this->component->showSearch = false;
+
+        $this->component->setView('calendar');
+
+        // These should remain unchanged
+        $this->assertEquals('test query', $this->component->query);
+        $this->assertEquals(5, $this->component->age);
+        $this->assertEquals('2024-02-20', $this->component->week);
+        $this->assertEquals(3, $this->component->limit);
+        $this->assertFalse($this->component->showSearch);
     }
 }

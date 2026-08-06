@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_USER_TELEGRAM_CHAT_ID', fields: ['telegramChatId'])]
 #[UniqueEntity('email', message: 'user.mail_uniqueness')]
 class User implements UserInterface
 {
@@ -42,6 +43,9 @@ class User implements UserInterface
     #[ORM\Column(type: 'phone_number', nullable: true)]
     private ?PhoneNumber $phone = null;
 
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $telegramChatId = null;
+
     #[ORM\Column(length: 255)]
     private string $name;
 
@@ -53,6 +57,12 @@ class User implements UserInterface
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $confirmedAt = null;
+
+    #[ORM\Column]
+    private bool $newsletterSubscribed = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $newsletterConsentDate = null;
 
     /**
      * @var Collection<int, Booking>
@@ -163,6 +173,18 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getTelegramChatId(): ?string
+    {
+        return $this->telegramChatId;
+    }
+
+    public function setTelegramChatId(?string $telegramChatId): static
+    {
+        $this->telegramChatId = $telegramChatId;
+
+        return $this;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -200,6 +222,30 @@ class User implements UserInterface
     public function setConfirmedAt(?\DateTimeImmutable $confirmedAt): void
     {
         $this->confirmedAt = $confirmedAt;
+    }
+
+    public function isNewsletterSubscribed(): bool
+    {
+        return $this->newsletterSubscribed;
+    }
+
+    public function setNewsletterSubscribed(bool $newsletterSubscribed): static
+    {
+        $this->newsletterSubscribed = $newsletterSubscribed;
+
+        return $this;
+    }
+
+    public function getNewsletterConsentDate(): ?\DateTimeImmutable
+    {
+        return $this->newsletterConsentDate;
+    }
+
+    public function setNewsletterConsentDate(?\DateTimeImmutable $newsletterConsentDate): static
+    {
+        $this->newsletterConsentDate = $newsletterConsentDate;
+
+        return $this;
     }
 
     /**

@@ -4,14 +4,13 @@
         <summary id="notif-btn" class="list-none cursor-pointer">
             <div class="relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground">
                 <span class="font-medium">{{ initials ?: 'ME' }}</span>
-                {# Unread badge from live getter #}
                 {% set c = this.getUnreadCount() %}
                 <span id="notif-badge"
-                      class="absolute -top-1 -right-1 {{ c>0 ? '' : 'hidden' }} min-w-5 h-5 px-1 rounded-full bg-red-600 text-white text-xs flex items-center justify-center">{{ c>9 ? '9+' : (c>0 ? c : '') }}</span>
+                      class="absolute -top-1 -right-1 {{ c > 0 ? '' : 'hidden' }} min-w-5 h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center font-semibold">{{ c > 9 ? '9+' : (c > 0 ? c : '') }}</span>
             </div>
         </summary>
 
-        <div id="notif-tray" class="absolute right-0 mt-2 w-80 bg-white border rounded-md shadow-lg z-50">
+        <div id="notif-tray" class="absolute right-0 mt-2 w-80 bg-popover border rounded-md shadow-md z-50 overflow-hidden">
             <div class="px-3 py-2 text-sm font-medium text-muted-foreground border-b flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -27,61 +26,74 @@
                     <div class="text-sm text-muted-foreground p-3">{{ 'notifications.empty'|trans }}</div>
                 {% else %}
                     {% for n in items %}
-                        {% set sev = n.severity.value ?? 'info' %}
-                        {% set color = sev == 'success' ? 'text-green-600' : (sev == 'warning' ? 'text-yellow-600' : (sev == 'error' ? 'text-red-600' : 'text-blue-600')) %}
-                        <div class="p-2 rounded-md transition-colors hover:bg-muted/50 flex items-start gap-2"
+                        {% set sev = n.severity.value %}
+                        {% set unread = n.unread %}
+                        {% set color = sev == 'success' ? 'text-green-500' : (sev == 'warning' ? 'text-yellow-500' : (sev == 'error' ? 'text-red-500' : 'text-blue-500')) %}
+                        <div class="p-2 rounded-md transition-colors flex items-start gap-2 {{ unread ? 'bg-accent/20 hover:bg-accent/30' : 'hover:bg-accent/50' }}"
                              data-id="{{ n.id }}" data-severity="{{ sev }}">
-                            <div class="mt-0.5 {{ color }}">
-                                {% if sev == 'success' %}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
-                                        <path d="M21.801 10A10 10 0 1 1 17 3.335"/>
-                                        <path d="m9 11 3 3L22 4"/>
-                                    </svg>
-                                {% elseif sev == 'warning' %}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
-                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                                        <line x1="12" y1="9" x2="12" y2="13"/>
-                                        <line x1="12" y1="17" x2="12.01" y2="17"/>
-                                    </svg>
-                                {% elseif sev == 'error' %}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
-                                        <polygon
-                                                points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
-                                        <line x1="15" y1="9" x2="9" y2="15"/>
-                                        <line x1="9" y1="9" x2="15" y2="15"/>
-                                    </svg>
-                                {% else %}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <line x1="12" y1="16" x2="12" y2="12"/>
-                                        <line x1="12" y1="8" x2="12.01" y2="8"/>
-                                    </svg>
-                                {% endif %}
-                            </div>
-                            <div class="flex-1">
-                                {% if n.url %}
-                                    <a href="{{ n.url }}" class="block text-sm font-medium text-workshop-brown"
-                                       data-action="click->live#action" data-live-action-param="markRead"
-                                       data-live-action-param-id="{{ n.id }}">{{ n.title }}</a>
-                                {% else %}
-                                    <div class="block text-sm font-medium text-workshop-brown">{{ n.title }}</div>
-                                {% endif %}
-                                {% if n.body %}
-                                    <div class="text-sm text-muted-foreground">{{ n.body }}</div>
-                                {% endif %}
-                                <div class="text-xs text-muted-foreground mt-1">{{ n.createdAt|format_datetime(pattern: 'dd MMM, HH:mm') }}</div>
-                            </div>
-                            <button class="text-muted-foreground hover:text-red-600"
-                                    title="{{ 'notifications.dismiss'|trans }}" data-action="live#action"
-                                    data-live-action-param="delete" data-live-action-param-id="{{ n.id }}">×
+                            <button type="button"
+                                    class="flex flex-1 items-start gap-2 text-left min-w-0 cursor-pointer"
+                                    data-action="live#action"
+                                    data-live-action-param="open"
+                                    data-live-id-param="{{ n.id }}">
+                                <div class="mt-0.5 shrink-0 {{ color }}">
+                                    {% if sev == 'success' %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M21.801 10A10 10 0 1 1 17 3.335"/>
+                                            <path d="m9 11 3 3L22 4"/>
+                                        </svg>
+                                    {% elseif sev == 'warning' %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                            <line x1="12" y1="9" x2="12" y2="13"/>
+                                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                        </svg>
+                                    {% elseif sev == 'error' %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
+                                            <line x1="15" y1="9" x2="9" y2="15"/>
+                                            <line x1="9" y1="9" x2="15" y2="15"/>
+                                        </svg>
+                                    {% else %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <line x1="12" y1="16" x2="12" y2="12"/>
+                                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                        </svg>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-1">
+                                        <p class="text-sm font-medium truncate">{{ n.title }}</p>
+                                        {% if unread %}
+                                            <span class="w-2 h-2 bg-primary rounded-full shrink-0" aria-hidden="true"></span>
+                                        {% endif %}
+                                    </div>
+                                    {% if n.body %}
+                                        <div class="text-xs text-muted-foreground mt-1 line-clamp-2">{{ n.body|raw }}</div>
+                                    {% endif %}
+                                    <p class="text-xs text-muted-foreground mt-1">{{ n.createdAt|format_datetime(pattern: 'dd MMM, HH:mm') }}</p>
+                                </div>
+                            </button>
+                            <button type="button"
+                                    class="inline-flex items-center justify-center h-4 w-4 p-0 rounded-md text-muted-foreground hover:bg-destructive/20 hover:text-destructive shrink-0"
+                                    title="{{ 'notifications.dismiss'|trans }}"
+                                    data-action="live#action"
+                                    data-live-action-param="delete"
+                                    data-live-id-param="{{ n.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 6 6 18"/>
+                                    <path d="m6 6 12 12"/>
+                                </svg>
                             </button>
                         </div>
                     {% endfor %}
@@ -91,13 +103,13 @@
             <div class="border-t px-3 py-2 flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">{{ initials ?: 'ME' }}</div>
                 <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium text-workshop-brown truncate">{{ app.user.name ?? app.user.email }}</div>
+                    <div class="text-sm font-medium truncate">{{ app.user.name ?? app.user.email }}</div>
                     <div class="text-xs text-muted-foreground truncate">{{ app.user.email }}</div>
                 </div>
             </div>
 
             <div class="border-t p-1 text-sm">
-                <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown"
+                <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50"
                    href="{{ path('dashboard') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -108,7 +120,7 @@
                     </svg>
                     {{ 'notifications.my_bookings'|trans }}
                 </a>
-                <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown"
+                <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50"
                    href="{{ path('profile') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -118,7 +130,7 @@
                     {{ 'notifications.profile_settings'|trans }}
                 </a>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown"
+                    <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50"
                        href="{{ path('app_admin_dashboard') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -142,7 +154,7 @@
                 {% elseif is_granted('ROLE_ADMIN') %}
                     <details class="mt-1">
                         <summary
-                                class="list-none cursor-pointer w-full flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50 text-workshop-brown">
+                                class="list-none cursor-pointer w-full flex items-center gap-2 px-2 py-2 rounded hover:bg-muted/50">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 relative top-px"
                                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                  stroke-linecap="round" stroke-linejoin="round">
@@ -152,7 +164,7 @@
                             </svg>
                             {{ 'notifications.impersonate'|trans }}
                         </summary>
-                        <div class="mt-2">
+                        <div class="mt-2 px-2">
                             <input id="impersonate-input" type="text" class="w-full rounded border px-2 py-1 text-sm"
                                    placeholder="{{ 'notifications.impersonate_placeholder'|trans }}" autocomplete="off"
                                    data-model="query" data-action="input->live#action" data-live-action-param="suggest">
@@ -163,7 +175,7 @@
                                         <a href="{{ path('dashboard', {'_switch_user': s.email}) }}"
                                            class="block w-full text-left px-3 py-2 hover:bg-muted/50"
                                            data-turbo="false">
-                                            <div class="font-medium text-workshop-brown">{{ s.name ?? s.email }}</div>
+                                            <div class="font-medium">{{ s.name ?? s.email }}</div>
                                             <div class="text-xs text-muted-foreground">{{ s.email }}</div>
                                         </a>
                                     {% endfor %}

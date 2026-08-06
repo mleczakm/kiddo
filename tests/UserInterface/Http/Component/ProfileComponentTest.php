@@ -33,6 +33,21 @@ class ProfileComponentTest extends WebTestCase
         return $user;
     }
 
+    private function createSubscribedUser(): User
+    {
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()
+            ->withRoles('ROLE_USER')
+            ->withNewsletterSubscribed(true)
+            ->assemble();
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
+    }
+
     public function testCanRender(): void
     {
         $client = static::createClient();
@@ -75,10 +90,11 @@ class ProfileComponentTest extends WebTestCase
             (string) $testComponent->render()
         );
 
-        // Set new values
+        // Set new values (phone is required on profile save)
         $testComponent
             ->set('name', 'New Name')
-            ->set('email', 'new.email@example.com');
+            ->set('email', 'new.email@example.com')
+            ->set('phone', '500 600 700');
 
         // Save changes
         $testComponent->call('save');
@@ -93,10 +109,91 @@ class ProfileComponentTest extends WebTestCase
 
         $this->assertSame('New Name', $updatedUser->getName());
         $this->assertSame('new.email@example.com', $updatedUser->getEmail());
+        $this->assertNotNull($updatedUser->getPhone());
 
         // Check if the view is updated
         $rendered = (string) $testComponent->render();
         $this->assertStringContainsString('New Name', $rendered);
         $this->assertStringContainsString('new.email@example.com', $rendered);
+        $this->assertStringContainsString('500 600 700', $rendered);
+    }
+
+    public function testEnablingNewsletterPersistsSubscription(): void
+    {
+        $client = static::createClient();
+        $user = $this->createUser('ROLE_USER');
+        $client->loginUser($user);
+
+        $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
+        $testComponent->call('startEditing');
+
+        $testComponent
+            ->set('name', $user->getName())
+            ->set('email', $user->getEmail())
+            ->set('phone', '500 600 700')
+            ->set('newsletterSubscribed', true);
+
+        $testComponent->call('save');
+
+        /** @var User $updatedUser */
+        $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
+        self::assertTrue($updatedUser->isNewsletterSubscribed());
+        self::assertNotNull($updatedUser->getNewsletterConsentDate());
+    }
+
+    public function testDisablingNewsletterClearsSubscription(): void
+    {
+        $client = static::createClient();
+        $user = $this->createSubscribedUser();
+        $client->loginUser($user);
+
+        $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
+        $testComponent->call('startEditing');
+
+        $testComponent
+            ->set('name', $user->getName())
+            ->set('email', $user->getEmail())
+            ->set('phone', '500 600 700')
+            ->set('newsletterSubscribed', false);
+
+        $testComponent->call('save');
+
+        /** @var User $updatedUser */
+        $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
+        self::assertFalse($updatedUser->isNewsletterSubscribed());
+        self::assertNull($updatedUser->getNewsletterConsentDate());
+    }
+
+    public function testUnchangedNewsletterStateIsPreserved(): void
+    {
+        $client = static::createClient();
+        $user = $this->createSubscribedUser();
+        $originalConsent = $user->getNewsletterConsentDate();
+        $client->loginUser($user);
+
+        $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
+        $testComponent->call('startEditing');
+
+        $testComponent
+            ->set('name', 'Renamed User')
+            ->set('email', $user->getEmail())
+            ->set('phone', '500 600 700')
+            ->set('newsletterSubscribed', true);
+
+        $testComponent->call('save');
+
+        /** @var User $updatedUser */
+        $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
+        self::assertSame('Renamed User', $updatedUser->getName());
+        self::assertTrue($updatedUser->isNewsletterSubscribed());
+        // Consent date was not overwritten: still within 1s of the original.
+        self::assertNotNull($updatedUser->getNewsletterConsentDate());
+        self::assertNotNull($originalConsent);
+        self::assertEqualsWithDelta(
+            $originalConsent->getTimestamp(),
+            $updatedUser->getNewsletterConsentDate()
+                ->getTimestamp(),
+            1.0,
+        );
     }
 }
