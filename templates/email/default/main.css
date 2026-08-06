@@ -63,3 +63,32 @@ h1 {
     color: #666;
     overflow-wrap: break-word;
 }
+
+@media only screen and (max-width: 600px) {
+    body {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 12px !important;
+    }
+    .email-container {
+        padding: 20px !important;
+        border-radius: 8px !important;
+    }
+    .logo {
+        font-size: 22px !important;
+    }
+    .button {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+        padding: 14px 20px !important;
+    }
+    table {
+        width: 100% !important;
+    }
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
