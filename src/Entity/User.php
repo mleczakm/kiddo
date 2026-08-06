@@ -64,6 +64,9 @@ class User implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $newsletterConsentDate = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastLoginAt = null;
+
     /**
      * @var Collection<int, Booking>
      */
@@ -244,6 +247,18 @@ class User implements UserInterface
     public function setNewsletterConsentDate(?\DateTimeImmutable $newsletterConsentDate): static
     {
         $this->newsletterConsentDate = $newsletterConsentDate;
+
+        return $this;
+    }
+
+    public function getLastLoginAt(): ?\DateTimeImmutable
+    {
+        return $this->lastLoginAt;
+    }
+
+    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): static
+    {
+        $this->lastLoginAt = $lastLoginAt;
 
         return $this;
     }
