@@ -1,4 +1,4 @@
-<header class="bg-white shadow-sm sticky top-0 z-50">
+<header class="bg-white shadow-sm sticky top-0 z-50" data-controller="mobile-menu">
     <div class="container mx-auto px-4 py-4">
         <div class="flex justify-between items-center">
             <a class="flex items-center gap-2" href="{{ path('homepage') }}"
@@ -12,11 +12,7 @@
                 <a
                         class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
                         href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a>
-                {% if app.user %}
-                    <div class="relative">
-                        {{ component('NotificationTrayLiveComponent') }}
-                    </div>
-                {% else %}
+                {% if not app.user %}
                     <a href="{{ path('app_login') }}"
                        class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">{{ 'page.login'|trans }}</a>
                     <a href="{{ path('user_register') }}"
@@ -25,15 +21,52 @@
                     </a>
                 {% endif %}
             </nav>
-            <button class="md:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     class="lucide lucide-menu">
-                    <line x1="4" x2="20" y1="12" y2="12"></line>
-                    <line x1="4" x2="20" y1="6" y2="6"></line>
-                    <line x1="4" x2="20" y1="18" y2="18"></line>
-                </svg>
-            </button>
+            <div class="flex items-center gap-3">
+                {% if app.user %}
+                    <div class="relative">
+                        {{ component('NotificationTrayLiveComponent') }}
+                    </div>
+                {% endif %}
+                <button class="md:hidden p-1.5 text-workshop-brown hover:bg-beige rounded-lg transition-colors"
+                        data-action="mobile-menu#toggle"
+                        aria-label="{{ 'page.menu.toggle'|trans }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-menu">
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
+
+    {# Mobile drawer backdrop #}
+    <div class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"
+         data-mobile-menu-target="backdrop"
+         data-action="click->mobile-menu#close"
+         aria-hidden="true"></div>
+
+    {# Mobile drawer #}
+    <nav class="mobile-menu fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white shadow-xl z-50 md:hidden flex flex-col p-6 gap-1"
+         data-mobile-menu-target="panel"
+         aria-label="{{ 'page.menu.toggle'|trans }}">
+        <div class="flex justify-between items-center mb-6">
+            <span class="font-display text-xl font-bold text-workshop-brown">{{ 'page.default.header'|trans }}</span>
+            <button class="p-1.5 text-workshop-brown hover:bg-beige rounded-lg transition-colors"
+                    data-action="mobile-menu#close"
+                    aria-label="{{ 'page.menu.close'|trans }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <a href="{{ path('homepage') }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ 'page.homepage'|trans }}</a>
+        <a href="{{ path('workshops') }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ 'page.workshops'|trans }}</a>
+        {% if not app.user %}
+            <a href="{{ path('app_login') }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ 'page.login'|trans }}</a>
+            <a href="{{ path('user_register') }}" class="mt-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90 transition-colors">
+                {{ 'page.register'|trans }}
+            </a>
+        {% endif %}
+    </nav>
 </header>

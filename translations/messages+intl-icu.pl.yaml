@@ -45,6 +45,9 @@ page:
   logout: Wyloguj się
   login: Zaloguj się
   email: "Email:"
+  menu:
+    toggle: Otwórz menu
+    close: Zamknij menu
   phone: "Telefon:"
   contact_us: "Skontaktuj się z nami"
   quick_links: "Szybkie linki"
