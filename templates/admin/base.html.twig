@@ -73,6 +73,19 @@
             #root .bg-stone-50, #root .bg-stone-100, #root .bg-slate-50/50, .bg-muted, .bg-muted/50 {
                 background-color: rgb(248, 250, 252) !important; /* bg-slate-50 */
             }
+
+            /* Deterministic desktop sidebar layout: the compiled Tailwind bundle
+               currently ships a stray unlayered `.fixed { position: fixed }` rule
+               that always wins over the layered, responsive `md:static` utility,
+               so the sidebar never leaves fixed positioning and overlaps content
+               at desktop widths. Force the intended static/in-flow layout here
+               instead of depending on that utility class compiling correctly. */
+            @media (min-width: 768px) {
+                #root aside[data-admin-sidebar-target="panel"] {
+                    position: static !important;
+                    transform: none !important;
+                }
+            }
         </style>
     {% endblock %}
 
