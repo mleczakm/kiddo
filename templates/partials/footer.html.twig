@@ -19,7 +19,7 @@
                            href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a></li>
                     {% if app.user %}
                         <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
-                               href="">{{ 'page.my_bookings'|trans }}</a></li>
+                               href="{{ path('dashboard') }}">{{ 'page.my_bookings'|trans }}</a></li>
                     {% else %}
                         <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
                                href="{{ path('app_login') }}">{{ 'page.login'|trans }}</a></li>
