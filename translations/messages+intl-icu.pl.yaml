@@ -553,6 +553,7 @@ admin_dashboard:
     quick_book: 'Szybka rezerwacja'
     actions: 'Akcje'
     no_upcoming_attendees: Brak nadchodzących wydarzeń
+    cancelled_bookings: 'Anulowane rezerwacje'
     decrease_capacity: 'Zmniejsz ilość dostępnych miejsc'
     increase_capacity: 'Zwiększ ilość dostępnych miejsc'
     show_cancelled: 'Pokaż anulowane'

@@ -104,6 +104,27 @@
                 background-color: rgb(248, 250, 252) !important; /* bg-slate-50 */
             }
 
+            /* Some customer-facing components (e.g. BookingCancellationModal) are shared
+               with the admin CRM and carry the frontend's warm-coral/brown "Kiddo" brand
+               (workshop-red/brown) hardcoded rather than through the shadcn CSS variables
+               already overridden above. Force those specific accent classes to the admin
+               indigo/slate palette wherever they render inside #root. */
+            #root .text-workshop-red, #root .text-workshop-brown {
+                color: rgb(79, 70, 229) !important; /* text-indigo-600 */
+            }
+            #root .bg-workshop-red {
+                background-color: rgb(79, 70, 229) !important; /* bg-indigo-600 */
+            }
+            #root .border-workshop-red, #root .focus-visible\:ring-workshop-red:focus-visible {
+                border-color: rgb(99, 102, 241) !important; /* border-indigo-500 */
+            }
+            #root .hover\:bg-workshop-red\/10:hover, #root .hover\:bg-workshop-red\/90:hover {
+                background-color: rgb(67, 56, 202) !important; /* indigo-700 */
+            }
+            #root .bg-workshop-red\/5, #root .bg-workshop-red\/10 {
+                background-color: rgb(238, 242, 255) !important; /* indigo-50 */
+            }
+
             /* Deterministic desktop sidebar layout: the compiled Tailwind bundle
                currently ships a stray unlayered `.fixed { position: fixed }` rule
                that always wins over the layered, responsive `md:static` utility,

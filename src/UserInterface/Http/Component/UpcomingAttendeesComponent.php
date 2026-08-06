@@ -199,17 +199,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     #[LiveAction]
     public function openActions(#[LiveArg] string $bookingId): void
     {
-        // Repurpose to open admin modal per requirements
-        $this->actionsForBookingId = null;
-        $this->adminModalBookingId = $bookingId;
-        $this->adminModalOpened = true;
-
-        $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
-        if ($booking instanceof Booking) {
-            $this->adminNote = (string) ($booking->getNotes() ?? '');
-        } else {
-            $this->adminNote = null;
-        }
+        $this->actionsForBookingId = $this->actionsForBookingId === $bookingId ? null : $bookingId;
     }
 
     #[LiveAction]

@@ -1,10 +1,10 @@
-<div {{ attributes }} class="rounded-xl border bg-stone-50 text-card-foreground shadow">
-    <div class="flex flex-col space-y-1.5 p-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-            <h3 class="flex items-center gap-3 text-xl font-serif font-semibold leading-none tracking-tight">
+<div {{ attributes }} class="rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col h-full">
+    <div class="p-6 border-b border-slate-100 bg-slate-50 shrink-0 rounded-t-2xl">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <h3 class="flex items-center gap-3 text-lg font-black text-slate-800">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     class="lucide lucide-users w-5 h-5">
+                     class="lucide lucide-users w-5 h-5 text-indigo-600">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
@@ -169,7 +169,6 @@
                                             {% set bId = booking.id %}
                                             <div class="relative">
                                                 <button type="button"
-                                                        disabled
                                                         data-action="click->live#action"
                                                         data-live-action-param="openActions"
                                                         data-live-booking-id-param="{{ bId }}"
@@ -277,7 +276,6 @@
                                                                     class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                                                                     data-action="click->live#action"
                                                                     data-live-action-param="closeActions"
-                                                                    data-live-component-id-param="{{ this.componentId }}"
                                                                     onclick="this.closest('.relative').querySelector('dialog')?.remove()">
                                                                 Zamknij
                                                             </button>
@@ -324,7 +322,7 @@
          class="{% if not this.modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/60"></div>
 
     <dialog {% if this.modalOpened %}open{% endif %}
-            class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl">
+            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl">
         {% set sel = this.selectedLessonId ? (this.lessons|filter(l => (l.id ~ '') == this.selectedLessonId)|first) : null %}
         <h3 class="text-lg font-semibold mb-4">Szybka rezerwacja{% if sel %}: {{ sel.metadata.title }} ({{ sel.metadata.schedule|date('Y-m-d H:i') }}){% endif %}</h3>
 
@@ -405,7 +403,7 @@
          data-live-action-param="closePaymentModal"
          class="{% if not this.paymentModalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/60"></div>
     <dialog {% if this.paymentModalOpened %}open{% endif %}
-            class="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl">
+            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl">
         {% if this.paymentCode and this.paymentAmount %}
             <div class="flex flex-col items-center justify-center min-h-[260px]">
                 <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
