@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Service\ActivityLogger;
+use App\Entity\ActivityType;
 use App\Entity\Booking;
 use App\Entity\Child;
 use App\Entity\Lesson;
@@ -18,6 +20,7 @@ use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -109,6 +112,8 @@ final class UpcomingAttendeesComponent extends AbstractController
         private readonly BookingRepository $bookingRepository,
         private readonly ChildRepository $childRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ActivityLogger $activityLogger,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
         $this->week = Clock::get()->now()->format('Y-m-d');
         $this->adminAction = '';
@@ -494,6 +499,16 @@ final class UpcomingAttendeesComponent extends AbstractController
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
+        $userId = $user->getId();
+        $this->activityLogger->log(
+            type: ActivityType::BOOKING_CREATED,
+            title: sprintf('%s zarezerwował/a zajęcia (dodane przez admina)', $user->getName()),
+            subject: $user,
+            summary: $lesson->getMetadata()->title,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
+            context: ['bookingId' => (string) $booking->getId()],
+        );
+
         $this->successMessage = 'Dodano rezerwację';
         // Reset form but keep modal open to show success
         $this->notes = '';
@@ -515,6 +530,16 @@ final class UpcomingAttendeesComponent extends AbstractController
             }
             $booking->payment->setStatus(Payment::STATUS_PAID);
             $this->entityManager->flush();
+
+            $user = $booking->getUser();
+            $userId = $user->getId();
+            $this->activityLogger->log(
+                type: ActivityType::PAYMENT_MARKED_PAID,
+                title: sprintf('%s oznaczony/a jako opłacony/a przez admina', $user->getName()),
+                subject: $user,
+                url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
+                context: ['bookingId' => (string) $booking->getId()],
+            );
         } catch (\Throwable) {
             // ignore
         }

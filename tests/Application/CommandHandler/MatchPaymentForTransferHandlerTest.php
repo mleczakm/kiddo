@@ -6,6 +6,8 @@ namespace App\Tests\Application\CommandHandler;
 
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
+use App\Entity\ActivityLog;
+use App\Entity\ActivityType;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
 use App\Tests\Assembler\PaymentAssembler;
@@ -302,6 +304,42 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->assertTrue($payment->getTransfers()->contains($transfer));
         $this->assertSame($payment, $transfer->getPayment());
         $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
+    }
+
+    public function testMatchingPaymentWritesAnActivityLogEntry(): void
+    {
+        $user = UserAssembler::new()->withName('Marta Kowalczyk')->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $paymentCode = new PaymentCode($payment);
+        $reflection = new \ReflectionClass($paymentCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($paymentCode, 'ACTV');
+        $this->entityManager->persist($paymentCode);
+
+        $transfer = TransferAssembler::new()
+            ->withTitle('Payment for order ACTV')
+            ->withAmount('100.00')
+            ->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        $command = new MatchPaymentForTransfer($transfer);
+        $this->messageBus->dispatch($command);
+
+        $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
+            ->findBy(['type' => ActivityType::PAYMENT_RECEIVED]);
+
+        $this->assertCount(1, $activityLogs);
+        $this->assertSame($user, $activityLogs[0]->getSubject());
+        $this->assertStringContainsString('Marta Kowalczyk', $activityLogs[0]->getTitle());
     }
 
     public function testDoesNotTransitionPaymentIfCannotPay(): void

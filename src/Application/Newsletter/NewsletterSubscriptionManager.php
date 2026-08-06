@@ -4,17 +4,22 @@ declare(strict_types=1);
 
 namespace App\Application\Newsletter;
 
+use App\Application\Service\ActivityLogger;
+use App\Entity\ActivityType;
 use App\Entity\User;
 use App\Infrastructure\Brevo\BrevoNewsletterService;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Clock\Clock;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class NewsletterSubscriptionManager
 {
     public function __construct(
         private readonly BrevoNewsletterService $brevoNewsletterService,
+        private readonly ActivityLogger $activityLogger,
+        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoggerInterface $logger = new NullLogger(),
     ) {}
 
@@ -44,6 +49,14 @@ class NewsletterSubscriptionManager
                     'exception' => $exception,
                 ]);
             }
+
+            $userId = $user->getId();
+            $this->activityLogger->log(
+                type: ActivityType::NEWSLETTER_SUBSCRIBED,
+                title: sprintf('%s zapisał/a się do newslettera', $user->getName()),
+                subject: $user,
+                url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
+            );
 
             return;
         }

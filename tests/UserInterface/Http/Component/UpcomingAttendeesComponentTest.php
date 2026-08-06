@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\ActivityLog;
+use App\Entity\ActivityType;
+use App\Entity\Booking;
 use App\Repository\LessonRepository;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
@@ -197,6 +200,59 @@ class UpcomingAttendeesComponentTest extends WebTestCase
             $rendered,
             'Cancelled booking should be shown when showCancelled is true'
         );
+    }
+
+    public function testConfirmFastBookingWritesAnActivityLogEntry(): void
+    {
+        $futureDate = Clock::get()->now()->modify('+1 day');
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->assemble();
+
+        $this->entityManager->persist($lesson);
+        $this->entityManager->flush();
+
+        $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
+        $testComponent->set('selectedLessonId', (string) $lesson->getId());
+        $testComponent->set('customerEmail', 'quickbook@example.com');
+        $testComponent->set('customerName', 'Kasia Wiśniewska');
+        $testComponent->call('confirmFastBooking');
+
+        $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
+            ->findBy(['type' => ActivityType::BOOKING_CREATED]);
+
+        $this->assertCount(1, $activityLogs);
+        $this->assertStringContainsString('Kasia Wiśniewska', $activityLogs[0]->getTitle());
+        $this->assertSame($lesson->getMetadata()->title, $activityLogs[0]->getSummary());
+    }
+
+    public function testMarkPaidWritesAnActivityLogEntry(): void
+    {
+        $futureDate = Clock::get()->now()->modify('+1 day');
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->assemble();
+        $user = UserAssembler::new()->withName('Piotr Zając')->assemble();
+        $booking = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+
+        $this->entityManager->persist($lesson);
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($booking);
+        $this->entityManager->flush();
+
+        $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
+        $testComponent->call('markPaid', ['bookingId' => (string) $booking->getId()]);
+
+        $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
+            ->findBy(['type' => ActivityType::PAYMENT_MARKED_PAID]);
+
+        $this->assertCount(1, $activityLogs);
+        $this->assertSame($user->getId(), $activityLogs[0]->getSubject()?->getId());
+        $this->assertStringContainsString('Piotr Zając', $activityLogs[0]->getTitle());
     }
 
     protected function setUp(): void

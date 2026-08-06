@@ -4,55 +4,111 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
-use App\Entity\MessageType;
-use App\Entity\UserMessage;
-use App\Repository\UserMessageRepository;
+use App\Entity\ActivityLog;
+use App\Entity\ActivityType;
+use App\Repository\ActivityLogRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
+/**
+ * "Ostatnia aktywność" — a live, polling feed of everything customer-
+ * facing that just happened: registrations, bookings, cancellations,
+ * reschedules, payments, unmatched transfers, newsletter signups, and
+ * customer messages. Sourced from the activity_log table, written to by
+ * ActivityLogMiddleware (command-bus actions) and direct ActivityLogger
+ * calls (actions that mutate entities without going through the bus).
+ */
 #[AsLiveComponent]
 final class AdminActivityLogComponent
 {
     use DefaultActionTrait;
 
+    private const int LIMIT = 10;
+
     public function __construct(
-        private readonly UserMessageRepository $userMessageRepository,
+        private readonly ActivityLogRepository $activityLogRepository,
     ) {}
 
     /**
-     * Recent customer-triggered events (cancellations, reschedules, etc.),
-     * sourced from the UserMessage records the booking handlers create.
-     *
-     * @return list<array<string, string>>
+     * @return list<array{
+     *     type: string,
+     *     icon: string,
+     *     color: string,
+     *     title: string,
+     *     name: ?string,
+     *     summary: ?string,
+     *     url: ?string,
+     *     createdAt: \DateTimeImmutable,
+     * }>
      */
     public function getActivityLog(): array
     {
         return array_values(array_map(
-            $this->formatMessage(...),
-            $this->userMessageRepository->findRecentMessages(8),
+            $this->format(...),
+            $this->activityLogRepository->findRecent(self::LIMIT),
         ));
     }
 
     /**
-     * @return array<string, string>
+     * No-op action: LiveComponents re-render (and re-run getActivityLog())
+     * after every action, so this is all `data-poll` needs to call to
+     * pick up new rows written since the last render.
      */
-    private function formatMessage(UserMessage $message): array
+    #[LiveAction]
+    public function refresh(): void {}
+
+    /**
+     * @return array{
+     *     type: string,
+     *     icon: string,
+     *     color: string,
+     *     title: string,
+     *     name: ?string,
+     *     summary: ?string,
+     *     url: ?string,
+     *     createdAt: \DateTimeImmutable,
+     * }
+     */
+    private function format(ActivityLog $log): array
     {
         return [
-            'type' => $message->getType() === MessageType::CANCELLATION_REQUEST ? 'cancelled' : 'other',
-            'badge' => match ($message->getType()) {
-                MessageType::CANCELLATION_REQUEST => 'Odwołane zajęcia',
-                MessageType::RESCHEDULE_REQUEST => 'Zmieniono termin',
-                MessageType::REFUND_REQUEST => 'Prośba o zwrot',
-                MessageType::COMPLAINT => 'Skarga',
-                MessageType::BOOKING_ISSUE => 'Problem z rezerwacją',
-                MessageType::TECHNICAL_ISSUE => 'Problem techniczny',
-                MessageType::GENERAL => 'Wiadomość',
-            },
-            'name' => $message->getUser()
-                ->getName(),
-            'lesson' => $message->getSubject(),
-            'notes' => $message->getMessage(),
+            'type' => $log->getType()->value,
+            'icon' => $this->iconFor($log->getType()),
+            'color' => $this->colorFor($log->getType()),
+            'title' => $log->getTitle(),
+            'name' => $log->getSubject()?->getName(),
+            'summary' => $log->getSummary(),
+            'url' => $log->getUrl(),
+            'createdAt' => $log->getCreatedAt(),
         ];
+    }
+
+    private function iconFor(ActivityType $type): string
+    {
+        return match ($type) {
+            ActivityType::USER_REGISTERED => 'user-plus',
+            ActivityType::BOOKING_CREATED => 'calendar-plus',
+            ActivityType::BOOKING_CANCELLED => 'calendar-x',
+            ActivityType::BOOKING_RESCHEDULED => 'calendar-clock',
+            ActivityType::REFUND_REQUESTED => 'rotate-ccw',
+            ActivityType::PAYMENT_RECEIVED, ActivityType::PAYMENT_MARKED_PAID => 'banknote',
+            ActivityType::TRANSFER_UNMATCHED => 'alert-triangle',
+            ActivityType::NEWSLETTER_SUBSCRIBED => 'mail',
+            ActivityType::CUSTOMER_MESSAGE => 'message-circle',
+        };
+    }
+
+    private function colorFor(ActivityType $type): string
+    {
+        return match ($type) {
+            ActivityType::USER_REGISTERED, ActivityType::NEWSLETTER_SUBSCRIBED => 'indigo',
+            ActivityType::BOOKING_CREATED => 'emerald',
+            ActivityType::BOOKING_CANCELLED, ActivityType::REFUND_REQUESTED => 'amber',
+            ActivityType::BOOKING_RESCHEDULED => 'blue',
+            ActivityType::PAYMENT_RECEIVED, ActivityType::PAYMENT_MARKED_PAID => 'emerald',
+            ActivityType::TRANSFER_UNMATCHED => 'red',
+            ActivityType::CUSTOMER_MESSAGE => 'slate',
+        };
     }
 }

@@ -5,15 +5,28 @@ declare(strict_types=1);
 namespace App\Tests\Application\Newsletter;
 
 use App\Application\Newsletter\NewsletterSubscriptionManager;
+use App\Application\Service\ActivityLogger;
 use App\Entity\User;
 use App\Infrastructure\Brevo\BrevoNewsletterService;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[Group('unit')]
 final class NewsletterSubscriptionManagerTest extends TestCase
 {
+    private function activityLogger(): ActivityLogger
+    {
+        return new ActivityLogger($this->createMock(EventDispatcherInterface::class));
+    }
+
+    private function urlGenerator(): UrlGeneratorInterface
+    {
+        return $this->createMock(UrlGeneratorInterface::class);
+    }
+
     public function testFalseToTrueSubscribesAndCallsBrevo(): void
     {
         $user = new User('someone@example.com', 'Alice');
@@ -25,7 +38,7 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $brevo->expects(self::never())
             ->method('removeContactFromList');
 
-        $manager = new NewsletterSubscriptionManager($brevo);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
         $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: true);
 
         self::assertTrue($user->isNewsletterSubscribed());
@@ -45,7 +58,7 @@ final class NewsletterSubscriptionManagerTest extends TestCase
             ->method('removeContactFromList')
             ->with('gone@example.com');
 
-        $manager = new NewsletterSubscriptionManager($brevo);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
         $manager->applyTransition($user, wasSubscribed: true, desiredSubscribed: false);
 
         self::assertFalse($user->isNewsletterSubscribed());
@@ -62,7 +75,7 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $brevo->expects(self::never())
             ->method('removeContactFromList');
 
-        $manager = new NewsletterSubscriptionManager($brevo);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
         $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: false);
 
         self::assertFalse($user->isNewsletterSubscribed());
@@ -84,7 +97,7 @@ final class NewsletterSubscriptionManagerTest extends TestCase
                 self::callback(fn(array $context) => ($context['email'] ?? null) === 'boom@example.com'),
             );
 
-        $manager = new NewsletterSubscriptionManager($brevo, $logger);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $logger);
         $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: true);
 
         self::assertTrue($user->isNewsletterSubscribed());
@@ -106,7 +119,7 @@ final class NewsletterSubscriptionManagerTest extends TestCase
             ->method('warning')
             ->with(self::stringContains('Failed to remove contact'), self::anything());
 
-        $manager = new NewsletterSubscriptionManager($brevo, $logger);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $logger);
         $manager->applyTransition($user, wasSubscribed: true, desiredSubscribed: false);
 
         self::assertFalse($user->isNewsletterSubscribed());

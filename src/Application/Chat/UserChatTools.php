@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Chat;
 
 use App\Application\Command\AddBooking;
+use App\Application\Service\ActivityLogger;
+use App\Entity\ActivityType;
 use App\Entity\Child;
 use App\Entity\MessageType;
 use App\Entity\PaymentFactory;
@@ -22,6 +24,7 @@ use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
 
 #[AutoconfigureTag('app.chat_tool_provider')]
@@ -36,6 +39,8 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         private NotificationRepository $notificationRepository,
         private PaymentCodeRepository $paymentCodeRepository,
         private LessonPresenter $presenter,
+        private ActivityLogger $activityLogger,
+        private UrlGeneratorInterface $urlGenerator,
     ) {}
 
     public function definitions(): array
@@ -803,14 +808,26 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         if ($typeValue !== null) {
             $type = MessageType::from($typeValue);
         }
+        $user = $actor->requireUser();
+        $subject = $args->requireString('subject');
         $message = new UserMessage(
-            $actor->requireUser(),
-            $args->requireString('subject'),
+            $user,
+            $subject,
             $args->requireString('message'),
             $type,
         );
         $this->entityManager->persist($message);
         $this->entityManager->flush();
+
+        $userId = $user->getId();
+        $this->activityLogger->log(
+            type: ActivityType::CUSTOMER_MESSAGE,
+            title: sprintf('%s wysłał/a wiadomość', $user->getName()),
+            subject: $user,
+            summary: $subject,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
+            context: ['messageId' => (string) $message->getId()],
+        );
 
         return ToolResult::success(
             'Wiadomość do administracji została utworzona.',

@@ -24,6 +24,7 @@ framework:
                     - App\Infrastructure\Messenger\PreventAsyncDispatchInTaskWorkerMiddleware
                     - messenger.middleware.doctrine_transaction
                     - messenger.middleware.doctrine_close_connection
+                    - App\Infrastructure\Messenger\ActivityLogMiddleware
                     - messenger.middleware.validation
 
         routing:

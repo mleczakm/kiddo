@@ -536,6 +536,10 @@ dashboard:
 admin_dashboard:
   title: Warsztatownia Sensoryczna - Panel administracyjny
   frontpage: Strona główna
+  activity_log:
+    title: 'Ostatnia aktywność'
+    refresh: 'Odśwież'
+    empty: 'Brak ostatniej aktywności.'
   upcoming_lessons:
     title: 'Nadchodzące zajęcia'
     actions: 'Akcje'
