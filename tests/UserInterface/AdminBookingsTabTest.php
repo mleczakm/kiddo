@@ -44,7 +44,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client->request('GET', '/admin/rezerwacje');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('.rounded-lg.border.bg-card', 'Admin bookings component should be present');
+        $this->assertSelectorExists('.rounded-2xl.border.border-slate-200', 'Admin bookings component should be present');
         $this->assertSelectorTextContains('h3', 'Wszystkie rezerwacje');
     }
 

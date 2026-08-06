@@ -1,35 +1,35 @@
 {# templates/components/AdminBookingsComponent.html.twig #}
 <div {{ attributes }} data-controller="live">
-    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
         <div class="p-6 border-b border-slate-100 bg-slate-50 shrink-0 flex flex-col space-y-1.5">
             <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                <h3 class="flex items-center gap-3 text-lg font-black text-slate-800">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar w-5 h-5">
                         <path d="M8 2v4"></path>
                         <path d="M16 2v4"></path>
                         <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                         <path d="M3 10h18"></path>
                     </svg>
-                    {{ 'admin_dashboard.bookings.title'|trans }}
+                    <span>{{ 'admin_dashboard.bookings.title'|trans }}</span>
                 </h3>
             </div>
         </div>
 
-        <div class="p-6 pt-0">
+        <div class="p-6">
             {# Success/Error Messages #}
             {% if this.successMessage %}
-                <div class="mb-4 p-4 rounded-md bg-green-50 border border-green-200">
+                <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-100">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                             </svg>
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ this.successMessage }}</p>
+                            <p class="text-sm font-bold text-green-800">{{ this.successMessage }}</p>
                         </div>
                         <div class="ml-auto pl-3">
-                            <button data-action="live#action" data-action-param="clearMessages" class="text-green-600 hover:text-green-500">
+                            <button data-action="live#action" data-action-param="clearMessages" class="text-green-600 hover:text-green-700">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -40,17 +40,18 @@
             {% endif %}
 
             {% if this.errorMessage %}
-                <div class="mb-4 p-4 rounded-md bg-red-50 border border-red-200">
+                <div class="mb-4 p-4 rounded-xl bg-red-50 border border-red-100">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800">{{ this.errorMessage }}</p>
+                            <p class="text-sm font-bold text-red-800">{{ this.errorMessage }}</p>
                         </div>
                         <div class="ml-auto pl-3">
-                            <button data-action="live#action" data-action-param="clearMessages" class="text-red-600 hover:text-red-500">
+                            <button data-action="live#action" data-action-param="clearMessages" class="text-red-600 hover:text-red-700">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -62,13 +63,13 @@
 
             {# Manual Booking Form #}
             {% if isFeatureEnabled('manual_bookings') %}
-            <div class="mb-6 p-4 border rounded-md bg-background">
-                <h3 class="text-lg font-medium mb-4">{{ 'admin_dashboard.bookings.manual.add_title'|trans }}</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input type="text" placeholder="{{ 'admin_dashboard.bookings.manual.customer_name_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerName }}" data-model="customerName" />
-                    <input type="email" placeholder="{{ 'admin_dashboard.bookings.manual.customer_email_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.customerEmail }}" data-model="customerEmail" />
-                    <input type="number" step="0.01" placeholder="{{ 'admin_dashboard.bookings.manual.amount_placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value="{{ this.amount }}" data-model="amount" />
-                    <select class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" data-model="paymentMethod">
+            <div class="mb-6 p-5 border border-slate-200 rounded-xl bg-slate-50">
+                <h3 class="text-sm font-bold text-slate-800 mb-4">{{ 'admin_dashboard.bookings.manual.add_title'|trans }}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <input type="text" placeholder="{{ 'admin_dashboard.bookings.manual.customer_name_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.customerName }}" data-model="customerName" />
+                    <input type="email" placeholder="{{ 'admin_dashboard.bookings.manual.customer_email_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.customerEmail }}" data-model="customerEmail" />
+                    <input type="number" step="0.01" placeholder="{{ 'admin_dashboard.bookings.manual.amount_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.amount }}" data-model="amount" />
+                    <select class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" data-model="paymentMethod">
                         <option value="">{{ 'admin_dashboard.bookings.manual.select_payment_method'|trans }}</option>
                         <option value="transfer">{{ 'admin_dashboard.bookings.manual.payment.transfer'|trans }}</option>
                         <option value="cash">{{ 'admin_dashboard.bookings.manual.payment.cash'|trans }}</option>
@@ -77,48 +78,49 @@
                 </div>
 
                 <div class="mb-4">
-                    <textarea placeholder="{{ 'admin_dashboard.bookings.manual.notes_placeholder'|trans }}" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" rows="3" data-model="notes">{{ this.notes }}</textarea>
+                    <textarea placeholder="{{ 'admin_dashboard.bookings.manual.notes_placeholder'|trans }}" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" rows="3" data-model="notes">{{ this.notes }}</textarea>
                 </div>
 
                 <div class="mb-4">
-                    <h4 class="font-medium mb-2">{{ 'admin_dashboard.bookings.manual.select_lessons_title'|trans }}</h4>
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{{ 'admin_dashboard.bookings.manual.select_lessons_title'|trans }}</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {% for lesson in this.getAvailableLessons() %}
-                            <label class="inline-flex items-center gap-2">
-                                <input type="checkbox" value="{{ lesson.id }}" data-model="selectedLessonIds" />
+                            <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                                <input type="checkbox" value="{{ lesson.id }}" data-model="selectedLessonIds" class="rounded text-indigo-600 focus:ring-indigo-500" />
                                 <span>{{ lesson.metadata.title }}</span>
                             </label>
                         {% else %}
-                            <p class="text-sm text-muted-foreground">{{ 'admin_dashboard.bookings.manual.no_lessons'|trans }}</p>
+                            <p class="text-sm text-slate-400">{{ 'admin_dashboard.bookings.manual.no_lessons'|trans }}</p>
                         {% endfor %}
                     </div>
                 </div>
 
                 <div>
-                    <button data-action="live#action" data-action-param="addManualBooking" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">{{ 'admin_dashboard.bookings.manual.add_button'|trans }}</button>
+                    <button data-action="live#action" data-action-param="addManualBooking" class="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition h-10 px-4 py-2 shadow-sm">{{ 'admin_dashboard.bookings.manual.add_button'|trans }}</button>
                 </div>
             </div>
             {% endif %}
 
             {# Search and Filters #}
-            <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                <div class="flex-1">
+            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                <div class="flex-1 relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
                     <input
                         type="text"
                         placeholder="{{ 'admin_dashboard.bookings.search_placeholder'|trans }}"
-                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        class="flex h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         value="{{ this.search }}"
                         data-model="search"
-                                            />
+                    />
                 </div>
 
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     {% set counts = this.getFilterCounts() %}
                     <button
                         data-model="filter"
                         data-value="all"
                         data-action="live#update"
-                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'all' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold transition h-10 px-3.5 {{ this.filter == 'all' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}"
                     >
                         {{ 'admin_dashboard.bookings.filter.all'|trans }} ({{ counts.all }})
                     </button>
@@ -126,7 +128,7 @@
                         data-model="filter"
                         data-value="active"
                         data-action="live#update"
-                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'active' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold transition h-10 px-3.5 {{ this.filter == 'active' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}"
                     >
                         {{ 'admin_dashboard.bookings.filter.active'|trans }} ({{ counts.active }})
                     </button>
@@ -134,7 +136,7 @@
                         data-model="filter"
                         data-value="completed"
                         data-action="live#update"
-                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'completed' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold transition h-10 px-3.5 {{ this.filter == 'completed' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}"
                     >
                         {{ 'admin_dashboard.bookings.filter.completed'|trans }} ({{ counts.completed }})
                     </button>
@@ -142,38 +144,37 @@
                         data-model="filter"
                         data-value="cancelled"
                         data-action="live#update"
-                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 {{ this.filter == 'cancelled' ? 'bg-accent text-accent-foreground' : 'bg-background' }}"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold transition h-10 px-3.5 {{ this.filter == 'cancelled' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' }}"
                     >
                         {{ 'admin_dashboard.bookings.filter.cancelled'|trans }} ({{ counts.cancelled }})
                     </button>
                 </div>
             </div>
 
-            {# Bookings Table #}
-            <div>
-                <h3 class="text-lg font-medium mb-4">{{ 'admin_dashboard.bookings.table_title'|trans }}</h3>
+            {# Bookings — desktop table (md and up) #}
+            <div class="hidden md:block">
                 <div class="relative w-full overflow-auto">
                     <table class="w-full caption-bottom text-sm">
-                        <thead class="[&_tr]:border-b">
-                            <tr class="border-b transition-colors hover:bg-slate-50">
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.client'|trans }} <span class="sr-only">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }} {{ 'admin_dashboard.bookings.table.headers.amount'|trans }} {{ 'admin_dashboard.bookings.table.headers.payment'|trans }} {{ 'admin_dashboard.bookings.table.headers.booking_status'|trans }} {{ 'admin_dashboard.bookings.table.headers.created_at'|trans }} {{ 'admin_dashboard.bookings.table.headers.actions'|trans }}</span></th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-8"></th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }}</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.amount'|trans }}</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.payment'|trans }}</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.booking_status'|trans }}</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.created_at'|trans }}</th>
-                                <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.table.headers.actions'|trans }}</th>
+                        <thead>
+                            <tr class="border-b border-slate-200">
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500">{{ 'admin_dashboard.bookings.table.headers.client'|trans }} <span class="sr-only">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }} {{ 'admin_dashboard.bookings.table.headers.amount'|trans }} {{ 'admin_dashboard.bookings.table.headers.payment'|trans }} {{ 'admin_dashboard.bookings.table.headers.booking_status'|trans }} {{ 'admin_dashboard.bookings.table.headers.created_at'|trans }} {{ 'admin_dashboard.bookings.table.headers.actions'|trans }}</span></th>
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500 w-8"></th>
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500">{{ 'admin_dashboard.bookings.table.headers.workshop'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500">{{ 'admin_dashboard.bookings.table.headers.amount'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500">{{ 'admin_dashboard.bookings.table.headers.payment'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500">{{ 'admin_dashboard.bookings.table.headers.booking_status'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500">{{ 'admin_dashboard.bookings.table.headers.created_at'|trans }}</th>
+                                <th class="h-12 px-4 text-left align-middle font-semibold text-slate-500">{{ 'admin_dashboard.bookings.table.headers.actions'|trans }}</th>
                             </tr>
                         </thead>
-                        <tbody class="[&_tr:last-child]:border-0">
+                        <tbody class="divide-y divide-slate-100">
                             {% for item in this.getAllBookings() %}
                                 {% set booking = item.booking %}
                                 {% set bookingId = booking.id %}
                                 {% set isExpanded = this.isBookingExpanded(bookingId) %}
 
                                 {# Main booking row #}
-                                <tr class="border-b transition-colors hover:bg-slate-50 cursor-pointer">
+                                <tr class="hover:bg-slate-50/50 transition cursor-pointer">
                                     <td class="p-4 align-middle">
                                         <div>
                                             {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
@@ -189,7 +190,7 @@
                                     </td>
                                     <td class="p-4 align-middle">
                                         <button type="button"
-                                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                                                class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
                                                 data-action="click->live#action"
                                                 data-live-action-param="toggleBookingExpansion"
                                                 data-live-booking-id-param="{{ bookingId }}">
@@ -208,25 +209,25 @@
                                         <div>
                                             {% if booking.lessons.count > 0 %}
                                                 {% set firstLesson = booking.lessons.first %}
-                                                <p class="font-medium">
+                                                <p class="font-bold text-slate-800">
                                                     {% if firstLesson.series %}
                                                         {{ firstLesson.metadata.title }} ({{ 'admin_dashboard.bookings.series'|trans }}: {{ firstLesson.series.type.value }})
                                                     {% else %}
                                                         {{ firstLesson.metadata.title ?? ('admin_dashboard.bookings.table.headers.workshop'|trans) }}
                                                     {% endif %}
                                                 </p>
-                                                <p class="text-sm text-muted-foreground">
+                                                <p class="text-xs text-slate-500">
                                                     {{ firstLesson.metadata.schedule|date('Y-m-d H:i') }}
                                                     {% if item.totalLessons > 1 %}
                                                         <br/><span class="text-xs">{{ 'admin_dashboard.bookings.more_lessons_count'|trans({count: (item.totalLessons - 1)}) }}</span>
                                                     {% endif %}
                                                 </p>
                                             {% else %}
-                                                <p class="font-medium text-muted-foreground">{{ 'admin_dashboard.bookings.no_lessons_in_booking'|trans }}</p>
+                                                <p class="font-medium text-slate-400">{{ 'admin_dashboard.bookings.no_lessons_in_booking'|trans }}</p>
                                             {% endif %}
                                         </div>
                                     </td>
-                                    <td class="p-4 align-middle font-medium">
+                                    <td class="p-4 align-middle font-bold text-slate-800">
                                         {% if booking.payment %}
                                             {{ booking.payment.amount|money }}
                                         {% else %}
@@ -234,54 +235,12 @@
                                         {% endif %}
                                     </td>
                                     <td class="p-4 align-middle">
-                                        <div class="space-y-1">
-                                            {% if booking.payment %}
-                                                {% set paymentStatus = booking.payment.status %}
-                                                {% if paymentStatus == 'paid' %}
-                                                    <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-green-500 text-white">
-                                                        {{ 'admin_dashboard.bookings.payment.paid'|trans }}
-                                                    </div>
-                                                {% elseif paymentStatus == 'pending' %}
-                                                    <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-yellow-500 text-white">
-                                                        {{ 'admin_dashboard.bookings.payment.pending'|trans }}
-                                                    </div>
-                                                {% else %}
-                                                    <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-red-500 text-white">
-                                                        {{ ('admin_dashboard.bookings.payment.' ~ paymentStatus)|trans({}) }}
-                                                    </div>
-                                                {% endif %}
-                                            {% else %}
-                                                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-gray-500 text-white">
-                                                    {{ 'admin_dashboard.bookings.payment.none'|trans }}
-                                                </div>
-                                            {% endif %}
-                                        </div>
+                                        {{ _self.payment_badge(booking.payment) }}
                                     </td>
                                     <td class="p-4 align-middle">
-                                        {% set status = booking.status %}
-                                        {% if status == 'active' %}
-                                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-blue-500 text-white">
-                                                {{ 'admin_dashboard.bookings.status.confirmed'|trans }}
-                                            </div>
-                                        {% elseif status == 'pending' %}
-                                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-yellow-500 text-white">
-                                                {{ 'admin_dashboard.bookings.status.pending'|trans }}
-                                            </div>
-                                        {% elseif status == 'past' %}
-                                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-green-500 text-white">
-                                                {{ 'admin_dashboard.bookings.status.completed'|trans }}
-                                            </div>
-                                        {% elseif status == 'cancelled' %}
-                                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-red-500 text-white">
-                                                {{ 'admin_dashboard.bookings.status.cancelled'|trans }}
-                                            </div>
-                                        {% else %}
-                                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-gray-500 text-white">
-                                                {{ ('admin_dashboard.bookings.status.' ~ status)|trans({}) }}
-                                            </div>
-                                        {% endif %}
+                                        {{ _self.status_badge(booking.status) }}
                                     </td>
-                                    <td class="p-4 align-middle">
+                                    <td class="p-4 align-middle text-slate-600">
                                         {{ booking.createdAt|date('d.m.Y') }}
                                     </td>
                                     <td class="p-4 align-middle">
@@ -291,7 +250,7 @@
                                                     data-action="live#action"
                                                     data-action-name="markAsPaid"
                                                     data-action-param="{{ booking.id }}"
-                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-green-600 text-white hover:bg-green-700 h-9 rounded-md px-3"
+                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-green-600 text-white hover:bg-green-700 h-9 rounded-lg px-3"
                                                 >
                                                     {{ 'admin_dashboard.bookings.actions.mark_paid'|trans }}
                                                 </button>
@@ -303,108 +262,16 @@
                                 {# Expanded lesson details rows #}
                                 {% if isExpanded %}
                                     <tr>
-                                        <td colspan="8" class="p-0 bg-muted/20">
+                                        <td colspan="8" class="p-0 bg-slate-50">
                                             <div class="p-4">
-                                                <div class="space-y-3">
-                                                    <h4 class="font-semibold text-sm">{{ 'admin_dashboard.bookings.details.title'|trans }}</h4>
-
-                                                    <div class="relative w-full overflow-auto">
-                                                        <table class="w-full caption-bottom text-sm">
-                                                            <thead class="[&_tr]:border-b">
-                                                                <tr class="border-b transition-colors hover:bg-slate-50">
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.lesson'|trans }}</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.date_time'|trans }}</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.amount'|trans }}</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.status'|trans }}</th>
-                                                                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground text-xs">{{ 'admin_dashboard.bookings.details.actions'|trans }}</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="[&_tr:last-child]:border-0">
-                                                                {% for lesson in booking.lessons %}
-                                                                    {% set lessonStatus = this.getLessonStatusBadge(lesson, booking) %}
-                                                                    {% set canModify = this.canLessonBeModified(lesson, booking) %}
-
-                                                                    <tr class="border-b transition-colors hover:bg-slate-50 text-sm">
-                                                                        <td class="p-4 align-middle text-xs">
-                                                                            <p class="font-medium">{{ lesson.metadata.title ?? 'Workshop' }}</p>
-                                                                            {% if lesson.series %}
-                                                                                <p class="text-xs text-muted-foreground">Series: {{ lesson.series.type.value }}</p>
-                                                                            {% endif %}
-                                                                        </td>
-                                                                        <td class="p-4 align-middle text-xs">
-                                                                            <div>
-                                                                                <p>{{ lesson.metadata.schedule|date('Y-m-d') }}</p>
-                                                                                <p class="text-muted-foreground">{{ lesson.metadata.schedule|date('H:i') }}</p>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td class="p-4 align-middle text-xs">
-                                                                            {% set amountPerLesson = this.getAmountPerLesson(booking) %}
-                                                                            {% if amountPerLesson %}
-                                                                                {{ amountPerLesson|money }}
-                                                                            {% else %}
-                                                                                -
-                                                                            {% endif %}
-                                                                        </td>
-                                                                        <td class="p-4 align-middle text-xs">
-                                                                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent {{ lessonStatus.class }}">
-                                                                                {{ lessonStatus.text }}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td class="p-4 align-middle text-xs">
-                                                                            <div class="flex gap-1">
-                                                                                {% if canModify %}
-                                                                                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md h-6 text-xs px-2">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 mr-1">
-                                                                                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                                                                                            <path d="M21 3v5h-5"></path>
-                                                                                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-                                                                                            <path d="M8 16H3v5"></path>
-                                                                                        </svg>
-                                                                                        {{ 'admin_dashboard.bookings.actions.reschedule'|trans }}
-                                                                                    </button>
-                                                                                    <button
-                                                                                        data-action="live#action"
-                                                                                        data-action-name="cancelLesson"
-                                                                                        data-action-param-booking-id="{{ booking.id }}"
-                                                                                        data-action-param-lesson-id="{{ lesson.id }}"
-                                                                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground rounded-md h-6 text-xs px-2 border-red-600 text-red-600 hover:bg-red-600/10"
-                                                                                    >
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 mr-1">
-                                                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                                                            <path d="m15 9-6 6"></path>
-                                                                                            <path d="m9 9 6 6"></path>
-                                                                                        </svg>
-                                                                                        {{ 'admin_dashboard.bookings.actions.cancel'|trans }}
-                                                                                    </button>
-                                                                                    <button
-                                                                                        data-action="live#action"
-                                                                                        data-action-name="refundLesson"
-                                                                                        data-action-param-booking-id="{{ booking.id }}"
-                                                                                        data-action-param-lesson-id="{{ lesson.id }}"
-                                                                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground rounded-md h-6 text-xs px-2 border-red-600 text-red-600 hover:bg-red-600/10"
-                                                                                    >
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 mr-1">
-                                                                                            <line x1="12" x2="12" y1="2" y2="22"></line>
-                                                                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                                                                        </svg>
-                                                                                        {{ 'admin_dashboard.bookings.actions.refund'|trans }}
-                                                                                    </button>
-                                                                                {% endif %}
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                                {{ _self.lesson_details(booking, this) }}
                                             </div>
                                         </td>
                                     </tr>
                                 {% endif %}
                             {% else %}
                                 <tr>
-                                    <td colspan="8" class="p-4 text-center text-muted-foreground">
+                                    <td colspan="8" class="p-8 text-center text-slate-400 font-medium">
                                         {{ 'admin_dashboard.bookings.no_bookings'|trans }}
                                     </td>
                                 </tr>
@@ -413,6 +280,165 @@
                     </table>
                 </div>
             </div>
+
+            {# Bookings — mobile cards (below md) #}
+            <div class="md:hidden space-y-3">
+                {% for item in this.getAllBookings() %}
+                    {% set booking = item.booking %}
+                    {% set bookingId = booking.id %}
+                    {% set isExpanded = this.isBookingExpanded(bookingId) %}
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                        <button type="button"
+                                class="w-full text-left p-4 flex items-start justify-between gap-3"
+                                data-action="click->live#action"
+                                data-live-action-param="toggleBookingExpansion"
+                                data-live-booking-id-param="{{ bookingId }}">
+                            <div class="min-w-0">
+                                {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                                {% if booking.lessons.count > 0 %}
+                                    {% set firstLesson = booking.lessons.first %}
+                                    <p class="text-sm font-bold text-slate-800 mt-2 truncate">
+                                        {{ firstLesson.metadata.title ?? ('admin_dashboard.bookings.table.headers.workshop'|trans) }}
+                                    </p>
+                                    <p class="text-xs text-slate-500">{{ firstLesson.metadata.schedule|date('Y-m-d H:i') }}</p>
+                                {% endif %}
+                                <div class="flex flex-wrap gap-1.5 mt-2">
+                                    {{ _self.status_badge(booking.status) }}
+                                    {{ _self.payment_badge(booking.payment) }}
+                                </div>
+                            </div>
+                            <div class="shrink-0 flex flex-col items-end gap-2">
+                                <span class="font-bold text-slate-800 text-sm">{{ booking.payment ? booking.payment.amount|money : '-' }}</span>
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {% if isExpanded %}
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m18 15-6-6-6 6"></path>
+                                    {% else %}
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"></path>
+                                    {% endif %}
+                                </svg>
+                            </div>
+                        </button>
+
+                        {% if booking.payment and booking.payment.status != 'paid' %}
+                            <div class="px-4 pb-3">
+                                <button
+                                    data-action="live#action"
+                                    data-action-name="markAsPaid"
+                                    data-action-param="{{ booking.id }}"
+                                    class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-green-600 text-white hover:bg-green-700 h-9 rounded-lg px-3"
+                                >
+                                    {{ 'admin_dashboard.bookings.actions.mark_paid'|trans }}
+                                </button>
+                            </div>
+                        {% endif %}
+
+                        {% if isExpanded %}
+                            <div class="p-4 bg-slate-50 border-t border-slate-200">
+                                {{ _self.lesson_details(booking, this) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="p-8 text-center text-slate-400 font-medium">{{ 'admin_dashboard.bookings.no_bookings'|trans }}</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
+
+{% macro status_badge(status) %}
+    {% if status == 'active' %}
+        <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-blue-100 text-blue-700">{{ 'admin_dashboard.bookings.status.confirmed'|trans }}</div>
+    {% elseif status == 'pending' %}
+        <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-amber-100 text-amber-700">{{ 'admin_dashboard.bookings.status.pending'|trans }}</div>
+    {% elseif status == 'past' %}
+        <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ 'admin_dashboard.bookings.status.completed'|trans }}</div>
+    {% elseif status == 'cancelled' %}
+        <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-red-100 text-red-700">{{ 'admin_dashboard.bookings.status.cancelled'|trans }}</div>
+    {% else %}
+        <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ ('admin_dashboard.bookings.status.' ~ status)|trans({}) }}</div>
+    {% endif %}
+{% endmacro %}
+
+{% macro payment_badge(payment) %}
+    {% if payment %}
+        {% set paymentStatus = payment.status %}
+        {% if paymentStatus == 'paid' %}
+            <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ 'admin_dashboard.bookings.payment.paid'|trans }}</div>
+        {% elseif paymentStatus == 'pending' %}
+            <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-amber-100 text-amber-700">{{ 'admin_dashboard.bookings.payment.pending'|trans }}</div>
+        {% else %}
+            <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-red-100 text-red-700">{{ ('admin_dashboard.bookings.payment.' ~ paymentStatus)|trans({}) }}</div>
+        {% endif %}
+    {% else %}
+        <div class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ 'admin_dashboard.bookings.payment.none'|trans }}</div>
+    {% endif %}
+{% endmacro %}
+
+{% macro lesson_details(booking, component) %}
+    <div class="space-y-3">
+        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ 'admin_dashboard.bookings.details.title'|trans }}</h4>
+        <div class="space-y-2">
+            {% for lesson in booking.lessons %}
+                {% set lessonStatus = component.getLessonStatusBadge(lesson, booking) %}
+                {% set canModify = component.canLessonBeModified(lesson, booking) %}
+                {% set amountPerLesson = component.getAmountPerLesson(booking) %}
+
+                <div class="bg-white border border-slate-200 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-slate-800 text-sm">{{ lesson.metadata.title ?? 'Workshop' }}</p>
+                        {% if lesson.series %}
+                            <p class="text-xs text-slate-500">{{ 'admin_dashboard.bookings.series'|trans }}: {{ lesson.series.type.value }}</p>
+                        {% endif %}
+                        <p class="text-xs text-slate-500">{{ lesson.metadata.schedule|date('Y-m-d H:i') }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-sm font-bold text-slate-800">{{ amountPerLesson ? amountPerLesson|money : '-' }}</span>
+                        <div class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold {{ lessonStatus.class }}">{{ lessonStatus.text }}</div>
+                    </div>
+                    {% if canModify %}
+                        <div class="flex gap-1.5 shrink-0">
+                            <button class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-md h-7 text-xs px-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
+                                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                                    <path d="M21 3v5h-5"></path>
+                                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                                    <path d="M8 16H3v5"></path>
+                                </svg>
+                                {{ 'admin_dashboard.bookings.actions.reschedule'|trans }}
+                            </button>
+                            <button
+                                data-action="live#action"
+                                data-action-name="cancelLesson"
+                                data-action-param-booking-id="{{ booking.id }}"
+                                data-action-param-lesson-id="{{ lesson.id }}"
+                                class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="m15 9-6 6"></path>
+                                    <path d="m9 9 6 6"></path>
+                                </svg>
+                                {{ 'admin_dashboard.bookings.actions.cancel'|trans }}
+                            </button>
+                            <button
+                                data-action="live#action"
+                                data-action-name="refundLesson"
+                                data-action-param-booking-id="{{ booking.id }}"
+                                data-action-param-lesson-id="{{ lesson.id }}"
+                                class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
+                                    <line x1="12" x2="12" y1="2" y2="22"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                                {{ 'admin_dashboard.bookings.actions.refund'|trans }}
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}

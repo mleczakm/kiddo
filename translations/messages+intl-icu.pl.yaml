@@ -623,6 +623,7 @@ admin_users:
   title: Użytkownicy
   search:
     placeholder: Szukaj użytkowników...
+    no_results: Nie znaleziono klientów.
   add_user: Dodaj użytkownika
   table:
     name: Nazwa

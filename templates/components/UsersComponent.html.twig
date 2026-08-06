@@ -1,69 +1,102 @@
 <div {{ attributes }}>
-    <div class="container mx-auto p-4 md:p-6">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-semibold">{{ 'admin_users.title'|trans }}</h1>
-            <div class="flex items-center gap-4">
-                <div class="relative flex items-center">
-                    <input type="search" placeholder="{{ 'admin_users.search.placeholder'|trans }}" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" data-model="query"/>
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-slate-100 bg-slate-50 shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h3 class="flex items-center gap-3 text-lg font-black text-slate-800">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-5 h-5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>{{ 'admin_users.title'|trans }}</span>
+            </h3>
+            <div class="flex items-center gap-3">
+                <div class="relative flex-1 sm:w-64">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                    <input type="search" placeholder="{{ 'admin_users.search.placeholder'|trans }}" class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" data-model="query"/>
                 </div>
-                <button disabled class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md">
+                <button disabled class="inline-flex items-center justify-center whitespace-nowrap text-sm font-bold transition disabled:pointer-events-none disabled:opacity-50 bg-indigo-600 text-white hover:bg-indigo-700 h-10 px-4 rounded-lg shadow-sm shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                     {{ 'admin_users.add_user'|trans }}
                 </button>
             </div>
         </div>
-        <div class="border rounded-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.name'|trans }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.email'|trans }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.children'|trans }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.role'|trans }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.status'|trans }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'admin_users.table.actions'|trans }}</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    {% for user in this.getUsers() %}
+
+        {# Clients — desktop table (md and up) #}
+        <div class="hidden md:block">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10">
-                                        <img class="h-10 w-10 rounded-full" src="https://i.pravatar.cc/40?u={{ user.email }}" alt="">
+                            <th class="px-6 py-4 font-semibold">{{ 'admin_users.table.name'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin_users.table.email'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin_users.table.children'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin_users.table.role'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold">{{ 'admin_users.table.status'|trans }}</th>
+                            <th class="px-6 py-4 font-semibold text-right">{{ 'admin_users.table.actions'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for user in this.getUsers() %}
+                            <tr class="hover:bg-slate-50/50 transition">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <img class="h-9 w-9 rounded-full shrink-0" src="https://i.pravatar.cc/40?u={{ user.email }}" alt="">
+                                        <a href="{{ path('app_admin_user_view', { id: user.id }) }}" class="font-bold text-slate-800 hover:text-indigo-600 transition">{{ user.name }}</a>
                                     </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">
-                                            <a href="{{ path('app_admin_user_view', { id: user.id }) }}" class="text-indigo-600 hover:text-indigo-900">{{ user.name }}</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ user.email }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">{{ user.email }}</td>
+                                <td class="px-6 py-4 text-slate-600">
                                     {% if user.children|length > 0 %}
                                         {{ user.children|map(c => c.name)|join(', ') }}
                                     {% else %}
-                                        —
+                                        <span class="text-slate-400">—</span>
                                     {% endif %}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ user.roles|join(', ') }}</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ 'admin_users.status.active'|trans }}</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button disabled class="text-indigo-600 hover:text-indigo-900">{{ 'admin_users.actions.edit'|trans }}</button>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ user.roles|join(', ') }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ 'admin_users.status.active'|trans }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button disabled class="p-1.5 text-slate-300 cursor-not-allowed rounded-lg" title="{{ 'admin_users.actions.edit'|trans }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-400 font-medium">{{ 'admin_users.search.no_results'|trans }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {# Clients — mobile cards (below md) #}
+        <div class="md:hidden divide-y divide-slate-100">
+            {% for user in this.getUsers() %}
+                <div class="p-4 flex items-start gap-3">
+                    <img class="h-10 w-10 rounded-full shrink-0" src="https://i.pravatar.cc/40?u={{ user.email }}" alt="">
+                    <div class="min-w-0 flex-1">
+                        <a href="{{ path('app_admin_user_view', { id: user.id }) }}" class="font-bold text-slate-800 hover:text-indigo-600 transition">{{ user.name }}</a>
+                        <p class="text-xs text-slate-500 truncate">{{ user.email }}</p>
+                        <p class="text-xs text-slate-500 mt-1">
+                            {% if user.children|length > 0 %}
+                                {{ user.children|map(c => c.name)|join(', ') }}
+                            {% else %}
+                                <span class="text-slate-400">{{ 'admin_users.table.children'|trans }}: —</span>
+                            {% endif %}
+                        </p>
+                        <div class="flex flex-wrap gap-1.5 mt-2">
+                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">{{ user.roles|join(', ') }}</span>
+                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700">{{ 'admin_users.status.active'|trans }}</span>
+                        </div>
+                    </div>
+                    <button disabled class="p-1.5 text-slate-300 cursor-not-allowed rounded-lg shrink-0" title="{{ 'admin_users.actions.edit'|trans }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                    </button>
+                </div>
+            {% else %}
+                <p class="p-8 text-center text-slate-400 font-medium">{{ 'admin_users.search.no_results'|trans }}</p>
+            {% endfor %}
         </div>
     </div>
 </div>

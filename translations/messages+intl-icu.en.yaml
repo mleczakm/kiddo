@@ -382,6 +382,8 @@ admin_dashboard:
       invalid_action: 'Invalid action.'
 
 admin_users:
+  search:
+    no_results: 'No clients found.'
   table:
     children: 'Children'
   children:
