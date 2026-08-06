@@ -380,11 +380,6 @@ abbr:where([title]) {
     text-decoration: underline dotted
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-size: inherit;
-    font-weight: inherit
-}
-
 a {
     color: inherit;
     text-decoration: inherit
@@ -426,26 +421,12 @@ table {
     border-collapse: collapse
 }
 
-button, input, optgroup, select, textarea {
-    font-family: inherit;
-    font-feature-settings: inherit;
-    font-variation-settings: inherit;
-    font-size: 100%;
-    font-weight: inherit;
-    line-height: inherit;
-    letter-spacing: inherit;
-    color: inherit;
-    margin: 0;
-    padding: 0
-}
-
 button, select {
     text-transform: none
 }
 
 button, input:where([type=button]), input:where([type=reset]), input:where([type=submit]) {
     -webkit-appearance: button;
-    background-color: transparent;
     background-image: none
 }
 
