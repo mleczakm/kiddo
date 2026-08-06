@@ -189,6 +189,25 @@ class AdminControllersSmokeTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function testTabNavigationLinksArePresent(): void
+    {
+        $client = static::createClient();
+        $admin = $this->createAdminUser($client);
+        $client->loginUser($admin);
+
+        $client->request('GET', '/admin');
+
+        // Check all navigation links are present
+        $this->assertSelectorExists('a[href="/admin"]');
+        $this->assertSelectorExists('a[href="/admin/zajecia"]');
+        $this->assertSelectorExists('a[href="/admin/harmonogram"]');
+        $this->assertSelectorExists('a[href="/admin/platnosci"]');
+        $this->assertSelectorExists('a[href="/admin/rezerwacje"]');
+        $this->assertSelectorExists('a[href="/admin/uzytkownicy"]');
+        $this->assertSelectorExists('a[href="/admin/wiadomosci"]');
+        $this->assertSelectorExists('a[href="/admin/ustawienia"]');
+    }
+
     public function testAllAdminEndpointsRequireAdminRole(): void
     {
         $client = static::createClient();
