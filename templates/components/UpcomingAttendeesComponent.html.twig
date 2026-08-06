@@ -317,93 +317,117 @@
     </div>
 
     {# Fast booking modal #}
-    <div data-action="click->live#action"
+    <div data-controller="modal-transition" data-modal-transition-mode-value="toggle">
+    <div data-modal-transition-target="overlay"
+         data-state="{{ this.modalOpened ? 'open' : 'closed' }}"
+         data-action="click->modal-transition#close click->live#action"
          data-live-action-param="closeModal"
-         class="{% if not this.modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/60"></div>
+         class="{% if not this.modalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"></div>
 
     <dialog {% if this.modalOpened %}open{% endif %}
-            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl">
+            data-modal-transition-target="panel"
+            data-state="{{ this.modalOpened ? 'open' : 'closed' }}"
+            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-0 shadow-xl duration-200 max-w-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
         {% set sel = this.selectedLessonId ? (this.lessons|filter(l => (l.id ~ '') == this.selectedLessonId)|first) : null %}
-        <h3 class="text-lg font-semibold mb-4">Szybka rezerwacja{% if sel %}: {{ sel.metadata.title }} ({{ sel.metadata.schedule|date('Y-m-d H:i') }}){% endif %}</h3>
 
-        {% if this.errorMessage %}
-            <div class="mb-3 p-2 text-sm rounded bg-red-100 text-red-800">{{ this.errorMessage }}</div>
-        {% endif %}
-        {% if this.successMessage %}
-            <div class="mb-3 p-2 text-sm rounded bg-green-100 text-green-800">{{ this.successMessage }}</div>
-        {% endif %}
-
-        <div class="grid gap-3">
-            <div>
-                <label class="block text-sm font-medium mb-1">Wybierz istniejącego użytkownika (opcjonalnie)</label>
-                {% if this.selectedUserId %}
-                    <div class="flex items-center justify-between p-2 border rounded bg-gray-50">
-                        <div class="text-sm">
-                            <div class="font-medium">{{ this.customerName }}</div>
-                            <div class="text-muted-foreground">{{ this.customerEmail }}</div>
-                        </div>
-                        <button class="btn-outline" type="button" data-action="live#action" data-live-action-param="clearSelectedUser">Wyczyść</button>
-                    </div>
-                {% else %}
-                    <div class="relative">
-                        <input type="text" class="w-full border rounded px-3 py-2" placeholder="Szukaj po imieniu lub e-mailu..." data-model="userSearch">
-                        {% if this.userSearch and this.userSearch|length >= 2 %}
-                            {% set found = this.filteredUsers %}
-                            <div class="absolute z-10 w-full mt-1 bg-white border rounded shadow max-h-48 overflow-y-auto">
-                                {% if found|length > 0 %}
-                                    {% for u in found %}
-                                        <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-100" data-action="live#action" data-live-action-param="selectExistingUser" data-live-user-id-param="{{ u.id }}">
-                                            <div class="font-medium">{{ u.name }}</div>
-                                            <div class="text-xs text-muted-foreground">{{ u.email }}</div>
-                                        </button>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="px-3 py-2 text-sm text-muted-foreground">Brak wyników dla "{{ this.userSearch }}"</div>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    </div>
+        <div class="flex items-start gap-3 p-6 border-b border-slate-100 bg-slate-50 rounded-t-2xl">
+            <span class="shrink-0 mt-0.5 inline-flex items-center justify-center w-9 h-9 rounded-full bg-indigo-50 text-indigo-600">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
+            </span>
+            <div class="min-w-0">
+                <h3 class="text-lg font-black text-slate-800">Szybka rezerwacja</h3>
+                {% if sel %}
+                    <p class="text-sm text-slate-500 mt-0.5">{{ sel.metadata.title }} &middot; {{ sel.metadata.schedule|date('Y-m-d H:i') }}</p>
                 {% endif %}
             </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">E-mail</label>
-                <input type="email" class="w-full border rounded px-3 py-2" data-model="customerEmail" placeholder="email@domena.pl">
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">Imię i nazwisko</label>
-                <input type="text" class="w-full border rounded px-3 py-2" data-model="customerName" placeholder="Jan Kowalski">
-            </div>
-            {% if this.selectedUserId and this.getSelectedUserChildren()|length > 0 %}
-            <div>
-                <label class="block text-sm font-medium mb-1">{{ 'booking.child.optional'|trans }}</label>
-                <select class="w-full border rounded px-3 py-2" data-model="selectedChildId">
-                    <option value="">{{ 'booking.child.select'|trans }}</option>
-                    {% for child in this.getSelectedUserChildren() %}
-                        <option value="{{ child.id }}" {{ this.selectedChildId == (child.id ~ '') ? 'selected' : '' }}>
-                            {{ child.name }}{% if child.ageYears %} ({{ 'profile.children.years'|trans({count: child.ageYears}) }}){% endif %}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            {% endif %}
-            <div>
-                <label class="block text-sm font-medium mb-1">Notatka (opcjonalnie)</label>
-                <textarea class="w-full border rounded px-3 py-2" rows="3" data-model="notes" placeholder="np. prośba o miejsce obok rodzeństwa"></textarea>
-            </div>
         </div>
 
-        <div class="flex justify-end gap-3 mt-5">
-            <button class="btn-outline" type="button" data-action="live#action" data-live-action-param="closeModal">{{ 'action.cancel'|trans }}</button>
-            <button class="btn-primary" type="button" data-action="live#action" data-live-action-param="confirmFastBooking">Zapisz</button>
+        <div class="p-6">
+            {% if this.errorMessage %}
+                <div class="mb-4 p-3 text-sm rounded-xl bg-red-50 text-red-700 border border-red-100">{{ this.errorMessage }}</div>
+            {% endif %}
+            {% if this.successMessage %}
+                <div class="mb-4 p-3 text-sm rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">{{ this.successMessage }}</div>
+            {% endif %}
+
+            <div class="grid gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Wybierz istniejącego użytkownika (opcjonalnie)</label>
+                    {% if this.selectedUserId %}
+                        <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl bg-slate-50">
+                            <div class="text-sm">
+                                <div class="font-semibold text-slate-800">{{ this.customerName }}</div>
+                                <div class="text-slate-500">{{ this.customerEmail }}</div>
+                            </div>
+                            <button type="button" class="px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-100" data-action="live#action" data-live-action-param="clearSelectedUser">Wyczyść</button>
+                        </div>
+                    {% else %}
+                        <div class="relative">
+                            <input type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Szukaj po imieniu lub e-mailu..." data-model="userSearch">
+                            {% if this.userSearch and this.userSearch|length >= 2 %}
+                                {% set found = this.filteredUsers %}
+                                <div class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                                    {% if found|length > 0 %}
+                                        {% for u in found %}
+                                            <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-50 first:rounded-t-xl last:rounded-b-xl" data-action="live#action" data-live-action-param="selectExistingUser" data-live-user-id-param="{{ u.id }}">
+                                                <div class="font-medium text-slate-800">{{ u.name }}</div>
+                                                <div class="text-xs text-slate-500">{{ u.email }}</div>
+                                            </button>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="px-3 py-2 text-sm text-slate-500">Brak wyników dla "{{ this.userSearch }}"</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">E-mail</label>
+                    <input type="email" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" data-model="customerEmail" placeholder="email@domena.pl">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Imię i nazwisko</label>
+                    <input type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" data-model="customerName" placeholder="Jan Kowalski">
+                </div>
+                {% if this.selectedUserId and this.getSelectedUserChildren()|length > 0 %}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">{{ 'booking.child.optional'|trans }}</label>
+                    <select class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" data-model="selectedChildId">
+                        <option value="">{{ 'booking.child.select'|trans }}</option>
+                        {% for child in this.getSelectedUserChildren() %}
+                            <option value="{{ child.id }}" {{ this.selectedChildId == (child.id ~ '') ? 'selected' : '' }}>
+                                {{ child.name }}{% if child.ageYears %} ({{ 'profile.children.years'|trans({count: child.ageYears}) }}){% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Notatka (opcjonalnie)</label>
+                    <textarea class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" rows="3" data-model="notes" placeholder="np. prośba o miejsce obok rodzeństwa"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50" data-action="click->modal-transition#close click->live#action" data-live-action-param="closeModal">{{ 'action.cancel'|trans }}</button>
+                <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow-sm hover:bg-indigo-700" data-action="live#action" data-live-action-param="confirmFastBooking">Zapisz</button>
+            </div>
         </div>
     </dialog>
+    </div>
 
     {# Booking payment modal (BLIK instructions) #}
-    <div data-action="click->live#action"
+    <div data-controller="modal-transition" data-modal-transition-mode-value="toggle">
+    <div data-modal-transition-target="overlay"
+         data-state="{{ this.paymentModalOpened ? 'open' : 'closed' }}"
+         data-action="click->modal-transition#close click->live#action"
          data-live-action-param="closePaymentModal"
-         class="{% if not this.paymentModalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/60"></div>
+         class="{% if not this.paymentModalOpened %}hidden{% endif %} fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"></div>
     <dialog {% if this.paymentModalOpened %}open{% endif %}
-            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl">
+            data-modal-transition-target="panel"
+            data-state="{{ this.paymentModalOpened ? 'open' : 'closed' }}"
+            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
         {% if this.paymentCode and this.paymentAmount %}
             <div class="flex flex-col items-center justify-center min-h-[260px]">
                 <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
@@ -423,11 +447,12 @@
         {% endif %}
         <div class="flex justify-end mt-6">
             <button type="button"
-                    data-action="live#action"
+                    data-action="click->modal-transition#close click->live#action"
                     data-live-action-param="closePaymentModal"
                     class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2">
                 {{ 'action.close'|trans }}
             </button>
         </div>
     </dialog>
+    </div>
 </div>
