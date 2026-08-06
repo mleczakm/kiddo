@@ -672,6 +672,7 @@ admin:
     root: 'Admin'
   menu:
     toggle: 'Otwórz menu'
+    view_site: 'Zobacz stronę'
   tour:
     start_button: 'Jak korzystać z panelu?'
     next: 'Dalej'
