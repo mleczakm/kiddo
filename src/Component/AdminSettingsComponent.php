@@ -24,7 +24,7 @@ class AdminSettingsComponent extends AbstractController
     use DefaultActionTrait;
     use ComponentToolsTrait;
 
-    #[LiveProp]
+    #[LiveProp(writable: true)]
     public string $settingsTab = 'roles';
 
     public ?string $newFinanceContactUserId = null;
