@@ -9,11 +9,15 @@ use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\User;
 use App\Entity\Payment;
+use App\Message\CancelLessonBooking;
+use App\Message\RefundLessonBooking;
+use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
 use App\Repository\UserRepository;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -69,11 +73,22 @@ class AdminBookingsComponent extends AbstractController
     #[LiveProp(writable: true)]
     public array $expandedBookings = [];
 
+    // Reschedule picker state
+    #[LiveProp(writable: true)]
+    public ?string $reschedulingBookingId = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $reschedulingLessonId = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $newLessonId = null;
+
     public function __construct(
         private readonly BookingRepository $bookingRepository,
         private readonly UserRepository $userRepository,
         private readonly LessonRepository $lessonRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly MessageBusInterface $messageBus,
     ) {}
 
     /**
@@ -339,26 +354,20 @@ class AdminBookingsComponent extends AbstractController
     #[LiveAction]
     public function cancelLesson(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
+        $admin = $this->getUser();
+        if (! $admin instanceof User) {
+            $this->errorMessage = 'Unable to cancel lesson: not logged in as admin';
+            return;
+        }
+
         try {
-            $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
-
-            if (! $booking) {
-                $this->errorMessage = 'Booking not found';
-                return;
-            }
-
-            if ($booking->cancelLesson($lessonId, 'Cancelled by admin')) {
-                // If no active lessons remain, mark booking as cancelled
-                if (! $booking->hasActiveBookedLessons()) {
-                    $booking->cancel(null, 'All lessons cancelled');
-                }
-
-                $this->entityManager->flush();
-                $this->successMessage = 'Lesson cancelled successfully';
-            } else {
-                $this->errorMessage = 'Unable to cancel lesson - it may already be cancelled or not found';
-            }
-
+            $this->messageBus->dispatch(new CancelLessonBooking(
+                Ulid::fromString($bookingId),
+                Ulid::fromString($lessonId),
+                $admin,
+                'Cancelled by admin',
+            ));
+            $this->successMessage = 'Lesson cancelled successfully';
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to cancel lesson: ' . $e->getMessage();
         }
@@ -367,24 +376,73 @@ class AdminBookingsComponent extends AbstractController
     #[LiveAction]
     public function refundLesson(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
+        $admin = $this->getUser();
+        if (! $admin instanceof User) {
+            $this->errorMessage = 'Unable to refund lesson: not logged in as admin';
+            return;
+        }
+
         try {
-            $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
-
-            if (! $booking) {
-                $this->errorMessage = 'Booking not found';
-                return;
-            }
-
-            if ($booking->refundLesson($lessonId, 'Refunded by admin')) {
-                $this->entityManager->flush();
-                $this->successMessage = 'Lesson refunded successfully';
-            } else {
-                $this->errorMessage = 'Unable to refund lesson - it may already be processed or not found';
-            }
-
+            $this->messageBus->dispatch(new RefundLessonBooking(
+                Ulid::fromString($bookingId),
+                Ulid::fromString($lessonId),
+                $admin,
+                'Refunded by admin',
+            ));
+            $this->successMessage = 'Lesson refunded successfully';
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to refund lesson: ' . $e->getMessage();
         }
+    }
+
+    #[LiveAction]
+    public function startReschedule(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
+    {
+        $this->reschedulingBookingId = $bookingId;
+        $this->reschedulingLessonId = $lessonId;
+        $this->newLessonId = null;
+    }
+
+    #[LiveAction]
+    public function cancelReschedule(): void
+    {
+        $this->reschedulingBookingId = null;
+        $this->reschedulingLessonId = null;
+        $this->newLessonId = null;
+    }
+
+    #[LiveAction]
+    public function reschedule(): void
+    {
+        $admin = $this->getUser();
+        if (! $admin instanceof User) {
+            $this->errorMessage = 'Unable to reschedule: not logged in as admin';
+            return;
+        }
+
+        if (! $this->reschedulingBookingId || ! $this->reschedulingLessonId || ! $this->newLessonId) {
+            $this->errorMessage = 'Wybierz nowy termin, aby przełożyć zajęcia';
+            return;
+        }
+
+        try {
+            $this->messageBus->dispatch(new RescheduleLessonBooking(
+                Ulid::fromString($this->reschedulingBookingId),
+                Ulid::fromString($this->reschedulingLessonId),
+                Ulid::fromString($this->newLessonId),
+                $admin,
+                'Rescheduled by admin',
+            ));
+            $this->successMessage = 'Lesson rescheduled successfully';
+            $this->cancelReschedule();
+        } catch (\Exception $e) {
+            $this->errorMessage = 'Failed to reschedule lesson: ' . $e->getMessage();
+        }
+    }
+
+    public function isReschedulingLesson(string $bookingId, string $lessonId): bool
+    {
+        return $this->reschedulingBookingId === $bookingId && $this->reschedulingLessonId === $lessonId;
     }
 
     /**

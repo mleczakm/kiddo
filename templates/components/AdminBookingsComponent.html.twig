@@ -399,7 +399,13 @@
                     </div>
                     {% if canModify %}
                         <div class="flex gap-1.5 shrink-0">
-                            <button class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-md h-7 text-xs px-2">
+                            <button
+                                data-action="live#action"
+                                data-live-action-param="startReschedule"
+                                data-live-booking-id-param="{{ booking.id }}"
+                                data-live-lesson-id-param="{{ lesson.id }}"
+                                class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-md h-7 text-xs px-2"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
                                     <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
                                     <path d="M21 3v5h-5"></path>
@@ -410,9 +416,9 @@
                             </button>
                             <button
                                 data-action="live#action"
-                                data-action-name="cancelLesson"
-                                data-action-param-booking-id="{{ booking.id }}"
-                                data-action-param-lesson-id="{{ lesson.id }}"
+                                data-live-action-param="cancelLesson"
+                                data-live-booking-id-param="{{ booking.id }}"
+                                data-live-lesson-id-param="{{ lesson.id }}"
                                 class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
@@ -424,9 +430,9 @@
                             </button>
                             <button
                                 data-action="live#action"
-                                data-action-name="refundLesson"
-                                data-action-param-booking-id="{{ booking.id }}"
-                                data-action-param-lesson-id="{{ lesson.id }}"
+                                data-live-action-param="refundLesson"
+                                data-live-booking-id-param="{{ booking.id }}"
+                                data-live-lesson-id-param="{{ lesson.id }}"
                                 class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
@@ -438,6 +444,29 @@
                         </div>
                     {% endif %}
                 </div>
+
+                {% if component.isReschedulingLesson(booking.id, lesson.id) %}
+                    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center gap-2">
+                        <select data-model="newLessonId" class="flex-1 p-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">{{ 'admin_dashboard.bookings.actions.reschedule_select_placeholder'|trans }}</option>
+                            {% for candidate in component.getAvailableLessons() %}
+                                {% if candidate.id != lesson.id %}
+                                    <option value="{{ candidate.id }}">{{ candidate.metadata.title }} — {{ candidate.metadata.schedule|date('Y-m-d H:i') }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="flex gap-2 shrink-0">
+                            <button data-action="live#action" data-live-action-param="reschedule"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-indigo-600 text-white hover:bg-indigo-700 h-9 rounded-lg px-3">
+                                {{ 'admin_dashboard.bookings.actions.reschedule_confirm'|trans }}
+                            </button>
+                            <button data-action="live#action" data-live-action-param="cancelReschedule"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition border border-slate-200 text-slate-600 hover:bg-slate-50 h-9 rounded-lg px-3">
+                                {{ 'admin_dashboard.bookings.actions.reschedule_cancel'|trans }}
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>

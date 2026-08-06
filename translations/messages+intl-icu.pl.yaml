@@ -616,6 +616,9 @@ admin_dashboard:
     actions:
       mark_paid: 'Oznacz jako opłacone'
       reschedule: 'Przełóż'
+      reschedule_select_placeholder: 'Wybierz nowy termin...'
+      reschedule_confirm: 'Zmień termin'
+      reschedule_cancel: 'Anuluj'
       cancel: 'Anuluj'
       refund: 'Zwrot'
 
