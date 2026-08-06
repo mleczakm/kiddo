@@ -22,12 +22,23 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static targets = ['overlay', 'panel'];
     static values = {
-        duration: { type: Number, default: 200 },
+        // Matches the fixed 150ms `animation-duration` baked into the
+        // `.animate-in`/`.animate-out` utilities in app.css.
+        duration: { type: Number, default: 150 },
         mode: { type: String, default: 'remove' },
     };
 
     close() {
         const elements = [...this.overlayTargets, ...this.panelTargets];
+
+        // Without this, the keyframe animation reverts to its pre-animation
+        // (visible) state the instant it finishes, which — since our cleanup
+        // below runs on a timer rather than in lockstep with the animation —
+        // produced a one-frame "blink" back to fully visible right before
+        // the element was actually removed/hidden.
+        elements.forEach((el) => {
+            el.style.animationFillMode = 'forwards';
+        });
 
         if (this.modeValue === 'toggle') {
             if (elements.some((el) => el.hasAttribute('data-live-ignore'))) {
@@ -43,6 +54,7 @@ export default class extends Controller {
                 elements.forEach((el) => {
                     el.removeAttribute('data-live-ignore');
                     el.classList.add('hidden');
+                    el.style.animationFillMode = '';
                     if (el.tagName === 'DIALOG') {
                         el.removeAttribute('open');
                     }
