@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http\Component;
 
 use PHPUnit\Framework\Attributes\Group;
+use App\Entity\Notification;
 use App\Entity\User;
 use App\UserInterface\Http\Component\UsersComponent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -54,5 +55,45 @@ final class UsersComponentTest extends WebTestCase
         $this->assertStringContainsString('admin@test.com', $rendered);
         $this->assertStringContainsString('john.doe@test.com', $rendered);
         $this->assertStringContainsString('jane.doe@test.com', $rendered);
+    }
+
+    public function testAdminCanSendAnInAppNotificationToAClient(): void
+    {
+        $client = self::createClient();
+        $container = self::getContainer();
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+
+        $adminUser = new User();
+        $adminUser->setEmail('admin@test.com');
+        $adminUser->setName('Admin User');
+        $adminUser->setRoles(['ROLE_ADMIN']);
+        $entityManager->persist($adminUser);
+
+        $customer = new User();
+        $customer->setEmail('john.doe@test.com');
+        $customer->setName('John Doe');
+        $customer->setRoles(['ROLE_USER']);
+        $entityManager->persist($customer);
+
+        $entityManager->flush();
+
+        $client->loginUser($adminUser);
+
+        $component = $this->createLiveComponent(UsersComponent::class, client: $client);
+        $component->call('startCompose', ['userId' => (string) $customer->getId()]);
+
+        self::assertSame($customer->getId(), $component->component()->getComposingForUser()?->getId());
+
+        $component->set('notifyTitle', 'Przypomnienie o zajęciach');
+        $component->set('notifyBody', 'Do zobaczenia jutro o 10:00!');
+        $component->call('sendNotification');
+
+        $notifications = $entityManager->getRepository(Notification::class)->findBy(['user' => $customer]);
+        self::assertCount(1, $notifications);
+        self::assertSame('Przypomnienie o zajęciach', $notifications[0]->getTitle());
+        self::assertSame('Do zobaczenia jutro o 10:00!', $notifications[0]->getBody());
+
+        // Composer state resets after sending
+        self::assertNull($component->component()->getComposingForUser());
     }
 }

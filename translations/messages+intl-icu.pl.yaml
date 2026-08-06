@@ -649,6 +649,15 @@ admin_users:
     active: Aktywny
   actions:
     edit: Edytuj
+    notify: Wyślij powiadomienie
+  notify:
+    title: Wyślij powiadomienie
+    subject: Temat
+    subject_placeholder: 'np. Przypomnienie o zajęciach'
+    body: Treść (opcjonalnie)
+    body_placeholder: 'Dodatkowa wiadomość dla klienta...'
+    cancel: Anuluj
+    send: Wyślij
 
 admin:
   badges:
