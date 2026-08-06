@@ -31,6 +31,36 @@
     
     {% block stylesheets %}
         <style>
+            /* Redefine the shadcn/Tailwind color tokens for everything under #root.
+               The :root-scoped values (assets/styles/app.css) are the frontend's
+               warm beige/coral "Kiddo" brand; every bg-primary/text-muted-foreground/
+               border-input/ring-ring/bg-destructive/etc. utility resolves through
+               these custom properties, so redefining them here (rather than
+               patching each utility class individually) fixes the whole admin
+               slate/indigo palette in one place, including components not
+               explicitly covered below. */
+            #root {
+                --background: 210 40% 98%;         /* slate-50 */
+                --foreground: 222 47% 11%;          /* slate-900 */
+                --card: 0 0% 100%;                  /* white */
+                --card-foreground: 222 47% 11%;
+                --popover: 0 0% 100%;
+                --popover-foreground: 222 47% 11%;
+                --primary: 243 75% 59%;             /* indigo-600 */
+                --primary-foreground: 0 0% 100%;
+                --secondary: 210 40% 96%;           /* slate-100 */
+                --secondary-foreground: 222 47% 11%;
+                --muted: 210 40% 96%;                /* slate-100 */
+                --muted-foreground: 215 16% 47%;    /* slate-500 */
+                --accent: 226 100% 97%;             /* indigo-50 */
+                --accent-foreground: 243 75% 59%;   /* indigo-600 */
+                --destructive: 0 84% 60%;           /* red-500 */
+                --destructive-foreground: 0 0% 100%;
+                --border: 214 32% 91%;              /* slate-200 */
+                --input: 214 32% 91%;                /* slate-200 */
+                --ring: 243 75% 59%;                /* indigo-600 */
+            }
+
             /* Force professional Inter font family for all elements in the admin CRM, overriding kids style */
             #root, #root h1, #root h2, #root h3, #root h4, #root h5, #root h6, 
             #root p, #root span, #root a, #root button, #root div, #root input, #root select, #root textarea,
@@ -65,7 +95,7 @@
             }
             
             /* Clean up any playful/cream backgrounds to professional white/slate inside admin */
-            #root .bg-beige, .modal-open .bg-beige, [role="dialog"], .modal-content, .bg-card, [role="tabpanel"], .workshop-card {
+            #root .bg-beige, .modal-open .bg-beige, [role="dialog"], #root dialog, .modal-content, .bg-card, [role="tabpanel"], .workshop-card {
                 background-color: #ffffff !important;
                 border-color: rgb(226, 232, 240) !important; /* border-slate-200 */
             }
@@ -120,7 +150,7 @@
                     <nav aria-label="breadcrumb" class="mb-6 shrink-0">
                         <ol class="flex flex-wrap items-center gap-1.5 break-words text-xs font-semibold text-slate-400 sm:gap-2.5">
                             <li class="inline-flex items-center gap-1.5">
-                                <a href="{{ path('app_admin_dashboard') }}" class="cursor-pointer hover:text-indigo-600 transition-colors">Admin</a>
+                                <a href="{{ path('app_admin_dashboard') }}" class="cursor-pointer hover:text-indigo-600 transition-colors">{{ 'admin.breadcrumb.root'|trans }}</a>
                                 <span class="text-slate-300" aria-hidden="true">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
                                 </span>
