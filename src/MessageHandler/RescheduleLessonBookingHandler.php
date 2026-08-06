@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
+use App\Application\Service\InAppNotificationService;
+use App\Entity\MessageType;
+use App\Entity\NotificationSeverity;
+use App\Entity\UserMessage;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
 readonly class RescheduleLessonBookingHandler
@@ -24,6 +31,10 @@ readonly class RescheduleLessonBookingHandler
         #[Autowire(service: 'state_machine.booking')]
         private WorkflowInterface $bookingStateMachine,
         private MessageBusInterface $bus,
+        private InAppNotificationService $inAppNotifications,
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
     ) {}
 
     public function __invoke(RescheduleLessonBooking $command): void
@@ -119,6 +130,32 @@ readonly class RescheduleLessonBookingHandler
             newLesson: $newLesson,
             rescheduledBy: $command->getRescheduledBy(),
             reason: $command->getReason(),
+        ));
+
+        $oldTitle = $oldLesson->getMetadata()->title;
+        $newTitle = $newLesson->getMetadata()->title;
+
+        // Notify the customer in-app that their booking moved (the admin
+        // notification above covers admins; this one covers the booking owner).
+        $this->inAppNotifications->notify(
+            $booking->getUser(),
+            $this->translator->trans('notifications.in_app.reschedule.user.title', [], 'messages'),
+            $this->translator->trans('notifications.in_app.reschedule.user.body', [
+                'from' => $oldTitle,
+                'to' => $newTitle,
+            ], 'messages'),
+            $this->urlGenerator->generate('dashboard'),
+            NotificationSeverity::Info,
+        );
+
+        // Record the reschedule for admin visibility in the Messages inbox
+        $this->entityManager->persist(new UserMessage(
+            user: $booking->getUser(),
+            subject: sprintf('Zmieniono termin: %s', $oldTitle),
+            message: $command->getReason()
+                ? sprintf('Termin "%s" zmieniono na "%s". Powód: %s', $oldTitle, $newTitle, $command->getReason())
+                : sprintf('Termin "%s" zmieniono na "%s".', $oldTitle, $newTitle),
+            type: MessageType::RESCHEDULE_REQUEST,
         ));
     }
 }

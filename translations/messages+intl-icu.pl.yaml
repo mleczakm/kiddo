@@ -90,6 +90,9 @@ notifications:
         title: Nowy użytkownik
         body: 'Zarejestrował się <strong>{name}</strong> (<em>{email}</em>).'
     reschedule:
+      user:
+        title: Zmieniono termin zajęć
+        body: 'Twój termin <strong>{from}</strong> został zmieniony na <strong>{to}</strong>.'
       admin:
         title: Przeniesienie rezerwacji
         body: 'Użytkownik <strong>{email}</strong> przeniósł rezerwację z <em>{from}</em> na <em>{to}</em>.'
