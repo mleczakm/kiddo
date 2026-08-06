@@ -427,31 +427,38 @@
     <dialog {% if this.paymentModalOpened %}open{% endif %}
             data-modal-transition-target="panel"
             data-state="{{ this.paymentModalOpened ? 'open' : 'closed' }}"
-            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
-        {% if this.paymentCode and this.paymentAmount %}
-            <div class="flex flex-col items-center justify-center min-h-[260px]">
-                <div class="bg-white border border-gray-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
-                    <div class="text-2xl font-bold text-workshop-brown mb-4">
-                        {{ 'blik.instruction'|trans }} <span class="text-workshop-red whitespace-nowrap"> {{ 'blik.phone'|trans }}</span>
-                    </div>
-                    <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span class="text-workshop-red whitespace-nowrap">{{ this.paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}</div>
-                    <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ this.paymentCode }}</div>
-                    <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
-                    <div class="text-muted-foreground text-sm border-t pt-4 mt-4">
-                        {{ 'blik.alt_transfer'|trans({'title': this.paymentCode,'account': '<span class="text-workshop-red whitespace-nowrap">' ~ '46 2490 0005 0000 4000 1897 5420' ~ '</span>'})|raw }}
+            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-0 shadow-xl duration-200 max-w-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+        <div class="flex items-start gap-3 p-6 border-b border-slate-100 bg-slate-50 rounded-t-2xl">
+            <span class="shrink-0 mt-0.5 inline-flex items-center justify-center w-9 h-9 rounded-full bg-indigo-50 text-indigo-600">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+            </span>
+            <h3 class="text-lg font-black text-slate-800 mt-0.5">Płatność BLIK</h3>
+        </div>
+
+        <div class="p-6">
+            {% if this.paymentCode and this.paymentAmount %}
+                <div class="text-center">
+                    <p class="text-slate-700">
+                        {{ 'blik.instruction'|trans }} <span class="font-bold text-indigo-600 whitespace-nowrap">{{ 'blik.phone'|trans }}</span>
+                    </p>
+                    <p class="text-slate-700 mt-1">{{ 'blik.instruction_2'|trans }} <span class="font-bold text-indigo-600 whitespace-nowrap">{{ this.paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}</p>
+                    <div class="text-2xl font-mono bg-slate-50 border border-slate-200 rounded-xl p-4 my-4 select-all tracking-widest text-indigo-600">{{ this.paymentCode }}</div>
+                    <p class="text-slate-500 text-sm">{{ 'blik.info'|trans }}</p>
+                    <div class="text-slate-500 text-sm border-t border-slate-100 pt-4 mt-4">
+                        {{ 'blik.alt_transfer'|trans({'title': this.paymentCode,'account': '<span class="font-bold text-indigo-600 whitespace-nowrap">' ~ '46 2490 0005 0000 4000 1897 5420' ~ '</span>'})|raw }}
                     </div>
                 </div>
+            {% else %}
+                <p class="text-center py-6 text-slate-500">Brak danych płatności.</p>
+            {% endif %}
+            <div class="flex justify-end mt-6">
+                <button type="button"
+                        data-action="click->modal-transition#close click->live#action"
+                        data-live-action-param="closePaymentModal"
+                        class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
+                    {{ 'action.close'|trans }}
+                </button>
             </div>
-        {% else %}
-            <div class="text-center p-4 text-muted-foreground">Brak danych płatności.</div>
-        {% endif %}
-        <div class="flex justify-end mt-6">
-            <button type="button"
-                    data-action="click->modal-transition#close click->live#action"
-                    data-live-action-param="closePaymentModal"
-                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2">
-                {{ 'action.close'|trans }}
-            </button>
         </div>
     </dialog>
     </div>

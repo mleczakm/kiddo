@@ -1,6 +1,6 @@
 <div {{ attributes }}>
     {% set initials = (app.user and app.user.name is defined and app.user.name ? app.user.name : app.user.email)|split(' ')|map(v => v|first)|join('')|slice(0,2)|upper %}
-    <details id="notif-details" class="relative">
+    <details id="notif-details" class="relative" data-controller="details-dropdown">
         <summary id="notif-btn" class="list-none cursor-pointer">
             <div class="relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground">
                 <span class="font-medium">{{ initials ?: 'ME' }}</span>
