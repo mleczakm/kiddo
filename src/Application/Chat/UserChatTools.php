@@ -810,12 +810,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         }
         $user = $actor->requireUser();
         $subject = $args->requireString('subject');
-        $message = new UserMessage(
-            $user,
-            $subject,
-            $args->requireString('message'),
-            $type,
-        );
+        $message = new UserMessage($user, $subject, $args->requireString('message'), $type);
         $this->entityManager->persist($message);
         $this->entityManager->flush();
 
@@ -825,8 +820,12 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             title: sprintf('%s wysłał/a wiadomość', $user->getName()),
             subject: $user,
             summary: $subject,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-            context: ['messageId' => (string) $message->getId()],
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'messageId' => (string) $message->getId(),
+            ],
         );
 
         return ToolResult::success(

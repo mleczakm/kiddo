@@ -75,10 +75,14 @@ final readonly class AddBookingHandler
                 $this->translator->trans('notifications.in_app.new_booking.instructor.title', [], 'messages'),
                 $this->translator->trans('notifications.in_app.new_booking.instructor.body', [
                     'name' => $user->getName(),
-                    'lesson' => $lesson->getMetadata()->title,
-                    'date' => $lesson->getMetadata()->schedule->format('Y-m-d H:i'),
+                    'lesson' => $lesson->getMetadata()
+                        ->title,
+                    'date' => $lesson->getMetadata()
+                        ->schedule->format('Y-m-d H:i'),
                 ], 'messages'),
-                $this->urlGenerator->generate('app_admin_lesson_view', ['id' => (string) $lesson->getId()]),
+                $this->urlGenerator->generate('app_admin_lesson_view', [
+                    'id' => (string) $lesson->getId(),
+                ]),
                 NotificationSeverity::Info,
             );
         }
