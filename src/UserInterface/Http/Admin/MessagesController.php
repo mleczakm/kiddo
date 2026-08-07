@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class MessagesController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_MESSAGES')]
     #[Route('/admin/wiadomosci', name: 'app_admin_messages')]
     public function index(): Response
     {

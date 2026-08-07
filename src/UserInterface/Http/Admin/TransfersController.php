@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class TransfersController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_PAYMENTS')]
     #[Route('/admin/platnosci', name: 'app_admin_transfers')]
     public function index(): Response
     {

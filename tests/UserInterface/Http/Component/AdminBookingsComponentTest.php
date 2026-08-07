@@ -113,4 +113,43 @@ final class AdminBookingsComponentTest extends WebTestCase
         // Picker state is cleared after a successful dispatch
         self::assertFalse($component->component()->isReschedulingLesson((string) $booking->getId(), (string) $oldLesson->getId()));
     }
+
+    public function testHostOnlySeesBookingsForLessonsTheyInstruct(): void
+    {
+        $host = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();
+        $this->em->persist($host);
+
+        $customer = UserAssembler::new()->assemble();
+        $this->em->persist($customer);
+
+        $ownLesson = LessonAssembler::new()->withTitle('Zajęcia prowadzącego')->assemble();
+        $ownLesson->addInstructor($host);
+        $this->em->persist($ownLesson);
+
+        $otherLesson = LessonAssembler::new()->withTitle('Cudze zajęcia')->assemble();
+        $this->em->persist($otherLesson);
+
+        $ownBooking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withLessons($ownLesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+        $otherBooking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withLessons($otherLesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+        $this->em->persist($ownBooking);
+        $this->em->persist($otherBooking);
+        $this->em->flush();
+
+        $this->client->loginUser($host);
+
+        $component = $this->createLiveComponent(name: AdminBookingsComponent::class, client: $this->client);
+        $bookings = $component->component()->getAllBookings();
+        $bookingIds = array_map(static fn(array $row) => (string) $row['booking']->getId(), $bookings);
+
+        self::assertContains((string) $ownBooking->getId(), $bookingIds);
+        self::assertNotContains((string) $otherBooking->getId(), $bookingIds);
+    }
 }

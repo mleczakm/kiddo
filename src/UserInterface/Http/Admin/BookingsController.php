@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class BookingsController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_BOOKINGS')]
     #[Route('/admin/rezerwacje', name: 'app_admin_bookings')]
     public function index(): Response
     {

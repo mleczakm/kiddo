@@ -134,6 +134,17 @@ class User implements UserInterface
     }
 
     /**
+     * Checks the role as stored on this user directly — does not expand
+     * role_hierarchy (e.g. an admin who inherits ROLE_HOST via the
+     * hierarchy still returns false for hasRole('ROLE_HOST')). Use
+     * is_granted()/Security::isGranted() when the hierarchy should apply.
+     */
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->roles, true);
+    }
+
+    /**
      * @see UserInterface
      */
     #[\Deprecated]

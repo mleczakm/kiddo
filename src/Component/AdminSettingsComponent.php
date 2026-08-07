@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -27,21 +28,17 @@ class AdminSettingsComponent extends AbstractController
     #[LiveProp(writable: true)]
     public string $settingsTab = 'roles';
 
+    #[LiveProp(writable: true)]
     public ?string $newFinanceContactUserId = null;
 
+    #[LiveProp(writable: true)]
     public ?string $robotsTxtContent = null;
 
-    public ?string $newAdminUserId = null;
+    #[LiveProp(writable: true)]
+    public ?string $adminSearch = null;
 
-    /**
-     * @var array<int, string>
-     */
-    public array $adminUserIds = [];
-
-    /**
-     * @var array<int, string>
-     */
-    public array $financeContactUserIds = [];
+    #[LiveProp(writable: true)]
+    public ?string $hostSearch = null;
 
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -52,27 +49,21 @@ class AdminSettingsComponent extends AbstractController
 
     public function mount(): void
     {
-        $this->loadSettings();
-    }
-
-    private function loadSettings(): void
-    {
-        // Load admin users
-        $adminUsers = $this->userRepository->findByRoles(['ROLE_ADMIN']);
-        $this->adminUserIds = array_map(fn(User $user) => (string) $user->getId(), $adminUsers);
-
-        // Load finance contacts
-        $financeContacts = $this->financeContactRepository->findAll();
-        $this->financeContactUserIds = array_map(
-            fn(FinanceContact $fc) => (string) $fc->getUser()->getId(),
-            $financeContacts
-        );
-
-        // Load robots.txt
+        // Only mount()-time state that's actually edited through a writable
+        // LiveProp belongs here. Everything else (admin/host/finance-contact
+        // lists) is queried fresh on every render by the getters below —
+        // LiveComponents re-hydrate from a plain public property's *default*
+        // value on every subsequent request/action (mount() only runs once,
+        // on the very first render), so caching query results into plain
+        // properties here would silently go stale after the first
+        // interaction.
         $robotsSetting = $this->settingRepository->findOneBy([
             'key' => 'robots.txt',
         ]);
-        $this->robotsTxtContent = $robotsSetting?->getContent() ?? "User-agent: *\nAllow: /\nDisallow: /admin/";
+        $content = $robotsSetting?->getContent();
+        $this->robotsTxtContent = (is_array($content) && is_string($content['content'] ?? null))
+            ? $content['content']
+            : "User-agent: *\nAllow: /\nDisallow: /admin/";
     }
 
     /**
@@ -88,13 +79,15 @@ class AdminSettingsComponent extends AbstractController
      */
     public function getAdminUsers(): array
     {
-        if (empty($this->adminUserIds)) {
-            return [];
-        }
+        return $this->userRepository->findByRole('ROLE_ADMIN');
+    }
 
-        return $this->userRepository->findBy([
-            'id' => $this->adminUserIds,
-        ]);
+    /**
+     * @return User[]
+     */
+    public function getHostUsers(): array
+    {
+        return $this->userRepository->findByRole('ROLE_HOST');
     }
 
     /**
@@ -102,21 +95,60 @@ class AdminSettingsComponent extends AbstractController
      */
     public function getFinanceContactUsers(): array
     {
-        if (empty($this->financeContactUserIds)) {
-            return [];
-        }
-
-        return $this->userRepository->findBy([
-            'id' => $this->financeContactUserIds,
-        ]);
+        return array_map(
+            fn(FinanceContact $fc) => $fc->getUser(),
+            $this->financeContactRepository->findAll()
+        );
     }
 
     /**
+     * @return array<int, string>
+     */
+    public function getFinanceContactUserIds(): array
+    {
+        return array_map(
+            fn(User $user) => (string) $user->getId(),
+            $this->getFinanceContactUsers()
+        );
+    }
+
+    /**
+     * Search results for the "add admin" picker, excluding users who are already admins.
+     *
      * @return User[]
      */
-    public function getInstructorUsers(): array
+    public function getFilteredUsersForAdmin(): array
     {
-        return $this->userRepository->findByRoles(['ROLE_INSTRUCTOR']);
+        return $this->searchExcluding($this->adminSearch, $this->getAdminUsers());
+    }
+
+    /**
+     * Search results for the "add host" picker, excluding users who are already hosts.
+     *
+     * @return User[]
+     */
+    public function getFilteredUsersForHost(): array
+    {
+        return $this->searchExcluding($this->hostSearch, $this->getHostUsers());
+    }
+
+    /**
+     * @param User[] $exclude
+     * @return User[]
+     */
+    private function searchExcluding(?string $search, array $exclude): array
+    {
+        if ($search === null || mb_strlen(trim($search)) < 2) {
+            return [];
+        }
+
+        $excludeIds = array_map(fn(User $user) => (string) $user->getId(), $exclude);
+        $results = $this->userRepository->findForAutocomplete($search);
+
+        return array_values(array_filter(
+            $results,
+            fn(User $user) => ! in_array((string) $user->getId(), $excludeIds, true)
+        ));
     }
 
     #[LiveAction]
@@ -131,7 +163,6 @@ class AdminSettingsComponent extends AbstractController
             return;
         }
 
-        // Check if already exists
         $existing = $this->financeContactRepository->findOneBy([
             'user' => $user,
         ]);
@@ -144,11 +175,10 @@ class AdminSettingsComponent extends AbstractController
         $this->entityManager->flush();
 
         $this->newFinanceContactUserId = null;
-        $this->loadSettings();
     }
 
     #[LiveAction]
-    public function removeFinanceContact(string $userId): void
+    public function removeFinanceContact(#[LiveArg] string $userId): void
     {
         $user = $this->userRepository->find((int) $userId);
         if ($user === null) {
@@ -162,47 +192,64 @@ class AdminSettingsComponent extends AbstractController
             $this->entityManager->remove($financeContact);
             $this->entityManager->flush();
         }
-
-        $this->loadSettings();
     }
 
     #[LiveAction]
-    public function addAdminUser(): void
-    {
-        if ($this->newAdminUserId === null) {
-            return;
-        }
-
-        $user = $this->userRepository->find((int) $this->newAdminUserId);
-        if ($user === null) {
-            return;
-        }
-
-        $roles = $user->getRoles();
-        if (! in_array('ROLE_ADMIN', $roles, true)) {
-            $roles[] = 'ROLE_ADMIN';
-            $user->setRoles($roles);
-            $this->entityManager->flush();
-        }
-
-        $this->newAdminUserId = null;
-        $this->loadSettings();
-    }
-
-    #[LiveAction]
-    public function removeAdminUser(string $userId): void
+    public function addAdminUser(#[LiveArg] string $userId): void
     {
         $user = $this->userRepository->find((int) $userId);
         if ($user === null) {
             return;
         }
 
-        $roles = $user->getRoles();
-        $roles = array_filter($roles, fn(string $role) => $role !== 'ROLE_ADMIN');
+        if (! $user->hasRole('ROLE_ADMIN')) {
+            $user->setRoles(array_values([...$user->getRoles(), 'ROLE_ADMIN']));
+            $this->entityManager->flush();
+        }
+
+        $this->adminSearch = null;
+    }
+
+    #[LiveAction]
+    public function removeAdminUser(#[LiveArg] string $userId): void
+    {
+        $user = $this->userRepository->find((int) $userId);
+        if ($user === null) {
+            return;
+        }
+
+        $roles = array_filter($user->getRoles(), fn(string $role) => $role !== 'ROLE_ADMIN');
         $user->setRoles(array_values($roles));
         $this->entityManager->flush();
+    }
 
-        $this->loadSettings();
+    #[LiveAction]
+    public function addHostUser(#[LiveArg] string $userId): void
+    {
+        $user = $this->userRepository->find((int) $userId);
+        if ($user === null) {
+            return;
+        }
+
+        if (! $user->hasRole('ROLE_HOST')) {
+            $user->setRoles(array_values([...$user->getRoles(), 'ROLE_HOST']));
+            $this->entityManager->flush();
+        }
+
+        $this->hostSearch = null;
+    }
+
+    #[LiveAction]
+    public function removeHostUser(#[LiveArg] string $userId): void
+    {
+        $user = $this->userRepository->find((int) $userId);
+        if ($user === null) {
+            return;
+        }
+
+        $roles = array_filter($user->getRoles(), fn(string $role) => $role !== 'ROLE_HOST');
+        $user->setRoles(array_values($roles));
+        $this->entityManager->flush();
     }
 
     #[LiveAction]
@@ -224,10 +271,5 @@ class AdminSettingsComponent extends AbstractController
         $this->entityManager->flush();
 
         $this->addFlash('success', 'robots.txt has been saved successfully.');
-    }
-
-    public function hasRole(User $user, string $role): bool
-    {
-        return in_array($role, $user->getRoles(), true);
     }
 }

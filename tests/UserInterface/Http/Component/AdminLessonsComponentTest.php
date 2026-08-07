@@ -6,6 +6,7 @@ namespace App\Tests\UserInterface\Http\Component;
 
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
+use App\Tests\Assembler\UserAssembler;
 use App\UserInterface\Http\Component\AdminLessonsComponent;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -26,6 +27,14 @@ final class AdminLessonsComponentTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->em = self::getContainer()->get(EntityManagerInterface::class);
+
+        // The component itself scopes ROLE_HOST users to their own lessons
+        // (see LessonRepository::findUpcomingInRangeForInstructor()); these
+        // tests exercise the unrestricted ROLE_ADMIN view.
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+        $this->em->flush();
+        $this->client->loginUser($admin);
     }
 
     public function testEmptyStateShowsMessage(): void
@@ -139,5 +148,40 @@ final class AdminLessonsComponentTest extends WebTestCase
 
         self::assertStringContainsString('In Week Lesson', $html);
         self::assertStringNotContainsString('Out Lesson', $html);
+    }
+
+    public function testHostOnlySeesLessonsTheyInstruct(): void
+    {
+        $weekStart = new \DateTimeImmutable('2025-03-03');
+
+        $host = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();
+        $this->em->persist($host);
+
+        $ownLesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($weekStart->modify('+1 day'))->assemble())
+            ->withTitle('Own Lesson')
+            ->withStatus('active')
+            ->assemble();
+        $ownLesson->addInstructor($host);
+
+        $otherLesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($weekStart->modify('+2 days'))->assemble())
+            ->withTitle('Other Lesson')
+            ->withStatus('active')
+            ->assemble();
+
+        $this->em->persist($ownLesson);
+        $this->em->persist($otherLesson);
+        $this->em->flush();
+
+        $this->client->loginUser($host);
+
+        $component = $this->createLiveComponent(name: AdminLessonsComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+        $html = (string) $component->render();
+
+        self::assertStringContainsString('Own Lesson', $html);
+        self::assertStringNotContainsString('Other Lesson', $html);
     }
 }

@@ -6,6 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use Symfony\Component\Uid\Ulid;
 use App\Entity\Lesson;
+use App\Entity\User;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,6 +45,24 @@ final class AdminLessonsComponent extends AbstractController
     {
         $start = new \DateTimeImmutable($this->week);
         $end = $start->modify('+7 days');
+
+        // ROLE_HOST (without ROLE_ADMIN) only ever sees lessons they're
+        // assigned to as an instructor — see LessonRepository and LessonVoter.
+        if (! $this->isGranted('ROLE_ADMIN')) {
+            $user = $this->getUser();
+            if (! $user instanceof User) {
+                return [];
+            }
+
+            /** @var list<Lesson> $lessons */
+            $lessons = $this->lessonRepository->findUpcomingInRangeForInstructor(
+                $start,
+                $end,
+                $this->showCancelled,
+                $user
+            );
+            return $lessons;
+        }
 
         /** @var list<Lesson> $lessons */
         $lessons = $this->lessonRepository->findUpcomingInRange($start, $end, $this->showCancelled);

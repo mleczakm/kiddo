@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class SettingsController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_SETTINGS')]
     #[Route('/admin/ustawienia', name: 'app_admin_settings')]
     public function index(): Response
     {

@@ -257,6 +257,42 @@ class AdminControllersSmokeTest extends WebTestCase
         }
     }
 
+    public function testHostCanReachLessonsAndBookingsOnly(): void
+    {
+        $client = static::createClient();
+        $host = $this->createHostUser($client);
+        $client->loginUser($host);
+
+        foreach (['/admin/zajecia', '/admin/rezerwacje'] as $route) {
+            $client->request('GET', $route);
+            $this->assertResponseIsSuccessful("Route {$route} should be accessible to a host");
+        }
+    }
+
+    public function testHostIsForbiddenFromAdminOnlySections(): void
+    {
+        $client = static::createClient();
+        $host = $this->createHostUser($client);
+        $client->loginUser($host);
+
+        $adminOnlyRoutes = [
+            '/admin',
+            '/admin/harmonogram',
+            '/admin/platnosci',
+            '/admin/uzytkownicy',
+            '/admin/wiadomosci',
+            '/admin/ustawienia',
+        ];
+
+        foreach ($adminOnlyRoutes as $route) {
+            $client->request('GET', $route);
+            $this->assertResponseStatusCodeSame(
+                Response::HTTP_FORBIDDEN,
+                "Route {$route} should be forbidden for a host"
+            );
+        }
+    }
+
     private function createAdminUser(KernelBrowser $client): User
     {
         /** @var EntityManagerInterface $entityManager */
@@ -267,6 +303,24 @@ class AdminControllersSmokeTest extends WebTestCase
             ->withEmail('admin@test.com')
             ->withName('Admin User')
             ->withRoles('ROLE_ADMIN')
+            ->assemble();
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $user;
+    }
+
+    private function createHostUser(KernelBrowser $client): User
+    {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()
+            ->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()
+            ->withEmail('host@test.com')
+            ->withName('Host User')
+            ->withRoles('ROLE_HOST')
             ->assemble();
 
         $entityManager->persist($user);

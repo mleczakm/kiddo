@@ -77,4 +77,40 @@ class UserRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    /**
+     * Search across id, name, email, and the name of any of the user's
+     * children — so a parent can be found by their child's name. Shared
+     * by every "pick a user" UI (admin/host assignment, workshop
+     * instructors, manual bookings) so the search behavior stays
+     * consistent in one place.
+     *
+     * @return User[]
+     */
+    public function findForAutocomplete(string $query, int $limit = 10): array
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('u')
+            ->leftJoin('u.children', 'c')
+            ->andWhere('LOWER(u.name) LIKE :query OR LOWER(u.email) LIKE :query OR LOWER(c.name) LIKE :query')
+            ->setParameter('query', '%' . strtolower($query) . '%')
+            ->groupBy('u.id')
+            ->orderBy('u.name', 'ASC')
+            ->setMaxResults($limit);
+
+        if (ctype_digit($query)) {
+            $qb->orWhere('u.id = :id')
+                ->setParameter('id', (int) $query);
+        }
+
+        /** @var User[] $result */
+        $result = $qb->getQuery()
+            ->getResult();
+
+        return $result;
+    }
 }

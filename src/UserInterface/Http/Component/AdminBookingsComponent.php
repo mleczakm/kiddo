@@ -111,6 +111,19 @@ class AdminBookingsComponent extends AbstractController
             ->leftJoin('b.payment', 'p')
             ->leftJoin('l.series', 's');
 
+        // ROLE_HOST (without ROLE_ADMIN) only ever sees bookings for lessons
+        // they're assigned to as an instructor — directly, or via the
+        // lesson's series (mirrors Lesson::getAllInstructors() semantics).
+        if (! $this->isGranted('ROLE_ADMIN')) {
+            $host = $this->getUser();
+            if (! $host instanceof User) {
+                return [];
+            }
+
+            $qb->andWhere(':host MEMBER OF l.instructors OR :host MEMBER OF s.instructors')
+                ->setParameter('host', $host);
+        }
+
         // Apply status filter
         if ($this->filter === 'active') {
             $qb->andWhere('b.status IN (:statuses)')

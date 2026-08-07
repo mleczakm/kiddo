@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Admin;
 
 use App\Entity\Lesson;
+use App\Security\Voter\LessonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,19 +16,23 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class LessonsController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_LESSONS')]
     #[Route('/admin/zajecia', name: 'app_admin_lessons')]
     public function index(): Response
     {
         return $this->render('admin/lessons/index.html.twig');
     }
 
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_LESSONS')]
     #[Route('/admin/zajecia/{id}', name: 'app_admin_lesson_view', requirements: [
         'id' => '[A-Za-z0-9]+',
     ])]
     public function view(Lesson $lesson): Response
     {
+        if (! $this->isGranted(LessonVoter::VIEW, $lesson)) {
+            throw $this->createNotFoundException();
+        }
+
         $series = $lesson->getSeries();
         $prev = $series?->getLessonsLt($lesson);
         $next = $series?->getLessonsGt($lesson);
@@ -39,7 +44,7 @@ final class LessonsController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_LESSONS')]
     #[Route('/admin/zajecia/{id}/toggle', name: 'app_admin_lesson_toggle', methods: ['POST'], requirements: [
         'id' => '[A-Za-z0-9]+',
     ])]
@@ -48,6 +53,10 @@ final class LessonsController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager
     ): RedirectResponse {
+        if (! $this->isGranted(LessonVoter::MANAGE, $lesson)) {
+            throw $this->createNotFoundException();
+        }
+
         $token = $request->request->get('_token');
         if (! $this->isCsrfTokenValid('toggle_lesson_' . $lesson->getId(), (string) $token)) {
             $this->addFlash('error', 'Invalid CSRF token.');

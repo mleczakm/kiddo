@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class ScheduleController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_SCHEDULE')]
     #[Route('/admin/harmonogram', name: 'app_admin_schedule')]
     public function index(): Response
     {

@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Series;
+use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -233,6 +234,42 @@ class LessonRepository extends ServiceEntityRepository
             ->andWhere('l.metadata.schedule <= :endDate')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
+            ->orderBy('l.metadata.schedule', 'ASC');
+
+        if (! $showCancelled) {
+            $qb->andWhere('l.status = :status')
+                ->setParameter('status', 'active');
+        }
+
+        /** @var Lesson[] $lessons */
+        $lessons = $qb->getQuery()
+            ->getResult();
+
+        return $lessons;
+    }
+
+    /**
+     * Same as findUpcomingInRange(), scoped to lessons where $instructor is
+     * an assigned instructor — either directly on the lesson or on its
+     * series (mirrors Lesson::getAllInstructors() semantics). Used for the
+     * ROLE_HOST admin views, which only ever see their own lessons.
+     *
+     * @return array<int, Lesson>
+     */
+    public function findUpcomingInRangeForInstructor(
+        \DateTimeImmutable $startDate,
+        \DateTimeImmutable $endDate,
+        bool $showCancelled,
+        User $instructor
+    ): array {
+        $qb = $this->createQueryBuilder('l')
+            ->leftJoin('l.series', 's')
+            ->andWhere('l.metadata.schedule >= :startDate')
+            ->andWhere('l.metadata.schedule <= :endDate')
+            ->andWhere(':instructor MEMBER OF l.instructors OR :instructor MEMBER OF s.instructors')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('instructor', $instructor)
             ->orderBy('l.metadata.schedule', 'ASC');
 
         if (! $showCancelled) {

@@ -14,14 +14,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UsersController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_USERS')]
     #[Route('/admin/uzytkownicy', name: 'app_admin_users')]
     public function index(): Response
     {
         return $this->render('admin/users/index.html.twig');
     }
 
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('ROLE_MANAGE_USERS')]
     #[Route('/admin/uzytkownicy/{id}', name: 'app_admin_user_view', requirements: [
         'id' => '\d+',
     ])]
