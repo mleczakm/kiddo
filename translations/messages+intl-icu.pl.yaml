@@ -709,18 +709,36 @@ admin:
     finish: 'Zakończ'
     step_counter: 'Krok {current} z {total}'
     steps:
-      sidebar_nav:
-        title: 'Menu nawigacyjne'
-        body: 'Tutaj przełączasz się między pulpitem, harmonogramem, rezerwacjami, klientami, płatnościami i wiadomościami.'
+      nav_dashboard:
+        title: 'Pulpit'
+        body: 'Strona startowa panelu — podsumowanie tego, co dzieje się dziś i w najbliższych dniach: kluczowe statystyki, nadchodzące zajęcia i alerty wymagające Twojej uwagi.'
       dashboard_kpis:
         title: 'Kluczowe wskaźniki'
         body: 'Szybki podgląd najważniejszych statystyk — liczby rezerwacji, przychodów i alertów wymagających uwagi.'
+      nav_workshops:
+        title: 'Warsztaty'
+        body: 'Tu zarządzasz cyklami zajęć: dodajesz nowe serie warsztatów, ustawiasz dzień tygodnia i godziny, ceny biletów/karnetów oraz przypisujesz prowadzących do całego cyklu.'
       add_workshop:
         title: 'Dodawanie zajęć'
         body: 'Ten przycisk otwiera kreator warsztatów — ustawisz tu podstawowe informacje, harmonogram i bilety.'
+      nav_lessons:
+        title: 'Zajęcia'
+        body: 'Lista pojedynczych wydarzeń w wybranym tygodniu. Sprawdzisz tu liczbę zapisanych osób, a otwierając konkretne zajęcia — zmienisz ich termin lub treść (tylko to wydarzenie albo cały cykl) i zobaczysz listę uczestników.'
+      nav_bookings:
+        title: 'Rezerwacje'
+        body: 'Wszystkie rezerwacje klientów w jednym miejscu — tu je anulujesz, zmieniasz termin lub dodajesz rezerwację ręcznie w imieniu klienta.'
       booking_actions:
         title: 'Zarządzanie rezerwacją'
         body: 'Stąd zmienisz termin zajęć klienta lub anulujesz rezerwację — klient zostanie o tym automatycznie powiadomiony.'
+      nav_users:
+        title: 'Użytkownicy'
+        body: 'Wyszukiwarka i baza kont: rodziców, prowadzących i administratorów. Stąd nadasz komuś rolę prowadzącego lub administratora i sprawdzisz historię rezerwacji oraz zapisane dzieci danej osoby.'
+      nav_transfers:
+        title: 'Płatności'
+        body: 'Przychodzące przelewy bankowe i ich dopasowanie do rezerwacji klientów — widzisz tu, które płatności zostały rozpoznane automatycznie, a które wymagają ręcznego przypisania.'
+      nav_messages:
+        title: 'Wiadomości'
+        body: 'Skrzynka zgłoszeń od klientów — w tym automatyczne wiadomości o prośbach o anulowanie lub zmianę terminu. Możesz tu odpowiedzieć bezpośrednio klientowi.'
       messages_inbox:
         title: 'Skrzynka wiadomości'
         body: 'Tu trafiają wiadomości od klientów, w tym automatyczne powiadomienia o anulowaniach i zmianach terminu.'
@@ -729,7 +747,7 @@ admin:
         body: 'Dzwonek pokazuje najnowsze zdarzenia w systemie wymagające Twojej uwagi.'
       settings_link:
         title: 'Ustawienia'
-        body: 'Skonfigurujesz tu dane zespołu, płatności i ustawienia SEO.'
+        body: 'Skonfigurujesz tu dane zespołu (administratorzy i prowadzący), dane do płatności i ustawienia SEO strony.'
   tabs:
     dashboard: 'Pulpit'
     workshops: 'Warsztaty'

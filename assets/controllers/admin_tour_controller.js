@@ -14,6 +14,7 @@ export default class extends Controller {
         labelBack: String,
         labelSkip: String,
         labelFinish: String,
+        stepCounterFormat: String,
     };
 
     #activeSteps = [];
@@ -112,9 +113,12 @@ export default class extends Controller {
 
         const isFirst = this.#index === 0;
         const isLast = this.#index === this.#activeSteps.length - 1;
+        const counter = this.stepCounterFormatValue
+            .replace('__CURRENT__', String(this.#index + 1))
+            .replace('__TOTAL__', String(this.#activeSteps.length));
 
         this.#tooltip.innerHTML = `
-            <p class="text-xs font-bold text-indigo-600 uppercase tracking-wide mb-2">${step.counter}</p>
+            <p class="text-xs font-bold text-indigo-600 uppercase tracking-wide mb-2">${counter}</p>
             <h3 class="text-base font-black text-slate-800 mb-1.5">${step.title}</h3>
             <p class="text-sm text-slate-600 mb-4">${step.body}</p>
             <div class="flex items-center justify-between gap-2">

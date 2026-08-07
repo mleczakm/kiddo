@@ -1,10 +1,16 @@
 {% set current_route = app.request.attributes.get('_route') %}
 
 {% set admin_tour_step_targets = [
-    { target: 'sidebar-nav', key: 'sidebar_nav' },
+    { target: 'nav-dashboard', key: 'nav_dashboard' },
     { target: 'dashboard-kpis', key: 'dashboard_kpis' },
+    { target: 'nav-workshops', key: 'nav_workshops' },
     { target: 'add-workshop', key: 'add_workshop' },
+    { target: 'nav-lessons', key: 'nav_lessons' },
+    { target: 'nav-bookings', key: 'nav_bookings' },
     { target: 'booking-actions', key: 'booking_actions' },
+    { target: 'nav-users', key: 'nav_users' },
+    { target: 'nav-transfers', key: 'nav_transfers' },
+    { target: 'nav-messages', key: 'nav_messages' },
     { target: 'messages-inbox', key: 'messages_inbox' },
     { target: 'notif-bell', key: 'notif_bell' },
     { target: 'settings-link', key: 'settings_link' },
@@ -15,9 +21,14 @@
         target: step.target,
         title: ('admin.tour.steps.' ~ step.key ~ '.title')|trans,
         body: ('admin.tour.steps.' ~ step.key ~ '.body')|trans,
-        counter: 'admin.tour.step_counter'|trans({current: loop.index, total: admin_tour_step_targets|length}),
     }]) %}
 {% endfor %}
+{# Not every step's target exists on every page (e.g. "add-workshop" only
+   renders on the Warsztaty page), so the JS filters admin_tour_steps down to
+   an "active" subset at runtime — the "Krok X z Y" counter must be computed
+   from that filtered count, not this full list, hence the __CURRENT__/__TOTAL__
+   placeholder tokens filled in client-side rather than a baked-in count. #}
+{% set admin_tour_step_counter_format = 'admin.tour.step_counter'|trans({'current': '__CURRENT__', 'total': '__TOTAL__'}) %}
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -151,7 +162,8 @@
          data-admin-tour-label-next-value="{{ 'admin.tour.next'|trans }}"
          data-admin-tour-label-back-value="{{ 'admin.tour.back'|trans }}"
          data-admin-tour-label-skip-value="{{ 'admin.tour.skip'|trans }}"
-         data-admin-tour-label-finish-value="{{ 'admin.tour.finish'|trans }}">
+         data-admin-tour-label-finish-value="{{ 'admin.tour.finish'|trans }}"
+         data-admin-tour-step-counter-format-value="{{ admin_tour_step_counter_format }}">
         {# Sidebar #}
         {% block sidebar %}
             {{ include('components/AdminMenu.html.twig') }}
