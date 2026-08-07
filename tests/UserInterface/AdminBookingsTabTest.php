@@ -83,7 +83,7 @@ class AdminBookingsTabTest extends WebTestCase
         // Check if manual booking form elements are present
         $this->assertSelectorExists('input[placeholder="Imię klienta"]', 'Customer name input should be present');
         $this->assertSelectorExists('input[placeholder="Email klienta"]', 'Customer email input should be present');
-        $this->assertSelectorExists('input[placeholder="Kwota (zł)"]', 'Amount input should be present');
+        $this->assertSelectorExists('input[placeholder="0,00"]', 'Amount input should be present');
         $this->assertSelectorExists('select', 'Payment method select should be present');
         $this->assertSelectorExists('textarea[placeholder*="Notatki"]', 'Notes textarea should be present');
         $this->assertSelectorExists(

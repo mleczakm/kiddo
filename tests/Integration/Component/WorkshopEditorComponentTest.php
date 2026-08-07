@@ -10,6 +10,7 @@ use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\WorkshopType;
 use App\Repository\NotificationRepository;
+use Brick\Money\Money;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\SeriesAssembler;
 use App\Tests\Assembler\UserAssembler;
@@ -60,6 +61,87 @@ final class WorkshopEditorComponentTest extends WebTestCase
         self::assertSame('Błotna Kuchnia', $workshopEditorComponent->title);
         self::assertSame('2030-06-15', $workshopEditorComponent->occurrenceDate);
         self::assertSame('10:30', $workshopEditorComponent->occurrenceTime);
+    }
+
+    public function testMountPrefillsTicketPriceInZlotyNotGrosze(): void
+    {
+        // Regression test: the ticket price fields used to be hydrated from
+        // Money::getMinorAmount() (grosze, e.g. 5000) while the input's
+        // placeholder implied whole zloty (e.g. "55") — an admin editing an
+        // existing lesson would see "5000" in a field that looked like it
+        // expected "50".
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+
+        $lesson = LessonAssembler::new()->assemble(); // default ticket option: 50 PLN
+        $this->em->persist($lesson);
+        $this->em->flush();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'lessonId' => $lesson->getId(),
+            'startOpen' => false,
+        ]);
+
+        /** @var WorkshopEditorComponent $workshopEditorComponent */
+        $workshopEditorComponent = $component->component();
+        self::assertSame('50.00', $workshopEditorComponent->singleTicketPrice);
+    }
+
+    public function testSavingTicketPriceAcceptsCommaDecimalAndPersistsCorrectAmount(): void
+    {
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+
+        $lesson = LessonAssembler::new()->assemble();
+        $this->em->persist($lesson);
+        $this->em->flush();
+        $lessonId = $lesson->getId();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'lessonId' => $lessonId,
+            'startOpen' => false,
+        ]);
+
+        $component->set('singleTicketPrice', '75,50');
+        $component->call('save');
+
+        $this->em->clear();
+        $reloaded = $this->em->find(Lesson::class, $lessonId);
+        self::assertNotNull($reloaded);
+        $ticketOption = $reloaded->getTicketOptions()[0] ?? null;
+        self::assertNotNull($ticketOption);
+        self::assertTrue($ticketOption->price->isEqualTo(Money::of('75.50', 'PLN')));
+    }
+
+    public function testInvalidTicketPriceIsRejectedWithoutSaving(): void
+    {
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+
+        $lesson = LessonAssembler::new()->assemble(); // default ticket option: 50 PLN
+        $this->em->persist($lesson);
+        $this->em->flush();
+        $lessonId = $lesson->getId();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'lessonId' => $lessonId,
+            'startOpen' => false,
+        ]);
+
+        $component->set('singleTicketPrice', 'not-a-number');
+        $component->set('title', 'Should Not Persist');
+        $component->call('save');
+
+        $this->em->clear();
+        $reloaded = $this->em->find(Lesson::class, $lessonId);
+        self::assertNotNull($reloaded);
+        self::assertNotSame('Should Not Persist', $reloaded->getMetadata()->title);
+        $ticketOption = $reloaded->getTicketOptions()[0] ?? null;
+        self::assertNotNull($ticketOption);
+        self::assertTrue($ticketOption->price->isEqualTo(Money::of('50.00', 'PLN')));
     }
 
     public function testHostCannotEditLessonTheyDoNotInstruct(): void

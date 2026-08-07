@@ -349,28 +349,34 @@
                             <div class="space-y-3">
                                 <div class="flex items-center gap-3">
                                     <div class="w-32 text-sm font-bold text-slate-700">Jednorazowe</div>
-                                    <div class="flex-1 flex items-center gap-2">
+                                    <div class="flex-1 relative">
                                         <input
-                                            type="number"
+                                            type="text"
+                                            inputmode="decimal"
+                                            data-controller="money-input"
+                                            data-action="input->money-input#sanitize"
                                             data-model="singleTicketPrice"
                                             value="{{ singleTicketPrice|default('') }}"
-                                            placeholder="55"
-                                            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none"
+                                            placeholder="55,00"
+                                            class="w-full p-2 pr-9 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none"
                                         />
-                                        <span class="text-sm text-slate-500">zł</span>
+                                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-slate-500">zł</span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <div class="w-32 text-sm font-bold text-slate-700">Karnet 4 wejścia</div>
-                                    <div class="flex-1 flex items-center gap-2">
+                                    <div class="flex-1 relative">
                                         <input
-                                            type="number"
+                                            type="text"
+                                            inputmode="decimal"
+                                            data-controller="money-input"
+                                            data-action="input->money-input#sanitize"
                                             data-model="carnet4Price"
                                             value="{{ carnet4Price|default('') }}"
-                                            placeholder="200"
-                                            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none"
+                                            placeholder="200,00"
+                                            class="w-full p-2 pr-9 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none"
                                         />
-                                        <span class="text-sm text-slate-500">zł</span>
+                                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-slate-500">zł</span>
                                     </div>
                                 </div>
                             </div>

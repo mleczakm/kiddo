@@ -592,7 +592,7 @@ admin_dashboard:
       add_title: 'Dodaj ręczną rezerwację'
       customer_name_placeholder: 'Imię klienta'
       customer_email_placeholder: 'Email klienta'
-      amount_placeholder: 'Kwota (zł)'
+      amount_placeholder: '0,00'
       select_payment_method: 'Wybierz metodę płatności'
       payment:
         transfer: 'Przelew'

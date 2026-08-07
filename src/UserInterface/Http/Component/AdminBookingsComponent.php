@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use Brick\Money\Money;
+use App\Application\Service\MoneyInputParser;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\User;
@@ -46,7 +47,7 @@ class AdminBookingsComponent extends AbstractController
     public ?string $customerEmail = null;
 
     #[LiveProp(writable: true)]
-    public ?float $amount = null;
+    public ?string $amount = null;
 
     #[LiveProp(writable: true)]
     public ?string $paymentMethod = null;
@@ -290,7 +291,12 @@ class AdminBookingsComponent extends AbstractController
             }
 
             // Create payment with correct Money object
-            $money = Money::of($this->amount, 'PLN');
+            $normalizedAmount = MoneyInputParser::parse($this->amount);
+            if ($normalizedAmount === null) {
+                $this->errorMessage = 'Imię, email, kwota i sposób płatności są wymagane';
+                return;
+            }
+            $money = Money::of($normalizedAmount, 'PLN');
             $payment = new Payment($user, $money);
             $payment->setStatus(Payment::STATUS_PAID);
             $this->entityManager->persist($payment);
@@ -320,6 +326,8 @@ class AdminBookingsComponent extends AbstractController
             $this->successMessage = 'Rezerwacja została pomyślnie dodana';
             $this->errorMessage = null;
 
+        } catch (\InvalidArgumentException) {
+            $this->errorMessage = 'Podaj poprawną kwotę, np. 150,00';
         } catch (\Exception $e) {
             $this->errorMessage = 'Wystąpił błąd podczas dodawania rezerwacji: ' . $e->getMessage();
         }

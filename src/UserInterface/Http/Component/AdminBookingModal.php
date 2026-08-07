@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Service\MoneyInputParser;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\User;
@@ -45,7 +46,7 @@ class AdminBookingModal extends AbstractController
     public string $bookingType = 'single'; // single, carnet
 
     #[LiveProp(writable: true)]
-    public ?float $amount = null;
+    public ?string $amount = null;
 
     #[LiveProp(writable: true)]
     public string $paymentMethod = 'cash';
@@ -249,9 +250,15 @@ class AdminBookingModal extends AbstractController
 
             // Create payment if amount is provided
             $payment = null;
-            if ($this->amount && $this->amount > 0) {
-                // Create Money object using PLN currency
-                $moneyAmount = Money::of($this->amount, 'PLN');
+            try {
+                $normalizedAmount = MoneyInputParser::parse($this->amount);
+            } catch (\InvalidArgumentException) {
+                $this->errorMessage = 'Enter a valid amount, e.g. 150.00';
+                return;
+            }
+
+            if ($normalizedAmount !== null) {
+                $moneyAmount = Money::of($normalizedAmount, 'PLN');
                 $payment = new Payment($user, $moneyAmount);
                 $payment->setStatus(Payment::STATUS_PAID);
 

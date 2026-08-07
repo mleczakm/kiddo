@@ -193,6 +193,59 @@ class AdminSettingsComponentTest extends WebTestCase
         $this->assertGreaterThanOrEqual(1, count($contacts));
     }
 
+    public function testFinanceContactCanBeAddedAndRemovedThroughTheComponent(): void
+    {
+        $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
+
+        self::assertCount(0, $this->financeContactRepository->findAll());
+
+        $component->call('addFinanceContact', [
+            'userId' => (string) $this->regularUser->getId(),
+        ]);
+
+        $contacts = $this->financeContactRepository->findAll();
+        self::assertCount(1, $contacts);
+        self::assertSame($this->regularUser->getId(), $contacts[0]->getUser()->getId());
+
+        $component->call('removeFinanceContact', [
+            'userId' => (string) $this->regularUser->getId(),
+        ]);
+
+        self::assertCount(0, $this->financeContactRepository->findAll());
+    }
+
+    public function testFinanceContactSearchFindsUsersByIdNameEmailOrChildName(): void
+    {
+        $withChild = UserAssembler::new()->withName('Anna Kowalska')->withEmail('anna@example.com')->assemble();
+        $this->entityManager->persist($withChild);
+        $this->entityManager->flush();
+
+        $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
+        $component->set('financeContactSearch', (string) $withChild->getId());
+        /** @var AdminSettingsComponent $adminSettingsComponent */
+        $adminSettingsComponent = $component->component();
+        $results = $adminSettingsComponent->getFilteredUsersForFinanceContact();
+
+        $ids = array_map(static fn(User $u) => $u->getId(), $results);
+        self::assertContains($withChild->getId(), $ids);
+    }
+
+    public function testFinanceContactSearchExcludesUsersAlreadyFinanceContacts(): void
+    {
+        $financeContact = new FinanceContact($this->regularUser);
+        $this->entityManager->persist($financeContact);
+        $this->entityManager->flush();
+
+        $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
+        $component->set('financeContactSearch', $this->regularUser->getEmail());
+        /** @var AdminSettingsComponent $adminSettingsComponent */
+        $adminSettingsComponent = $component->component();
+        $results = $adminSettingsComponent->getFilteredUsersForFinanceContact();
+
+        $ids = array_map(static fn(User $u) => $u->getId(), $results);
+        self::assertNotContains($this->regularUser->getId(), $ids);
+    }
+
     public function testAdminUsersListShowsExistingAdmins(): void
     {
         // Regression test: AdminSettingsComponent::loadSettings() used to

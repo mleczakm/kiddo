@@ -68,7 +68,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                     <input type="text" placeholder="{{ 'admin_dashboard.bookings.manual.customer_name_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.customerName }}" data-model="customerName" />
                     <input type="email" placeholder="{{ 'admin_dashboard.bookings.manual.customer_email_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.customerEmail }}" data-model="customerEmail" />
-                    <input type="number" step="0.01" placeholder="{{ 'admin_dashboard.bookings.manual.amount_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.amount }}" data-model="amount" />
+                    <div class="relative">
+                        <input type="text"
+                               inputmode="decimal"
+                               data-controller="money-input"
+                               data-action="input->money-input#sanitize"
+                               placeholder="{{ 'admin_dashboard.bookings.manual.amount_placeholder'|trans }}"
+                               class="flex h-10 w-full rounded-lg border border-slate-200 bg-white pl-3 pr-9 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                               value="{{ this.amount }}"
+                               data-model="amount" />
+                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-slate-400">zł</span>
+                    </div>
                     <select class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" data-model="paymentMethod">
                         <option value="">{{ 'admin_dashboard.bookings.manual.select_payment_method'|trans }}</option>
                         <option value="transfer">{{ 'admin_dashboard.bookings.manual.payment.transfer'|trans }}</option>

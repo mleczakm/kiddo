@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Form\PlatformBillingPaymentType;
+use App\Application\Service\MoneyInputParser;
 use App\Application\Service\PlatformBillingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -97,13 +98,22 @@ class PlatformBillingComponent extends AbstractController
 
         /** @var array{amount: mixed} $data */
         $data = $form->getData();
-        $amount = is_numeric($data['amount']) ? (float) $data['amount'] : 0.0;
 
         try {
+            $normalized = MoneyInputParser::parse(is_string($data['amount']) ? $data['amount'] : null);
+            $amount = $normalized !== null ? (float) $normalized : 0.0;
+
+            if ($amount <= 0) {
+                $this->errorMessage = 'Podaj poprawną kwotę, np. 150,00';
+                return;
+            }
+
             $this->platformBillingService->processPastDuePayment($amount);
             $this->successMessage = sprintf('Payment of %.2f PLN processed successfully', $amount);
             $this->errorMessage = null;
             $this->showModal = false;
+        } catch (\InvalidArgumentException) {
+            $this->errorMessage = 'Podaj poprawną kwotę, np. 150,00';
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to process payment: ' . $e->getMessage();
             $this->successMessage = null;

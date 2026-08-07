@@ -6,6 +6,7 @@ namespace App\Component;
 
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\MoneyInputParser;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
@@ -240,9 +241,9 @@ class WorkshopEditorComponent extends AbstractController
 
         foreach ($lesson->getTicketOptions() as $option) {
             if ($option->type === TicketType::ONE_TIME) {
-                $this->singleTicketPrice = (string) $option->price->getMinorAmount();
+                $this->singleTicketPrice = (string) $option->price->getAmount();
             } elseif ($option->type === TicketType::CARNET_4) {
-                $this->carnet4Price = (string) $option->price->getMinorAmount();
+                $this->carnet4Price = (string) $option->price->getAmount();
             }
         }
     }
@@ -396,14 +397,24 @@ class WorkshopEditorComponent extends AbstractController
             return;
         }
 
+        try {
+            $ticketOptions = $this->buildTicketOptions();
+        } catch (\InvalidArgumentException) {
+            $this->addFlash('error', 'Podaj poprawną cenę biletu, np. 55,00.');
+            return;
+        }
+
         if ($this->editingLessonId !== null) {
-            $this->saveExistingLesson();
+            $this->saveExistingLesson($ticketOptions);
         } else {
-            $this->saveNewSeries();
+            $this->saveNewSeries($ticketOptions);
         }
     }
 
-    private function saveExistingLesson(): void
+    /**
+     * @param list<TicketOption> $ticketOptions
+     */
+    private function saveExistingLesson(array $ticketOptions): void
     {
         $lesson = $this->entityManager->find(Lesson::class, $this->editingLessonId);
         if ($lesson === null) {
@@ -442,7 +453,6 @@ class WorkshopEditorComponent extends AbstractController
             }
         }
 
-        $ticketOptions = $this->buildTicketOptions();
         $instructors = $this->resolveSelectedInstructors();
 
         if ($scope === 'series') {
@@ -472,7 +482,10 @@ class WorkshopEditorComponent extends AbstractController
         $this->emitUp('workshopEditorSaved');
     }
 
-    private function saveNewSeries(): void
+    /**
+     * @param list<TicketOption> $ticketOptions
+     */
+    private function saveNewSeries(array $ticketOptions): void
     {
         if (! $this->isGranted('ROLE_MANAGE_SCHEDULE')) {
             $this->addFlash('error', 'Nie masz uprawnień do tworzenia nowych warsztatów.');
@@ -487,7 +500,7 @@ class WorkshopEditorComponent extends AbstractController
             $series->addInstructor($user);
         }
 
-        $series->ticketOptions = $this->buildTicketOptions();
+        $series->ticketOptions = $ticketOptions;
 
         $metadata = new LessonMetadata(
             title: (string) $this->title,
@@ -535,18 +548,22 @@ class WorkshopEditorComponent extends AbstractController
     private function buildTicketOptions(): array
     {
         $ticketOptions = [];
-        if ($this->singleTicketPrice !== null && $this->singleTicketPrice !== '') {
+
+        $singlePrice = MoneyInputParser::parse($this->singleTicketPrice);
+        if ($singlePrice !== null) {
             $ticketOptions[] = new TicketOption(
                 TicketType::ONE_TIME,
-                Money::ofMinor($this->singleTicketPrice, 'PLN'),
+                Money::of($singlePrice, 'PLN'),
                 'Wejście jednorazowe',
                 TicketReschedulePolicy::UNLIMITED_24H_BEFORE,
             );
         }
-        if ($this->carnet4Price !== null && $this->carnet4Price !== '') {
+
+        $carnet4Price = MoneyInputParser::parse($this->carnet4Price);
+        if ($carnet4Price !== null) {
             $ticketOptions[] = new TicketOption(
                 TicketType::CARNET_4,
-                Money::ofMinor($this->carnet4Price, 'PLN'),
+                Money::of($carnet4Price, 'PLN'),
                 'Karnet: 4 wejścia',
                 TicketReschedulePolicy::ONETIME_24H_BEFORE,
             );
