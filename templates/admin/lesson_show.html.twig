@@ -30,9 +30,9 @@
             <a href="#" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors" aria-disabled="true">
                 {{ 'admin.lesson_show.reschedule'|trans }}
             </a>
-            <a href="#" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors" aria-disabled="true">
-                {{ 'admin.lesson_show.modify'|trans }}
-            </a>
+            {% if is_granted('LESSON_MANAGE', lesson) %}
+                {{ component('WorkshopEditor', { lessonId: lesson.id, startOpen: false }) }}
+            {% endif %}
             {% set emails = lesson.attendants|map(u => u.email)|join(',') %}
             <a href="mailto:?bcc={{ emails|url_encode }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-amber-600 text-amber-700 hover:bg-amber-50 transition-colors">
                 {{ 'admin.lesson_show.contact_attendees'|trans }}

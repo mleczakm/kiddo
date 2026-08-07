@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Application\Service\InAppNotificationService;
+use App\Application\Service\LessonInstructorResolver;
 use App\Entity\MessageType;
+use App\Entity\NotificationSeverity;
 use App\Entity\UserMessage;
 use App\Message\CancelLessonBooking;
 use App\Repository\BookingRepository;
@@ -12,7 +15,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
 class CancelLessonBookingHandler
@@ -23,6 +28,10 @@ class CancelLessonBookingHandler
         private readonly WorkflowInterface $bookingStateMachine,
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
+        private readonly InAppNotificationService $inAppNotifications,
+        private readonly LessonInstructorResolver $instructorResolver,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     public function __invoke(CancelLessonBooking $command): void
@@ -88,9 +97,11 @@ class CancelLessonBookingHandler
         }
 
         $lessonTitle = '';
+        $cancelledLesson = null;
         foreach ($booking->getLessons() as $lesson) {
             if ($lesson->getId()->equals($command->getLessonId())) {
                 $lessonTitle = $lesson->getMetadata()->title;
+                $cancelledLesson = $lesson;
                 break;
             }
         }
@@ -103,6 +114,21 @@ class CancelLessonBookingHandler
                 : sprintf('Zajęcia "%s" zostały anulowane.', $lessonTitle),
             type: MessageType::CANCELLATION_REQUEST,
         ));
+
+        if ($cancelledLesson !== null) {
+            $instructors = $this->instructorResolver->resolve([$cancelledLesson], exclude: $command->getCancelledBy());
+            $this->inAppNotifications->notifyUsers(
+                $instructors,
+                $this->translator->trans('notifications.in_app.cancellation.instructor.title', [], 'messages'),
+                $this->translator->trans('notifications.in_app.cancellation.instructor.body', [
+                    'name' => $booking->getUser()->getName(),
+                    'lesson' => $lessonTitle,
+                    'date' => $cancelledLesson->getMetadata()->schedule->format('Y-m-d H:i'),
+                ], 'messages'),
+                $this->urlGenerator->generate('app_admin_lesson_view', ['id' => (string) $cancelledLesson->getId()]),
+                NotificationSeverity::Info,
+            );
+        }
 
         $this->logger->info('Lesson cancelled within booking', [
             'bookingId' => $booking->getId()

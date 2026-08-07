@@ -128,6 +128,10 @@ notifications:
     reservation:
       title: Booking created
       body: 'Your booking is awaiting payment. Code: <strong>{code}</strong> ({amount} PLN).'
+    new_booking:
+      instructor:
+        title: New booking on your workshop
+        body: '<strong>{name}</strong> booked a spot in <em>{lesson}</em> ({date}).'
     payment:
       user:
         title: Payment confirmed
@@ -138,6 +142,9 @@ notifications:
     cancellation:
       title: Booking cancelled
       body: 'Booking for <strong>{lesson}</strong> ({date}) was cancelled.'
+      instructor:
+        title: Booking cancelled on your workshop
+        body: '<strong>{name}</strong> cancelled their booking for <em>{lesson}</em> ({date}).'
     cancellation_admin:
       title: Booking cancelled (no payment)
       body: 'Booking for <strong>{lesson}</strong> ({date}) by <strong>{email}</strong> was automatically cancelled due to no payment.'
@@ -152,6 +159,16 @@ notifications:
       admin:
         title: Booking rescheduled
         body: 'User <strong>{email}</strong> moved a booking from <em>{from}</em> to <em>{to}</em>.'
+      instructor:
+        title: Booking rescheduled on your workshop
+        body: '<strong>{name}</strong> moved a booking from <em>{from}</em> to <em>{to}</em>.'
+    workshop_edited:
+      admin:
+        title: Workshop updated
+        body: '<strong>{editor}</strong> updated <em>{lesson}</em> ({scope}).'
+      instructor:
+        title: Your workshop was updated
+        body: '<strong>{editor}</strong> updated <em>{lesson}</em> ({scope}).'
     transfer_not_matched:
       title: Unmatched transfer
       body: 'Transfer <strong>{amount}</strong> from <em>{sender}</em> ({title}) was not matched.'

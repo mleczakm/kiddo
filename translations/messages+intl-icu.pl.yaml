@@ -72,6 +72,10 @@ notifications:
     reservation:
       title: Rezerwacja utworzona
       body: 'Twoja rezerwacja czeka na płatność. Kod: <strong>{code}</strong> ({amount} zł).'
+    new_booking:
+      instructor:
+        title: Nowa rezerwacja na Twoich zajęciach
+        body: '<strong>{name}</strong> zarezerwował/a miejsce na <em>{lesson}</em> ({date}).'
     payment:
       user:
         title: Płatność potwierdzona
@@ -82,6 +86,9 @@ notifications:
     cancellation:
       title: Rezerwacja anulowana
       body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) została anulowana.'
+      instructor:
+        title: Anulowano rezerwację na Twoich zajęciach
+        body: '<strong>{name}</strong> anulował/a rezerwację na <em>{lesson}</em> ({date}).'
     cancellation_admin:
       title: Rezerwacja anulowana (brak wpłaty)
       body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) użytkownika <strong>{email}</strong> została automatycznie anulowana z powodu braku płatności.'
@@ -99,9 +106,19 @@ notifications:
       admin:
         title: Przeniesienie rezerwacji
         body: 'Użytkownik <strong>{email}</strong> przeniósł rezerwację z <em>{from}</em> na <em>{to}</em>.'
+      instructor:
+        title: Zmiana terminu na Twoich zajęciach
+        body: '<strong>{name}</strong> przeniósł/przeniosła rezerwację z <em>{from}</em> na <em>{to}</em>.'
     admin_reply:
       title: Odpowiedź od zespołu
       body: 'Otrzymałeś odpowiedź dotyczącą wiadomości "{subject}".'
+    workshop_edited:
+      admin:
+        title: Zaktualizowano warsztat
+        body: '<strong>{editor}</strong> zaktualizował/a <em>{lesson}</em> ({scope}).'
+      instructor:
+        title: Zaktualizowano Twój warsztat
+        body: '<strong>{editor}</strong> zaktualizował/a <em>{lesson}</em> ({scope}).'
     transfer_not_matched:
       title: Nieprzypisany przelew
       body: 'Przelew <strong>{amount}</strong> od <em>{sender}</em> ({title}) nie został dopasowany.'
@@ -847,6 +864,24 @@ admin:
     capacity: "Pojemność"
     booked: "Zarezerwowane"
     available: "Dostępne"
+  workshop_editor:
+    add_button: "Dodaj zajęcia"
+    title_create: "Kreator Warsztatów"
+    title_edit: "Edytuj warsztat"
+    lead_create: "Dodaj nowe wydarzenie i zasady sprzedaży"
+    lead_edit: "Zmień szczegóły istniejącego wydarzenia"
+    save_create: "Utwórz warsztat"
+    save_edit: "Zapisz zmiany"
+    this_occurrence: "Ten termin"
+    occurrence_date_hint: "Data i godzina dotyczą tylko tego pojedynczego wydarzenia."
+    scope:
+      label: "Zakres zmian"
+      occurrence: "Tylko to wydarzenie"
+      occurrence_hint: "Zmiana dotyczy wyłącznie terminu {date} {time}."
+      series: "Cały cykl"
+      series_hint: "Zmiana obejmie także {count} nadchodzących wydarzeń z tej serii."
+      occurrence_short: "tylko to wydarzenie"
+      series_short: "cały cykl"
 
 
 ROLE_USER: Użytkownik

@@ -6,6 +6,7 @@ namespace App\MessageHandler;
 
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\Service\InAppNotificationService;
+use App\Application\Service\LessonInstructorResolver;
 use App\Entity\MessageType;
 use App\Entity\NotificationSeverity;
 use App\Entity\UserMessage;
@@ -32,6 +33,7 @@ readonly class RescheduleLessonBookingHandler
         private WorkflowInterface $bookingStateMachine,
         private MessageBusInterface $bus,
         private InAppNotificationService $inAppNotifications,
+        private LessonInstructorResolver $instructorResolver,
         private EntityManagerInterface $entityManager,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
@@ -157,5 +159,20 @@ readonly class RescheduleLessonBookingHandler
                 : sprintf('Termin "%s" zmieniono na "%s".', $oldTitle, $newTitle),
             type: MessageType::RESCHEDULE_REQUEST,
         ));
+
+        // Instructors of either lesson (old or new) should know a booking
+        // moved — excluding the person who performed the reschedule.
+        $instructors = $this->instructorResolver->resolve([$oldLesson, $newLesson], exclude: $command->getRescheduledBy());
+        $this->inAppNotifications->notifyUsers(
+            $instructors,
+            $this->translator->trans('notifications.in_app.reschedule.instructor.title', [], 'messages'),
+            $this->translator->trans('notifications.in_app.reschedule.instructor.body', [
+                'name' => $booking->getUser()->getName(),
+                'from' => $oldTitle,
+                'to' => $newTitle,
+            ], 'messages'),
+            $this->urlGenerator->generate('app_admin_lesson_view', ['id' => (string) $newLesson->getId()]),
+            NotificationSeverity::Info,
+        );
     }
 }

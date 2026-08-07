@@ -1,21 +1,55 @@
-{% if isModalOpen %}
 <div {{ attributes }}>
+{% if not isModalOpen %}
+    <button
+        data-action="live#action" data-live-action-param="openModal"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
+    >
+        {{ editingLessonId ? 'admin.lesson_show.modify'|trans : 'admin.workshop_editor.add_button'|trans }}
+    </button>
+{% else %}
     <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4">
         <div class="bg-white w-full sm:max-w-4xl rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col h-[95vh] sm:h-auto sm:max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
 
             <!-- Header -->
             <div class="flex justify-between items-center p-4 sm:p-6 border-b border-slate-100 shrink-0">
                 <div class="min-w-0">
-                    <h2 class="text-lg sm:text-xl font-black text-slate-800">Kreator Warsztatów</h2>
-                    <p class="text-xs sm:text-sm text-slate-500">Dodaj lub edytuj wydarzenie i zasady sprzedaży</p>
+                    <h2 class="text-lg sm:text-xl font-black text-slate-800">
+                        {{ editingLessonId ? 'admin.workshop_editor.title_edit'|trans : 'admin.workshop_editor.title_create'|trans }}
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500">
+                        {{ editingLessonId ? 'admin.workshop_editor.lead_edit'|trans : 'admin.workshop_editor.lead_create'|trans }}
+                    </p>
                 </div>
                 <button
-                    data-action="live#emitUp" data-live-event-param="workshopEditorClosed"
+                    data-action="live#action" data-live-action-param="close"
                     class="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition shrink-0"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
+
+            <!-- Edit scope selector — only relevant when editing a lesson that belongs to a series -->
+            {% if editingLessonId and this.getEditingSeries() %}
+                <div class="px-4 sm:px-6 py-3 bg-amber-50 border-b border-amber-100 shrink-0">
+                    <p class="text-xs font-bold text-amber-900 mb-2 uppercase tracking-wide">{{ 'admin.workshop_editor.scope.label'|trans }}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <label class="flex items-start gap-2 p-3 rounded-xl border-2 cursor-pointer transition {{ editScope == 'occurrence' ? 'border-indigo-600 bg-white' : 'border-transparent bg-white/60 hover:bg-white' }}">
+                            <input type="radio" name="editScope" data-model="editScope" value="occurrence" class="mt-0.5 w-4 h-4 text-indigo-600" />
+                            <span>
+                                <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.scope.occurrence'|trans }}</span>
+                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.occurrence_hint'|trans({ date: occurrenceDate, time: occurrenceTime }) }}</span>
+                            </span>
+                        </label>
+                        <label class="flex items-start gap-2 p-3 rounded-xl border-2 cursor-pointer transition {{ editScope == 'series' ? 'border-indigo-600 bg-white' : 'border-transparent bg-white/60 hover:bg-white' }}">
+                            <input type="radio" name="editScope" data-model="editScope" value="series" class="mt-0.5 w-4 h-4 text-indigo-600" />
+                            <span>
+                                <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.scope.series'|trans }}</span>
+                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.series_hint'|trans({ count: this.getUpcomingSeriesLessonsCount() }) }}</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            {% endif %}
 
             <!-- Tabs -->
             <div class="flex px-4 sm:px-6 border-b border-slate-200 bg-slate-50 overflow-x-auto shrink-0">
@@ -33,7 +67,7 @@
                     data-value="schedule"
                     style="padding: 0.75rem 1rem;" class="px-3 sm:px-4 py-3 text-sm font-bold border-b-2 transition whitespace-nowrap {{ activeTab == 'schedule' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}"
                 >
-                    Harmonogram i Cykliczność
+                    {{ editingLessonId ? 'Termin'|trans : 'Harmonogram i Cykliczność' }}
                 </button>
                 <button
                     data-action="live#update"
@@ -55,23 +89,24 @@
 
             <!-- Form Body - Scrollable -->
             <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
-                
+
                 <!-- TAB: GENERAL -->
                 {% if activeTab == 'general' %}
                     <div class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="space-y-1.5 col-span-2 md:col-span-1">
                                 <label class="text-sm font-bold text-slate-700">Nazwa warsztatów *</label>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     data-model="title"
-                                    placeholder="np. Błotna Kuchnia" 
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" 
+                                    value="{{ title|default('') }}"
+                                    placeholder="np. Błotna Kuchnia"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                 />
                             </div>
                             <div class="space-y-1.5 col-span-2 md:col-span-1">
                                 <label class="text-sm font-bold text-slate-700">Kategoria *</label>
-                                <select 
+                                <select
                                     data-model="category"
                                     class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                 >
@@ -87,39 +122,41 @@
                             <div class="space-y-1.5">
                                 <label class="text-sm font-bold text-slate-700">Przedział wiekowy</label>
                                 <div class="flex items-center gap-2">
-                                    <input 
-                                        type="number" 
+                                    <input
+                                        type="number"
                                         data-model="ageMin"
-                                        placeholder="0" 
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                        value="{{ ageMin|default('') }}"
+                                        placeholder="0"
+                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                     />
                                     <span class="text-slate-400">-</span>
-                                    <input 
-                                        type="number" 
+                                    <input
+                                        type="number"
                                         data-model="ageMax"
-                                        placeholder="10" 
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                        value="{{ ageMax|default('') }}"
+                                        placeholder="10"
+                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                     />
                                     <span class="text-sm text-slate-500">lat</span>
                                 </div>
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-sm font-bold text-slate-700">Limit miejsc (pojemność sali)</label>
-                                <input 
-                                    type="number" 
+                                <input
+                                    type="number"
                                     data-model="capacity"
-                                    value="{{ capacity|default(10) }}" 
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                    value="{{ capacity|default(10) }}"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                 />
                             </div>
                         </div>
 
                         <div class="space-y-1.5">
                             <label class="text-sm font-bold text-slate-700">Opis (widoczny dla klientów) *</label>
-                            <textarea 
+                            <textarea
                                 data-model="description"
-                                rows="4" 
-                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                rows="4"
+                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                 placeholder="Opisz co będzie się dziać..."
                             >{{ description|default('') }}</textarea>
                         </div>
@@ -127,20 +164,22 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="space-y-1.5">
                                 <label class="text-sm font-bold text-slate-700">Krótki opis (lead)</label>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     data-model="lead"
-                                    placeholder="Krótki opis w jednym zdaniu" 
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                    value="{{ lead|default('') }}"
+                                    placeholder="Krótki opis w jednym zdaniu"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                 />
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-sm font-bold text-slate-700">Motyw wizualny</label>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     data-model="visualTheme"
-                                    placeholder="np. orange-100" 
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                    value="{{ visualTheme|default('') }}"
+                                    placeholder="np. orange-100"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                 />
                             </div>
                         </div>
@@ -149,28 +188,59 @@
 
                 <!-- TAB: SCHEDULE -->
                 {% if activeTab == 'schedule' %}
+                    {% if editingLessonId %}
+                        <div class="space-y-6">
+                            <div class="space-y-4 border border-slate-200 p-5 rounded-xl">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    {{ 'admin.workshop_editor.this_occurrence'|trans }}
+                                </h3>
+                                <p class="text-xs text-slate-500">{{ 'admin.workshop_editor.occurrence_date_hint'|trans }}</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div class="space-y-1.5">
+                                        <label class="text-sm font-bold text-slate-700">Data</label>
+                                        <input
+                                            type="date"
+                                            data-model="occurrenceDate"
+                                            value="{{ occurrenceDate|default('') }}"
+                                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
+                                        />
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <label class="text-sm font-bold text-slate-700">Godzina</label>
+                                        <input
+                                            type="time"
+                                            data-model="occurrenceTime"
+                                            value="{{ occurrenceTime|default('') }}"
+                                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
                     <div class="space-y-6">
                         <div class="p-4 rounded-xl border-2 border-indigo-100 bg-indigo-50/50 flex gap-4">
                             <div class="flex-1">
                                 <label class="flex items-center gap-2 text-sm font-bold text-indigo-900 mb-1">
-                                    <input 
-                                        type="radio" 
-                                        name="scheduletype" 
+                                    <input
+                                        type="radio"
+                                        name="scheduletype"
                                         data-model="scheduleType"
                                         value="single"
-                                        class="w-4 h-4 text-indigo-600" 
+                                        class="w-4 h-4 text-indigo-600"
                                     /> Wydarzenie jednorazowe
                                 </label>
                                 <p class="text-xs text-indigo-700 ml-6">Klasyczne zajęcia w konkretnym dniu.</p>
                             </div>
                             <div class="flex-1">
                                 <label class="flex items-center gap-2 text-sm font-bold text-indigo-900 mb-1">
-                                    <input 
-                                        type="radio" 
-                                        name="scheduletype" 
+                                    <input
+                                        type="radio"
+                                        name="scheduletype"
                                         data-model="scheduleType"
                                         value="recurring"
-                                        class="w-4 h-4 text-indigo-600" 
+                                        class="w-4 h-4 text-indigo-600"
                                         checked
                                     /> Cykliczne (Powtarzalne)
                                 </label>
@@ -183,11 +253,11 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                                 Konfiguracja Cyklu
                             </h3>
-                            
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div class="space-y-1.5">
                                     <label class="text-sm font-bold text-slate-700">Dzień tygodnia</label>
-                                    <select 
+                                    <select
                                         data-model="dayOfWeek"
                                         class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                     >
@@ -200,18 +270,18 @@
                                 <div class="space-y-1.5">
                                     <label class="text-sm font-bold text-slate-700">Godzina (Od - Do)</label>
                                     <div class="flex items-center gap-2">
-                                        <input 
-                                            type="time" 
+                                        <input
+                                            type="time"
                                             data-model="startTime"
-                                            value="{{ startTime|default('10:00') }}" 
-                                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                            value="{{ startTime|default('10:00') }}"
+                                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                         />
                                         <span class="text-slate-400">-</span>
-                                        <input 
-                                            type="time" 
+                                        <input
+                                            type="time"
                                             data-model="endTime"
-                                            value="{{ endTime|default('11:30') }}" 
-                                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                            value="{{ endTime|default('11:30') }}"
+                                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -220,28 +290,28 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
                                 <div class="space-y-1.5">
                                     <label class="text-sm font-bold text-slate-700">Początek cyklu</label>
-                                    <input 
-                                        type="date" 
+                                    <input
+                                        type="date"
                                         data-model="startDate"
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                     />
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="text-sm font-bold text-slate-700">Zakończenie cyklu (opcjonalne)</label>
-                                    <input 
-                                        type="date" 
+                                    <input
+                                        type="date"
                                         data-model="endDate"
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none" 
+                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                     />
                                 </div>
                             </div>
 
                             <div class="pt-2">
                                 <label class="flex items-center gap-2 text-sm font-bold text-slate-700 cursor-pointer">
-                                    <input 
-                                        type="checkbox" 
+                                    <input
+                                        type="checkbox"
                                         data-model="skipHolidays"
-                                        class="w-4 h-4 rounded text-indigo-600" 
+                                        class="w-4 h-4 rounded text-indigo-600"
                                         checked
                                     />
                                     Omijaj dni ustawowo wolne od pracy (święta)
@@ -249,6 +319,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 {% endif %}
 
                 <!-- TAB: TICKETS -->
@@ -257,10 +328,10 @@
                         <div class="p-4 rounded-xl border-2 border-indigo-100 bg-indigo-50/50">
                             <h3 class="font-bold text-indigo-900 mb-2">Metody płatności</h3>
                             <label class="flex items-center gap-2 text-sm font-bold text-indigo-800 cursor-pointer">
-                                <input 
-                                    type="checkbox" 
+                                <input
+                                    type="checkbox"
                                     data-model="allowPayOnPlace"
-                                    class="w-4 h-4 rounded text-indigo-600" 
+                                    class="w-4 h-4 rounded text-indigo-600"
                                 />
                                 Włącz opcję "Płatność na miejscu" (wymaga akceptacji przez prowadzącego/admina)
                             </label>
@@ -274,16 +345,17 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                 Cennik
                             </h3>
-                            
+
                             <div class="space-y-3">
                                 <div class="flex items-center gap-3">
                                     <div class="w-32 text-sm font-bold text-slate-700">Jednorazowe</div>
                                     <div class="flex-1 flex items-center gap-2">
-                                        <input 
-                                            type="number" 
+                                        <input
+                                            type="number"
                                             data-model="singleTicketPrice"
-                                            placeholder="55" 
-                                            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none" 
+                                            value="{{ singleTicketPrice|default('') }}"
+                                            placeholder="55"
+                                            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none"
                                         />
                                         <span class="text-sm text-slate-500">zł</span>
                                     </div>
@@ -291,11 +363,12 @@
                                 <div class="flex items-center gap-3">
                                     <div class="w-32 text-sm font-bold text-slate-700">Karnet 4 wejścia</div>
                                     <div class="flex-1 flex items-center gap-2">
-                                        <input 
-                                            type="number" 
+                                        <input
+                                            type="number"
                                             data-model="carnet4Price"
-                                            placeholder="200" 
-                                            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none" 
+                                            value="{{ carnet4Price|default('') }}"
+                                            placeholder="200"
+                                            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none"
                                         />
                                         <span class="text-sm text-slate-500">zł</span>
                                     </div>
@@ -309,34 +382,41 @@
                 {% if activeTab == 'instructors' %}
                     <div class="space-y-6">
                         <div class="space-y-4">
-                            <div class="flex gap-2">
-                                <select 
-                                    data-model="newInstructorId"
-                                    class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                >
-                                    <option value="">Wybierz prowadzącego...</option>
-                                    {% for user in this.getUsers() %}
-                                        {% if user.id not in instructorIds %}
-                                            <option value="{{ user.id }}">{{ user.name }} ({{ user.email }})</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                <button 
-                                    data-action="live#action" data-live-action-param="addInstructor"
-                                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition"
-                                >
-                                    Dodaj
-                                </button>
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    data-model="on(input)|instructorSearch"
+                                    value="{{ instructorSearch|default('') }}"
+                                    placeholder="Szukaj po imieniu, nazwisku lub e-mailu..."
+                                    autocomplete="off"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                />
+                                {% if instructorSearch and instructorSearch|length >= 2 %}
+                                    <div class="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg max-h-56 overflow-y-auto">
+                                        {% for user in this.getFilteredInstructors() %}
+                                            <button
+                                                type="button"
+                                                data-action="live#action" data-live-action-param="addInstructor" data-live-user-id-param="{{ user.id }}"
+                                                class="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition border-b border-slate-100 last:border-0"
+                                            >
+                                                <div class="text-sm font-bold text-slate-800">{{ user.name }}</div>
+                                                <div class="text-xs text-slate-500">{{ user.email }}</div>
+                                            </button>
+                                        {% else %}
+                                            <div class="px-4 py-3 text-sm text-slate-400">Brak wyników</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            
+
                             {% for user in this.getInstructors() %}
                                 <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200">
                                     <div>
                                         <div class="font-bold text-sm text-slate-800">{{ user.name }}</div>
                                         <div class="text-xs text-slate-500">{{ user.email }}</div>
                                     </div>
-                                    <button 
-                                        data-action="live#action" data-live-action-param="removeInstructor" data-live-action-param-userId="{{ user.id }}"
+                                    <button
+                                        data-action="live#action" data-live-action-param="removeInstructor" data-live-user-id-param="{{ user.id }}"
                                         class="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -355,7 +435,7 @@
             <!-- Footer -->
             <div class="p-4 sm:p-6 border-t border-slate-100 bg-white flex flex-col-reverse sm:flex-row justify-end gap-3 rounded-b-2xl shrink-0">
                 <button
-                    data-action="live#emitUp" data-live-event-param="workshopEditorClosed"
+                    data-action="live#action" data-live-action-param="close"
                     class="px-6 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
                 >
                     Anuluj
@@ -364,10 +444,10 @@
                     data-action="live#action" data-live-action-param="save"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition"
                 >
-                    Zapisz Szablon
+                    {{ editingLessonId ? 'admin.workshop_editor.save_edit'|trans : 'admin.workshop_editor.save_create'|trans }}
                 </button>
             </div>
         </div>
     </div>
-</div>
 {% endif %}
+</div>

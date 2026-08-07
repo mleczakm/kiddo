@@ -40,9 +40,27 @@ final readonly class InAppNotificationService
         ?string $url = null,
         NotificationSeverity $severity = NotificationSeverity::Info,
     ): array {
+        return $this->notifyUsers($this->userRepository->findByRole('ROLE_ADMIN'), $title, $body, $url, $severity);
+    }
+
+    /**
+     * Notify a batch of users at once — one Notification row per user, one
+     * flush. Callers are responsible for any deduplication/exclusion (e.g.
+     * dropping the acting user from the list) before calling this.
+     *
+     * @param iterable<User> $users
+     * @return list<Notification>
+     */
+    public function notifyUsers(
+        iterable $users,
+        string $title,
+        ?string $body = null,
+        ?string $url = null,
+        NotificationSeverity $severity = NotificationSeverity::Info,
+    ): array {
         $notifications = [];
-        foreach ($this->userRepository->findByRole('ROLE_ADMIN') as $admin) {
-            $notification = new Notification($admin, $title, $body, $url, $severity);
+        foreach ($users as $user) {
+            $notification = new Notification($user, $title, $body, $url, $severity);
             $this->em->persist($notification);
             $notifications[] = $notification;
         }

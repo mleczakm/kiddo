@@ -156,7 +156,7 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
 
         $html = (string) $component->render();
-        self::assertStringContainsString('Kreator Warsztatów', $html);
+        self::assertStringContainsString('Edytuj warsztat', $html);
         // Confirms the series id was correctly resolved to a Ulid and its data loaded
         self::assertStringContainsString('Editable Series Title', $html);
     }
