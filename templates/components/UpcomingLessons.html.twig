@@ -160,43 +160,40 @@
                                         {% set workshopUrl = lesson.metadata.slug
                                             ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
                                             : path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')}) %}
-                                        <div class="relative rounded-xl border bg-card text-card-foreground shadow-sm pl-4 pr-3 py-3 pb-8 hover:shadow-md transition-shadow">
+                                        <a href="{{ workshopUrl }}" class="group block relative rounded-xl border bg-card text-card-foreground shadow-sm pl-4 pr-3 py-3 hover:shadow-md hover:-translate-y-0.5 transition-all">
                                             <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style="background-color: {{ lesson.metadata.visualTheme }};"></div>
-                                            <div class="text-sm font-medium">
-                                                <a href="{{ workshopUrl }}" class="hover:underline">{{ lesson.metadata.title }}</a>
-                                            </div>
+                                            <div class="text-sm font-medium group-hover:underline">{{ lesson.metadata.title }}</div>
                                             <div class="text-xs text-muted-foreground">
                                                 {{ lesson.metadata.schedule|date('H:i') }}-{{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}
                                             </div>
                                             {% set lessonBookings = userBookings[lesson.id]|default([]) %}
                                             {% if lessonBookings is not empty %}
-                                                <div class="flex flex-wrap gap-1 mt-1">
+                                                <div class="mt-2 space-y-1">
                                                     {% for bookingInfo in lessonBookings %}
-                                                        {% if bookingInfo.paymentStatus == 'paid' %}
-                                                            <span class="inline-flex items-center rounded-full border bg-green-50 border-green-200 text-green-700 px-1.5 py-0.5 text-xs font-semibold">
-                                                                {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.paid'|trans }}
-                                                            </span>
-                                                        {% else %}
-                                                            <span class="inline-flex items-center rounded-full border bg-gray-50 border-gray-200 text-gray-600 px-1.5 py-0.5 text-xs font-semibold">
-                                                                {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.unpaid'|trans }}
-                                                            </span>
-                                                        {% endif %}
+                                                        {% set paid = bookingInfo.paymentStatus == 'paid' %}
+                                                        <div class="flex items-center gap-1.5 text-xs font-semibold {{ paid ? 'text-green-700' : 'text-amber-700' }}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+                                                                <path d="M20 6 9 17l-5-5"></path>
+                                                            </svg>
+                                                            <span class="truncate">{% if bookingInfo.childName %}{{ bookingInfo.childName }} · {% endif %}{{ ('admin.badges.' ~ (paid ? 'paid' : 'unpaid'))|trans }}</span>
+                                                        </div>
                                                     {% endfor %}
                                                 </div>
                                             {% endif %}
-                                            {% if lesson.getAvailableSpots() <= 3 %}
-                                                <div class="inline-flex items-center rounded-full border mt-1 text-xs border-workshop-red text-workshop-red {% if lesson.getAvailableSpots() == 0 %}bg-workshop-red/10{% endif %} px-2 py-0.5 font-semibold">
-                                                    {{ 'lesson.spots_available'|trans({spots: lesson.getAvailableSpots()}) }}
-                                                </div>
-                                            {% endif %}
-                                            {{ component('LessonModal', {
-                                                lesson: lesson,
-                                                modalOpened: this.shouldOpenModal(lesson),
-                                                closeUrl: this.showSearch
-                                                    ? path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')})
-                                                    : path('homepage')
-                                            }) }}
-                                        </div>
+                                            {% set availableSpots = lesson.getAvailableSpots() %}
+                                            {% set spotsClass = availableSpots > 4 ? 'border-green-200 text-green-700 bg-green-50' : (availableSpots > 2 ? 'border-yellow-200 text-yellow-700 bg-yellow-50' : 'border-workshop-red/30 text-workshop-red bg-workshop-red/10') %}
+                                            <div class="inline-flex items-center rounded-full border mt-2 text-xs font-semibold px-2 py-0.5 {{ spotsClass }}">
+                                                {{ 'lesson.spots_available'|trans({spots: availableSpots}) }}
+                                            </div>
+                                        </a>
+                                        {{ component('LessonModal', {
+                                            lesson: lesson,
+                                            modalOpened: this.shouldOpenModal(lesson),
+                                            hideOpenButton: true,
+                                            closeUrl: this.showSearch
+                                                ? path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')})
+                                                : path('homepage')
+                                        }) }}
                                     {% endfor %}
                                 </div>
                             {% endif %}
@@ -223,17 +220,13 @@
                         </div>
                         {% set lessonBookings = userBookings[lesson.id]|default([]) %}
                         {% if lessonBookings is not empty %}
-                            <div class="flex flex-wrap gap-2 mb-3">
+                            <div class="flex flex-wrap gap-1.5 mb-3">
                                 {% for bookingInfo in lessonBookings %}
-                                    {% if bookingInfo.paymentStatus == 'paid' %}
-                                        <span class="inline-flex items-center rounded-full border bg-green-50 border-green-200 text-green-700 px-2.5 py-0.5 text-xs font-semibold">
-                                            {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.paid'|trans }}
-                                        </span>
-                                    {% else %}
-                                        <span class="inline-flex items-center rounded-full border bg-gray-50 border-gray-200 text-gray-600 px-2.5 py-0.5 text-xs font-semibold">
-                                            {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.unpaid'|trans }}
-                                        </span>
-                                    {% endif %}
+                                    {% set paid = bookingInfo.paymentStatus == 'paid' %}
+                                    <span class="inline-flex items-center gap-1.5 rounded-full border pl-2.5 pr-3 py-1 text-xs font-semibold {{ paid ? 'bg-green-50 border-green-200 text-green-700' : 'bg-amber-50 border-amber-200 text-amber-700' }}">
+                                        <span class="w-1.5 h-1.5 rounded-full shrink-0 {{ paid ? 'bg-green-500' : 'bg-amber-500' }}"></span>
+                                        {% if bookingInfo.childName %}{{ bookingInfo.childName }} · {% endif %}{{ ('admin.badges.' ~ (paid ? 'paid' : 'unpaid'))|trans }}
+                                    </span>
                                 {% endfor %}
                             </div>
                         {% endif %}

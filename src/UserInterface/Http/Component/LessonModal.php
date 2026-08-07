@@ -43,6 +43,9 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public string $closeUrl = '/';
 
+    #[LiveProp]
+    public bool $hideOpenButton = false;
+
     #[LiveProp(writable: true)]
     public bool $modalOpened = false;
 

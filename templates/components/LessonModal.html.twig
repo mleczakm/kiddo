@@ -13,11 +13,13 @@
         ) }}
 >
 
+    {% if not hideOpenButton %}
     <button data-action="live#action click->workshop-url#pushOpen"
             data-live-action-param="openModal"
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90 hover:scale-105 transition-transform duration-200 active:scale-95 relative z-10"
             type="button">{{ 'lesson.details'|trans }}
     </button>
+    {% endif %}
 
     {% if modalOpened %}
     <div data-controller="modal-transition">

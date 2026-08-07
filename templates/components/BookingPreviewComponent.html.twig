@@ -1,46 +1,61 @@
 <div {{ attributes }}>
     {% set bookings = this.getBookings() %}
     {% if bookings is not empty %}
-        <div class="bg-muted/50 p-4 rounded-lg mb-6">
-            <h3 class="font-semibold mb-3 text-sm">{{ 'booking.existing_bookings'|trans }}</h3>
-            <div class="space-y-2">
+        <div class="bg-muted/50 p-5 rounded-xl mb-8">
+            <h3 class="text-lg font-bold mb-4 font-display text-workshop-brown">{{ 'booking.existing_bookings'|trans }}</h3>
+            <div class="space-y-3">
                 {% for booking in bookings %}
                     {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
-                    <div class="flex items-center justify-between p-3 bg-white rounded border {{ isCancelled ? 'opacity-70' : '' }}">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-medium text-sm truncate">{{ booking.child ? booking.child.name : 'booking.no_child'|trans }}</span>
-                                {% if booking.lessons|length > 1 %}
-                                    <span class="inline-flex items-center rounded-full border border-workshop-blue text-workshop-blue px-2 py-0.5 text-xs font-semibold">
-                                        {{ 'dashboard.booking.carnet'|trans }}
-                                    </span>
-                                {% endif %}
+                    {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
+                    {% set childName = booking.child ? booking.child.name : 'booking.no_child'|trans %}
+                    <div class="flex items-center justify-between gap-3 p-3.5 bg-white rounded-xl border border-slate-100 shadow-sm {{ isCancelled ? 'opacity-70' : '' }}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm {{ isPaid ? 'bg-green-100 text-green-700' : 'bg-workshop-yellow/20 text-workshop-brown' }}">
+                                {{ childName|first|upper }}
                             </div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                {% if booking.payment %}
-                                    {% set statusClass =
-                                        booking.payment.status == 'paid' ? 'border-green-600 bg-green-600 text-white' :
-                                        (booking.payment.status == 'pending' ? 'border-yellow-500 bg-yellow-500 text-white' :
-                                        (booking.payment.status == 'failed' ? 'border-red-600 bg-red-600 text-white' :
-                                        (booking.payment.status == 'refunded' ?  'border-blue-600 bg-blue-600 text-white' :
-                                        'border-gray-400 bg-gray-200 text-gray-700'))) %}
-                                    <div class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 {{ statusClass }}">
-                                        {{ ('dashboard.payment.' ~ booking.payment.status)|trans }}
-                                    </div>
-                                {% else %}
-                                    <span class="inline-flex items-center rounded-full border border-gray-400 bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold">
-                                        {{ 'admin.badges.unpaid'|trans }}
-                                    </span>
-                                {% endif %}
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-semibold text-sm truncate">{{ childName }}</span>
+                                    {% if booking.lessons|length > 1 %}
+                                        <span class="inline-flex items-center rounded-full border border-workshop-blue text-workshop-blue px-2 py-0.5 text-xs font-semibold">
+                                            {{ 'dashboard.booking.carnet'|trans }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    {% if booking.payment %}
+                                        {% set statusClass =
+                                            booking.payment.status == 'paid' ? 'border-green-200 bg-green-50 text-green-700' :
+                                            (booking.payment.status == 'pending' ? 'border-yellow-200 bg-yellow-50 text-yellow-700' :
+                                            (booking.payment.status == 'failed' ? 'border-red-200 bg-red-50 text-red-700' :
+                                            (booking.payment.status == 'refunded' ?  'border-blue-200 bg-blue-50 text-blue-700' :
+                                            'border-gray-200 bg-gray-100 text-gray-600'))) %}
+                                        {% set statusDot =
+                                            booking.payment.status == 'paid' ? 'bg-green-500' :
+                                            (booking.payment.status == 'pending' ? 'bg-yellow-500' :
+                                            (booking.payment.status == 'failed' ? 'bg-red-500' :
+                                            (booking.payment.status == 'refunded' ?  'bg-blue-500' :
+                                            'bg-gray-400'))) %}
+                                        <div class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold {{ statusClass }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ statusDot }}"></span>
+                                            {{ ('dashboard.payment.' ~ booking.payment.status)|trans }}
+                                        </div>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-100 text-gray-600 px-2.5 py-1 text-xs font-semibold">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                            {{ 'admin.badges.unpaid'|trans }}
+                                        </span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 ml-4">
+                        <div class="flex items-center gap-2 shrink-0">
                             {% if booking.payment and booking.payment.status != 'paid' and booking.payment.paymentCode %}
                                 <button type="button"
                                         data-action="live#emitUp"
                                         data-live-event-param="resumePayment"
                                         data-live-booking-id-param="{{ booking.id }}"
-                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-8 px-3 bg-workshop-red text-white">
+                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-9 px-4 bg-workshop-red text-white">
                                     {{ 'booking.pay'|trans }} {{ booking.payment.amount|money }}
                                 </button>
                             {% endif %}

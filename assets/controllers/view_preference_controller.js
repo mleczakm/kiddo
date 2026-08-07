@@ -22,6 +22,16 @@ export default class extends Controller {
     }
 
     #syncFromStorage() {
+        // A deep link (e.g. a lesson card that navigates straight to a
+        // workshop URL) can render the page with a modal already open.
+        // Restoring the stored grid/calendar preference goes through the
+        // `setView` action, which deliberately clears the modal-open state
+        // as part of a manual view switch — so here it would silently close
+        // the modal a moment after it opened. Leave the deep link alone.
+        if (document.querySelector('dialog[open]')) {
+            return;
+        }
+
         const stored = localStorage.getItem(this.storageKeyValue);
         if (stored && (stored === 'grid' || stored === 'calendar')) {
             const liveComponent = this.element.closest('[data-controller*="live"]');
