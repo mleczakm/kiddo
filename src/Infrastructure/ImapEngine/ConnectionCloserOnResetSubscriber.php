@@ -7,7 +7,7 @@ namespace App\Infrastructure\ImapEngine;
 use DirectoryTree\ImapEngine\MailboxInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
-final readonly class ConnectionCloserOnResetSubscriber implements ResetInterface
+final class ConnectionCloserOnResetSubscriber implements ResetInterface
 {
     public function __construct(
         private MailboxInterface $mailbox

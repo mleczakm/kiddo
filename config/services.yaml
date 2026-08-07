@@ -114,9 +114,13 @@ services:
 
   App\Infrastructure\Doctrine\EntityManagerResetter:
     public: true
+    tags:
+      - { name: swoole_bundle.safe_stateful_service }
 
   App\Infrastructure\ImapEngine\ConnectionCloserOnResetSubscriber:
     public: true
+    tags:
+      - { name: swoole_bundle.safe_stateful_service }
 
   App\Infrastructure\Swoole\SwooleServerProviderInterface:
     class: App\Infrastructure\Swoole\HttpServerSwooleServerProvider

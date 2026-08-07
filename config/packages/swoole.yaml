@@ -1,6 +1,10 @@
 swoole:
   http_server:
     static: advanced
+    exception_handler:
+      # coroutines mode always fetches "swoole_bundle.error_handler.symfony_error_handler",
+      # which only gets registered when the exception handler type is "symfony"
+      type: symfony
     services:
       trust_all_proxies_handler: true
       access_log:
@@ -16,6 +20,14 @@ swoole:
       reset_handler: true
     settings:
       worker_count: 8
+  platform:
+    coroutines:
+      enabled: true
+      # Without a cap, each worker/task-worker process pools a separate Doctrine connection
+      # instance per coroutine context, which was exhausting Postgres's max_connections (100)
+      # within seconds of boot (12 processes x scheduler polling every ~1s).
+      doctrine_processor_config:
+        global_limit: 5
 
 when@prod:
   swoole_bundle_resetter:

@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetterInterface;
 
 #[AsEventListener(event: 'kernel.terminate', method: 'reset')]
-final readonly class EntityManagerResetter implements ServicesResetterInterface
+final class EntityManagerResetter implements ServicesResetterInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager

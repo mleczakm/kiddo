@@ -1518,17 +1518,27 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         port?: scalar|Param|null, // Default: 9501
  *         trusted_hosts?: mixed, // Default: []
  *         trusted_proxies?: mixed, // Default: []
- *         running_mode?: "process"|"reactor"|"thread"|Param, // Default: "process"
+ *         running_mode?: "process"|"reactor"|Param, // Default: "process"
  *         socket_type?: "tcp"|"tcp_ipv6"|"udp"|"udp_ipv6"|"unix_dgram"|"unix_stream"|Param, // Default: "tcp"
  *         ssl_enabled?: bool|Param, // Default: false
  *         hmr?: array{
- *             enabled?: "off"|"auto"|"inotify"|"external"|Param, // Default: "auto"
+ *             enabled?: "off"|"auto"|"inotify"|"stat"|"external"|Param, // Default: "auto"
  *             file_path?: scalar|Param|null, // Default: "%swoole_bundle.cache_dir%"
  *         },
  *         api?: array{
  *             enabled?: bool|Param, // Default: false
  *             host?: scalar|Param|null, // Default: "0.0.0.0"
  *             port?: scalar|Param|null, // Default: 9200
+ *         },
+ *         healthcheck?: array{ // Liveness endpoint served by a dedicated process, unaffected by worker pool saturation.
+ *             enabled?: bool|Param, // Default: false
+ *             host?: scalar|Param|null, // Default: "0.0.0.0"
+ *             port?: scalar|Param|null, // Default: 9300
+ *             path?: scalar|Param|null, // Default: "/healthz"
+ *             checks?: array{ // Scheduling of the health checks registered by the project. Ignored when none is registered.
+ *                 interval?: int|Param, // Seconds between two passes over every registered check. // Default: 5
+ *                 staleness_threshold?: int|Param, // Seconds after which a verdict no longer counts as current and the endpoint reports unhealthy. // Default: 15
+ *             },
  *         },
  *         static?: Param|string|array{
  *             strategy?: "off"|"default"|"advanced"|"auto"|Param, // Default: "auto"
@@ -1584,6 +1594,9 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     },
  *     platform?: array{
+ *         fiber_context?: array{
+ *             enabled?: "auto"|"off"|"on"|Param, // Default: "auto"
+ *         },
  *         coroutines?: array{
  *             enabled?: bool|Param, // Default: false
  *             max_coroutines?: scalar|Param|null, // Default: 100000
@@ -1600,6 +1613,10 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *                 limits?: list<int|Param>,
  *             },
  *         },
+ *     },
+ *     session?: array{
+ *         max_data_bytes?: int|Param, // Default: 4096
+ *         max_active_sessions?: int|Param, // Default: 1024
  *     },
  * }
  * @psalm-type SymfonycastsTailwindConfig = array{
