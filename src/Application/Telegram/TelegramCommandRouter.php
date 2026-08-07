@@ -77,7 +77,7 @@ final readonly class TelegramCommandRouter
             return 'Odłączono Telegram od konta Kiddo.';
         }
 
-        $actor = new ChatActor($user, array_values($user->getRoles()));
+        $actor = new ChatActor($user, $user->getRoles());
 
         if (str_starts_with($text, '/ja') || preg_match('/^(kim jestem|profil)$/iu', $text) === 1) {
             return $this->call($actor, 'user.me', []);

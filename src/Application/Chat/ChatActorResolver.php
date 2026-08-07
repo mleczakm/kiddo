@@ -28,11 +28,11 @@ final readonly class ChatActorResolver
 
         $roles = $chatToken->roles !== [] ? $chatToken->roles : $user->getRoles();
 
-        return new ChatActor($user, array_values($roles));
+        return new ChatActor($user, $roles);
     }
 
     public function fromUser(User $user): ChatActor
     {
-        return new ChatActor($user, array_values($user->getRoles()));
+        return new ChatActor($user, $user->getRoles());
     }
 }

@@ -25,7 +25,7 @@ final readonly class ChatTokenManager
 
         return $this->encode([
             'uid' => $userId,
-            'roles' => array_values($user->getRoles()),
+            'roles' => $user->getRoles(),
             'exp' => time() + ($ttlSeconds ?? self::DEFAULT_TTL_SECONDS),
             'jti' => bin2hex(random_bytes(16)),
         ]);
