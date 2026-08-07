@@ -61,6 +61,23 @@ class UserRepository extends ServiceEntityRepository
     /**
      * @return User[]
      */
+    public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
+    {
+        /** @var User[] $users */
+        $users = $this->createQueryBuilder('u')
+            ->where('u.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->orderBy('u.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $users;
+    }
+
+    /**
+     * @return User[]
+     */
     public function findAllMatching(string $query): array
     {
         $qb = $this->createQueryBuilder('u');

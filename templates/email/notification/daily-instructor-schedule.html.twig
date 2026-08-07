@@ -1,0 +1,70 @@
+{% trans_default_domain 'emails' %}
+
+<style>
+    .report-wrapper {
+        font-family: Arial, sans-serif;
+        color: #4c2e11;
+    }
+    .stats-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 8px 0;
+        margin-bottom: 20px;
+    }
+    .stat-card {
+        background-color: #f9f1de;
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+        vertical-align: top;
+        width: 50%;
+    }
+    .stat-card .stat-value {
+        font-size: 22px;
+        font-weight: 800;
+        color: #e34646;
+    }
+    .stat-card .stat-label {
+        font-size: 12px;
+        color: #738f3e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .empty-note {
+        color: #999;
+        font-style: italic;
+        font-size: 13px;
+        margin: 8px 0 0;
+    }
+</style>
+
+<div class="report-wrapper">
+    <p>{{ 'daily_lessons_schedule.instructor_greeting'|trans({'name': instructor.name}) }}</p>
+    <p>{{ 'daily_lessons_schedule.instructor_reminder'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+
+    {% set totalAttendees = 0 %}
+    {% for lesson in lessons %}
+        {% set totalAttendees = totalAttendees + lesson.bookings|filter(b => not b.isLessonCancelled(lesson))|length %}
+    {% endfor %}
+
+    <table class="stats-table" role="presentation">
+        <tr>
+            <td class="stat-card">
+                <div class="stat-value">{{ lessons|length }}</div>
+                <div class="stat-label">{{ 'daily_lessons_schedule.instructor_stats.lessons'|trans }}</div>
+            </td>
+            <td class="stat-card">
+                <div class="stat-value">{{ totalAttendees }}</div>
+                <div class="stat-label">{{ 'daily_lessons_schedule.instructor_stats.attendees'|trans }}</div>
+            </td>
+        </tr>
+    </table>
+
+    {% if lessons is empty %}
+        <p class="empty-note">{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+    {% endif %}
+
+    {% include 'email/notification/_lesson_schedule_cards.html.twig' with {'lessons': lessons} %}
+
+    <p>{{ 'daily_lessons_schedule.instructor_footer'|trans }}</p>
+</div>

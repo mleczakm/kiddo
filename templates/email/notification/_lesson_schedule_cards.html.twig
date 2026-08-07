@@ -1,0 +1,112 @@
+{% trans_default_domain 'emails' %}
+<style>
+    .lesson-card {
+        border: 1px solid #eee2c8;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        overflow: hidden;
+    }
+    .lesson-card h2 {
+        font-size: 16px;
+        color: #4c2e11;
+        background-color: #f9f1de;
+        margin: 0;
+        padding: 10px 14px;
+    }
+    .lesson-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .lesson-table th, .lesson-table td {
+        border-top: 1px solid #eee2c8;
+        padding: 8px 14px;
+        text-align: left;
+        font-size: 13px;
+    }
+    .lesson-table th {
+        background-color: #fdfaf1;
+        color: #738f3e;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+    }
+    .booking-carnet {
+        background-color: #eaf6ff;
+    }
+    .booking-cancelled {
+        background-color: #ffebee;
+        text-decoration: line-through;
+    }
+    .booking-rescheduled {
+        background-color: #fff9c4;
+        font-style: italic;
+    }
+    .no-attendants {
+        padding: 10px 14px;
+        color: #999;
+        font-style: italic;
+        font-size: 13px;
+    }
+</style>
+
+{% for lesson in lessons %}
+    <div class="lesson-card">
+        <h2>{{ lesson.metadata.title }} ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})</h2>
+
+        {% if lesson.bookings is not empty and lesson.bookings.count > 0 %}
+            <table class="lesson-table">
+                <thead>
+                    <tr>
+                        <th>{{ 'daily_lessons_schedule.table.header.attendee'|trans }}</th>
+                        <th>{{ 'daily_lessons_schedule.table.header.email'|trans }}</th>
+                        <th>{{ 'daily_lessons_schedule.table.header.progress'|trans }}</th>
+                        <th>{{ 'daily_lessons_schedule.table.header.status'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in lesson.bookings %}
+                        {% set isCarnet = booking.isCarnet() %}
+                        {% set isCancelled = booking.isLessonCancelled(lesson) %}
+                        {% set isRescheduled = booking.isLessonRescheduled(lesson) %}
+
+                        {% set row_class = '' %}
+                        {% if isCarnet %}{% set row_class = row_class ~ ' booking-carnet' %}{% endif %}
+                        {% if isRescheduled %}{% set row_class = row_class ~ ' booking-rescheduled' %}
+                        {% elseif isCancelled %}{% set row_class = row_class ~ ' booking-cancelled' %}{% endif %}
+
+                        <tr class="{{ row_class }}">
+                            <td>
+                                {% if booking.child %}
+                                    <strong>{{ booking.child.name }}</strong>{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}<br>
+                                    <small style="color: #666;">{{ booking.user.name }}</small>
+                                {% else %}
+                                    <em style="color: #999;">—</em><br>
+                                    <small style="color: #666;">{{ booking.user.name }}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ booking.user.email }}</td>
+                            <td>
+                                {% if isCarnet %}
+                                    {{ 'daily_lessons_schedule.table.body.progress'|trans({'index': booking.getLessonIndex(lesson), 'total': booking.getTotalLessons()}) }}
+                                {% else %}
+                                    {{ 'daily_lessons_schedule.table.body.single_entry'|trans }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if isRescheduled %}
+                                    {{ 'daily_lessons_schedule.table.body.status.rescheduled'|trans }}
+                                {% elseif isCancelled %}
+                                    {{ 'daily_lessons_schedule.table.body.status.cancelled'|trans }}
+                                {% else %}
+                                    {{ 'daily_lessons_schedule.table.body.status.active'|trans }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-attendants">{{ 'daily_lessons_schedule.no_attendants'|trans }}</p>
+        {% endif %}
+    </div>
+{% endfor %}

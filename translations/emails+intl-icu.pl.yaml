@@ -109,6 +109,25 @@ daily_lessons_schedule:
   user_greeting: 'Cześć {name},'
   user_reminder: 'To szybkie przypomnienie o Twoich dzisiejszych zajęciach w {date}:'
   user_footer: "Do zobaczenia na zajęciach w Warsztatowni Sensorycznej!"
+  instructor_subject: 'Twoje zajęcia dzisiaj ({date})'
+  instructor_greeting: 'Cześć {name},'
+  instructor_reminder: 'Oto podsumowanie Twoich zajęć na dziś ({date}):'
+  instructor_stats:
+    lessons: 'Zajęcia'
+    attendees: 'Uczestnicy'
+  instructor_footer: 'Do zobaczenia w Warsztatowni Sensorycznej!'
+  yesterday:
+    heading: 'Podsumowanie wczoraj ({date})'
+    new_users:
+      title: 'Nowi użytkownicy'
+      none: 'Brak nowych rejestracji wczoraj.'
+    new_reservations:
+      title: 'Nowe rezerwacje'
+      none: 'Brak nowych rezerwacji wczoraj.'
+    revenue:
+      title: 'Wpłaty'
+  today:
+    heading: 'Zajęcia dzisiaj ({date})'
   table:
     header:
       attendee: 'Uczestnik'

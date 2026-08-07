@@ -1,94 +1,109 @@
 {% trans_default_domain 'emails' %}
 
 <style>
-    .lesson-table {
+    .report-wrapper {
+        font-family: Arial, sans-serif;
+        color: #4c2e11;
+    }
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #4c2e11;
+        margin: 28px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #f7c343;
+    }
+    .stats-table {
         width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
+        border-collapse: separate;
+        border-spacing: 8px 0;
+        margin-bottom: 8px;
     }
-    .lesson-table th, .lesson-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
+    .stat-card {
+        background-color: #f9f1de;
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+        vertical-align: top;
+        width: 33%;
     }
-    .lesson-table th {
-        background-color: #f2f2f2;
+    .stat-card .stat-value {
+        font-size: 22px;
+        font-weight: 800;
+        color: #e34646;
     }
-    .booking-carnet {
-        background-color: #eaf6ff;
+    .stat-card .stat-label {
+        font-size: 12px;
+        color: #738f3e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .booking-cancelled {
-        background-color: #ffebee;
-        text-decoration: line-through;
+    .detail-list {
+        margin: 10px 2px 0;
+        padding: 0;
+        list-style: none;
+        font-size: 13px;
     }
-    .booking-rescheduled {
-        background-color: #fff9c4;
+    .detail-list li {
+        padding: 6px 0;
+        border-bottom: 1px solid #eee2c8;
+    }
+    .detail-list li:last-child {
+        border-bottom: none;
+    }
+    .empty-note {
+        color: #999;
         font-style: italic;
+        font-size: 13px;
+        margin: 8px 0 0;
     }
 </style>
-    {% for lesson in lessons %}
-        <h2 style="font-family: Arial, sans-serif; color: #333;">
-            {{ lesson.metadata.title }} ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})
-        </h2>
 
-        {% if lesson.bookings is not empty and lesson.bookings.count > 0 %}
-            <table class="lesson-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                <thead>
-                    <tr>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.attendee'|trans }}</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.email'|trans }}</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.progress'|trans }}</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">{{ 'daily_lessons_schedule.table.header.status'|trans }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for booking in lesson.bookings %}
-                        {% set isCarnet = booking.isCarnet() %}
-                        {% set isCancelled = booking.isLessonCancelled(lesson) %}
-                        {% set isRescheduled = booking.isLessonRescheduled(lesson) %}
+<div class="report-wrapper">
+    <div class="section-title">{{ 'daily_lessons_schedule.yesterday.heading'|trans({'date': yesterday|format_datetime(pattern='EEEE, dd.MM')}) }}</div>
 
-                        {% set row_class = '' %}
-                        {% if isCarnet %}{% set row_class = row_class ~ ' booking-carnet' %}{% endif %}
-                        {% if isRescheduled %}{% set row_class = row_class ~ ' booking-rescheduled' %}
-                        {% elseif isCancelled %}{% set row_class = row_class ~ ' booking-cancelled' %}{% endif %}
+    <table class="stats-table" role="presentation">
+        <tr>
+            <td class="stat-card">
+                <div class="stat-value">{{ newUsers|length }}</div>
+                <div class="stat-label">{{ 'daily_lessons_schedule.yesterday.new_users.title'|trans }}</div>
+            </td>
+            <td class="stat-card">
+                <div class="stat-value">{{ newBookings|length }}</div>
+                <div class="stat-label">{{ 'daily_lessons_schedule.yesterday.new_reservations.title'|trans }}</div>
+            </td>
+            <td class="stat-card">
+                <div class="stat-value">{{ revenue|money }}</div>
+                <div class="stat-label">{{ 'daily_lessons_schedule.yesterday.revenue.title'|trans }}</div>
+            </td>
+        </tr>
+    </table>
 
-                        {% set row_style = '' %}
-                        {% if isCarnet %}{% set row_style = row_style ~ ' background-color: #eaf6ff;' %}{% endif %}
-                        {% if isRescheduled %}{% set row_style = row_style ~ ' background-color: #fff9c4; font-style: italic;' %}
-                        {% elseif isCancelled %}{% set row_style = row_style ~ ' background-color: #ffebee; text-decoration: line-through;' %}{% endif %}
+    {% if newUsers is not empty %}
+        <ul class="detail-list">
+            {% for newUser in newUsers %}
+                <li>👤 <strong>{{ newUser.name }}</strong> — {{ newUser.email }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty-note">{{ 'daily_lessons_schedule.yesterday.new_users.none'|trans }}</p>
+    {% endif %}
 
-                        <tr class="{{ row_class }}" style="{{ row_style }}">
-                            <td style="border: 1px solid #ddd; padding: 8px;">
-                                {% if booking.child %}
-                                    <strong>{{ booking.child.name }}</strong>{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}<br>
-                                    <small style="color: #666;">{{ booking.user.name }}</small>
-                                {% else %}
-                                    <em style="color: #999;">—</em><br>
-                                    <small style="color: #666;">{{ booking.user.name }}</small>
-                                {% endif %}
-                            </td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">{{ booking.user.email }}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">
-                                {% if isCarnet %}
-                                    {{ 'daily_lessons_schedule.table.body.progress'|trans({'index': booking.getLessonIndex(lesson), 'total': booking.getTotalLessons()}) }}
-                                {% else %}
-                                    {{ 'daily_lessons_schedule.table.body.single_entry'|trans }}
-                                {% endif %}
-                            </td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">
-                                {% if isRescheduled %}
-                                    {{ 'daily_lessons_schedule.table.body.status.rescheduled'|trans }}
-                                {% elseif isCancelled %}
-                                    {{ 'daily_lessons_schedule.table.body.status.cancelled'|trans }}
-                                {% else %}
-                                    {{ 'daily_lessons_schedule.table.body.status.active'|trans }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>{{ 'daily_lessons_schedule.no_attendants'|trans }}</p>
-        {% endif %}
-    {% endfor %}
+    {% if newBookings is not empty %}
+        <ul class="detail-list">
+            {% for newBooking in newBookings %}
+                <li>🎫 <strong>{{ newBooking.user.name }}</strong>{% if newBooking.child %} ({{ newBooking.child.name }}){% endif %} — {{ newBooking.lessons|map(l => l.metadata.title)|join(', ') }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty-note">{{ 'daily_lessons_schedule.yesterday.new_reservations.none'|trans }}</p>
+    {% endif %}
+
+    <div class="section-title">{{ 'daily_lessons_schedule.today.heading'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</div>
+
+    {% if lessons is empty %}
+        <p class="empty-note">{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+    {% endif %}
+
+    {% include 'email/notification/_lesson_schedule_cards.html.twig' with {'lessons': lessons} %}
+</div>

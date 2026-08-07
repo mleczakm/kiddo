@@ -115,4 +115,27 @@ class BookingRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return array<Booking>
+     */
+    public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
+    {
+        /** @var array<Booking> $bookings */
+        $bookings = $this->createQueryBuilder('b')
+            ->leftJoin('b.lessons', 'l')
+            ->leftJoin('b.user', 'u')
+            ->leftJoin('b.child', 'c')
+            ->addSelect('l', 'u', 'c')
+            ->where('b.createdAt BETWEEN :start AND :end')
+            ->andWhere('b.status != :cancelled')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('cancelled', Booking::STATUS_CANCELLED)
+            ->orderBy('b.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $bookings;
+    }
 }

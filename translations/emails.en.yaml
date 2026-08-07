@@ -52,6 +52,25 @@ daily_lessons_schedule:
   user_greeting: "Hi {name},"
   user_reminder: "This is a quick reminder about your lessons today on {date}:"
   user_footer: "See you at the workshop!"
+  instructor_subject: "Your lessons today ({date})"
+  instructor_greeting: "Hi {name},"
+  instructor_reminder: "Here's a summary of your lessons today ({date}):"
+  instructor_stats:
+    lessons: "Lessons"
+    attendees: "Attendees"
+  instructor_footer: "See you at the workshop!"
+  yesterday:
+    heading: "Yesterday's summary ({date})"
+    new_users:
+      title: "New registrations"
+      none: "No new registrations yesterday."
+    new_reservations:
+      title: "New reservations"
+      none: "No new reservations yesterday."
+    revenue:
+      title: "Payments received"
+  today:
+    heading: "Today's lessons ({date})"
 
 booking_cancellation:
   subject: 'Cancellation of booking for the class on {date}'
