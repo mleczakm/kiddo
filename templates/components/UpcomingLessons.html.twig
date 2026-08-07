@@ -135,57 +135,71 @@
                     <span>{{ 'view.week_of'|trans }} {{ this.weekStart|format_date('medium') }}</span>
                 </h2>
             </div>
-            <div class="grid grid-cols-7 gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-4">
+            <div class="grid grid-flow-col auto-cols-[190px] gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-4 pb-3">
                 {% for dayData in this.getWorkshopsByDay() %}
-                    <div class="day-column min-w-[140px] snap-start">
-                        <div class="day-header p-2 bg-muted rounded-t-lg text-center font-medium">
+                    {% set isToday = dayData.date|date('Y-m-d') == "now"|date('Y-m-d') %}
+                    <div class="day-column snap-start rounded-2xl border overflow-hidden shadow-sm flex flex-col {{ isToday ? 'border-workshop-red/40 ring-1 ring-workshop-red/20' : 'border-muted' }}">
+                        <div class="p-3 text-center font-medium {{ isToday ? 'bg-workshop-red text-white' : 'bg-muted text-foreground' }}">
                             <div>{{ ('day.' ~ dayData.weekday)|trans }}</div>
-                            <div class="text-xs text-muted-foreground">{{ dayData.date|format_date('short') }}</div>
+                            <div class="text-xs {{ isToday ? 'text-white/80' : 'text-muted-foreground' }}">{{ dayData.date|format_date('short') }}</div>
                         </div>
-                        <div class="day-content min-h-[300px] bg-white rounded-b-lg p-2 border border-muted">
-                            <div class="space-y-2">
-                                {% for lesson in dayData.workshops %}
-                                    {% set workshopUrl = lesson.metadata.slug
-                                        ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
-                                        : path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')}) %}
-                                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-2 pb-6 hover:shadow-md transition-shadow">
-                                        <div class="text-sm font-medium">
-                                            <a href="{{ workshopUrl }}" class="hover:underline">{{ lesson.metadata.title }}</a>
-                                        </div>
-                                        <div class="text-xs text-muted-foreground">
-                                            {{ lesson.metadata.schedule|date('H:i') }}-{{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}
-                                        </div>
-                                        {% set lessonBookings = userBookings[lesson.id]|default([]) %}
-                                        {% if lessonBookings is not empty %}
-                                            <div class="flex flex-wrap gap-1 mt-1">
-                                                {% for bookingInfo in lessonBookings %}
-                                                    {% if bookingInfo.paymentStatus == 'paid' %}
-                                                        <span class="inline-flex items-center rounded-full border bg-green-50 border-green-200 text-green-700 px-1.5 py-0.5 text-xs font-semibold">
-                                                            {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.paid'|trans }}
-                                                        </span>
-                                                    {% else %}
-                                                        <span class="inline-flex items-center rounded-full border bg-gray-50 border-gray-200 text-gray-600 px-1.5 py-0.5 text-xs font-semibold">
-                                                            {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.unpaid'|trans }}
-                                                        </span>
-                                                    {% endif %}
-                                                {% endfor %}
+                        <div class="day-content flex-1 min-h-[300px] bg-white p-3">
+                            {% if dayData.workshops is empty %}
+                                <div class="h-full min-h-[260px] flex flex-col items-center justify-center text-center gap-2 text-muted-foreground/60">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M8 2v4"></path>
+                                        <path d="M16 2v4"></path>
+                                        <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                        <path d="M3 10h18"></path>
+                                    </svg>
+                                    <span class="text-xs">{{ 'lesson.no_lessons_found'|trans }}</span>
+                                </div>
+                            {% else %}
+                                <div class="space-y-2.5">
+                                    {% for lesson in dayData.workshops %}
+                                        {% set workshopUrl = lesson.metadata.slug
+                                            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
+                                            : path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')}) %}
+                                        <div class="relative rounded-xl border bg-card text-card-foreground shadow-sm pl-4 pr-3 py-3 pb-8 hover:shadow-md transition-shadow">
+                                            <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style="background-color: {{ lesson.metadata.visualTheme }};"></div>
+                                            <div class="text-sm font-medium">
+                                                <a href="{{ workshopUrl }}" class="hover:underline">{{ lesson.metadata.title }}</a>
                                             </div>
-                                        {% endif %}
-                                        {% if lesson.getAvailableSpots() <= 3 %}
-                                            <div class="inline-flex items-center rounded-full border mt-1 text-xs border-workshop-red text-workshop-red {% if lesson.getAvailableSpots() == 0 %}bg-workshop-red/10{% endif %} px-2 py-0.5 font-semibold">
-                                                {{ 'lesson.spots_available'|trans({spots: lesson.getAvailableSpots()}) }}
+                                            <div class="text-xs text-muted-foreground">
+                                                {{ lesson.metadata.schedule|date('H:i') }}-{{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}
                                             </div>
-                                        {% endif %}
-                                        {{ component('LessonModal', {
-                                            lesson: lesson,
-                                            modalOpened: this.shouldOpenModal(lesson),
-                                            closeUrl: this.showSearch
-                                                ? path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')})
-                                                : path('homepage')
-                                        }) }}
-                                    </div>
-                                {% endfor %}
-                            </div>
+                                            {% set lessonBookings = userBookings[lesson.id]|default([]) %}
+                                            {% if lessonBookings is not empty %}
+                                                <div class="flex flex-wrap gap-1 mt-1">
+                                                    {% for bookingInfo in lessonBookings %}
+                                                        {% if bookingInfo.paymentStatus == 'paid' %}
+                                                            <span class="inline-flex items-center rounded-full border bg-green-50 border-green-200 text-green-700 px-1.5 py-0.5 text-xs font-semibold">
+                                                                {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.paid'|trans }}
+                                                            </span>
+                                                        {% else %}
+                                                            <span class="inline-flex items-center rounded-full border bg-gray-50 border-gray-200 text-gray-600 px-1.5 py-0.5 text-xs font-semibold">
+                                                                {% if bookingInfo.childName %}{{ bookingInfo.childName }} • {% endif %}{{ 'admin.badges.unpaid'|trans }}
+                                                            </span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            {% if lesson.getAvailableSpots() <= 3 %}
+                                                <div class="inline-flex items-center rounded-full border mt-1 text-xs border-workshop-red text-workshop-red {% if lesson.getAvailableSpots() == 0 %}bg-workshop-red/10{% endif %} px-2 py-0.5 font-semibold">
+                                                    {{ 'lesson.spots_available'|trans({spots: lesson.getAvailableSpots()}) }}
+                                                </div>
+                                            {% endif %}
+                                            {{ component('LessonModal', {
+                                                lesson: lesson,
+                                                modalOpened: this.shouldOpenModal(lesson),
+                                                closeUrl: this.showSearch
+                                                    ? path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')})
+                                                    : path('homepage')
+                                            }) }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

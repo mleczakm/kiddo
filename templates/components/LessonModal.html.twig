@@ -35,7 +35,7 @@
             data-modal-target="dialog"
             data-modal-transition-target="panel"
             data-state="open"
-            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+            class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit gap-4 border bg-background p-6 sm:p-10 shadow-lg duration-200 sm:rounded-2xl max-w-3xl max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
         <div class="grid">
             {% if termsOpened %}
                 <div class="flex flex-col space-y-2 text-center sm:text-left mb-6 h-[80vh]">
@@ -104,18 +104,17 @@
                     </div>
                 </div>
             {% else %}
-                <div class="flex flex-col space-y-2 text-center sm:text-left mb-6">
-                    <h2 id="radix-:r1:" class="tracking-tight text-2xl font-bold font-display text-workshop-brown">
+                <div class="flex flex-col space-y-2 text-center sm:text-left mb-6 pr-8">
+                    <h2 id="radix-:r1:" class="tracking-tight text-3xl font-bold font-display text-workshop-brown">
                         {{ lesson.metadata.title }}</h2>
                     <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
                 </div>
 
-                {{ component('BookingPreviewComponent', {lesson: lesson}) }}
-                <div class="space-y-6 mt-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    </div>
+                <div class="w-full h-40 sm:h-52 rounded-2xl mb-8" style="background-color: {{ lesson.metadata.visualTheme }};"></div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {{ component('BookingPreviewComponent', {lesson: lesson}) }}
+                <div class="space-y-8 mt-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
                         <div class="flex items-start">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none"
@@ -205,11 +204,11 @@
                         </div>
                     </div>
 
-                    <div>
-                        <h3 class="font-semibold mb-2">{{ 'lesson.description'|trans }}</h3>
-                        <p class="text-muted-foreground">{{ lesson.metadata.description|raw|nl2br }}</p>
+                    <div class="bg-muted/50 p-6 rounded-xl">
+                        <h3 class="text-lg font-bold mb-3 font-display text-workshop-brown">{{ 'lesson.description'|trans }}</h3>
+                        <div class="text-muted-foreground leading-7 [&_br]:block [&_br]:content-[''] [&_br]:mb-2">{{ lesson.metadata.description|raw|nl2br }}</div>
                     </div>
-                    <div class="bg-muted/50 p-4 rounded-lg">
+                    <div class="bg-muted/50 p-6 rounded-xl">
                         <h3 class="text-lg font-bold mb-4 font-display text-workshop-brown">
                             {{ 'lesson.booking_options'|trans }}</h3>
 
@@ -262,7 +261,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8 pt-2 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-4">
+                <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-4">
                     <div class="flex items-center {% if not termsAccepted and paymentStatus == 'error' %}border border-red-500 rounded bg-red-50 p-2{% endif %}">
                         <input type="checkbox" id="terms"
                                data-model="termsAccepted"

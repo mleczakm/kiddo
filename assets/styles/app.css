@@ -479,8 +479,10 @@ ol, ul, menu {
     padding: 0
 }
 
-dialog {
-    padding: 0
+@layer base {
+    dialog {
+        padding: 0
+    }
 }
 
 input::-moz-placeholder, textarea::-moz-placeholder {
