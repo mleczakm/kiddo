@@ -45,15 +45,20 @@ final readonly class ActivityLogWorkflowSubscriber implements EventSubscriberInt
         $user = $payment->getUser();
         $userId = $user->getId();
 
-        $amount = new MoneyExtension()->formatMoney($payment->getAmount());
+        $amount = new MoneyExtension()
+            ->formatMoney($payment->getAmount());
 
         $this->activityLogger->log(
             type: ActivityType::PAYMENT_RECEIVED,
             title: sprintf('%s opłacił/a rezerwację', $user->getName()),
             subject: $user,
             summary: sprintf('%s — %s', $amount, $payment->getBookingsSummary()),
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-            context: ['paymentId' => (string) $payment->getId()],
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'paymentId' => (string) $payment->getId(),
+            ],
             dedupeKey: 'payment_received:' . $payment->getId(),
         );
     }

@@ -99,8 +99,9 @@ final class AdminKpiStatsComponentTest extends WebTestCase
         $em->flush();
 
         $component = $this->createLiveComponent(name: AdminKpiStatsComponent::class, client: $client);
-        $kpi = $component->component()
-            ->getKpiStats();
+        /** @var AdminKpiStatsComponent $adminKpiStatsComponent */
+        $adminKpiStatsComponent = $component->component();
+        $kpi = $adminKpiStatsComponent->getKpiStats();
 
         self::assertSame(1, $kpi['bookingsCount']);
         self::assertTrue($kpi['revenue']->isEqualTo(Money::of(100, 'PLN')));

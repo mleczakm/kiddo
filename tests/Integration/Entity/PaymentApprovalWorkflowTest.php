@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Entity;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
@@ -16,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 
-#[\PHPUnit\Framework\Attributes\Group('functional')]
+#[Group('functional')]
 class PaymentApprovalWorkflowTest extends WebTestCase
 {
     private EntityManagerInterface $entityManager;
@@ -118,7 +119,9 @@ class PaymentApprovalWorkflowTest extends WebTestCase
 
         $this->assertFalse($booking->isWaitingApproval());
         $this->assertTrue($booking->isConfirmed());
-        $this->assertEquals($this->adminUser->getId(), $booking->getApprovedBy()->getId());
+        $approvedBy = $booking->getApprovedBy();
+        $this->assertNotNull($approvedBy);
+        $this->assertEquals($this->adminUser->getId(), $approvedBy->getId());
         $this->assertNotNull($booking->getApprovedAt());
     }
 

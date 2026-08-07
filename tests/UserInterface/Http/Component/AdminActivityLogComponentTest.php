@@ -24,7 +24,9 @@ final class AdminActivityLogComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(name: AdminActivityLogComponent::class, client: $client);
 
-        self::assertSame([], $component->component()->getActivityLog());
+        /** @var AdminActivityLogComponent $activityLogComponent */
+        $activityLogComponent = $component->component();
+        self::assertSame([], $activityLogComponent->getActivityLog());
         self::assertStringContainsString('Brak ostatniej aktywności', (string) $component->render());
     }
 
@@ -58,8 +60,9 @@ final class AdminActivityLogComponentTest extends WebTestCase
         $em->flush();
 
         $component = $this->createLiveComponent(name: AdminActivityLogComponent::class, client: $client);
-        $log = $component->component()
-            ->getActivityLog();
+        /** @var AdminActivityLogComponent $activityLogComponent */
+        $activityLogComponent = $component->component();
+        $log = $activityLogComponent->getActivityLog();
 
         self::assertCount(2, $log);
         self::assertSame('transfer_unmatched', $log[0]['type']);

@@ -236,10 +236,7 @@ class WorkshopEditorComponent extends AbstractController
         $this->occurrenceDate = $metadata->schedule->format('Y-m-d');
         $this->occurrenceTime = $metadata->schedule->format('H:i');
 
-        $this->instructorIds = array_map(
-            fn(User $u) => (string) $u->getId(),
-            $lesson->getAllInstructors()
-        );
+        $this->instructorIds = array_map(fn(User $u) => (string) $u->getId(), $lesson->getAllInstructors());
 
         foreach ($lesson->getTicketOptions() as $option) {
             if ($option->type === TicketType::ONE_TIME) {
@@ -338,11 +335,17 @@ class WorkshopEditorComponent extends AbstractController
         ));
     }
 
+    /**
+     * @return list<string>
+     */
     public function getCategories(): array
     {
         return ['Sensoryka', 'Muzyka', 'Ruchowe', 'Plastyczne', 'Brudna zabawa'];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getDaysOfWeek(): array
     {
         return [
@@ -449,10 +452,12 @@ class WorkshopEditorComponent extends AbstractController
             foreach ($instructors as $user) {
                 $series->addInstructor($user);
             }
-            $lesson->getInstructors()->clear();
+            $lesson->getInstructors()
+                ->clear();
         } else {
             $lesson->setTicketOptions(...$ticketOptions);
-            $lesson->getInstructors()->clear();
+            $lesson->getInstructors()
+                ->clear();
             foreach ($instructors as $user) {
                 $lesson->addInstructor($user);
             }
@@ -582,7 +587,9 @@ class WorkshopEditorComponent extends AbstractController
             [],
             'messages'
         );
-        $url = $this->urlGenerator->generate('app_admin_lesson_view', ['id' => (string) $affectedLessons[0]->getId()]);
+        $url = $this->urlGenerator->generate('app_admin_lesson_view', [
+            'id' => (string) $affectedLessons[0]->getId(),
+        ]);
 
         $instructors = $this->instructorResolver->resolve($affectedLessons, exclude: $editor);
         $this->inAppNotifications->notifyUsers(

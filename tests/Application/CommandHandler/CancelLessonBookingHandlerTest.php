@@ -46,16 +46,14 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()->dispatch(new CancelLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $user,
-            'Nie damy rady przyjść',
-        ));
+        $this->bus()
+            ->dispatch(new CancelLessonBooking($booking->getId(), $lesson->getId(), $user, 'Nie damy rady przyjść'));
         // The cancel handler dispatches a further notification command, also
         // routed to the async transport, so drain the queue until it settles.
-        $this->transport('async')->process();
-        $this->transport('async')->process();
+        $this->transport('async')
+            ->process();
+        $this->transport('async')
+            ->process();
 
         $em->clear();
         /** @var Booking $reloaded */
@@ -63,16 +61,23 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         self::assertSame(Booking::STATUS_CANCELLED, $reloaded->getStatus());
 
         // Cancellation email sent to the customer (workflow.booking.transition.cancel fired)
-        $this->mailer()->assertSentEmailCount(1);
-        $sentEmail = $this->mailer()->sentEmails()->first();
+        $this->mailer()
+            ->assertSentEmailCount(1);
+        $sentEmail = $this->mailer()
+            ->sentEmails()
+            ->first();
         self::assertSame($user->getEmail(), $sentEmail->getTo()[0]->getAddress());
 
         // In-app notification created for the customer
-        $notifications = $em->getRepository(Notification::class)->findBy(['user' => $user]);
+        $notifications = $em->getRepository(Notification::class)->findBy([
+            'user' => $user,
+        ]);
         self::assertCount(1, $notifications);
 
         // Admin-visible message recorded about the cancellation
-        $messages = $em->getRepository(UserMessage::class)->findBy(['user' => $user]);
+        $messages = $em->getRepository(UserMessage::class)->findBy([
+            'user' => $user,
+        ]);
         self::assertCount(1, $messages);
         self::assertSame(MessageType::CANCELLATION_REQUEST, $messages[0]->getType());
         self::assertStringContainsString('Sensoplastyka', $messages[0]->getSubject());
@@ -105,12 +110,10 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()->dispatch(new CancelLessonBooking(
-            $booking->getId(),
-            $lesson1->getId(),
-            $user,
-        ));
-        $this->transport('async')->process();
+        $this->bus()
+            ->dispatch(new CancelLessonBooking($booking->getId(), $lesson1->getId(), $user));
+        $this->transport('async')
+            ->process();
 
         $em->clear();
         /** @var Booking $reloaded */
@@ -119,10 +122,13 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         self::assertSame(Booking::STATUS_ACTIVE, $reloaded->getStatus());
 
         // No workflow transition fired at the booking level, so no cancellation email
-        $this->mailer()->assertSentEmailCount(0);
+        $this->mailer()
+            ->assertSentEmailCount(0);
 
         // The cancellation is still recorded for admin visibility
-        $messages = $em->getRepository(UserMessage::class)->findBy(['user' => $user]);
+        $messages = $em->getRepository(UserMessage::class)->findBy([
+            'user' => $user,
+        ]);
         self::assertCount(1, $messages);
     }
 }

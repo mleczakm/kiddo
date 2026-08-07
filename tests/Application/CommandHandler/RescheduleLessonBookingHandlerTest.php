@@ -52,16 +52,16 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()->dispatch(new RescheduleLessonBooking(
-            $booking->getId(),
-            $oldLesson->getId(),
-            $newLesson->getId(),
-            $admin,
-        ));
+        $this->bus()
+            ->dispatch(
+                new RescheduleLessonBooking($booking->getId(), $oldLesson->getId(), $newLesson->getId(), $admin)
+            );
         // Drain the queue: the handler itself dispatches a further admin
         // notification command, also routed to the async transport.
-        $this->transport('async')->process();
-        $this->transport('async')->process();
+        $this->transport('async')
+            ->process();
+        $this->transport('async')
+            ->process();
 
         $em->clear();
 
@@ -69,11 +69,15 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
         $reloaded = $em->getRepository(Booking::class)->find($booking->getId());
         self::assertSame(Booking::STATUS_ACTIVE, $reloaded->getStatus());
 
-        $notifications = $em->getRepository(Notification::class)->findBy(['user' => $customer]);
+        $notifications = $em->getRepository(Notification::class)->findBy([
+            'user' => $customer,
+        ]);
         self::assertCount(1, $notifications);
         self::assertStringContainsString('termin', mb_strtolower((string) $notifications[0]->getTitle()));
 
-        $messages = $em->getRepository(UserMessage::class)->findBy(['user' => $customer]);
+        $messages = $em->getRepository(UserMessage::class)->findBy([
+            'user' => $customer,
+        ]);
         self::assertCount(1, $messages);
         self::assertSame(MessageType::RESCHEDULE_REQUEST, $messages[0]->getType());
         self::assertStringContainsString('Zajęcia poniedziałkowe', $messages[0]->getSubject());

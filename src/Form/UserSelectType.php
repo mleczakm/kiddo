@@ -52,7 +52,8 @@ final class UserSelectType extends AbstractType
                         ->orderBy('u.name', 'ASC');
                 }
 
-                return $repository->createQueryBuilder('u')->orderBy('u.name', 'ASC');
+                return $repository->createQueryBuilder('u')
+                    ->orderBy('u.name', 'ASC');
             },
             'placeholder' => 'Wybierz użytkownika...',
             'translation_domain' => 'messages',
@@ -61,6 +62,7 @@ final class UserSelectType extends AbstractType
         $resolver->setAllowedTypes('query', ['null', 'string']);
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return EntityType::class;

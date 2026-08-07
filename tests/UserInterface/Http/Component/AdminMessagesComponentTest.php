@@ -58,15 +58,20 @@ final class AdminMessagesComponentTest extends WebTestCase
         $component->set('statusChange', MessageStatus::RESOLVED->value);
         $component->call('sendReply');
 
-        $this->mailer()->assertSentEmailCount(1);
-        $sentEmail = $this->mailer()->sentEmails()->first();
+        $this->mailer()
+            ->assertSentEmailCount(1);
+        $sentEmail = $this->mailer()
+            ->sentEmails()
+            ->first();
         self::assertSame($customer->getEmail(), $sentEmail->getTo()[0]->getAddress());
         self::assertStringContainsString(
             'Tak, mamy jeszcze 2 wolne miejsca!',
             (string) ($sentEmail->getHtmlBody() ?? $sentEmail->getTextBody())
         );
 
-        $notifications = $this->em->getRepository(Notification::class)->findBy(['user' => $customer]);
+        $notifications = $this->em->getRepository(Notification::class)->findBy([
+            'user' => $customer,
+        ]);
         self::assertCount(1, $notifications);
 
         $this->em->clear();

@@ -134,8 +134,10 @@ readonly class RescheduleLessonBookingHandler
             reason: $command->getReason(),
         ));
 
-        $oldTitle = $oldLesson->getMetadata()->title;
-        $newTitle = $newLesson->getMetadata()->title;
+        $oldTitle = $oldLesson->getMetadata()
+            ->title;
+        $newTitle = $newLesson->getMetadata()
+            ->title;
 
         // Notify the customer in-app that their booking moved (the admin
         // notification above covers admins; this one covers the booking owner).
@@ -162,16 +164,22 @@ readonly class RescheduleLessonBookingHandler
 
         // Instructors of either lesson (old or new) should know a booking
         // moved — excluding the person who performed the reschedule.
-        $instructors = $this->instructorResolver->resolve([$oldLesson, $newLesson], exclude: $command->getRescheduledBy());
+        $instructors = $this->instructorResolver->resolve(
+            [$oldLesson, $newLesson],
+            exclude: $command->getRescheduledBy()
+        );
         $this->inAppNotifications->notifyUsers(
             $instructors,
             $this->translator->trans('notifications.in_app.reschedule.instructor.title', [], 'messages'),
             $this->translator->trans('notifications.in_app.reschedule.instructor.body', [
-                'name' => $booking->getUser()->getName(),
+                'name' => $booking->getUser()
+                    ->getName(),
                 'from' => $oldTitle,
                 'to' => $newTitle,
             ], 'messages'),
-            $this->urlGenerator->generate('app_admin_lesson_view', ['id' => (string) $newLesson->getId()]),
+            $this->urlGenerator->generate('app_admin_lesson_view', [
+                'id' => (string) $newLesson->getId(),
+            ]),
             NotificationSeverity::Info,
         );
     }

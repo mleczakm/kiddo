@@ -95,10 +95,7 @@ class AdminSettingsComponent extends AbstractController
      */
     public function getFinanceContactUsers(): array
     {
-        return array_map(
-            fn(FinanceContact $fc) => $fc->getUser(),
-            $this->financeContactRepository->findAll()
-        );
+        return array_map(fn(FinanceContact $fc) => $fc->getUser(), $this->financeContactRepository->findAll());
     }
 
     /**
@@ -106,10 +103,7 @@ class AdminSettingsComponent extends AbstractController
      */
     public function getFinanceContactUserIds(): array
     {
-        return array_map(
-            fn(User $user) => (string) $user->getId(),
-            $this->getFinanceContactUsers()
-        );
+        return array_map(fn(User $user) => (string) $user->getId(), $this->getFinanceContactUsers());
     }
 
     /**
@@ -203,7 +197,7 @@ class AdminSettingsComponent extends AbstractController
         }
 
         if (! $user->hasRole('ROLE_ADMIN')) {
-            $user->setRoles(array_values([...$user->getRoles(), 'ROLE_ADMIN']));
+            $user->setRoles([...$user->getRoles(), 'ROLE_ADMIN']);
             $this->entityManager->flush();
         }
 
@@ -232,7 +226,7 @@ class AdminSettingsComponent extends AbstractController
         }
 
         if (! $user->hasRole('ROLE_HOST')) {
-            $user->setRoles(array_values([...$user->getRoles(), 'ROLE_HOST']));
+            $user->setRoles([...$user->getRoles(), 'ROLE_HOST']);
             $this->entityManager->flush();
         }
 

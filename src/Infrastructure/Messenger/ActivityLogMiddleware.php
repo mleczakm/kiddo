@@ -87,9 +87,14 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             type: ActivityType::BOOKING_CREATED,
             title: sprintf('%s zarezerwował/a zajęcia', $user->getName()),
             subject: $user,
-            summary: $lesson->getMetadata()->title,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-            context: ['lessonId' => $command->lessonId],
+            summary: $lesson->getMetadata()
+                ->title,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'lessonId' => $command->lessonId,
+            ],
         );
     }
 
@@ -108,9 +113,14 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             type: ActivityType::BOOKING_CANCELLED,
             title: sprintf('%s odwołał/a rezerwację', $user->getName()),
             subject: $user,
-            summary: $lesson?->getMetadata()->title,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-            context: ['bookingId' => (string) $command->getBookingId()],
+            summary: $lesson?->getMetadata()
+                ->title,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'bookingId' => (string) $command->getBookingId(),
+            ],
         );
     }
 
@@ -133,8 +143,12 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             summary: $oldLesson !== null && $newLesson !== null
                 ? sprintf('%s → %s', $oldLesson->getMetadata()->title, $newLesson->getMetadata()->title)
                 : null,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-            context: ['bookingId' => (string) $command->getBookingId()],
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'bookingId' => (string) $command->getBookingId(),
+            ],
         );
     }
 
@@ -153,9 +167,14 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             type: ActivityType::REFUND_REQUESTED,
             title: sprintf('%s poprosił/a o zwrot', $user->getName()),
             subject: $user,
-            summary: $lesson?->getMetadata()->title,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-            context: ['bookingId' => (string) $command->getBookingId()],
+            summary: $lesson?->getMetadata()
+                ->title,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'bookingId' => (string) $command->getBookingId(),
+            ],
         );
     }
 
@@ -175,7 +194,9 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             title: sprintf('Nowy użytkownik: %s', $user->getName()),
             subject: $user,
             summary: $user->getEmail(),
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
             dedupeKey: 'user_registered:' . $userId,
         );
     }
@@ -190,7 +211,9 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             subject: null,
             summary: sprintf('%s — %s (%s)', $transfer->amount, $transfer->getSender(), $transfer->title),
             url: $this->urlGenerator->generate('app_admin_transfers'),
-            context: ['transferId' => $transfer->getId()],
+            context: [
+                'transferId' => $transfer->getId(),
+            ],
             dedupeKey: 'transfer_unmatched:' . $transfer->getId(),
         );
     }

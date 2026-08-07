@@ -62,7 +62,9 @@ final class ActivityLoggerTest extends KernelTestCase
         /** @var ActivityLogRepository $repo */
         $repo = self::getContainer()->get(ActivityLogRepository::class);
         $em = self::getContainer()->get('doctrine')->getManager();
-        $matching = $em->getRepository(ActivityLog::class)->findBy(['dedupeKey' => 'transfer_unmatched:123']);
+        $matching = $em->getRepository(ActivityLog::class)->findBy([
+            'dedupeKey' => 'transfer_unmatched:123',
+        ]);
 
         self::assertCount(1, $matching);
         self::assertSame('Nierozpoznany przelew', $matching[0]->getTitle());

@@ -113,6 +113,10 @@ class AdminMessagesComponent extends AbstractController
     #[LiveAction]
     public function sendReply(): void
     {
+        if ($this->selectedMessageId === null) {
+            return;
+        }
+
         $message = $this->userMessageRepository->find(Ulid::fromString($this->selectedMessageId));
         if (! $message) {
             return;

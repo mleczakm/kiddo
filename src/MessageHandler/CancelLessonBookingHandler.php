@@ -100,7 +100,8 @@ class CancelLessonBookingHandler
         $cancelledLesson = null;
         foreach ($booking->getLessons() as $lesson) {
             if ($lesson->getId()->equals($command->getLessonId())) {
-                $lessonTitle = $lesson->getMetadata()->title;
+                $lessonTitle = $lesson->getMetadata()
+                    ->title;
                 $cancelledLesson = $lesson;
                 break;
             }
@@ -121,11 +122,15 @@ class CancelLessonBookingHandler
                 $instructors,
                 $this->translator->trans('notifications.in_app.cancellation.instructor.title', [], 'messages'),
                 $this->translator->trans('notifications.in_app.cancellation.instructor.body', [
-                    'name' => $booking->getUser()->getName(),
+                    'name' => $booking->getUser()
+                        ->getName(),
                     'lesson' => $lessonTitle,
-                    'date' => $cancelledLesson->getMetadata()->schedule->format('Y-m-d H:i'),
+                    'date' => $cancelledLesson->getMetadata()
+                        ->schedule->format('Y-m-d H:i'),
                 ], 'messages'),
-                $this->urlGenerator->generate('app_admin_lesson_view', ['id' => (string) $cancelledLesson->getId()]),
+                $this->urlGenerator->generate('app_admin_lesson_view', [
+                    'id' => (string) $cancelledLesson->getId(),
+                ]),
                 NotificationSeverity::Info,
             );
         }

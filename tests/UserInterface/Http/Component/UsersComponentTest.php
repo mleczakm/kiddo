@@ -80,20 +80,28 @@ final class UsersComponentTest extends WebTestCase
         $client->loginUser($adminUser);
 
         $component = $this->createLiveComponent(UsersComponent::class, client: $client);
-        $component->call('startCompose', ['userId' => (string) $customer->getId()]);
+        $component->call('startCompose', [
+            'userId' => (string) $customer->getId(),
+        ]);
 
-        self::assertSame($customer->getId(), $component->component()->getComposingForUser()?->getId());
+        /** @var UsersComponent $usersComponent */
+        $usersComponent = $component->component();
+        self::assertSame($customer->getId(), $usersComponent->getComposingForUser()?->getId());
 
         $component->set('notifyTitle', 'Przypomnienie o zajęciach');
         $component->set('notifyBody', 'Do zobaczenia jutro o 10:00!');
         $component->call('sendNotification');
 
-        $notifications = $entityManager->getRepository(Notification::class)->findBy(['user' => $customer]);
+        $notifications = $entityManager->getRepository(Notification::class)->findBy([
+            'user' => $customer,
+        ]);
         self::assertCount(1, $notifications);
         self::assertSame('Przypomnienie o zajęciach', $notifications[0]->getTitle());
         self::assertSame('Do zobaczenia jutro o 10:00!', $notifications[0]->getBody());
 
         // Composer state resets after sending
-        self::assertNull($component->component()->getComposingForUser());
+        /** @var UsersComponent $usersComponent */
+        $usersComponent = $component->component();
+        self::assertNull($usersComponent->getComposingForUser());
     }
 }

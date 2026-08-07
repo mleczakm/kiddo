@@ -20,14 +20,14 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
  * calls (actions that mutate entities without going through the bus).
  */
 #[AsLiveComponent]
-final class AdminActivityLogComponent
+final readonly class AdminActivityLogComponent
 {
     use DefaultActionTrait;
 
     private const int LIMIT = 10;
 
     public function __construct(
-        private readonly ActivityLogRepository $activityLogRepository,
+        private ActivityLogRepository $activityLogRepository,
     ) {}
 
     /**
@@ -44,10 +44,7 @@ final class AdminActivityLogComponent
      */
     public function getActivityLog(): array
     {
-        return array_values(array_map(
-            $this->format(...),
-            $this->activityLogRepository->findRecent(self::LIMIT),
-        ));
+        return array_values(array_map($this->format(...), $this->activityLogRepository->findRecent(self::LIMIT)));
     }
 
     /**
@@ -73,7 +70,8 @@ final class AdminActivityLogComponent
     private function format(ActivityLog $log): array
     {
         return [
-            'type' => $log->getType()->value,
+            'type' => $log->getType()
+                ->value,
             'icon' => $this->iconFor($log->getType()),
             'color' => $this->colorFor($log->getType()),
             'title' => $log->getTitle(),

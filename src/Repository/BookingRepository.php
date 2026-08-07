@@ -103,6 +103,22 @@ class BookingRepository extends ServiceEntityRepository
         return $this->findForUserAndLessons($user, [$lesson]);
     }
 
+    /**
+     * @return array<Booking>
+     */
+    public function findByLesson(Lesson $lesson): array
+    {
+        /** @var array<Booking> $bookings */
+        $bookings = $this->createQueryBuilder('b')
+            ->innerJoin('b.lessons', 'l')
+            ->where('l.id = :lessonId')
+            ->setParameter('lessonId', $lesson->getId(), 'ulid')
+            ->getQuery()
+            ->getResult();
+
+        return $bookings;
+    }
+
     public function countCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): int
     {
         return (int) $this->createQueryBuilder('b')

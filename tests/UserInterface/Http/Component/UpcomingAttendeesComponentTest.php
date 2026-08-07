@@ -219,7 +219,9 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $testComponent->call('confirmFastBooking');
 
         $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
-            ->findBy(['type' => ActivityType::BOOKING_CREATED]);
+            ->findBy([
+                'type' => ActivityType::BOOKING_CREATED,
+            ]);
 
         $this->assertCount(1, $activityLogs);
         $this->assertStringContainsString('Kasia Wiśniewska', $activityLogs[0]->getTitle());
@@ -245,10 +247,14 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->entityManager->flush();
 
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
-        $testComponent->call('markPaid', ['bookingId' => (string) $booking->getId()]);
+        $testComponent->call('markPaid', [
+            'bookingId' => (string) $booking->getId(),
+        ]);
 
         $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
-            ->findBy(['type' => ActivityType::PAYMENT_MARKED_PAID]);
+            ->findBy([
+                'type' => ActivityType::PAYMENT_MARKED_PAID,
+            ]);
 
         $this->assertCount(1, $activityLogs);
         $this->assertSame($user->getId(), $activityLogs[0]->getSubject()?->getId());

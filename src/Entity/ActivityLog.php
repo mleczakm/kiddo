@@ -22,14 +22,6 @@ class ActivityLog
     private \DateTimeImmutable $createdAt;
 
     /**
-     * Idempotency key. Recurring background sweeps (e.g. re-checking unmatched
-     * transfers) may report the same real-world event more than once; when set,
-     * a second entry with the same key is skipped rather than duplicating the feed.
-     */
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $dedupeKey = null;
-
-    /**
      * @param array<string, mixed> $context
      */
     public function __construct(
@@ -46,11 +38,16 @@ class ActivityLog
         private ?string $url = null,
         #[ORM\Column(type: 'json', nullable: true)]
         private array $context = [],
-        ?string $dedupeKey = null,
+        /**
+         * Idempotency key. Recurring background sweeps (e.g. re-checking unmatched
+         * transfers) may report the same real-world event more than once; when set,
+         * a second entry with the same key is skipped rather than duplicating the feed.
+         */
+        #[ORM\Column(type: 'string', length: 255, nullable: true)]
+        private ?string $dedupeKey = null,
     ) {
         $this->id = new Ulid();
         $this->createdAt = new \DateTimeImmutable('now');
-        $this->dedupeKey = $dedupeKey;
     }
 
     public function getId(): Ulid

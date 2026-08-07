@@ -22,7 +22,9 @@ final class LessonVoterTest extends TestCase
     public function testAdminIsAlwaysGranted(): void
     {
         $security = $this->createMock(Security::class);
-        $security->method('isGranted')->with('ROLE_ADMIN')->willReturn(true);
+        $security->method('isGranted')
+            ->with('ROLE_ADMIN')
+            ->willReturn(true);
 
         $voter = new LessonVoter($security);
         $lesson = LessonAssembler::new()->assemble();
@@ -38,17 +40,16 @@ final class LessonVoterTest extends TestCase
         $host = UserAssembler::new()->withId(42)->withRoles('ROLE_HOST')->assemble();
 
         $security = $this->createMock(Security::class);
-        $security->method('isGranted')->willReturnMap([
-            ['ROLE_ADMIN', false],
-            ['ROLE_HOST', true],
-        ]);
+        $security->method('isGranted')
+            ->willReturnMap([['ROLE_ADMIN', false], ['ROLE_HOST', true]]);
 
         $voter = new LessonVoter($security);
         $lesson = LessonAssembler::new()->assemble();
         $lesson->addInstructor($host);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->method('getUser')->willReturn($host);
+        $token->method('getUser')
+            ->willReturn($host);
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
@@ -61,17 +62,16 @@ final class LessonVoterTest extends TestCase
         $otherInstructor = UserAssembler::new()->withId(99)->withRoles('ROLE_HOST')->assemble();
 
         $security = $this->createMock(Security::class);
-        $security->method('isGranted')->willReturnMap([
-            ['ROLE_ADMIN', false],
-            ['ROLE_HOST', true],
-        ]);
+        $security->method('isGranted')
+            ->willReturnMap([['ROLE_ADMIN', false], ['ROLE_HOST', true]]);
 
         $voter = new LessonVoter($security);
         $lesson = LessonAssembler::new()->assemble();
         $lesson->addInstructor($otherInstructor);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->method('getUser')->willReturn($host);
+        $token->method('getUser')
+            ->willReturn($host);
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
@@ -83,10 +83,8 @@ final class LessonVoterTest extends TestCase
         $host = UserAssembler::new()->withId(7)->withRoles('ROLE_HOST')->assemble();
 
         $security = $this->createMock(Security::class);
-        $security->method('isGranted')->willReturnMap([
-            ['ROLE_ADMIN', false],
-            ['ROLE_HOST', true],
-        ]);
+        $security->method('isGranted')
+            ->willReturnMap([['ROLE_ADMIN', false], ['ROLE_HOST', true]]);
 
         $voter = new LessonVoter($security);
         $lesson = LessonAssembler::new()->assemble();
@@ -95,7 +93,8 @@ final class LessonVoterTest extends TestCase
         $lesson->setSeries($series);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->method('getUser')->willReturn($host);
+        $token->method('getUser')
+            ->willReturn($host);
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
@@ -107,16 +106,15 @@ final class LessonVoterTest extends TestCase
         $user = UserAssembler::new()->withId(1)->assemble();
 
         $security = $this->createMock(Security::class);
-        $security->method('isGranted')->willReturnMap([
-            ['ROLE_ADMIN', false],
-            ['ROLE_HOST', false],
-        ]);
+        $security->method('isGranted')
+            ->willReturnMap([['ROLE_ADMIN', false], ['ROLE_HOST', false]]);
 
         $voter = new LessonVoter($security);
         $lesson = LessonAssembler::new()->assemble();
 
         $token = $this->createMock(TokenInterface::class);
-        $token->method('getUser')->willReturn($user);
+        $token->method('getUser')
+            ->willReturn($user);
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 

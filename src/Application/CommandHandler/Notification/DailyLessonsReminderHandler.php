@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\CommandHandler\Notification;
 
+use App\Entity\Booking;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Application\Service\InAppNotificationService;
@@ -163,7 +164,7 @@ readonly class DailyLessonsReminderHandler
     /**
      * @param Lesson[] $lessons
      * @param User[] $newUsers
-     * @param \App\Entity\Booking[] $newBookings
+     * @param Booking[] $newBookings
      */
     private function buildReport(
         array $lessons,

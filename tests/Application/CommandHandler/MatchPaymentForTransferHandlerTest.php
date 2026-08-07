@@ -335,7 +335,9 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->messageBus->dispatch($command);
 
         $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
-            ->findBy(['type' => ActivityType::PAYMENT_RECEIVED]);
+            ->findBy([
+                'type' => ActivityType::PAYMENT_RECEIVED,
+            ]);
 
         $this->assertCount(1, $activityLogs);
         $this->assertSame($user, $activityLogs[0]->getSubject());

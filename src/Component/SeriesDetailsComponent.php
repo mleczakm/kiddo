@@ -7,8 +7,8 @@ namespace App\Component;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Series;
+use App\Entity\User;
 use App\Repository\BookingRepository;
-use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
@@ -35,7 +35,6 @@ class SeriesDetailsComponent extends AbstractController
     private ?Series $series = null;
 
     public function __construct(
-        private readonly LessonRepository $lessonRepository,
         private readonly BookingRepository $bookingRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {}
@@ -116,9 +115,7 @@ class SeriesDetailsComponent extends AbstractController
      */
     public function getBookingsForLesson(Lesson $lesson): array
     {
-        return $this->bookingRepository->findBy([
-            'lesson' => $lesson,
-        ]);
+        return $this->bookingRepository->findByLesson($lesson);
     }
 
     /**
@@ -194,7 +191,7 @@ class SeriesDetailsComponent extends AbstractController
         }
 
         $currentUser = $this->getUser();
-        if ($currentUser === null) {
+        if (! $currentUser instanceof User) {
             return;
         }
 

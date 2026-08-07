@@ -14,14 +14,14 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent]
-final class AdminKpiStatsComponent
+final readonly class AdminKpiStatsComponent
 {
     use DefaultActionTrait;
 
     public function __construct(
-        private readonly BookingRepository $bookingRepository,
-        private readonly PaymentRepository $paymentRepository,
-        private readonly LessonRepository $lessonRepository,
+        private BookingRepository $bookingRepository,
+        private PaymentRepository $paymentRepository,
+        private LessonRepository $lessonRepository,
     ) {}
 
     /**
@@ -47,7 +47,8 @@ final class AdminKpiStatsComponent
         $totalCapacity = 0;
         $totalBooked = 0;
         foreach ($lessons as $lesson) {
-            $capacity = $lesson->getMetadata()->capacity;
+            $capacity = $lesson->getMetadata()
+                ->capacity;
             $totalCapacity += $capacity;
             $totalBooked += $capacity - $lesson->getAvailableSpots();
         }

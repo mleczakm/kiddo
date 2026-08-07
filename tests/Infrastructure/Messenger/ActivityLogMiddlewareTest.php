@@ -49,16 +49,16 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()->dispatch(new CancelLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $user,
-            'Nie damy rady przyjść',
-        ));
-        $this->transport('async')->process();
-        $this->transport('async')->process();
+        $this->bus()
+            ->dispatch(new CancelLessonBooking($booking->getId(), $lesson->getId(), $user, 'Nie damy rady przyjść'));
+        $this->transport('async')
+            ->process();
+        $this->transport('async')
+            ->process();
 
-        $activityLogs = $em->getRepository(ActivityLog::class)->findBy(['type' => ActivityType::BOOKING_CANCELLED]);
+        $activityLogs = $em->getRepository(ActivityLog::class)->findBy([
+            'type' => ActivityType::BOOKING_CANCELLED,
+        ]);
 
         self::assertCount(1, $activityLogs);
         self::assertSame($user->getId(), $activityLogs[0]->getSubject()?->getId());

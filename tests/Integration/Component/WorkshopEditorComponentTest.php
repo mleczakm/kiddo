@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
+use App\Component\WorkshopEditorComponent;
+use App\Entity\Lesson;
 use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\WorkshopType;
@@ -53,9 +55,11 @@ final class WorkshopEditorComponentTest extends WebTestCase
             'startOpen' => false,
         ]);
 
-        self::assertSame('Błotna Kuchnia', $component->component()->title);
-        self::assertSame('2030-06-15', $component->component()->occurrenceDate);
-        self::assertSame('10:30', $component->component()->occurrenceTime);
+        /** @var WorkshopEditorComponent $workshopEditorComponent */
+        $workshopEditorComponent = $component->component();
+        self::assertSame('Błotna Kuchnia', $workshopEditorComponent->title);
+        self::assertSame('2030-06-15', $workshopEditorComponent->occurrenceDate);
+        self::assertSame('10:30', $workshopEditorComponent->occurrenceTime);
     }
 
     public function testHostCannotEditLessonTheyDoNotInstruct(): void
@@ -81,7 +85,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $component->call('save');
 
         $this->em->clear();
-        $reloaded = $this->em->find(\App\Entity\Lesson::class, $lessonId);
+        $reloaded = $this->em->find(Lesson::class, $lessonId);
         self::assertNotNull($reloaded);
         self::assertSame('Original Title', $reloaded->getMetadata()->title);
     }
@@ -110,7 +114,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $component->call('save');
 
         $this->em->clear();
-        $reloaded = $this->em->find(\App\Entity\Lesson::class, $lessonId);
+        $reloaded = $this->em->find(Lesson::class, $lessonId);
         self::assertNotNull($reloaded);
         self::assertSame('Updated By Host', $reloaded->getMetadata()->title);
     }
@@ -128,14 +132,16 @@ final class WorkshopEditorComponentTest extends WebTestCase
             'startOpen' => false,
         ]);
 
-        self::assertSame('occurrence', $component->component()->editScope);
+        /** @var WorkshopEditorComponent $workshopEditorComponent */
+        $workshopEditorComponent = $component->component();
+        self::assertSame('occurrence', $workshopEditorComponent->editScope);
 
         $component->set('title', 'Occurrence Only Update');
         $component->call('save');
 
         $this->em->clear();
-        $reloadedCurrent = $this->em->find(\App\Entity\Lesson::class, $current->getId());
-        $reloadedSibling = $this->em->find(\App\Entity\Lesson::class, $sibling->getId());
+        $reloadedCurrent = $this->em->find(Lesson::class, $current->getId());
+        $reloadedSibling = $this->em->find(Lesson::class, $sibling->getId());
         self::assertNotNull($reloadedCurrent);
         self::assertNotNull($reloadedSibling);
         self::assertSame('Occurrence Only Update', $reloadedCurrent->getMetadata()->title);
@@ -152,7 +158,8 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $pastLesson = $fixture['past'];
         $cancelledLesson = $fixture['cancelled'];
 
-        $siblingOriginalSchedule = $sibling->getMetadata()->schedule;
+        $siblingOriginalSchedule = $sibling->getMetadata()
+            ->schedule;
 
         $this->client->loginUser($admin);
         $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
@@ -165,10 +172,10 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $component->call('save');
 
         $this->em->clear();
-        $reloadedCurrent = $this->em->find(\App\Entity\Lesson::class, $current->getId());
-        $reloadedSibling = $this->em->find(\App\Entity\Lesson::class, $sibling->getId());
-        $reloadedPast = $this->em->find(\App\Entity\Lesson::class, $pastLesson->getId());
-        $reloadedCancelled = $this->em->find(\App\Entity\Lesson::class, $cancelledLesson->getId());
+        $reloadedCurrent = $this->em->find(Lesson::class, $current->getId());
+        $reloadedSibling = $this->em->find(Lesson::class, $sibling->getId());
+        $reloadedPast = $this->em->find(Lesson::class, $pastLesson->getId());
+        $reloadedCancelled = $this->em->find(Lesson::class, $cancelledLesson->getId());
 
         self::assertNotNull($reloadedCurrent);
         self::assertNotNull($reloadedSibling);
@@ -222,7 +229,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
     }
 
     /**
-     * @return array{admin: User, series: Series, current: \App\Entity\Lesson, sibling: \App\Entity\Lesson, past: \App\Entity\Lesson, cancelled: \App\Entity\Lesson}
+     * @return array{admin: User, series: Series, current: Lesson, sibling: Lesson, past: Lesson, cancelled: Lesson}
      */
     private function buildSeriesWithLessons(): array
     {

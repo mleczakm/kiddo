@@ -36,8 +36,12 @@ final class LessonVoter extends Voter
         return in_array($attribute, [self::VIEW, self::MANAGE], true) && $subject instanceof Lesson;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
-    {
+    protected function voteOnAttribute(
+        string $attribute,
+        mixed $subject,
+        TokenInterface $token,
+        ?Vote $vote = null
+    ): bool {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }

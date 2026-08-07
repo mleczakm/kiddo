@@ -504,9 +504,14 @@ final class UpcomingAttendeesComponent extends AbstractController
             type: ActivityType::BOOKING_CREATED,
             title: sprintf('%s zarezerwował/a zajęcia (dodane przez admina)', $user->getName()),
             subject: $user,
-            summary: $lesson->getMetadata()->title,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-            context: ['bookingId' => (string) $booking->getId()],
+            summary: $lesson->getMetadata()
+                ->title,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'bookingId' => (string) $booking->getId(),
+            ],
         );
 
         $this->successMessage = 'Dodano rezerwację';
@@ -537,8 +542,12 @@ final class UpcomingAttendeesComponent extends AbstractController
                 type: ActivityType::PAYMENT_MARKED_PAID,
                 title: sprintf('%s oznaczony/a jako opłacony/a przez admina', $user->getName()),
                 subject: $user,
-                url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', ['id' => $userId]) : null,
-                context: ['bookingId' => (string) $booking->getId()],
+                url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                    'id' => $userId,
+                ]) : null,
+                context: [
+                    'bookingId' => (string) $booking->getId(),
+                ],
             );
         } catch (\Throwable) {
             // ignore

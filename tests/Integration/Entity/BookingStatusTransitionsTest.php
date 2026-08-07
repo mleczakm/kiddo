@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Entity;
 
+use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
@@ -16,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 
-#[\PHPUnit\Framework\Attributes\Group('functional')]
+#[Group('functional')]
 class BookingStatusTransitionsTest extends WebTestCase
 {
     private EntityManagerInterface $entityManager;

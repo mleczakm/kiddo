@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
+use PHPUnit\Framework\Attributes\Group;
+use App\Component\AdminSettingsComponent;
 use App\Entity\FinanceContact;
 use App\Entity\Setting;
 use App\Entity\User;
@@ -16,7 +18,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
-#[\PHPUnit\Framework\Attributes\Group('functional')]
+#[Group('functional')]
 class AdminSettingsComponentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
@@ -163,7 +165,10 @@ class AdminSettingsComponentTest extends WebTestCase
             'key' => 'robots.txt',
         ]);
         $this->assertNotNull($robotsSetting);
-        $this->assertEquals($content, $robotsSetting->getContent()['content']);
+        $savedContent = $robotsSetting->getContent();
+        $this->assertIsArray($savedContent);
+        $this->assertArrayHasKey('content', $savedContent);
+        $this->assertEquals($content, $savedContent['content']);
     }
 
     public function testFinanceContactUniqueness(): void
@@ -196,7 +201,9 @@ class AdminSettingsComponentTest extends WebTestCase
         // roles column — so this list was always empty, even for a real
         // ROLE_ADMIN user like $this->adminUser.
         $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
-        $admins = $component->component()->getAdminUsers();
+        /** @var AdminSettingsComponent $adminSettingsComponent */
+        $adminSettingsComponent = $component->component();
+        $admins = $adminSettingsComponent->getAdminUsers();
 
         $adminIds = array_map(static fn(User $u) => $u->getId(), $admins);
         self::assertContains($this->adminUser->getId(), $adminIds);
@@ -209,7 +216,9 @@ class AdminSettingsComponentTest extends WebTestCase
 
         self::assertNotContains('ROLE_HOST', $this->regularUser->getRoles());
 
-        $component->call('addHostUser', ['userId' => (string) $this->regularUser->getId()]);
+        $component->call('addHostUser', [
+            'userId' => (string) $this->regularUser->getId(),
+        ]);
 
         // The component's own dispatch may close/reopen the entity manager
         // (App\Infrastructure\Doctrine\EntityManagerResetter, needed for the
@@ -220,11 +229,15 @@ class AdminSettingsComponentTest extends WebTestCase
         self::assertNotNull($reloaded);
         self::assertTrue($reloaded->hasRole('ROLE_HOST'));
 
-        $hosts = $component->component()->getHostUsers();
+        /** @var AdminSettingsComponent $adminSettingsComponent */
+        $adminSettingsComponent = $component->component();
+        $hosts = $adminSettingsComponent->getHostUsers();
         $hostIds = array_map(static fn(User $u) => $u->getId(), $hosts);
         self::assertContains($this->regularUser->getId(), $hostIds);
 
-        $component->call('removeHostUser', ['userId' => (string) $this->regularUser->getId()]);
+        $component->call('removeHostUser', [
+            'userId' => (string) $this->regularUser->getId(),
+        ]);
 
         // find() by primary key short-circuits to the identity map without
         // re-querying if $reloaded is still tracked; clear() forces a fresh
@@ -243,7 +256,9 @@ class AdminSettingsComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
         $component->set('adminSearch', (string) $withChild->getId());
-        $results = $component->component()->getFilteredUsersForAdmin();
+        /** @var AdminSettingsComponent $adminSettingsComponent */
+        $adminSettingsComponent = $component->component();
+        $results = $adminSettingsComponent->getFilteredUsersForAdmin();
 
         $ids = array_map(static fn(User $u) => $u->getId(), $results);
         self::assertContains($withChild->getId(), $ids);
@@ -253,7 +268,9 @@ class AdminSettingsComponentTest extends WebTestCase
     {
         $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
         $component->set('adminSearch', 'admin@test.com');
-        $results = $component->component()->getFilteredUsersForAdmin();
+        /** @var AdminSettingsComponent $adminSettingsComponent */
+        $adminSettingsComponent = $component->component();
+        $results = $adminSettingsComponent->getFilteredUsersForAdmin();
 
         $ids = array_map(static fn(User $u) => $u->getId(), $results);
         self::assertNotContains($this->adminUser->getId(), $ids);
