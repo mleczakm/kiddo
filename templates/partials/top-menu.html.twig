@@ -1,33 +1,41 @@
-<header class="bg-white shadow-sm sticky top-0 z-50" data-controller="mobile-menu">
-    <div class="container mx-auto px-4 py-4">
-        <div class="flex justify-between items-center">
-            <a class="flex items-center gap-2" href="{{ path('homepage') }}"
+<header class="bg-white border-b-2 border-beige sticky top-0 z-50" data-controller="mobile-menu">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+            <a class="flex items-center shrink-0" href="{{ path('homepage') }}"
                title="{{ 'last_update'|trans }}{{ last_release()|format_date(pattern: 'HH:mm, dd MMM') }}">
-                <span class="font-display text-2xl font-bold text-workshop-brown">{{ 'page.default.header'|trans }}</span>
+                <span class="font-display text-xl font-bold text-workshop-brown tracking-tight">Warsztatownia</span>&nbsp;<span
+                        class="font-display text-xl font-bold tracking-tight"><span class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span class="text-workshop-yellow">n</span><span class="text-workshop-blue">s</span><span class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span class="text-workshop-green">y</span><span class="text-workshop-yellow">c</span><span class="text-workshop-blue">z</span><span class="text-workshop-pink">n</span><span class="text-workshop-red">a</span></span>
             </a>
-            <nav class="hidden md:flex items-center gap-8">
-                <a
-                        class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
-                        href="{{ path('homepage') }}">{{ 'page.homepage'|trans }}</a>
-                <a
-                        class="font-medium text-workshop-brown hover:text-workshop-red transition-colors"
-                        href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a>
-                {% if not app.user %}
+
+            <nav class="hidden md:flex items-center h-full ml-8 border-l border-beige">
+                <a class="h-full flex items-center px-4 text-sm font-medium text-workshop-brown border-b-2 border-transparent hover:border-workshop-red hover:text-workshop-red transition-colors"
+                   href="{{ path('homepage') }}">{{ 'page.homepage'|trans }}</a>
+                <a class="h-full flex items-center px-4 text-sm font-medium text-workshop-brown border-b-2 border-transparent hover:border-workshop-red hover:text-workshop-red transition-colors"
+                   href="{{ path('workshops') }}">{{ 'page.workshops'|trans }}</a>
+            </nav>
+
+            <div class="hidden md:flex items-center gap-3 ml-auto pl-4 border-l border-beige">
+                {% if app.user %}
+                    <div class="relative">
+                        {{ component('NotificationTrayLiveComponent') }}
+                    </div>
+                {% else %}
                     <a href="{{ path('app_login') }}"
-                       class="font-medium text-workshop-brown hover:text-workshop-red transition-colors">{{ 'page.login'|trans }}</a>
+                       class="font-medium text-sm text-workshop-brown hover:text-workshop-red transition-colors px-2">{{ 'page.login'|trans }}</a>
                     <a href="{{ path('user_register') }}"
                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90">
                         {{ 'page.register'|trans }}
                     </a>
                 {% endif %}
-            </nav>
-            <div class="flex items-center gap-3">
+            </div>
+
+            <div class="flex md:hidden items-center gap-3 ml-auto">
                 {% if app.user %}
                     <div class="relative">
                         {{ component('NotificationTrayLiveComponent') }}
                     </div>
                 {% endif %}
-                <button class="md:hidden p-1.5 text-workshop-brown hover:bg-beige rounded-lg transition-colors"
+                <button class="p-1.5 text-workshop-brown hover:bg-beige rounded-lg transition-colors"
                         data-action="mobile-menu#toggle"
                         aria-label="{{ 'page.menu.toggle'|trans }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -53,7 +61,9 @@
          data-mobile-menu-target="panel"
          aria-label="{{ 'page.menu.toggle'|trans }}">
         <div class="flex justify-between items-center mb-6">
-            <span class="font-display text-xl font-bold text-workshop-brown">{{ 'page.default.header'|trans }}</span>
+            <span class="font-display text-lg font-bold tracking-tight">
+                <span class="text-workshop-brown">Warsztatownia</span>&nbsp;<span class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span class="text-workshop-yellow">n</span><span class="text-workshop-blue">s</span><span class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span class="text-workshop-green">y</span><span class="text-workshop-yellow">c</span><span class="text-workshop-blue">z</span><span class="text-workshop-pink">n</span><span class="text-workshop-red">a</span>
+            </span>
             <button class="p-1.5 text-workshop-brown hover:bg-beige rounded-lg transition-colors"
                     data-action="mobile-menu#close"
                     aria-label="{{ 'page.menu.close'|trans }}">
