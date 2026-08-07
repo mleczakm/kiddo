@@ -52,7 +52,7 @@ class PlatformBillingService
      */
     public function addCommissionToCurrentDue(Money $paymentAmount): void
     {
-        $commission = $paymentAmount->multipliedBy(0.02, RoundingMode::HALF_UP);
+        $commission = $paymentAmount->multipliedBy('0.02', RoundingMode::HALF_UP);
         $currentDue = Money::of($this->getBillingData()['currentDue'], 'PLN');
         $newCurrentDue = $currentDue->plus($commission);
 
