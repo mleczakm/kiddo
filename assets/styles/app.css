@@ -20,6 +20,12 @@ details#notif-details:not([open]) #notif-tray {
     display: none;
 }
 
+/* Deep-linked reservation row (e.g. /panel?activeTab=cancelled#reservation-xyz) */
+.reservation-target-highlight:target {
+    outline: 3px solid #ef4444;
+    outline-offset: 2px;
+}
+
 :root {
     --background: 44 86% 93%;
     --foreground: 30 76% 18%;

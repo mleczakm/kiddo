@@ -4,8 +4,9 @@
         <div role="tablist" aria-orientation="horizontal"
              class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full mb-6"
              tabindex="0" data-orientation="horizontal" style="outline: none;">
-            <button type="button" role="tab"
+            <button type="button" role="tab" id="tab-active"
                     aria-selected="{{ activeTab == 'active' ? 'true' : 'false' }}"
+                    aria-controls="bookings-panel"
                     data-state="{{ activeTab == 'active' ? 'active' : 'inactive' }}"
                     data-action="live#action"
                     data-live-action-param="selectTab"
@@ -14,8 +15,9 @@
                     data-orientation="horizontal">
                 {{ 'dashboard.active_bookings'|trans }}
             </button>
-            <button type="button" role="tab"
+            <button type="button" role="tab" id="tab-past"
                     aria-selected="{{ activeTab == 'past' ? 'true' : 'false' }}"
+                    aria-controls="bookings-panel"
                     data-state="{{ activeTab == 'past' ? 'active' : 'inactive' }}"
                     data-action="live#action"
                     data-live-action-param="selectTab"
@@ -24,8 +26,9 @@
                     data-orientation="horizontal">
                 {{ 'dashboard.past_bookings'|trans }}
             </button>
-            <button type="button" role="tab"
+            <button type="button" role="tab" id="tab-cancelled"
                     aria-selected="{{ activeTab == 'cancelled' ? 'true' : 'false' }}"
+                    aria-controls="bookings-panel"
                     data-state="{{ activeTab == 'cancelled' ? 'active' : 'inactive' }}"
                     data-action="live#action"
                     data-live-action-param="selectTab"
@@ -36,11 +39,11 @@
             </button>
         </div>
 
-        {# Active Bookings Tab Panel #}
         <div data-state="active" data-orientation="horizontal" role="tabpanel"
-             aria-labelledby="active-tab" id="active-bookings" tabindex="0"
+             aria-labelledby="tab-{{ activeTab }}" id="bookings-panel" tabindex="0"
              class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <div class="space-y-4">
+                {% set anyShown = false %}
                 {% for booking in this.getCurrentBookings %}
                     {% for lesson in booking.lessons %}
                         {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
@@ -52,7 +55,8 @@
                             (activeTab == 'past' and (not isCancelled) and (not isFuture))
                         %}
                         {% if show %}
-                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden {{ isCancelled ? 'opacity-70' : '' }}">
+                        {% set anyShown = true %}
+                        <div id="reservation-{{ lesson.id }}" class="reservation-target-highlight scroll-mt-28 rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden {{ isCancelled ? 'opacity-70' : '' }}">
                             <div class="flex flex-col md:flex-row">
                                 <div class="p-6 flex-grow">
                                     <div class="flex justify-between items-start">
@@ -80,6 +84,11 @@
                                                 <span class="font-medium text-lg text-workshop-brown">
                                                     {{ booking.payment.amount|money }}
                                                 </span>
+                                                {% if booking.payment.status == 'paid' and booking.payment.paidAt %}
+                                                    <span class="text-xs text-muted-foreground">
+                                                        {{ 'dashboard.paid_at'|trans({date: booking.payment.paidAt|date('d.m.Y H:i')}) }}
+                                                    </span>
+                                                {% endif %}
                                             {% endif %}
                                             <div class="text-xs">
                                                 {{ booking.createdAt|date('d.m.Y H:i') }}
@@ -112,13 +121,26 @@
                                                     <polyline points="12 6 12 12 16 14"></polyline>
                                                 </svg>
                                                 <span>{{ lesson.metadata.schedule|date('H:i') }} - {{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</span>
-                                                {% if isCancelled %}
-                                                    <span class="ml-2 inline-flex items-center rounded-full bg-red-50 text-red-700 px-2.5 py-0.5 text-xs font-semibold border border-red-200">
-                                                        {{ isRescheduled ? 'rescheduled' : 'cancelled' }}
+                                            </div>
+                                        </div>
+                                        {% if isCancelled %}
+                                            {% set attributionAt = isRescheduled ? booking.lessonsMap.getRescheduledAt(lesson.id) : booking.lessonsMap.getCancelledAt(lesson.id) %}
+                                            {% set attributionByName = this.resolveUserName(isRescheduled ? booking.lessonsMap.getRescheduledByUserId(lesson.id) : booking.lessonsMap.getCancelledByUserId(lesson.id)) %}
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full bg-red-50 text-red-700 px-2.5 py-0.5 text-xs font-semibold border border-red-200">
+                                                    {{ (isRescheduled ? 'dashboard.status.rescheduled' : 'dashboard.status.cancelled')|trans }}
+                                                </span>
+                                                {% if attributionAt %}
+                                                    <span class="text-xs text-muted-foreground">
+                                                        {% if attributionByName %}
+                                                            {{ (isRescheduled ? 'dashboard.rescheduled_by' : 'dashboard.cancelled_by')|trans({name: attributionByName, date: attributionAt|date('d.m.Y H:i')}) }}
+                                                        {% else %}
+                                                            {{ (isRescheduled ? 'dashboard.rescheduled_on' : 'dashboard.cancelled_on')|trans({date: attributionAt|date('d.m.Y H:i')}) }}
+                                                        {% endif %}
                                                     </span>
                                                 {% endif %}
                                             </div>
-                                        </div>
+                                        {% endif %}
                                         {% if booking.child %}
                                             <div class="flex items-center space-x-2 text-sm">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-baby w-4 h-4 mr-1 text-workshop-red">
@@ -150,15 +172,16 @@
                         </div>
                         {% endif %}
                     {% endfor %}
-                {% else %}
+                {% endfor %}
+                {% if not anyShown %}
                     <div class="text-center py-8 text-muted-foreground">
-                        <p>{{ 'dashboard.no_active_bookings'|trans }}</p>
+                        <p>{{ ('dashboard.no_' ~ activeTab ~ '_bookings')|trans }}</p>
                         <a href="{{ path('workshops') }}"
                            class="text-workshop-red hover:underline mt-2 inline-block">
                             {{ 'dashboard.browse_workshops'|trans }}
                         </a>
                     </div>
-                {% endfor %}
+                {% endif %}
             </div>
         </div>
     </div>

@@ -74,7 +74,11 @@ class CancelLessonBookingHandler
         }
 
         // Perform domain operation: cancel the specific lesson ONLY (do not cancel the whole booking)
-        $wasCancelled = $booking->cancelLesson($command->getLessonId()->toRfc4122(), $command->getReason());
+        $wasCancelled = $booking->cancelLesson(
+            $command->getLessonId()->toRfc4122(),
+            $command->getReason(),
+            $command->getCancelledBy(),
+        );
 
         if (! $wasCancelled) {
             $this->logger->warning('Requested lesson was not active or could not be cancelled', [

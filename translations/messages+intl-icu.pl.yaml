@@ -256,6 +256,8 @@ lesson:
         other    {}
     }
 
+  repeats_weekly: Powtarza się co tydzień
+
   minutes: >-
     {minutes, plural,
       =0 {brak}
@@ -517,6 +519,7 @@ dashboard:
   status:
     active: Aktywne
     cancelled: Anulowane
+    rescheduled: Przełożone
     past: Wykorzystany
   cancel: Anuluj
   sessions_used: Wykorzystane zajęcia
@@ -535,6 +538,7 @@ dashboard:
   cancelled_bookings: Anulowane rezerwacje
   past_bookings: Przeszłe rezerwacje
   no_active_bookings: Nie masz aktywnych rezerwacji
+  no_past_bookings: Nie masz przeszłych rezerwacji
   no_cancelled_bookings: Nie masz anulowanych rezerwacji
   browse_workshops: Przeglądaj dostępne warsztaty
   payment:
@@ -549,6 +553,12 @@ dashboard:
   at: o
   booking:
     carnet: "Karnet"
+  paid_at: "Opłacono {date}"
+  cancelled_by: "Anulowane przez {name}, {date}"
+  cancelled_on: "Anulowane {date}"
+  rescheduled_by: "Przełożone przez {name}, {date}"
+  rescheduled_on: "Przełożone {date}"
+  view_reservation: "Zobacz w panelu rezerwacji"
 
 admin_dashboard:
   title: Warsztatownia Sensoryczna - Panel administracyjny

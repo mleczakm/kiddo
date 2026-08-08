@@ -286,7 +286,9 @@ final class UpcomingAttendeesComponent extends AbstractController
                     break;
 
                 case 'cancel':
-                    $booking->cancelLesson($currentLesson->getId()->toString());
+                    /** @var ?User $admin */
+                    $admin = $this->getUser();
+                    $booking->cancelLesson($currentLesson->getId()->toString(), null, $admin);
 
                     $this->entityManager->flush();
                     $this->successMessage = 'Booking cancelled successfully';

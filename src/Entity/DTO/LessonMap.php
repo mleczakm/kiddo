@@ -79,6 +79,24 @@ class LessonMap implements \Countable
     public Map $active;
 
     /**
+     * PHP's default clone is shallow: the four Ds\Map buckets would still
+     * point at the same underlying maps as the original, so mutating a
+     * clone (e.g. moving a lesson from active to cancelled) would silently
+     * mutate the "original" too — defeating the whole point of cloning
+     * before reassigning, which is what lets Doctrine's reference-based
+     * change tracking notice the entity changed (see Booking::cancelLesson()
+     * / rescheduleLesson()). Clone each bucket explicitly to keep the two
+     * copies independent.
+     */
+    public function __clone(): void
+    {
+        $this->lessons = clone $this->lessons;
+        $this->active = clone $this->active;
+        $this->past = clone $this->past;
+        $this->cancelled = clone $this->cancelled;
+    }
+
+    /**
      * @param array<string, list<string>> ...$datas
      */
     public function __construct(array ...$datas)
@@ -223,12 +241,13 @@ class LessonMap implements \Countable
         $this->past->remove($lessonId);
     }
 
-    public function cancelAllBookedLessons(?string $reason = null): void
+    public function cancelAllBookedLessons(?string $reason = null, ?User $cancelledBy = null): void
     {
         $this->ensureMapsInitialized();
+        $cancelledAt = new \DateTimeImmutable();
         // Move all active lessons to cancelled
         foreach ($this->active as $ulid => $bookedLesson) {
-            $this->cancelled->put($ulid, $bookedLesson);
+            $this->cancelled->put($ulid, new CancelledLesson($ulid, $cancelledBy?->getId(), $cancelledAt, $reason));
         }
         $this->active->clear();
     }
@@ -240,13 +259,12 @@ class LessonMap implements \Countable
         return $this->lessons->get($ulid, null);
     }
 
-    public function cancelLesson(string $lessonId, ?string $reason = null): bool
+    public function cancelLesson(string $lessonId, ?string $reason = null, ?User $cancelledBy = null): bool
     {
         $this->ensureMapsInitialized();
         $ulid = Ulid::fromString($lessonId);
         if ($this->active->hasKey($ulid)) {
-            $bookedLesson = $this->active->get($ulid);
-            $this->cancelled->put($ulid, $bookedLesson);
+            $this->cancelled->put($ulid, new CancelledLesson($ulid, $cancelledBy?->getId(), new \DateTimeImmutable(), $reason));
             $this->active->remove($ulid);
             return true;
         }
@@ -489,5 +507,53 @@ class LessonMap implements \Countable
         $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString((string) $lessonId);
 
         return $this->active->hasKey($ulid);
+    }
+
+    /**
+     * Raw entry for a lesson in the cancelled bucket (plain BookedLesson,
+     * CancelledLesson, or RescheduledLesson depending on how/when it was
+     * cancelled — older records may only have the plain shape).
+     */
+    public function getCancelledEntry(Ulid|string $lessonId): ?BookedLesson
+    {
+        $this->ensureMapsInitialized();
+        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString((string) $lessonId);
+
+        return $this->cancelled->get($ulid, null);
+    }
+
+    public function getCancelledByUserId(Ulid|string $lessonId): ?int
+    {
+        $entry = $this->getCancelledEntry($lessonId);
+
+        return $entry instanceof CancelledLesson ? $entry->cancelledBy : null;
+    }
+
+    public function getCancelledAt(Ulid|string $lessonId): ?\DateTimeImmutable
+    {
+        $entry = $this->getCancelledEntry($lessonId);
+
+        return $entry instanceof CancelledLesson ? $entry->cancelledAt : null;
+    }
+
+    public function getCancellationReason(Ulid|string $lessonId): ?string
+    {
+        $entry = $this->getCancelledEntry($lessonId);
+
+        return $entry instanceof CancelledLesson ? $entry->reason : null;
+    }
+
+    public function getRescheduledByUserId(Ulid|string $lessonId): ?int
+    {
+        $entry = $this->getCancelledEntry($lessonId);
+
+        return $entry instanceof RescheduledLesson ? $entry->rescheduledBy : null;
+    }
+
+    public function getRescheduledAt(Ulid|string $lessonId): ?\DateTimeImmutable
+    {
+        $entry = $this->getCancelledEntry($lessonId);
+
+        return $entry instanceof RescheduledLesson ? $entry->rescheduledAt : null;
     }
 }

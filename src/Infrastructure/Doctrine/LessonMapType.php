@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Doctrine;
 
 use App\Entity\DTO\BookedLesson;
+use App\Entity\DTO\CancelledLesson;
 use App\Entity\DTO\LessonMap;
 use App\Entity\DTO\RescheduledLesson;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
@@ -58,6 +59,15 @@ class LessonMapType extends JsonType
                             (string) $itemData['rescheduledAt']
                         ) : null
                     ));
+                } elseif (is_array($itemData) && array_key_exists('cancelledAt', $itemData)) {
+                    $map->put($ulid, new CancelledLesson(
+                        Ulid::fromString(isset($itemData['lessonId']) ? (string) $itemData['lessonId'] : ''),
+                        isset($itemData['cancelledBy']) ? (int) $itemData['cancelledBy'] : null,
+                        isset($itemData['cancelledAt']) ? new \DateTimeImmutable(
+                            (string) $itemData['cancelledAt']
+                        ) : null,
+                        isset($itemData['reason']) ? (string) $itemData['reason'] : null,
+                    ));
                 } else {
                     $map->put($ulid, new BookedLesson($ulid));
                 }
@@ -102,7 +112,7 @@ class LessonMapType extends JsonType
     }
 
     /**
-     * @return array{lessonId: string, rescheduledFrom?: string, rescheduledBy?: int, rescheduledAt?: string|null}
+     * @return array{lessonId: string, rescheduledFrom?: string, rescheduledBy?: int, rescheduledAt?: string|null, cancelledBy?: int|null, cancelledAt?: string|null, reason?: string|null}
      */
     private function serializeBookedLesson(BookedLesson $bookedLesson): array
     {
@@ -113,6 +123,10 @@ class LessonMapType extends JsonType
             $data['rescheduledFrom'] = $bookedLesson->rescheduledFrom->toString();
             $data['rescheduledBy'] = $bookedLesson->rescheduledBy;
             $data['rescheduledAt'] = $bookedLesson->rescheduledAt?->format(\DateTimeInterface::RFC3339);
+        } elseif ($bookedLesson instanceof CancelledLesson) {
+            $data['cancelledBy'] = $bookedLesson->cancelledBy;
+            $data['cancelledAt'] = $bookedLesson->cancelledAt?->format(\DateTimeInterface::RFC3339);
+            $data['reason'] = $bookedLesson->reason;
         }
         return $data;
     }

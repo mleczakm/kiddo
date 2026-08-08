@@ -190,9 +190,12 @@ class Booking
         $this->setStatus(self::STATUS_CANCELLED);
         $this->cancelledBy = $cancelledBy;
 
-        // Cancel all booked lessons using the map
-        $this->getLessonsMap()
-            ->cancelAllBookedLessons($reason);
+        // Clone the lesson map to ensure changes are detected by Doctrine
+        // (a custom-typed field only persists if the property is reassigned
+        // to a new object instance — see rescheduleLesson()).
+        $newLessonMap = clone $this->getLessonsMap();
+        $newLessonMap->cancelAllBookedLessons($reason, $cancelledBy);
+        $this->lessonsMap = $newLessonMap;
 
         if ($reason) {
             $this->notes = $reason;
@@ -230,11 +233,14 @@ class Booking
     /**
      * Cancel specific lesson
      */
-    public function cancelLesson(string $lessonId, ?string $reason = null): bool
+    public function cancelLesson(string $lessonId, ?string $reason = null, ?User $cancelledBy = null): bool
     {
-        $result = $this->getLessonsMap()
-            ->cancelLesson($lessonId, $reason);
+        // Clone before mutating so Doctrine's reference-based change
+        // tracking picks up the update (see cancel()/rescheduleLesson()).
+        $newLessonMap = clone $this->getLessonsMap();
+        $result = $newLessonMap->cancelLesson($lessonId, $reason, $cancelledBy);
         if ($result) {
+            $this->lessonsMap = $newLessonMap;
             $this->updatedAt = Clock::get()->now();
         }
         return $result;
@@ -245,9 +251,10 @@ class Booking
      */
     public function refundLesson(string $lessonId, ?string $reason = null): bool
     {
-        $result = $this->getLessonsMap()
-            ->refundLesson($lessonId, $reason);
+        $newLessonMap = clone $this->getLessonsMap();
+        $result = $newLessonMap->refundLesson($lessonId, $reason);
         if ($result) {
+            $this->lessonsMap = $newLessonMap;
             $this->updatedAt = Clock::get()->now();
         }
         return $result;

@@ -130,18 +130,16 @@
                             </svg>
                             <div>
                                 <p class="font-medium">{{ 'lesson.schedule'|trans }}</p>
-                                <p class="text-muted-foreground">{% if lesson.series.type.value == 'weekly' %}
-                                        {{ 'lesson.every'|trans({
-                                            'day': lesson.metadata.schedule|date('l'),
-                                            'hour': lesson.metadata.schedule|date('H:i')
-                                        }) }}
-                                    {% else %}
-                                        {{ 'lesson.once'|trans({
-                                            'day': lesson.metadata.schedule|date('l'),
-                                            'date': lesson.metadata.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
-                                            'hour': lesson.metadata.schedule|date('H:i')
-                                        }) }}
-                                    {% endif %}</p>
+                                <p class="text-muted-foreground">
+                                    {{ 'lesson.once'|trans({
+                                        'day': lesson.metadata.schedule|date('l'),
+                                        'date': lesson.metadata.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
+                                        'hour': lesson.metadata.schedule|date('H:i')
+                                    }) }}
+                                </p>
+                                {% if lesson.series.type.value == 'weekly' %}
+                                    <p class="text-xs text-muted-foreground/70">{{ 'lesson.repeats_weekly'|trans }}</p>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="flex items-start">

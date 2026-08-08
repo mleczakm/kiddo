@@ -8,6 +8,7 @@
                     {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
                     {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
                     {% set childName = booking.child ? booking.child.name : 'booking.no_child'|trans %}
+                    {% set reservationTab = isCancelled ? 'cancelled' : (lesson.metadata.schedule > date() ? 'active' : 'past') %}
                     <div class="flex items-center justify-between gap-3 p-3.5 bg-white rounded-xl border border-slate-100 shadow-sm {{ isCancelled ? 'opacity-70' : '' }}">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm {{ isPaid ? 'bg-green-100 text-green-700' : 'bg-workshop-yellow/20 text-workshop-brown' }}">
@@ -59,6 +60,15 @@
                                     {{ 'booking.pay'|trans }} {{ booking.payment.amount|money }}
                                 </button>
                             {% endif %}
+                            <a href="{{ path('dashboard', {activeTab: reservationTab}) }}#reservation-{{ lesson.id }}"
+                               title="{{ 'dashboard.view_reservation'|trans }}"
+                               class="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200 text-slate-500 hover:text-workshop-red hover:border-workshop-red/40 hover:bg-workshop-red/5 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 7h10v10"></path>
+                                    <path d="M7 17 17 7"></path>
+                                </svg>
+                                <span class="sr-only">{{ 'dashboard.view_reservation'|trans }}</span>
+                            </a>
                         </div>
                     </div>
                 {% endfor %}

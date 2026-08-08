@@ -130,5 +130,17 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
             'user' => $user,
         ]);
         self::assertCount(1, $messages);
+
+        // The per-lesson cancelled state must survive a fresh DB round-trip
+        // (regression guard: LessonMap is a custom-typed field, mutating it
+        // in place without reassigning the property is invisible to
+        // Doctrine's change tracking).
+        self::assertTrue($reloaded->isLessonCancelled($lesson1), 'lesson1 should be cancelled after reload');
+        self::assertFalse($reloaded->isLessonCancelled($lesson2), 'lesson2 should still be active after reload');
+        self::assertSame(
+            $user->getId(),
+            $reloaded->getLessonsMap()->getCancelledByUserId($lesson1->getId()),
+            'cancellation should record who cancelled it'
+        );
     }
 }

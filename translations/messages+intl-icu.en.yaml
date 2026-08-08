@@ -199,6 +199,8 @@ dashboard:
   status:
     active: Active
     cancelled: Cancelled
+    rescheduled: Rescheduled
+    past: Completed
   sessions_used: Sessions Used
   valid_until: Valid Until
   not_available: N/A
@@ -211,11 +213,15 @@ dashboard:
   no_upcoming_sessions: No upcoming sessions
   active_bookings: Active Bookings
   cancelled_bookings: Cancelled Bookings
+  past_bookings: Past Bookings
   no_active_bookings: You don't have any active bookings
+  no_past_bookings: You don't have any past bookings
   no_cancelled_bookings: You don't have any cancelled bookings
   browse_workshops: Browse available workshops
   payment:
     paid: Paid
+    pending: Awaiting payment
+    expired: "Payment expired"
     pending_transfers: 'Pending Payment Transfers'
     sender: 'Customer'
     title: 'Workshop'
@@ -226,8 +232,18 @@ dashboard:
     last_successful_import: 'Last successful import'
   confirm_cancel: Are you sure you want to cancel this booking?
   single_session: Single Session
+  single_entry: Single entry
+  at: at
   actions:
     cancel: Cancel
+  booking:
+    carnet: "Carnet"
+  paid_at: "Paid on {date}"
+  cancelled_by: "Cancelled by {name} on {date}"
+  cancelled_on: "Cancelled on {date}"
+  rescheduled_by: "Rescheduled by {name} on {date}"
+  rescheduled_on: "Rescheduled on {date}"
+  view_reservation: "View in your bookings"
 
 workshop:
   fully_booked: 'Fully booked'
@@ -243,6 +259,18 @@ lesson:
   minutes: '{minutes} minutes'
   ages: 'Ages {min}-{max}'
   every: 'Every {day} at {hour}'
+  once: >-
+    {day, select,
+        Monday   {Monday {date}, at {hour}}
+        Tuesday   {Tuesday {date}, at {hour}}
+        Wednesday   {Wednesday {date}, at {hour}}
+        Thursday   {Thursday {date}, at {hour}}
+        Friday   {Friday {date}, at {hour}}
+        Saturday   {Saturday {date}, at {hour}}
+        Sunday   {Sunday {date}, at {hour}}
+        other    {}
+    }
+  repeats_weekly: 'Repeats every week'
   single_session: 'Single Session'
   actions:
     cancel: Cancel
