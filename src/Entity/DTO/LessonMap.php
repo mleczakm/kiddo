@@ -264,7 +264,10 @@ class LessonMap implements \Countable
         $this->ensureMapsInitialized();
         $ulid = Ulid::fromString($lessonId);
         if ($this->active->hasKey($ulid)) {
-            $this->cancelled->put($ulid, new CancelledLesson($ulid, $cancelledBy?->getId(), new \DateTimeImmutable(), $reason));
+            $this->cancelled->put(
+                $ulid,
+                new CancelledLesson($ulid, $cancelledBy?->getId(), new \DateTimeImmutable(), $reason)
+            );
             $this->active->remove($ulid);
             return true;
         }

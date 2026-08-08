@@ -85,17 +85,27 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
         // The reschedule must survive a fresh DB round-trip (regression
         // guard: LessonMap is a custom-typed field — see
         // CancelLessonBookingHandlerTest for the same concern on cancel).
-        self::assertTrue($reloaded->isLessonRescheduled($oldLesson), 'old lesson should be marked rescheduled after reload');
+        self::assertTrue(
+            $reloaded->isLessonRescheduled($oldLesson),
+            'old lesson should be marked rescheduled after reload'
+        );
         // $newLesson is a detached instance from before em->clear(), so compare
         // by id rather than Collection::contains() (which is identity-based).
         $reloadedLessonIds = array_map(
-            static fn($l) => $l->getId()->toRfc4122(),
-            $reloaded->getLessons()->toArray()
+            static fn($l) => $l->getId()
+                ->toRfc4122(),
+            $reloaded->getLessons()
+                ->toArray()
         );
-        self::assertContains($newLesson->getId()->toRfc4122(), $reloadedLessonIds, 'new lesson should be attached to the booking after reload');
+        self::assertContains(
+            $newLesson->getId()->toRfc4122(),
+            $reloadedLessonIds,
+            'new lesson should be attached to the booking after reload'
+        );
         self::assertSame(
             $admin->getId(),
-            $reloaded->getLessonsMap()->getRescheduledByUserId($oldLesson->getId()),
+            $reloaded->getLessonsMap()
+                ->getRescheduledByUserId($oldLesson->getId()),
             'reschedule should record who rescheduled it'
         );
     }

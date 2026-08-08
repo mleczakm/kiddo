@@ -139,7 +139,8 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         self::assertFalse($reloaded->isLessonCancelled($lesson2), 'lesson2 should still be active after reload');
         self::assertSame(
             $user->getId(),
-            $reloaded->getLessonsMap()->getCancelledByUserId($lesson1->getId()),
+            $reloaded->getLessonsMap()
+                ->getCancelledByUserId($lesson1->getId()),
             'cancellation should record who cancelled it'
         );
     }

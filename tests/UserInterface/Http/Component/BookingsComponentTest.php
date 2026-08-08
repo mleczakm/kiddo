@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\User;
 use App\Entity\Booking;
 use App\Entity\Payment;
 use App\Tests\Assembler\BookingAssembler;
@@ -79,7 +80,9 @@ final class BookingsComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(
             name: BookingsComponent::class,
-            data: ['activeTab' => 'past'],
+            data: [
+                'activeTab' => 'past',
+            ],
             client: $client,
         );
 
@@ -135,13 +138,15 @@ final class BookingsComponentTest extends WebTestCase
         $em->flush();
         $em->clear();
 
-        $reloadedUser = $em->getRepository(\App\Entity\User::class)->find($user->getId());
+        $reloadedUser = $em->getRepository(User::class)->find($user->getId());
         self::assertNotNull($reloadedUser);
         $client->loginUser($reloadedUser);
 
         $component = $this->createLiveComponent(
             name: BookingsComponent::class,
-            data: ['activeTab' => 'cancelled'],
+            data: [
+                'activeTab' => 'cancelled',
+            ],
             client: $client,
         );
 
@@ -194,7 +199,9 @@ final class BookingsComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(
             name: BookingsComponent::class,
-            data: ['activeTab' => 'active'],
+            data: [
+                'activeTab' => 'active',
+            ],
             client: $client,
         );
 
@@ -215,7 +222,9 @@ final class BookingsComponentTest extends WebTestCase
 
         $pastComponent = $this->createLiveComponent(
             name: BookingsComponent::class,
-            data: ['activeTab' => 'past'],
+            data: [
+                'activeTab' => 'past',
+            ],
             client: $client,
         );
         $pastHtml = (string) $pastComponent->render();
@@ -224,7 +233,9 @@ final class BookingsComponentTest extends WebTestCase
 
         $cancelledComponent = $this->createLiveComponent(
             name: BookingsComponent::class,
-            data: ['activeTab' => 'cancelled'],
+            data: [
+                'activeTab' => 'cancelled',
+            ],
             client: $client,
         );
         $cancelledHtml = (string) $cancelledComponent->render();
@@ -242,12 +253,10 @@ final class BookingsComponentTest extends WebTestCase
         $client->request('GET', '/panel?activeTab=cancelled');
 
         self::assertResponseIsSuccessful();
-        $content = (string) $client->getResponse()->getContent();
+        $content = (string) $client->getResponse()
+            ->getContent();
         self::assertStringContainsString('aria-selected="true"', $content);
         // The cancelled tab button must be the one carrying aria-selected="true".
-        self::assertMatchesRegularExpression(
-            '/id="tab-cancelled"[^>]*aria-selected="true"/',
-            $content
-        );
+        self::assertMatchesRegularExpression('/id="tab-cancelled"[^>]*aria-selected="true"/', $content);
     }
 }
