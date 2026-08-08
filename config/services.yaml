@@ -97,9 +97,6 @@ services:
     alias: symfony_health_check.doctrine_orm_check
 
   # Sentry services for Monolog handler
-  Sentry\State\HubInterface:
-    factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
-
   BGalati\MonologSentryHandler\SentryHandler:
     arguments:
       $hub: '@Sentry\State\HubInterface'
@@ -197,9 +194,23 @@ services:
       - controller.service_arguments
       - { name: monolog.logger, channel: mcp }
 
+# SentryBundle is only registered for prod (config/bundles.php), so it's the only environment
+# where Sentry\State\HubInterface comes pre-bound to a real, DSN-configured client (see
+# vendor/sentry/sentry-symfony's own services.yaml: HubAdapter::getInstance() + bindClient()).
+# dev/test still need *a* Hub to satisfy BGalati\MonologSentryHandler\SentryHandler's
+# autowired $hub argument, so fall back to the bare SDK singleton here — it never gets a
+# client bound, so captures are harmless no-ops rather than being sent anywhere.
+when@dev:
+  services:
+    Sentry\State\HubInterface:
+      factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
+
 # Test-specific service overrides
 when@test:
   services:
+    Sentry\State\HubInterface:
+      factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
+
     # Use test implementation of CurrentWorkerRestarterInterface to track restart calls
     App\Infrastructure\Swoole\CurrentWorkerRestarterInterface:
       class: App\Tests\Infrastructure\Swoole\TestCurrentWorkerRestarter
