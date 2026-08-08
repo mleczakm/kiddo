@@ -98,7 +98,8 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
                 ->toArray()
         );
         self::assertContains(
-            $newLesson->getId()->toRfc4122(),
+            $newLesson->getId()
+                ->toRfc4122(),
             $reloadedLessonIds,
             'new lesson should be attached to the booking after reload'
         );
