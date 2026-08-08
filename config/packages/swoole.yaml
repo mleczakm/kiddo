@@ -29,11 +29,16 @@ swoole:
       doctrine_processor_config:
         global_limit: 5
 
+swoole_bundle_resetter:
+  # default false - if set to true, the app will check if there is an active transaction
+  # in the processed connection, and it will rollback the transaction.
+  # Needed in every env now that coroutines pool multiple connection instances per worker:
+  # a coroutine that fails mid-transaction otherwise leaves its pooled connection dirty for
+  # whichever coroutine picks it up next, surfacing as "There is already an active transaction".
+  check_active_transactions: true
+
 when@prod:
   swoole_bundle_resetter:
     # default 0 - if set, the connection ping operation will be executed each X seconds
     # (instead of at the beginning of each request)
     ping_interval: 29
-    # default false - if set to true, the app will check if there is an active transaction
-    # in the processed connection, and it will rollback the transaction
-    check_active_transactions: true

@@ -19,6 +19,7 @@ services:
       - .:/app
       - ~/.composer:/.composer
       - .docker/php/ini/zz-php.ini:/usr/local/etc/php/conf.d/zz-php.ini
+      - .docker/php/ini/xdebug.ini:/usr/local/etc/php/conf.d/zz-xdebug.ini
 
     user: 1000:1000
     ports:

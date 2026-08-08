@@ -45,6 +45,17 @@ jobs:
             APP_VERSION=${{ github.ref_name }}
             APP_REVISION=${{ github.sha }}
 
+      - name: Upload seccomp profile
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ".docker/seccomp/swoole-io-uring.json"
+          target: "/opt/projects/hosting"
+          strip_components: 0
+
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
         with:
@@ -55,37 +66,50 @@ jobs:
           script: |
             cd /opt/projects/hosting
             IMAGE_REF="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}"
-            
+
             # Update .env file with the new image reference
             echo "Updating .env file with new image reference..."
             if [ ! -f .env ]; then
               touch .env
             fi
-            
+
             # Add or update KIDDO_IMAGE in .env
             if grep -q '^KIDDO_IMAGE=' .env; then
               sed -i "s|^KIDDO_IMAGE=.*|KIDDO_IMAGE=$IMAGE_REF|" .env
             else
               echo "KIDDO_IMAGE=$IMAGE_REF" >> .env
             fi
-            
+
+            # Ensure the kiddo service runs with the seccomp profile Swoole's coroutine mode
+            # needs (Docker's default profile blocks io_uring_setup/enter/register). Patched in
+            # place with yq rather than rewritten, so nothing else in the file is disturbed.
+            echo "Ensuring seccomp profile is configured on the kiddo service..."
+            COMPOSE_FILE=$(ls compose.yaml compose.yml docker-compose.yml docker-compose.yaml 2>/dev/null | head -1)
+            if [ -z "$COMPOSE_FILE" ]; then
+              echo "No compose file found in /opt/projects/hosting, skipping seccomp patch" >&2
+            else
+              docker run --rm -v "$(pwd)":/workdir -w /workdir mikefarah/yq:4 eval -i \
+                '.services.kiddo.security_opt = ["seccomp=.docker/seccomp/swoole-io-uring.json"]' \
+                "$COMPOSE_FILE"
+            fi
+
             # Pull the latest image
             echo "Pulling the latest Docker image..."
             echo "Using image reference: $IMAGE_REF"
-            
+
             # Login to GitHub Container Registry if using ghcr.io
             if [[ $IMAGE_REF == ghcr.io/* ]]; then
               echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             fi
-            
-            docker compose pull kiddo 
-            
+
+            docker compose pull kiddo
+
             # Run the new container with the updated image
             echo "Starting new container..."
             docker compose up -d kiddo
-            
+
             # Run database migrations
             echo "Running database migrations..."
             docker compose exec kiddo bin/console doctrine:migrations:migrate --no-interaction
-            
+
             echo "Deployment completed successfully!"
