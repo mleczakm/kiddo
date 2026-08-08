@@ -42,3 +42,18 @@ when@prod:
     # default 0 - if set, the connection ping operation will be executed each X seconds
     # (instead of at the beginning of each request)
     ping_interval: 29
+
+# Coroutines only matter for the real swoole HTTP server process; PHPUnit's WebTestCase never
+# runs inside one. With coroutines on, swoole-bundle swaps the container's `kernel` service for
+# a clone ("kernel_proxy") that deliberately shares bundle instances with the original kernel
+# (see CoroutinesSupportingKernel::__clone(), a no-op by design so worker coroutines share
+# state). KernelBrowser resolves its injected `@kernel` to that clone and reboots it between
+# every request; the clone's first shutdown() nulls the container on bundle objects the real
+# kernel (tracked separately as KernelTestCase::$kernel) still holds references to, so that
+# kernel crashes with "Call to a member function hasParameter() on null" the moment its own
+# shutdown() runs in tearDown(). Disabling coroutines for tests sidesteps the clone entirely.
+when@test:
+  swoole:
+    platform:
+      coroutines:
+        enabled: false

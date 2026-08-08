@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Symfony;
 
+use Sentry\State\HubInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
@@ -28,11 +29,9 @@ final class SentryHubServiceWiringTest extends TestCase
 {
     public function testTopLevelServicesDoNotOverrideTheSentryHub(): void
     {
-        $config = Yaml::parseFile(dirname(__DIR__, 3) . '/config/services.yaml');
-
         self::assertArrayNotHasKey(
-            'Sentry\State\HubInterface',
-            $config['services'],
+            HubInterface::class,
+            $this->block(null),
             'config/services.yaml must not define Sentry\State\HubInterface at the top level: '
                 . 'doing so overrides the client-bound Hub that sentry/sentry-symfony registers for prod, '
                 . 'silently dropping every event sent through BGalati\MonologSentryHandler\SentryHandler '
@@ -42,16 +41,38 @@ final class SentryHubServiceWiringTest extends TestCase
 
     public function testDevAndTestEnvironmentsStillProvideAFallbackHub(): void
     {
-        $config = Yaml::parseFile(dirname(__DIR__, 3) . '/config/services.yaml');
-
         foreach (['when@dev', 'when@test'] as $block) {
             self::assertArrayHasKey(
-                'Sentry\State\HubInterface',
-                $config[$block]['services'],
+                HubInterface::class,
+                $this->block($block),
                 "config/services.yaml's \"{$block}\" block must provide a fallback Sentry\State\HubInterface "
                     . 'so BGalati\MonologSentryHandler\SentryHandler can still be autowired outside prod '
                     . '(SentryBundle is only registered for the prod environment).'
             );
         }
+    }
+
+    /**
+     * Returns the `services:` map either at the document root (when $envBlock is null) or
+     * nested under a `when@<env>:` block.
+     *
+     * @return array<string, mixed>
+     */
+    private function block(?string $envBlock): array
+    {
+        $config = Yaml::parseFile(dirname(__DIR__, 3) . '/config/services.yaml');
+        self::assertIsArray($config);
+
+        $scope = $config;
+        if ($envBlock !== null) {
+            self::assertArrayHasKey($envBlock, $config);
+            self::assertIsArray($config[$envBlock]);
+            $scope = $config[$envBlock];
+        }
+
+        self::assertArrayHasKey('services', $scope);
+        self::assertIsArray($scope['services']);
+
+        return $scope['services'];
     }
 }
