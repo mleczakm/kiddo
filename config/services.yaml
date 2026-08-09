@@ -96,6 +96,12 @@ services:
   SymfonyHealthCheckBundle\Check\DoctrineORMCheck:
     alias: symfony_health_check.doctrine_orm_check
 
+  # Scanner honeypot (extracted to mleczakm/zip-bomb-honeypot, not covered by the App\ autodiscovery above)
+  Mleczakm\ZipBombHoneypot\MaliciousRequestSubscriber: ~
+  Mleczakm\ZipBombHoneypot\HoneypotResponder: ~
+  Mleczakm\ZipBombHoneypot\MaliciousRequestPathMatcher: ~
+  Mleczakm\ZipBombHoneypot\ZipBombGenerator: ~
+
   # Sentry services for Monolog handler
   BGalati\MonologSentryHandler\SentryHandler:
     arguments:
