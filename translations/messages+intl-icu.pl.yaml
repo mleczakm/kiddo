@@ -799,6 +799,10 @@ admin:
       status: "Status"
       code: "Kod"
       method: "Metoda"
+    method:
+      online: "Online"
+      pay_on_place: "Na miejscu"
+      transfer: "Przelew"
     status:
       paid: "Opłacona"
       pending: "Oczekująca"

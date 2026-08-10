@@ -77,7 +77,7 @@
               </td>
               <td class="p-4 align-middle">
                 <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-slate-100 text-slate-700">
-                  {{ payment.method|default('transfer') }}
+                  {{ ('admin.payments.method.' ~ (payment.method ? payment.method.value : 'transfer'))|trans }}
                 </div>
               </td>
               <td class="p-4 align-middle">
@@ -127,7 +127,7 @@
             </span>
             <div class="flex items-center gap-1.5">
               <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-slate-100 text-slate-700">
-                {{ payment.method|default('transfer') }}
+                {{ ('admin.payments.method.' ~ (payment.method ? payment.method.value : 'transfer'))|trans }}
               </div>
               {% if payment.status == 'paid' %}
                 <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-green-500 text-white">
