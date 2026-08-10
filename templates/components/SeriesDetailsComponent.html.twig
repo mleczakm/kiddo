@@ -81,7 +81,7 @@
                                                 <div class="flex items-center gap-2 font-black text-lg text-slate-800">
                                                     <span>{{ lesson.schedule|date('d.m.Y') }}</span>
                                                     <a href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}"
-                                                       class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm transition hover:bg-indigo-700"
+                                                       class="inline-flex h-7 w-7 items-center justify-center text-white shadow-sm transition"
                                                        title="Otwórz szczegóły zajęć" aria-label="Otwórz szczegóły zajęć" onclick="event.stopPropagation()">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                                                     </a>
