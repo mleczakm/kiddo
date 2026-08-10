@@ -10,11 +10,6 @@ services:
       COMPOSER_HOME: /.composer
       PHP_CS_FIXER_IGNORE_ENV: true
       SWOOLE_ALLOW_XDEBUG: 1
-    # Docker's default seccomp profile blocks io_uring_setup/enter/register, which Swoole's
-    # coroutine hooks need. This is Docker's default profile plus those three syscalls allowed,
-    # instead of security_opt: seccomp=unconfined (which would drop all syscall filtering).
-    security_opt:
-      - seccomp=.docker/seccomp/swoole-io-uring.json
     volumes:
       - .:/app
       - ~/.composer:/.composer

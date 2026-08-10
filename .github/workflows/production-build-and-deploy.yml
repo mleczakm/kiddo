@@ -45,17 +45,6 @@ jobs:
             APP_VERSION=${{ github.ref_name }}
             APP_REVISION=${{ github.sha }}
 
-      - name: Upload seccomp profile
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ".docker/seccomp/swoole-io-uring.json"
-          target: "/opt/projects/hosting"
-          strip_components: 0
-
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
         with:
@@ -78,19 +67,6 @@ jobs:
               sed -i "s|^KIDDO_IMAGE=.*|KIDDO_IMAGE=$IMAGE_REF|" .env
             else
               echo "KIDDO_IMAGE=$IMAGE_REF" >> .env
-            fi
-
-            # Ensure the kiddo service runs with the seccomp profile Swoole's coroutine mode
-            # needs (Docker's default profile blocks io_uring_setup/enter/register). Patched in
-            # place with yq rather than rewritten, so nothing else in the file is disturbed.
-            echo "Ensuring seccomp profile is configured on the kiddo service..."
-            COMPOSE_FILE=$(ls compose.yaml compose.yml docker-compose.yml docker-compose.yaml 2>/dev/null | head -1)
-            if [ -z "$COMPOSE_FILE" ]; then
-              echo "No compose file found in /opt/projects/hosting, skipping seccomp patch" >&2
-            else
-              docker run --rm -v "$(pwd)":/workdir -w /workdir mikefarah/yq:4 eval -i \
-                '.services.kiddo.security_opt = ["seccomp=.docker/seccomp/swoole-io-uring.json"]' \
-                "$COMPOSE_FILE"
             fi
 
             # Pull the latest image

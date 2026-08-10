@@ -7,6 +7,10 @@ EXPOSE 9501
 
 CMD bin/console swoole:server:run
 
+# io_uring is unavailable inside the production LXC guest even on a new-enough
+# host kernel. Compile Swoole without it so coroutine mode uses epoll instead.
+ENV IPE_SWOOLE_WITHOUT_IOURING=1
+
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions apcu ds-^1 ffi intl pcntl pdo_pgsql sysvsem swoole-6.2.2 xsl zip
 

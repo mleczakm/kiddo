@@ -1,4 +1,9 @@
 swoole:
+  # Capacity for the coroutine-safe session storage. Session persistence still uses
+  # Symfony's PDO handler (configured in framework.yaml), so sessions survive restarts.
+  session:
+    max_data_bytes: 16384
+    max_active_sessions: 4096
   http_server:
     static: advanced
     exception_handler:
@@ -23,6 +28,11 @@ swoole:
   platform:
     coroutines:
       enabled: true
+      # Symfony's form registry keeps a mutable resolution stack. Without a
+      # coroutine-local instance, concurrent form rendering can falsely report
+      # a circular FormType reference.
+      stateful_services:
+        - form.registry
       # Without a cap, each worker/task-worker process pools a separate Doctrine connection
       # instance per coroutine context, which was exhausting Postgres's max_connections (100)
       # within seconds of boot (12 processes x scheduler polling every ~1s).
@@ -42,31 +52,6 @@ when@prod:
     # default 0 - if set, the connection ping operation will be executed each X seconds
     # (instead of at the beginning of each request)
     ping_interval: 29
-  swoole:
-    platform:
-      coroutines:
-        # TEMPORARILY DISABLED — coroutines mode crashes on the production host.
-        #
-        # Swoole's coroutine engine tries to use io_uring, which needs its futex_wait/
-        # futex_wakeup opcodes from Linux 6.7+. The prod host runs a Proxmox 5.15.158
-        # kernel. Both ways io_uring can fail here are fatal (not a graceful fallback
-        # to epoll, despite that being the documented behavior and what happens in dev):
-        #   - Docker's default seccomp profile blocks the io_uring syscalls outright
-        #     ("Operation not permitted") -> immediate crash.
-        #   - Our custom seccomp profile (.docker/seccomp/swoole-io-uring.json) allows
-        #     the syscalls through, so Swoole gets further and hits Swoole's own explicit
-        #     "requires 6.7 or higher Linux kernel" error instead -> also an immediate crash.
-        # There is no runtime ini toggle to disable io_uring in this Swoole build (it's a
-        # compile-time feature, "io_uring => enabled" in `php -i`, not a `swoole.*` ini
-        # directive) — the only way to avoid it is to not enable coroutines at all.
-        #
-        # This is an infrastructure limitation (host kernel too old), unrelated to the
-        # swoole-bundle/z-engine class_alias() bug fixed separately (see composer.json —
-        # that fix is still needed and still correct for any host with a new-enough kernel).
-        #
-        # Re-enable once the prod host's kernel is upgraded to 6.7+, or once verified
-        # working on whatever host replaces it.
-        enabled: false
 
 # Coroutines only matter for the real swoole HTTP server process; PHPUnit's WebTestCase never
 # runs inside one. With coroutines on, swoole-bundle swaps the container's `kernel` service for
