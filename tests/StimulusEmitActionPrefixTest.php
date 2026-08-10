@@ -27,6 +27,10 @@ final class StimulusEmitActionPrefixTest extends TestCase
             new \RecursiveDirectoryIterator($templatesDir, \FilesystemIterator::SKIP_DOTS)
         );
         foreach ($iterator as $file) {
+            if (! $file instanceof \SplFileInfo) {
+                continue;
+            }
+
             if (! $file->isFile() || ! str_ends_with($file->getFilename(), '.html.twig')) {
                 continue;
             }
@@ -42,10 +46,15 @@ final class StimulusEmitActionPrefixTest extends TestCase
             // form's own data-action).
             $tagsWithDefaultClick = ['a', 'button', 'form'];
 
-            if (preg_match_all('/data-action="([^"]*)"/', $contents, $matches, \PREG_OFFSET_CAPTURE)) {
+            $matchCount = preg_match_all('/data-action="([^"]*)"/', $contents, $matches, \PREG_OFFSET_CAPTURE);
+            if ($matchCount !== false && $matchCount > 0) {
                 foreach ($matches[1] as [$actionValue, $offset]) {
                     $hasBareLiveAction = false;
-                    foreach (preg_split('/\s+/', trim($actionValue)) as $directive) {
+                    $directives = preg_split('/\s+/', trim($actionValue));
+                    if ($directives === false) {
+                        continue;
+                    }
+                    foreach ($directives as $directive) {
                         if ($directive !== '' && str_starts_with($directive, 'live#')) {
                             $hasBareLiveAction = true;
                         }
@@ -56,7 +65,11 @@ final class StimulusEmitActionPrefixTest extends TestCase
 
                     $precedingTagOpen = strrpos(substr($contents, 0, $offset), '<');
                     $tagName = null;
-                    if ($precedingTagOpen !== false && preg_match('/<([a-zA-Z0-9]+)/', substr($contents, $precedingTagOpen), $tagMatch)) {
+                    if ($precedingTagOpen !== false && preg_match(
+                        '/<([a-zA-Z0-9]+)/',
+                        substr($contents, $precedingTagOpen),
+                        $tagMatch
+                    )) {
                         $tagName = strtolower($tagMatch[1]);
                     }
 
@@ -69,6 +82,13 @@ final class StimulusEmitActionPrefixTest extends TestCase
             }
         }
 
-        self::assertSame([], $offenders, "Found un-prefixed 'live#*' Stimulus actions (needs 'click->' prefix on div/tr/li/p elements):\n" . implode("\n", $offenders));
+        self::assertSame(
+            [],
+            $offenders,
+            "Found un-prefixed 'live#*' Stimulus actions (needs 'click->' prefix on div/tr/li/p elements):\n" . implode(
+                "\n",
+                $offenders
+            )
+        );
     }
 }
