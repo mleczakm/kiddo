@@ -142,7 +142,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for booking in user.bookings|slice(0, 10) %}
-                            <tr class="hover:bg-slate-50/50 transition">
+                            <tr class="cursor-pointer hover:bg-indigo-50/50 transition" data-controller="reservation-modal-trigger" data-action="click->reservation-modal-trigger#open" data-reservation-modal-trigger-booking-id-value="{{ booking.id }}"{% if booking.lesson %} data-reservation-modal-trigger-lesson-id-value="{{ booking.lesson.id }}"{% endif %}>
                                 <td class="px-6 py-4 font-bold text-slate-800">
                                     {% if booking.lesson %}
                                         <a href="{{ path('app_admin_lesson_view', { id: booking.lesson.id }) }}" class="hover:text-indigo-600 transition">{{ booking.lesson.metadata.title }}</a>
