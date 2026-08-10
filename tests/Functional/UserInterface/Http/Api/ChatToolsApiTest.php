@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Functional\UserInterface\Http\Api;
 
 use App\Application\Chat\ChatTokenManager;
+use App\Infrastructure\ElevenLabs\ElevenLabsClient;
 use App\Tests\Assembler\UserAssembler;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 
 #[Group('functional')]
 final class ChatToolsApiTest extends WebTestCase
@@ -83,13 +86,21 @@ final class ChatToolsApiTest extends WebTestCase
     public function testSignedUrlWorksForGuests(): void
     {
         $client = static::createClient();
+        static::getContainer()->set(ElevenLabsClient::class, new ElevenLabsClient(
+            new MockHttpClient(new MockResponse(json_encode([
+                'signed_url' => 'wss://example.test/conversation',
+            ], JSON_THROW_ON_ERROR))),
+            'test-api-key',
+            'test-agent-id',
+        ));
         $client->request('POST', '/api/chat/signed-url', server: [
             'CONTENT_TYPE' => 'application/json',
         ], content: '{}');
 
         self::assertResponseIsSuccessful();
-        /** @var array{guest: bool, chat_token: string, dynamic_variables: array{kiddo_is_guest: string}} $payload */
+        /** @var array{signed_url: string, guest: bool, chat_token: string, dynamic_variables: array{kiddo_is_guest: string}} $payload */
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('wss://example.test/conversation', $payload['signed_url']);
         self::assertTrue($payload['guest']);
         self::assertSame('true', $payload['dynamic_variables']['kiddo_is_guest']);
         self::assertNotEmpty($payload['chat_token']);
