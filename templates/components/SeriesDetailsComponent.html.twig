@@ -116,7 +116,7 @@
                                                             <div>
                                                                 <div class="font-bold text-sm text-slate-800">
                                                                     {{ booking.child.name|default('Brak dziecka') }}
-                                                                    <span class="text-xs text-slate-400 font-normal">({{ booking.child.birthDate|date('Y')|default('—') }})</span>
+                                                                    <span class="text-xs text-slate-400 font-normal">({{ booking.child.birthday ? booking.child.birthday|date('Y') : '—' }})</span>
                                                                 </div>
                                                                 <!-- Hover dla danych rodzica -->
                                                                 <div class="relative group/parent inline-block">
