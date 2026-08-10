@@ -52,10 +52,7 @@ class RegisterUser extends AbstractController
                 'label' => 'form.register.name',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length([
-                        'min' => 2,
-                        'max' => 100,
-                    ]),
+                    new Assert\Length(min: 2, max: 100),
                 ],
             ])
             ->add('email', EmailType::class, [

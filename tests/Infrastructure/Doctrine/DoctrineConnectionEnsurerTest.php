@@ -6,6 +6,7 @@ namespace App\Tests\Infrastructure\Doctrine;
 
 use App\Infrastructure\Doctrine\DoctrineConnectionEnsurer;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Result;
 use PHPUnit\Framework\Attributes\Group;
@@ -63,7 +64,7 @@ final class DoctrineConnectionEnsurerTest extends TestCase
                 ++$calls;
 
                 return match ($calls) {
-                    1, 2 => throw new Exception('no connection to the server'),
+                    1, 2 => throw new ConnectionException('no connection to the server'),
                     default => $this->createMock(Result::class),
                 };
             });
@@ -90,7 +91,7 @@ final class DoctrineConnectionEnsurerTest extends TestCase
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturnCallback(function (): void {
-                throw new Exception('no connection to the server');
+                throw new ConnectionException('no connection to the server');
             });
         $connection->expects($this->exactly(2))
             ->method('close');

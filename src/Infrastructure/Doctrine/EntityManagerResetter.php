@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ServicesResetterInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\HttpKernel\DependencyInjection\ServicesResetterInterface;
 
 #[AsEventListener(event: 'kernel.terminate', method: 'reset')]
 final class EntityManagerResetter implements ServicesResetterInterface

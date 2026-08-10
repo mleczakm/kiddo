@@ -18,12 +18,6 @@ class LessonMapType extends JsonType
     public const NAME = 'lesson_map';
 
     #[\Override]
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    #[\Override]
     public function convertToPHPValue($value, AbstractPlatform $platform): ?LessonMap
     {
         if ($value === null || $value === '') {
@@ -129,11 +123,5 @@ class LessonMapType extends JsonType
             $data['reason'] = $bookedLesson->reason;
         }
         return $data;
-    }
-
-    #[\Override]
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
     }
 }

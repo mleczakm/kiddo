@@ -1,2 +1,2 @@
 health_check:
-    resource: '@SymfonyHealthCheckBundle/Resources/config/routes.xml'
+    resource: '@SymfonyHealthCheckBundle/Resources/config/routes.php'
