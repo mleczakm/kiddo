@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Application\Chat;
 
 use App\Application\Command\AddBooking;
+use App\Application\Command\Notification\SendVerificationCode;
 use App\Entity\Child;
 use App\Entity\PaymentFactory;
+use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
@@ -15,11 +17,16 @@ use App\Repository\ChildRepository;
 use App\Repository\LessonRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\PaymentCodeRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Uid\Ulid;
 
 #[AutoconfigureTag('app.chat_tool_provider')]
@@ -34,6 +41,11 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         private NotificationRepository $notificationRepository,
         private PaymentCodeRepository $paymentCodeRepository,
         private LessonPresenter $presenter,
+        private UserRepository $userRepository,
+        private ChatTokenManager $tokenManager,
+        #[Autowire(service: 'limiter.auth_email_limiter')]
+        private RateLimiterFactory $authEmailRateLimiter,
+        private CacheItemPoolInterface $cache,
     ) {}
 
     public function definitions(): array
@@ -300,6 +312,48 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 'required' => ['confirm', 'notification_id'],
             ], requiresConfirm: true),
+            new ToolDefinition('user.register', 'Register a new user account. A 6-digit verification code is emailed to the user; ask them to read it back, then call user.login_with_code.', [
+                'type' => 'object',
+                'properties' => [
+                    'email' => [
+                        'type' => 'string',
+                        'description' => 'User email address',
+                    ],
+                    'name' => [
+                        'type' => 'string',
+                        'description' => 'User full name',
+                    ],
+                    'phone' => [
+                        'type' => 'string',
+                        'description' => 'Polish phone number (optional)',
+                    ],
+                ],
+                'required' => ['email', 'name'],
+            ], requiresAuth: false),
+            new ToolDefinition('user.request_login_code', 'Request a login verification code via email. Rate limited: 3 per hour per email.', [
+                'type' => 'object',
+                'properties' => [
+                    'email' => [
+                        'type' => 'string',
+                        'description' => 'User email address',
+                    ],
+                ],
+                'required' => ['email'],
+            ], requiresAuth: false),
+            new ToolDefinition('user.login_with_code', 'Authenticate with email and verification code to get chat token.', [
+                'type' => 'object',
+                'properties' => [
+                    'email' => [
+                        'type' => 'string',
+                        'description' => 'User email address',
+                    ],
+                    'code' => [
+                        'type' => 'string',
+                        'description' => '6-digit verification code',
+                    ],
+                ],
+                'required' => ['email', 'code'],
+            ], requiresAuth: false),
         ];
     }
 
@@ -333,6 +387,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'user.list_notifications' => $this->listNotifications($actor, $args),
                 'user.mark_notification_read' => $this->markNotificationRead($actor, $args),
                 'user.delete_notification' => $this->deleteNotification($actor, $args),
+                'user.register' => $this->registerUser($args),
+                'user.request_login_code' => $this->requestLoginCode($args),
+                'user.login_with_code' => $this->loginWithCode($args),
                 default => ToolResult::failure(sprintf('Unknown user tool: %s', $name)),
             };
         } catch (\InvalidArgumentException $e) {
@@ -770,5 +827,129 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $this->entityManager->flush();
 
         return ToolResult::success('Powiadomienie usunięte.');
+    }
+
+    private function registerUser(ToolArguments $args): ToolResult
+    {
+        $email = $args->requireString('email');
+        $name = $args->requireString('name');
+        $phone = $args->string('phone');
+
+        if ($this->userRepository->findOneBy(['email' => $email])) {
+            return ToolResult::failure('Email already registered');
+        }
+
+        $user = new User();
+        $user->setEmail($email);
+        $user->setName($name);
+        $user->setRoles(['ROLE_USER']);
+
+        if ($phone !== null && $phone !== '') {
+            try {
+                $phoneObj = PhoneNumberUtil::getInstance()->parse($phone, 'PL');
+                $user->setPhone($phoneObj);
+            } catch (NumberParseException) {
+                return ToolResult::failure('Invalid phone number');
+            }
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $this->issueVerificationCode($user->getEmail());
+
+        return ToolResult::success(
+            'Registration successful. A verification code has been sent to the user\'s email. Ask them to read it back to you.',
+            ['user_id' => $user->getId()]
+        );
+    }
+
+    private function requestLoginCode(ToolArguments $args): ToolResult
+    {
+        $email = $args->requireString('email');
+
+        // Rate limit per email (3 codes per hour)
+        $limiter = $this->authEmailRateLimiter->create($email);
+        $limit = $limiter->consume(1);
+        if (! $limit->isAccepted()) {
+            $retryAfter = $limit->getRetryAfter()->getTimestamp() - time();
+
+            return ToolResult::failure(sprintf(
+                'Too many code requests. Please try again in %d seconds.',
+                $retryAfter
+            ));
+        }
+
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+        if (! $user) {
+            return ToolResult::failure('User not found');
+        }
+
+        $this->issueVerificationCode($user->getEmail());
+
+        return ToolResult::success('Verification code sent to the user\'s email.');
+    }
+
+    private function loginWithCode(ToolArguments $args): ToolResult
+    {
+        $email = $args->requireString('email');
+        $code = $args->requireString('code');
+
+        $cacheKey = $this->verificationCodeCacheKey($email);
+        $item = $this->cache->getItem($cacheKey);
+        $storedCode = $item->get();
+
+        if (! $item->isHit() || ! is_string($storedCode) || ! hash_equals($storedCode, $code)) {
+            return ToolResult::failure('Invalid or expired code');
+        }
+
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+        if (! $user) {
+            return ToolResult::failure('User not found');
+        }
+
+        $this->cache->deleteItem($cacheKey);
+
+        if ($user->getConfirmedAt() === null) {
+            $user->setConfirmedAt(Clock::get()->now());
+        }
+        $user->setLastLoginAt(Clock::get()->now());
+        $this->entityManager->flush();
+
+        $chatToken = $this->tokenManager->mint($user);
+
+        return ToolResult::success(
+            'Login successful',
+            [
+                'chat_token' => $chatToken,
+                'user' => [
+                    'id' => $user->getId(),
+                    'email' => $user->getEmail(),
+                    'name' => $user->getName(),
+                ],
+            ]
+        );
+    }
+
+    private function issueVerificationCode(string $email): void
+    {
+        $code = $this->generateVerificationCode();
+        $item = $this->cache->getItem($this->verificationCodeCacheKey($email));
+        $item->set($code);
+        $item->expiresAfter(600);
+        $this->cache->save($item);
+
+        $this->bus->dispatch(new SendVerificationCode($email, $code));
+    }
+
+    private function verificationCodeCacheKey(string $email): string
+    {
+        // PSR-6 keys forbid {}()/\@: — hash the (lowercased) address instead of sanitizing it.
+        return sprintf('verification_code_%s', hash('xxh3', mb_strtolower($email)));
+    }
+
+    private function generateVerificationCode(): string
+    {
+        return sprintf('%06d', random_int(0, 999999));
     }
 }
