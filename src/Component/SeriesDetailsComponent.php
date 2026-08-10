@@ -15,6 +15,7 @@ use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -177,13 +178,14 @@ class SeriesDetailsComponent extends AbstractController
     }
 
     #[LiveAction]
-    public function expandLesson(Ulid $lessonId): void
+    public function expandLesson(#[LiveArg] string $lessonId): void
     {
-        $this->expandedLessonId = $this->expandedLessonId === $lessonId ? null : $lessonId;
+        $id = Ulid::fromString($lessonId);
+        $this->expandedLessonId = $this->expandedLessonId?->equals($id) === true ? null : $id;
     }
 
     #[LiveAction]
-    public function approveBooking(string $bookingId): void
+    public function approveBooking(#[LiveArg] string $bookingId): void
     {
         $booking = $this->entityManager->getRepository(Booking::class)->find($bookingId);
         if ($booking === null) {
