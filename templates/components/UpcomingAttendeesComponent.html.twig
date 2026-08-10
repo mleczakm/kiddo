@@ -167,7 +167,7 @@
                                                 {% endif %}
                                             </span>
                                             {% set bId = booking.id %}
-                                            <div class="relative">
+                                            <div class="relative" data-controller="dropdown-outside-click">
                                                 <button type="button"
                                                         data-action="click->live#action"
                                                         data-live-action-param="openActions"
@@ -176,12 +176,16 @@
                                                     {{ 'admin_dashboard.upcoming_attendees.actions'|trans }}
                                                 </button>
                                                 {% if this.actionsForBookingId and this.actionsForBookingId == (bId ~ '') %}
-                                                    <div class="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-200 bg-white shadow-xl z-20 overflow-hidden">
-                                                        <div class="py-1.5">
+                                                    <div class="absolute right-0 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-white shadow-xl z-20 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+                                                        <button type="button" hidden
+                                                                data-action="click->live#action"
+                                                                data-live-action-param="closeActions"
+                                                                onclick="this.closest('.relative').querySelector('dialog')?.remove()"></button>
+                                                        <div class="py-1">
                                                             {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
                                                             {% if not isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                                        class="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="payForBooking"
                                                                         data-live-booking-id-param="{{ bId }}"
@@ -193,17 +197,10 @@
                                                             <div class="px-1">
                                                                 {{ component('App\\UserInterface\\Http\\Component\\BookingCancellationModal', { booking: booking, lesson: lesson }) }}
                                                             </div>
-                                                            <button type="button"
-                                                                    class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                                                                    data-action="click->live#action"
-                                                                    data-live-action-param="closeActions"
-                                                                    onclick="this.closest('.relative').querySelector('dialog')?.remove()">
-                                                                Zamknij
-                                                            </button>
                                                             <div class="border-t border-slate-100 my-1"></div>
                                                             {% if isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                                        class="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markUnpaid"
                                                                         data-live-booking-id-param="{{ bId }}">
@@ -211,7 +208,7 @@
                                                                 </button>
                                                             {% else %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                                        class="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markPaid"
                                                                         data-live-booking-id-param="{{ bId }}">
@@ -246,7 +243,7 @@
                                                 {% endif %}
                                             </span>
                                             {% set bId = booking.id %}
-                                            <div class="relative">
+                                            <div class="relative" data-controller="dropdown-outside-click">
                                                 <button type="button"
                                                         data-action="click->live#action"
                                                         data-live-action-param="openActions"
@@ -255,12 +252,16 @@
                                                     {{ 'admin_dashboard.upcoming_attendees.actions'|trans }}
                                                 </button>
                                                 {% if this.actionsForBookingId and this.actionsForBookingId == (bId ~ '') %}
-                                                    <div class="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-200 bg-white shadow-xl z-20 overflow-hidden">
-                                                        <div class="py-1.5">
+                                                    <div class="absolute right-0 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-white shadow-xl z-20 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+                                                        <button type="button" hidden
+                                                                data-action="click->live#action"
+                                                                data-live-action-param="closeActions"
+                                                                onclick="this.closest('.relative').querySelector('dialog')?.remove()"></button>
+                                                        <div class="py-1">
                                                             {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
                                                             {% if not isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                                        class="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="payForBooking"
                                                                         data-live-booking-id-param="{{ bId }}"
@@ -272,17 +273,10 @@
                                                             <div class="px-1">
                                                                 {{ component('App\\UserInterface\\Http\\Component\\BookingCancellationModal', { booking: booking, lesson: lesson }) }}
                                                             </div>
-                                                            <button type="button"
-                                                                    class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                                                                    data-action="click->live#action"
-                                                                    data-live-action-param="closeActions"
-                                                                    onclick="this.closest('.relative').querySelector('dialog')?.remove()">
-                                                                Zamknij
-                                                            </button>
                                                             <div class="border-t border-slate-100 my-1"></div>
                                                             {% if isPaid %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                                        class="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markUnpaid"
                                                                         data-live-booking-id-param="{{ bId }}">
@@ -290,7 +284,7 @@
                                                                 </button>
                                                             {% else %}
                                                                 <button type="button"
-                                                                        class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                                        class="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                                                                         data-action="click->live#action"
                                                                         data-live-action-param="markPaid"
                                                                         data-live-booking-id-param="{{ bId }}">
