@@ -1,0 +1,7 @@
+framework:
+    rate_limiter:
+        mcp_ip_limiter:
+            # 100 requests per hour per IP
+            policy: 'sliding_window'
+            limit: 100
+            interval: '1 hour'

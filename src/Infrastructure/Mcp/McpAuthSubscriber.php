@@ -10,6 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 /**
  * Guards the Symfony MCP Bundle HTTP endpoint with optional service key + chat feature flag.
@@ -20,6 +21,8 @@ final readonly class McpAuthSubscriber implements EventSubscriberInterface
         private FeatureManager $featureManager,
         #[Autowire('%env(KIDDO_MCP_SERVICE_KEY)%')]
         private string $serviceKey,
+        #[Autowire(service: 'limiter.mcp_ip_limiter')]
+        private RateLimiterFactory $mcpRateLimiter,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -53,10 +56,24 @@ final readonly class McpAuthSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // Apply IP-based rate limiting
+        $limiter = $this->mcpRateLimiter->create($request->getClientIp());
+        $limit = $limiter->consume(1);
+        if (! $limit->isAccepted()) {
+            $event->setResponse(new JsonResponse([
+                'error' => 'Rate limit exceeded',
+                'retry_after' => $limit->getRetryAfter()->getTimestamp() - time(),
+            ], 429));
+
+            return;
+        }
+
+        // If no service key is configured, allow public access
         if ($this->serviceKey === '') {
             return;
         }
 
+        // If service key is configured, require it (for ElevenLabs)
         $key = $request->headers->get('X-Kiddo-Mcp-Key')
             ?? $request->headers->get('X-Api-Key');
         if (! is_string($key) || $key === '') {
