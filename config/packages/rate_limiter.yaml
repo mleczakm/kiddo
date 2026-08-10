@@ -5,3 +5,13 @@ framework:
             policy: 'sliding_window'
             limit: 100
             interval: '1 hour'
+        auth_email_limiter:
+            # 3 code requests per hour per email
+            policy: 'sliding_window'
+            limit: 3
+            interval: '1 hour'
+        auth_ip_limiter:
+            # 20 register/verify/login attempts per hour per IP
+            policy: 'sliding_window'
+            limit: 20
+            interval: '1 hour'

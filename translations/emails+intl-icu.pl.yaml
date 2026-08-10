@@ -3,6 +3,13 @@ exception: Załączony ślad stosu wyjątku.
 link_warning_upper: Jeśli powyższy przycisk nie działa, możesz skopiować i wkleić poniższy link do swojej przeglądarki
 link_warning_underlying: Jeśli nie prosiłeś(-aś) o link do logowania, zignoruj tę wiadomość. Bezpieczeństwo Twojego konta jest dla nas ważne.
 
+verification_code:
+  subject: 'Twój kod weryfikacyjny'
+  content: |
+    Twój kod weryfikacyjny to: {code}
+
+    Kod jest ważny przez 10 minut. Jeśli nie prosiłeś(-aś) o ten kod, zignoruj tę wiadomość.
+
 login_link:
   subject: 'Zaloguj się do swojego konta'
   register_subject: 'Potwierdzenie rejestracji'

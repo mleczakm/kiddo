@@ -35,6 +35,7 @@ framework:
             'App\Application\Command\SaveTransfer': sync
             'App\Application\Command\MatchPaymentForTransfer': sync
             'App\Application\Command\SendLoginNotification': sync
+            'App\Application\Command\Notification\SendVerificationCode': sync
             'App\Application\Command\SendReservationNotification': sync
             # Route everything else to async
             '*': async
