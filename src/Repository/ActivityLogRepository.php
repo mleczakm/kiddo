@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\ActivityLog;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,6 +29,24 @@ class ActivityLogRepository extends ServiceEntityRepository
             // createdAt has only second precision in the DB; break ties with the
             // ULID (itself time-ordered) so rows created in the same second still
             // come back in the order they actually happened.
+            ->orderBy('a.createdAt', 'DESC')
+            ->addOrderBy('a.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
+     * @return ActivityLog[]
+     */
+    public function findBySubject(User $subject, int $limit = 20): array
+    {
+        /** @var list<ActivityLog> $result */
+        $result = $this->createQueryBuilder('a')
+            ->andWhere('a.subject = :subject')
+            ->setParameter('subject', $subject)
             ->orderBy('a.createdAt', 'DESC')
             ->addOrderBy('a.id', 'DESC')
             ->setMaxResults($limit)

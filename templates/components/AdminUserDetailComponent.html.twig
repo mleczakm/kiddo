@@ -1,0 +1,210 @@
+<div {{ attributes }} class="space-y-6">
+    {% set user = this.getUser() %}
+
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between gap-4">
+            <h3 class="text-lg font-black text-slate-800">Dane osobowe</h3>
+            <button type="button"
+                    data-action="live#action" data-live-action-param="startCompose"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                Wyślij powiadomienie
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Imię i nazwisko</label>
+                    {% if this.editingField == 'name' %}
+                        <input type="text" data-model="fieldValue" autofocus
+                               data-action="blur->live#action" data-live-action-param="saveField"
+                               class="mt-1 w-full border-0 border-b-2 border-indigo-500 bg-transparent px-0 py-0.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-0">
+                        {% if this.fieldError %}<p class="mt-1 text-xs font-semibold text-red-600">{{ this.fieldError }}</p>{% endif %}
+                    {% else %}
+                        <p class="mt-1 cursor-pointer rounded-lg text-sm font-bold text-slate-800 transition hover:bg-slate-50 hover:text-indigo-600"
+                           data-action="click->live#action" data-live-action-param="startEditField" data-live-field-param="name"
+                           title="Kliknij, aby edytować">{{ user.name }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Email</label>
+                    <p class="text-sm font-bold text-slate-800 mt-1">{{ user.email }}</p>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Telefon</label>
+                    {% if this.editingField == 'phone' %}
+                        <input type="text" data-model="fieldValue" autofocus placeholder="+48 500 100 100"
+                               data-action="blur->live#action" data-live-action-param="saveField"
+                               class="mt-1 w-full border-0 border-b-2 border-indigo-500 bg-transparent px-0 py-0.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-0">
+                        {% if this.fieldError %}<p class="mt-1 text-xs font-semibold text-red-600">{{ this.fieldError }}</p>{% endif %}
+                    {% else %}
+                        <p class="mt-1 cursor-pointer rounded-lg text-sm font-bold text-slate-800 transition hover:bg-slate-50 hover:text-indigo-600"
+                           data-action="click->live#action" data-live-action-param="startEditField" data-live-field-param="phone"
+                           title="Kliknij, aby edytować">{{ user.getPhone() ? user.getPhone()|phone_number_format : 'Kliknij, aby dodać' }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Data rejestracji</label>
+                    <p class="text-sm font-bold text-slate-800 mt-1">{{ user.getCreatedAt() ? user.getCreatedAt()|date('Y-m-d H:i') ~ ' UTC' : '-' }}</p>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ostatnie logowanie</label>
+                    <p class="text-sm font-bold text-slate-800 mt-1">{{ user.getLastLoginAt() ? user.getLastLoginAt()|date('Y-m-d H:i') ~ ' UTC' : 'Nigdy' }}</p>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Email potwierdzony</label>
+                    <p class="text-sm font-bold mt-1">
+                        {% if user.getConfirmedAt() %}
+                            <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">Potwierdzony {{ user.getConfirmedAt()|date('Y-m-d') }}</span>
+                        {% else %}
+                            <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-amber-100 text-amber-700">Niepotwierdzony</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Newsletter</label>
+                    <p class="text-sm font-bold mt-1">
+                        {% if user.isNewsletterSubscribed() %}
+                            <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ user.getNewsletterConsentDate() ? ('Zapisany od ' ~ user.getNewsletterConsentDate()|date('Y-m-d')) : 'Zapisany' }}</span>
+                        {% else %}
+                            <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">Niezapisany</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Role</label>
+                    <p class="text-sm font-bold text-slate-800 mt-1">
+                        {{ user.roles|map(role => '<span class="px-2 py-0.5 bg-slate-100 rounded text-xs text-slate-600 font-semibold">' ~ role ~ '</span>')|join(' ')|raw }}
+                    </p>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notatka administracyjna</label>
+                    {% if this.editingField == 'adminNote' %}
+                        <textarea data-model="fieldValue" rows="3" autofocus placeholder="Dodaj notatkę widoczną tylko dla zespołu…"
+                                  data-action="input->live#action" data-live-action-param="debounce(600)|saveField"
+                                  class="mt-1 w-full resize-y border-0 border-b-2 border-indigo-500 bg-transparent px-0 py-1 text-sm text-slate-800 focus:outline-none focus:ring-0"></textarea>
+                        {% if this.fieldError %}<p class="mt-1 text-xs font-semibold text-red-600">{{ this.fieldError }}</p>{% endif %}
+                    {% else %}
+                        <p class="mt-1 cursor-pointer rounded-lg text-sm text-slate-500 transition hover:bg-slate-50 hover:text-indigo-600"
+                           data-action="click->live#action" data-live-action-param="startEditField" data-live-field-param="adminNote"
+                           title="Kliknij, aby edytować">{{ user.getAdminNote() ?: 'Kliknij, aby dodać notatkę…' }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if this.composingNotification %}
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+            <div class="bg-white w-full sm:max-w-md rounded-2xl shadow-2xl flex flex-col animate-in fade-in-0 zoom-in-95 duration-200">
+                <div class="flex justify-between items-center p-6 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-lg font-black text-slate-800">Wyślij powiadomienie</h2>
+                        <p class="text-sm text-slate-500">{{ user.name }} ({{ user.email }})</p>
+                    </div>
+                    <button data-action="live#action" data-live-action-param="cancelCompose" class="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tytuł</label>
+                        <input type="text" data-model="notifyTitle" class="w-full mt-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Treść (opcjonalnie)</label>
+                        <textarea data-model="notifyBody" rows="3" class="w-full mt-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 p-6 border-t border-slate-100">
+                    <button data-action="live#action" data-live-action-param="cancelCompose" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition">Anuluj</button>
+                    <button data-action="live#action" data-live-action-param="sendNotification" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm transition">Wyślij</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Children Profiles #}
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between gap-4">
+            <h3 class="text-lg font-black text-slate-800">Profile dzieci</h3>
+            <button type="button" data-action="live#action" data-live-action-param="startAddChild"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                Dodaj dziecko
+            </button>
+        </div>
+        <div class="p-6">
+            {% if this.addingChild %}
+                <div class="mb-4 rounded-xl border border-indigo-200 bg-indigo-50/50 p-4 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Imię</label>
+                            <input type="text" data-model="newChildName" autofocus class="w-full mt-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Data urodzenia</label>
+                            <input type="date" data-model="newChildBirthday" class="w-full mt-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" data-action="live#action" data-live-action-param="cancelAddChild" class="px-3 py-1.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Anuluj</button>
+                        <button type="button" data-action="live#action" data-live-action-param="saveNewChild" class="px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Zapisz dziecko</button>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for child in this.getChildren() %}
+                    {% if this.editingChildId == (child.id ~ '') %}
+                        <div class="rounded-xl border border-indigo-200 bg-indigo-50/50 p-4 space-y-2">
+                            <input type="text" data-model="editChildName" class="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="date" data-model="editChildBirthday" class="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <div class="flex justify-end gap-2 pt-1">
+                                <button type="button" data-action="live#action" data-live-action-param="cancelEditChild" class="px-2.5 py-1 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Anuluj</button>
+                                <button type="button" data-action="live#action" data-live-action-param="saveChild" class="px-2.5 py-1 text-xs font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Zapisz</button>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex cursor-pointer items-center gap-4 rounded-xl border border-slate-200 p-4 bg-slate-50/50 transition hover:border-indigo-300 hover:bg-indigo-50/30"
+                             data-action="click->live#action" data-live-action-param="startEditChild" data-live-child-id-param="{{ child.id }}"
+                             title="Kliknij, aby edytować">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-black text-lg shrink-0">
+                                {{ child.name|first|upper }}
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-slate-800 truncate">{{ child.name }}</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">
+                                    {{ child.birthday ? child.birthday|date('Y-m-d') : 'Data urodzenia nieznana' }}
+                                    {% if child.getAgeYears() is not null %}· {{ child.getAgeYears() }} lat{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-slate-400 font-medium italic col-span-full">Brak przypisanych dzieci.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# Change history #}
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-slate-50">
+            <h3 class="text-lg font-black text-slate-800">Historia zmian</h3>
+        </div>
+        <div class="divide-y divide-slate-100">
+            {% for entry in this.getHistory() %}
+                <div class="p-4 flex items-start justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold text-slate-800">{{ entry.title }}</p>
+                        {% if entry.summary %}<p class="text-xs text-slate-500 mt-0.5">{{ entry.summary }}</p>{% endif %}
+                    </div>
+                    <p class="text-xs text-slate-400 whitespace-nowrap shrink-0">{{ entry.createdAt|date('Y-m-d H:i') }}</p>
+                </div>
+            {% else %}
+                <p class="p-8 text-center text-slate-400 font-medium italic">Brak zarejestrowanych zmian.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>

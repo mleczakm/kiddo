@@ -94,6 +94,7 @@ final readonly class AdminActivityLogComponent
             ActivityType::TRANSFER_UNMATCHED => 'alert-triangle',
             ActivityType::NEWSLETTER_SUBSCRIBED => 'mail',
             ActivityType::CUSTOMER_MESSAGE => 'message-circle',
+            ActivityType::USER_PROFILE_UPDATED => 'user-cog',
         };
     }
 
@@ -107,6 +108,7 @@ final readonly class AdminActivityLogComponent
             ActivityType::PAYMENT_RECEIVED, ActivityType::PAYMENT_MARKED_PAID => 'emerald',
             ActivityType::TRANSFER_UNMATCHED => 'red',
             ActivityType::CUSTOMER_MESSAGE => 'slate',
+            ActivityType::USER_PROFILE_UPDATED => 'slate',
         };
     }
 }

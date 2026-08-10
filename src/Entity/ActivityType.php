@@ -19,4 +19,5 @@ enum ActivityType: string
     case TRANSFER_UNMATCHED = 'transfer_unmatched';
     case NEWSLETTER_SUBSCRIBED = 'newsletter_subscribed';
     case CUSTOMER_MESSAGE = 'customer_message';
+    case USER_PROFILE_UPDATED = 'user_profile_updated';
 }

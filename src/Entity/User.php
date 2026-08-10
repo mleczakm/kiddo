@@ -46,6 +46,9 @@ class User implements UserInterface
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $telegramChatId = null;
 
+    #[ORM\Column(type: 'string', length: 1000, nullable: true)]
+    private ?string $adminNote = null;
+
     #[ORM\Column(length: 255)]
     private string $name;
 
@@ -197,6 +200,18 @@ class User implements UserInterface
     public function setTelegramChatId(?string $telegramChatId): static
     {
         $this->telegramChatId = $telegramChatId;
+
+        return $this;
+    }
+
+    public function getAdminNote(): ?string
+    {
+        return $this->adminNote;
+    }
+
+    public function setAdminNote(?string $adminNote): static
+    {
+        $this->adminNote = $adminNote;
 
         return $this;
     }
