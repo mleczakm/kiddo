@@ -44,11 +44,15 @@ final class AdminUserDetailComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(
             name: AdminUserDetailComponent::class,
-            data: ['userId' => $customer->getId()],
+            data: [
+                'userId' => $customer->getId(),
+            ],
             client: $this->client,
         );
 
-        $component->call('startEditField', ['field' => 'adminNote']);
+        $component->call('startEditField', [
+            'field' => 'adminNote',
+        ]);
         $component->set('fieldValue', 'Preferuje kontakt telefoniczny po 16:00.');
         // Both the debounced "input" auto-save and the "blur" save call the same
         // saveField action with no arguments - it always commits and exits.
@@ -58,7 +62,9 @@ final class AdminUserDetailComponentTest extends WebTestCase
         $state = $component->component();
         self::assertNull($state->editingField, 'saving must return to display mode');
 
-        $reloaded = $this->em->getRepository(User::class)->find($customer->getId()) ?? throw new \LogicException('User not found');
+        $reloaded = $this->em->getRepository(User::class)->find($customer->getId()) ?? throw new \LogicException(
+            'User not found'
+        );
         self::assertSame('Preferuje kontakt telefoniczny po 16:00.', $reloaded->getAdminNote());
 
         $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($reloaded);
@@ -79,11 +85,15 @@ final class AdminUserDetailComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(
             name: AdminUserDetailComponent::class,
-            data: ['userId' => $customer->getId()],
+            data: [
+                'userId' => $customer->getId(),
+            ],
             client: $this->client,
         );
 
-        $component->call('startEditField', ['field' => 'name']);
+        $component->call('startEditField', [
+            'field' => 'name',
+        ]);
         $component->set('fieldValue', '   ');
         $component->call('saveField', []);
 
@@ -106,7 +116,9 @@ final class AdminUserDetailComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(
             name: AdminUserDetailComponent::class,
-            data: ['userId' => $customer->getId()],
+            data: [
+                'userId' => $customer->getId(),
+            ],
             client: $this->client,
         );
 
@@ -115,7 +127,9 @@ final class AdminUserDetailComponentTest extends WebTestCase
         $component->set('notifyBody', 'Twoje konto jest gotowe.');
         $component->call('sendNotification');
 
-        $notifications = $this->em->getRepository(Notification::class)->findBy(['user' => $customer]);
+        $notifications = $this->em->getRepository(Notification::class)->findBy([
+            'user' => $customer,
+        ]);
         self::assertCount(1, $notifications);
         self::assertSame('Witamy!', $notifications[0]->getTitle());
 
@@ -137,7 +151,9 @@ final class AdminUserDetailComponentTest extends WebTestCase
 
         $component = $this->createLiveComponent(
             name: AdminUserDetailComponent::class,
-            data: ['userId' => $customer->getId()],
+            data: [
+                'userId' => $customer->getId(),
+            ],
             client: $this->client,
         );
 

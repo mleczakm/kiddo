@@ -87,6 +87,7 @@ final class AdminUserDetailComponent extends AbstractController
         private readonly ActivityLogRepository $activityLogRepository,
     ) {}
 
+    #[\Override]
     public function getUser(): User
     {
         return $this->userRepository->find($this->userId) ?? throw new \LogicException('User not found');
@@ -106,7 +107,7 @@ final class AdminUserDetailComponent extends AbstractController
     public function getHistory(): array
     {
         return array_values(array_map(
-            static fn ($log): array => [
+            static fn($log): array => [
                 'title' => $log->getTitle(),
                 'summary' => $log->getSummary(),
                 'createdAt' => $log->getCreatedAt(),
@@ -131,7 +132,6 @@ final class AdminUserDetailComponent extends AbstractController
             'phone' => $user->getPhone()?->getNationalNumber() !== null
                 ? '+' . $user->getPhone()->getCountryCode() . $user->getPhone()->getNationalNumber()
                 : '',
-            default => '',
         };
     }
 
@@ -161,7 +161,6 @@ final class AdminUserDetailComponent extends AbstractController
             'phone' => $user->getPhone()?->getNationalNumber() !== null
                 ? '+' . $user->getPhone()->getCountryCode() . $user->getPhone()->getNationalNumber()
                 : '',
-            default => '',
         };
 
         if ($before === $value) {
@@ -173,7 +172,6 @@ final class AdminUserDetailComponent extends AbstractController
             'adminNote' => 'Notatkę administracyjną',
             'name' => 'Imię i nazwisko',
             'phone' => 'Telefon',
-            default => $field,
         };
 
         switch ($field) {
@@ -207,7 +205,12 @@ final class AdminUserDetailComponent extends AbstractController
             type: ActivityType::USER_PROFILE_UPDATED,
             title: sprintf('Zaktualizowano dane użytkownika %s', $user->getName()),
             subject: $user,
-            summary: sprintf('%s: „%s” → „%s”', $fieldLabel, $before !== '' ? $before : '—', $value !== '' ? $value : '—'),
+            summary: sprintf(
+                '%s: „%s” → „%s”',
+                $fieldLabel,
+                $before !== '' ? $before : '—',
+                $value !== '' ? $value : '—'
+            ),
         );
 
         $this->cancelEditField();
