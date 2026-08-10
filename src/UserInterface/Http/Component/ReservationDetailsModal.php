@@ -68,7 +68,7 @@ final class ReservationDetailsModal extends AbstractController
     #[LiveListener('openReservationDetails')]
     public function open(#[LiveArg] string $bookingId, #[LiveArg] ?string $lessonId = null): void
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->findBooking($bookingId);
         if (! $booking instanceof Booking) {
             return;
@@ -113,7 +113,7 @@ final class ReservationDetailsModal extends AbstractController
     #[LiveAction]
     public function saveNote(): void
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->getBooking();
         if (! $booking instanceof Booking) {
             return;
@@ -128,7 +128,7 @@ final class ReservationDetailsModal extends AbstractController
     #[LiveAction]
     public function executeAction(): void
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->getBooking();
         $lesson = $this->getLesson();
         $actor = $this->getUser();
