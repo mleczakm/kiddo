@@ -641,6 +641,7 @@ admin_dashboard:
       paid: 'Opłacone'
       pending: 'Oczekuje'
       failed: 'Nieudane'
+      refunded: 'Zwrócone'
       expired: 'Wygasła'
       none: 'Brak'
     total_lessons: 'Łącznie Zajęć'
@@ -798,6 +799,12 @@ admin:
       status: "Status"
       code: "Kod"
       method: "Metoda"
+    status:
+      paid: "Opłacona"
+      pending: "Oczekująca"
+      failed: "Nieudana"
+      refunded: "Zwrócona"
+      expired: "Wygasła"
     empty: "Brak płatności w wybranym tygodniu"
     carnet: "Karnet"
   lessons:
@@ -944,6 +951,7 @@ common:
 # Payment system
 payment:
   pending_transfers: "Oczekujące przelewy"
+  no_transfers: "Brak przelewów"
   sender: "Nadawca"
   title: "Tytuł"
   amount: "Kwota"
