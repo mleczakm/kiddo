@@ -33,10 +33,7 @@ class PlatformBillingPaymentType extends AbstractType
                 ],
                 'constraints' => [
                     new NotBlank(),
-                    new Regex(
-                        pattern: '/^\d+([.,]\d{1,2})?$/',
-                        message: 'Podaj poprawną kwotę, np. 150,00',
-                    ),
+                    new Regex(pattern: '/^\d+([.,]\d{1,2})?$/', message: 'Podaj poprawną kwotę, np. 150,00'),
                 ],
             ])
             ->add('submit', SubmitType::class, [

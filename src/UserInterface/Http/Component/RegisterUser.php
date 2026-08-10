@@ -50,10 +50,7 @@ class RegisterUser extends AbstractController
         $form = $this->createFormBuilder($this->user)
             ->add('name', TextType::class, [
                 'label' => 'form.register.name',
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(min: 2, max: 100),
-                ],
+                'constraints' => [new Assert\NotBlank(), new Assert\Length(min: 2, max: 100)],
             ])
             ->add('email', EmailType::class, [
                 'constraints' => [new Assert\NotBlank(), new Assert\Email()],
