@@ -24,6 +24,10 @@ class Payment
 
     public const STATUS_REFUNDED = 'refunded';
 
+    public const STATUS_REFUND_REQUESTED = 'refund_requested';
+
+    public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_EXPIRED = 'expired';
 
     // Transitions
@@ -31,7 +35,11 @@ class Payment
 
     public const TRANSITION_FAIL = 'fail';
 
+    public const TRANSITION_REQUEST_REFUND = 'request_refund';
+
     public const TRANSITION_REFUND = 'refund';
+
+    public const TRANSITION_CANCEL = 'cancel';
 
     public const TRANSITION_EXPIRE = 'expire';
 
@@ -40,7 +48,9 @@ class Payment
         self::STATUS_PENDING,
         self::STATUS_PAID,
         self::STATUS_FAILED,
+        self::STATUS_REFUND_REQUESTED,
         self::STATUS_REFUNDED,
+        self::STATUS_CANCELLED,
         self::STATUS_EXPIRED,
     ];
 
@@ -48,7 +58,9 @@ class Payment
     public const TRANSITIONS = [
         self::TRANSITION_PAY,
         self::TRANSITION_FAIL,
+        self::TRANSITION_REQUEST_REFUND,
         self::TRANSITION_REFUND,
+        self::TRANSITION_CANCEL,
         self::TRANSITION_EXPIRE,
     ];
 
@@ -64,6 +76,31 @@ class Payment
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $refundRequestedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $refundRequestedBy = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $refundRequestMessage = null;
+
+    #[ORM\Column(options: [
+        'default' => false,
+    ])]
+    private bool $refundRequestedViaUserPanel = false;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $statusChangedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $statusChangedBy = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $statusNote = null;
 
     /**
      * @var Collection<int, Booking>
@@ -134,6 +171,9 @@ class Payment
                 break;
         }
 
+        if ($this->status !== $status) {
+            $this->statusChangedAt = new \DateTimeImmutable();
+        }
         $this->status = $status;
 
         return $this;
@@ -147,6 +187,60 @@ class Payment
     public function getPaidAt(): ?\DateTimeImmutable
     {
         return $this->paidAt;
+    }
+
+    public function recordRefundRequest(User $requestedBy, ?string $message, bool $viaUserPanel): self
+    {
+        $this->refundRequestedAt = new \DateTimeImmutable();
+        $this->refundRequestedBy = $requestedBy;
+        $this->refundRequestMessage = $message !== null && trim($message) !== '' ? trim($message) : null;
+        $this->refundRequestedViaUserPanel = $viaUserPanel;
+
+        return $this;
+    }
+
+    public function recordStatusDecision(User $changedBy, ?string $note): self
+    {
+        $this->statusChangedBy = $changedBy;
+        $this->statusNote = $note !== null && trim($note) !== '' ? trim($note) : null;
+        $this->statusChangedAt ??= new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getRefundRequestedAt(): ?\DateTimeImmutable
+    {
+        return $this->refundRequestedAt;
+    }
+
+    public function getRefundRequestedBy(): ?User
+    {
+        return $this->refundRequestedBy;
+    }
+
+    public function getRefundRequestMessage(): ?string
+    {
+        return $this->refundRequestMessage;
+    }
+
+    public function isRefundRequestedViaUserPanel(): bool
+    {
+        return $this->refundRequestedViaUserPanel;
+    }
+
+    public function getStatusChangedAt(): ?\DateTimeImmutable
+    {
+        return $this->statusChangedAt;
+    }
+
+    public function getStatusChangedBy(): ?User
+    {
+        return $this->statusChangedBy;
+    }
+
+    public function getStatusNote(): ?string
+    {
+        return $this->statusNote;
     }
 
     /**

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http\Component;
 
 use App\Entity\Booking;
+use App\Entity\Payment;
 use App\Entity\WorkshopType;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
+use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\SeriesAssembler;
 use App\Tests\Assembler\UserAssembler;
 use App\UserInterface\Http\Component\ReservationDetailsModal;
@@ -157,5 +159,43 @@ final class ReservationDetailsModalTest extends WebTestCase
         /** @var ReservationDetailsModal $modal */
         $modal = $component->component();
         self::assertSame('', $modal->action);
+    }
+
+    public function testAdminCanMarkRequestedRefundAsRefundedWithNote(): void
+    {
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $customer = UserAssembler::new()->assemble();
+        $lesson = LessonAssembler::new()->withSchedule(Clock::get()->now()->modify('+1 day'))->assemble();
+        $payment = PaymentAssembler::new()->withUser($customer)->withStatus(
+            Payment::STATUS_REFUND_REQUESTED
+        )->assemble();
+        $booking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withPayment($payment)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+
+        foreach ([$admin, $customer, $lesson, $payment, $booking] as $entity) {
+            $this->em->persist($entity);
+        }
+        $this->em->flush();
+        $this->client->loginUser($admin);
+
+        $component = $this->createLiveComponent(name: ReservationDetailsModal::class, client: $this->client);
+        $component->call('open', [
+            'bookingId' => (string) $booking->getId(),
+        ]);
+        $component->set('paymentNote', 'Zwrot bankowy nr 123');
+        $component->call('changePaymentStatus', [
+            'transition' => Payment::TRANSITION_REFUND,
+        ]);
+
+        $this->em->clear();
+        $updatedPayment = $this->em->find(Payment::class, $payment->getId());
+        self::assertInstanceOf(Payment::class, $updatedPayment);
+        self::assertSame(Payment::STATUS_REFUNDED, $updatedPayment->getStatus());
+        self::assertSame('Zwrot bankowy nr 123', $updatedPayment->getStatusNote());
+        self::assertSame($admin->getId(), $updatedPayment->getStatusChangedBy()?->getId());
     }
 }

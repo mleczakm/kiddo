@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Entity\MessageType;
+use App\Entity\Payment;
+use App\Entity\UserMessage;
 use App\Message\RefundLessonBooking;
 use App\Repository\BookingRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -17,8 +21,11 @@ class RefundLessonBookingHandler
     public function __construct(
         private readonly BookingRepository $bookingRepository,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
         #[Autowire(service: 'state_machine.booking')]
-        private readonly WorkflowInterface $bookingStateMachine
+        private readonly WorkflowInterface $bookingStateMachine,
+        #[Autowire(service: 'state_machine.payment')]
+        private readonly WorkflowInterface $paymentStateMachine,
     ) {}
 
     public function __invoke(RefundLessonBooking $command): void
@@ -89,6 +96,24 @@ class RefundLessonBookingHandler
 
         // Perform domain operation: mark the specific lesson refunded
         $booking->refundLesson($command->getLessonId()->toRfc4122(), $command->getReason());
+
+        $payment = $booking->getPayment();
+        if ($payment instanceof Payment && $payment->getStatus() === Payment::STATUS_PAID) {
+            $this->paymentStateMachine->apply($payment, Payment::TRANSITION_REQUEST_REFUND);
+            $payment->recordRefundRequest($command->getRefundedBy(), $command->getReason(), ! $isAdmin);
+        }
+
+        if (! $isAdmin) {
+            $message = new UserMessage(
+                user: $booking->getUser(),
+                subject: sprintf('Prośba o zwrot: %s', $lesson?->getMetadata()->title ?? 'zajęcia'),
+                message: $command->getReason() ?: 'Użytkownik poprosił o zwrot płatności za wybrane zajęcia.',
+                type: MessageType::REFUND_REQUEST,
+            );
+            $message->setRelatedBooking($booking);
+            $message->setRelatedLesson($lesson);
+            $this->entityManager->persist($message);
+        }
 
         // Log outcome
         $this->logger->info('Refund requested for a lesson within booking', [

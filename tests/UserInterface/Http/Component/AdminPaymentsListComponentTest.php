@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\Payment;
 use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\UserAssembler;
 use App\UserInterface\Http\Component\AdminPaymentsListComponent;
@@ -55,5 +56,32 @@ final class AdminPaymentsListComponentTest extends WebTestCase
         $rendered = (string) $component->render();
 
         self::assertStringContainsString('Online', $rendered);
+    }
+
+    public function testFiltersPaymentsByStatus(): void
+    {
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+        $customer = UserAssembler::new()->assemble();
+        $this->em->persist($customer);
+
+        $paid = PaymentAssembler::new()->withUser($customer)->withStatus(Payment::STATUS_PAID)->assemble();
+        $refundRequested = PaymentAssembler::new()->withUser($customer)->withStatus(
+            Payment::STATUS_REFUND_REQUESTED
+        )->assemble();
+        $this->em->persist($paid);
+        $this->em->persist($refundRequested);
+        $this->em->flush();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: AdminPaymentsListComponent::class, client: $this->client);
+        $component->set('status', Payment::STATUS_REFUND_REQUESTED);
+
+        /** @var AdminPaymentsListComponent $liveComponent */
+        $liveComponent = $component->component();
+        self::assertSame([(string) $refundRequested->getId()], array_map(
+            static fn(Payment $payment): string => (string) $payment->getId(),
+            $liveComponent->getPayments(),
+        ));
     }
 }

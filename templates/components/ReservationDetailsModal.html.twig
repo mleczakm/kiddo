@@ -117,12 +117,41 @@
                                 {% if payment %}
                                     <div class="flex items-baseline justify-between"><span class="text-sm text-slate-500">Kwota</span><strong class="text-xl text-slate-900">{{ payment.amount|money }}</strong></div>
                                     <dl class="mt-4 space-y-3 border-t border-slate-100 pt-4 text-sm">
-                                        <div class="flex justify-between gap-3"><dt class="text-slate-500">Status</dt><dd class="font-bold text-slate-800">{{ payment.status|trans }}</dd></div>
+                                        <div class="flex justify-between gap-3"><dt class="text-slate-500">Status</dt><dd class="font-bold text-slate-800">{{ ('admin.payments.status.' ~ payment.status)|trans }}</dd></div>
                                         <div class="flex justify-between gap-3"><dt class="text-slate-500">Metoda</dt><dd class="font-bold text-slate-800">{{ payment.method ? payment.method.value|trans : 'Nie określono' }}</dd></div>
                                         <div class="flex justify-between gap-3"><dt class="text-slate-500">Utworzono</dt><dd class="text-right font-semibold text-slate-700">{{ payment.createdAt|date('d.m.Y H:i') }}</dd></div>
                                         <div class="flex justify-between gap-3"><dt class="text-slate-500">Opłacono</dt><dd class="text-right font-semibold text-slate-700">{{ payment.paidAt ? payment.paidAt|date('d.m.Y H:i') : '—' }}</dd></div>
                                     </dl>
                                     {% if payment.transfers.count %}<div class="mt-4 rounded-xl bg-slate-50 p-3"><p class="mb-2 text-xs font-bold text-slate-500">Przelewy</p>{% for transfer in payment.transfers %}<div class="border-t border-slate-200 py-2 first:border-0"><p class="text-sm font-semibold text-slate-700">{{ transfer.sender }} · {{ transfer.amount }}</p><p class="text-xs text-slate-400">{{ transfer.transferredAt|date('d.m.Y H:i') }} · {{ transfer.title }}</p></div>{% endfor %}</div>{% endif %}
+
+                                    <div class="mt-5 border-t border-slate-100 pt-4">
+                                        <h4 class="mb-3 text-xs font-black uppercase tracking-wider text-slate-400">Historia płatności</h4>
+                                        <ol class="space-y-3 border-l-2 border-slate-200 pl-4 text-sm">
+                                            <li><p class="font-bold text-slate-700">Utworzono płatność</p><p class="text-xs text-slate-400">{{ payment.createdAt|date('d.m.Y H:i') }}</p></li>
+                                            {% if payment.paidAt %}<li><p class="font-bold text-emerald-700">Płatność otrzymana</p><p class="text-xs text-slate-400">{{ payment.paidAt|date('d.m.Y H:i') }}</p></li>{% endif %}
+                                            {% if payment.refundRequestedAt %}
+                                                <li>
+                                                    <p class="font-bold text-amber-700">Zwrot zgłoszony</p>
+                                                    <p class="text-xs text-slate-400">{{ payment.refundRequestedAt|date('d.m.Y H:i') }}{% if payment.refundRequestedBy %} · {{ payment.refundRequestedBy.name }}{% endif %}</p>
+                                                    {% if payment.refundRequestedViaUserPanel and payment.refundRequestMessage %}<div class="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-900"><span class="font-bold">Wiadomość użytkownika:</span> {{ payment.refundRequestMessage }}</div>{% elseif payment.refundRequestMessage %}<div class="mt-2 rounded-lg bg-slate-50 p-2 text-xs text-slate-700"><span class="font-bold">Powód/notatka:</span> {{ payment.refundRequestMessage }}</div>{% endif %}
+                                                </li>
+                                            {% endif %}
+                                            {% if payment.status in ['refunded', 'cancelled'] and payment.statusChangedAt %}
+                                                <li><p class="font-bold {{ payment.status == 'refunded' ? 'text-blue-700' : 'text-slate-700' }}">{{ ('admin.payments.status.' ~ payment.status)|trans }}</p><p class="text-xs text-slate-400">{{ payment.statusChangedAt|date('d.m.Y H:i') }}{% if payment.statusChangedBy %} · {{ payment.statusChangedBy.name }}{% endif %}</p>{% if payment.statusNote %}<p class="mt-1 text-xs text-slate-600">{{ payment.statusNote }}</p>{% endif %}</li>
+                                            {% endif %}
+                                        </ol>
+                                    </div>
+
+                                    {% if this.canChangePaymentStatus('refund') or this.canChangePaymentStatus('cancel') %}
+                                        <div class="mt-5 border-t border-slate-100 pt-4">
+                                            <label for="payment-note" class="mb-2 block text-xs font-bold text-slate-500">Notatka do decyzji (opcjonalnie)</label>
+                                            <textarea id="payment-note" data-model="paymentNote" rows="2" placeholder="Np. numer przelewu zwrotnego lub powód anulowania" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea>
+                                            <div class="mt-3 grid grid-cols-1 gap-2">
+                                                {% if this.canChangePaymentStatus('refund') %}<button type="button" data-action="live#action" data-live-action-param="changePaymentStatus" data-live-transition-param="refund" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700">Oznacz jako zwróconą</button>{% endif %}
+                                                {% if this.canChangePaymentStatus('cancel') %}<button type="button" data-action="live#action" data-live-action-param="changePaymentStatus" data-live-transition-param="cancel" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">Oznacz jako anulowaną</button>{% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 {% else %}<p class="text-sm text-slate-500">Do rezerwacji nie przypisano płatności.</p>{% endif %}
                             </section>
 

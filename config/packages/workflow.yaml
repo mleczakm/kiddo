@@ -54,7 +54,9 @@ framework:
                 - pending
                 - paid
                 - failed
+                - refund_requested
                 - refunded
+                - cancelled
                 - expired
             transitions:
                 pay:
@@ -64,10 +66,15 @@ framework:
                 fail:
                     from: pending
                     to: failed
-                refund:
+                request_refund:
                     from: paid
+                    to: refund_requested
+                refund:
+                    from: [paid, refund_requested]
                     to: refunded
+                cancel:
+                    from: [pending, paid, refund_requested]
+                    to: cancelled
                 expire:
                     from: pending
                     to: expired
-

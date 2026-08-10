@@ -807,8 +807,13 @@ admin:
       paid: "Opłacona"
       pending: "Oczekująca"
       failed: "Nieudana"
+      refund_requested: "Zwrot zgłoszony"
       refunded: "Zwrócona"
+      cancelled: "Anulowana"
       expired: "Wygasła"
+    filter:
+      status: "Filtruj według statusu"
+      all_statuses: "Wszystkie statusy"
     empty: "Brak płatności w wybranym tygodniu"
     carnet: "Karnet"
   lessons:

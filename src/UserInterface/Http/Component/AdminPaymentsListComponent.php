@@ -24,6 +24,9 @@ final class AdminPaymentsListComponent extends AbstractController
     #[LiveProp(writable: true, url: true)]
     public string $week;
 
+    #[LiveProp(writable: true, url: true)]
+    public string $status = 'all';
+
     public function mount(): void
     {
         // Default to current date if not set
@@ -50,10 +53,23 @@ final class AdminPaymentsListComponent extends AbstractController
             ->addOrderBy('p.paidAt', 'DESC')
             ->addOrderBy('p.createdAt', 'DESC');
 
+        if (in_array($this->status, Payment::STATUSES, true)) {
+            $qb->andWhere('p.status = :status')
+                ->setParameter('status', $this->status);
+        }
+
         /** @var list<Payment> $result */
         $result = $qb->getQuery()
             ->getResult();
         return $result;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getAvailableStatuses(): array
+    {
+        return Payment::STATUSES;
     }
 
     public function getWeekStart(): \DateTimeImmutable

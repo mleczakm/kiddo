@@ -7,6 +7,7 @@ namespace App\UserInterface\Http\Component;
 use App\Entity\Booking;
 use App\Entity\DTO\RescheduledLesson;
 use App\Entity\Lesson;
+use App\Entity\Payment;
 use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
@@ -15,9 +16,11 @@ use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -57,11 +60,16 @@ final class ReservationDetailsModal extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $errorMessage = null;
 
+    #[LiveProp(writable: true)]
+    public string $paymentNote = '';
+
     public function __construct(
         private readonly BookingRepository $bookingRepository,
         private readonly LessonRepository $lessonRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
+        #[Autowire(service: 'state_machine.payment')]
+        private readonly WorkflowInterface $paymentStateMachine,
     ) {}
 
     #[LiveAction]
@@ -77,6 +85,7 @@ final class ReservationDetailsModal extends AbstractController
         $this->bookingId = $bookingId;
         $this->lessonId = $lessonId ?? $this->firstRelevantLessonId($booking);
         $this->note = $booking->getNotes() ?? '';
+        $this->paymentNote = '';
         $this->modalOpened = true;
         $this->resetAction();
     }
@@ -123,6 +132,41 @@ final class ReservationDetailsModal extends AbstractController
         $this->entityManager->flush();
         $this->successMessage = 'Notatka została zapisana.';
         $this->errorMessage = null;
+    }
+
+    #[LiveAction]
+    public function changePaymentStatus(#[LiveArg] string $transition): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
+        $payment = $this->getBooking()?->getPayment();
+        $actor = $this->getUser();
+        if (! $payment instanceof Payment || ! $actor instanceof User) {
+            $this->errorMessage = 'Nie udało się odnaleźć płatności.';
+            return;
+        }
+
+        if (! in_array($transition, [Payment::TRANSITION_REFUND, Payment::TRANSITION_CANCEL], true)
+            || ! $this->paymentStateMachine->can($payment, $transition)) {
+            $this->errorMessage = 'Ta zmiana statusu płatności nie jest dostępna.';
+            return;
+        }
+
+        $this->paymentStateMachine->apply($payment, $transition);
+        $payment->recordStatusDecision($actor, $this->paymentNote);
+        $this->entityManager->flush();
+
+        $this->successMessage = $transition === Payment::TRANSITION_REFUND
+            ? 'Płatność została oznaczona jako zwrócona.'
+            : 'Płatność została oznaczona jako anulowana.';
+        $this->errorMessage = null;
+        $this->paymentNote = '';
+    }
+
+    public function canChangePaymentStatus(string $transition): bool
+    {
+        $payment = $this->getBooking()?->getPayment();
+
+        return $payment instanceof Payment && $this->paymentStateMachine->can($payment, $transition);
     }
 
     #[LiveAction]
