@@ -24,6 +24,9 @@ body {
 .logo span {
     display: inline-block;
 }
+.logo-brand {
+    letter-spacing: 0.2em;
+}
 .red { color: #e34646; }
 .green { color: #98c93c; }
 .yellow { color: #f7c343; }
