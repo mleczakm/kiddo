@@ -66,7 +66,7 @@
                         {% set typeClass = message.type.value in ['booking_issue', 'cancellation_request', 'reschedule_request', 'refund_request'] ? 'bg-orange-100 text-orange-800' : (message.type.value == 'complaint' ? 'bg-red-100 text-red-800' : (message.type.value == 'technical_issue' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800')) %}
 
                         <div class="p-4 border rounded-lg cursor-pointer transition-colors {{ message.unread ? 'bg-blue-50 border-blue-200' : 'bg-white' }} hover:bg-gray-50"
-                             data-action="live#action"
+                             data-action="click->live#action"
                              data-live-action-param="selectMessage"
                              data-live-message-id-param="{{ message.id }}">
                             <div class="flex items-start justify-between">

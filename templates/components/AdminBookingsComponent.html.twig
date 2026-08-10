@@ -184,7 +184,7 @@
                                 {% set isExpanded = this.isBookingExpanded(bookingId) %}
 
                                 {# Main booking row #}
-                                <tr class="hover:bg-indigo-50/40 transition cursor-pointer" data-action="live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}">
+                                <tr class="hover:bg-indigo-50/40 transition cursor-pointer" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}">
                                     <td class="p-4 align-middle">
                                         <div>
                                             {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}

@@ -148,7 +148,7 @@
                                     {% set lesson_index = booking.getLessonIndex(lesson) %}
                                     {% set total_lessons = booking.getTotalLessons() %}
                                     {% set progress_percentage = (lesson_index / total_lessons) * 100 %}
-                                    <div class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 p-3 transition hover:border-indigo-300 hover:bg-indigo-50/50" style="background: linear-gradient(90deg, #eaf6ff {{ progress_percentage }}%, white {{ progress_percentage }}%);" data-action="live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
+                                    <div class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 p-3 transition hover:border-indigo-300 hover:bg-indigo-50/50" style="background: linear-gradient(90deg, #eaf6ff {{ progress_percentage }}%, white {{ progress_percentage }}%);" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
                                         <div>
                                             {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
                                             <p class="text-xs text-muted-foreground">(Karnet: {{ lesson_index }}/{{ total_lessons }})</p>
@@ -166,14 +166,13 @@
                                                     {{ 'admin.badges.unpaid'|trans }}
                                                 {% endif %}
                                             </span>
-                                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 18 6-6-6-6"/></svg>
                                         </div>
                                     </div>
                                 {% endfor %}
 
                                 {# Then Render Single Bookings #}
                                 {% for booking in groupedBookings.single %}
-                                    <div class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-3 transition hover:border-indigo-300 hover:bg-indigo-50/50" data-action="live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
+                                    <div class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-3 transition hover:border-indigo-300 hover:bg-indigo-50/50" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
                                         <div>
                                             {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
                                             {% if booking.notes %}
@@ -190,7 +189,6 @@
                                                     {{ 'admin.badges.unpaid'|trans }}
                                                 {% endif %}
                                             </span>
-                                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 18 6-6-6-6"/></svg>
                                         </div>
                                     </div>
                                 {% endfor %}

@@ -88,12 +88,12 @@
                                         <strong class="text-slate-800 font-bold block mb-1.5">{{ 'admin_dashboard.upcoming_lessons.attendees'|trans }}:</strong>
                                         <ul class="space-y-1.5">
                                             {% for booking in confirmedBookings %}
-                                                <li class="flex cursor-pointer items-center gap-1.5 font-medium text-green-700 hover:underline" data-action="live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}">
+                                                <li class="flex cursor-pointer items-center gap-1.5 font-medium text-green-700 hover:underline" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}">
                                                     <span class="text-green-500 font-bold">✓</span> {{ booking.user.name }} ({{ booking.user.email }})
                                                 </li>
                                             {% endfor %}
                                             {% for booking in cancelledBookings %}
-                                                <li class="flex cursor-pointer items-center gap-1.5 font-medium text-red-500 line-through hover:underline" data-action="live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}">
+                                                <li class="flex cursor-pointer items-center gap-1.5 font-medium text-red-500 line-through hover:underline" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}">
                                                     <span class="text-red-400 font-bold">✗</span> {{ booking.user.name }} ({{ booking.user.email }}) - {{ 'admin_dashboard.upcoming_lessons.cancelled'|trans }}
                                                 </li>
                                             {% endfor %}

@@ -77,7 +77,7 @@
                                     <!-- Nagłówek Wystąpienia -->
                                     <div 
                                         class="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:bg-slate-50 {{ isExpanded ? 'bg-indigo-50/30' : '' }}"
-                                        data-action="live#action" data-live-action-param="expandLesson" data-live-action-param-lessonId="{{ lesson.id }}"
+                                        data-action="click->live#action" data-live-action-param="expandLesson" data-live-action-param-lessonId="{{ lesson.id }}"
                                     >
                                         <div class="flex items-center gap-4">
                                             <div class="p-3 rounded-xl font-bold text-center min-w-[70px] {{ isPast ? 'bg-slate-200 text-slate-600' : 'bg-indigo-50 text-indigo-700' }}">
@@ -114,7 +114,7 @@
                                             
                                             <div class="divide-y divide-slate-100">
                                                 {% for booking in activeBookings %}
-                                                    <div class="p-3 pl-5 flex cursor-pointer flex-col justify-between gap-3 transition hover:bg-white md:flex-row md:items-center group" data-action="live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
+                                                    <div class="p-3 pl-5 flex cursor-pointer flex-col justify-between gap-3 transition hover:bg-white md:flex-row md:items-center group" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
                                                         <div class="flex items-center gap-3">
                                                             <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs shrink-0">
                                                                 {{ booking.child.name|first|default('U') }}
@@ -180,7 +180,7 @@
                                                     </div>
                                                     <div class="divide-y divide-purple-50">
                                                         {% for booking in waitingApproval %}
-                                                            <div class="p-3 pl-5 flex cursor-pointer justify-between items-center gap-3 hover:bg-purple-50 transition" data-action="live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
+                                                            <div class="p-3 pl-5 flex cursor-pointer justify-between items-center gap-3 hover:bg-purple-50 transition" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
                                                                 <div>
                                                                     <div class="font-bold text-sm text-slate-800">{{ booking.child.name|default('Brak dziecka') }}</div>
                                                                     <div class="text-[10px] text-slate-500">{{ booking.user.name }} • {{ booking.user.phone|default('Brak') }}</div>
