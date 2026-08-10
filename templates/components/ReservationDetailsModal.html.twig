@@ -1,0 +1,143 @@
+<div {{ attributes }} data-controller="live" data-reservation-details-modal>
+    {% if this.modalOpened and this.booking %}
+        {% set booking = this.booking %}
+        {% set lesson = this.lesson %}
+        {% set payment = booking.payment %}
+        <div data-controller="modal-transition">
+            <div class="fixed inset-0 z-[70] bg-slate-950/60 backdrop-blur-sm animate-in fade-in-0"
+                 data-modal-transition-target="overlay" data-state="open"
+                 data-action="click->modal-transition#close click->live#action"
+                 data-live-action-param="close"></div>
+
+            <dialog open aria-labelledby="reservation-details-title"
+                    class="fixed left-1/2 top-1/2 z-[71] m-0 flex max-h-[92vh] w-[min(1040px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-0 text-slate-800 shadow-2xl animate-in fade-in-0 zoom-in-95"
+                    style="background-color:#fff;color:#1e293b"
+                    data-modal-transition-target="panel" data-state="open">
+                <header class="flex shrink-0 items-start justify-between border-b border-slate-200 bg-white px-6 py-5">
+                    <div>
+                        <div class="mb-1 flex flex-wrap items-center gap-2">
+                            <h2 id="reservation-details-title" class="text-xl font-black text-slate-900">Szczegóły rezerwacji</h2>
+                            <span class="rounded-full px-2.5 py-1 text-xs font-bold {{ booking.status == 'active' ? 'bg-emerald-100 text-emerald-700' : (booking.status == 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600') }}">
+                                {{ booking.status|trans }}
+                            </span>
+                        </div>
+                        <p class="font-mono text-xs text-slate-400">{{ booking.id }}</p>
+                    </div>
+                    <button type="button" aria-label="Zamknij szczegóły rezerwacji"
+                            class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                            data-action="click->modal-transition#close click->live#action" data-live-action-param="close">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg>
+                    </button>
+                </header>
+
+                <div class="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-6">
+                    {% if this.successMessage %}<div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{{ this.successMessage }}</div>{% endif %}
+                    {% if this.errorMessage %}<div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{{ this.errorMessage }}</div>{% endif %}
+
+                    <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+                        <div class="space-y-5 lg:col-span-2">
+                            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <h3 class="mb-4 text-xs font-black uppercase tracking-wider text-slate-400">Uczestnik i opiekun</h3>
+                                <div class="grid gap-4 sm:grid-cols-2">
+                                    <div>
+                                        <p class="text-xs font-semibold text-slate-400">Dziecko / uczestnik</p>
+                                        <p class="mt-1 text-lg font-black text-slate-900">{{ booking.child ? booking.child.name : 'Nie przypisano dziecka' }}</p>
+                                        {% if booking.child and booking.child.birthday %}<p class="text-sm text-slate-500">ur. {{ booking.child.birthday|date('d.m.Y') }} · {{ booking.child.ageYears }} lat</p>{% endif %}
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-slate-400">Opiekun</p>
+                                        <p class="mt-1 font-bold text-slate-800">{{ booking.user.name }}</p>
+                                        <a class="block text-sm text-indigo-600 hover:underline" href="mailto:{{ booking.user.email }}">{{ booking.user.email }}</a>
+                                        {% if booking.user.phone %}<a class="block text-sm text-slate-600 hover:underline" href="tel:{{ booking.user.phone }}">{{ booking.user.phone }}</a>{% endif %}
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <div class="mb-4 flex items-center justify-between gap-3">
+                                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Zajęcia w rezerwacji</h3>
+                                    <span class="text-xs font-semibold text-slate-500">{{ booking.lessons.count }} {{ booking.lessons.count == 1 ? 'termin' : 'terminy' }}</span>
+                                </div>
+                                <div class="space-y-2">
+                                    {% for bookedLesson in booking.lessons|sort((a,b) => a.metadata.schedule <=> b.metadata.schedule) %}
+                                        {% set mapped = booking.getBookedLesson(bookedLesson.id) %}
+                                        {% set selected = lesson and lesson.id == bookedLesson.id %}
+                                        <button type="button"
+                                                class="flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition {{ selected ? 'border-indigo-300 bg-indigo-50 ring-1 ring-indigo-200' : 'border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50' }}"
+                                                data-action="live#action" data-live-action-param="selectLesson" data-live-lesson-id-param="{{ bookedLesson.id }}">
+                                            <span>
+                                                <span class="block font-bold text-slate-800">{{ bookedLesson.metadata.title }}</span>
+                                                <span class="block text-sm text-slate-500">{{ bookedLesson.metadata.schedule|date('d.m.Y, H:i') }}{% if bookedLesson.series %} · {{ bookedLesson.series.name }}{% endif %}</span>
+                                            </span>
+                                            <span class="rounded-md px-2 py-1 text-[11px] font-bold {{ booking.isLessonRescheduled(bookedLesson) ? 'bg-amber-100 text-amber-700' : (booking.isLessonCancelled(bookedLesson) ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700') }}">
+                                                {{ booking.isLessonRescheduled(bookedLesson) ? 'Przełożone' : (booking.isLessonCancelled(bookedLesson) ? 'Anulowane' : 'Aktywne') }}
+                                            </span>
+                                        </button>
+                                    {% endfor %}
+                                </div>
+
+                                {% if this.rescheduleHistory|length %}
+                                    <div class="mt-5 border-t border-slate-100 pt-4">
+                                        <h4 class="mb-3 text-xs font-black uppercase tracking-wider text-slate-400">Historia przełożeń</h4>
+                                        {% for entry in this.rescheduleHistory %}
+                                            <div class="flex gap-3 border-l-2 border-amber-300 py-2 pl-3 text-sm">
+                                                <div><span class="font-semibold text-slate-700">{{ entry.from ? entry.from.metadata.schedule|date('d.m.Y H:i') : 'Poprzedni termin' }}</span><span class="mx-2 text-slate-300">→</span><span class="font-semibold text-indigo-700">{{ entry.to ? entry.to.metadata.schedule|date('d.m.Y H:i') : 'Nowy termin' }}</span>{% if entry.at %}<p class="text-xs text-slate-400">Przełożono {{ entry.at|date('d.m.Y H:i') }}</p>{% endif %}</div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </section>
+
+                            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <div class="mb-3 flex items-center justify-between"><h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Notatka administracyjna</h3><span class="text-xs text-slate-400">Widoczna tylko dla zespołu</span></div>
+                                <textarea data-model="note" rows="3" placeholder="Dodaj ważną informację do rezerwacji…" class="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100">{{ this.note }}</textarea>
+                                <div class="mt-3 flex justify-end"><button type="button" data-action="live#action" data-live-action-param="saveNote" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-700">Zapisz notatkę</button></div>
+                            </section>
+                        </div>
+
+                        <aside class="space-y-5">
+                            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <h3 class="mb-4 text-xs font-black uppercase tracking-wider text-slate-400">Płatność</h3>
+                                {% if payment %}
+                                    <div class="flex items-baseline justify-between"><span class="text-sm text-slate-500">Kwota</span><strong class="text-xl text-slate-900">{{ payment.amount|money }}</strong></div>
+                                    <dl class="mt-4 space-y-3 border-t border-slate-100 pt-4 text-sm">
+                                        <div class="flex justify-between gap-3"><dt class="text-slate-500">Status</dt><dd class="font-bold text-slate-800">{{ payment.status|trans }}</dd></div>
+                                        <div class="flex justify-between gap-3"><dt class="text-slate-500">Metoda</dt><dd class="font-bold text-slate-800">{{ payment.method ? payment.method.value|trans : 'Nie określono' }}</dd></div>
+                                        <div class="flex justify-between gap-3"><dt class="text-slate-500">Utworzono</dt><dd class="text-right font-semibold text-slate-700">{{ payment.createdAt|date('d.m.Y H:i') }}</dd></div>
+                                        <div class="flex justify-between gap-3"><dt class="text-slate-500">Opłacono</dt><dd class="text-right font-semibold text-slate-700">{{ payment.paidAt ? payment.paidAt|date('d.m.Y H:i') : '—' }}</dd></div>
+                                    </dl>
+                                    {% if payment.transfers.count %}<div class="mt-4 rounded-xl bg-slate-50 p-3"><p class="mb-2 text-xs font-bold text-slate-500">Przelewy</p>{% for transfer in payment.transfers %}<div class="border-t border-slate-200 py-2 first:border-0"><p class="text-sm font-semibold text-slate-700">{{ transfer.sender }} · {{ transfer.amount }}</p><p class="text-xs text-slate-400">{{ transfer.transferredAt|date('d.m.Y H:i') }} · {{ transfer.title }}</p></div>{% endfor %}</div>{% endif %}
+                                {% else %}<p class="text-sm text-slate-500">Do rezerwacji nie przypisano płatności.</p>{% endif %}
+                            </section>
+
+                            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                <h3 class="mb-4 text-xs font-black uppercase tracking-wider text-slate-400">Rezerwacja</h3>
+                                <dl class="space-y-3 text-sm"><div class="flex justify-between gap-3"><dt class="text-slate-500">Utworzono</dt><dd class="text-right font-semibold text-slate-700">{{ booking.createdAt|date('d.m.Y H:i') }}</dd></div><div class="flex justify-between gap-3"><dt class="text-slate-500">Ostatnia zmiana</dt><dd class="text-right font-semibold text-slate-700">{{ booking.updatedAt ? booking.updatedAt|date('d.m.Y H:i') : '—' }}</dd></div><div class="flex justify-between gap-3"><dt class="text-slate-500">Rodzaj</dt><dd class="font-semibold text-slate-700">{{ booking.isCarnet ? 'Karnet' : 'Jednorazowa' }}</dd></div></dl>
+                            </section>
+
+                            {% if lesson and lesson.future and not booking.isLessonRescheduled(lesson) %}
+                                <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                    <h3 class="mb-4 text-xs font-black uppercase tracking-wider text-slate-400">Akcje dla wybranego terminu</h3>
+                                    {% if not this.action %}
+                                        <div class="space-y-2">
+                                            {% if this.availableLessons|length %}<button type="button" data-action="live#action" data-live-action-param="selectAction" data-live-value-param="reschedule" class="w-full rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-left text-sm font-bold text-indigo-700 hover:bg-indigo-100">Przełóż na inny termin</button>{% endif %}
+                                            <button type="button" data-action="live#action" data-live-action-param="selectAction" data-live-action-value-param="cancel" class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Anuluj rezerwację</button>
+                                            {% if payment and payment.status == 'paid' %}<button type="button" data-action="live#action" data-live-action-param="selectAction" data-live-action-value-param="refund" class="w-full rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-left text-sm font-bold text-red-700 hover:bg-red-100">Anuluj ze zwrotem</button>{% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="space-y-3">
+                                            <p class="text-sm font-bold text-slate-800">{{ this.action == 'reschedule' ? 'Wybierz nowy termin' : (this.action == 'refund' ? 'Anulowanie ze zwrotem' : 'Anulowanie rezerwacji') }}</p>
+                                            {% if this.action == 'reschedule' %}<select data-model="targetLessonId" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"><option value="">Wybierz zajęcia…</option>{% for target in this.availableLessons %}<option value="{{ target.id }}">{{ target.metadata.schedule|date('d.m.Y H:i') }} — {{ target.metadata.title }}</option>{% endfor %}</select>{% endif %}
+                                            <textarea data-model="reason" rows="2" placeholder="Powód (opcjonalnie)" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea>
+                                            <div class="flex gap-2"><button type="button" data-action="live#action" data-live-action-param="selectAction" data-live-action-value-param="" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Wróć</button><button type="button" data-action="live#action" data-live-action-param="executeAction" class="flex-1 rounded-lg px-3 py-2 text-sm font-bold text-white {{ this.action == 'refund' ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700' }}">Potwierdź</button></div>
+                                        </div>
+                                    {% endif %}
+                                </section>
+                            {% endif %}
+                        </aside>
+                    </div>
+                </div>
+            </dialog>
+        </div>
+    {% endif %}
+</div>
