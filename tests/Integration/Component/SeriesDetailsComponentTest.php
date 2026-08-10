@@ -104,7 +104,7 @@ final class SeriesDetailsComponentTest extends WebTestCase
             ->assemble();
         $lesson->setSeries($series);
 
-        $parent = UserAssembler::new()->assemble();
+        $parent = UserAssembler::new()->withPhone('+48 501 111 111')->assemble();
         $child = new Child($parent, 'Zosia', new \DateTimeImmutable('2020-04-12'));
         $booking = BookingAssembler::new()
             ->withUser($parent)
@@ -130,5 +130,7 @@ final class SeriesDetailsComponentTest extends WebTestCase
         self::assertStringContainsString('Zosia', $html);
         self::assertStringContainsString('(2020)', $html);
         self::assertStringContainsString($parent->getName(), $html);
+        self::assertStringContainsString('501 111 111', $html);
+        self::assertStringNotContainsString('Country Code:', $html);
     }
 }

@@ -64,7 +64,7 @@
                                             {% endif %}
                                         </p>
                                         <a class="block text-sm text-indigo-600 hover:underline" href="mailto:{{ booking.user.email }}">{{ booking.user.email }}</a>
-                                        {% if booking.user.phone %}<a class="block text-sm text-slate-600 hover:underline" href="tel:{{ booking.user.phone }}">{{ booking.user.phone }}</a>{% endif %}
+                                        {% if booking.user.phone %}<a class="block text-sm text-slate-600 hover:underline" href="tel:{{ booking.user.phone|phone_number_format('E164') }}">{{ booking.user.phone|phone_number_format('NATIONAL') }}</a>{% endif %}
                                     </div>
                                 </div>
                             </section>

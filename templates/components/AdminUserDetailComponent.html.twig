@@ -40,7 +40,7 @@
                     {% else %}
                         <p class="mt-1 cursor-pointer rounded-lg text-sm font-bold text-slate-800 transition hover:bg-slate-50 hover:text-indigo-600"
                            data-action="click->live#action" data-live-action-param="startEditField" data-live-field-param="phone"
-                           title="Kliknij, aby edytować">{{ user.getPhone() ? user.getPhone()|phone_number_format : 'Kliknij, aby dodać' }}</p>
+                           title="Kliknij, aby edytować">{{ user.getPhone() ? user.getPhone()|phone_number_format('NATIONAL') : 'Kliknij, aby dodać' }}</p>
                     {% endif %}
                 </div>
                 <div>
