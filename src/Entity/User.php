@@ -17,7 +17,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ORM\UniqueConstraint(name: 'UNIQ_USER_TELEGRAM_CHAT_ID', fields: ['telegramChatId'])]
 #[UniqueEntity('email', message: 'user.mail_uniqueness')]
 class User implements UserInterface
 {
@@ -42,9 +41,6 @@ class User implements UserInterface
 
     #[ORM\Column(type: 'phone_number', nullable: true)]
     private ?PhoneNumber $phone = null;
-
-    #[ORM\Column(length: 64, nullable: true)]
-    private ?string $telegramChatId = null;
 
     #[ORM\Column(type: 'string', length: 1000, nullable: true)]
     private ?string $adminNote = null;
@@ -188,18 +184,6 @@ class User implements UserInterface
     public function setPhone(?PhoneNumber $phone): static
     {
         $this->phone = $phone;
-
-        return $this;
-    }
-
-    public function getTelegramChatId(): ?string
-    {
-        return $this->telegramChatId;
-    }
-
-    public function setTelegramChatId(?string $telegramChatId): static
-    {
-        $this->telegramChatId = $telegramChatId;
 
         return $this;
     }
