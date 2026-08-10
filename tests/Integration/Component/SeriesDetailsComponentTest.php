@@ -90,6 +90,8 @@ final class SeriesDetailsComponentTest extends WebTestCase
 
         self::assertStringContainsString('data-live-action-param="expandLesson"', $html);
         self::assertStringContainsString('data-live-lesson-id-param="' . $lesson->getId() . '"', $html);
+        self::assertStringContainsString('href="/admin/zajecia/' . $lesson->getId() . '"', $html);
+        self::assertStringContainsString('aria-label="Otwórz szczegóły zajęć"', $html);
         self::assertStringNotContainsString('data-live-action-param-lessonId', $html);
     }
 

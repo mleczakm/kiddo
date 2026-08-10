@@ -31,6 +31,8 @@ final class LessonsControllerTest extends WebTestCase
         $client->request('GET', '/admin/zajecia/' . $lesson->getId());
 
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('button[data-live-action-param="openModal"]', 'Modyfikuj');
+        $this->assertSelectorTextNotContains('body', 'Zmień termin');
     }
 
     public function testHostGets404OnALessonTheyreNotAssignedTo(): void
