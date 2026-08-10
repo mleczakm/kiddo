@@ -173,6 +173,55 @@ final class AdminScheduleComponentTest extends WebTestCase
         self::assertStringContainsString('Editable Series Title', $html);
     }
 
+    public function testClickingSeriesCanOpenPreviewWithLessonsAndEditAction(): void
+    {
+        $weekStart = new \DateTimeImmutable('+1 week monday');
+        $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY, []);
+        $this->em->persist($series);
+
+        $lesson = $this->createLesson('Preview Series Title', $weekStart->modify('+1 day'));
+        $lesson->setSeries($series);
+        $this->em->persist($lesson);
+        $this->em->flush();
+
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+        $component->call('openPreview', [
+            'seriesId' => (string) $series->getId(),
+        ]);
+
+        $html = (string) $component->render();
+        self::assertStringContainsString('Podgląd warsztatu', $html);
+        self::assertStringContainsString('Preview Series Title', $html);
+        self::assertStringContainsString('Harmonogram i Rezerwacje', $html);
+        self::assertStringContainsString('Edytuj', $html);
+        self::assertStringContainsString('Zakończ cykl', $html);
+    }
+
+    public function testEndSeriesOpensEditorWithTodayAsLastOccurrence(): void
+    {
+        $weekStart = new \DateTimeImmutable('+1 week monday');
+        $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY, []);
+        $this->em->persist($series);
+
+        $lesson = $this->createLesson('Series To End', $weekStart->modify('+1 day'));
+        $lesson->setSeries($series);
+        $this->em->persist($lesson);
+        $this->em->flush();
+
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+        $component->call('endSeries', [
+            'seriesId' => (string) $series->getId(),
+        ]);
+
+        $html = (string) $component->render();
+        self::assertStringContainsString('Kończysz cykl dzisiaj', $html);
+        self::assertStringContainsString(new \DateTimeImmutable('today')->format('Y-m-d'), $html);
+    }
+
     public function testToggleLessonStatusDisablesAndEnables(): void
     {
         $weekStart = new \DateTimeImmutable('2025-02-03');

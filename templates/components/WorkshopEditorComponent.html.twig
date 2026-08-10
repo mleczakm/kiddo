@@ -252,6 +252,9 @@
                                         {{ 'admin.workshop_editor.last_occurrence.label'|trans }}
                                     </h3>
                                     <p class="text-xs text-slate-500">{{ 'admin.workshop_editor.last_occurrence.hint'|trans }}</p>
+                                    {% if endDate == 'now'|date('Y-m-d') %}
+                                        <p class="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2">{{ 'admin.workshop_editor.last_occurrence.ending_today_hint'|trans }}</p>
+                                    {% endif %}
                                     <input
                                         type="date"
                                         data-model="endDate"

@@ -126,4 +126,34 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         // Two extra weekly occurrences fit within the 2-week cutoff (original + 2 = 3)
         self::assertCount(3, $savedSeries->lessons);
     }
+
+    public function testMarksSeriesCancelledOneWeekAfterItsEndingDate(): void
+    {
+        $em = self::getContainer()->get('doctrine')->getManager();
+        /** @var SeriesRepository $seriesRepository */
+        $seriesRepository = self::getContainer()->get(SeriesRepository::class);
+
+        $series = SeriesAssembler::new()
+            ->withType(WorkshopType::WEEKLY)
+            ->withLastOccurrenceDate(new \DateTimeImmutable('-8 days', new \DateTimeZone('UTC')))
+            ->assemble();
+        $em->persist($series);
+
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule(new \DateTimeImmutable('-8 days'))
+            ->withSeries($series)
+            ->assemble();
+        $lesson->setSeries($series);
+        $em->persist($lesson);
+        $em->flush();
+
+        /** @var ExtendSeriesScheduleHandler $handler */
+        $handler = self::getContainer()->get(ExtendSeriesScheduleHandler::class);
+        $handler(new ExtendSeriesSchedule());
+
+        $em->clear();
+        $savedSeries = $seriesRepository->find($series->getId());
+        self::assertNotNull($savedSeries);
+        self::assertSame('cancelled', $savedSeries->status);
+    }
 }

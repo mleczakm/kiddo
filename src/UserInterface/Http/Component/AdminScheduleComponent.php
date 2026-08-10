@@ -9,7 +9,6 @@ use App\Entity\Lesson;
 use App\Entity\Series;
 use App\Entity\User;
 use App\Repository\LessonRepository;
-use App\Repository\SeriesRepository;
 use App\Security\Voter\LessonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +35,6 @@ final class AdminScheduleComponent extends AbstractController
 
     public function __construct(
         private readonly LessonRepository $lessonRepository,
-        private readonly SeriesRepository $seriesRepository,
         private readonly EntityManagerInterface $em,
     ) {}
 
@@ -48,6 +46,12 @@ final class AdminScheduleComponent extends AbstractController
 
     #[LiveProp(writable: true)]
     public ?Ulid $editSeriesId = null;
+
+    #[LiveProp(writable: true)]
+    public ?Ulid $previewSeriesId = null;
+
+    #[LiveProp(writable: true)]
+    public bool $endingSeries = false;
 
     #[LiveProp(writable: true)]
     public bool $showAddModal = false;
@@ -151,6 +155,29 @@ final class AdminScheduleComponent extends AbstractController
     #[LiveAction]
     public function startEdit(#[LiveArg] string $seriesId): void
     {
+        $this->previewSeriesId = null;
+        $this->endingSeries = false;
+        $this->editSeriesId = Ulid::fromString($seriesId);
+    }
+
+    #[LiveAction]
+    public function openPreview(#[LiveArg] string $seriesId): void
+    {
+        $this->previewSeriesId = Ulid::fromString($seriesId);
+    }
+
+    #[LiveAction]
+    public function closePreview(): void
+    {
+        $this->previewSeriesId = null;
+    }
+
+    #[LiveAction]
+    public function endSeries(#[LiveArg] string $seriesId): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_SCHEDULE');
+        $this->previewSeriesId = null;
+        $this->endingSeries = true;
         $this->editSeriesId = Ulid::fromString($seriesId);
     }
 
@@ -165,6 +192,7 @@ final class AdminScheduleComponent extends AbstractController
     public function onWorkshopEditorClosed(): void
     {
         $this->editSeriesId = null;
+        $this->endingSeries = false;
         $this->showAddModal = false;
     }
 

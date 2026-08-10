@@ -28,6 +28,12 @@ final readonly class ExtendSeriesScheduleHandler
 
         $activeSeries = $this->seriesRepository->findActive();
         foreach ($activeSeries as $series) {
+            if ($series->lastOccurrenceDate !== null
+                && $now >= $series->lastOccurrenceDate->modify('+1 week')) {
+                $series->status = 'cancelled';
+                continue;
+            }
+
             // Only extend WEEKLY series for now
             if ($series->type !== WorkshopType::WEEKLY) {
                 continue;

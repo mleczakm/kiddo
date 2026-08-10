@@ -171,14 +171,22 @@ class WorkshopEditorComponent extends AbstractController
         private readonly TranslatorInterface $translator,
     ) {}
 
-    public function mount(?Ulid $seriesId = null, ?Ulid $lessonId = null, bool $startOpen = true): void
-    {
+    public function mount(
+        ?Ulid $seriesId = null,
+        ?Ulid $lessonId = null,
+        bool $startOpen = true,
+        bool $endToday = false,
+    ): void {
         if ($lessonId !== null) {
             $this->editingLessonId = $lessonId;
             $this->loadLessonData();
         } elseif ($seriesId !== null) {
             $this->editingSeriesId = $seriesId;
             $this->loadSeriesRepresentativeLesson();
+        }
+        if ($endToday) {
+            $this->endDate = Clock::get()->now()->format('Y-m-d');
+            $this->activeTab = 'schedule';
         }
         $this->isModalOpen = $startOpen;
     }

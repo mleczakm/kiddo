@@ -63,7 +63,13 @@
     {% for group in this.groups %}
       {% set series = group.series %}
       <div class="border border-slate-200 rounded-xl overflow-hidden {{ series and series.status == 'cancelled' ? 'opacity-60' : '' }}">
-        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
+        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white {{ series ? 'cursor-pointer hover:bg-slate-50 transition' : '' }}"
+             {% if series %}
+               role="button" tabindex="0"
+               data-action="click->live#action"
+               data-live-action-param="openPreview"
+               data-live-series-id-param="{{ series.id }}"
+             {% endif %}>
           <div class="min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
               <span class="font-bold text-slate-800">{{ series ? series.firstLesson.metadata.title : group.lessons[0].metadata.title }}</span>
@@ -92,7 +98,7 @@
           </div>
           {% if series and is_granted('ROLE_MANAGE_SCHEDULE') %}
             <div class="flex gap-2 shrink-0">
-              <button data-action="click->live#action"
+              <button data-action="click->live#action:stop"
                       data-live-action-param="startEdit"
                       data-live-series-id-param="{{ series.id }}"
                       class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-blue-600 text-blue-600 hover:bg-blue-600/10">
@@ -153,6 +159,24 @@
   {% if this.showAddModal %}
     {{ component('WorkshopEditor') }}
   {% elseif this.editSeriesId %}
-    {{ component('WorkshopEditor', { seriesId: this.editSeriesId }) }}
+    {{ component('WorkshopEditor', { seriesId: this.editSeriesId, endToday: this.endingSeries }) }}
+  {% elseif this.previewSeriesId %}
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50">
+      <div class="bg-slate-50 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto">
+        <div class="sticky top-0 z-10 flex items-center justify-between gap-3 p-4 border-b border-slate-200 bg-white rounded-t-3xl">
+          <h2 class="font-black text-slate-800">Podgląd warsztatu</h2>
+          <div class="flex items-center gap-2">
+            {% if is_granted('ROLE_MANAGE_SCHEDULE') %}
+              <button type="button" data-action="click->live#action" data-live-action-param="endSeries" data-live-series-id-param="{{ this.previewSeriesId }}" class="h-9 px-3 rounded-xl border border-red-200 text-red-700 text-sm font-bold hover:bg-red-50">Zakończ cykl</button>
+              <button type="button" data-action="click->live#action" data-live-action-param="startEdit" data-live-series-id-param="{{ this.previewSeriesId }}" class="h-9 px-3 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700">Edytuj</button>
+            {% endif %}
+            <button type="button" data-action="click->live#action" data-live-action-param="closePreview" class="h-9 w-9 rounded-xl border border-slate-200 text-slate-600" aria-label="Zamknij">×</button>
+          </div>
+        </div>
+        <div class="p-4">
+          {{ component('SeriesDetails', { seriesId: this.previewSeriesId }) }}
+        </div>
+      </div>
+    </div>
   {% endif %}
 </div>

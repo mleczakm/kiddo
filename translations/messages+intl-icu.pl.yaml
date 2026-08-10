@@ -732,10 +732,10 @@ admin:
         body: 'Szybki podgląd najważniejszych statystyk — liczby rezerwacji, przychodów i alertów wymagających uwagi.'
       nav_workshops:
         title: 'Warsztaty'
-        body: 'Tu zarządzasz cyklami zajęć: dodajesz nowe serie warsztatów, ustawiasz dzień tygodnia i godziny, ceny biletów/karnetów oraz przypisujesz prowadzących do całego cyklu. Rozwijając serię zobaczysz też jej pojedyncze wystąpienia w wybranym tygodniu.'
+        body: 'Tu zarządzasz warsztatami i ich terminami. Kliknij wiersz warsztatu, aby otworzyć podgląd wszystkich zajęć i rezerwacji. Z podglądu możesz przejść do edycji albo zakończyć cykl, ustawiając dzisiejszą datę jako ostatni termin.'
       add_workshop:
         title: 'Dodawanie zajęć'
-        body: 'Ten przycisk otwiera kreator warsztatów — ustawisz tu podstawowe informacje, harmonogram i bilety.'
+        body: 'Ten przycisk otwiera kreator warsztatów — ustawisz informacje, kolor i zdjęcie, harmonogram, ostatni termin cyklu, bilety oraz prowadzących.'
       nav_bookings:
         title: 'Rezerwacje'
         body: 'Wszystkie rezerwacje klientów w jednym miejscu — tu je anulujesz, zmieniasz termin lub dodajesz rezerwację ręcznie w imieniu klienta.'
@@ -914,7 +914,8 @@ admin:
     occurrence_date_hint: "Data i godzina dotyczą tylko tego pojedynczego wydarzenia."
     last_occurrence:
       label: "Ostatni termin cyklu (opcjonalnie)"
-      hint: "Po tej dacie nowe terminy przestaną być automatycznie dodawane do tej serii. Nie anuluje to już zaplanowanych zajęć."
+      hint: "Po tej dacie nowe terminy nie będą automatycznie dodawane. Tydzień później cykl zostanie oznaczony jako zakończony. Już zaplanowane zajęcia pozostaną bez zmian."
+      ending_today_hint: "Kończysz cykl dzisiaj. Po zapisaniu nowe terminy nie będą dodawane, a za tydzień warsztat zostanie automatycznie oznaczony jako zakończony."
     scope:
       label: "Zakres zmian"
       occurrence: "Tylko to wydarzenie"
