@@ -62,7 +62,6 @@ security:
             - ROLE_SETTINGS
             - ROLE_MANAGE_USERS
             - ROLE_MANAGE_PAYMENTS
-            - ROLE_MANAGE_MESSAGES
             - ROLE_MANAGE_SCHEDULE
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
