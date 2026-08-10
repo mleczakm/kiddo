@@ -40,7 +40,7 @@ class CarnetsComponent extends AbstractController
             ->andWhere('b.status IN (:statuses)')
             ->setParameter('statuses', [Booking::STATUS_CONFIRMED])
             ->setParameter('user', $user)
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->getQuery()
             ->getResult();
 

@@ -17,13 +17,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class LessonsController extends AbstractController
 {
     #[IsGranted('ROLE_MANAGE_LESSONS')]
-    #[Route('/admin/zajecia', name: 'app_admin_lessons')]
-    public function index(): Response
-    {
-        return $this->render('admin/lessons/index.html.twig');
-    }
-
-    #[IsGranted('ROLE_MANAGE_LESSONS')]
     #[Route('/admin/zajecia/{id}', name: 'app_admin_lesson_view', requirements: [
         'id' => '[A-Za-z0-9]+',
     ])]

@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 #[Group('functional')]
@@ -144,6 +145,48 @@ final class WorkshopEditorComponentTest extends WebTestCase
         self::assertTrue($ticketOption->price->isEqualTo(Money::of('50.00', 'PLN')));
     }
 
+    public function testImageUploadIsPersistedWhenSavingExistingLesson(): void
+    {
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+
+        $lesson = LessonAssembler::new()->assemble();
+        $this->em->persist($lesson);
+        $this->em->flush();
+        $lessonId = $lesson->getId();
+
+        $imagePath = tempnam(sys_get_temp_dir(), 'workshop-image-');
+        self::assertNotFalse($imagePath);
+        $imageData = base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+            true
+        );
+        self::assertNotFalse($imageData);
+        file_put_contents($imagePath, $imageData);
+
+        try {
+            $this->client->loginUser($admin);
+            $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+                'lessonId' => $lessonId,
+                'startOpen' => false,
+            ]);
+
+            $component->call('save', files: [
+                'imageFile' => new UploadedFile($imagePath, 'workshop.png', 'image/png', null, true),
+            ]);
+
+            $this->em->clear();
+            $reloaded = $this->em->find(Lesson::class, $lessonId);
+            self::assertNotNull($reloaded);
+            self::assertSame('image/png', $reloaded->getMetadata()->imageMimeType);
+            self::assertSame(base64_encode($imageData), $reloaded->getMetadata()->imageData);
+        } finally {
+            if (is_file($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+    }
+
     public function testHostCannotEditLessonTheyDoNotInstruct(): void
     {
         $host = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();
@@ -240,8 +283,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $pastLesson = $fixture['past'];
         $cancelledLesson = $fixture['cancelled'];
 
-        $siblingOriginalSchedule = $sibling->getMetadata()
-            ->schedule;
+        $siblingOriginalSchedule = $sibling->schedule;
 
         $this->client->loginUser($admin);
         $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
@@ -266,7 +308,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         self::assertSame('Series Wide Update', $reloadedCurrent->getMetadata()->title);
         self::assertSame('Series Wide Update', $reloadedSibling->getMetadata()->title);
-        self::assertEquals($siblingOriginalSchedule, $reloadedSibling->getMetadata()->schedule);
+        self::assertEquals($siblingOriginalSchedule, $reloadedSibling->schedule);
 
         // Past and cancelled lessons are never touched by a series-wide edit.
         self::assertSame('Past Title', $reloadedPast->getMetadata()->title);

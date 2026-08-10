@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\CommandHandler;
 
 use App\Entity\Booking;
-use App\Entity\MessageType;
 use App\Entity\Notification;
-use App\Entity\UserMessage;
 use App\Message\CancelLessonBooking;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
@@ -73,14 +71,6 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
             'user' => $user,
         ]);
         self::assertCount(1, $notifications);
-
-        // Admin-visible message recorded about the cancellation
-        $messages = $em->getRepository(UserMessage::class)->findBy([
-            'user' => $user,
-        ]);
-        self::assertCount(1, $messages);
-        self::assertSame(MessageType::CANCELLATION_REQUEST, $messages[0]->getType());
-        self::assertStringContainsString('Sensoplastyka', $messages[0]->getSubject());
     }
 
     public function testCancellingOneLessonOfAMultiLessonBookingKeepsBookingActive(): void
@@ -124,12 +114,6 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         // No workflow transition fired at the booking level, so no cancellation email
         $this->mailer()
             ->assertSentEmailCount(0);
-
-        // The cancellation is still recorded for admin visibility
-        $messages = $em->getRepository(UserMessage::class)->findBy([
-            'user' => $user,
-        ]);
-        self::assertCount(1, $messages);
 
         // The per-lesson cancelled state must survive a fresh DB round-trip
         // (regression guard: LessonMap is a custom-typed field, mutating it

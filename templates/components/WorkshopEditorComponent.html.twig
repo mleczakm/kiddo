@@ -173,14 +173,42 @@
                                 />
                             </div>
                             <div class="space-y-1.5">
-                                <label class="text-sm font-bold text-slate-700">Motyw wizualny</label>
+                                <label class="text-sm font-bold text-slate-700">Kolor motywu</label>
                                 <input
-                                    type="text"
+                                    type="color"
                                     data-model="visualTheme"
-                                    value="{{ visualTheme|default('') }}"
-                                    placeholder="np. orange-100"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
+                                    value="{{ visualTheme matches '/^#[0-9a-fA-F]{6}$/' ? visualTheme : '#f97316' }}"
+                                    class="w-full h-11 p-1 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none"
                                 />
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-bold text-slate-700">Zdjęcie warsztatu</label>
+
+                            {% if this.getEditingLessonImageUrl() %}
+                                <div class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                    <img src="{{ this.getEditingLessonImageUrl() }}" alt="" class="w-16 h-16 rounded-lg object-cover shrink-0" />
+                                    <label class="flex items-center gap-2 text-xs font-bold text-red-600 cursor-pointer">
+                                        <input type="checkbox" data-model="removeImage" class="w-4 h-4 rounded text-red-600" />
+                                        Usuń obecne zdjęcie
+                                    </label>
+                                </div>
+                            {% endif %}
+
+                            <div class="dropzone-container" data-controller="symfony--ux-dropzone--dropzone">
+                                <input type="file" accept="image/*" name="imageFile"
+                                       data-symfony--ux-dropzone--dropzone-target="input" class="dropzone-input" />
+                                <div class="dropzone-placeholder" data-symfony--ux-dropzone--dropzone-target="placeholder">
+                                    Przeciągnij i upuść zdjęcie lub kliknij, aby wybrać (maks. 3 MB)
+                                </div>
+                                <div class="dropzone-preview" data-symfony--ux-dropzone--dropzone-target="preview" style="display: none">
+                                    <button class="dropzone-preview-button" type="button"
+                                            data-symfony--ux-dropzone--dropzone-target="previewClearButton"></button>
+                                    <div class="dropzone-preview-image" style="display: none"
+                                         data-symfony--ux-dropzone--dropzone-target="previewImage"></div>
+                                    <div data-symfony--ux-dropzone--dropzone-target="previewFilename" class="dropzone-preview-filename"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -217,6 +245,21 @@
                                     </div>
                                 </div>
                             </div>
+                            {% if this.getEditingSeries() and is_granted('ROLE_MANAGE_SCHEDULE') %}
+                                <div class="space-y-2 border border-slate-200 p-5 rounded-xl">
+                                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        {{ 'admin.workshop_editor.last_occurrence.label'|trans }}
+                                    </h3>
+                                    <p class="text-xs text-slate-500">{{ 'admin.workshop_editor.last_occurrence.hint'|trans }}</p>
+                                    <input
+                                        type="date"
+                                        data-model="endDate"
+                                        value="{{ endDate|default('') }}"
+                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
+                                    />
+                                </div>
+                            {% endif %}
                         </div>
                     {% else %}
                     <div class="space-y-6">
@@ -447,7 +490,7 @@
                     Anuluj
                 </button>
                 <button
-                    data-action="live#action" data-live-action-param="save"
+                    data-action="live#action" data-live-action-param="files|save"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition"
                 >
                     {{ editingLessonId ? 'admin.workshop_editor.save_edit'|trans : 'admin.workshop_editor.save_create'|trans }}

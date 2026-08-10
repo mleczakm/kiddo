@@ -39,10 +39,10 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $em->persist($admin2);
 
         $oldLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->withSchedule($fromDate)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())->withSchedule($fromDate)
             ->assemble();
         $newLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->withSchedule($toDate)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())->withSchedule($toDate)
             ->assemble();
         $em->persist($oldLesson);
         $em->persist($newLesson);
@@ -93,11 +93,11 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $em->persist($user);
 
         $oldLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Pilates')->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Pilates')->assemble())->withSchedule($date)
             ->assemble();
         $newLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Pilates')->withSchedule($date->modify('+2 days'))
-                ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Pilates')->assemble())
+            ->withSchedule($date->modify('+2 days'))
             ->assemble();
         $em->persist($oldLesson);
         $em->persist($newLesson);

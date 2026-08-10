@@ -5,13 +5,10 @@
     { target: 'dashboard-kpis', key: 'dashboard_kpis' },
     { target: 'nav-workshops', key: 'nav_workshops' },
     { target: 'add-workshop', key: 'add_workshop' },
-    { target: 'nav-lessons', key: 'nav_lessons' },
     { target: 'nav-bookings', key: 'nav_bookings' },
     { target: 'booking-actions', key: 'booking_actions' },
     { target: 'nav-users', key: 'nav_users' },
     { target: 'nav-transfers', key: 'nav_transfers' },
-    { target: 'nav-messages', key: 'nav_messages' },
-    { target: 'messages-inbox', key: 'messages_inbox' },
     { target: 'notif-bell', key: 'notif_bell' },
     { target: 'settings-link', key: 'settings_link' },
 ] %}
@@ -192,25 +189,9 @@
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Pulpit</span>
                                 </li>
-                            {% elseif current_route in ['app_admin_lessons', 'app_admin_lesson_view', 'app_admin_lesson_toggle'] %}
+                            {% elseif current_route in ['app_admin_schedule', 'app_admin_lesson_view', 'app_admin_lesson_toggle'] %}
                                 <li class="inline-flex items-center gap-1.5">
-                                    <span class="text-slate-400">Warsztaty i Grafik</span>
-                                    <span class="text-slate-300" aria-hidden="true">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                                    </span>
-                                </li>
-                                <li class="inline-flex items-center gap-1.5">
-                                    <span class="font-bold text-slate-700">Lista Zajęć</span>
-                                </li>
-                            {% elseif current_route == 'app_admin_schedule' %}
-                                <li class="inline-flex items-center gap-1.5">
-                                    <span class="text-slate-400">Warsztaty i Grafik</span>
-                                    <span class="text-slate-300" aria-hidden="true">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                                    </span>
-                                </li>
-                                <li class="inline-flex items-center gap-1.5">
-                                    <span class="font-bold text-slate-700">Harmonogram</span>
+                                    <span class="font-bold text-slate-700">Warsztaty i Grafik</span>
                                 </li>
                             {% elseif current_route in ['app_admin_users', 'app_admin_user_view'] %}
                                 <li class="inline-flex items-center gap-1.5">
@@ -235,10 +216,6 @@
                             {% elseif current_route == 'app_admin_transfers' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Przelewy / Finanse</span>
-                                </li>
-                            {% elseif current_route == 'app_admin_messages' %}
-                                <li class="inline-flex items-center gap-1.5">
-                                    <span class="font-bold text-slate-700">Wiadomości</span>
                                 </li>
                             {% elseif current_route == 'app_admin_settings' %}
                                 <li class="inline-flex items-center gap-1.5">

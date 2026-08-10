@@ -9,7 +9,6 @@ use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\Booking;
 use App\Entity\Lesson;
-use App\Entity\MessageStatus;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
 use App\Entity\Series;
@@ -17,7 +16,6 @@ use App\Entity\TicketOption;
 use App\Entity\TicketReschedulePolicy;
 use App\Entity\TicketType;
 use App\Entity\User;
-use App\Entity\UserMessage;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
@@ -134,16 +132,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                 ],
             ], requiresAdmin: true),
-            new ToolDefinition('admin.update_series', 'Activate/cancel a series or replace ticket options.', [
+            new ToolDefinition('admin.update_series', 'Replace ticket options for a series.', [
                 'type' => 'object',
                 'properties' => [
                     ...$confirm,
                     'series_id' => [
                         'type' => 'string',
-                    ],
-                    'status' => [
-                        'type' => 'string',
-                        'enum' => ['active', 'cancelled'],
                     ],
                     'ticket_options' => [
                         'type' => 'array',
@@ -352,34 +346,6 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                 ],
             ], requiresAdmin: true),
-            new ToolDefinition('admin.list_messages', 'List support inbox messages.', [
-                'type' => 'object',
-                'properties' => [
-                    'status' => [
-                        'type' => 'string',
-                    ],
-                    'limit' => [
-                        'type' => 'integer',
-                    ],
-                ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.update_message', 'Update support message status and/or admin notes.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'message_id' => [
-                        'type' => 'string',
-                    ],
-                    'status' => [
-                        'type' => 'string',
-                        'enum' => array_map(static fn(MessageStatus $s) => $s->value, MessageStatus::cases()),
-                    ],
-                    'admin_notes' => [
-                        'type' => 'string',
-                    ],
-                ],
-                'required' => ['confirm', 'message_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
             new ToolDefinition('admin.notify_user', 'Send an in-app notification to a user.', [
                 'type' => 'object',
                 'properties' => [
@@ -444,8 +410,6 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'admin.trigger_import_transfers' => $this->triggerImport(),
                 'admin.search_users' => $this->searchUsers($args),
                 'admin.get_user' => $this->getUser($args),
-                'admin.list_messages' => $this->listMessages($args),
-                'admin.update_message' => $this->updateMessage($actor, $args),
                 'admin.notify_user' => $this->notifyUser($args),
                 default => ToolResult::failure(sprintf('Unknown admin tool: %s', $name)),
             };
@@ -492,11 +456,11 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             /** @var list<Lesson> $cancelled */
             $cancelled = $this->lessonRepository->createQueryBuilder('l')
                 ->andWhere('l.status = :status')
-                ->andWhere('l.metadata.schedule BETWEEN :weekStart AND :weekEnd')
+                ->andWhere('l.schedule BETWEEN :weekStart AND :weekEnd')
                 ->setParameter('status', 'cancelled')
                 ->setParameter('weekStart', $weekStart)
                 ->setParameter('weekEnd', $weekEnd)
-                ->orderBy('l.metadata.schedule', 'ASC')
+                ->orderBy('l.schedule', 'ASC')
                 ->getQuery()
                 ->getResult();
             $lessons = array_merge($lessons, $cancelled);
@@ -833,70 +797,6 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
-    private function listMessages(ToolArguments $args): ToolResult
-    {
-        $qb = $this->entityManager->createQueryBuilder()
-            ->select('m')
-            ->from(UserMessage::class, 'm')
-            ->orderBy('m.createdAt', 'DESC')
-            ->setMaxResults($args->int('limit', 30) ?? 30);
-        $status = $args->string('status');
-        if ($status !== null) {
-            $qb->andWhere('m.status = :status')
-                ->setParameter('status', MessageStatus::from($status));
-        }
-        /** @var list<UserMessage> $messages */
-        $messages = $qb->getQuery()
-            ->getResult();
-        $items = [];
-        foreach ($messages as $message) {
-            $items[] = [
-                'id' => (string) $message->getId(),
-                'subject' => $message->getSubject(),
-                'message' => $message->getMessage(),
-                'type' => $message->getType()
-                    ->value,
-                'status' => $message->getStatus()
-                    ->value,
-                'user_email' => $message->getUser()
-                    ->getEmail(),
-                'admin_notes' => $message->getAdminNotes(),
-                'created_at' => $message->getCreatedAt()
-                    ->format(\DateTimeInterface::ATOM),
-            ];
-        }
-
-        return ToolResult::success(sprintf('Wiadomości: %d.', count($items)), [
-            'messages' => $items,
-        ]);
-    }
-
-    private function updateMessage(ChatActor $actor, ToolArguments $args): ToolResult
-    {
-        $message = $this->entityManager->find(UserMessage::class, Ulid::fromString($args->requireString('message_id')));
-        if (! $message instanceof UserMessage) {
-            return ToolResult::failure('Message not found');
-        }
-        if ($args->has('status')) {
-            $status = MessageStatus::from($args->requireString('status'));
-            $message->setStatus($status);
-            if ($status === MessageStatus::READ && $message->getReadAt() === null) {
-                $message->markAsRead($actor->requireUser());
-            }
-        }
-        $adminNotes = $args->string('admin_notes');
-        if ($adminNotes !== null) {
-            $message->setAdminNotes($adminNotes);
-        }
-        $this->entityManager->flush();
-
-        return ToolResult::success('Wiadomość zaktualizowana.', [
-            'id' => (string) $message->getId(),
-            'status' => $message->getStatus()
-                ->value,
-        ]);
-    }
-
     private function listSeries(ToolArguments $args): ToolResult
     {
         $week = $args->string('week') ?? new \DateTimeImmutable('today')
@@ -933,17 +833,6 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         if (! $series instanceof Series) {
             return ToolResult::failure('Series not found');
         }
-        if ($args->has('status')) {
-            $status = $args->requireString('status');
-            if ($status === 'cancelled') {
-                $series->cancel();
-            } elseif ($status === 'active') {
-                $series->activate();
-            } else {
-                return ToolResult::failure('Invalid series status');
-            }
-        }
-
         $ticketOptionsInput = $args->array('ticket_options');
         if ($ticketOptionsInput !== null) {
             $ticketOptions = [];
@@ -1005,13 +894,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             return ToolResult::failure('Template lesson not found');
         }
         $schedule = new \DateTimeImmutable($args->requireString('schedule'));
-        $metadata = $template->getMetadata()
-            ->withSchedule($schedule);
+        $metadata = $template->getMetadata();
         $capacity = $args->int('capacity');
         if ($capacity !== null) {
             $metadata = $metadata->withCapacity($capacity);
         }
-        $lesson = new Lesson($metadata);
+        $lesson = new Lesson($metadata, $schedule);
         $series = $template->getSeries();
         if ($series !== null) {
             $lesson->setSeries($series);

@@ -190,13 +190,12 @@ class AdminBookingsTabTest extends WebTestCase
             visualTheme: 'default',
             description: 'Test workshop description',
             capacity: 10,
-            schedule: new \DateTimeImmutable('+1 day'),
             duration: 60,
             ageRange: $ageRange,
             category: 'test'
         );
 
-        $lesson = new Lesson($metadata, []);
+        $lesson = new Lesson($metadata, new \DateTimeImmutable('+1 day'), []);
         $booking = new Booking($testUser, $payment, $lesson);
         $booking->setStatus(Booking::STATUS_CONFIRMED);
 
@@ -244,13 +243,12 @@ class AdminBookingsTabTest extends WebTestCase
             visualTheme: 'default',
             description: 'Workshop with child',
             capacity: 10,
-            schedule: new \DateTimeImmutable('+1 day'),
             duration: 60,
             ageRange: $ageRange,
             category: 'test'
         );
 
-        $lesson = new Lesson($metadata, []);
+        $lesson = new Lesson($metadata, new \DateTimeImmutable('+1 day'), []);
         $booking = new Booking($testUser, $payment, $lesson);
         $booking->setChild($child);
         $booking->setStatus(Booking::STATUS_CONFIRMED);
@@ -299,13 +297,12 @@ class AdminBookingsTabTest extends WebTestCase
             visualTheme: 'default',
             description: 'Unpaid workshop description',
             capacity: 10,
-            schedule: new \DateTimeImmutable('+1 day'),
             duration: 60,
             ageRange: $ageRange,
             category: 'test'
         );
 
-        $lesson = new Lesson($metadata, []);
+        $lesson = new Lesson($metadata, new \DateTimeImmutable('+1 day'), []);
         $booking = new Booking($testUser, $payment, $lesson);
         $booking->setStatus(Booking::STATUS_CONFIRMED);
 
@@ -346,13 +343,12 @@ class AdminBookingsTabTest extends WebTestCase
             visualTheme: 'default',
             description: 'Available workshop for booking',
             capacity: 15,
-            schedule: new \DateTimeImmutable('+2 days'),
             duration: 90,
             ageRange: $ageRange,
             category: 'workshop'
         );
 
-        $lesson = new Lesson($metadata, []);
+        $lesson = new Lesson($metadata, new \DateTimeImmutable('+2 days'), []);
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($adminUser);

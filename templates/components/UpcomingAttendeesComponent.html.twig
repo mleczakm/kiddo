@@ -87,7 +87,7 @@
                                     {% endif %}
                                 </h4>
                                 <p class="text-sm text-muted-foreground">
-                                    {{ lesson.metadata.schedule|format_datetime('medium', 'short') }} •
+                                    {{ lesson.schedule|format_datetime('medium', 'short') }} •
                                     {% set activeBookings = lesson.bookings|filter(b => b.active and (b.lessonsMap.active.hasKey(lesson.id) or b.lessonsMap.past.hasKey(lesson.id))) %}
                                     {{ activeBookings|length }}
                                     /{{ lesson.metadata.capacity }} {{ 'admin_dashboard.capacity'|trans }}
@@ -225,7 +225,7 @@
             <div class="min-w-0">
                 <h3 class="text-lg font-black text-slate-800">Szybka rezerwacja</h3>
                 {% if sel %}
-                    <p class="text-sm text-slate-500 mt-0.5">{{ sel.metadata.title }} &middot; {{ sel.metadata.schedule|date('Y-m-d H:i') }}</p>
+                    <p class="text-sm text-slate-500 mt-0.5">{{ sel.metadata.title }} &middot; {{ sel.schedule|date('Y-m-d H:i') }}</p>
                 {% endif %}
             </div>
         </div>

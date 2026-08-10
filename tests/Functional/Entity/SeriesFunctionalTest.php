@@ -31,19 +31,16 @@ final class SeriesFunctionalTest extends WebTestCase
 
         $now = new \DateTimeImmutable('now');
         $lEarly = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()->withTitle('Early')->withSchedule($now->modify('-2 days'))->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Early')->assemble())
+            ->withSchedule($now->modify('-2 days'))
             ->assemble();
         $lMid = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()->withTitle('Mid')->withSchedule($now->modify('+1 day'))->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Mid')->assemble())
+            ->withSchedule($now->modify('+1 day'))
             ->assemble();
         $lLate = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()->withTitle('Late')->withSchedule($now->modify('+10 days'))->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Late')->assemble())
+            ->withSchedule($now->modify('+10 days'))
             ->assemble();
 
         $lEarly->setSeries($series);
@@ -63,18 +60,8 @@ final class SeriesFunctionalTest extends WebTestCase
         $first = $reloaded->getFirstLesson();
         $last = $reloaded->getLastLesson();
 
-        self::assertSame(
-            $lEarly->getMetadata()
-                ->schedule->format('Y-m-d'),
-            $first->getMetadata()
-                ->schedule->format('Y-m-d')
-        );
-        self::assertSame(
-            $lLate->getMetadata()
-                ->schedule->format('Y-m-d'),
-            $last->getMetadata()
-                ->schedule->format('Y-m-d')
-        );
+        self::assertSame($lEarly->schedule->format('Y-m-d'), $first->schedule->format('Y-m-d'));
+        self::assertSame($lLate->schedule->format('Y-m-d'), $last->schedule->format('Y-m-d'));
     }
 
     public function testGetFirstOrLastLessonThrowsWhenEmpty(): void

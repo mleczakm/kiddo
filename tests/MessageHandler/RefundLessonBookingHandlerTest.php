@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\MessageHandler;
 
 use App\Entity\Booking;
-use App\Entity\MessageType;
 use App\Entity\Payment;
-use App\Entity\UserMessage;
 use App\Message\RefundLessonBooking;
 use App\MessageHandler\RefundLessonBookingHandler;
 use App\Tests\Assembler\BookingAssembler;
@@ -22,7 +20,7 @@ use Symfony\Component\Clock\Clock;
 #[Group('functional')]
 final class RefundLessonBookingHandlerTest extends KernelTestCase
 {
-    public function testUserRequestChangesPaymentStatusAndStoresMessage(): void
+    public function testUserRequestChangesPaymentStatus(): void
     {
         self::bootKernel();
         $container = self::getContainer();
@@ -53,12 +51,5 @@ final class RefundLessonBookingHandlerTest extends KernelTestCase
         self::assertSame(Payment::STATUS_REFUND_REQUESTED, $payment->getStatus());
         self::assertSame('Proszę o zwrot.', $payment->getRefundRequestMessage());
         self::assertTrue($payment->isRefundRequestedViaUserPanel());
-
-        $messages = $em->getRepository(UserMessage::class)->findBy([
-            'relatedBooking' => $booking,
-            'type' => MessageType::REFUND_REQUEST,
-        ]);
-        self::assertCount(1, $messages);
-        self::assertSame('Proszę o zwrot.', $messages[0]->getMessage());
     }
 }

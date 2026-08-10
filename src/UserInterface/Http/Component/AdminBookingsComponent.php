@@ -110,7 +110,8 @@ class AdminBookingsComponent extends AbstractController
             ->leftJoin('b.user', 'u')
             ->leftJoin('b.lessons', 'l')
             ->leftJoin('b.payment', 'p')
-            ->leftJoin('l.series', 's');
+            ->leftJoin('l.series', 's')
+            ->leftJoin('l.metadata', 'm');
 
         // ROLE_HOST (without ROLE_ADMIN) only ever sees bookings for lessons
         // they're assigned to as an instructor — directly, or via the
@@ -147,7 +148,7 @@ class AdminBookingsComponent extends AbstractController
 
         // Apply search filter
         if ($this->search) {
-            $qb->andWhere('u.name LIKE :search OR u.email LIKE :search OR l.metadata.title LIKE :search')
+            $qb->andWhere('u.name LIKE :search OR u.email LIKE :search OR m.title LIKE :search')
                 ->setParameter('search', '%' . $this->search . '%');
         }
 
@@ -169,7 +170,7 @@ class AdminBookingsComponent extends AbstractController
 
             // Calculate completed and upcoming lessons from actual lessons
             foreach ($booking->getLessons() as $lesson) {
-                if ($lesson->getMetadata()->schedule < Clock::get()->now()) {
+                if ($lesson->schedule < Clock::get()->now()) {
                     $completedLessons++;
                 } else {
                     $upcomingLessons[] = $lesson;
@@ -252,10 +253,10 @@ class AdminBookingsComponent extends AbstractController
         $result = $this->lessonRepository->createQueryBuilder('l')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
-            ->andWhere('l.metadata.schedule > :now')
+            ->andWhere('l.schedule > :now')
             ->setParameter('status', 'active')
             ->setParameter('now', Clock::get()->now())
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->setMaxResults(50)
             ->getQuery()
             ->getResult();
@@ -494,8 +495,7 @@ class AdminBookingsComponent extends AbstractController
         // Check if lesson is in active map
         if ($lessonMap->active()->hasKey($lessonId)) {
             $now = Clock::get()->now();
-            $schedule = $lesson->getMetadata()
-                ->schedule;
+            $schedule = $lesson->schedule;
 
             if ($schedule < Clock::get()->now()) {
                 return [
@@ -523,8 +523,7 @@ class AdminBookingsComponent extends AbstractController
         $lessonId = $lesson->getId();
 
         // Can modify only if lesson is in active map and in the future
-        return $lesson->getMetadata()
-            ->schedule > $now
+        return $lesson->schedule > $now
                         && $booking->canBeRescheduled()
             && $lessonMap->active()
                 ->hasKey($lessonId);
@@ -593,17 +592,18 @@ class AdminBookingsComponent extends AbstractController
     public function getFilteredLessons(): array
     {
         $qb = $this->lessonRepository->createQueryBuilder('l')
+            ->join('l.metadata', 'm')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
-            ->andWhere('l.metadata.schedule > :now')
+            ->andWhere('l.schedule > :now')
             ->setParameter('status', 'active')
             ->setParameter('now', Clock::get()->now())
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->setMaxResults(10);
 
         // Apply search filter
         $searchTerm = '%' . $this->lessonSearch . '%';
-        $qb->andWhere('l.metadata.title LIKE :search OR l.metadata.description LIKE :search')
+        $qb->andWhere('m.title LIKE :search OR m.description LIKE :search')
             ->setParameter('search', $searchTerm);
 
         /** @var Lesson[] $result */

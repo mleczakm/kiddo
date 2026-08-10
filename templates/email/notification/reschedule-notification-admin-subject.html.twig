@@ -1,2 +1,2 @@
 {% trans_default_domain 'emails' %}
-{{ 'reschedule.notification.admin.subject'|trans({'user': user.emailString}) }} {{ oldLesson.metadata.title }} {{ oldLesson.metadata.schedule|format_datetime(pattern='dd MMM HH:mm') }} → {{ newLesson.metadata.title }} {{ newLesson.metadata.schedule|format_datetime(pattern='dd MMM HH:mm') }}
+{{ 'reschedule.notification.admin.subject'|trans({'user': user.emailString}) }} {{ oldLesson.metadata.title }} {{ oldLesson.schedule|format_datetime(pattern='dd MMM HH:mm') }} → {{ newLesson.metadata.title }} {{ newLesson.schedule|format_datetime(pattern='dd MMM HH:mm') }}

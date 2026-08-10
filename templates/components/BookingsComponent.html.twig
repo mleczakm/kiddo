@@ -48,7 +48,7 @@
                     {% for lesson in booking.lessons %}
                         {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
                         {% set isRescheduled = booking.lessonsMap.isRescheduledLesson(lesson.id) %}
-                        {% set isFuture = lesson.metadata.schedule > date() %}
+                        {% set isFuture = lesson.schedule > date() %}
                         {% set show =
                             (activeTab == 'cancelled' and isCancelled) or
                             (activeTab == 'active' and (not isCancelled) and isFuture) or
@@ -109,7 +109,7 @@
                                                           rx="2"></rect>
                                                     <path d="M3 10h18"></path>
                                                 </svg>
-                                                <span>{{ lesson.metadata.schedule|date('d.m.Y') }}</span>
+                                                <span>{{ lesson.schedule|date('d.m.Y') }}</span>
                                             </div>
                                             <div class="flex items-center {{ isCancelled ? 'line-through text-muted-foreground' : '' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -120,7 +120,7 @@
                                                     <circle cx="12" cy="12" r="10"></circle>
                                                     <polyline points="12 6 12 12 16 14"></polyline>
                                                 </svg>
-                                                <span>{{ lesson.metadata.schedule|date('H:i') }} - {{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</span>
+                                                <span>{{ lesson.schedule|date('H:i') }} - {{ lesson.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</span>
                                             </div>
                                         </div>
                                         {% if isCancelled %}

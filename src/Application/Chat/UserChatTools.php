@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Chat;
 
 use App\Application\Command\AddBooking;
-use App\Application\Service\ActivityLogger;
-use App\Entity\ActivityType;
 use App\Entity\Child;
-use App\Entity\MessageType;
 use App\Entity\PaymentFactory;
-use App\Entity\UserMessage;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
@@ -24,7 +20,6 @@ use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
 
 #[AutoconfigureTag('app.chat_tool_provider')]
@@ -39,8 +34,6 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         private NotificationRepository $notificationRepository,
         private PaymentCodeRepository $paymentCodeRepository,
         private LessonPresenter $presenter,
-        private ActivityLogger $activityLogger,
-        private UrlGeneratorInterface $urlGenerator,
     ) {}
 
     public function definitions(): array
@@ -307,23 +300,6 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 'required' => ['confirm', 'notification_id'],
             ], requiresConfirm: true),
-            new ToolDefinition('user.create_message', 'Open a support ticket / message for admins.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'subject' => [
-                        'type' => 'string',
-                    ],
-                    'message' => [
-                        'type' => 'string',
-                    ],
-                    'type' => [
-                        'type' => 'string',
-                        'enum' => array_map(static fn(MessageType $t) => $t->value, MessageType::cases()),
-                    ],
-                ],
-                'required' => ['confirm', 'subject', 'message'],
-            ], requiresConfirm: true),
         ];
     }
 
@@ -357,7 +333,6 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'user.list_notifications' => $this->listNotifications($actor, $args),
                 'user.mark_notification_read' => $this->markNotificationRead($actor, $args),
                 'user.delete_notification' => $this->deleteNotification($actor, $args),
-                'user.create_message' => $this->createMessage($actor, $args),
                 default => ToolResult::failure(sprintf('Unknown user tool: %s', $name)),
             };
         } catch (\InvalidArgumentException $e) {
@@ -638,11 +613,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             return ToolResult::failure('Lesson has no series — cannot reschedule');
         }
 
-        $available = $this->lessonRepository->findAvailableLessonsForReschedule(
-            $series,
-            $lesson->getMetadata()
-                ->schedule,
-        );
+        $available = $this->lessonRepository->findAvailableLessonsForReschedule($series, $lesson->schedule);
         $targets = [];
         foreach ($available as $candidate) {
             if ($candidate->getId()->equals($lesson->getId())) {
@@ -799,40 +770,5 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $this->entityManager->flush();
 
         return ToolResult::success('Powiadomienie usunięte.');
-    }
-
-    private function createMessage(ChatActor $actor, ToolArguments $args): ToolResult
-    {
-        $type = MessageType::GENERAL;
-        $typeValue = $args->string('type');
-        if ($typeValue !== null) {
-            $type = MessageType::from($typeValue);
-        }
-        $user = $actor->requireUser();
-        $subject = $args->requireString('subject');
-        $message = new UserMessage($user, $subject, $args->requireString('message'), $type);
-        $this->entityManager->persist($message);
-        $this->entityManager->flush();
-
-        $userId = $user->getId();
-        $this->activityLogger->log(
-            type: ActivityType::CUSTOMER_MESSAGE,
-            title: sprintf('%s wysłał/a wiadomość', $user->getName()),
-            subject: $user,
-            summary: $subject,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
-                'id' => $userId,
-            ]) : null,
-            context: [
-                'messageId' => (string) $message->getId(),
-            ],
-        );
-
-        return ToolResult::success(
-            'Wiadomość do administracji została utworzona.',
-            [
-                'message_id' => (string) $message->getId(),
-            ]
-        );
     }
 }

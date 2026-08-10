@@ -29,6 +29,10 @@ form:
     mail_sent_header: Witamy!
 
 
+mobile_nav:
+  tickets: Bilety
+  account: Konto
+
 page:
   default:
     header: "Warsztatownia sensoryczna"
@@ -728,13 +732,10 @@ admin:
         body: 'Szybki podgląd najważniejszych statystyk — liczby rezerwacji, przychodów i alertów wymagających uwagi.'
       nav_workshops:
         title: 'Warsztaty'
-        body: 'Tu zarządzasz cyklami zajęć: dodajesz nowe serie warsztatów, ustawiasz dzień tygodnia i godziny, ceny biletów/karnetów oraz przypisujesz prowadzących do całego cyklu.'
+        body: 'Tu zarządzasz cyklami zajęć: dodajesz nowe serie warsztatów, ustawiasz dzień tygodnia i godziny, ceny biletów/karnetów oraz przypisujesz prowadzących do całego cyklu. Rozwijając serię zobaczysz też jej pojedyncze wystąpienia w wybranym tygodniu.'
       add_workshop:
         title: 'Dodawanie zajęć'
         body: 'Ten przycisk otwiera kreator warsztatów — ustawisz tu podstawowe informacje, harmonogram i bilety.'
-      nav_lessons:
-        title: 'Zajęcia'
-        body: 'Lista pojedynczych wydarzeń w wybranym tygodniu. Sprawdzisz tu liczbę zapisanych osób, a otwierając konkretne zajęcia — zmienisz ich termin lub treść (tylko to wydarzenie albo cały cykl) i zobaczysz listę uczestników.'
       nav_bookings:
         title: 'Rezerwacje'
         body: 'Wszystkie rezerwacje klientów w jednym miejscu — tu je anulujesz, zmieniasz termin lub dodajesz rezerwację ręcznie w imieniu klienta.'
@@ -747,12 +748,6 @@ admin:
       nav_transfers:
         title: 'Płatności'
         body: 'Przychodzące przelewy bankowe i ich dopasowanie do rezerwacji klientów — widzisz tu, które płatności zostały rozpoznane automatycznie, a które wymagają ręcznego przypisania.'
-      nav_messages:
-        title: 'Wiadomości'
-        body: 'Skrzynka zgłoszeń od klientów — w tym automatyczne wiadomości o prośbach o anulowanie lub zmianę terminu. Możesz tu odpowiedzieć bezpośrednio klientowi.'
-      messages_inbox:
-        title: 'Skrzynka wiadomości'
-        body: 'Tu trafiają wiadomości od klientów, w tym automatyczne powiadomienia o anulowaniach i zmianach terminu.'
       notif_bell:
         title: 'Powiadomienia'
         body: 'Dzwonek pokazuje najnowsze zdarzenia w systemie wymagające Twojej uwagi.'
@@ -768,7 +763,6 @@ admin:
     lessons: Zajęcia
     schedule: Harmonogram
     transfers: Płatności
-    messages: Wiadomości
     settings: Ustawienia
     coming_soon: 'Sekcja "{tab}" wkrótce dostępna'
   billing:
@@ -850,7 +844,7 @@ admin:
       cancel: "Anuluj serię"
       activate: "Aktywuj serię"
       edit: "Edytuj"
-    empty: "Brak serii w wybranym tygodniu"
+    empty: "Brak zajęć w wybranym tygodniu"
   user_show:
     kpi:
       total_spent: "Suma wydatków"
@@ -918,6 +912,9 @@ admin:
     save_edit: "Zapisz zmiany"
     this_occurrence: "Ten termin"
     occurrence_date_hint: "Data i godzina dotyczą tylko tego pojedynczego wydarzenia."
+    last_occurrence:
+      label: "Ostatni termin cyklu (opcjonalnie)"
+      hint: "Po tej dacie nowe terminy przestaną być automatycznie dodawane do tej serii. Nie anuluje to już zaplanowanych zajęć."
     scope:
       label: "Zakres zmian"
       occurrence: "Tylko to wydarzenie"

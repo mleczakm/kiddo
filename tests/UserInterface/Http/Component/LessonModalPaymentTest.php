@@ -51,9 +51,10 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Sensory')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+                    ->withTitle('Sensory')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
 
@@ -116,9 +117,10 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Sensory')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+                    ->withTitle('Sensory')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
 
@@ -188,9 +190,10 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Sensory')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+                    ->withTitle('Sensory')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
 
@@ -233,12 +236,8 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withType(WorkshopType::ONE_TIME)
             ->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Music')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-21 11:00:00'))
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new() ->withTitle('Music') ->withTitle('Music') ->assemble())
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 11:00:00'))
             ->assemble();
         $lesson->setSeries($series);
 
@@ -310,12 +309,8 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withType(WorkshopType::ONE_TIME)
             ->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Art')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-22 12:00:00'))
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new() ->withTitle('Art') ->withTitle('Art') ->assemble())
+            ->withSchedule(new \DateTimeImmutable('2024-02-22 12:00:00'))
             ->assemble();
         $lesson->setSeries($series);
 

@@ -32,7 +32,7 @@ class CheckBookingsToMarkPastHandlerTest extends KernelTestCase
 
         // Booking A: active, all active lessons are in the past -> should become past
         $lessonPast = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($past)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($past)
             ->assemble();
         $em->persist($lessonPast);
         $bookingA = BookingAssembler::new()
@@ -45,7 +45,7 @@ class CheckBookingsToMarkPastHandlerTest extends KernelTestCase
 
         // Booking B: active, has a future active lesson -> should remain active
         $lessonFuture = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($future)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($future)
             ->assemble();
         $em->persist($lessonFuture);
         $bookingB = BookingAssembler::new()
@@ -58,7 +58,7 @@ class CheckBookingsToMarkPastHandlerTest extends KernelTestCase
 
         // Booking C: active, only lesson is future but cancelled -> should become past per spec
         $lessonFuture2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($future)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($future)
             ->assemble();
         $em->persist($lessonFuture2);
         $bookingC = BookingAssembler::new()

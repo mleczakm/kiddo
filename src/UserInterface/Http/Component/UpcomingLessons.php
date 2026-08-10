@@ -146,8 +146,7 @@ class UpcomingLessons
 
         // Group workshops by their schedule date
         foreach ($workshops as $workshop) {
-            $scheduleDate = $workshop->getMetadata()
-                ->schedule->format('Y-m-d');
+            $scheduleDate = $workshop->schedule->format('Y-m-d');
             if (isset($grouped[$scheduleDate])) {
                 $grouped[$scheduleDate]['workshops'][] = $workshop;
             }
@@ -171,8 +170,8 @@ class UpcomingLessons
             return true;
         }
 
-        return $metadata->schedule->format('Y-m-d') === $this->openDate
-            && $metadata->schedule->format('H:i') === $this->openHour;
+        return $lesson->schedule->format('Y-m-d') === $this->openDate
+            && $lesson->schedule->format('H:i') === $this->openHour;
     }
 
     public function getCurrentWeek(): string

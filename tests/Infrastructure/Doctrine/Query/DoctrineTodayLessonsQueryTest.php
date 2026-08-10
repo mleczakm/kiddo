@@ -22,13 +22,13 @@ class DoctrineTodayLessonsQueryTest extends KernelTestCase
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
             ->assemble();
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date->setTime(15, 0))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date->setTime(15, 0))
             ->assemble();
         $lessonOther = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($otherDate)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($otherDate)
             ->assemble();
 
         $em->persist($lesson1);

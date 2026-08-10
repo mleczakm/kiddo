@@ -178,8 +178,7 @@ class LessonMap implements \Countable
             }
 
             // Otherwise, classify by the lesson's schedule
-            $schedule = $lesson->getMetadata()
-                ->schedule;
+            $schedule = $lesson->schedule;
             if ($schedule >= $now) {
                 $lessonMap->active->put($lessonId, $booked);
             } else {
@@ -322,7 +321,7 @@ class LessonMap implements \Countable
         $now = Clock::get()->now();
         foreach ($this->lessons as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
-            if ($lesson && $lesson->getMetadata()->schedule > $now) {
+            if ($lesson && $lesson->schedule > $now) {
                 return false;
             }
         }
@@ -393,7 +392,7 @@ class LessonMap implements \Countable
         $modifiable = [];
         foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
-            if ($lesson && $lesson->getMetadata()->schedule > $now) {
+            if ($lesson && $lesson->schedule > $now) {
                 $modifiable[] = $bookedLesson;
             }
         }
@@ -440,7 +439,7 @@ class LessonMap implements \Countable
         $future = [];
         foreach ($this->active as $bookedLesson) {
             $lesson = $bookedLesson->entity($booking);
-            if ($lesson && $lesson->getMetadata()->schedule > $now) {
+            if ($lesson && $lesson->schedule > $now) {
                 $future[] = $bookedLesson;
             }
         }

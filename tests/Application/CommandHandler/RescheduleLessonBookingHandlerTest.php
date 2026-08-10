@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\CommandHandler;
 
 use App\Entity\Booking;
-use App\Entity\MessageType;
 use App\Entity\Notification;
-use App\Entity\UserMessage;
 use App\Message\RescheduleLessonBooking;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
@@ -22,7 +20,7 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
 {
     use InteractsWithMessenger;
 
-    public function testRescheduleNotifiesTheCustomerAndRecordsAMessage(): void
+    public function testRescheduleNotifiesTheCustomer(): void
     {
         self::bootKernel();
         $em = self::getContainer()->get('doctrine')->getManager();
@@ -74,13 +72,6 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
         ]);
         self::assertCount(1, $notifications);
         self::assertStringContainsString('termin', mb_strtolower((string) $notifications[0]->getTitle()));
-
-        $messages = $em->getRepository(UserMessage::class)->findBy([
-            'user' => $customer,
-        ]);
-        self::assertCount(1, $messages);
-        self::assertSame(MessageType::RESCHEDULE_REQUEST, $messages[0]->getType());
-        self::assertStringContainsString('Zajęcia poniedziałkowe', $messages[0]->getSubject());
 
         // The reschedule must survive a fresh DB round-trip (regression
         // guard: LessonMap is a custom-typed field — see

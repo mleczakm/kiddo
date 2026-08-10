@@ -31,7 +31,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $em->persist($admin);
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())->withSchedule($date)
             ->assemble();
         $em->persist($lesson);
         $booking = BookingAssembler::new()->withUser($user)->withLessons($lesson)->withStatus(
@@ -67,7 +67,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $em->persist($child);
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensoryka')->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensoryka')->assemble())->withSchedule($date)
             ->assemble();
         $em->persist($lesson);
         $booking = BookingAssembler::new()

@@ -1,7 +1,7 @@
 <div
         {% if modalOpened %}data-modal-state="open"{% else %}data-modal-state="closed"{% endif %}
         {% set workshopUrl = lesson and lesson.metadata.slug
-            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
+            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
             : closeUrl %}
         {{ attributes.defaults(stimulus_controller('workshop-url', {
             openUrl: workshopUrl,
@@ -112,7 +112,7 @@
                     <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
                 </div>
 
-                <div class="w-full h-40 sm:h-52 rounded-2xl mb-8" style="background-color: {{ lesson.metadata.visualTheme }};"></div>
+                <div class="w-full h-40 sm:h-52 rounded-2xl mb-8 bg-cover bg-center" style="background-color: {{ lesson.metadata.safeVisualTheme }}; {{ lesson.metadata.hasImage ? 'background-image: url(\'' ~ path('workshop_image', {id: lesson.id}) ~ '\');' : '' }}"></div>
 
                 {{ component('BookingPreviewComponent', {lesson: lesson}) }}
                 <div class="space-y-8 mt-8">
@@ -132,9 +132,9 @@
                                 <p class="font-medium">{{ 'lesson.schedule'|trans }}</p>
                                 <p class="text-muted-foreground">
                                     {{ 'lesson.once'|trans({
-                                        'day': lesson.metadata.schedule|date('l'),
-                                        'date': lesson.metadata.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
-                                        'hour': lesson.metadata.schedule|date('H:i')
+                                        'day': lesson.schedule|date('l'),
+                                        'date': lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
+                                        'hour': lesson.schedule|date('H:i')
                                     }) }}
                                 </p>
                                 {% if lesson.series.type.value == 'weekly' %}
@@ -354,9 +354,9 @@
                 <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-lg font-semibold">{{ lesson.metadata.schedule|format_datetime(pattern: 'd MMMM') }}</p>
-                            <p class="text-sm text-muted-foreground">{{ lesson.metadata.schedule|date('H:i') }}
-                                - {{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</p>
+                            <p class="text-lg font-semibold">{{ lesson.schedule|format_datetime(pattern: 'd MMMM') }}</p>
+                            <p class="text-sm text-muted-foreground">{{ lesson.schedule|date('H:i') }}
+                                - {{ lesson.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</p>
                         </div>
                         <div class="flex items-center gap-2"></div>
                     </div>

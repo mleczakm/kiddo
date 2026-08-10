@@ -15,7 +15,6 @@ class LessonMetadataAssembler
         private string $visualTheme,
         private string $description,
         private int $capacity,
-        private \DateTimeImmutable $schedule,
         private int $duration,
         private AgeRange $ageRange,
         private string $category = 'Category'
@@ -29,7 +28,6 @@ class LessonMetadataAssembler
             visualTheme: 'Default Visual Theme',
             description: 'Default Description',
             capacity: 30,
-            schedule: new \DateTimeImmutable('now'), // Default duration in minutes
             duration: 60,
             ageRange: AgeRangeAssembler::new()->assemble(),
             category: 'Default Category',
@@ -71,13 +69,6 @@ class LessonMetadataAssembler
         return $clone;
     }
 
-    public function withSchedule(\DateTimeImmutable $schedule): self
-    {
-        $clone = clone $this;
-        $clone->schedule = $schedule;
-        return $clone;
-    }
-
     public function withDuration(int $duration): self
     {
         $clone = clone $this;
@@ -107,7 +98,6 @@ class LessonMetadataAssembler
             $this->visualTheme,
             $this->description,
             $this->capacity,
-            $this->schedule,
             $this->duration,
             $this->ageRange,
             $this->category

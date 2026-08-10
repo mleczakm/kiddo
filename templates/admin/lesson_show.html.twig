@@ -1,7 +1,7 @@
 {% set activeTab = 'lessons' %}
 {% set sub_breadcrumbs = [
     {'label': lesson.metadata.title},
-    {'label': lesson.metadata.schedule|date('Y-m-d H:i')}
+    {'label': lesson.schedule|date('Y-m-d H:i')}
 ] %}
     {# Breadcrumbs #}
     
@@ -17,7 +17,7 @@
                 </span>
             </h1>
             <p class="text-slate-500 mt-1">
-                {{ lesson.metadata.schedule|format_datetime('medium', 'short') }} · {{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }} · {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
+                {{ lesson.schedule|format_datetime('medium', 'short') }} · {{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }} · {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
             </p>
         </div>
         <div class="flex items-center gap-2">
@@ -46,14 +46,14 @@
             <div>
                 {% if prevLesson %}
                     <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', { id: prevLesson.id }) }}">
-                        ← {{ 'admin.lesson_show.previous_lesson'|trans }} ({{ prevLesson.metadata.schedule|date('Y-m-d H:i') }})
+                        ← {{ 'admin.lesson_show.previous_lesson'|trans }} ({{ prevLesson.schedule|date('Y-m-d H:i') }})
                     </a>
                 {% endif %}
             </div>
             <div>
                 {% if nextLesson %}
                     <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', { id: nextLesson.id }) }}">
-                        {{ 'admin.lesson_show.next_lesson'|trans }} ({{ nextLesson.metadata.schedule|date('Y-m-d H:i') }}) →
+                        {{ 'admin.lesson_show.next_lesson'|trans }} ({{ nextLesson.schedule|date('Y-m-d H:i') }}) →
                     </a>
                 {% endif %}
             </div>

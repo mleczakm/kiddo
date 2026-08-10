@@ -44,13 +44,13 @@ class LessonRepository extends ServiceEntityRepository
 
         /** @var array<int, Lesson> $result */
         $result = $qb
-            ->andWhere('l.metadata.schedule > :afterDate')
+            ->andWhere('l.schedule > :afterDate')
             ->andWhere('l.status = :status')
             ->andWhere('l.series = :series')
             ->setParameter('afterDate', $afterDate)
             ->setParameter('status', 'active')
             ->setParameter('series', $series->getId(), 'ulid')
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->setMaxResults($maxResults)
             ->getQuery()
             ->getResult();
@@ -72,8 +72,8 @@ class LessonRepository extends ServiceEntityRepository
             ->leftJoin('b.child', 'c')
             ->leftJoin('b.user', 'u')
             ->addSelect('b, c, u')
-            ->where('l.metadata.schedule >= :start')
-            ->andWhere('l.metadata.schedule <= :end')
+            ->where('l.schedule >= :start')
+            ->andWhere('l.schedule <= :end')
             ->andWhere('l.status = :status')
             ->setParameter('status', 'active')
             ->setParameter('start', $start)
@@ -95,25 +95,26 @@ class LessonRepository extends ServiceEntityRepository
         bool $orderByPopularity = false
     ): array {
         $qb = $this->createQueryBuilder('l')
+            ->join('l.metadata', 'm')
             ->andWhere('l.status = :status')
             ->setParameter('status', 'active')
-            ->orderBy('l.metadata.schedule', 'ASC');
+            ->orderBy('l.schedule', 'ASC');
 
         if ($query !== null) {
-            $qb->andWhere('ILIKE(l.metadata.title, :query) = TRUE')
+            $qb->andWhere('ILIKE(m.title, :query) = TRUE')
                 ->setParameter('query', '%' . $query . '%');
         }
 
         if ($age !== null) {
-            $qb->andWhere('l.metadata.ageRange.min <= :age')
-                ->andWhere('l.metadata.ageRange.max >= :age')
+            $qb->andWhere('m.ageRange.min <= :age')
+                ->andWhere('m.ageRange.max >= :age')
                 ->setParameter('age', $age);
         }
 
         $weekStart = new \DateTimeImmutable($week);
         $weekEnd = $weekStart->modify('+7 days 23:59:59');
 
-        $qb->andWhere('l.metadata.schedule BETWEEN :weekStart AND :weekEnd')
+        $qb->andWhere('l.schedule BETWEEN :weekStart AND :weekEnd')
             ->setParameter('weekStart', $weekStart)
             ->setParameter('weekEnd', $weekEnd);
 
@@ -149,9 +150,9 @@ class LessonRepository extends ServiceEntityRepository
         /** @var Lesson[] $lessons */
         $lessons = $this->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
-            ->where('l.metadata.schedule > :since')
+            ->where('l.schedule > :since')
             ->setParameter('since', $since)
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
@@ -170,11 +171,11 @@ class LessonRepository extends ServiceEntityRepository
             ->leftJoin('b.child', 'c')
             ->leftJoin('b.user', 'u')
             ->addSelect('b, c, u')
-            ->andWhere('l.metadata.schedule > :since')
+            ->andWhere('l.schedule > :since')
             ->andWhere('l.status = :status')
             ->setParameter('status', 'active')
             ->setParameter('since', $since)
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
@@ -195,13 +196,13 @@ class LessonRepository extends ServiceEntityRepository
             ->leftJoin('b.child', 'c')
             ->leftJoin('b.user', 'u')
             ->addSelect('b, c, u')
-            ->andWhere('l.metadata.schedule >= :startDate')
-            ->andWhere('l.metadata.schedule <= :endDate')
+            ->andWhere('l.schedule >= :startDate')
+            ->andWhere('l.schedule <= :endDate')
             // include lessons even if they have no bookings
             ->andWhere('(b.status IN (:bookingStatus) OR b.id IS NULL)')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
-            ->orderBy('l.metadata.schedule', 'ASC');
+            ->orderBy('l.schedule', 'ASC');
 
         if (! $showCancelled) {
             $qb->andWhere('l.status = :status')
@@ -230,11 +231,11 @@ class LessonRepository extends ServiceEntityRepository
         bool $showCancelled = false
     ): array {
         $qb = $this->createQueryBuilder('l')
-            ->andWhere('l.metadata.schedule >= :startDate')
-            ->andWhere('l.metadata.schedule <= :endDate')
+            ->andWhere('l.schedule >= :startDate')
+            ->andWhere('l.schedule <= :endDate')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
-            ->orderBy('l.metadata.schedule', 'ASC');
+            ->orderBy('l.schedule', 'ASC');
 
         if (! $showCancelled) {
             $qb->andWhere('l.status = :status')
@@ -264,13 +265,13 @@ class LessonRepository extends ServiceEntityRepository
     ): array {
         $qb = $this->createQueryBuilder('l')
             ->leftJoin('l.series', 's')
-            ->andWhere('l.metadata.schedule >= :startDate')
-            ->andWhere('l.metadata.schedule <= :endDate')
+            ->andWhere('l.schedule >= :startDate')
+            ->andWhere('l.schedule <= :endDate')
             ->andWhere(':instructor MEMBER OF l.instructors OR :instructor MEMBER OF s.instructors')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
             ->setParameter('instructor', $instructor)
-            ->orderBy('l.metadata.schedule', 'ASC');
+            ->orderBy('l.schedule', 'ASC');
 
         if (! $showCancelled) {
             $qb->andWhere('l.status = :status')

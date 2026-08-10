@@ -155,12 +155,11 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
             visualTheme: 'rgb(255, 255, 255)',
             description: 'Test description',
             capacity: 10,
-            schedule: $schedule,
             duration: 60,
             ageRange: new AgeRange(3, 6),
             category: 'Test Category'
         );
 
-        return new Lesson($metadata);
+        return new Lesson($metadata, $schedule);
     }
 }

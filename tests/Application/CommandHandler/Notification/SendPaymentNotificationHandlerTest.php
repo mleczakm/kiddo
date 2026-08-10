@@ -45,7 +45,7 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         $em->persist($admin2);
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())->withSchedule($date)
             ->assemble();
         $em->persist($lesson);
 

@@ -55,10 +55,11 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
 
         // Simulate legacy rows that still have an empty slug in the database.
         $em->getConnection()
-            ->update('lesson', [
+            ->update('lesson_metadata', [
                 'slug' => '',
             ], [
-                'id' => $lesson->getId()
+                'id' => $lesson->getMetadata()
+                    ->getId()
                     ->toRfc4122(),
             ]);
         $em->clear();
@@ -98,12 +99,8 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
             ->withType(WorkshopType::WEEKLY)
             ->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle($title)
-                    ->withSchedule($schedule)
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new() ->withTitle($title) ->withTitle($title) ->assemble())
+            ->withSchedule($schedule)
             ->assemble();
         $lesson->setSeries($series);
 

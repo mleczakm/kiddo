@@ -84,7 +84,7 @@ class BookingsComponent extends AbstractController
                 Booking::STATUS_CANCELLED,
                 Booking::STATUS_COMPLETED,
             ])
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->getQuery()
             ->getResult();
 

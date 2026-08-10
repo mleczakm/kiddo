@@ -6,12 +6,9 @@ namespace App\MessageHandler;
 
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
-use App\Entity\MessageType;
 use App\Entity\NotificationSeverity;
-use App\Entity\UserMessage;
 use App\Message\CancelLessonBooking;
 use App\Repository\BookingRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -27,7 +24,6 @@ class CancelLessonBookingHandler
         #[Autowire(service: 'state_machine.booking')]
         private readonly WorkflowInterface $bookingStateMachine,
         private readonly LoggerInterface $logger,
-        private readonly EntityManagerInterface $entityManager,
         private readonly InAppNotificationService $inAppNotifications,
         private readonly LessonInstructorResolver $instructorResolver,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -112,15 +108,6 @@ class CancelLessonBookingHandler
             }
         }
 
-        $this->entityManager->persist(new UserMessage(
-            user: $booking->getUser(),
-            subject: sprintf('Anulowano zajęcia: %s', $lessonTitle),
-            message: $command->getReason()
-                ? sprintf('Zajęcia "%s" zostały anulowane. Powód: %s', $lessonTitle, $command->getReason())
-                : sprintf('Zajęcia "%s" zostały anulowane.', $lessonTitle),
-            type: MessageType::CANCELLATION_REQUEST,
-        ));
-
         if ($cancelledLesson !== null) {
             $instructors = $this->instructorResolver->resolve([$cancelledLesson], exclude: $command->getCancelledBy());
             $this->inAppNotifications->notifyUsers(
@@ -130,8 +117,7 @@ class CancelLessonBookingHandler
                     'name' => $booking->getUser()
                         ->getName(),
                     'lesson' => $lessonTitle,
-                    'date' => $cancelledLesson->getMetadata()
-                        ->schedule->format('Y-m-d H:i'),
+                    'date' => $cancelledLesson->schedule->format('Y-m-d H:i'),
                 ], 'messages'),
                 $this->urlGenerator->generate('app_admin_lesson_view', [
                     'id' => (string) $cancelledLesson->getId(),

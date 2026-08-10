@@ -558,12 +558,7 @@ class Booking
         $lessons = $this->getLessons()
             ->toArray();
 
-        usort(
-            $lessons,
-            static fn(Lesson $a, Lesson $b): int => $a->getMetadata()
-                ->schedule <=> $b->getMetadata()
-                ->schedule
-        );
+        usort($lessons, static fn(Lesson $a, Lesson $b): int => $a->schedule <=> $b->schedule);
 
         foreach ($lessons as $index => $lesson) {
             if ($lesson->getId()->equals($lessonToFind->getId())) {
@@ -579,8 +574,8 @@ class Booking
         return $this->getLessons()
             ->reduce(fn(string $carry, Lesson $lesson) => $carry === ''
                 ? $lesson->getMetadata()
-                    ->title . $lesson->getMetadata()->schedule->format(' (H:i) d.m')
-                : $carry . $lesson->getMetadata()->schedule->format(', d.m'), '');
+                    ->title . $lesson->schedule->format(' (H:i) d.m')
+                : $carry . $lesson->schedule->format(', d.m'), '');
     }
 
     public function getChild(): ?Child

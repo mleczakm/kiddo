@@ -46,12 +46,8 @@ final class BookingPreviewComponentTest extends WebTestCase
             ->withType(WorkshopType::ONE_TIME)
             ->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Yoga')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-21 09:00:00'))
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new() ->withTitle('Yoga') ->withTitle('Yoga') ->assemble())
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 09:00:00'))
             ->assemble();
         $lesson->setSeries($series);
 

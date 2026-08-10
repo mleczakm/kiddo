@@ -91,12 +91,11 @@ class MultiInstructorSupportTest extends WebTestCase
             visualTheme: 'default',
             description: 'Test description',
             capacity: 10,
-            schedule: Clock::get()->now()->modify('+1 day'),
             duration: 90,
             ageRange: new AgeRange(0, 10),
             category: 'Test',
         );
-        $lesson = new Lesson($metadata);
+        $lesson = new Lesson($metadata, Clock::get()->now()->modify('+1 day'));
         $lesson->addInstructor($this->instructor1);
         $lesson->addInstructor($this->instructor2);
         $this->entityManager->persist($lesson);
@@ -122,12 +121,11 @@ class MultiInstructorSupportTest extends WebTestCase
             visualTheme: 'default',
             description: 'Test description',
             capacity: 10,
-            schedule: Clock::get()->now()->modify('+1 day'),
             duration: 90,
             ageRange: new AgeRange(0, 10),
             category: 'Test',
         );
-        $lesson = new Lesson($metadata);
+        $lesson = new Lesson($metadata, Clock::get()->now()->modify('+1 day'));
         $lesson->addInstructor($this->instructor3);
         $lesson->setSeries($series);
         $this->entityManager->persist($lesson);
@@ -149,12 +147,11 @@ class MultiInstructorSupportTest extends WebTestCase
             visualTheme: 'default',
             description: 'Test description',
             capacity: 10,
-            schedule: Clock::get()->now()->modify('+1 day'),
             duration: 90,
             ageRange: new AgeRange(0, 10),
             category: 'Test',
         );
-        $lesson = new Lesson($metadata);
+        $lesson = new Lesson($metadata, Clock::get()->now()->modify('+1 day'));
         $lesson->addInstructor($this->instructor1);
         $lesson->addInstructor($this->instructor2);
         $this->entityManager->persist($lesson);
@@ -184,12 +181,11 @@ class MultiInstructorSupportTest extends WebTestCase
             visualTheme: 'default',
             description: 'Test description',
             capacity: 10,
-            schedule: Clock::get()->now()->modify('+1 day'),
             duration: 90,
             ageRange: new AgeRange(0, 10),
             category: 'Test',
         );
-        $lesson = new Lesson($metadata);
+        $lesson = new Lesson($metadata, Clock::get()->now()->modify('+1 day'));
         $lesson->addInstructor($this->instructor1);
         $lesson->addInstructor($this->instructor2);
         $lesson->setSeries($series);

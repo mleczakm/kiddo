@@ -77,10 +77,8 @@ final class AdminKpiStatsComponentTest extends WebTestCase
             ->assemble());
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()
-                ->withSchedule(new \DateTimeImmutable('2025-03-20 10:00:00'))
-                ->withCapacity(10)
-                ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new() ->withCapacity(10) ->assemble())
+            ->withSchedule(new \DateTimeImmutable('2025-03-20 10:00:00'))
             ->withStatus('active')
             ->assemble();
         $em->persist($lesson);

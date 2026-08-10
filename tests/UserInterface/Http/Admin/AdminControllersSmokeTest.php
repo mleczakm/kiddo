@@ -101,50 +101,6 @@ class AdminControllersSmokeTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function testAdminMessagesRequiresAdminRole(): void
-    {
-        $client = static::createClient();
-        $regularUser = $this->createRegularUser($client);
-        $client->loginUser($regularUser);
-
-        $client->request('GET', '/admin/wiadomosci');
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-    }
-
-    public function testAdminMessagesWithAdminUser(): void
-    {
-        $client = static::createClient();
-        $admin = $this->createAdminUser($client);
-        $client->loginUser($admin);
-
-        $client->request('GET', '/admin/wiadomosci');
-
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function testAdminLessonsRequiresAdminRole(): void
-    {
-        $client = static::createClient();
-        $regularUser = $this->createRegularUser($client);
-        $client->loginUser($regularUser);
-
-        $client->request('GET', '/admin/zajecia');
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-    }
-
-    public function testAdminLessonsWithAdminUser(): void
-    {
-        $client = static::createClient();
-        $admin = $this->createAdminUser($client);
-        $client->loginUser($admin);
-
-        $client->request('GET', '/admin/zajecia');
-
-        $this->assertResponseIsSuccessful();
-    }
-
     public function testAdminScheduleRequiresAdminRole(): void
     {
         $client = static::createClient();
@@ -199,12 +155,10 @@ class AdminControllersSmokeTest extends WebTestCase
 
         // Check all navigation links are present
         $this->assertSelectorExists('a[href="/admin"]');
-        $this->assertSelectorExists('a[href="/admin/zajecia"]');
         $this->assertSelectorExists('a[href="/admin/harmonogram"]');
         $this->assertSelectorExists('a[href="/admin/platnosci"]');
         $this->assertSelectorExists('a[href="/admin/rezerwacje"]');
         $this->assertSelectorExists('a[href="/admin/uzytkownicy"]');
-        $this->assertSelectorExists('a[href="/admin/wiadomosci"]');
         $this->assertSelectorExists('a[href="/admin/ustawienia"]');
     }
 
@@ -216,12 +170,10 @@ class AdminControllersSmokeTest extends WebTestCase
 
         $adminRoutes = [
             '/admin',
-            '/admin/zajecia',
             '/admin/harmonogram',
             '/admin/platnosci',
             '/admin/rezerwacje',
             '/admin/uzytkownicy',
-            '/admin/wiadomosci',
             '/admin/ustawienia',
         ];
 
@@ -242,12 +194,10 @@ class AdminControllersSmokeTest extends WebTestCase
 
         $adminRoutes = [
             '/admin',
-            '/admin/zajecia',
             '/admin/harmonogram',
             '/admin/platnosci',
             '/admin/rezerwacje',
             '/admin/uzytkownicy',
-            '/admin/wiadomosci',
             '/admin/ustawienia',
         ];
 
@@ -263,7 +213,7 @@ class AdminControllersSmokeTest extends WebTestCase
         $host = $this->createHostUser($client);
         $client->loginUser($host);
 
-        foreach (['/admin/zajecia', '/admin/rezerwacje'] as $route) {
+        foreach (['/admin/harmonogram', '/admin/rezerwacje'] as $route) {
             $client->request('GET', $route);
             $this->assertResponseIsSuccessful("Route {$route} should be accessible to a host");
         }
@@ -275,14 +225,7 @@ class AdminControllersSmokeTest extends WebTestCase
         $host = $this->createHostUser($client);
         $client->loginUser($host);
 
-        $adminOnlyRoutes = [
-            '/admin',
-            '/admin/harmonogram',
-            '/admin/platnosci',
-            '/admin/uzytkownicy',
-            '/admin/wiadomosci',
-            '/admin/ustawienia',
-        ];
+        $adminOnlyRoutes = ['/admin', '/admin/platnosci', '/admin/uzytkownicy', '/admin/ustawienia'];
 
         foreach ($adminOnlyRoutes as $route) {
             $client->request('GET', $route);

@@ -180,7 +180,6 @@ class UpcomingLessonsComponentTest extends TestCase
             visualTheme: 'rgb(200, 255, 200)',
             description: 'Test description for upcoming lesson',
             capacity: 15,
-            schedule: new \DateTimeImmutable(),
             duration: 90,
             ageRange: new AgeRange(2, 5),
             category: 'Test Category'
@@ -189,6 +188,7 @@ class UpcomingLessonsComponentTest extends TestCase
         $lesson = $this->createMock(Lesson::class);
         $lesson->method('getMetadata')
             ->willReturn($metadata);
+        $lesson->schedule = new \DateTimeImmutable();
 
         return $lesson;
     }

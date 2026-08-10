@@ -54,15 +54,30 @@ final class LessonMetadataTest extends TestCase
         $this->assertSame(LessonMetadata::slugify('Senso Bobasy'), LessonMetadata::slugify('Senso Bobasy'));
     }
 
-    private function createMetadata(string $title, ?string $slug = null): LessonMetadata
+    public function testGetSafeVisualThemeKeepsValidHexColor(): void
+    {
+        $metadata = $this->createMetadata('Senso Bobasy', visualTheme: '#a1b2c3');
+
+        $this->assertSame('#a1b2c3', $metadata->getSafeVisualTheme());
+    }
+
+    public function testGetSafeVisualThemeFallsBackForLegacyFreeTextValue(): void
+    {
+        // Pre-fix rows may hold a Tailwind-style token like "orange-100",
+        // which is not valid CSS for background-color.
+        $metadata = $this->createMetadata('Senso Bobasy', visualTheme: 'orange-100');
+
+        $this->assertSame(LessonMetadata::DEFAULT_VISUAL_THEME, $metadata->getSafeVisualTheme());
+    }
+
+    private function createMetadata(string $title, ?string $slug = null, string $visualTheme = '#fff'): LessonMetadata
     {
         return new LessonMetadata(
             title: $title,
             lead: 'Lead',
-            visualTheme: '#fff',
+            visualTheme: $visualTheme,
             description: 'Description',
             capacity: 10,
-            schedule: new \DateTimeImmutable('2024-02-20 10:00:00'),
             duration: 60,
             ageRange: new AgeRange(0, 3),
             category: 'test',

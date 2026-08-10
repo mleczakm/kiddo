@@ -31,6 +31,7 @@ use Novaway\Bundle\FeatureFlagBundle\NovawayFeatureFlagBundle;
 use Zenstruck\Messenger\Test\ZenstruckMessengerTestBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use Symfony\AI\McpBundle\McpBundle;
+use Symfony\UX\Dropzone\DropzoneBundle;
 
 return [
     FrameworkBundle::class => [
@@ -123,6 +124,9 @@ return [
         'all' => true,
     ],
     McpBundle::class => [
+        'all' => true,
+    ],
+    DropzoneBundle::class => [
         'all' => true,
     ],
 ];

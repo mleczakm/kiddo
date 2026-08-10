@@ -51,7 +51,7 @@
 
 {% for lesson in lessons %}
     <div class="lesson-card">
-        <h2>{{ lesson.metadata.title }} ({{ lesson.metadata.schedule|format_datetime(pattern='HH:mm') }})</h2>
+        <h2>{{ lesson.metadata.title }} ({{ lesson.schedule|format_datetime(pattern='HH:mm') }})</h2>
 
         {% if lesson.bookings is not empty and lesson.bookings.count > 0 %}
             <table class="lesson-table">

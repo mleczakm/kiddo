@@ -23,17 +23,17 @@ class LessonRepositoryTest extends KernelTestCase
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
             ->assemble();
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date->setTime(15, 0))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date->setTime(15, 0))
             ->assemble();
         $lessonOther = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($otherDate)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($otherDate)
             ->assemble();
         $lessonOther2 = LessonAssembler::new()
             ->withStatus('cancelled')
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
             ->assemble();
 
         $em->persist($lesson1);
@@ -64,20 +64,22 @@ class LessonRepositoryTest extends KernelTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withAgeRange(AgeRangeAssembler::new()->withMin(1)->withMax(2)->assemble())
-                    ->withSchedule($date)
                     ->assemble()
             )
+            ->withSchedule($date)
             ->withTitle('ooooo')
             ->assemble();
         $lesson2 = LessonAssembler::new()
             ->withMetadata(
-                LessonMetadataAssembler::new()->withSchedule($date->setTime(15, 0))
+                LessonMetadataAssembler::new()
                     ->withAgeRange(AgeRangeAssembler::new()->withMin(0)->withMax(1)->assemble())
                     ->assemble()
             )
+            ->withSchedule($date->setTime(15, 0))
             ->assemble();
         $lessonOther = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new() ->withSchedule($otherDate) ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($otherDate)
             ->assemble();
 
         $em->persist($lesson1);
@@ -104,13 +106,13 @@ class LessonRepositoryTest extends KernelTestCase
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
             ->assemble();
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($date->setTime(12, 13))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date->setTime(12, 13))
             ->assemble();
         $lessonOther = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($otherDate)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($otherDate)
             ->assemble();
 
         $em->persist($lesson1);

@@ -25,10 +25,10 @@ class SeriesRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s')
             ->leftJoin('s.lessons', 'l')
-            ->andWhere('l.metadata.schedule BETWEEN :start AND :end')
+            ->andWhere('l.schedule BETWEEN :start AND :end')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
         ;
 
         if (! $showCancelled) {

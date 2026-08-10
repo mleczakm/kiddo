@@ -35,7 +35,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
     {
         $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(5)->assemble())
+            ->withSchedule($futureDate)
             ->assemble();
 
         $this->entityManager->persist($lesson);
@@ -51,7 +52,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
     {
         $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(5)->assemble())
+            ->withSchedule($futureDate)
             ->assemble();
 
         $this->entityManager->persist($lesson);
@@ -73,7 +75,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
     {
         $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(1)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(1)->assemble())
+            ->withSchedule($futureDate)
             ->assemble();
 
         $this->entityManager->persist($lesson);
@@ -96,7 +99,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $futureDate = Clock::get()->now()->modify('+1 day');
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(3)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(3)->assemble())
+            ->withSchedule($futureDate)
             ->assemble();
 
         $user = UserAssembler::new()->assemble();
@@ -145,7 +149,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
     {
         $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(5)->assemble())
+            ->withSchedule($futureDate)
             ->assemble();
 
         $user = UserAssembler::new()->assemble();
@@ -206,7 +211,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
     {
         $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(5)->assemble())
+            ->withSchedule($futureDate)
             ->assemble();
 
         $this->entityManager->persist($lesson);
@@ -232,7 +238,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
     {
         $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($futureDate)->withCapacity(5)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(5)->assemble())
+            ->withSchedule($futureDate)
             ->assemble();
         $user = UserAssembler::new()->withName('Piotr Zając')->assemble();
         $booking = BookingAssembler::new()

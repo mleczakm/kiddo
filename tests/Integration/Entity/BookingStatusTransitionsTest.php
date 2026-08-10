@@ -41,12 +41,11 @@ class BookingStatusTransitionsTest extends WebTestCase
             visualTheme: 'default',
             description: 'Test description',
             capacity: 10,
-            schedule: Clock::get()->now()->modify('+1 day'),
             duration: 90,
             ageRange: new AgeRange(0, 10),
             category: 'Test',
         );
-        $this->lesson = new Lesson($metadata);
+        $this->lesson = new Lesson($metadata, Clock::get()->now()->modify('+1 day'));
         $this->entityManager->persist($this->lesson);
 
         $this->entityManager->flush();
@@ -133,12 +132,11 @@ class BookingStatusTransitionsTest extends WebTestCase
             visualTheme: 'default',
             description: 'Test description',
             capacity: 10,
-            schedule: Clock::get()->now()->modify('-1 day'),
             duration: 90,
             ageRange: new AgeRange(0, 10),
             category: 'Test',
         );
-        $pastLesson = new Lesson($pastMetadata);
+        $pastLesson = new Lesson($pastMetadata, Clock::get()->now()->modify('-1 day'));
         $this->entityManager->persist($pastLesson);
 
         $payment = new Payment($this->user, Money::of(55, 'PLN'));

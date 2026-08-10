@@ -51,7 +51,8 @@ final class PaymentsListComponentTest extends WebTestCase
         $weekStart = new \DateTimeImmutable('2025-01-06'); // Monday
         $lessonDate = $weekStart->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($lessonDate)->withCapacity(5)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(5)->assemble())
+            ->withSchedule($lessonDate)
             ->assemble();
 
         $payment = PaymentAssembler::new()
@@ -104,7 +105,8 @@ final class PaymentsListComponentTest extends WebTestCase
         $weekStart = new \DateTimeImmutable('2025-01-13');
         $lessonDate = $weekStart->modify('+1 day');
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($lessonDate)->withCapacity(3)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(3)->assemble())
+            ->withSchedule($lessonDate)
             ->withTitle('Pending Workshop')
             ->assemble();
 
@@ -149,7 +151,7 @@ final class PaymentsListComponentTest extends WebTestCase
         $secondWeek = $firstWeek->modify('+7 days');
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($firstWeek->modify('+1 day'))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($firstWeek->modify('+1 day'))
             ->withTitle('Week1 Lesson')
             ->assemble();
         $payment1 = PaymentAssembler::new()->withUser($user)->withAmount(Money::of('10.00', 'PLN'))->withCreatedAt(
@@ -161,7 +163,7 @@ final class PaymentsListComponentTest extends WebTestCase
         )->assemble();
 
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($secondWeek->modify('+1 day'))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($secondWeek->modify('+1 day'))
             ->withTitle('Week2 Lesson')
             ->assemble();
         $payment2 = PaymentAssembler::new()->withUser($user)->withAmount(Money::of('20.00', 'PLN'))->withCreatedAt(

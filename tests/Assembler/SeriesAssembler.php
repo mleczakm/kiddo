@@ -41,6 +41,11 @@ class SeriesAssembler extends EntityAssembler
         return $this->with('ticketOptions', $ticketOptions);
     }
 
+    public function withLastOccurrenceDate(?\DateTimeImmutable $lastOccurrenceDate): static
+    {
+        return $this->with('lastOccurrenceDate', $lastOccurrenceDate);
+    }
+
     public function assemble(): Series
     {
         /** @var array<Lesson> $lessons */
@@ -53,10 +58,14 @@ class SeriesAssembler extends EntityAssembler
         // Ensure ticketOptions is a list (sequential numeric keys starting from 0)
         $ticketOptionsList = array_values($ticketOptions);
 
+        /** @var ?\DateTimeImmutable $lastOccurrenceDate */
+        $lastOccurrenceDate = $this->properties['lastOccurrenceDate'] ?? null;
+
         $series = new Series(
             lessons: new ArrayCollection($lessons),
             type: $type,
-            ticketOptions: $ticketOptionsList
+            ticketOptions: $ticketOptionsList,
+            lastOccurrenceDate: $lastOccurrenceDate,
         );
 
         if (isset($this->properties['id'])) {

@@ -6,14 +6,16 @@
         <span>{{ 'admin.schedule.title'|trans }}</span>
       </h3>
       <div class="flex flex-wrap items-center gap-2">
-        <button type="button"
-                data-action="live#action"
-                data-live-action-param="openAddModal"
-                data-tour-target="add-workshop"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 h-9 rounded-xl text-sm font-bold flex items-center gap-2 transition shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-          {{ 'admin.schedule.add_workshop'|trans }}
-        </button>
+        {% if is_granted('ROLE_MANAGE_SCHEDULE') %}
+          <button type="button"
+                  data-action="live#action"
+                  data-live-action-param="openAddModal"
+                  data-tour-target="add-workshop"
+                  class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 h-9 rounded-xl text-sm font-bold flex items-center gap-2 transition shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            {{ 'admin.schedule.add_workshop'|trans }}
+          </button>
+        {% endif %}
         <button type="button"
                 data-action="live#action"
                 data-live-action-param="toggleCancelled"
@@ -57,132 +59,95 @@
       </div>
     </div>
   </div>
-  <div class="p-6 pt-0">
-    {# Desktop table (md and up) #}
-    <div class="hidden md:block relative w-full overflow-auto">
-      <table class="w-full caption-bottom text-sm">
-        <thead class="[&_tr]:border-b">
-          <tr class="border-b transition-colors hover:bg-slate-50">
-            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.type'|trans }}</th>
-            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.tickets'|trans }}</th>
-            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.period'|trans }}</th>
-            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.status'|trans }}</th>
-            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{{ 'admin.schedule.headers.actions'|trans }}</th>
-          </tr>
-        </thead>
-        <tbody class="[&_tr:last-child]:border-0">
-          {% for series in this.series %}
-            <tr class="border-b transition-colors hover:bg-slate-50 {{ series.status == 'cancelled' ? 'opacity-60' : '' }}">
-              <td class="p-4 align-middle">
-                <div class="font-medium">{{ series.firstLesson.metadata.title }}</div>
-                <div class="text-xs text-muted-foreground mt-1">{{ series.type.value == 'weekly' ? 'admin.schedule.type.weekly'|trans : 'admin.schedule.type.one_time'|trans }}</div>
-              </td>
-              <td class="p-4 align-middle">
-                {% if series.ticketOptions %}
-                  <div class="flex flex-wrap gap-1">
-                    {% for t in this.getTicketTypes(series) %}
-                      <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-100">{{ ('lesson.' ~ t)|trans }}</span>
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  <span class="text-muted-foreground">—</span>
-                {% endif %}
-              </td>
-              <td class="p-4 align-middle">
-                  {{ series.firstLesson.metadata.schedule|date('Y-m-d') }} — {{ series.lastLesson.metadata.schedule|date('Y-m-d') }}
-              </td>
-              <td class="p-4 align-middle">
-                {% set status = series.status %}
-                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors
-                  {{ status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
-                  {{ status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
-                </div>
-              </td>
-              <td class="p-4 align-middle space-x-2">
-                {% if series.status == 'active' %}
-                  <button data-action="click->live#action"
-                          data-live-action-param="cancelSeries"
-                          data-live-series-id-param="{{ series.id }}"
-                          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-red-600 text-red-600 hover:bg-red-600/10">
-                    {{ 'admin.schedule.actions.cancel'|trans }}
-                  </button>
-                {% else %}
-                  <button data-action="click->live#action"
-                          data-live-action-param="activateSeries"
-                          data-live-series-id-param="{{ series.id }}"
-                          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-green-600 text-green-600 hover:bg-green-600/10">
-                    {{ 'admin.schedule.actions.activate'|trans }}
-                  </button>
-                {% endif %}
-                <button data-action="click->live#action"
-                        data-live-action-param="startEdit"
-                        data-live-series-id-param="{{ series.id }}"
-                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-blue-600 text-blue-600 hover:bg-blue-600/10">
-                  {{ 'admin.schedule.actions.edit'|trans }}
-                </button>
-              </td>
-            </tr>
-          {% else %}
-            <tr>
-              <td colspan="5" class="p-4 text-center text-muted-foreground">{{ 'admin.schedule.empty'|trans }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    {# Mobile cards (below md) #}
-    <div class="md:hidden space-y-3">
-      {% for series in this.series %}
-        <div class="border border-slate-200 rounded-xl p-4 {{ series.status == 'cancelled' ? 'opacity-60' : '' }}">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <div class="font-medium text-slate-800">{{ series.firstLesson.metadata.title }}</div>
-              <div class="text-xs text-muted-foreground mt-0.5">{{ series.type.value == 'weekly' ? 'admin.schedule.type.weekly'|trans : 'admin.schedule.type.one_time'|trans }}</div>
+  <div class="p-6 pt-0 space-y-3">
+    {% for group in this.groups %}
+      {% set series = group.series %}
+      <div class="border border-slate-200 rounded-xl overflow-hidden {{ series and series.status == 'cancelled' ? 'opacity-60' : '' }}">
+        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-bold text-slate-800">{{ series ? series.firstLesson.metadata.title : group.lessons[0].metadata.title }}</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                {{ series ? (series.type.value == 'weekly' ? 'admin.schedule.type.weekly'|trans : 'admin.schedule.type.one_time'|trans) : 'admin.schedule.type.one_time'|trans }}
+              </span>
+              {% set status = series ? series.status : group.lessons[0].status %}
+              <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
+                {{ status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
+              </span>
             </div>
-            {% set status = series.status %}
-            <div class="shrink-0 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
-              {{ status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
+            <div class="text-xs text-muted-foreground mt-1">
+              {% if series %}
+                {{ series.firstLesson.schedule|date('Y-m-d') }} — {{ series.lastLesson.schedule|date('Y-m-d') }}
+              {% else %}
+                {{ group.lessons[0].schedule|date('Y-m-d H:i') }}
+              {% endif %}
             </div>
+            {% if series and series.ticketOptions %}
+              <div class="flex flex-wrap gap-1 mt-2">
+                {% for t in this.getTicketTypes(series) %}
+                  <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-100">{{ ('lesson.' ~ t)|trans }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
-          <div class="text-sm text-slate-500 mt-2">
-            {{ series.firstLesson.metadata.schedule|date('Y-m-d') }} — {{ series.lastLesson.metadata.schedule|date('Y-m-d') }}
-          </div>
-          {% if series.ticketOptions %}
-            <div class="flex flex-wrap gap-1 mt-2">
-              {% for t in this.getTicketTypes(series) %}
-                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-gray-100">{{ ('lesson.' ~ t)|trans }}</span>
-              {% endfor %}
+          {% if series and is_granted('ROLE_MANAGE_SCHEDULE') %}
+            <div class="flex gap-2 shrink-0">
+              <button data-action="click->live#action"
+                      data-live-action-param="startEdit"
+                      data-live-series-id-param="{{ series.id }}"
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background hover:text-accent-foreground h-9 rounded-md px-3 border-blue-600 text-blue-600 hover:bg-blue-600/10">
+                {{ 'admin.schedule.actions.edit'|trans }}
+              </button>
             </div>
           {% endif %}
-          <div class="flex gap-2 mt-3">
-            {% if series.status == 'active' %}
-              <button data-action="click->live#action"
-                      data-live-action-param="cancelSeries"
-                      data-live-series-id-param="{{ series.id }}"
-                      class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border h-9 rounded-md px-3 border-red-600 text-red-600 hover:bg-red-600/10">
-                {{ 'admin.schedule.actions.cancel'|trans }}
-              </button>
-            {% else %}
-              <button data-action="click->live#action"
-                      data-live-action-param="activateSeries"
-                      data-live-series-id-param="{{ series.id }}"
-                      class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border h-9 rounded-md px-3 border-green-600 text-green-600 hover:bg-green-600/10">
-                {{ 'admin.schedule.actions.activate'|trans }}
+        </div>
+
+        {% if series %}
+          {# This week's occurrences for this series #}
+          <div class="border-t border-slate-100 bg-slate-50 divide-y divide-slate-100">
+            {% for lesson in group.lessons %}
+              <div class="px-4 py-2.5 flex items-center justify-between gap-3 {{ lesson.status == 'cancelled' ? 'opacity-60' : '' }}">
+                <a class="text-sm hover:underline {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : 'text-slate-700' }}" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">
+                  {{ lesson.schedule|date('d.m.Y H:i') }}
+                </a>
+                <div class="flex items-center gap-3">
+                  <span class="text-xs font-medium text-slate-500">{{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}</span>
+                  <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
+                    {{ lesson.status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
+                  </span>
+                  {% if is_granted('LESSON_MANAGE', lesson) %}
+                    <button type="button"
+                            data-action="click->live#action"
+                            data-live-action-param="toggleLessonStatus"
+                            data-live-lesson-id-param="{{ lesson.id }}"
+                            class="inline-flex items-center justify-center whitespace-nowrap text-xs font-bold border h-7 rounded-md px-2.5 {{ lesson.status == 'active' ? 'border-red-600 text-red-600 hover:bg-red-600/10' : 'border-green-600 text-green-600 hover:bg-green-600/10' }}">
+                      {{ lesson.status == 'active' ? ('admin.lessons.actions.deactivate'|trans) : ('admin.lessons.actions.activate'|trans) }}
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          {% set lesson = group.lessons[0] %}
+          <div class="border-t border-slate-100 bg-slate-50 px-4 py-2.5 flex items-center justify-end gap-3">
+            <a class="text-sm text-slate-500 hover:underline mr-auto" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">{{ 'admin.lessons.open'|trans }}</a>
+            <span class="text-xs font-medium text-slate-500">{{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}</span>
+            {% if is_granted('LESSON_MANAGE', lesson) %}
+              <button type="button"
+                      data-action="click->live#action"
+                      data-live-action-param="toggleLessonStatus"
+                      data-live-lesson-id-param="{{ lesson.id }}"
+                      class="inline-flex items-center justify-center whitespace-nowrap text-xs font-bold border h-7 rounded-md px-2.5 {{ lesson.status == 'active' ? 'border-red-600 text-red-600 hover:bg-red-600/10' : 'border-green-600 text-green-600 hover:bg-green-600/10' }}">
+                {{ lesson.status == 'active' ? ('admin.lessons.actions.deactivate'|trans) : ('admin.lessons.actions.activate'|trans) }}
               </button>
             {% endif %}
-            <button data-action="click->live#action"
-                    data-live-action-param="startEdit"
-                    data-live-series-id-param="{{ series.id }}"
-                    class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border h-9 rounded-md px-3 border-blue-600 text-blue-600 hover:bg-blue-600/10">
-              {{ 'admin.schedule.actions.edit'|trans }}
-            </button>
           </div>
-        </div>
-      {% else %}
-        <p class="p-4 text-center text-muted-foreground">{{ 'admin.schedule.empty'|trans }}</p>
-      {% endfor %}
-    </div>
+        {% endif %}
+      </div>
+    {% else %}
+      <p class="p-4 text-center text-muted-foreground">{{ 'admin.schedule.empty'|trans }}</p>
+    {% endfor %}
   </div>
 
   {% if this.showAddModal %}

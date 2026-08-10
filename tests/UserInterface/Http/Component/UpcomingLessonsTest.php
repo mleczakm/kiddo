@@ -187,7 +187,6 @@ class UpcomingLessonsTest extends TestCase
             visualTheme: '#fff',
             description: 'Desc',
             capacity: 10,
-            schedule: new \DateTimeImmutable('2024-02-21 10:30:00'),
             duration: 60,
             ageRange: new AgeRange(0, 3),
             category: 'test',
@@ -196,6 +195,7 @@ class UpcomingLessonsTest extends TestCase
         $lesson = $this->createMock(Lesson::class);
         $lesson->method('getMetadata')
             ->willReturn($metadata);
+        $lesson->schedule = new \DateTimeImmutable('2024-02-21 10:30:00');
 
         $this->component->openSlug = 'balaganki';
         $this->component->openDate = '2024-02-21';

@@ -148,12 +148,11 @@ class WeekFilteringIntegrationTest extends KernelTestCase
             visualTheme: 'rgb(255, 255, 255)',
             description: 'Integration test description',
             capacity: 10,
-            schedule: $schedule,
             duration: 60,
             ageRange: new AgeRange(3, 6),
             category: 'Integration Test'
         );
 
-        return new Lesson($metadata);
+        return new Lesson($metadata, $schedule);
     }
 }

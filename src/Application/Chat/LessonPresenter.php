@@ -55,7 +55,7 @@ final readonly class LessonPresenter
         return [
             'id' => (string) $lesson->getId(),
             'title' => $meta->title,
-            'schedule' => $meta->schedule->format(\DateTimeInterface::ATOM),
+            'schedule' => $lesson->schedule->format(\DateTimeInterface::ATOM),
             'duration_minutes' => $meta->duration,
             'capacity' => $meta->capacity,
             'available_spots' => $lesson->getAvailableSpots(),
@@ -120,8 +120,7 @@ final readonly class LessonPresenter
                 'id' => (string) $lesson->getId(),
                 'title' => $lesson->getMetadata()
                     ->title,
-                'schedule' => $lesson->getMetadata()
-                    ->schedule->format(\DateTimeInterface::ATOM),
+                'schedule' => $lesson->schedule->format(\DateTimeInterface::ATOM),
                 'cancelled' => $booking->isLessonCancelled($lesson),
                 'rescheduled' => $booking->isLessonRescheduled($lesson),
             ];

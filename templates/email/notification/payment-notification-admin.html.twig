@@ -11,7 +11,7 @@
         {% set booking = bookings|filter(b => b.lessons.contains(lesson))|first %}
         <li>
             <strong>{{ lesson.metadata.title }}</strong>
-            ({{ lesson.metadata.schedule|format_datetime(pattern='dd MMM, HH:mm') }})
+            ({{ lesson.schedule|format_datetime(pattern='dd MMM, HH:mm') }})
             {% if booking and booking.child %}
                 - {{ booking.child.name }}{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}
             {% endif %}

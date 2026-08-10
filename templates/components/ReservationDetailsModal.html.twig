@@ -75,7 +75,7 @@
                                     <span class="text-xs font-semibold text-slate-500">{{ booking.lessons.count }} {{ booking.lessons.count == 1 ? 'termin' : 'terminy' }}</span>
                                 </div>
                                 <div class="space-y-2">
-                                    {% for bookedLesson in booking.lessons|sort((a,b) => a.metadata.schedule <=> b.metadata.schedule) %}
+                                    {% for bookedLesson in booking.lessons|sort((a,b) => a.schedule <=> b.schedule) %}
                                         {% set mapped = booking.getBookedLesson(bookedLesson.id) %}
                                         {% set selected = lesson and lesson.id == bookedLesson.id %}
                                         <button type="button"
@@ -83,7 +83,7 @@
                                                 data-action="live#action" data-live-action-param="selectLesson" data-live-lesson-id-param="{{ bookedLesson.id }}">
                                             <span>
                                                 <span class="block font-bold text-slate-800">{{ bookedLesson.metadata.title }}</span>
-                                                <span class="block text-sm text-slate-500">{{ bookedLesson.metadata.schedule|date('d.m.Y, H:i') }}{% if bookedLesson.series %} · {{ bookedLesson.series.type.value == 'weekly' ? 'admin.schedule.type.weekly'|trans : 'admin.schedule.type.one_time'|trans }}{% endif %}</span>
+                                                <span class="block text-sm text-slate-500">{{ bookedLesson.schedule|date('d.m.Y, H:i') }}{% if bookedLesson.series %} · {{ bookedLesson.series.type.value == 'weekly' ? 'admin.schedule.type.weekly'|trans : 'admin.schedule.type.one_time'|trans }}{% endif %}</span>
                                             </span>
                                             <span class="rounded-md px-2 py-1 text-[11px] font-bold {{ booking.isLessonRescheduled(bookedLesson) ? 'bg-amber-100 text-amber-700' : (booking.isLessonCancelled(bookedLesson) ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700') }}">
                                                 {{ booking.isLessonRescheduled(bookedLesson) ? 'Przełożone' : (booking.isLessonCancelled(bookedLesson) ? 'Anulowane' : 'Aktywne') }}
@@ -97,7 +97,7 @@
                                         <h4 class="mb-3 text-xs font-black uppercase tracking-wider text-slate-400">Historia przełożeń</h4>
                                         {% for entry in this.rescheduleHistory %}
                                             <div class="flex gap-3 border-l-2 border-amber-300 py-2 pl-3 text-sm">
-                                                <div><span class="font-semibold text-slate-700">{{ entry.from ? entry.from.metadata.schedule|date('d.m.Y H:i') : 'Poprzedni termin' }}</span><span class="mx-2 text-slate-300">→</span><span class="font-semibold text-indigo-700">{{ entry.to ? entry.to.metadata.schedule|date('d.m.Y H:i') : 'Nowy termin' }}</span>{% if entry.at %}<p class="text-xs text-slate-400">Przełożono {{ entry.at|date('d.m.Y H:i') }}</p>{% endif %}</div>
+                                                <div><span class="font-semibold text-slate-700">{{ entry.from ? entry.from.schedule|date('d.m.Y H:i') : 'Poprzedni termin' }}</span><span class="mx-2 text-slate-300">→</span><span class="font-semibold text-indigo-700">{{ entry.to ? entry.to.schedule|date('d.m.Y H:i') : 'Nowy termin' }}</span>{% if entry.at %}<p class="text-xs text-slate-400">Przełożono {{ entry.at|date('d.m.Y H:i') }}</p>{% endif %}</div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -172,7 +172,7 @@
                                     {% else %}
                                         <div class="space-y-3">
                                             <p class="text-sm font-bold text-slate-800">{{ this.action == 'reschedule' ? 'Wybierz nowy termin' : (this.action == 'refund' ? 'Anulowanie ze zwrotem' : 'Anulowanie rezerwacji') }}</p>
-                                            {% if this.action == 'reschedule' %}<select data-model="targetLessonId" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"><option value="">Wybierz zajęcia…</option>{% for target in this.availableLessons %}<option value="{{ target.id }}">{{ target.metadata.schedule|date('d.m.Y H:i') }} — {{ target.metadata.title }}</option>{% endfor %}</select>{% endif %}
+                                            {% if this.action == 'reschedule' %}<select data-model="targetLessonId" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"><option value="">Wybierz zajęcia…</option>{% for target in this.availableLessons %}<option value="{{ target.id }}">{{ target.schedule|date('d.m.Y H:i') }} — {{ target.metadata.title }}</option>{% endfor %}</select>{% endif %}
                                             <textarea data-model="reason" rows="2" placeholder="Powód (opcjonalnie)" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea>
                                             <div class="flex gap-2"><button type="button" data-action="live#action" data-live-action-param="selectAction" data-live-value-param="" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Wróć</button><button type="button" data-action="live#action" data-live-action-param="executeAction" class="flex-1 rounded-lg px-3 py-2 text-sm font-bold text-white {{ this.action == 'refund' ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700' }}">Potwierdź</button></div>
                                         </div>

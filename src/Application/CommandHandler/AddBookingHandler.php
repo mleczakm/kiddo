@@ -77,8 +77,7 @@ final readonly class AddBookingHandler
                     'name' => $user->getName(),
                     'lesson' => $lesson->getMetadata()
                         ->title,
-                    'date' => $lesson->getMetadata()
-                        ->schedule->format('Y-m-d H:i'),
+                    'date' => $lesson->schedule->format('Y-m-d H:i'),
                 ], 'messages'),
                 $this->urlGenerator->generate('app_admin_lesson_view', [
                     'id' => (string) $lesson->getId(),
@@ -96,8 +95,7 @@ final readonly class AddBookingHandler
                 $payment?->getAmount() ?? Money::zero(Currency::of('PLN')),
                 lessonTitle: $lesson->getMetadata()
                     ->title,
-                lessonSchedule: $lesson->getMetadata()
-                    ->schedule,
+                lessonSchedule: $lesson->schedule,
                 ticketType: $ticketOption->type->value,
                 childName: $booking->getChild()?->getName(),
             ))->with(new DispatchAfterCurrentBusStamp())

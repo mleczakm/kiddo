@@ -39,7 +39,7 @@ final class BookingPreviewComponentTest extends KernelTestCase
             ->assemble();
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($now->modify('+2 days'))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
             ->assemble();
 
         $payment = PaymentAssembler::new()
@@ -75,11 +75,11 @@ final class BookingPreviewComponentTest extends KernelTestCase
             ->assemble();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($now->modify('+2 days'))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
             ->assemble();
 
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($now->modify('+3 days'))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+3 days'))
             ->assemble();
 
         $payment = PaymentAssembler::new()
@@ -128,7 +128,7 @@ final class BookingPreviewComponentTest extends KernelTestCase
             ->assemble();
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($now->modify('+2 days'))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
             ->assemble();
 
         $payment = PaymentAssembler::new()
@@ -164,7 +164,7 @@ final class BookingPreviewComponentTest extends KernelTestCase
             ->assemble();
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($now->modify('+2 days'))->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
             ->assemble();
 
         $payment1 = PaymentAssembler::new()

@@ -428,6 +428,9 @@
             "ref": "0df5844274d871b37fc3816c57a768ffc60a43a5"
         }
     },
+    "symfony/ux-dropzone": {
+        "version": "v3.4.0"
+    },
     "symfony/ux-live-component": {
         "version": "2.24",
         "recipe": {

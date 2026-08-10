@@ -72,12 +72,11 @@ class PaymentTest extends TestCase
             'yoga',
             'A relaxing yoga session',
             10,
-            $schedule,
             60,
             new AgeRange(18, 65),
             'fitness'
         );
-        $lesson = new Lesson($lessonMetadata);
+        $lesson = new Lesson($lessonMetadata, $schedule);
 
         // Create a booking with the lesson
         $booking = new Booking($user, $payment, $lesson);
@@ -107,12 +106,11 @@ class PaymentTest extends TestCase
             'yoga',
             'A relaxing yoga session',
             10,
-            $schedule1,
             60,
             new AgeRange(18, 65),
             'fitness'
         );
-        $lesson1 = new Lesson($lessonMetadata1);
+        $lesson1 = new Lesson($lessonMetadata1, $schedule1);
 
         // Create second lesson on a different date
         $schedule2 = new \DateTimeImmutable('2025-10-28 16:00:00');
@@ -122,12 +120,11 @@ class PaymentTest extends TestCase
             'pilates',
             'Challenging pilates workout',
             10,
-            $schedule2,
             60,
             new AgeRange(18, 65),
             'fitness'
         );
-        $lesson2 = new Lesson($lessonMetadata2);
+        $lesson2 = new Lesson($lessonMetadata2, $schedule2);
 
         // Create bookings with the lessons
         $booking1 = new Booking($user, $payment, $lesson1);
@@ -159,12 +156,11 @@ class PaymentTest extends TestCase
             'yoga',
             'A relaxing yoga session',
             10,
-            $schedule,
             60,
             new AgeRange(18, 65),
             'fitness'
         );
-        $lesson = new Lesson($lessonMetadata);
+        $lesson = new Lesson($lessonMetadata, $schedule);
 
         $booking = new Booking($user, $payment, $lesson);
 
@@ -191,12 +187,11 @@ class PaymentTest extends TestCase
             'yoga',
             'A relaxing yoga session',
             10,
-            $schedule1,
             60,
             new AgeRange(18, 65),
             'fitness'
         );
-        $lesson1 = new Lesson($lessonMetadata1);
+        $lesson1 = new Lesson($lessonMetadata1, $schedule1);
 
         $schedule2 = new \DateTimeImmutable('2025-10-28 16:00:00');
         $lessonMetadata2 = new LessonMetadata(
@@ -205,12 +200,11 @@ class PaymentTest extends TestCase
             'pilates',
             'Challenging pilates workout',
             10,
-            $schedule2,
             60,
             new AgeRange(18, 65),
             'fitness'
         );
-        $lesson2 = new Lesson($lessonMetadata2);
+        $lesson2 = new Lesson($lessonMetadata2, $schedule2);
 
         $booking = new Booking($user, $payment, $lesson1, $lesson2);
         $payment->addBooking($booking);

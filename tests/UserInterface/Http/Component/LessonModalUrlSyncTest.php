@@ -41,9 +41,10 @@ final class LessonModalUrlSyncTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Bałaganki')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+                    ->withTitle('Bałaganki')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
         $em->persist($series);
@@ -83,9 +84,10 @@ final class LessonModalUrlSyncTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Bałaganki')
-                    ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+                    ->withTitle('Bałaganki')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
         $em->persist($series);

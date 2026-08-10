@@ -8,7 +8,7 @@
         <div class="space-y-6 animate-in fade-in duration-300">
             <!-- HEADER WARSZTATU -->
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-                <div class="absolute left-0 top-0 bottom-0 w-2 bg-indigo-500"></div>
+                <div class="absolute left-0 top-0 bottom-0 w-2" style="background-color: {{ series.lessons.first.metadata.safeVisualTheme }};"></div>
                 <div class="pl-4">
                     <div class="flex items-center gap-3 mb-2">
                         <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-100 text-indigo-600">
@@ -62,7 +62,7 @@
 
                     <div class="space-y-6 relative">
                         {% for lesson in this.getLessons() %}
-                            {% set isPast = lesson.metadata.schedule < date() %}
+                            {% set isPast = lesson.schedule < date() %}
                             {% set isExpanded = this.isLessonExpanded(lesson) %}
                             {% set activeBookings = this.getActiveBookingsForLesson(lesson) %}
                             {% set waitingApproval = this.getWaitingApprovalBookingsForLesson(lesson) %}
@@ -81,11 +81,11 @@
                                     >
                                         <div class="flex items-center gap-4">
                                             <div class="p-3 rounded-xl font-bold text-center min-w-[70px] {{ isPast ? 'bg-slate-200 text-slate-600' : 'bg-indigo-50 text-indigo-700' }}">
-                                                {{ lesson.metadata.schedule|date('H:i') }}
+                                                {{ lesson.schedule|date('H:i') }}
                                             </div>
                                             <div>
                                                 <div class="font-black text-lg text-slate-800">
-                                                    {{ lesson.metadata.schedule|date('d.m.Y') }}
+                                                    {{ lesson.schedule|date('d.m.Y') }}
                                                     {% if isPast %}<span class="text-xs text-slate-400 font-normal ml-2">(Zakończone)</span>{% endif %}
                                                 </div>
                                                 <div class="text-sm font-medium text-slate-500">Zajętość: {{ activeBookings|length }} / {{ lesson.metadata.capacity }} miejsc</div>

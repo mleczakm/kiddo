@@ -422,16 +422,15 @@ final class SeedDemoDataCommand extends Command
         string $theme,
     ): Lesson {
         return new Lesson(new LessonMetadata(
-            $title,
-            'Rozwojowe zajęcia demonstracyjne dla dzieci i rodziców.',
-            $theme,
-            'Kompletny opis przykładowych zajęć. Dane utworzone przez komendę developerską.',
-            $capacity,
-            $schedule,
-            60,
-            $ageRange,
-            $category,
-        ));
+            title: $title,
+            lead: 'Rozwojowe zajęcia demonstracyjne dla dzieci i rodziców.',
+            visualTheme: $theme,
+            description: 'Kompletny opis przykładowych zajęć. Dane utworzone przez komendę developerską.',
+            capacity: $capacity,
+            duration: 60,
+            ageRange: $ageRange,
+            category: $category,
+        ), $schedule);
     }
 
     private function payment(User $user, string $amount, PaymentMethod $method, string $status): Payment
@@ -497,7 +496,8 @@ final class SeedDemoDataCommand extends Command
 
         /** @var list<Lesson> $lessons */
         $lessons = $this->lessonRepository->createQueryBuilder('l')
-            ->where('l.metadata.title LIKE :prefix')
+            ->join('l.metadata', 'm')
+            ->where('m.title LIKE :prefix')
             ->setParameter('prefix', self::DEMO_TITLE_PREFIX . '%')
             ->getQuery()
             ->getResult();

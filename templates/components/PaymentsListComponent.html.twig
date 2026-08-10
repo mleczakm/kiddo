@@ -84,7 +84,7 @@
                       {% for lesson in booking.lessons %}
                         {% set cancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
                         <span class="{{ cancelled ? 'line-through text-red-600' : '' }}">
-                          {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                          {{ lesson.schedule|date('Y-m-d H:i') }}
                         </span>{{ not loop.last ? ', ' : '' }}
                       {% endfor %}
                       {% set extra = (booking.lessons|length) - 1 %}

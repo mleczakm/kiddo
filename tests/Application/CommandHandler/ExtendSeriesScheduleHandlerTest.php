@@ -35,7 +35,7 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         $em->persist($series);
 
         $lastLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withSchedule($lastLessonDate)->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($lastLessonDate)
             ->withSeries($series)
             ->assemble();
         $lastLesson->setSeries($series);
@@ -69,7 +69,7 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         // Verify that for each expected date there is a lesson in the series
         $actualDates = [];
         foreach ($savedSeries->lessons as $l) {
-            $actualDates[] = $l->getMetadata()->schedule->format('c');
+            $actualDates[] = $l->schedule->format('c');
         }
 
         foreach ($expectedDates as $d) {
@@ -78,5 +78,52 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
 
         // And total count matches original + expected additions (no duplicates)
         self::assertCount(1 + count($expectedDates), $savedSeries->lessons);
+    }
+
+    public function testStopsGeneratingOccurrencesPastLastOccurrenceDate(): void
+    {
+        $em = self::getContainer()->get('doctrine')->getManager();
+        /** @var SeriesRepository $seriesRepository */
+        $seriesRepository = self::getContainer()->get(SeriesRepository::class);
+
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $lastLessonDate = $now->modify('+1 day');
+        // Cut off after only two more weekly occurrences, well short of the
+        // usual +2 months horizon.
+        $lastOccurrenceDate = $lastLessonDate->modify('+2 weeks');
+
+        $series = SeriesAssembler::new()
+            ->withType(WorkshopType::WEEKLY)
+            ->withLastOccurrenceDate($lastOccurrenceDate)
+            ->assemble();
+        $em->persist($series);
+
+        $lastLesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($lastLessonDate)
+            ->withSeries($series)
+            ->assemble();
+        $lastLesson->setSeries($series);
+        $em->persist($lastLesson);
+
+        $em->flush();
+
+        /** @var ExtendSeriesScheduleHandler $handler */
+        $handler = self::getContainer()->get(ExtendSeriesScheduleHandler::class);
+        $handler(new ExtendSeriesSchedule());
+
+        $savedSeries = $seriesRepository->find($series->getId());
+        self::assertNotNull($savedSeries);
+
+        $latestSchedule = null;
+        foreach ($savedSeries->lessons as $l) {
+            if ($latestSchedule === null || $l->schedule > $latestSchedule) {
+                $latestSchedule = $l->schedule;
+            }
+        }
+
+        self::assertNotNull($latestSchedule);
+        self::assertLessThanOrEqual($lastOccurrenceDate, $latestSchedule);
+        // Two extra weekly occurrences fit within the 2-week cutoff (original + 2 = 3)
+        self::assertCount(3, $savedSeries->lessons);
     }
 }

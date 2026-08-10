@@ -40,8 +40,16 @@ class Lesson
     private Collection $instructors;
 
     public function __construct(
-        #[ORM\Embedded(class: LessonMetadata::class, columnPrefix: false)]
+        #[ORM\ManyToOne(targetEntity: LessonMetadata::class, cascade: ['persist'])]
+        #[ORM\JoinColumn(nullable: false)]
         private LessonMetadata $metadata,
+        /**
+         * This occurrence's own date/time — the one piece of content that must
+         * always be unique per Lesson, so (unlike the rest of a workshop's
+         * content) it can never live on the shared LessonMetadata.
+         */
+        #[ORM\Column(type: 'datetime_immutable')]
+        public \DateTimeImmutable $schedule,
         /**
          * @var list<TicketOption>
          */
@@ -158,7 +166,7 @@ class Lesson
 
     public function future(): bool
     {
-        return $this->metadata->schedule >= Clock::get()->now();
+        return $this->schedule >= Clock::get()->now();
     }
 
     /**
@@ -174,7 +182,7 @@ class Lesson
     public function cancellationAvailable(): bool
     {
         return $this->status === 'active'
-            && $this->metadata->schedule >= Clock::get()->now()->modify('+24 hours');
+            && $this->schedule >= Clock::get()->now()->modify('+24 hours');
     }
 
     public function setTicketOptions(TicketOption ... $options): void

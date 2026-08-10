@@ -56,7 +56,8 @@ final class SeedDemoDataCommandTest extends KernelTestCase
         self::assertCount(6, $demoUsers);
         /** @var list<object> $demoLessons */
         $demoLessons = $lessons->createQueryBuilder('l')
-            ->where('l.metadata.title LIKE :prefix')
+            ->join('l.metadata', 'm')
+            ->where('m.title LIKE :prefix')
             ->setParameter('prefix', '[DEMO] %')
             ->getQuery()
             ->getResult();

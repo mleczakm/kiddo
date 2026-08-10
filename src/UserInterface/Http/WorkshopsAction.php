@@ -50,8 +50,7 @@ class WorkshopsAction extends AbstractController
             return $this->redirectToRoute('workshops');
         }
 
-        $schedule = $lesson->getMetadata()
-            ->schedule;
+        $schedule = $lesson->schedule;
 
         return $this->render('workshops.html.twig', [
             'week' => $schedule->format('Y-m-d'),
@@ -75,8 +74,9 @@ class WorkshopsAction extends AbstractController
                 $query = $entityManager->createQuery(<<<DQL
                     SELECT l
                     FROM App\Entity\Lesson l
-                    WHERE l.metadata.slug = :slug
-                    AND l.metadata.schedule = :schedule
+                    JOIN l.metadata m
+                    WHERE m.slug = :slug
+                    AND l.schedule = :schedule
                     AND l.status = 'active'
                     DQL)
                     ->setParameter('slug', $slug)
@@ -99,10 +99,11 @@ class WorkshopsAction extends AbstractController
         $query = $entityManager->createQuery(<<<DQL
             SELECT l
             FROM App\Entity\Lesson l
-            WHERE l.metadata.slug = :slug
-            AND l.metadata.schedule BETWEEN :start AND :end
+            JOIN l.metadata m
+            WHERE m.slug = :slug
+            AND l.schedule BETWEEN :start AND :end
             AND l.status = 'active'
-            ORDER BY l.metadata.schedule ASC
+            ORDER BY l.schedule ASC
             DQL)
             ->setParameter('slug', $slug)
             ->setParameter('start', $startDate)
@@ -118,10 +119,11 @@ class WorkshopsAction extends AbstractController
         $query = $entityManager->createQuery(<<<DQL
             SELECT l
             FROM App\Entity\Lesson l
-            WHERE l.metadata.slug = :slug
+            JOIN l.metadata m
+            WHERE m.slug = :slug
             AND l.status = 'active'
-            AND l.metadata.schedule >= :now
-            ORDER BY l.metadata.schedule ASC
+            AND l.schedule >= :now
+            ORDER BY l.schedule ASC
             DQL)
             ->setParameter('slug', $slug)
             ->setParameter('now', $now);

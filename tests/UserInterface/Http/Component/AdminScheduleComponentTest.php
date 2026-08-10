@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Tests\Assembler\LessonAssembler;
+use App\Tests\Assembler\LessonMetadataAssembler;
+use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
@@ -13,7 +16,6 @@ use App\Entity\TicketOption;
 use App\Entity\TicketReschedulePolicy;
 use App\Entity\TicketType;
 use App\Entity\WorkshopType;
-use App\Repository\SeriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -22,6 +24,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 use App\UserInterface\Http\Component\AdminScheduleComponent;
 
+/**
+ * Covers the merged Warsztaty (Series) + Zajęcia (Lesson) admin view: a
+ * Series is grouped with its own occurrences in the selected week, a Lesson
+ * without a Series renders as its own row, and a ROLE_HOST-only user only
+ * ever sees what they instruct.
+ */
 #[Group('functional')]
 final class AdminScheduleComponentTest extends WebTestCase
 {
@@ -35,6 +43,11 @@ final class AdminScheduleComponentTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->em = self::getContainer()->get(EntityManagerInterface::class);
+
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+        $this->em->flush();
+        $this->client->loginUser($admin);
     }
 
     public function testEmptyStateShowsMessage(): void
@@ -43,7 +56,7 @@ final class AdminScheduleComponentTest extends WebTestCase
         $html = (string) $component->render();
 
         self::assertStringContainsString('Harmonogram', $html);
-        self::assertStringContainsString('Brak serii w wybranym tygodniu', $html);
+        self::assertStringContainsString('Brak zajęć w wybranym tygodniu', $html);
     }
 
     public function testDisplaysSeriesWithTicketsPeriodTypeAndStatus(): void
@@ -68,8 +81,6 @@ final class AdminScheduleComponentTest extends WebTestCase
         $l1->setSeries($series);
         $l2->setSeries($series);
 
-
-
         $this->em->persist($l1);
         $this->em->persist($l2);
         $this->em->flush();
@@ -82,9 +93,9 @@ final class AdminScheduleComponentTest extends WebTestCase
         self::assertStringContainsString('Harmonogram', $html);
         // Type label (weekly)
         self::assertStringContainsString('Cotygodniowa', $html);
-        // Period dates present
-        self::assertStringContainsString($weekStart->modify('+1 day')->format('Y-m-d'), $html);
-        self::assertStringContainsString($weekStart->modify('+3 days')->format('Y-m-d'), $html);
+        // Both occurrences render nested under the series
+        self::assertStringContainsString($weekStart->modify('+1 day')->format('d.m.Y'), $html);
+        self::assertStringContainsString($weekStart->modify('+3 days')->format('d.m.Y'), $html);
         // Status badge Active
         self::assertStringContainsString('Aktywne', $html);
         // Ticket type tokens (by enum value)
@@ -92,38 +103,39 @@ final class AdminScheduleComponentTest extends WebTestCase
         self::assertStringContainsString('karnet 4 wejścia', $html);
     }
 
-    public function testCancelSeriesActionChangesStatus(): void
+    public function testLessonWithoutSeriesRendersAsOwnRow(): void
     {
-        $weekStart = new \DateTimeImmutable('2025-01-06');
-        $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY, []);
+        $weekStart = new \DateTimeImmutable('2025-04-07');
 
+        $standalone = $this->createLesson('Standalone Lesson', $weekStart->modify('+1 day'));
+        $this->em->persist($standalone);
+        $this->em->flush();
+
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+        $html = (string) $component->render();
+
+        self::assertStringContainsString('Standalone Lesson', $html);
+    }
+
+    public function testCancelledSeriesHiddenByDefault(): void
+    {
+        $weekStart = new \DateTimeImmutable('2025-05-05');
+        $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY, [], 'cancelled');
         $this->em->persist($series);
-        $l1 = $this->createLesson('Series L1', $weekStart->modify('+1 day'));
+
+        $l1 = $this->createLesson('Hidden Series Lesson', $weekStart->modify('+1 day'));
         $l1->setSeries($series);
         $this->em->persist($l1);
         $this->em->flush();
 
         $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
             'week' => $weekStart->format('Y-m-d'),
-            'showCancelled' => true,
         ]);
-
-        // Cancel
-        $component->call('cancelSeries', [
-            'seriesId' => (string) $series->getId(),
-        ]);
-
-        // Reload from DB and assert status
-        /** @var SeriesRepository $repo */
-        $repo = self::getContainer()->get(SeriesRepository::class);
-        $reloaded = $repo->find($series->getId());
-
-        self::assertNotNull($reloaded);
-        self::assertSame('cancelled', $reloaded->status);
-
-
         $html = (string) $component->render();
-        self::assertStringContainsString('Anulowane', $html);
+
+        self::assertStringNotContainsString('Hidden Series Lesson', $html);
     }
 
     public function testOpenAddModalRendersWorkshopEditor(): void
@@ -161,6 +173,107 @@ final class AdminScheduleComponentTest extends WebTestCase
         self::assertStringContainsString('Editable Series Title', $html);
     }
 
+    public function testToggleLessonStatusDisablesAndEnables(): void
+    {
+        $weekStart = new \DateTimeImmutable('2025-02-03');
+
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+1 day'))
+            ->withTitle('Togglable Lesson')
+            ->withStatus('active')
+            ->assemble();
+
+        $this->em->persist($lesson);
+        $this->em->flush();
+
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+
+        // Deactivate
+        $component->call('toggleLessonStatus', [
+            'lessonId' => (string) $lesson->getId(),
+        ]);
+        $this->em->clear();
+
+        $reloaded = $this->em->getRepository($lesson::class)->find($lesson->getId());
+        self::assertNotNull($reloaded);
+        self::assertSame('cancelled', $reloaded->status);
+
+        // Reactivate
+        $component->call('toggleLessonStatus', [
+            'lessonId' => (string) $lesson->getId(),
+        ]);
+        $this->em->clear();
+        $reloaded2 = $this->em->getRepository($lesson::class)->find($lesson->getId());
+        self::assertNotNull($reloaded2);
+        self::assertSame('active', $reloaded2->status);
+    }
+
+    public function testWeekFilteringOnlyShowsSelectedWeek(): void
+    {
+        $weekStart = new \DateTimeImmutable('2025-02-10');
+        $prevWeek = $weekStart->modify('-7 days');
+
+        $inWeek = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+1 day'))
+            ->withTitle('In Week Lesson')
+            ->withStatus('active')
+            ->assemble();
+        $outOfWeek = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($prevWeek->modify('+1 day'))
+            ->withTitle('Out Lesson')
+            ->withStatus('active')
+            ->assemble();
+
+        $this->em->persist($inWeek);
+        $this->em->persist($outOfWeek);
+        $this->em->flush();
+
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+        $html = (string) $component->render();
+
+        self::assertStringContainsString('In Week Lesson', $html);
+        self::assertStringNotContainsString('Out Lesson', $html);
+    }
+
+    public function testHostOnlySeesLessonsTheyInstruct(): void
+    {
+        $weekStart = new \DateTimeImmutable('2025-03-03');
+
+        $host = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();
+        $this->em->persist($host);
+
+        $ownLesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+1 day'))
+            ->withTitle('Own Lesson')
+            ->withStatus('active')
+            ->assemble();
+        $ownLesson->addInstructor($host);
+
+        $otherLesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+2 days'))
+            ->withTitle('Other Lesson')
+            ->withStatus('active')
+            ->assemble();
+
+        $this->em->persist($ownLesson);
+        $this->em->persist($otherLesson);
+        $this->em->flush();
+
+        $this->client->loginUser($host);
+
+        $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client, data: [
+            'week' => $weekStart->format('Y-m-d'),
+        ]);
+        $html = (string) $component->render();
+
+        self::assertStringContainsString('Own Lesson', $html);
+        self::assertStringNotContainsString('Other Lesson', $html);
+    }
+
     private function createLesson(string $title, \DateTimeImmutable $schedule): Lesson
     {
         $metadata = new LessonMetadata(
@@ -169,11 +282,10 @@ final class AdminScheduleComponentTest extends WebTestCase
             visualTheme: 'default',
             description: 'Desc',
             capacity: 10,
-            schedule: $schedule,
             duration: 60,
             ageRange: new AgeRange(3, 8),
             category: 'test'
         );
-        return new Lesson($metadata);
+        return new Lesson($metadata, $schedule);
     }
 }

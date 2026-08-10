@@ -43,6 +43,15 @@ class Series
         #[ORM\ManyToMany(targetEntity: User::class)]
         #[ORM\JoinTable(name: 'series_instructor')]
         public Collection $instructors = new ArrayCollection(),
+        /**
+         * When set, ExtendSeriesScheduleHandler stops generating new Lesson
+         * occurrences for this series once it reaches this date — existing
+         * occurrences (including ones after this date, if already created)
+         * are left untouched. This is the supported way to wind a recurring
+         * series down on a known date.
+         */
+        #[ORM\Column(type: 'date_immutable', nullable: true)]
+        public ?\DateTimeImmutable $lastOccurrenceDate = null,
     ) {
         $this->id = new Ulid();
     }
@@ -58,7 +67,7 @@ class Series
     public function getLessonsGte(Lesson $lesson, int $limit): array
     {
         $criteria = Criteria::create()
-            ->where(Criteria::expr()->gte('metadata.schedule', $lesson->getMetadata()->schedule))
+            ->where(Criteria::expr()->gte('schedule', $lesson->schedule))
             ->setMaxResults($limit)
             ->orderBy([
                 'id' => Order::Ascending,
@@ -71,7 +80,7 @@ class Series
     public function getLessonsGt(Lesson $lesson): ?Lesson
     {
         $criteria = Criteria::create()
-            ->where(Criteria::expr()->gt('metadata.schedule', $lesson->getMetadata()->schedule))
+            ->where(Criteria::expr()->gt('schedule', $lesson->schedule))
             ->setMaxResults(1)
             ->orderBy([
                 'id' => Order::Ascending,
@@ -84,7 +93,7 @@ class Series
     public function getLessonsLt(Lesson $lesson): ?Lesson
     {
         $criteria = Criteria::create()
-            ->where(Criteria::expr()->lt('metadata.schedule', $lesson->getMetadata()->schedule))
+            ->where(Criteria::expr()->lt('schedule', $lesson->schedule))
             ->setMaxResults(1)
             ->orderBy([
                 'id' => Order::Descending,
@@ -103,7 +112,7 @@ class Series
         /** @var ?Lesson $first */
         $first = null;
         foreach ($this->lessons as $lesson) {
-            if ($first === null || $lesson->getMetadata()->schedule < $first->getMetadata()->schedule) {
+            if ($first === null || $lesson->schedule < $first->schedule) {
                 $first = $lesson;
             }
         }
@@ -124,7 +133,7 @@ class Series
         /** @var ?Lesson $last */
         $last = null;
         foreach ($this->lessons as $lesson) {
-            if ($last === null || $lesson->getMetadata()->schedule > $last->getMetadata()->schedule) {
+            if ($last === null || $lesson->schedule > $last->schedule) {
                 $last = $lesson;
             }
         }
@@ -134,16 +143,6 @@ class Series
         }
 
         return $last;
-    }
-
-    public function cancel(): void
-    {
-        $this->status = 'cancelled';
-    }
-
-    public function activate(): void
-    {
-        $this->status = 'active';
     }
 
     /**

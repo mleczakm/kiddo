@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba56973ccb3e472ee1e0dc149985af05",
+    "content-hash": "21dbcbdfdb1b5df6f0220ec4917d3068",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -11158,6 +11158,89 @@
                 }
             ],
             "time": "2026-04-30T16:10:06+00:00"
+        },
+        {
+            "name": "symfony/ux-dropzone",
+            "version": "v3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/ux-dropzone.git",
+                "reference": "c6db3028a3c981a2c14a54d33996aeebae7834cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/ux-dropzone/zipball/c6db3028a3c981a2c14a54d33996aeebae7834cd",
+                "reference": "c6db3028a3c981a2c14a54d33996aeebae7834cd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4",
+                "symfony/config": "^7.4|^8.0",
+                "symfony/dependency-injection": "^7.4|^8.0",
+                "symfony/form": "^7.4|^8.0",
+                "symfony/http-kernel": "^7.4|^8.0",
+                "symfony/options-resolver": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11.1|^12.0",
+                "symfony/framework-bundle": "^7.4|^8.0",
+                "symfony/twig-bundle": "^7.4|^8.0",
+                "symfony/var-dumper": "^7.4|^8.0",
+                "twig/twig": "^2.14.7|^3.0.4"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/ux",
+                    "name": "symfony/ux"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\UX\\Dropzone\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Titouan Galopin",
+                    "email": "galopintitouan@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "File input dropzones for Symfony Forms",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "symfony-ux"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/ux-dropzone/tree/v3.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-07-25T17:54:47+00:00"
         },
         {
             "name": "symfony/ux-live-component",

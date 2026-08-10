@@ -60,7 +60,7 @@ class LessonAssembler extends EntityAssembler
 
     public function withSchedule(\DateTimeImmutable $schedule): static
     {
-        return $this->with('metadata', $this->getMetadata()->withSchedule($schedule));
+        return $this->with('schedule', $schedule);
     }
 
     public function withDuration(int $duration): static
@@ -100,13 +100,15 @@ class LessonAssembler extends EntityAssembler
             visualTheme: 'default',
             description: 'Test Description',
             capacity: 10,
-            schedule: new \DateTimeImmutable('+1 day'),
             duration: 60,
             ageRange: new AgeRange(5, 10),
             category: 'test',
         );
 
-        $lesson = new Lesson($metadata);
+        /** @var \DateTimeImmutable $schedule */
+        $schedule = $this->properties['schedule'] ?? new \DateTimeImmutable('+1 day');
+
+        $lesson = new Lesson($metadata, $schedule);
 
         if (isset($this->properties['id'])) {
             $reflection = new \ReflectionClass($lesson);
@@ -157,7 +159,6 @@ class LessonAssembler extends EntityAssembler
             visualTheme: 'default',
             description: 'Test Description',
             capacity: 10,
-            schedule: new \DateTimeImmutable('+1 day'),
             duration: 60,
             ageRange: new AgeRange(5, 10),
             category: 'test',

@@ -7,13 +7,10 @@ namespace App\MessageHandler;
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
-use App\Entity\MessageType;
 use App\Entity\NotificationSeverity;
-use App\Entity\UserMessage;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -34,7 +31,6 @@ readonly class RescheduleLessonBookingHandler
         private MessageBusInterface $bus,
         private InAppNotificationService $inAppNotifications,
         private LessonInstructorResolver $instructorResolver,
-        private EntityManagerInterface $entityManager,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
     ) {}
@@ -151,16 +147,6 @@ readonly class RescheduleLessonBookingHandler
             $this->urlGenerator->generate('dashboard'),
             NotificationSeverity::Info,
         );
-
-        // Record the reschedule for admin visibility in the Messages inbox
-        $this->entityManager->persist(new UserMessage(
-            user: $booking->getUser(),
-            subject: sprintf('Zmieniono termin: %s', $oldTitle),
-            message: $command->getReason()
-                ? sprintf('Termin "%s" zmieniono na "%s". Powód: %s', $oldTitle, $newTitle, $command->getReason())
-                : sprintf('Termin "%s" zmieniono na "%s".', $oldTitle, $newTitle),
-            type: MessageType::RESCHEDULE_REQUEST,
-        ));
 
         // Instructors of either lesson (old or new) should know a booking
         // moved — excluding the person who performed the reschedule.

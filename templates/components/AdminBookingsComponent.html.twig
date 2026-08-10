@@ -227,7 +227,7 @@
                                                     {% endif %}
                                                 </p>
                                                 <p class="text-xs text-slate-500">
-                                                    {{ firstLesson.metadata.schedule|date('Y-m-d H:i') }}
+                                                    {{ firstLesson.schedule|date('Y-m-d H:i') }}
                                                     {% if item.totalLessons > 1 %}
                                                         <br/><span class="text-xs">{{ 'admin_dashboard.bookings.more_lessons_count'|trans({count: (item.totalLessons - 1)}) }}</span>
                                                     {% endif %}
@@ -311,7 +311,7 @@
                                     <p class="text-sm font-bold text-slate-800 mt-2 truncate">
                                         {{ firstLesson.metadata.title ?? ('admin_dashboard.bookings.table.headers.workshop'|trans) }}
                                     </p>
-                                    <p class="text-xs text-slate-500">{{ firstLesson.metadata.schedule|date('Y-m-d H:i') }}</p>
+                                    <p class="text-xs text-slate-500">{{ firstLesson.schedule|date('Y-m-d H:i') }}</p>
                                 {% endif %}
                                 <div class="flex flex-wrap gap-1.5 mt-2">
                                     {{ _self.status_badge(booking.status) }}
@@ -401,7 +401,7 @@
                         {% if lesson.series %}
                             <p class="text-xs text-slate-500">{{ 'admin_dashboard.bookings.series'|trans }}: {{ lesson.series.type.value }}</p>
                         {% endif %}
-                        <p class="text-xs text-slate-500">{{ lesson.metadata.schedule|date('Y-m-d H:i') }}</p>
+                        <p class="text-xs text-slate-500">{{ lesson.schedule|date('Y-m-d H:i') }}</p>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                         <span class="text-sm font-bold text-slate-800">{{ amountPerLesson ? amountPerLesson|money : '-' }}</span>
@@ -461,7 +461,7 @@
                             <option value="">{{ 'admin_dashboard.bookings.actions.reschedule_select_placeholder'|trans }}</option>
                             {% for candidate in component.getAvailableLessons() %}
                                 {% if candidate.id != lesson.id %}
-                                    <option value="{{ candidate.id }}">{{ candidate.metadata.title }} — {{ candidate.metadata.schedule|date('Y-m-d H:i') }}</option>
+                                    <option value="{{ candidate.id }}">{{ candidate.metadata.title }} — {{ candidate.schedule|date('Y-m-d H:i') }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>

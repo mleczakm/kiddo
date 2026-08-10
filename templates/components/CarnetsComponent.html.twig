@@ -22,8 +22,8 @@
                                     <span class="text-muted-foreground">{{ 'dashboard.valid_until'|trans }}:</span>
                                     {% set latestDate = null %}
                                     {% for lesson in booking.lessons %}
-                                        {% if latestDate is null or lesson.metadata.schedule > latestDate %}
-                                            {% set latestDate = lesson.metadata.schedule %}
+                                        {% if latestDate is null or lesson.schedule > latestDate %}
+                                            {% set latestDate = lesson.schedule %}
                                         {% endif %}
                                     {% endfor %}
                                     <span>{{ latestDate ? latestDate|date('d.m.Y') : 'N/A' }}</span>
@@ -45,7 +45,7 @@
                                 <h4 class="text-sm font-medium mb-2">{{ 'dashboard.upcoming_sessions'|trans }}:</h4>
                                 <ul class="space-y-2 text-sm">
                                     {% set upcomingSessions = [] %}
-                                    {% for lesson in booking.lessons|filter(l => l.metadata.schedule > date())|sort((a, b) => a.metadata.schedule <=> b.metadata.schedule) %}
+                                    {% for lesson in booking.lessons|filter(l => l.schedule > date())|sort((a, b) => a.schedule <=> b.schedule) %}
                                         {% set upcomingSessions = upcomingSessions|merge([{
                                             'lesson': lesson,
                                             'booking': booking
@@ -75,7 +75,7 @@
                                                 <path d="M16 18h.01"></path>
                                             </svg>
                                             <span class="{{ isCancelled ? 'line-through' : '' }}">
-                                                {{ session.lesson.metadata.schedule|date('d.m.Y H:i:s')|format_datetime(pattern: 'd MMMM') }} {{ 'dashboard.at'|trans }} {{ session.lesson.getMetadata().schedule|date('H:i') }}
+                                                {{ session.lesson.schedule|date('d.m.Y H:i:s')|format_datetime(pattern: 'd MMMM') }} {{ 'dashboard.at'|trans }} {{ session.lesson.schedule|date('H:i') }}
                                             </span>
                                             {% if isCancelled %}
                                                 <span class="ml-2 inline-flex items-center rounded-full bg-red-50 text-red-700 px-2.5 py-0.5 text-xs font-semibold border border-red-200">

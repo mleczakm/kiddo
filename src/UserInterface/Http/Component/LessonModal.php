@@ -169,15 +169,16 @@ class LessonModal extends AbstractController
 
     private function workshopUrl(): string
     {
-        $metadata = $this->lesson?->getMetadata();
-        if ($metadata === null || $metadata->slug === null || $metadata->slug === '') {
+        $lesson = $this->lesson;
+        $metadata = $lesson?->getMetadata();
+        if ($lesson === null || $metadata === null || $metadata->slug === null || $metadata->slug === '') {
             return $this->closeUrl;
         }
 
         return $this->urlGenerator->generate('workshop_by_slug', [
             'slug' => $metadata->slug,
-            'date' => $metadata->schedule->format('Y-m-d'),
-            'hour' => $metadata->schedule->format('H:i'),
+            'date' => $lesson->schedule->format('Y-m-d'),
+            'hour' => $lesson->schedule->format('H:i'),
         ]);
     }
 

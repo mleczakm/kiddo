@@ -90,16 +90,17 @@ class AdminBookingModal extends AbstractController
         }
 
         $qb = $this->lessonRepository->createQueryBuilder('l')
+            ->join('l.metadata', 'm')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
-            ->andWhere('l.metadata.schedule > :now')
+            ->andWhere('l.schedule > :now')
             ->setParameter('status', 'active')
             ->setParameter('now', Clock::get()->now())
-            ->orderBy('l.metadata.schedule', 'ASC')
+            ->orderBy('l.schedule', 'ASC')
             ->setMaxResults(10);
 
         $searchTerm = '%' . $this->lessonSearch . '%';
-        $qb->andWhere('l.metadata.title LIKE :search OR l.metadata.description LIKE :search OR s.name LIKE :search')
+        $qb->andWhere('m.title LIKE :search OR m.description LIKE :search OR s.name LIKE :search')
             ->setParameter('search', $searchTerm);
 
         /** @var Lesson[] $result */

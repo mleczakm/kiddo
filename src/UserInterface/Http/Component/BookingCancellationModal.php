@@ -69,8 +69,7 @@ class BookingCancellationModal extends AbstractController
 
         $availableLessons = $this->lessonRepository->findAvailableLessonsForReschedule(
             $series,
-            $this->lesson->getMetadata()
-                ->schedule,
+            $this->lesson->schedule,
         );
 
         return array_values(array_filter(

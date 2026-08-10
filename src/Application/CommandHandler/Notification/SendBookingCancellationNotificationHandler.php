@@ -38,8 +38,7 @@ final readonly class SendBookingCancellationNotificationHandler
         }
 
         /** @var \DateTimeImmutable $lessonDate */
-        $lessonDate = $firstLesson->getMetadata()
-            ->schedule;
+        $lessonDate = $firstLesson->schedule;
 
         // Get translated content
         $dayOfWeek = $this->translator->trans('from_day_of_week', [

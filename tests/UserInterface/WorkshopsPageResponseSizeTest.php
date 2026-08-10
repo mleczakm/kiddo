@@ -44,9 +44,11 @@ final class WorkshopsPageResponseSizeTest extends WebTestCase
                     LessonMetadataAssembler::new()
                         ->withTitle(sprintf('Workshop %d', $i))
                         ->withDescription(str_repeat('Long description for size pressure. ', 20))
-                        ->withSchedule(new \DateTimeImmutable(sprintf('2024-02-21 %02d:00:00', 8 + ($i % 10))))
+                        ->withTitle(sprintf('Workshop %d', $i))
+                        ->withDescription(str_repeat('Long description for size pressure. ', 20))
                         ->assemble()
                 )
+                ->withSchedule(new \DateTimeImmutable(sprintf('2024-02-21 %02d:00:00', 8 + ($i % 10))))
                 ->assemble();
             $lesson->setSeries($series);
             $em->persist($lesson);

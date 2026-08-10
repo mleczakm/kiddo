@@ -72,12 +72,12 @@ class SeriesDetailsComponent extends AbstractController
         $lessons = $series->lessons->toArray();
 
         // Sort by schedule
-        usort($lessons, fn(Lesson $a, Lesson $b) => $a->getMetadata()->schedule <=> $b->getMetadata()->schedule);
+        usort($lessons, fn(Lesson $a, Lesson $b) => $a->schedule <=> $b->schedule);
 
         // Filter based on showPast
         if (! $this->showPast) {
             $now = Clock::get()->now();
-            $lessons = array_filter($lessons, fn(Lesson $lesson) => $lesson->getMetadata()->schedule >= $now);
+            $lessons = array_filter($lessons, fn(Lesson $lesson) => $lesson->schedule >= $now);
         }
 
         return array_values($lessons);
@@ -96,11 +96,11 @@ class SeriesDetailsComponent extends AbstractController
         $lessons = $series->lessons->toArray();
 
         // Sort by schedule
-        usort($lessons, fn(Lesson $a, Lesson $b) => $b->getMetadata()->schedule <=> $a->getMetadata()->schedule);
+        usort($lessons, fn(Lesson $a, Lesson $b) => $b->schedule <=> $a->schedule);
 
         // Only past lessons
         $now = Clock::get()->now();
-        $lessons = array_filter($lessons, fn(Lesson $lesson) => $lesson->getMetadata()->schedule < $now);
+        $lessons = array_filter($lessons, fn(Lesson $lesson) => $lesson->schedule < $now);
 
         return array_values($lessons);
     }

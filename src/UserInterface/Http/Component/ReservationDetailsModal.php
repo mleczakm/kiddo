@@ -244,7 +244,7 @@ final class ReservationDetailsModal extends AbstractController
         }
 
         return array_values(array_filter(
-            $this->lessonRepository->findAvailableLessonsForReschedule($series, $lesson->getMetadata()->schedule),
+            $this->lessonRepository->findAvailableLessonsForReschedule($series, $lesson->schedule),
             static fn(Lesson $candidate): bool => ! $candidate->getId()
                 ->equals($lesson->getId())
                 && ! $booking->getLessons()

@@ -75,7 +75,7 @@
                                 <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                                 <path d="M3 10h18"></path>
                             </svg>
-                            <span>{{ lesson.metadata.schedule|date('d.m.Y') }}</span>
+                            <span>{{ lesson.schedule|date('d.m.Y') }}</span>
                         </div>
                         <div class="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -84,7 +84,7 @@
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 6 12 12 16 14"></polyline>
                             </svg>
-                            <span>{{ lesson.metadata.schedule|date('H:i') }} - {{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</span>
+                            <span>{{ lesson.schedule|date('H:i') }} - {{ lesson.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}</span>
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
                                                         <path d="M3 10h18"></path>
                                                     </svg>
                                                     <span class="text-sm font-medium">
-                                                        {{ availableLesson.metadata.schedule|format_datetime(pattern='EEEE, d MMMM', locale=app.request.locale) }}
+                                                        {{ availableLesson.schedule|format_datetime(pattern='EEEE, d MMMM', locale=app.request.locale) }}
                                                     </span>
                                                 </div>
                                                 <div class="flex items-center">
@@ -172,7 +172,7 @@
                                                         <polyline points="12 6 12 12 16 14"></polyline>
                                                     </svg>
                                                     <span class="text-sm">
-                                                        {{ availableLesson.metadata.schedule|date('H:i') }}-{{ availableLesson.metadata.schedule|date_modify('+' ~ availableLesson.metadata.duration ~ ' minutes')|date('H:i') }}
+                                                        {{ availableLesson.schedule|date('H:i') }}-{{ availableLesson.schedule|date_modify('+' ~ availableLesson.metadata.duration ~ ' minutes')|date('H:i') }}
                                                     </span>
                                                 </div>
                                                 <div class="flex items-center">

@@ -43,27 +43,31 @@ final readonly class ExtendSeriesScheduleHandler
                 continue;
             }
 
-            $cursor = $last->getMetadata()
-                ->schedule->modify('+1 week');
-            if ($cursor > $horizon) {
-                // Already beyond horizon
+            $cursor = $last->schedule->modify('+1 week');
+            $seriesHorizon = $series->lastOccurrenceDate !== null
+                ? min($horizon, $series->lastOccurrenceDate)
+                : $horizon;
+            if ($cursor > $seriesHorizon) {
+                // Already beyond horizon (or past the series' last occurrence date)
                 continue;
             }
 
-            while ($cursor <= $horizon) {
+            while ($cursor <= $seriesHorizon) {
                 // Prevent duplicates if a lesson at this schedule already exists in the series
                 $exists = false;
                 foreach ($series->lessons as $existing) {
-                    if ($existing->getMetadata()->schedule === $cursor) { // compare value
+                    if ($existing->schedule->getTimestamp() === $cursor->getTimestamp()) {
                         $exists = true;
                         break;
                     }
                 }
 
                 if (! $exists) {
-                    $newMetadata = $last->getMetadata()
-                        ->withSchedule($cursor);
-                    $newLesson = new Lesson($newMetadata);
+                    // Reuses the same LessonMetadata row as $last (rather than
+                    // cloning a new one per occurrence) since content is
+                    // identical across a weekly series' generated occurrences
+                    // — only the schedule differs.
+                    $newLesson = new Lesson($last->getMetadata(), $cursor);
                     $newLesson->setSeries($series);
                     // Ticket options: rely on series-level options + lesson-level already in constructor
                     $this->em->persist($newLesson);

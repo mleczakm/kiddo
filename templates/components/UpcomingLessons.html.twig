@@ -158,13 +158,13 @@
                                 <div class="space-y-2.5">
                                     {% for lesson in dayData.workshops %}
                                         {% set workshopUrl = lesson.metadata.slug
-                                            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
-                                            : path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')}) %}
+                                            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
+                                            : path('workshops', {week: lesson.schedule|date('Y-m-d')}) %}
                                         <a href="{{ workshopUrl }}" class="group block relative rounded-xl border bg-card text-card-foreground shadow-sm pl-4 pr-3 py-3 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                                            <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style="background-color: {{ lesson.metadata.visualTheme }};"></div>
+                                            <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style="background-color: {{ lesson.metadata.safeVisualTheme }};"></div>
                                             <div class="text-sm font-medium group-hover:underline">{{ lesson.metadata.title }}</div>
                                             <div class="text-xs text-muted-foreground">
-                                                {{ lesson.metadata.schedule|date('H:i') }}-{{ lesson.metadata.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}
+                                                {{ lesson.schedule|date('H:i') }}-{{ lesson.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}
                                             </div>
                                             {% set lessonBookings = userBookings[lesson.id]|default([]) %}
                                             {% if lessonBookings is not empty %}
@@ -191,7 +191,7 @@
                                             modalOpened: this.shouldOpenModal(lesson),
                                             hideOpenButton: true,
                                             closeUrl: this.showSearch
-                                                ? path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')})
+                                                ? path('workshops', {week: lesson.schedule|date('Y-m-d')})
                                                 : path('homepage')
                                         }) }}
                                     {% endfor %}
@@ -209,10 +209,10 @@
                 {% include "components/CapacityBadge.html.twig" with {'capacity': lesson.metadata.capacity, 'available': lesson.availableSpots } %}
                 <div class="rounded-lg bg-white shadow-sm h-full flex flex-col">
                     {% set workshopUrl = lesson.metadata.slug
-                        ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.metadata.schedule|date('Y-m-d'), hour: lesson.metadata.schedule|date('H:i')})
-                        : path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')}) %}
+                        ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
+                        : path('workshops', {week: lesson.schedule|date('Y-m-d')}) %}
                     <a href="{{ workshopUrl }}" class="block h-48 bg-cover bg-center rounded-t-lg"
-                         style="background-color: {{ lesson.metadata.visualTheme }}; background-image: none; border-top-left-radius: 12px; border-top-right-radius: 12px;"></a>
+                         style="background-color: {{ lesson.metadata.safeVisualTheme }}; {{ lesson.metadata.hasImage ? 'background-image: url(\'' ~ path('workshop_image', {id: lesson.id}) ~ '\');' : 'background-image: none;' }} border-top-left-radius: 12px; border-top-right-radius: 12px;"></a>
                     <div class="p-6 flex flex-col flex-grow">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-xl font-bold font-display"><a href="{{ workshopUrl }}" class="hover:underline">{{ lesson.metadata.title }}</a></h3>
@@ -245,14 +245,14 @@
                                 <span>
                                     {% if lesson.series and lesson.series.type.value == 'weekly' %}
                                         {{ 'lesson.every'|trans({
-                                            'day': lesson.metadata.schedule|date('l'),
-                                            'hour': lesson.metadata.schedule|date('H:i')
+                                            'day': lesson.schedule|date('l'),
+                                            'hour': lesson.schedule|date('H:i')
                                         }) }}
                                     {% else %}
                                         {{ 'lesson.once'|trans({
-                                            'day': lesson.metadata.schedule|date('l'),
-                                            'date': lesson.metadata.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
-                                            'hour': lesson.metadata.schedule|date('H:i')
+                                            'day': lesson.schedule|date('l'),
+                                            'date': lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
+                                            'hour': lesson.schedule|date('H:i')
                                         }) }}
                                     {% endif %}
                                 </span>
@@ -287,7 +287,7 @@
                                 lesson: lesson,
                                 modalOpened: this.shouldOpenModal(lesson),
                                 closeUrl: this.showSearch
-                                    ? path('workshops', {week: lesson.metadata.schedule|date('Y-m-d')})
+                                    ? path('workshops', {week: lesson.schedule|date('Y-m-d')})
                                     : path('homepage')
                             }) }}
                         </div>

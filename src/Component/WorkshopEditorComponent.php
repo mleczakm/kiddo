@@ -24,6 +24,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -91,6 +93,11 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $visualTheme = null;
 
+    private ?UploadedFile $uploadedImage = null;
+
+    #[LiveProp(writable: true)]
+    public bool $removeImage = false;
+
     #[LiveProp(writable: true)]
     public ?int $ageMin = null;
 
@@ -123,11 +130,14 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $endTime = null;
 
+    // Plain 'Y-m-d' strings (not DateTimeImmutable): native <input type="date">
+    // posts a date-only value, which doesn't match the datetime format
+    // LiveComponent expects when hydrating a DateTimeImmutable-typed prop.
     #[LiveProp(writable: true)]
-    public ?\DateTimeImmutable $startDate = null;
+    public ?string $startDate = null;
 
     #[LiveProp(writable: true)]
-    public ?\DateTimeImmutable $endDate = null;
+    public ?string $endDate = null;
 
     #[LiveProp(writable: true)]
     public bool $skipHolidays = true;
@@ -194,10 +204,10 @@ class WorkshopEditorComponent extends AbstractController
         $now = Clock::get()->now();
         $representative = null;
         foreach ($series->lessons as $candidate) {
-            if ($candidate->status !== 'active' || $candidate->getMetadata()->schedule < $now) {
+            if ($candidate->status !== 'active' || $candidate->schedule < $now) {
                 continue;
             }
-            if ($representative === null || $candidate->getMetadata()->schedule < $representative->getMetadata()->schedule) {
+            if ($representative === null || $candidate->schedule < $representative->schedule) {
                 $representative = $candidate;
             }
         }
@@ -222,6 +232,7 @@ class WorkshopEditorComponent extends AbstractController
         $series = $lesson->getSeries();
         if ($series !== null) {
             $this->editingSeriesId = $series->getId();
+            $this->endDate = $series->lastOccurrenceDate?->format('Y-m-d');
         }
 
         $metadata = $lesson->getMetadata();
@@ -234,8 +245,8 @@ class WorkshopEditorComponent extends AbstractController
         $this->ageMax = $metadata->ageRange->max;
         $this->capacity = $metadata->capacity;
         $this->duration = $metadata->duration;
-        $this->occurrenceDate = $metadata->schedule->format('Y-m-d');
-        $this->occurrenceTime = $metadata->schedule->format('H:i');
+        $this->occurrenceDate = $lesson->schedule->format('Y-m-d');
+        $this->occurrenceTime = $lesson->schedule->format('H:i');
 
         $this->instructorIds = array_map(fn(User $u) => (string) $u->getId(), $lesson->getAllInstructors());
 
@@ -268,6 +279,18 @@ class WorkshopEditorComponent extends AbstractController
         return $this->getEditingLesson()?->getSeries();
     }
 
+    public function getEditingLessonImageUrl(): ?string
+    {
+        $lesson = $this->getEditingLesson();
+        if ($lesson === null || ! $lesson->getMetadata()->hasImage()) {
+            return null;
+        }
+
+        return $this->urlGenerator->generate('workshop_image', [
+            'id' => (string) $lesson->getId(),
+        ]);
+    }
+
     /**
      * How many other lessons in the series would also be touched by
      * "cały cykl" — shown so the scope choice is never a guess.
@@ -289,7 +312,7 @@ class WorkshopEditorComponent extends AbstractController
             if ($sibling === $lesson) {
                 continue;
             }
-            if ($sibling->status === 'active' && $sibling->getMetadata()->schedule >= $now) {
+            if ($sibling->status === 'active' && $sibling->schedule >= $now) {
                 $count++;
             }
         }
@@ -389,12 +412,29 @@ class WorkshopEditorComponent extends AbstractController
         $this->instructorIds = array_values(array_filter($this->instructorIds, fn(string $id) => $id !== $userId));
     }
 
+    private const int MAX_IMAGE_BYTES = 3 * 1024 * 1024;
+
     #[LiveAction]
-    public function save(): void
+    public function save(Request $request): void
     {
+        $imageFile = $request->files->get('imageFile');
+        $this->uploadedImage = $imageFile instanceof UploadedFile ? $imageFile : null;
+
         if ($this->title === null || $this->category === null || $this->description === null) {
             $this->addFlash('error', 'Wypełnij wszystkie wymagane pola.');
             return;
+        }
+
+        if ($this->uploadedImage !== null) {
+            $mimeType = $this->uploadedImage->getMimeType();
+            if ($mimeType === null || ! str_starts_with($mimeType, 'image/')) {
+                $this->addFlash('error', 'Zdjęcie musi być plikiem graficznym.');
+                return;
+            }
+            if ($this->uploadedImage->getSize() > self::MAX_IMAGE_BYTES) {
+                $this->addFlash('error', 'Zdjęcie jest za duże (maks. 3 MB).');
+                return;
+            }
         }
 
         try {
@@ -439,18 +479,36 @@ class WorkshopEditorComponent extends AbstractController
         }
 
         $affectedLessons = [$lesson];
-        $lesson->setMetadata($this->buildMetadataFor($lesson, $newSchedule));
+        $lesson->schedule = $newSchedule;
+
+        // Last-occurrence date is a series-wide scheduling setting (stops
+        // ExtendSeriesScheduleHandler from generating further occurrences),
+        // independent of the content edit scope — only ROLE_MANAGE_SCHEDULE
+        // can change it, same as creating/cancelling a series.
+        if ($series !== null && $this->isGranted('ROLE_MANAGE_SCHEDULE')) {
+            $series->lastOccurrenceDate = $this->parseDate($this->endDate);
+        }
 
         if ($scope === 'series') {
+            // One shared metadata row for the whole series, rather than each
+            // occurrence duplicating its own copy — every affected lesson
+            // (this one and its active upcoming siblings) points at the same
+            // LessonMetadata; only each Lesson's own schedule stays distinct.
+            $sharedMetadata = $this->buildMetadataFor($lesson);
+            $lesson->setMetadata($sharedMetadata);
+
             $now = Clock::get()->now();
             foreach ($series->lessons as $sibling) {
-                if ($sibling === $lesson || $sibling->status !== 'active' || $sibling->getMetadata()->schedule < $now) {
+                if ($sibling === $lesson || $sibling->status !== 'active' || $sibling->schedule < $now) {
                     continue;
                 }
-                // Content propagates; each occurrence keeps its own date/time.
-                $sibling->setMetadata($this->buildMetadataFor($sibling, $sibling->getMetadata()->schedule));
+                // Content (and the shared metadata row) propagates; each
+                // occurrence keeps its own date/time.
+                $sibling->setMetadata($sharedMetadata);
                 $affectedLessons[] = $sibling;
             }
+        } else {
+            $lesson->setMetadata($this->buildMetadataFor($lesson));
         }
 
         $instructors = $this->resolveSelectedInstructors();
@@ -493,6 +551,7 @@ class WorkshopEditorComponent extends AbstractController
         }
 
         $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY);
+        $series->lastOccurrenceDate = $this->parseDate($this->endDate);
         $this->entityManager->persist($series);
 
         $instructors = $this->resolveSelectedInstructors();
@@ -505,16 +564,20 @@ class WorkshopEditorComponent extends AbstractController
         $metadata = new LessonMetadata(
             title: (string) $this->title,
             lead: $this->lead ?? '',
-            visualTheme: $this->visualTheme ?? 'default',
+            visualTheme: $this->visualTheme ?? LessonMetadata::DEFAULT_VISUAL_THEME,
             description: (string) $this->description,
             capacity: $this->capacity ?? 10,
-            schedule: $this->startDate ?? Clock::get()->now(),
             duration: $this->duration ?? 90,
             ageRange: new AgeRange($this->ageMin ?? 0, $this->ageMax ?? 10),
             category: (string) $this->category,
         );
 
-        $lesson = new Lesson($metadata);
+        $upload = $this->readUploadedImage();
+        if ($upload !== null) {
+            $metadata = $metadata->withImage($upload['data'], $upload['mime']);
+        }
+
+        $lesson = new Lesson($metadata, $this->parseDate($this->startDate) ?? Clock::get()->now());
         $lesson->setSeries($series);
         foreach ($instructors as $user) {
             $lesson->addInstructor($user);
@@ -528,18 +591,61 @@ class WorkshopEditorComponent extends AbstractController
         $this->emitUp('workshopEditorSaved');
     }
 
-    private function buildMetadataFor(Lesson $lesson, \DateTimeImmutable $schedule): LessonMetadata
+    private function buildMetadataFor(Lesson $lesson): LessonMetadata
     {
-        return $lesson->getMetadata()
+        $metadata = $lesson->getMetadata()
             ->withTitle((string) $this->title)
             ->withLead($this->lead ?? '')
-            ->withVisualTheme($this->visualTheme ?? 'default')
+            ->withVisualTheme($this->visualTheme ?? LessonMetadata::DEFAULT_VISUAL_THEME)
             ->withDescription((string) $this->description)
             ->withCapacity($this->capacity ?? 10)
-            ->withSchedule($schedule)
             ->withDuration($this->duration ?? 90)
             ->withAgeRange(new AgeRange($this->ageMin ?? 0, $this->ageMax ?? 10))
             ->withCategory((string) $this->category);
+
+        if ($this->removeImage) {
+            $metadata = $metadata->withImage(null, null);
+        } else {
+            $upload = $this->readUploadedImage();
+            if ($upload !== null) {
+                $metadata = $metadata->withImage($upload['data'], $upload['mime']);
+            }
+        }
+
+        return $metadata;
+    }
+
+    private function parseDate(?string $value): ?\DateTimeImmutable
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return new \DateTimeImmutable($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    /**
+     * @return array{data: string, mime: string}|null
+     */
+    private function readUploadedImage(): ?array
+    {
+        if ($this->uploadedImage === null) {
+            return null;
+        }
+
+        $contents = file_get_contents($this->uploadedImage->getPathname());
+        if ($contents === false) {
+            return null;
+        }
+
+        return [
+            'data' => base64_encode($contents),
+            'mime' => $this->uploadedImage->getMimeType() ?? 'application/octet-stream',
+        ];
     }
 
     /**

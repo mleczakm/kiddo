@@ -51,17 +51,19 @@ final class BookingsComponentTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia przeszle w karnecie')
-                    ->withSchedule(new \DateTimeImmutable('2026-08-01 09:00:00'))
+                    ->withTitle('Zajecia przeszle w karnecie')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2026-08-01 09:00:00'))
             ->assemble();
         $futureLesson = LessonAssembler::new()
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia przyszle w karnecie')
-                    ->withSchedule(new \DateTimeImmutable('2026-08-15 09:00:00'))
+                    ->withTitle('Zajecia przyszle w karnecie')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2026-08-15 09:00:00'))
             ->assemble();
 
         $booking = BookingAssembler::new()
@@ -109,17 +111,19 @@ final class BookingsComponentTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia odwolane w karnecie')
-                    ->withSchedule(new \DateTimeImmutable('2026-08-20 09:00:00'))
+                    ->withTitle('Zajecia odwolane w karnecie')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2026-08-20 09:00:00'))
             ->assemble();
         $activeLesson = LessonAssembler::new()
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia aktywne w karnecie')
-                    ->withSchedule(new \DateTimeImmutable('2026-08-25 09:00:00'))
+                    ->withTitle('Zajecia aktywne w karnecie')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2026-08-25 09:00:00'))
             ->assemble();
 
         $booking = BookingAssembler::new()
@@ -170,9 +174,10 @@ final class BookingsComponentTest extends WebTestCase
             ->withMetadata(
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia oplacone')
-                    ->withSchedule(new \DateTimeImmutable('2026-08-15 09:00:00'))
+                    ->withTitle('Zajecia oplacone')
                     ->assemble()
             )
+            ->withSchedule(new \DateTimeImmutable('2026-08-15 09:00:00'))
             ->assemble();
         $payment = PaymentAssembler::new()
             ->withUser($user)

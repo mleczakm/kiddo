@@ -120,7 +120,7 @@
                                     <div>
                                         <div class="font-medium">{{ lesson.metadata.title }}</div>
                                         <div class="text-muted-foreground">
-                                            {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                                            {{ lesson.schedule|date('Y-m-d H:i') }}
                                             {% if lesson.series %}
                                                 - {{ lesson.series.name }}
                                             {% endif %}
@@ -163,7 +163,7 @@
                                                     data-action-param-lesson-id="{{ lesson.id }}">
                                                 <div class="font-medium">{{ lesson.metadata.title }}</div>
                                                 <div class="text-sm text-muted-foreground">
-                                                    {{ lesson.metadata.schedule|date('Y-m-d H:i') }}
+                                                    {{ lesson.schedule|date('Y-m-d H:i') }}
                                                     {% if lesson.series %}- {{ lesson.series.name }}{% endif %}
                                                 </div>
                                             </button>
