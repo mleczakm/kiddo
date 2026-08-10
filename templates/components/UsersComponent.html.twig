@@ -33,7 +33,8 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for user in this.getUsers() %}
-                            <tr class="hover:bg-slate-50/50 transition">
+                            <tr class="hover:bg-slate-50/50 transition cursor-pointer"
+                                onclick="if (!event.target.closest('a, button')) { window.location = '{{ path('app_admin_user_view', { id: user.id }) }}'; }">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="h-9 w-9 rounded-full shrink-0 bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">{{ user.email|slice(0, 1)|upper }}</div>
@@ -84,7 +85,8 @@
         {# Clients — mobile cards (below md) #}
         <div class="md:hidden divide-y divide-slate-100">
             {% for user in this.getUsers() %}
-                <div class="p-4 flex items-start gap-3">
+                <div class="p-4 flex items-start gap-3 cursor-pointer"
+                     onclick="if (!event.target.closest('a, button')) { window.location = '{{ path('app_admin_user_view', { id: user.id }) }}'; }">
                     <div class="h-10 w-10 rounded-full shrink-0 bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">{{ user.email|slice(0, 1)|upper }}</div>
                     <div class="min-w-0 flex-1">
                         <a href="{{ path('app_admin_user_view', { id: user.id }) }}" class="font-bold text-slate-800 hover:text-indigo-600 transition">{{ user.name }}</a>
@@ -111,9 +113,9 @@
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                         </button>
-                        <button disabled class="p-1.5 text-slate-300 cursor-not-allowed rounded-lg" title="{{ 'admin_users.actions.edit'|trans }}">
+                        <a href="{{ path('app_admin_user_view', { id: user.id }) }}" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="{{ 'admin_users.actions.edit'|trans }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                        </button>
+                        </a>
                     </div>
                 </div>
             {% else %}
