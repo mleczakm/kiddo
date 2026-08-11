@@ -42,3 +42,5 @@ Runs unit → smoke → functional (with test DB create + schema update).
 2. Review auto-applied changes
 3. `docker compose run --rm php composer qa`
 4. Fix any remaining issues, then re-run `composer qa`
+
+@RTK.md
