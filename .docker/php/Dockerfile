@@ -1,4 +1,4 @@
-FROM php:8.5-cli AS base
+FROM php:8.5-cli-alpine AS base
 
 WORKDIR /app
 ENV APP_ENV=prod
@@ -12,13 +12,7 @@ CMD bin/console swoole:server:run
 ENV IPE_SWOOLE_WITHOUT_IOURING=1
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions apcu ds-^1 ffi intl pcntl pdo_pgsql sysvsem swoole-6.2.2 xsl zip
-
-# git: swoole-bundle/swoole-bundle is pinned to a develop commit ahead of its last tagged
-# release (coroutines support) and installed via a source (git clone) install — see
-# config.preferred-install in composer.json for why.
-RUN apt-get update && apt-get install -y --no-install-recommends git \
-    && rm -rf /var/lib/apt/lists/*
+    install-php-extensions apcu curl ds-^1 ffi intl pcntl pdo_pgsql sysvsem swoole-6.2.2 xsl zip
 
 COPY .docker/php/ini/zz-php.ini /usr/local/etc/php/conf.d/zz-php.ini
 
