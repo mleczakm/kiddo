@@ -7,6 +7,7 @@ parameters:
   env(ELEVENLABS_API_KEY): ''
   env(ELEVENLABS_AGENT_ID): ''
   env(KIDDO_MCP_SERVICE_KEY): ''
+  env(HTTP_CLIENT_HEALTHCHECK_URL): 'https://connectivitycheck.gstatic.com/generate_204'
 
 services:
   # default configuration for services in *this* file
@@ -168,6 +169,10 @@ services:
   App\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheck:
     arguments:
       $cacheConnection: '@doctrine.dbal.cache_connection'
+
+  App\Infrastructure\Healthcheck\HttpClientHealthcheck:
+    arguments:
+      $url: '%env(HTTP_CLIENT_HEALTHCHECK_URL)%'
 
   # Ensure both the default ORM connection and the dedicated cache DBAL connection.
   App\Infrastructure\Doctrine\CompositeConnectionEnsurer:
