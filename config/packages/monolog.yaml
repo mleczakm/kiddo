@@ -52,7 +52,7 @@ when@prod:
                 buffer_size: 0 # No limit
             grouped_main:
                 type: whatfailuregroup
-                members: [main, sentry]
+                members: [main, sentry, logdash]
             main:
                 type: stream
                 path: php://stdout
@@ -83,3 +83,8 @@ when@prod:
             sentry_handler:
                 type: service
                 id: BGalati\MonologSentryHandler\SentryHandler
+            logdash:
+                type: service
+                id: App\Infrastructure\Monolog\LogdashHandler
+                level: info
+                formatter: monolog.formatter.json

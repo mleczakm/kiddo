@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "182837b7b52e05990b74057cae8892dd",
+    "content-hash": "06198350100785f04fca1d054ded7926",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2850,16 +2850,16 @@
         },
         {
             "name": "logdash/php-sdk",
-            "version": "dev-main",
+            "version": "dev-feat/batching-async-transport",
             "source": {
                 "type": "git",
                 "url": "https://github.com/logdash-io/php-sdk.git",
-                "reference": "d22e55bdd45f4ca18af4aa5546dc50cf0525e67b"
+                "reference": "3300724acc7c0af2364f68c174b4324b76b54337"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/d22e55bdd45f4ca18af4aa5546dc50cf0525e67b",
-                "reference": "d22e55bdd45f4ca18af4aa5546dc50cf0525e67b",
+                "url": "https://api.github.com/repos/logdash-io/php-sdk/zipball/3300724acc7c0af2364f68c174b4324b76b54337",
+                "reference": "3300724acc7c0af2364f68c174b4324b76b54337",
                 "shasum": ""
             },
             "require": {
@@ -2872,7 +2872,6 @@
                 "phpunit/phpunit": "^10.0",
                 "squizlabs/php_codesniffer": "^3.7"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -2904,9 +2903,9 @@
             ],
             "support": {
                 "issues": "https://github.com/logdash-io/php-sdk/issues",
-                "source": "https://github.com/logdash-io/php-sdk/tree/v"
+                "source": "https://github.com/logdash-io/php-sdk/tree/feat/batching-async-transport"
             },
-            "time": "2025-07-28T12:44:41+00:00"
+            "time": "2026-08-08T23:50:22+00:00"
         },
         {
             "name": "lorenzo/pinky",
@@ -17538,6 +17537,12 @@
         }
     ],
     "aliases": [
+        {
+            "package": "logdash/php-sdk",
+            "version": "dev-feat/batching-async-transport",
+            "alias": "1.0.0",
+            "alias_normalized": "1.0.0.0"
+        },
         {
             "package": "novaway/feature-flag-bundle",
             "version": "9999999-dev",

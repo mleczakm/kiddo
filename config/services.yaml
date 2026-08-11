@@ -84,6 +84,9 @@ services:
     factory: [ '@logdash', 'logger' ]
     public: true
 
+  Logdash\Logdash:
+    alias: logdash
+
   Symfony\Component\Cache\Psr16Cache:
 
   Psr\SimpleCache\CacheInterface:

@@ -8,6 +8,7 @@ use App\Application\Event\ActivityOccurred;
 use App\Entity\ActivityLog;
 use App\Repository\ActivityLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Logdash\Logdash as LogdashClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -21,6 +22,7 @@ final readonly class ActivityLogSubscriber implements EventSubscriberInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ActivityLogRepository $activityLogRepository,
+        private ?LogdashClient $logdash = null,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -46,5 +48,13 @@ final readonly class ActivityLogSubscriber implements EventSubscriberInterface
             dedupeKey: $event->dedupeKey,
         ));
         $this->entityManager->flush();
+
+        // Track activity metrics in logdash
+        if ($this->logdash !== null) {
+            $this->logdash->metrics()
+                ->mutate('activities.total', 1);
+            $this->logdash->metrics()
+                ->mutate('activities.' . $event->type->value, 1);
+        }
     }
 }

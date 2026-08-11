@@ -6,6 +6,7 @@ namespace App\Infrastructure\EventSubscriber;
 
 use App\Application\Command\Notification\SendBookingCancellationNotificationCommand;
 use App\Entity\Booking;
+use Logdash\Logdash;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -13,7 +14,8 @@ use Symfony\Component\Workflow\Event\Event;
 readonly class BookingWorkflowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
+        private ?Logdash $logdash = null,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -37,5 +39,11 @@ readonly class BookingWorkflowSubscriber implements EventSubscriberInterface
         // $booking->getStatus() is still the pre-transition value at this point — it
         // cannot be used to gate this notification.
         $this->messageBus->dispatch(new SendBookingCancellationNotificationCommand($booking));
+
+        // Track booking cancellation metrics
+        if ($this->logdash !== null) {
+            $this->logdash->metrics()
+                ->mutate('bookings.cancelled', 1);
+        }
     }
 }

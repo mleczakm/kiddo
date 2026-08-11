@@ -44,7 +44,7 @@
     "dragonmantank/cron-expression": "^3.6",
     "dunglas/doctrine-json-odm": "^1.5.0",
     "gedmo/doctrine-extensions": "^3.22.1",
-    "logdash/php-sdk": "dev-main",
+    "logdash/php-sdk": "dev-feat/batching-async-transport as 1.0.0",
     "macpaw/symfony-health-check-bundle": "^2.0",
     "martin-georgiev/postgresql-for-doctrine": "^3.7.0",
     "mleczakm/zip-bomb-honeypot": "^1.0",
