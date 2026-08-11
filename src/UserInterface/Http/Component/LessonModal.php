@@ -113,16 +113,18 @@ class LessonModal extends AbstractController
         private readonly EntityManagerInterface $entityManager,
     ) {}
 
+    public function mount(): void
+    {
+        $this->selectDefaultTicketType();
+    }
+
     #[LiveAction]
     public function openModal(): void
     {
         $this->modalOpened = true;
         $this->phoneError = null;
 
-        if ($this->lesson !== null && $this->selectedTicketType === null) {
-            $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
-            $this->selectedTicketType = $ticketOptions[$this->activeTabIndex]->type->value;
-        }
+        $this->selectDefaultTicketType();
 
         $this->syncBrowserUrl();
     }
@@ -289,6 +291,8 @@ class LessonModal extends AbstractController
     #[LiveAction]
     public function processPayment(): void
     {
+        $this->selectDefaultTicketType();
+
         if (! $this->termsAccepted || ! $this->selectedTicketType) {
             $this->paymentStatus = 'error';
             return;
@@ -330,6 +334,17 @@ class LessonModal extends AbstractController
             return;
         }
         $this->paymentStatus = 'error';
+    }
+
+    private function selectDefaultTicketType(): void
+    {
+        if ($this->lesson === null || $this->selectedTicketType !== null) {
+            return;
+        }
+
+        $ticketOptions = iterator_to_array($this->lesson->getTicketOptions());
+        $selected = $ticketOptions[$this->activeTabIndex] ?? $ticketOptions[0] ?? null;
+        $this->selectedTicketType = $selected?->type->value;
     }
 
     public function needsPhone(): bool

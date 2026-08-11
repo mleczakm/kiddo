@@ -7,7 +7,9 @@ namespace App\Tests\UserInterface\Http\Component;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
+use App\Entity\Booking;
 use App\Entity\WorkshopType;
+use App\Repository\BookingRepository;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
@@ -34,6 +36,63 @@ final class LessonModalPaymentTest extends WebTestCase
     {
         Clock::set(new NativeClock());
         parent::tearDown();
+    }
+
+    public function testCreatesBookingWhenWorkshopPageOpensModalDirectly(): void
+    {
+        Clock::set(new MockClock('2024-02-20 08:00:00'));
+
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()
+            ->withPhone('501111111')
+            ->assemble();
+        $series = SeriesAssembler::new()
+            ->withType(WorkshopType::ONE_TIME)
+            ->assemble();
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->assemble())
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+            ->assemble();
+        $lesson->setSeries($series);
+
+        $em->persist($user);
+        $em->persist($series);
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($user);
+
+        $component = $this->createLiveComponent(
+            name: LessonModal::class,
+            data: [
+                'lesson' => $lesson,
+                'modalOpened' => true,
+                'termsAccepted' => true,
+                'closeUrl' => '/warsztaty',
+            ],
+            client: $client,
+        );
+
+        $component->call('processPayment');
+
+        /** @var LessonModal $lessonModal */
+        $lessonModal = $component->component();
+        self::assertSame('awaiting_payment', $lessonModal->paymentStatus);
+        self::assertNotNull($lessonModal->paymentCode);
+
+        /** @var BookingRepository $bookings */
+        $bookings = static::getContainer()->get(BookingRepository::class);
+        $booking = $bookings->findOneBy([
+            'user' => $user,
+        ]);
+        self::assertInstanceOf(Booking::class, $booking);
+        $bookedLesson = $booking->getLessons()
+            ->first();
+        self::assertNotFalse($bookedLesson);
+        self::assertSame((string) $lesson->getId(), (string) $bookedLesson->getId());
+        self::assertSame($lessonModal->paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
     }
 
     public function testResumePaymentShowsExistingPaymentCode(): void
