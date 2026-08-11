@@ -835,7 +835,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $name = $args->requireString('name');
         $phone = $args->string('phone');
 
-        if ($this->userRepository->findOneBy(['email' => $email])) {
+        if ($this->userRepository->findOneBy([
+            'email' => $email,
+        ])) {
             return ToolResult::failure('Email already registered');
         }
 
@@ -860,7 +862,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
         return ToolResult::success(
             'Registration successful. A verification code has been sent to the user\'s email. Ask them to read it back to you.',
-            ['user_id' => $user->getId()]
+            [
+                'user_id' => $user->getId(),
+            ]
         );
     }
 
@@ -872,7 +876,8 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $limiter = $this->authEmailRateLimiter->create($email);
         $limit = $limiter->consume(1);
         if (! $limit->isAccepted()) {
-            $retryAfter = $limit->getRetryAfter()->getTimestamp() - time();
+            $retryAfter = $limit->getRetryAfter()
+                ->getTimestamp() - time();
 
             return ToolResult::failure(sprintf(
                 'Too many code requests. Please try again in %d seconds.',
@@ -880,7 +885,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             ));
         }
 
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy([
+            'email' => $email,
+        ]);
         if (! $user) {
             return ToolResult::failure('User not found');
         }
@@ -903,7 +910,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             return ToolResult::failure('Invalid or expired code');
         }
 
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy([
+            'email' => $email,
+        ]);
         if (! $user) {
             return ToolResult::failure('User not found');
         }

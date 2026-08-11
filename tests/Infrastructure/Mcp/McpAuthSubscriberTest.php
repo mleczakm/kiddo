@@ -42,7 +42,9 @@ final class McpAuthSubscriberTest extends TestCase
     public function testAllowsRequestWithMatchingXKiddoMcpKeyHeader(): void
     {
         $subscriber = $this->createSubscriber(serviceKey: 'secret-key');
-        $event = $this->createRequestEvent($subscriber, headers: ['X-Kiddo-Mcp-Key' => 'secret-key']);
+        $event = $this->createRequestEvent($subscriber, headers: [
+            'X-Kiddo-Mcp-Key' => 'secret-key',
+        ]);
 
         $subscriber->onKernelRequest($event);
 
@@ -52,7 +54,9 @@ final class McpAuthSubscriberTest extends TestCase
     public function testAllowsRequestWithMatchingBearerAuthorizationHeader(): void
     {
         $subscriber = $this->createSubscriber(serviceKey: 'secret-key');
-        $event = $this->createRequestEvent($subscriber, headers: ['Authorization' => 'Bearer secret-key']);
+        $event = $this->createRequestEvent($subscriber, headers: [
+            'Authorization' => 'Bearer secret-key',
+        ]);
 
         $subscriber->onKernelRequest($event);
 
@@ -62,7 +66,9 @@ final class McpAuthSubscriberTest extends TestCase
     public function testRejectsRequestWithWrongKey(): void
     {
         $subscriber = $this->createSubscriber(serviceKey: 'secret-key');
-        $event = $this->createRequestEvent($subscriber, headers: ['X-Kiddo-Mcp-Key' => 'wrong-key']);
+        $event = $this->createRequestEvent($subscriber, headers: [
+            'X-Kiddo-Mcp-Key' => 'wrong-key',
+        ]);
 
         $subscriber->onKernelRequest($event);
 
@@ -110,7 +116,8 @@ final class McpAuthSubscriberTest extends TestCase
     private function featureManagerAlwaysEnabled(): FeatureManager
     {
         $featureManager = $this->createMock(FeatureManager::class);
-        $featureManager->method('isEnabled')->willReturn(true);
+        $featureManager->method('isEnabled')
+            ->willReturn(true);
 
         return $featureManager;
     }

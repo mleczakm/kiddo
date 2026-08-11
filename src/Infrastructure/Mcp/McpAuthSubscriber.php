@@ -62,7 +62,8 @@ final readonly class McpAuthSubscriber implements EventSubscriberInterface
         if (! $limit->isAccepted()) {
             $event->setResponse(new JsonResponse([
                 'error' => 'Rate limit exceeded',
-                'retry_after' => $limit->getRetryAfter()->getTimestamp() - time(),
+                'retry_after' => $limit->getRetryAfter()
+                    ->getTimestamp() - time(),
             ], 429));
 
             return;

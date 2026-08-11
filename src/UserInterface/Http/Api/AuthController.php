@@ -49,7 +49,9 @@ final class AuthController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         if (! is_array($data)) {
-            return $this->json(['error' => 'Invalid JSON'], 400);
+            return $this->json([
+                'error' => 'Invalid JSON',
+            ], 400);
         }
 
         $constraints = new Assert\Collection([
@@ -60,17 +62,26 @@ final class AuthController extends AbstractController
 
         $violations = $validator->validate($data, $constraints);
         if (count($violations) > 0) {
-            return $this->json(['error' => 'Validation failed', 'violations' => (string) $violations], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+                'violations' => (string) $violations,
+            ], 400);
         }
 
         $email = $this->stringField($data, 'email');
         $name = $this->stringField($data, 'name');
         if ($email === null || $name === null) {
-            return $this->json(['error' => 'Validation failed'], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+            ], 400);
         }
 
-        if ($this->userRepository->findOneBy(['email' => $email])) {
-            return $this->json(['error' => 'Email already registered'], 409);
+        if ($this->userRepository->findOneBy([
+            'email' => $email,
+        ])) {
+            return $this->json([
+                'error' => 'Email already registered',
+            ], 409);
         }
 
         if ($emailLimitResponse = $this->checkEmailLimit($email)) {
@@ -88,7 +99,9 @@ final class AuthController extends AbstractController
                 $phone = PhoneNumberUtil::getInstance()->parse($phoneField, 'PL');
                 $user->setPhone($phone);
             } catch (NumberParseException) {
-                return $this->json(['error' => 'Invalid phone number'], 400);
+                return $this->json([
+                    'error' => 'Invalid phone number',
+                ], 400);
             }
         }
 
@@ -113,7 +126,9 @@ final class AuthController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         if (! is_array($data)) {
-            return $this->json(['error' => 'Invalid JSON'], 400);
+            return $this->json([
+                'error' => 'Invalid JSON',
+            ], 400);
         }
 
         $constraints = new Assert\Collection([
@@ -123,18 +138,24 @@ final class AuthController extends AbstractController
 
         $violations = $validator->validate($data, $constraints);
         if (count($violations) > 0) {
-            return $this->json(['error' => 'Validation failed'], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+            ], 400);
         }
 
         $email = $this->stringField($data, 'email');
         $code = $this->stringField($data, 'code');
         if ($email === null || $code === null) {
-            return $this->json(['error' => 'Validation failed'], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+            ], 400);
         }
 
         $user = $this->consumeVerificationCode($email, $code);
         if ($user === null) {
-            return $this->json(['error' => 'Invalid or expired code'], 400);
+            return $this->json([
+                'error' => 'Invalid or expired code',
+            ], 400);
         }
 
         $chatToken = $this->tokenManager->mint($user);
@@ -151,7 +172,9 @@ final class AuthController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         if (! is_array($data)) {
-            return $this->json(['error' => 'Invalid JSON'], 400);
+            return $this->json([
+                'error' => 'Invalid JSON',
+            ], 400);
         }
 
         $constraints = new Assert\Collection([
@@ -160,26 +183,36 @@ final class AuthController extends AbstractController
 
         $violations = $validator->validate($data, $constraints);
         if (count($violations) > 0) {
-            return $this->json(['error' => 'Validation failed'], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+            ], 400);
         }
 
         $email = $this->stringField($data, 'email');
         if ($email === null) {
-            return $this->json(['error' => 'Validation failed'], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+            ], 400);
         }
 
         if ($emailLimitResponse = $this->checkEmailLimit($email)) {
             return $emailLimitResponse;
         }
 
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy([
+            'email' => $email,
+        ]);
         if (! $user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json([
+                'error' => 'User not found',
+            ], 404);
         }
 
         $this->issueVerificationCode($user->getEmail());
 
-        return $this->json(['message' => 'Verification code sent']);
+        return $this->json([
+            'message' => 'Verification code sent',
+        ]);
     }
 
     #[Route('/login', name: 'api_auth_login', methods: ['POST'])]
@@ -191,7 +224,9 @@ final class AuthController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         if (! is_array($data)) {
-            return $this->json(['error' => 'Invalid JSON'], 400);
+            return $this->json([
+                'error' => 'Invalid JSON',
+            ], 400);
         }
 
         $constraints = new Assert\Collection([
@@ -201,18 +236,24 @@ final class AuthController extends AbstractController
 
         $violations = $validator->validate($data, $constraints);
         if (count($violations) > 0) {
-            return $this->json(['error' => 'Validation failed'], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+            ], 400);
         }
 
         $email = $this->stringField($data, 'email');
         $code = $this->stringField($data, 'code');
         if ($email === null || $code === null) {
-            return $this->json(['error' => 'Validation failed'], 400);
+            return $this->json([
+                'error' => 'Validation failed',
+            ], 400);
         }
 
         $user = $this->consumeVerificationCode($email, $code);
         if ($user === null) {
-            return $this->json(['error' => 'Invalid or expired code'], 400);
+            return $this->json([
+                'error' => 'Invalid or expired code',
+            ], 400);
         }
 
         $user->setLastLoginAt(Clock::get()->now());
@@ -252,7 +293,9 @@ final class AuthController extends AbstractController
             return null;
         }
 
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy([
+            'email' => $email,
+        ]);
         if (! $user) {
             return null;
         }
@@ -274,7 +317,8 @@ final class AuthController extends AbstractController
         if (! $limit->isAccepted()) {
             return $this->json([
                 'error' => 'Too many code requests. Please try again later.',
-                'retry_after' => $limit->getRetryAfter()->getTimestamp() - time(),
+                'retry_after' => $limit->getRetryAfter()
+                    ->getTimestamp() - time(),
             ], 429);
         }
 
@@ -288,7 +332,8 @@ final class AuthController extends AbstractController
         if (! $limit->isAccepted()) {
             return $this->json([
                 'error' => 'Too many attempts. Please try again later.',
-                'retry_after' => $limit->getRetryAfter()->getTimestamp() - time(),
+                'retry_after' => $limit->getRetryAfter()
+                    ->getTimestamp() - time(),
             ], 429);
         }
 

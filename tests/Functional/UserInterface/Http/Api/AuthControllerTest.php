@@ -58,31 +58,45 @@ final class AuthControllerTest extends WebTestCase
     {
         $email = 'auth-flow@example.com';
 
-        $registerResponse = $this->register(['email' => $email, 'name' => 'Auth Flow']);
+        $registerResponse = $this->register([
+            'email' => $email,
+            'name' => 'Auth Flow',
+        ]);
         self::assertSame(201, $registerResponse->getStatusCode());
         $registerPayload = $this->decode($registerResponse);
         self::assertArrayNotHasKey('verification_code', $registerPayload);
         self::assertTrue($registerPayload['requires_verification']);
 
         $this->assertEmailCount(1);
-        $sentEmail = $this->mailer()->sentEmails()->first();
+        $sentEmail = $this->mailer()
+            ->sentEmails()
+            ->first();
         $sentEmail->assertSubject('Twój kod weryfikacyjny');
         $code = $this->extractCode((string) $sentEmail->getHtmlBody() . (string) $sentEmail->getTextBody());
 
-        $verifyResponse = $this->verify(['email' => $email, 'code' => $code]);
+        $verifyResponse = $this->verify([
+            'email' => $email,
+            'code' => $code,
+        ]);
         self::assertSame(200, $verifyResponse->getStatusCode());
+        /** @var array{chat_token: string, user: array{email: string}} $verifyPayload */
         $verifyPayload = $this->decode($verifyResponse);
         self::assertArrayHasKey('chat_token', $verifyPayload);
         self::assertSame($email, $verifyPayload['user']['email']);
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => $email]);
+        $user = $userRepository->findOneBy([
+            'email' => $email,
+        ]);
         self::assertNotNull($user);
         self::assertNotNull($user->getConfirmedAt());
 
         // Codes are single-use.
-        $replayResponse = $this->verify(['email' => $email, 'code' => $code]);
+        $replayResponse = $this->verify([
+            'email' => $email,
+            'code' => $code,
+        ]);
         self::assertSame(400, $replayResponse->getStatusCode());
     }
 
@@ -90,10 +104,16 @@ final class AuthControllerTest extends WebTestCase
     {
         $email = 'auth-wrong-code@example.com';
 
-        $registerResponse = $this->register(['email' => $email, 'name' => 'Wrong Code']);
+        $registerResponse = $this->register([
+            'email' => $email,
+            'name' => 'Wrong Code',
+        ]);
         self::assertSame(201, $registerResponse->getStatusCode());
 
-        $verifyResponse = $this->verify(['email' => $email, 'code' => '000000']);
+        $verifyResponse = $this->verify([
+            'email' => $email,
+            'code' => '000000',
+        ]);
         self::assertSame(400, $verifyResponse->getStatusCode());
         self::assertArrayNotHasKey('chat_token', $this->decode($verifyResponse));
     }
@@ -103,7 +123,10 @@ final class AuthControllerTest extends WebTestCase
         $email = 'auth-rate-limit@example.com';
 
         // register() consumes the first of 3 email-limiter slots (shared budget with send-code).
-        self::assertSame(201, $this->register(['email' => $email, 'name' => 'Rate Limit'])->getStatusCode());
+        self::assertSame(201, $this->register([
+            'email' => $email,
+            'name' => 'Rate Limit',
+        ])->getStatusCode());
 
         // 2nd and 3rd slots.
         self::assertSame(200, $this->sendCode($email)->getStatusCode());
@@ -118,11 +141,17 @@ final class AuthControllerTest extends WebTestCase
         $email = 'auth-ip-limit@example.com';
 
         for ($i = 0; $i < 20; ++$i) {
-            $response = $this->login(['email' => $email, 'code' => '123456']);
+            $response = $this->login([
+                'email' => $email,
+                'code' => '123456',
+            ]);
             self::assertSame(400, $response->getStatusCode(), "attempt {$i} should be a plain invalid-code rejection");
         }
 
-        self::assertSame(429, $this->login(['email' => $email, 'code' => '123456'])->getStatusCode());
+        self::assertSame(429, $this->login([
+            'email' => $email,
+            'code' => '123456',
+        ])->getStatusCode());
     }
 
     /**
@@ -151,7 +180,9 @@ final class AuthControllerTest extends WebTestCase
 
     private function sendCode(string $email): JsonResponse
     {
-        return $this->controller->sendCode($this->jsonRequest(['email' => $email]), $this->validator);
+        return $this->controller->sendCode($this->jsonRequest([
+            'email' => $email,
+        ]), $this->validator);
     }
 
     /**
@@ -162,7 +193,9 @@ final class AuthControllerTest extends WebTestCase
         return Request::create(
             uri: '/api/auth/_test',
             method: 'POST',
-            server: ['CONTENT_TYPE' => 'application/json'],
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
     }
@@ -183,6 +216,6 @@ final class AuthControllerTest extends WebTestCase
         self::assertMatchesRegularExpression('/\d{6}/', $body);
         preg_match('/\d{6}/', $body, $matches);
 
-        return $matches[0];
+        return $matches[0] ?? '';
     }
 }
