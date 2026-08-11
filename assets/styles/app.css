@@ -466,10 +466,6 @@ progress {
     font: inherit
 }
 
-blockquote, dl, dd, h1, h2, h3, h4, h5, h6, hr, figure, p, pre {
-    margin: 0
-}
-
 fieldset {
     margin: 0;
     padding: 0
@@ -3018,12 +3014,4 @@ body {
 
 .has-\[\[data-slot\=input-group-control\]\:focus-visible\]\:ring-ring:has([data-slot=input-group-control]:focus-visible) {
     --tw-ring-color: hsl(var(--ring))
-}
-
-[data-side=right][data-state=collapsed] .\[\[data-side\=right\]\[data-state\=collapsed\]_\&\]\:cursor-w-resize {
-    cursor: w-resize
-}
-
-[data-side=right] .\[\[data-side\=right\]_\&\]\:cursor-e-resize {
-    cursor: e-resize
 }
