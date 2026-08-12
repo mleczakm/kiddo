@@ -45,11 +45,6 @@ when@test:
 when@prod:
     monolog:
         handlers:
-            buffer:
-                type: buffer
-                level: debug
-                handler: grouped_main
-                buffer_size: 0 # No limit
             grouped_main:
                 type: whatfailuregroup
                 members: [main, sentry]
@@ -67,9 +62,9 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
-            # Point fingers_crossed directly at SentryHandler (no intermediate BufferHandler).
-            # BufferHandler only flushes on close()/reset(), and under Swoole shutdown never runs
-            # per request — so events sat in memory and never reached Sentry.
+            # Keep both the main output and Sentry free of an outer BufferHandler. In the
+            # long-running Swoole process it is not closed per request, so an unlimited
+            # buffer retains every LogRecord and steadily grows worker memory.
             sentry:
                 type: fingers_crossed
                 action_level: warning

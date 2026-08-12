@@ -74,17 +74,6 @@ services:
       $mailboxUsername: '%env(MAILBOX_USERNAME)%'
       $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
 
-  logdash:
-    class: Logdash\Logdash
-    factory: [ 'Logdash\Logdash', 'create' ]
-    arguments:
-      - apiKey: '%env(LOGDASH_API_KEY)%'
-        verbose: '%kernel.debug%'
-
-  Logdash\Logger\Logger:
-    factory: [ '@logdash', 'logger' ]
-    public: true
-
   Symfony\Component\Cache\Psr16Cache:
 
   Psr\SimpleCache\CacheInterface:
