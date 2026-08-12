@@ -16,7 +16,8 @@ swoole:
         enabled: true
     trusted_proxies: '*'
     settings:
-      worker_count: 4
+      worker_count: 1
+      worker_max_request: 500
       log_file: '/proc/self/fd/2'
       # Default 2MiB is too small for heavy pages (e.g. workshops with many LiveComponents).
       buffer_output_size: 8388608
@@ -24,7 +25,7 @@ swoole:
     services:
       reset_handler: true
     settings:
-      worker_count: 8
+      worker_count: 2
   platform:
     coroutines:
       enabled: true
