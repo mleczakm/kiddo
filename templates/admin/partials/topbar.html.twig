@@ -28,7 +28,11 @@
             {{ page_title|default('Kiddo Admin') }}
         {% endif %}
     </h1>
-    
+
+    <div class="flex-1 max-w-xl mx-4 md:mx-8 relative hidden md:block">
+        {{ component('AdminGlobalSearchComponent') }}
+    </div>
+
     <div class="flex items-center gap-2 md:gap-4 shrink-0">
         <button type="button"
                 class="hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition"
