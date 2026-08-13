@@ -128,7 +128,9 @@ final class SeedDemoDataCommand extends Command
             count($weeklyLessons) + count($oneTimeLessons),
             count($bookings),
         ));
-        $io->note('3 unmatched transfers were added at /admin/platnosci — use "Zatwierdź" to search and merge one with a pending payment.');
+        $io->note(
+            '3 unmatched transfers were added at /admin/platnosci — use "Zatwierdź" to search and merge one with a pending payment.'
+        );
         $this->printAccessDetails($io);
 
         return Command::SUCCESS;
