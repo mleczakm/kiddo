@@ -34,9 +34,9 @@ final readonly class SearchResultHydrator
         }
 
         $sql = sprintf(<<<'SQL'
-            WITH wanted(type, id) AS (VALUES %s), details AS (
-                SELECT 'client' type, u.id::text id, u.name title,
-                       concat_ws(' · ', u.email, u.phone, 'Rejestracja: ' || to_char(u.created_at, 'DD.MM.YYYY')) subtitle
+            WITH wanted(entity_type, id) AS (VALUES %s), details AS (
+                SELECT 'client' AS entity_type, u.id::text AS id, u.name AS title,
+                       concat_ws(' · ', u.email, u.phone, 'Rejestracja: ' || to_char(u.created_at, 'DD.MM.YYYY')) AS subtitle
                 FROM "user" u
                 UNION ALL
                 SELECT 'child', c.id::text, c.name,
@@ -64,7 +64,9 @@ final readonly class SearchResultHydrator
                        concat_ws(' · ', t.title, t.amount, to_char(t.transferred_at, 'DD.MM.YYYY HH24:MI'))
                 FROM transfer t WHERE t.deleted_at IS NULL
             )
-            SELECT d.type, d.id, d.title, d.subtitle FROM wanted w JOIN details d USING (type, id)
+            SELECT d.entity_type AS "type", d.id, d.title, d.subtitle
+            FROM wanted w
+            JOIN details d USING (entity_type, id)
             SQL
             , implode(', ', $values));
 
