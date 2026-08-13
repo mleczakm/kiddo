@@ -174,6 +174,11 @@ class Booking
         return in_array($this->status, [self::STATUS_PENDING, self::STATUS_ACTIVE], true);
     }
 
+    public function canBeReactivated(): bool
+    {
+        return $this->status === self::STATUS_CANCELLED;
+    }
+
     public function canBeCompleted(): bool
     {
         return $this->getLessonsMap()
@@ -200,6 +205,24 @@ class Booking
         if ($reason) {
             $this->notes = $reason;
         }
+
+        return $this;
+    }
+
+    /**
+     * Restores lessons that were moved to the cancelled bucket back to
+     * active (or past, if their schedule has since elapsed). Does not
+     * itself change the booking status — that's driven by the 'reactivate'
+     * workflow transition (see workflow.yaml), mirroring how cancelLesson()
+     * leaves the status transition to the caller.
+     */
+    public function reactivate(): self
+    {
+        $this->cancelledBy = null;
+
+        $newLessonMap = clone $this->getLessonsMap();
+        $newLessonMap->reactivateAllBookedLessons($this);
+        $this->lessonsMap = $newLessonMap;
 
         return $this;
     }

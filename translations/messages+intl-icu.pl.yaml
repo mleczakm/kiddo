@@ -673,6 +673,7 @@ admin_dashboard:
       reschedule_cancel: 'Anuluj'
       cancel: 'Anuluj'
       refund: 'Zwrot'
+      reactivate: 'Przywróć'
 
 admin_users:
   title: Użytkownicy

@@ -11,6 +11,7 @@ use App\Entity\Lesson;
 use App\Entity\User;
 use App\Entity\Payment;
 use App\Message\CancelLessonBooking;
+use App\Message\ReactivateBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
@@ -392,6 +393,27 @@ class AdminBookingsComponent extends AbstractController
             $this->successMessage = 'Lesson cancelled successfully';
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to cancel lesson: ' . $e->getMessage();
+        }
+    }
+
+    #[LiveAction]
+    public function reactivateBooking(#[LiveArg] string $bookingId): void
+    {
+        $admin = $this->getUser();
+        if (! $admin instanceof User) {
+            $this->errorMessage = 'Unable to reactivate booking: not logged in as admin';
+            return;
+        }
+
+        try {
+            $this->messageBus->dispatch(new ReactivateBooking(
+                Ulid::fromString($bookingId),
+                $admin,
+                'Reactivated by admin',
+            ));
+            $this->successMessage = 'Booking reactivated successfully';
+        } catch (\Exception $e) {
+            $this->errorMessage = 'Failed to reactivate booking: ' . $e->getMessage();
         }
     }
 

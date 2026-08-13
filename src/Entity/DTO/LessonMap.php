@@ -251,6 +251,30 @@ class LessonMap implements \Countable
         $this->active->clear();
     }
 
+    /**
+     * Moves lessons from the cancelled bucket back to active (or past, if
+     * their schedule has since elapsed), mirroring cancelAllBookedLessons().
+     */
+    public function reactivateAllBookedLessons(Booking $booking): void
+    {
+        $this->ensureMapsInitialized();
+        $now = Clock::get()->now();
+
+        foreach ($booking->getLessons() as $lesson) {
+            $lessonId = $lesson->getId();
+            if (! $this->cancelled->hasKey($lessonId)) {
+                continue;
+            }
+
+            $this->cancelled->remove($lessonId);
+            if ($lesson->schedule >= $now) {
+                $this->active->put($lessonId, new BookedLesson($lessonId));
+            } else {
+                $this->past->put($lessonId, new BookedLesson($lessonId));
+            }
+        }
+    }
+
     public function getLesson(string $lessonId): ?BookedLesson
     {
         $this->ensureMapsInitialized();

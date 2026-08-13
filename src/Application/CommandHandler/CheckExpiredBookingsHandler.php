@@ -20,6 +20,10 @@ class CheckExpiredBookingsHandler
         $expiredBookings = $this->bookingRepository->findExpiredPendingBookings($command->expirationTime);
 
         foreach ($expiredBookings as $booking) {
+            if ($booking->hasPaidPayment()) {
+                continue;
+            }
+
             if ($this->bookingStateMachine->can($booking, 'cancel')) {
                 $this->bookingStateMachine->apply($booking, 'cancel');
             }

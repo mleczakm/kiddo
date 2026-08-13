@@ -265,6 +265,16 @@
                                                     {{ 'admin_dashboard.bookings.actions.mark_paid'|trans }}
                                                 </button>
                                             {% endif %}
+                                            {% if booking.status == 'cancelled' %}
+                                                <button
+                                                    data-action="click->live#action:stop"
+                                                    data-live-action-param="reactivateBooking"
+                                                    data-live-booking-id-param="{{ booking.id }}"
+                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-indigo-600 text-white hover:bg-indigo-700 h-9 rounded-lg px-3"
+                                                >
+                                                    {{ 'admin_dashboard.bookings.actions.reactivate'|trans }}
+                                                </button>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>
@@ -339,6 +349,19 @@
                                     class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-green-600 text-white hover:bg-green-700 h-9 rounded-lg px-3"
                                 >
                                     {{ 'admin_dashboard.bookings.actions.mark_paid'|trans }}
+                                </button>
+                            </div>
+                        {% endif %}
+
+                        {% if booking.status == 'cancelled' %}
+                            <div class="px-4 pb-3">
+                                <button
+                                    data-action="click->live#action:stop"
+                                    data-live-action-param="reactivateBooking"
+                                    data-live-booking-id-param="{{ booking.id }}"
+                                    class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-indigo-600 text-white hover:bg-indigo-700 h-9 rounded-lg px-3"
+                                >
+                                    {{ 'admin_dashboard.bookings.actions.reactivate'|trans }}
                                 </button>
                             </div>
                         {% endif %}

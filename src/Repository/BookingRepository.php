@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Booking;
 use App\Entity\Lesson;
+use App\Entity\Payment;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,10 +28,13 @@ class BookingRepository extends ServiceEntityRepository
     {
         /** @var array<Booking> $bookings */
         $bookings =  $this->createQueryBuilder('b')
+            ->leftJoin('b.payment', 'p')
             ->where('b.status = :status')
             ->andWhere('b.createdAt < :expirationTime')
+            ->andWhere('p.status IS NULL OR p.status != :paidStatus')
             ->setParameter('status', Booking::STATUS_PENDING)
             ->setParameter('expirationTime', $expirationTime)
+            ->setParameter('paidStatus', Payment::STATUS_PAID)
             ->getQuery()
             ->getResult();
 

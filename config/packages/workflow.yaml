@@ -24,6 +24,10 @@ framework:
                     guard: "subject.canBeCancelled()"
                     from: [pending, active]
                     to: cancelled
+                reactivate:
+                    guard: "subject.canBeReactivated()"
+                    from: cancelled
+                    to: active
                 request_refund:
                     guard: "subject.canRequestRefund()"
                     from: [active]
