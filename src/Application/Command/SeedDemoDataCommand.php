@@ -22,6 +22,7 @@ use App\Repository\BookingRepository;
 use App\Repository\ChildRepository;
 use App\Repository\LessonRepository;
 use App\Repository\PaymentRepository;
+use App\Repository\TransferRepository;
 use App\Repository\UserRepository;
 use Brick\Money\Money;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -52,6 +53,7 @@ final class SeedDemoDataCommand extends Command
         private readonly BookingRepository $bookingRepository,
         private readonly PaymentRepository $paymentRepository,
         private readonly LessonRepository $lessonRepository,
+        private readonly TransferRepository $transferRepository,
         #[Autowire('%kernel.environment%')]
         private readonly string $environment,
     ) {
@@ -126,6 +128,7 @@ final class SeedDemoDataCommand extends Command
             count($weeklyLessons) + count($oneTimeLessons),
             count($bookings),
         ));
+        $io->note('3 unmatched transfers were added at /admin/platnosci — use "Zatwierdź" to search and merge one with a pending payment.');
         $this->printAccessDetails($io);
 
         return Command::SUCCESS;
@@ -388,6 +391,8 @@ final class SeedDemoDataCommand extends Command
             $oneTime[2]
         );
 
+        $this->createUnmatchedTransfers($now);
+
         return [
             $singlePaid,
             $carnet,
@@ -461,8 +466,50 @@ final class SeedDemoDataCommand extends Command
         return $booking;
     }
 
+    /**
+     * Unmatched bank transfers left with payment=null, mirroring real life cases where the
+     * sender name on the bank statement doesn't match any account and an admin has to search
+     * for the right pending payment and merge it manually via the "assign payment" modal.
+     */
+    private function createUnmatchedTransfers(\DateTimeImmutable $now): void
+    {
+        $transfers = [
+            new Transfer(
+                '61 1090 0000 0000 0001 2345 6789',
+                'Ewa Kamińska',
+                self::DEMO_TITLE_PREFIX . 'za warsztaty dla wnuczki',
+                '95.00',
+                $now->modify('-3 hours')
+            ),
+            new Transfer(
+                '89 1140 2004 0000 3002 0135 5387',
+                'Grzegorz Zieliński',
+                self::DEMO_TITLE_PREFIX . 'oplata za zajecia syna',
+                '95.00',
+                $now->modify('-6 hours')
+            ),
+            new Transfer(
+                '12 1240 0000 0000 0000 0000 0000',
+                'Nieznany Nadawca',
+                self::DEMO_TITLE_PREFIX . 'przelew',
+                '60.00',
+                $now->modify('-1 day 2 hours')
+            ),
+        ];
+
+        foreach ($transfers as $transfer) {
+            $this->entityManager->persist($transfer);
+        }
+    }
+
     private function removePreviousDemoData(): void
     {
+        foreach ($this->transferRepository->findByTitleStartingWith(self::DEMO_TITLE_PREFIX) as $transfer) {
+            $transfer->setPayment(null);
+            $this->entityManager->remove($transfer);
+        }
+        $this->entityManager->flush();
+
         /** @var list<User> $users */
         $users = $this->userRepository->createQueryBuilder('u')
             ->where('u.email LIKE :domain')

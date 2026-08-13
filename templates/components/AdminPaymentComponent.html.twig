@@ -50,14 +50,17 @@
                                 {{ transfer.transferredAt|date('Y-m-d H:i') }}
                             </td>
                             <td class="p-4 align-middle text-right">
-                                <button
-                                    data-action="live#action"
-                                    data-live-action-param="reject"
-                                    data-live-transfer-id-param="{{ transfer.id }}"
-                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 h-9 rounded-lg px-3"
-                                >
-                                    {{ 'payment.reject'|trans }}
-                                </button>
+                                <div class="flex items-center justify-end gap-2">
+                                    {{ component('AssignPaymentModalComponent', { transfer: transfer }) }}
+                                    <button
+                                        data-action="live#action"
+                                        data-live-action-param="reject"
+                                        data-live-transfer-id-param="{{ transfer.id }}"
+                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 h-9 rounded-lg px-3"
+                                    >
+                                        {{ 'payment.reject'|trans }}
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     {% else %}
@@ -82,14 +85,17 @@
                         </div>
                         <div class="flex items-center justify-between mt-3">
                             <span class="text-xs text-slate-500">{{ transfer.transferredAt|date('Y-m-d H:i') }}</span>
-                            <button
-                                data-action="live#action"
-                                data-live-action-param="reject"
-                                data-live-transfer-id-param="{{ transfer.id }}"
-                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 h-9 rounded-lg px-3"
-                            >
-                                {{ 'payment.reject'|trans }}
-                            </button>
+                            <div class="flex items-center gap-2">
+                                {{ component('AssignPaymentModalComponent', { transfer: transfer }) }}
+                                <button
+                                    data-action="live#action"
+                                    data-live-action-param="reject"
+                                    data-live-transfer-id-param="{{ transfer.id }}"
+                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 h-9 rounded-lg px-3"
+                                >
+                                    {{ 'payment.reject'|trans }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 {% else %}

@@ -61,6 +61,21 @@ class TransferRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Transfer[]
+     */
+    public function findByTitleStartingWith(string $prefix): array
+    {
+        /** @var Transfer[] $result */
+        $result = $this->createQueryBuilder('t')
+            ->where('t.title LIKE :prefix')
+            ->setParameter('prefix', $prefix . '%')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
      * Restore a soft-deleted transfer
      */
     public function restore(Transfer $transfer): void
