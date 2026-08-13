@@ -67,7 +67,7 @@ when@prod:
             # buffer retains every LogRecord and steadily grows worker memory.
             sentry:
                 type: fingers_crossed
-                action_level: warning
+                action_level: error
                 handler: sentry_handler
                 include_stacktraces: true
                 process_psr_3_messages: true
@@ -78,3 +78,4 @@ when@prod:
             sentry_handler:
                 type: service
                 id: BGalati\MonologSentryHandler\SentryHandler
+                level: error
