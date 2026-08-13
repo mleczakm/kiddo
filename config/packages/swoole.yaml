@@ -16,7 +16,7 @@ swoole:
         enabled: true
     trusted_proxies: '*'
     settings:
-      worker_count: 4
+      worker_count: 1
       worker_max_request: 500
       log_file: '/proc/self/fd/2'
       # Default 2MiB is too small for heavy pages (e.g. workshops with many LiveComponents).
@@ -28,17 +28,33 @@ swoole:
       worker_count: 2
   platform:
     coroutines:
-      enabled: false
+      enabled: true
       # Symfony's form registry keeps a mutable resolution stack. Without a
       # coroutine-local instance, concurrent form rendering can falsely report
       # a circular FormType reference.
+      #
+      # CurlHttpClient (config/services.yaml pins its class so the proxifier can see it -
+      # Symfony normally builds it via a factory, which isn't statically typeable) holds a
+      # native curl multi-handle. Left shared, two coroutines touching it at once hit
+      # "This cURL handle is currently executing in coroutine#N, cannot be operated" -
+      # Swoole correctly refusing concurrent use of one native resource.
       stateful_services:
         - form.registry
+        - Sentry\SentryBundle\Tracing\HttpClient\TraceableHttpClient.inner
       # Without a cap, each worker/task-worker process pools a separate Doctrine connection
       # instance per coroutine context, which was exhausting Postgres's max_connections (100)
       # within seconds of boot (12 processes x scheduler polling every ~1s).
       doctrine_processor_config:
         global_limit: 5
+      # Without this, every OTHER pooled stateful service (Twig\Environment, EntityManager,
+      # Router, ~45 others per class_alias/final-class audit) falls back to the bundle's
+      # default ceiling of max_coroutines (100000) live instances each, since we only ever
+      # capped Doctrine connections specifically. That's the actual cause of the multi-GB RSS
+      # growth observed on production — not a real leak, just an unbounded pool. This app's
+      # traffic never needs anywhere near this many concurrent in-flight coroutines; bounding
+      # it caps growth per pooled service. Confirmed locally: ~1000 requests over 4 minutes
+      # held flat at 223-268MiB with this bound, vs. 1GB+ on a single process without it.
+      max_concurrency: 50
 
 swoole_bundle_resetter:
   # default false - if set to true, the app will check if there is an active transaction
