@@ -163,6 +163,17 @@ services:
     arguments:
       $url: '%env(HTTP_CLIENT_HEALTHCHECK_URL)%'
 
+  # Symfony normally builds this via the HttpClient::create() factory, whose return type
+  # (CurlHttpClient vs NativeHttpClient) is only known at runtime. The coroutine proxifier
+  # skips any service whose class isn't statically known, so it never pools this - every
+  # coroutine ends up sharing one CurlHttpClient's native curl handles, which Swoole
+  # correctly rejects concurrent use of ("This cURL handle is currently executing in
+  # coroutine#N"). Pinning the class here (same as what the factory picks, since ext-curl
+  # is compiled into Swoole - see a61dc04) makes it visible to the proxifier so it can be
+  # added to platform.coroutines.stateful_services below.
+  http_client.transport:
+    class: Symfony\Component\HttpClient\CurlHttpClient
+
   # Ensure both the default ORM connection and the dedicated cache DBAL connection.
   App\Infrastructure\Doctrine\CompositeConnectionEnsurer:
     arguments:

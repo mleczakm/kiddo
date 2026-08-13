@@ -32,13 +32,29 @@ swoole:
       # Symfony's form registry keeps a mutable resolution stack. Without a
       # coroutine-local instance, concurrent form rendering can falsely report
       # a circular FormType reference.
+      #
+      # CurlHttpClient (config/services.yaml pins its class so the proxifier can see it -
+      # Symfony normally builds it via a factory, which isn't statically typeable) holds a
+      # native curl multi-handle. Left shared, two coroutines touching it at once hit
+      # "This cURL handle is currently executing in coroutine#N, cannot be operated" -
+      # Swoole correctly refusing concurrent use of one native resource, confirmed under load
+      # testing on the memory-debug branch.
       stateful_services:
         - form.registry
+        - Sentry\SentryBundle\Tracing\HttpClient\TraceableHttpClient.inner
       # Without a cap, each worker/task-worker process pools a separate Doctrine connection
       # instance per coroutine context, which was exhausting Postgres's max_connections (100)
       # within seconds of boot (12 processes x scheduler polling every ~1s).
       doctrine_processor_config:
         global_limit: 5
+      # Without this, every OTHER pooled stateful service (Twig\Environment, EntityManager,
+      # Router, ~45 others per class_alias/final-class audit) falls back to the bundle's
+      # default ceiling of max_coroutines (100000) live instances each, since we only ever
+      # capped Doctrine connections specifically. That's the actual cause of the multi-GB RSS
+      # growth observed on prod with coroutines on (see memory-debug branch investigation) —
+      # not a real leak, just an unbounded pool. This app's traffic never needs anywhere near
+      # this many concurrent in-flight coroutines; bounding it caps growth per pooled service.
+      max_concurrency: 50
 
 swoole_bundle_resetter:
   # default false - if set to true, the app will check if there is an active transaction
@@ -53,20 +69,6 @@ when@prod:
     # default 0 - if set, the connection ping operation will be executed each X seconds
     # (instead of at the beginning of each request)
     ping_interval: 29
-
-  # Temporary, for the memory-debug leak-tracer investigation (see App\Infrastructure\Swoole):
-  # swoole_tracer_leak_detect() segfaults under coroutines (FFI/z-engine conflict, see
-  # .docker/php/ini/swoole-tracer.ini). Coroutines are the only concurrency this app has with
-  # worker_count 1, so disabling them means one worker = one request at a time; bumping to 4
-  # processes restores real (I/O-overlap) concurrency without coroutines. Revert both once the
-  # leak hunt is done.
-  swoole:
-    platform:
-      coroutines:
-        enabled: false
-    http_server:
-      settings:
-        worker_count: 4
 
 # Coroutines only matter for the real swoole HTTP server process; PHPUnit's WebTestCase never
 # runs inside one. With coroutines on, swoole-bundle swaps the container's `kernel` service for
