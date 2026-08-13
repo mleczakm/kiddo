@@ -59,7 +59,7 @@
                             <button type="button"
                                     class="text-muted-foreground hover:text-foreground"
                                     data-action="live#action"
-                                    data-action-name="clearUserSelection">
+                                    data-live-action-param="clearUserSelection">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M6 18L18 6M6 6l12 12"></path>
@@ -84,8 +84,8 @@
                                             <button type="button"
                                                     class="w-full px-3 py-2 text-left hover:bg-muted focus:bg-muted focus:outline-none"
                                                     data-action="live#action"
-                                                    data-action-name="selectUser"
-                                                    data-action-param-user-id="{{ user.id }}">
+                                                    data-live-action-param="selectUser"
+                                                    data-live-user-id-param="{{ user.id }}">
                                                 <div class="font-medium">{{ user.name }}</div>
                                                 <div class="text-sm text-muted-foreground">{{ user.email }}</div>
                                             </button>
@@ -129,8 +129,8 @@
                                     <button type="button"
                                             class="text-muted-foreground hover:text-foreground"
                                             data-action="live#action"
-                                            data-action-name="removeLesson"
-                                            data-action-param-lesson-id="{{ lesson.id }}">
+                                            data-live-action-param="removeLesson"
+                                            data-live-lesson-id-param="{{ lesson.id }}">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M6 18L18 6M6 6l12 12"></path>
@@ -159,8 +159,8 @@
                                             <button type="button"
                                                     class="w-full px-3 py-2 text-left hover:bg-muted focus:bg-muted focus:outline-none"
                                                     data-action="live#action"
-                                                    data-action-name="selectLesson"
-                                                    data-action-param-lesson-id="{{ lesson.id }}">
+                                                    data-live-action-param="selectLesson"
+                                                    data-live-lesson-id-param="{{ lesson.id }}">
                                                 <div class="font-medium">{{ lesson.metadata.title }}</div>
                                                 <div class="text-sm text-muted-foreground">
                                                     {{ lesson.schedule|date('Y-m-d H:i') }}
@@ -264,7 +264,7 @@
                     <button type="button"
                             class="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
                             data-action="live#action"
-                            data-action-name="createBooking"
+                            data-live-action-param="createBooking"
                             {% if not this.isFormValid %}disabled{% endif %}>
                         Create Booking
                     </button>
