@@ -201,6 +201,25 @@ when@dev:
     Sentry\State\HubInterface:
       factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
 
+# Temporary leak-tracer wiring, see the classes' docblocks for context. Registered only for
+# prod (not dev) since dev's debug tooling — profiler, web debug toolbar, xdebug — adds its
+# own allocations that would skew leak results away from real production behaviour.
+when@prod:
+  services:
+    App\Infrastructure\Swoole\Configurator\WithLeakTracer:
+      tags:
+        - 'swoole_bundle.server_configurator'
+
+    App\Infrastructure\Swoole\LeakTracerRequestHandler:
+      decorates: SwooleBundle\SwooleBundle\Server\RequestHandler\RequestHandler
+      arguments:
+        $innerHandler: '@.inner'
+
+    App\Infrastructure\Swoole\LeakTracerWorkerStartHandler:
+      decorates: SwooleBundle\SwooleBundle\Server\WorkerHandler\WorkerStartHandler
+      arguments:
+        $innerHandler: '@.inner'
+
 # Test-specific service overrides
 when@test:
   services:

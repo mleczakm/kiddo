@@ -54,6 +54,20 @@ when@prod:
     # (instead of at the beginning of each request)
     ping_interval: 29
 
+  # Temporary, for the memory-debug leak-tracer investigation (see App\Infrastructure\Swoole):
+  # swoole_tracer_leak_detect() segfaults under coroutines (FFI/z-engine conflict, see
+  # .docker/php/ini/swoole-tracer.ini). Coroutines are the only concurrency this app has with
+  # worker_count 1, so disabling them means one worker = one request at a time; bumping to 4
+  # processes restores real (I/O-overlap) concurrency without coroutines. Revert both once the
+  # leak hunt is done.
+  swoole:
+    platform:
+      coroutines:
+        enabled: false
+    http_server:
+      settings:
+        worker_count: 4
+
 # Coroutines only matter for the real swoole HTTP server process; PHPUnit's WebTestCase never
 # runs inside one. With coroutines on, swoole-bundle swaps the container's `kernel` service for
 # a clone ("kernel_proxy") that deliberately shares bundle instances with the original kernel

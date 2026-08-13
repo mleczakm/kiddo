@@ -10,11 +10,13 @@ services:
       COMPOSER_HOME: /.composer
       PHP_CS_FIXER_IGNORE_ENV: true
       SWOOLE_ALLOW_XDEBUG: 1
+      APP_ENV: prod
     volumes:
       - .:/app
       - ~/.composer:/.composer
       - .docker/php/ini/zz-php.ini:/usr/local/etc/php/conf.d/zz-php.ini
       - .docker/php/ini/xdebug.ini:/usr/local/etc/php/conf.d/zz-xdebug.ini
+      - .docker/php/ini/swoole-tracer.ini:/usr/local/etc/php/conf.d/zz-swoole-tracer.ini
 
     user: 1000:1000
     ports:

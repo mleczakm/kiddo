@@ -28,7 +28,16 @@ final class WithScheduler implements Configurator
             $this->scheduler->run();
         });
 
+
+
+
+
         $server->on('shutdown', function (): void {
+            // memprof isn't actually loading in this image (php -m shows no memprof module),
+            // so calling it unconditionally fatals the shutdown handler with "undefined function".
+            if (\function_exists('memprof_dump_pprof')) {
+                memprof_dump_pprof(fopen("profile-{$this->tickId}.heap", "w"));
+            }
             Timer::clear($this->tickId);
         });
     }
