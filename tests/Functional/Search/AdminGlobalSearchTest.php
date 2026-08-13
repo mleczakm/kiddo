@@ -152,6 +152,14 @@ final class AdminGlobalSearchTest extends WebTestCase
         );
         self::assertNotNull($datedResult);
         self::assertStringContainsString('15.08.2042', $datedResult->subtitle);
+
+        $paymentResult = array_find(
+            $results,
+            static fn($result): bool => $result->reference->type === SearchType::Payment
+        );
+        self::assertNotNull($paymentResult);
+        self::assertStringContainsString('80,00 zł', $paymentResult->subtitle);
+        self::assertStringNotContainsString('#type', $paymentResult->subtitle);
     }
 
     /**

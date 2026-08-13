@@ -54,7 +54,9 @@ final readonly class SearchResultHydrator
                 FROM lesson l JOIN lesson_metadata lm ON lm.id = l.metadata_id
                 UNION ALL
                 SELECT 'payment', p.id::text, 'Płatność · ' || u.name,
-                       concat_ws(' · ', p.status, p.method, p.amount::text,
+                       concat_ws(' · ', p.status, p.method,
+                           replace(p.amount->>'amount', '.', ',') || ' ' ||
+                               CASE p.amount->>'currency' WHEN 'PLN' THEN 'zł' ELSE p.amount->>'currency' END,
                            to_char(COALESCE(p.paid_at, p.created_at), 'DD.MM.YYYY HH24:MI'))
                 FROM payment p JOIN "user" u ON u.id = p.user_id
                 UNION ALL
