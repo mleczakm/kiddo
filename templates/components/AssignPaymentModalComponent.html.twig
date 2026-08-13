@@ -3,7 +3,7 @@
         <button
                 data-action="live#action"
                 data-live-action-param="openModal"
-                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 px-3 bg-workshop-green text-white hover:bg-workshop-green/90">
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 px-3 bg-indigo-600 text-white hover:bg-indigo-700">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                  class="lucide lucide-circle-check-big w-4 h-4 mr-1" data-lov-id="src/pages/Admin.tsx:1219:30"
@@ -21,50 +21,50 @@
         <div data-modal-transition-target="overlay"
              data-state="open"
              data-action="click->modal-transition#close click->live#action" data-live-action-param="closeModal"
-             class="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"></div>
+             class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"></div>
 
         {# Dialog #}
-        <div role="dialog"
+        <dialog open aria-modal="true" aria-labelledby="assign-payment-title"
              data-modal-transition-target="panel"
              data-state="open"
-             class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl translate-x-[-25%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg sm:rounded-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+             class="fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-4xl max-h-[calc(100vh-2rem)] translate-x-[-50%] translate-y-[-50%] gap-5 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl sm:p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
 
             <div class="flex flex-col space-y-1.5 text-center sm:text-left">
-                <h2 class="text-lg font-semibold leading-none tracking-tight">{{ 'payment.assign_payment'|trans }}</h2>
+                <h2 id="assign-payment-title" class="text-lg font-bold leading-none tracking-tight text-slate-800">{{ 'payment.assign_payment'|trans }}</h2>
             </div>
 
             {% if this.transfer %}
                 <div class="space-y-6">
-                    <div class="bg-muted/50 p-4 rounded-lg">
-                        <h3 class="font-semibold mb-3">{{ 'payment.transfer_details'|trans }}</h3>
-                        <div class="grid grid-cols-2 gap-4">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <h3 class="font-bold text-slate-800 mb-3">{{ 'payment.transfer_details'|trans }}</h3>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label class="text-sm text-muted-foreground">{{ 'payment.sender'|trans }}</label>
-                                <p class="font-medium">{{ this.transfer.sender }}</p>
+                                <label class="text-sm text-slate-500">{{ 'payment.sender'|trans }}</label>
+                                <p class="font-medium text-slate-800">{{ this.transfer.sender }}</p>
                             </div>
                             <div>
-                                <label class="text-sm text-muted-foreground">{{ 'payment.account_number'|trans }}</label>
-                                <p class="font-medium">{{ this.transfer.accountNumber }}</p>
+                                <label class="text-sm text-slate-500">{{ 'payment.account_number'|trans }}</label>
+                                <p class="font-medium text-slate-800">{{ this.transfer.accountNumber }}</p>
                             </div>
                             <div>
-                                <label class="text-sm text-muted-foreground">{{ 'payment.transfer_title'|trans }}</label>
-                                <p class="font-medium">{{ this.transfer.title }}</p>
+                                <label class="text-sm text-slate-500">{{ 'payment.transfer_title'|trans }}</label>
+                                <p class="font-medium text-slate-800">{{ this.transfer.title }}</p>
                             </div>
                             <div>
-                                <label class="text-sm text-muted-foreground">{{ 'payment.amount'|trans }}</label>
-                                <p class="font-medium text-green-600">{{ this.transfer.amount }}</p>
+                                <label class="text-sm text-slate-500">{{ 'payment.amount'|trans }}</label>
+                                <p class="font-bold text-emerald-600">{{ this.transfer.amount }}</p>
                             </div>
                             <div>
-                                <label class="text-sm text-muted-foreground">{{ 'payment.date'|trans }}</label>
-                                <p class="font-medium">{{ this.transfer.transferredAt|date('d.m.Y') }}</p>
+                                <label class="text-sm text-slate-500">{{ 'payment.date'|trans }}</label>
+                                <p class="font-medium text-slate-800">{{ this.transfer.transferredAt|date('d.m.Y') }}</p>
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <label class="text-base font-semibold"
+                        <label class="text-base font-bold text-slate-800"
                                for="payment-search">{{ 'payment.select_payment'|trans }}</label>
-                        <p class="text-sm text-muted-foreground mb-4">{{ 'payment.select_payment_help'|trans }}</p>
+                        <p class="text-sm text-slate-500 mb-4">{{ 'payment.select_payment_help'|trans }}</p>
                         <input
                                 id="payment-search"
                                 name="payment_search"
@@ -80,7 +80,7 @@
                                         data-action="click->live#action"
                                         data-live-action-param="selectPayment"
                                         data-live-payment-id-param="{{ payment.id }}"
-                                        class="p-3 border rounded-lg cursor-pointer transition-all border-border hover:border-workshop-blue/50 {{ this.selectedPaymentId == payment.id ? 'bg-blue-100 border-workshop-blue' : '' }}"
+                                        class="p-3 border rounded-xl cursor-pointer transition-all border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 {{ this.selectedPaymentId == payment.id ? 'bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500' : 'bg-white' }}"
                                 >
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
@@ -88,13 +88,13 @@
                                                 <p class="font-bold">{{ payment.paymentCode ? payment.paymentCode.code : '' }}</p>
                                                 <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground text-xs">{{ payment.amount }}</div>
                                                 {% if payment.amountMatch(this.transfer) %}
-                                                    <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent hover:bg-secondary/80 text-xs bg-green-100 text-green-700">{{ 'payment.amount_match'|trans }}</div>
+                                                    <div class="inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">{{ 'payment.amount_match'|trans }}</div>
                                                 {% endif %}
                                             </div>
                                             <p class="text-sm text-muted-foreground">{{ payment.bookingsSummary }} {{ payment.user.name }} {{ payment.user.email }}</p>
                                             <p class="text-xs text-muted-foreground">{{ 'payment.booked'|trans({'{date}': payment.createdAt|date('d.m.Y')}) }}</p>
                                         </div>
-                                        <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 text-xs">{{ 'payment.status_pending'|trans }}</div>
+                                        <div class="inline-flex items-center rounded-full border border-red-200 px-2.5 py-0.5 text-xs font-semibold bg-red-50 text-red-600">{{ 'payment.status_pending'|trans }}</div>
                                     </div>
                                 </div>
                             {% else %}
@@ -109,7 +109,7 @@
                         <button
                                 data-action="click->modal-transition#close click->live#action"
                                 data-live-action-param="closeModal"
-                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 h-10 px-4 py-2"
                         >
                             {{ 'action.cancel'|trans }}
                         </button>
@@ -117,7 +117,7 @@
                                 data-action="click->live#action"
                                 data-live-action-param="confirmAssignment"
                                 {{ this.selectedPaymentId is null ? 'disabled' : '' }}
-                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-workshop-green text-white hover:bg-workshop-green/90"
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700"
                         >
                             {{ 'action.confirm_and_merge'|trans }}
                         </button>
@@ -126,7 +126,7 @@
             {% endif %}
 
             <button type="button" data-action="click->modal-transition#close click->live#action" data-live-action-param="closeModal"
-                    class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                    class="absolute right-4 top-4 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:pointer-events-none">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      class="h-4 w-4">
@@ -135,7 +135,7 @@
                 </svg>
                 <span class="sr-only">{{ 'action.close'|trans }}</span>
             </button>
-        </div>
+        </dialog>
         </div>
     {% endif %}
 </div>
