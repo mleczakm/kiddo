@@ -82,6 +82,8 @@ final class AdminGlobalSearchTest extends WebTestCase
         self::assertStringContainsString('Client</span>', $html);
         self::assertStringContainsString('<mark class="bg-amber-200', $html);
         self::assertStringContainsString('/admin/uzytkownicy/' . $customer->getId(), $html);
+        self::assertStringContainsString('data-search-result-icon="client"', $html);
+        self::assertStringContainsString('bg-sky-100 text-sky-700', $html);
     }
 
     public function testLiveComponentGeneratesAValidLinkForDatabaseUlid(): void
@@ -99,6 +101,19 @@ final class AdminGlobalSearchTest extends WebTestCase
 
         self::assertStringContainsString('</mark> Workshops', $lessonHtml);
         self::assertStringContainsString('/admin/zajecia/' . $lesson->getId(), $lessonHtml);
+        self::assertStringContainsString('data-search-result-icon="lesson"', $lessonHtml);
+        self::assertStringContainsString('bg-indigo-100 text-indigo-700', $lessonHtml);
+    }
+
+    public function testAdminTourIncludesGlobalSearchStep(): void
+    {
+        $this->entityManager->flush();
+        $this->browser->loginUser($this->admin);
+        $this->browser->request('GET', '/admin');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('[data-tour-target="global-search"]');
+        self::assertSelectorExists('[data-admin-tour-steps-value*="Wyszukiwarka"]');
     }
 
     public function testSearchesEntityDatesInPolishDayMonthFormat(): void

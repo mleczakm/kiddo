@@ -731,6 +731,9 @@ admin:
       dashboard_kpis:
         title: 'Kluczowe wskaźniki'
         body: 'Szybki podgląd najważniejszych statystyk — liczby rezerwacji, przychodów i alertów wymagających uwagi.'
+      global_search:
+        title: 'Wyszukiwarka'
+        body: 'Szukaj klientów, dzieci, rezerwacji, zajęć, płatności i przelewów z dowolnego miejsca w panelu. Wpisz nazwę, e-mail, numer lub datę, np. 15.08. Skrót Ctrl+K (⌘K na Macu) od razu ustawia kursor w wyszukiwarce.'
       nav_workshops:
         title: 'Warsztaty'
         body: 'Tu zarządzasz warsztatami i ich terminami. Kliknij wiersz warsztatu, aby otworzyć podgląd wszystkich zajęć i rezerwacji. Z podglądu możesz przejść do edycji albo zakończyć cykl, ustawiając dzisiejszą datę jako ostatni termin.'
