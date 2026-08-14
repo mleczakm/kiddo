@@ -161,9 +161,16 @@ final class AdminGlobalSearchTest extends WebTestCase
         self::assertContains(SearchType::Payment, $types);
 
         $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
+        // Matched by id, not just type: $this->admin (persisted in setUp() with a real,
+        // un-pinned created_at) is also a Client-type result, and on any test run that
+        // happens to execute on the 15th of August, its created_at's real day/month
+        // coincidentally matches this test's search string too - array_find picking merely
+        // "the first Client result" then non-deterministically grabs the admin instead of
+        // $customer, asserting against the wrong row's (real, "today") subtitle date.
         $datedResult = array_find(
             $results,
             static fn($result): bool => $result->reference->type === SearchType::Client
+                && $result->reference->id === (string) $customer->getId()
         );
         self::assertNotNull($datedResult);
         self::assertStringContainsString('15.08.2042', $datedResult->subtitle);
