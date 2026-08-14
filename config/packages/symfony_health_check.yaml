@@ -1,4 +1,12 @@
+# Both response codes were previously unset, defaulting to null - BaseController only
+# overrides the 200 OK response with this code when a check reports failure, so /health and
+# /ping always returned 200 regardless of what the individual checks (visible only in the
+# JSON body) actually reported. Combined with the Dockerfile's HEALTHCHECK previously missing
+# curl's -f flag, this meant Docker's health status - and by extension the autoheal
+# automation watching it - could never reflect an actual check failure.
 symfony_health_check:
+    health_error_response_code: 503
+    ping_error_response_code: 503
     health_checks:
         - id: symfony_health_check.environment_check
         - id: symfony_health_check.status_up_check
@@ -6,5 +14,6 @@ symfony_health_check:
         - id: App\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheck
         - id: App\Infrastructure\Healthcheck\DoctrineInsideTaskWorkerHealthcheck
         - id: App\Infrastructure\Healthcheck\HttpClientHealthcheck
+        - id: App\Infrastructure\Healthcheck\ProcessCountHealthcheck
     ping_checks:
         - id: symfony_health_check.status_up_check

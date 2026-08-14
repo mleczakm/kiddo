@@ -53,7 +53,11 @@ RUN (bin/console cache:warmup || bin/console cache:warmup) \
 
 FROM base AS prod
 
-HEALTHCHECK --start-period=2s --interval=5s --timeout=5s --retries=5 CMD curl -sS localhost:9501/health || exit 1
+# -f/--fail is required: without it, curl only fails the healthcheck on a transport-level
+# error (connection refused, timeout) and treats any HTTP response - including a 500 or the
+# 503 symfony_health_check.yaml now sends for a failed check - as success (exit 0). Confirmed
+# directly: `curl -sS` against a 500 response exits 0.
+HEALTHCHECK --start-period=2s --interval=5s --timeout=5s --retries=5 CMD curl -sSf localhost:9501/health || exit 1
 
 COPY composer.json composer.lock ./
 

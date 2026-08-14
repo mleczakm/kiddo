@@ -45,3 +45,14 @@ when@test:
         messenger:
             transports:
                 async: test://
+            routing:
+                # DoctrineInsideTaskWorkerHealthcheck dispatches this and waits (via cache) for a
+                # real task worker to pick it up and write the result back. test:// never consumes
+                # what's dispatched to it (it just records messages for assertions), so this
+                # guaranteed-timed-out forever under the default '*': async routing - invisible
+                # only because /health previously returned 200 regardless of check results (see
+                # symfony_health_check.yaml). Routing it to sync makes the dispatch (and the
+                # DoctrineORMCheck it runs) execute inline, which is the closest test-env
+                # equivalent to "a task worker handled it" since there's no real task worker
+                # concept in a request/response test.
+                'App\Application\Command\DoctrineInsideTaskWorkerCheck': sync
