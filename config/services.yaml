@@ -90,6 +90,15 @@ services:
       $mailboxUsername: '%env(MAILBOX_USERNAME)%'
       $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
 
+  # Guards the Mailbox connection directly (lower priority = inner, see the
+  # decoration_priority comment further down) - IncomingNotificationMailQueryWithLastSuccessfulImportDecorator
+  # stays the outermost decorator, unchanged.
+  App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecorator:
+    decorates: App\Infrastructure\ImapEngine\AliorNotificationMailProvider
+    decoration_priority: -10
+    arguments:
+      $decorated: '@.inner'
+
   App\Application\CommandHandler\ImportTransfersFromMailHandler:
     arguments:
       $mailboxUsername: '%env(MAILBOX_USERNAME)%'
