@@ -47,6 +47,16 @@ final class WithScheduler implements Configurator
         // starving others) rather than a direct dependency. LockRegistry's cross-process
         // stampede protection is also pointless here anyway: this master is the only process
         // ever writing this checkpoint key.
+        //
+        // Deliberately global rather than scoped to just this pool via the "cleaner"-looking
+        // AbstractAdapter::setCallbackWrapper(null): cache.app is wrapped by Sentry's cache
+        // tracer (no setCallbackWrapper()) and its raw pool underneath is coroutine-pooled -
+        // a fresh instance per coroutine - so a one-time setCallbackWrapper() call at boot
+        // would only patch whichever instance is checked out at that moment, not the ones
+        // future coroutines get. LockRegistry's static state doesn't have that problem. The
+        // trade-off is losing stampede protection for every cache pool app-wide, not just
+        // the scheduler's - acceptable since it only guards redundant recomputation on a
+        // concurrent cache-miss race, not correctness.
         LockRegistry::setFiles([]);
 
         $this->tickId = Timer::tick(1000, $this->tick(...));
