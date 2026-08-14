@@ -191,8 +191,31 @@
                         class="flex h-full flex-col items-center justify-center gap-3 py-6 text-center"
                     >
                         <p class="max-w-xs text-sm text-muted-foreground">
-                            {{ 'homepage.chat_hero.welcome'|trans }}
+                            {{ (isAdminChat ? 'admin.chat.welcome' : 'homepage.chat_hero.welcome')|trans }}
                         </p>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            {% set floatingSuggestions = isAdminChat ? [
+                                'admin.chat.suggestions.today_schedule',
+                                'admin.chat.suggestions.unmatched_transfers',
+                                'admin.chat.suggestions.pending_payments',
+                                'admin.chat.suggestions.find_user',
+                            ] : [
+                                'homepage.chat_hero.suggestions.age',
+                                'homepage.chat_hero.suggestions.saturday',
+                                'homepage.chat_hero.suggestions.book',
+                                'homepage.chat_hero.suggestions.carnet',
+                            ] %}
+                            {% for suggestion in floatingSuggestions %}
+                                <button
+                                    type="button"
+                                    data-action="chat-assistant#suggest"
+                                    data-chat-assistant-suggestion-param="{{ suggestion|trans|e('html_attr') }}"
+                                    class="rounded-full border border-muted bg-beige px-2.5 py-1 text-xs text-workshop-brown transition-colors hover:bg-workshop-blue/15"
+                                >
+                                    {{ suggestion|trans }}
+                                </button>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
 
@@ -201,7 +224,7 @@
                     data-action="submit->chat-assistant#send"
                     class="w-full p-3 border-t border-muted bg-white"
                 >
-                    <div class="relative flex w-full items-center rounded-md border border-input outline-none transition-[color,box-shadow] has-[>textarea]:h-auto has-[[data-slot=input-group-control]:focus-visible]:ring-ring has-[[data-slot=input-group-control]:focus-visible]:ring-1 overflow-hidden">
+                    <div class="relative flex w-full items-center rounded-md border border-input outline-none transition-[color,box-shadow] has-[>textarea]:h-auto has-[[data-slot=input-group-control]:focus-visible]:ring-ring has-[[data-slot=input-group-control]:focus-visible]:ring-1 overflow-hidden flex-col">
                         <textarea
                                 data-chat-assistant-target="input"
                                 data-slot="input-group-control"
@@ -238,9 +261,22 @@
                 type="button"
                 data-chat-assistant-target="toggle"
                 data-action="chat-assistant#toggle"
-                class="rounded-full bg-workshop-red text-white shadow-lg px-4 py-3 text-sm font-semibold hover:bg-workshop-red/90"
+                class="inline-flex items-center gap-2 rounded-full bg-workshop-red text-white shadow-lg px-4 py-3 text-sm font-semibold hover:bg-workshop-red/90"
+                aria-label="{{ 'homepage.chat_hero.chat_button'|trans }}"
             >
-                {{ 'homepage.chat_hero.chat_button'|trans }}
+                <svg data-chat-assistant-target="toggleIconOpen" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 shrink-0" aria-hidden="true">
+                    <path d="M12 8V4H8"/>
+                    <rect width="16" height="12" x="4" y="8" rx="2"/>
+                    <path d="M2 14h2"/>
+                    <path d="M20 14h2"/>
+                    <path d="M15 13v2"/>
+                    <path d="M9 13v2"/>
+                </svg>
+                <svg data-chat-assistant-target="toggleIconClose" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden h-5 w-5 shrink-0" aria-hidden="true">
+                    <path d="M18 6 6 18"/>
+                    <path d="m6 6 12 12"/>
+                </svg>
+                <span>{{ 'homepage.chat_hero.chat_button'|trans }}</span>
             </button>
         </div>
     {% endif %}

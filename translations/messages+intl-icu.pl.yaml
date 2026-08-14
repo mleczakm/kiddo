@@ -713,6 +713,13 @@ admin:
     unpaid: 'Nieopłacone'
     pending: 'Oczekuje na płatność'
   title: 'Panel Administratora'
+  chat:
+    welcome: 'Cześć! Mogę sprawdzić grafik, rezerwacje, płatności i klientów. W czym pomóc?'
+    suggestions:
+      today_schedule: 'Jakie mamy dziś zajęcia w grafiku?'
+      unmatched_transfers: 'Pokaż nieprzypisane przelewy'
+      pending_payments: 'Jakie płatności czekają na potwierdzenie?'
+      find_user: 'Znajdź klienta po adresie e-mail'
   breadcrumb:
     root: 'Admin'
   menu:

@@ -114,6 +114,13 @@
                 background-color: rgb(248, 250, 252) !important; /* bg-slate-50 */
             }
 
+            /* The floating chat assistant's message pane keeps the frontend's
+               cream tint (bg-beige/30) because it's a distinct utility class
+               from bg-beige, which is already forced to white above. */
+            #root .bg-beige\/30 {
+                background-color: rgb(248, 250, 252) !important; /* bg-slate-50 */
+            }
+
             /* Some customer-facing components (e.g. BookingCancellationModal) are shared
                with the admin CRM and carry the frontend's warm-coral/brown "Kiddo" brand
                (workshop-red/brown) hardcoded rather than through the shadcn CSS variables
@@ -247,6 +254,7 @@
             </main>
         </div>
         {{ component('ReservationDetailsModal') }}
+        {{ include('partials/chat_assistant.html.twig', { variant: 'floating', admin_chat: true }) }}
     </div>
 </body>
 </html>

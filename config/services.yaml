@@ -6,6 +6,7 @@
 parameters:
   env(ELEVENLABS_API_KEY): ''
   env(ELEVENLABS_AGENT_ID): ''
+  env(ELEVENLABS_ADMIN_AGENT_ID): ''
   env(KIDDO_MCP_SERVICE_KEY): ''
   env(HTTP_CLIENT_HEALTHCHECK_URL): 'https://connectivitycheck.gstatic.com/generate_204'
 

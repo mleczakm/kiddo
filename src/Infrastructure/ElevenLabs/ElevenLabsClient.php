@@ -15,6 +15,8 @@ final readonly class ElevenLabsClient
         private string $apiKey,
         #[Autowire('%env(ELEVENLABS_AGENT_ID)%')]
         private string $agentId,
+        #[Autowire('%env(ELEVENLABS_ADMIN_AGENT_ID)%')]
+        private string $adminAgentId = '',
     ) {}
 
     public function isConfigured(): bool
@@ -27,11 +29,13 @@ final readonly class ElevenLabsClient
      *
      * @return array{signed_url: string, agent_id: string, dynamic_variables: array<string, string|int|bool|null>}
      */
-    public function getSignedUrl(array $dynamicVariables = []): array
+    public function getSignedUrl(array $dynamicVariables = [], bool $admin = false): array
     {
         if (! $this->isConfigured()) {
             throw new \RuntimeException('ElevenLabs is not configured (ELEVENLABS_API_KEY / ELEVENLABS_AGENT_ID)');
         }
+
+        $agentId = $admin && $this->adminAgentId !== '' ? $this->adminAgentId : $this->agentId;
 
         $response = $this->httpClient->request(
             'GET',
@@ -41,7 +45,7 @@ final readonly class ElevenLabsClient
                     'xi-api-key' => $this->apiKey,
                 ],
                 'query' => [
-                    'agent_id' => $this->agentId,
+                    'agent_id' => $agentId,
                 ],
             ]
         );
@@ -54,7 +58,7 @@ final readonly class ElevenLabsClient
 
         return [
             'signed_url' => $signedUrl,
-            'agent_id' => $this->agentId,
+            'agent_id' => $agentId,
             'dynamic_variables' => $dynamicVariables,
         ];
     }

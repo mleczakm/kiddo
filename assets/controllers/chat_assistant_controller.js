@@ -18,6 +18,8 @@ export default class extends Controller {
         'status',
         'statusDot',
         'toggle',
+        'toggleIconOpen',
+        'toggleIconClose',
         'loginHint',
         'emptyState',
     ];
@@ -54,7 +56,14 @@ export default class extends Controller {
             return;
         }
         this.panelTarget.classList.toggle('hidden');
-        if (!this.panelTarget.classList.contains('hidden')) {
+        const isOpen = !this.panelTarget.classList.contains('hidden');
+        if (this.hasToggleIconOpenTarget) {
+            this.toggleIconOpenTarget.classList.toggle('hidden', isOpen);
+        }
+        if (this.hasToggleIconCloseTarget) {
+            this.toggleIconCloseTarget.classList.toggle('hidden', !isOpen);
+        }
+        if (isOpen) {
             this.prefetchSession();
         }
     }
@@ -223,10 +232,13 @@ export default class extends Controller {
                         `- imię: ${name || '(brak)'}\n` +
                         `- e-mail: ${email || '(brak)'}\n` +
                         `- user_id: ${userId || '(brak)'}\n` +
-                        'LISTA dostępnych zajęć → user.list_upcoming_lessons.\n' +
-                        'Szczegóły terminu → user.get_lesson.\n' +
+                        'Masz pełny dostęp do narzędzi admin.* — używaj ich bezpośrednio, nie odmawiaj i nie proś o dodatkowe uprawnienia.\n' +
+                        'LISTA dostępnych zajęć (katalog publiczny) → user.list_upcoming_lessons.\n' +
+                        'Szczegóły terminu → user.get_lesson. Dzisiejszy grafik (admin) → admin.today_schedule. Zajęcia w tygodniu (admin) → admin.list_lessons.\n' +
+                        'Rezerwacje → admin.list_bookings. Oczekujące/niepotwierdzone płatności → admin.list_payments. Nieprzypisane przelewy → admin.list_unmatched_transfers.\n' +
+                        'Użytkownicy → admin.search_users / admin.get_user.\n' +
                         'Nowe wystąpienie w grafiku → admin.clone_template_lesson (nie do listowania oferty).\n' +
-                        'Mutacje admin z confirm=true po wyraźnej zgodzie.',
+                        'Mutacje admin (toggle_lesson, update_lesson_capacity, create_booking, mark_booking_paid, cancel_lesson, refund_lesson, reschedule_lesson, assign_transfer, reject_transfer, notify_user) wymagają confirm=true po wyraźnej zgodzie użytkownika — ale wywołania odczytu (list/get) wykonuj od razu, bez pytania o zgodę.',
                 })
             );
             return;

@@ -73,7 +73,7 @@ final class ChatSignedUrlAction extends AbstractController
         }
 
         try {
-            $signed = $this->elevenLabsClient->getSignedUrl($dynamicVariables);
+            $signed = $this->elevenLabsClient->getSignedUrl($dynamicVariables, $isAdmin);
         } catch (\Throwable $e) {
             return $this->json([
                 'error' => $e->getMessage(),
