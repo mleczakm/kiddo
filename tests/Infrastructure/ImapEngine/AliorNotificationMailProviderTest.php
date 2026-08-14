@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Infrastructure\ImapEngine;
 
 use App\Infrastructure\ImapEngine\AliorNotificationMailProvider;
-use App\Infrastructure\Swoole\CurrentWorkerRestarterInterface;
 use DirectoryTree\ImapEngine\MessageQueryInterface;
 use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
@@ -22,10 +21,6 @@ class AliorNotificationMailProviderTest extends TestCase
         $mailbox->expects($this->never())
             ->method('reconnect');
 
-        $workerRestarter = $this->createMock(CurrentWorkerRestarterInterface::class);
-        $workerRestarter->expects($this->never())
-            ->method('restart');
-
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())
             ->method('info')
@@ -33,7 +28,6 @@ class AliorNotificationMailProviderTest extends TestCase
 
         $provider = new AliorNotificationMailProvider(
             $mailbox,
-            $workerRestarter,
             $logger,
             mailboxUsername: '',
             mailboxPassword: '',
@@ -42,21 +36,20 @@ class AliorNotificationMailProviderTest extends TestCase
         $this->assertSame([], iterator_to_array($provider()));
     }
 
-    public function testRestartsWorkerOnThrowableWhenCredentialsConfigured(): void
+    public function testLogsErrorAndDoesNotThrowOnThrowableWhenCredentialsConfigured(): void
     {
+        // Deliberately no worker restart on failure - see AliorNotificationMailProvider's
+        // catch block for why. A one-off failure here just logs and lets the next
+        // scheduled run 30s later retry via reconnect().
         $testMailbox = new FakeMailbox(folders: [new ThrowingFolder('inbox')]);
-        $workerRestarter = $this->createMock(CurrentWorkerRestarterInterface::class);
-        $workerRestarter->expects($this->once())
-            ->method('restart');
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())
             ->method('error')
-            ->with('Gmail IMAP query failed, restarting worker', $this->arrayHasKey('exception'));
+            ->with('Gmail IMAP query failed', $this->arrayHasKey('exception'));
 
         $provider = new AliorNotificationMailProvider(
             $testMailbox,
-            $workerRestarter,
             $logger,
             mailboxUsername: 'user@example.com',
             mailboxPassword: 'secret',

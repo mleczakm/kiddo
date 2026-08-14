@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Infrastructure\ImapEngine;
 
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
-use App\Infrastructure\Swoole\CurrentWorkerRestarterInterface;
 use DirectoryTree\ImapEngine\MailboxInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\LoggerInterface;
@@ -18,8 +17,6 @@ final class AliorNotificationMailProviderFunctionalTest extends KernelTestCase
 
     private MailboxInterface $mailbox;
 
-    private CurrentWorkerRestarterInterface $workerRestarter;
-
     private LoggerInterface $logger;
 
     protected function setUp(): void
@@ -27,7 +24,6 @@ final class AliorNotificationMailProviderFunctionalTest extends KernelTestCase
         self::bootKernel();
         $this->provider = self::getContainer()->get(IncomingNotificationMailQuery::class);
         $this->mailbox = self::getContainer()->get(MailboxInterface::class);
-        $this->workerRestarter = self::getContainer()->get(CurrentWorkerRestarterInterface::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
     }
 
@@ -39,7 +35,6 @@ final class AliorNotificationMailProviderFunctionalTest extends KernelTestCase
     public function testProviderHasRequiredDependencies(): void
     {
         $this->assertInstanceOf(MailboxInterface::class, $this->mailbox);
-        $this->assertInstanceOf(CurrentWorkerRestarterInterface::class, $this->workerRestarter);
         $this->assertInstanceOf(LoggerInterface::class, $this->logger);
     }
 

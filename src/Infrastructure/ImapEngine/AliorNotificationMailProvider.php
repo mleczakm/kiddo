@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\ImapEngine;
 
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
-use App\Infrastructure\Swoole\CurrentWorkerRestarterInterface;
 use DirectoryTree\ImapEngine\MailboxInterface;
 use DirectoryTree\ImapEngine\MessageQueryInterface;
 use Psr\Log\LoggerInterface;
@@ -14,7 +13,6 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
 {
     public function __construct(
         private MailboxInterface $mailbox,
-        private CurrentWorkerRestarterInterface $workerRestarter,
         private LoggerInterface $logger,
         private string $mailboxUsername,
         private string $mailboxPassword,
@@ -43,11 +41,21 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
                 ->unseen()
                 ->get();
         } catch (\Throwable $exception) {
-            $this->logger->error('Gmail IMAP query failed, restarting worker', [
+            // Deliberately doesn't restart the worker (previously called
+            // CurrentWorkerRestarterInterface::restart(), i.e. $server->stop($server->worker_id)).
+            // A one-off Gmail hiccup here is normal and self-heals on the next scheduled run 30s
+            // later - reconnect() above always tears down and rebuilds the connection from
+            // scratch regardless of prior state, so nothing needs a restart to recover. Explicitly
+            // stopping the worker raced against Swoole's own process management (observed as
+            // "Server::stop_async_worker(): failed to push WORKER_STOP message, Error: No such
+            // process"), corrupting a task-worker slot: for hours afterward, roughly half of
+            // every message the scheduler's master-process tick dispatched (measured via
+            // "Sending message" vs "Received message" log counts) was silently dropped, eventually
+            // exhausting file descriptors and OOM-killing the whole container. A brief, external,
+            // self-recovering IMAP hiccup should never risk that.
+            $this->logger->error('Gmail IMAP query failed', [
                 'exception' => $exception,
             ]);
-
-            $this->workerRestarter->restart();
         }
     }
 }
