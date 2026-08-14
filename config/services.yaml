@@ -9,6 +9,11 @@ parameters:
   env(ELEVENLABS_ADMIN_AGENT_ID): ''
   env(KIDDO_MCP_SERVICE_KEY): ''
   env(HTTP_CLIENT_HEALTHCHECK_URL): 'https://connectivitycheck.gstatic.com/generate_204'
+  # Steady state is ~5 processes (master, manager, 1 HTTP worker, 2 task workers - see
+  # config/packages/swoole.yaml). Generous headroom above that for worker_max_request-triggered
+  # recycling (briefly overlapping old/new workers), while still tripping well before the
+  # leak patterns seen in production (~20 to ~1030 extra processes).
+  env(HEALTHCHECK_MAX_PROCESSES): '20'
 
 services:
   # default configuration for services in *this* file
@@ -189,6 +194,10 @@ services:
   App\Infrastructure\Healthcheck\HttpClientHealthcheck:
     arguments:
       $url: '%env(HTTP_CLIENT_HEALTHCHECK_URL)%'
+
+  App\Infrastructure\Healthcheck\ProcessCountHealthcheck:
+    arguments:
+      $maxProcesses: '%env(int:HEALTHCHECK_MAX_PROCESSES)%'
 
   # Symfony normally builds this via the HttpClient::create() factory, whose return type
   # (CurlHttpClient vs NativeHttpClient) is only known at runtime. The coroutine proxifier
