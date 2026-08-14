@@ -126,6 +126,7 @@
                                         {% if isCancelled %}
                                             {% set attributionAt = isRescheduled ? booking.lessonsMap.getRescheduledAt(lesson.id) : booking.lessonsMap.getCancelledAt(lesson.id) %}
                                             {% set attributionByName = this.resolveUserName(isRescheduled ? booking.lessonsMap.getRescheduledByUserId(lesson.id) : booking.lessonsMap.getCancelledByUserId(lesson.id)) %}
+                                            {% set cancellationReason = (not isRescheduled) ? booking.lessonsMap.getCancellationReason(lesson.id) : null %}
                                             <div class="flex items-center gap-2">
                                                 <span class="inline-flex items-center rounded-full bg-red-50 text-red-700 px-2.5 py-0.5 text-xs font-semibold border border-red-200">
                                                     {{ (isRescheduled ? 'dashboard.status.rescheduled' : 'dashboard.status.cancelled')|trans }}
@@ -134,6 +135,8 @@
                                                     <span class="text-xs text-muted-foreground">
                                                         {% if attributionByName %}
                                                             {{ (isRescheduled ? 'dashboard.rescheduled_by' : 'dashboard.cancelled_by')|trans({name: attributionByName, date: attributionAt|date('d.m.Y H:i')}) }}
+                                                        {% elseif cancellationReason %}
+                                                            {{ 'dashboard.cancelled_automatically'|trans({reason: cancellationReason, date: attributionAt|date('d.m.Y H:i')}) }}
                                                         {% else %}
                                                             {{ (isRescheduled ? 'dashboard.rescheduled_on' : 'dashboard.cancelled_on')|trans({date: attributionAt|date('d.m.Y H:i')}) }}
                                                         {% endif %}

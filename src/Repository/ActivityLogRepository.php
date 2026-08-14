@@ -56,6 +56,24 @@ class ActivityLogRepository extends ServiceEntityRepository
         return $result;
     }
 
+    /**
+     * @return ActivityLog[]
+     */
+    public function findByBookingId(string $bookingId, int $limit = 20): array
+    {
+        /** @var list<ActivityLog> $result */
+        $result = $this->createQueryBuilder('a')
+            ->andWhere("JSON_GET_TEXT(a.context, 'bookingId') = :bookingId")
+            ->setParameter('bookingId', $bookingId)
+            ->orderBy('a.createdAt', 'DESC')
+            ->addOrderBy('a.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
     public function existsByDedupeKey(string $dedupeKey): bool
     {
         $count = $this->createQueryBuilder('a')

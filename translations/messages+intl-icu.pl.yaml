@@ -560,6 +560,7 @@ dashboard:
   paid_at: "Opłacono {date}"
   cancelled_by: "Anulowane przez {name}, {date}"
   cancelled_on: "Anulowane {date}"
+  cancelled_automatically: "Anulowane automatycznie, {date} — {reason}"
   rescheduled_by: "Przełożone przez {name}, {date}"
   rescheduled_on: "Przełożone {date}"
   view_reservation: "Zobacz w panelu rezerwacji"

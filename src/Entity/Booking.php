@@ -193,6 +193,20 @@ class Booking
     public function cancel(?User $cancelledBy = null, ?string $reason = null): self
     {
         $this->setStatus(self::STATUS_CANCELLED);
+        $this->markAllLessonsCancelled($reason, $cancelledBy);
+
+        return $this;
+    }
+
+    /**
+     * Records who/why every active lesson was cancelled, without touching
+     * the booking status. Split out of cancel() so callers that drive the
+     * status change through the workflow transition instead (so that
+     * workflow.booking.transition.cancel still fires — e.g. the automatic
+     * expiry sweep) can populate this metadata as a separate step.
+     */
+    public function markAllLessonsCancelled(?string $reason = null, ?User $cancelledBy = null): self
+    {
         $this->cancelledBy = $cancelledBy;
 
         // Clone the lesson map to ensure changes are detected by Doctrine

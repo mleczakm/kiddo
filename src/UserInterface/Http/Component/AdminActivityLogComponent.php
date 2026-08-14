@@ -87,7 +87,7 @@ final readonly class AdminActivityLogComponent
         return match ($type) {
             ActivityType::USER_REGISTERED => 'user-plus',
             ActivityType::BOOKING_CREATED => 'calendar-plus',
-            ActivityType::BOOKING_CANCELLED => 'calendar-x',
+            ActivityType::BOOKING_CANCELLED, ActivityType::BOOKING_AUTO_CANCELLED => 'calendar-x',
             ActivityType::BOOKING_RESCHEDULED => 'calendar-clock',
             ActivityType::REFUND_REQUESTED => 'rotate-ccw',
             ActivityType::PAYMENT_RECEIVED, ActivityType::PAYMENT_MARKED_PAID => 'banknote',
@@ -104,6 +104,7 @@ final readonly class AdminActivityLogComponent
             ActivityType::USER_REGISTERED, ActivityType::NEWSLETTER_SUBSCRIBED => 'indigo',
             ActivityType::BOOKING_CREATED => 'emerald',
             ActivityType::BOOKING_CANCELLED, ActivityType::REFUND_REQUESTED => 'amber',
+            ActivityType::BOOKING_AUTO_CANCELLED => 'slate',
             ActivityType::BOOKING_RESCHEDULED => 'blue',
             ActivityType::PAYMENT_RECEIVED, ActivityType::PAYMENT_MARKED_PAID => 'emerald',
             ActivityType::TRANSFER_UNMATCHED => 'red',

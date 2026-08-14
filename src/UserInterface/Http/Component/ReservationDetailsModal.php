@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Entity\ActivityLog;
 use App\Entity\Booking;
 use App\Entity\DTO\RescheduledLesson;
 use App\Entity\Lesson;
@@ -12,6 +13,7 @@ use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
+use App\Repository\ActivityLogRepository;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,6 +68,7 @@ final class ReservationDetailsModal extends AbstractController
     public function __construct(
         private readonly BookingRepository $bookingRepository,
         private readonly LessonRepository $lessonRepository,
+        private readonly ActivityLogRepository $activityLogRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
         #[Autowire(service: 'state_machine.payment')]
@@ -276,6 +279,27 @@ final class ReservationDetailsModal extends AbstractController
         }
 
         return $history;
+    }
+
+    /**
+     * @return list<array{type: string, title: string, summary: ?string, createdAt: \DateTimeImmutable}>
+     */
+    public function getBookingEvents(): array
+    {
+        if ($this->bookingId === null) {
+            return [];
+        }
+
+        return array_values(array_map(
+            static fn(ActivityLog $log): array => [
+                'type' => $log->getType()
+                    ->value,
+                'title' => $log->getTitle(),
+                'summary' => $log->getSummary(),
+                'createdAt' => $log->getCreatedAt(),
+            ],
+            $this->activityLogRepository->findByBookingId($this->bookingId),
+        ));
     }
 
     private function reschedule(Booking $booking, Lesson $lesson, User $actor): Envelope

@@ -241,6 +241,7 @@ dashboard:
   paid_at: "Paid on {date}"
   cancelled_by: "Cancelled by {name} on {date}"
   cancelled_on: "Cancelled on {date}"
+  cancelled_automatically: "Automatically cancelled on {date} — {reason}"
   rescheduled_by: "Rescheduled by {name} on {date}"
   rescheduled_on: "Rescheduled on {date}"
   view_reservation: "View in your bookings"
