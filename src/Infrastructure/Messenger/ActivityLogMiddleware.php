@@ -94,6 +94,9 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             ]) : null,
             context: [
                 'lessonId' => $command->lessonId,
+                ...($command->paymentCode !== '' ? [
+                    'paymentCode' => $command->paymentCode,
+                ] : []),
             ],
         );
     }
