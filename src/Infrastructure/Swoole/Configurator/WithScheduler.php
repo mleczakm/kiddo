@@ -93,14 +93,19 @@ final class WithScheduler implements Configurator
 
         $this->running = true;
 
-        // Registers this coroutine to release/reset every pooled stateful service it touches
-        // when it ends - the same mechanism ContextReleasingHttpKernelRequestHandler and
-        // ContextReleasingTransportHandler use for HTTP requests and async messages. Without
-        // this, nothing pooled (Doctrine's entity manager, event dispatcher, etc.) that
-        // scheduler->run() uses was ever being reset between ticks.
-        $this->coWrapper->defer();
-
         try {
+            // Registers this coroutine to release/reset every pooled stateful service it
+            // touches when it ends - the same mechanism ContextReleasingHttpKernelRequestHandler
+            // and ContextReleasingTransportHandler use for HTTP requests and async messages.
+            // Without this, nothing pooled (Doctrine's entity manager, event dispatcher, etc.)
+            // that scheduler->run() uses was ever being reset between ticks. Inside the try,
+            // not before it: observed throwing Swoole\Error ("API must be called in the
+            // coroutine") in production on rare occasions (likely a startup/reload timing
+            // race) - originally sat before this try block entirely, so that error had the
+            // exact same uncaught-crash consequence described below, taking the *manager*
+            // process down with it.
+            $this->coWrapper->defer();
+
             $this->scheduler->run();
         } catch (Throwable $e) {
             // Timer::tick has no caller to propagate an exception to - nothing catches it,
