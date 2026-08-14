@@ -9,6 +9,7 @@ use App\Infrastructure\Symfony\Scheduler;
 use Doctrine\Bundle\DoctrineBundle\Middleware\BacktraceDebugDataHolder;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use RuntimeException;
 use Swoole\Http\Server;
@@ -47,6 +48,7 @@ final class WithSchedulerTest extends TestCase
             new Scheduler($this->createMock(MessageBusInterface::class), []),
             $this->createMock(BacktraceDebugDataHolder::class),
             self::emptyCoWrapper(),
+            $this->createMock(LoggerInterface::class),
         ))->configure($this->createMock(Server::class));
 
         $ticks = iterator_to_array(Timer::list());
@@ -66,6 +68,7 @@ final class WithSchedulerTest extends TestCase
             new Scheduler($this->createMock(MessageBusInterface::class), []),
             $this->createMock(BacktraceDebugDataHolder::class),
             self::emptyCoWrapper(),
+            $this->createMock(LoggerInterface::class),
         ))->configure($this->createMock(Server::class));
 
         self::assertSame([], self::lockRegistryFiles());
@@ -83,7 +86,12 @@ final class WithSchedulerTest extends TestCase
         $debugDataHolder->expects($this->once())
             ->method('reset');
 
-        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, self::emptyCoWrapper());
+        $withScheduler = new WithScheduler(
+            $scheduler,
+            $debugDataHolder,
+            self::emptyCoWrapper(),
+            $this->createMock(LoggerInterface::class),
+        );
 
         run(static function () use ($withScheduler): void {
             $withScheduler->tick();
@@ -106,6 +114,7 @@ final class WithSchedulerTest extends TestCase
             $this->createMock(Scheduler::class),
             $this->createMock(BacktraceDebugDataHolder::class),
             $coWrapper,
+            $this->createMock(LoggerInterface::class),
         );
 
         run(static function () use ($withScheduler): void {
@@ -120,7 +129,12 @@ final class WithSchedulerTest extends TestCase
         $debugDataHolder->expects($this->once())
             ->method('reset');
 
-        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, self::emptyCoWrapper());
+        $withScheduler = new WithScheduler(
+            $scheduler,
+            $debugDataHolder,
+            self::emptyCoWrapper(),
+            $this->createMock(LoggerInterface::class),
+        );
 
         $scheduler->expects($this->once())
             ->method('run')
@@ -149,27 +163,70 @@ final class WithSchedulerTest extends TestCase
             });
 
         $debugDataHolder = $this->createMock(BacktraceDebugDataHolder::class);
-        $debugDataHolder->expects($this->once())
+        $debugDataHolder->expects($this->exactly(2))
             ->method('reset');
 
-        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, self::emptyCoWrapper());
+        $withScheduler = new WithScheduler(
+            $scheduler,
+            $debugDataHolder,
+            self::emptyCoWrapper(),
+            $this->createMock(LoggerInterface::class),
+        );
 
-        $caught = null;
-        run(static function () use ($withScheduler, &$caught): void {
-            try {
-                $withScheduler->tick();
-            } catch (RuntimeException $e) {
-                $caught = $e;
-            }
+        // A failed tick must not propagate - Timer::tick has no caller to catch it, so an
+        // uncaught exception here crashes the entire process (confirmed via direct test:
+        // stopping the database rapidly crash-looped the whole container from this exact
+        // path, ~9 restarts in 30 seconds, before this catch was added).
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
         });
-
-        self::assertInstanceOf(RuntimeException::class, $caught);
-        self::assertSame('boom', $caught->getMessage());
 
         // A stuck/failed tick must not permanently block future ticks from running.
         run(static function () use ($withScheduler): void {
             $withScheduler->tick();
         });
+    }
+
+    public function testTickLogsAndSwallowsExceptionsFromScheduler(): void
+    {
+        $scheduler = $this->createMock(Scheduler::class);
+        $exception = new RuntimeException('boom');
+        $scheduler->expects($this->once())
+            ->method('run')
+            ->willThrowException($exception);
+
+        // Asserting via ->with() on a mock invoked from inside Swoole\Coroutine\run() crashes
+        // PHPUnit 11's parameter-matcher (it walks the call stack for the enclosing TestCase,
+        // which a coroutine's separate stack doesn't have) - capture the call instead and
+        // assert on it from the outer, non-coroutine stack once run() returns.
+        $loggedMessage = null;
+        $loggedContext = null;
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->willReturnCallback(function (string $message, array $context) use (
+                &$loggedMessage,
+                &$loggedContext
+            ): void {
+                $loggedMessage = $message;
+                $loggedContext = $context;
+            });
+
+        $withScheduler = new WithScheduler(
+            $scheduler,
+            $this->createMock(BacktraceDebugDataHolder::class),
+            self::emptyCoWrapper(),
+            $logger,
+        );
+
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
+        });
+
+        self::assertSame('Scheduler tick failed', $loggedMessage);
+        self::assertSame([
+            'exception' => $exception,
+        ], $loggedContext);
     }
 
     private static function emptyCoWrapper(): CoWrapper

@@ -6,12 +6,14 @@ namespace App\Infrastructure\Swoole\Configurator;
 
 use App\Infrastructure\Symfony\Scheduler;
 use Doctrine\Bundle\DoctrineBundle\Middleware\BacktraceDebugDataHolder;
+use Psr\Log\LoggerInterface;
 use Swoole\Http\Server;
 use Swoole\Timer;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\CoWrapper;
 use SwooleBundle\SwooleBundle\Server\Configurator\Configurator;
 use Symfony\Component\Cache\LockRegistry;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Throwable;
 
 final class WithScheduler implements Configurator
 {
@@ -33,6 +35,7 @@ final class WithScheduler implements Configurator
         // services when the coroutine ends. Timer::tick's coroutine is created directly by
         // Swoole, bypassing both of those, so nothing was ever resetting for it - see tick().
         private readonly CoWrapper $coWrapper,
+        private readonly LoggerInterface $logger,
     ) {}
 
     public function __destruct()
@@ -99,14 +102,29 @@ final class WithScheduler implements Configurator
 
         try {
             $this->scheduler->run();
-
+        } catch (Throwable $e) {
+            // Timer::tick has no caller to propagate an exception to - nothing catches it,
+            // so PHP's default uncaught-exception handling kicks in, which under Symfony's
+            // ErrorHandler + Swoole's coroutine hooking becomes an uncaught
+            // Swoole\ExitException that crashes the *entire process*, not just this
+            // coroutine. Confirmed via direct test: stopping the database (so
+            // ConnectionEnsurer's retry loop exhausts and rethrows) crashed the whole
+            // container in a rapid restart loop - ~9 restarts within 30 seconds - purely
+            // from this tick, with no task handler involved at all. A single failed tick
+            // must not be allowed to bring the whole server down; log it and let the next
+            // tick retry in a second.
+            $this->logger->error('Scheduler tick failed', [
+                'exception' => $e,
+            ]);
+        } finally {
             // This tick never goes through kernel.terminate, so nothing normally resets
             // request-scoped accumulators for it. Doctrine's query-debug middleware appends
             // one entry per query regardless of debug mode, unbounded without this — confirmed
             // via memory_get_usage before/after isolating this exact call: ~6KB/tick from the
-            // two connection-health-check queries this tick already runs every second.
+            // two connection-health-check queries this tick already runs every second. Runs
+            // even on failure so a run that throws partway through doesn't leave stale debug
+            // data behind for the next tick.
             $this->debugDataHolder->reset();
-        } finally {
             $this->running = false;
         }
     }
