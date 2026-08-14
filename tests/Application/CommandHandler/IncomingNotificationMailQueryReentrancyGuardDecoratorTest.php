@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
+use PHPUnit\Framework\Assert;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
 use App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecorator;
 use DirectoryTree\ImapEngine\MessageQueryInterface;
@@ -18,12 +19,12 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
         $one = $this->createMock(MessageQueryInterface::class);
         $two = $this->createMock(MessageQueryInterface::class);
 
-        $decorated = new class ([$one, $two]) implements IncomingNotificationMailQuery {
+        $decorated = new readonly class ([$one, $two]) implements IncomingNotificationMailQuery {
             /**
              * @param list<MessageQueryInterface> $messages
              */
             public function __construct(
-                private readonly array $messages
+                private array $messages
             ) {}
 
             public function __invoke(): iterable
@@ -57,7 +58,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
                 // mid-flight - exactly what happened when a slow IMAP round-trip
                 // outlasted the 30s polling interval.
                 foreach ($this->reentrantCallers as $caller) {
-                    \PHPUnit\Framework\Assert::assertSame([], iterator_to_array($caller(), false));
+                    Assert::assertSame([], iterator_to_array($caller(), false));
                 }
 
                 yield $this->message;
