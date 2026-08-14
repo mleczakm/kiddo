@@ -91,7 +91,8 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
 
         self::assertSame(Booking::STATUS_CANCELLED, $savedA->getStatus());
         self::assertNull(
-            $savedA->getLessonsMap()->getCancelledByUserId((string) $lessonA->getId()),
+            $savedA->getLessonsMap()
+                ->getCancelledByUserId((string) $lessonA->getId()),
             'Automatic cancellation should not attribute the lesson to any user'
         );
         self::assertNotNull($savedA->getLessonsMap()->getCancellationReason((string) $lessonA->getId()));

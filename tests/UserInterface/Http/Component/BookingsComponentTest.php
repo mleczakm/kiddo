@@ -162,6 +162,67 @@ final class BookingsComponentTest extends WebTestCase
         self::assertStringContainsString('Jan Testowy', $html);
     }
 
+    /**
+     * Regression test for the auto-cancellation attribution branch added in
+     * 12190de: when a lesson was cancelled with no attributed user
+     * (cancelledBy null) but a reason is present — the signature of the
+     * hourly expiry sweep, see CheckExpiredBookingsHandler — the Cancelled
+     * tab must show the "cancelled automatically" message instead of
+     * silently falling back to "cancelled by {name}" with an empty name.
+     */
+    public function testCancelledTabShowsAutomaticCancellationReasonWhenNoUserAttributed(): void
+    {
+        Clock::set(new MockClock('2026-08-08 12:00:00'));
+
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()->assemble();
+        $lesson = LessonAssembler::new()
+            ->withMetadata(
+                LessonMetadataAssembler::new()
+                    ->withTitle('Zajecia anulowane automatycznie')
+                    ->assemble()
+            )
+            ->withSchedule(new \DateTimeImmutable('2026-08-20 09:00:00'))
+            ->assemble();
+
+        $booking = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+
+        $em->persist($user);
+        $em->persist($lesson);
+        $em->persist($booking);
+        $em->flush();
+
+        // No $cancelledBy: mirrors what CheckExpiredBookingsHandler does for
+        // the automatic expiry sweep.
+        $booking->cancel(null, 'Rezerwacja anulowana automatycznie — brak płatności w wymaganym terminie');
+        $em->flush();
+        $em->clear();
+
+        $reloadedUser = $em->getRepository(User::class)->find($user->getId());
+        self::assertNotNull($reloadedUser);
+        $client->loginUser($reloadedUser);
+
+        $component = $this->createLiveComponent(
+            name: BookingsComponent::class,
+            data: [
+                'activeTab' => 'cancelled',
+            ],
+            client: $client,
+        );
+
+        $html = (string) $component->render();
+
+        self::assertStringContainsString('Zajecia anulowane automatycznie', $html);
+        self::assertStringContainsString('Anulowane automatycznie', $html);
+        self::assertStringContainsString('brak płatności w wymaganym terminie', $html);
+    }
+
     public function testPaidAtIsShownForPaidBooking(): void
     {
         Clock::set(new MockClock('2026-08-08 12:00:00'));

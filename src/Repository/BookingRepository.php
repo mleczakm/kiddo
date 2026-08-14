@@ -57,6 +57,45 @@ class BookingRepository extends ServiceEntityRepository
     }
 
     /**
+     * Every booking a user could plausibly want to see on their dashboard —
+     * pending, active, past, or cancelled (including auto-cancelled) —
+     * fully hydrated with lessons/series/payment.
+     *
+     * Deliberately does NOT filter by lesson date at the SQL level: doing so
+     * would make Doctrine partially hydrate `booking.lessons` from just the
+     * joined+filtered rows, which is unreliable for a collection that's
+     * meant to represent the *complete* set of lessons on the booking. Tab
+     * filtering (active/past/cancelled) is left to the caller, since it's a
+     * per-*lesson* decision, not a per-*booking* one — a single carnet
+     * booking can have lessons in more than one of those states at once.
+     *
+     * @return list<Booking>
+     */
+    public function findVisibleForUser(User $user): array
+    {
+        /** @var list<Booking> $result */
+        $result = $this->createQueryBuilder('b')
+            ->select('b', 'l', 's', 'p')
+            ->leftJoin('b.lessons', 'l')
+            ->leftJoin('l.series', 's')
+            ->leftJoin('b.payment', 'p')
+            ->where('b.user = :user')
+            ->andWhere('b.status IN (:statuses)')
+            ->setParameter('user', $user)
+            ->setParameter('statuses', [
+                Booking::STATUS_PENDING,
+                Booking::STATUS_ACTIVE,
+                Booking::STATUS_CANCELLED,
+                Booking::STATUS_COMPLETED,
+            ])
+            ->orderBy('l.schedule', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
      * Find non-cancelled bookings for a user and specific lessons
      *
      * @param array<Lesson> $lessons
