@@ -8,6 +8,7 @@ use App\Infrastructure\Symfony\Scheduler;
 use Doctrine\Bundle\DoctrineBundle\Middleware\BacktraceDebugDataHolder;
 use Swoole\Http\Server;
 use Swoole\Timer;
+use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\CoWrapper;
 use SwooleBundle\SwooleBundle\Server\Configurator\Configurator;
 use Symfony\Component\Cache\LockRegistry;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -21,9 +22,17 @@ final class WithScheduler implements Configurator
     public function __construct(
         private readonly Scheduler $scheduler,
         // Exempted from per-coroutine pooling (services.yaml) so this is always the same
-        // shared instance, safe to inject and reset directly.
+        // shared instance, safe to inject and reset directly. It's exempt from pooling
+        // specifically because it's exempt from CoWrapper's reset cycle too (see tick()) -
+        // pooling and auto-reset are the same mechanism, opting out of one opts out of both.
         #[Autowire(service: 'doctrine.debug_data_holder')]
         private readonly BacktraceDebugDataHolder $debugDataHolder,
+        // Every other request/message boundary in the app (HTTP requests via
+        // ContextReleasingHttpKernelRequestHandler, async messages via
+        // ContextReleasingTransportHandler) calls this to reset all pooled stateful
+        // services when the coroutine ends. Timer::tick's coroutine is created directly by
+        // Swoole, bypassing both of those, so nothing was ever resetting for it - see tick().
+        private readonly CoWrapper $coWrapper,
     ) {}
 
     public function __destruct()
@@ -80,6 +89,13 @@ final class WithScheduler implements Configurator
         }
 
         $this->running = true;
+
+        // Registers this coroutine to release/reset every pooled stateful service it touches
+        // when it ends - the same mechanism ContextReleasingHttpKernelRequestHandler and
+        // ContextReleasingTransportHandler use for HTTP requests and async messages. Without
+        // this, nothing pooled (Doctrine's entity manager, event dispatcher, etc.) that
+        // scheduler->run() uses was ever being reset between ticks.
+        $this->coWrapper->defer();
 
         try {
             $this->scheduler->run();

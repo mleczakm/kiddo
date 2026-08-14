@@ -13,8 +13,14 @@ use ReflectionClass;
 use RuntimeException;
 use Swoole\Http\Server;
 use Swoole\Timer;
+use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\CoWrapper;
+use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePool;
+use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePoolContainer;
+use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePoolEntry;
 use Symfony\Component\Cache\LockRegistry;
 use Symfony\Component\Messenger\MessageBusInterface;
+
+use function Swoole\Coroutine\run;
 
 #[Group('unit')]
 final class WithSchedulerTest extends TestCase
@@ -40,6 +46,7 @@ final class WithSchedulerTest extends TestCase
         ($withScheduler = new WithScheduler(
             new Scheduler($this->createMock(MessageBusInterface::class), []),
             $this->createMock(BacktraceDebugDataHolder::class),
+            self::emptyCoWrapper(),
         ))->configure($this->createMock(Server::class));
 
         $ticks = iterator_to_array(Timer::list());
@@ -58,6 +65,7 @@ final class WithSchedulerTest extends TestCase
         ($withScheduler = new WithScheduler(
             new Scheduler($this->createMock(MessageBusInterface::class), []),
             $this->createMock(BacktraceDebugDataHolder::class),
+            self::emptyCoWrapper(),
         ))->configure($this->createMock(Server::class));
 
         self::assertSame([], self::lockRegistryFiles());
@@ -75,8 +83,34 @@ final class WithSchedulerTest extends TestCase
         $debugDataHolder->expects($this->once())
             ->method('reset');
 
-        new WithScheduler($scheduler, $debugDataHolder)
-            ->tick();
+        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, self::emptyCoWrapper());
+
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
+        });
+    }
+
+    public function testTickReleasesPooledServicesForTheCurrentCoroutine(): void
+    {
+        // Real CoWrapper/ServicePoolContainer instead of mocks: both are final, and this is
+        // exactly the wiring ContextReleasingHttpKernelRequestHandler and
+        // ContextReleasingTransportHandler rely on for every HTTP request/async message, so
+        // it's worth verifying tick() plugs into the real thing rather than just a stub.
+        $pool = $this->createMock(ServicePool::class);
+        $pool->expects($this->once())
+            ->method('releaseFromCoroutine');
+
+        $coWrapper = new CoWrapper(new ServicePoolContainer([new ServicePoolEntry($pool)]));
+
+        $withScheduler = new WithScheduler(
+            $this->createMock(Scheduler::class),
+            $this->createMock(BacktraceDebugDataHolder::class),
+            $coWrapper,
+        );
+
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
+        });
     }
 
     public function testTickSkipsWhileAlreadyRunning(): void
@@ -86,7 +120,7 @@ final class WithSchedulerTest extends TestCase
         $debugDataHolder->expects($this->once())
             ->method('reset');
 
-        $withScheduler = new WithScheduler($scheduler, $debugDataHolder);
+        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, self::emptyCoWrapper());
 
         $scheduler->expects($this->once())
             ->method('run')
@@ -95,7 +129,9 @@ final class WithSchedulerTest extends TestCase
                 $withScheduler->tick();
             });
 
-        $withScheduler->tick();
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
+        });
     }
 
     public function testTickResetsRunningFlagAfterExceptionSoLaterTicksAreNotSkipped(): void
@@ -116,17 +152,29 @@ final class WithSchedulerTest extends TestCase
         $debugDataHolder->expects($this->once())
             ->method('reset');
 
-        $withScheduler = new WithScheduler($scheduler, $debugDataHolder);
+        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, self::emptyCoWrapper());
 
-        try {
-            $withScheduler->tick();
-            self::fail('Expected RuntimeException was not thrown.');
-        } catch (RuntimeException $e) {
-            self::assertSame('boom', $e->getMessage());
-        }
+        $caught = null;
+        run(static function () use ($withScheduler, &$caught): void {
+            try {
+                $withScheduler->tick();
+            } catch (RuntimeException $e) {
+                $caught = $e;
+            }
+        });
+
+        self::assertInstanceOf(RuntimeException::class, $caught);
+        self::assertSame('boom', $caught->getMessage());
 
         // A stuck/failed tick must not permanently block future ticks from running.
-        $withScheduler->tick();
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
+        });
+    }
+
+    private static function emptyCoWrapper(): CoWrapper
+    {
+        return new CoWrapper(new ServicePoolContainer([]));
     }
 
     /**
