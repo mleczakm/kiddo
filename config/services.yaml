@@ -144,9 +144,6 @@ services:
   App\Infrastructure\Swoole\SwooleServerProviderInterface:
     class: App\Infrastructure\Swoole\HttpServerSwooleServerProvider
 
-  App\Infrastructure\Swoole\CurrentWorkerRestarterInterface:
-    class: App\Infrastructure\Swoole\SwooleCurrentWorkerRestarter
-
   Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
     arguments:
       - '%env(DATABASE_URL)%'
@@ -169,9 +166,9 @@ services:
 
   App\Application\CommandHandler\IncomingNotificationMailQuery: '@App\Application\CommandHandler\IncomingNotificationMailQueryWithLastSuccessfulImportDecorator'
 
-  # Outer decorator must restart the worker on any task failure, including connection ensure failures.
-  # Higher decoration_priority = outer. Restart wraps ensure so thrown ensure errors still restart.
-  App\Infrastructure\Swoole\WorkerRestartingTaskHandler:
+  # Outer decorator logs any task failure, including connection ensure failures. Higher
+  # decoration_priority = outer, so this sees exceptions thrown by the ensure decorator below.
+  App\Infrastructure\Swoole\ExceptionLoggingTaskHandler:
     decorates: SwooleBundle\SwooleBundle\Server\TaskHandler\TaskHandler
     decoration_priority: -9995
 
@@ -247,11 +244,6 @@ when@test:
   services:
     Sentry\State\HubInterface:
       factory: [ 'Sentry\SentrySdk', 'getCurrentHub' ]
-
-    # Use test implementation of CurrentWorkerRestarterInterface to track restart calls
-    App\Infrastructure\Swoole\CurrentWorkerRestarterInterface:
-      class: App\Tests\Infrastructure\Swoole\TestCurrentWorkerRestarter
-      public: true
 
     App\Infrastructure\Doctrine\ConnectionEnsurerInterface:
       alias: App\Infrastructure\Doctrine\CompositeConnectionEnsurer
