@@ -63,9 +63,11 @@ final readonly class PostgresGlobalSearchQuery implements GlobalSearchQuery
             SELECT 'payment', p.id::text,
                    CASE WHEN to_char(COALESCE(p.paid_at, p.created_at), 'DD.MM') = :query THEN 7
                         WHEN lower(p.id::text) = :query THEN 6 WHEN lower(p.id::text) LIKE :prefix THEN 5
+                        WHEN lower(COALESCE(p.payment_code_snapshot, '')) = :query THEN 5
                         WHEN lower(u.name) LIKE :prefix THEN 4 WHEN lower(u.email) LIKE :prefix THEN 3 ELSE 1 END
             FROM payment p JOIN "user" u ON u.id = p.user_id
-            WHERE lower(concat_ws(' ', p.id::text, p.status, p.method, p.amount::text, u.name, u.email,
+            WHERE lower(concat_ws(' ', p.id::text, p.status, p.method, p.amount::text,
+                        p.payment_code_snapshot, u.name, u.email,
                         to_char(p.created_at, 'DD.MM.YYYY'), to_char(p.created_at, 'DD.MM'),
                         to_char(p.paid_at, 'DD.MM.YYYY'), to_char(p.paid_at, 'DD.MM'))) LIKE :contains
 

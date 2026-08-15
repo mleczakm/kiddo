@@ -32,7 +32,6 @@ class PaymentCode
         private Payment $payment,
         ?string $code = null,
     ) {
-        $this->payment->setPaymentCode($this);
         $this->createdAt = new \DateTimeImmutable();
 
         if ($code !== null) {
@@ -40,6 +39,8 @@ class PaymentCode
         } else {
             $this->generateCode();
         }
+
+        $this->payment->setPaymentCode($this);
     }
 
     public function getId(): ?int

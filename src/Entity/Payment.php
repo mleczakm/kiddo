@@ -77,6 +77,9 @@ class Payment
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
+    #[ORM\Column(type: 'string', length: 4, nullable: true)]
+    private ?string $paymentCodeSnapshot = null;
+
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $refundRequestedAt = null;
 
@@ -278,6 +281,11 @@ class Payment
         return $this->paymentCode;
     }
 
+    public function getPaymentCodeSnapshot(): ?string
+    {
+        return $this->paymentCodeSnapshot;
+    }
+
     public function setPaymentCode(PaymentCode $paymentCode): self
     {
         // set the owning side of the relation if necessary
@@ -286,6 +294,7 @@ class Payment
         }
 
         $this->paymentCode = $paymentCode;
+        $this->paymentCodeSnapshot = $paymentCode->getCode();
         return $this;
     }
 

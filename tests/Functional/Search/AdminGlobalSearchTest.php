@@ -12,6 +12,7 @@ use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Entity\Payment;
+use App\Entity\PaymentCode;
 use App\Entity\User;
 use App\Infrastructure\Search\SearchResultHydrator;
 use Brick\Money\Money;
@@ -64,6 +65,32 @@ final class AdminGlobalSearchTest extends WebTestCase
         $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
         $resultTypes = array_map(static fn($result): SearchType => $result->reference->type, $results);
         self::assertContains(SearchType::Lesson, $resultTypes);
+    }
+
+    public function testSearchesPaymentByCodeAfterCodeEntityIsRemovedOnPayment(): void
+    {
+        $customer = new User('payment-code-search@example.test', 'Payment Code Search');
+        $payment = new Payment($customer, Money::of(80, 'PLN'));
+        new PaymentCode($payment, 'X7K2');
+        $this->entityManager->persist($customer);
+        $this->entityManager->persist($payment);
+        $this->entityManager->flush();
+
+        $payment->setStatus(Payment::STATUS_PAID);
+        $this->entityManager->flush();
+
+        self::assertNull($payment->getPaymentCode());
+        self::assertSame('X7K2', $payment->getPaymentCodeSnapshot());
+
+        $references = array_values(iterator_to_array(
+            self::getContainer()->get(GlobalSearchQuery::class)->search('X7K2'),
+        ));
+
+        self::assertTrue($this->contains(
+            $references,
+            SearchType::Payment,
+            $payment->getId()->toRfc4122(),
+        ));
     }
 
     public function testLiveComponentRendersDatabaseResultsWithLinksAndHighlighting(): void
