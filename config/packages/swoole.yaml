@@ -17,7 +17,22 @@ swoole:
     trusted_proxies: '*'
     settings:
       worker_count: 1
-      worker_max_request: 500
+      # Production has hit a full-process hang (site totally unresponsive, caught only by the
+      # process_count/health_error_response_code fixes and autoheal restarting it) 4 times in
+      # one day, each preceded by Swoole's own worker_max_request-triggered recycle logging
+      # "stop_async_worker(): failed to push WORKER_STOP message, Error: No such process[3]"
+      # (errno 3 = ESRCH - the old worker had already exited by the time the manager tried to
+      # signal it, a benign race in Swoole's own recycle logic, not app code). Root cause of
+      # the hang itself isn't confirmed yet, but every recycle is a chance for whatever race
+      # this is to trigger, and with worker_count: 1 a stuck HTTP worker takes the whole site
+      # down. Raised 10x to cut how often that recycle - and the exposure window - happens
+      # while this is investigated further.
+      worker_max_request: 5000
+      # Was 'notice' (prod default - see SwooleExtension::isDebug()). Worker lifecycle events
+      # (recycling, task dispatch) only log at 'notice' and above, which is exactly the detail
+      # missing to diagnose the hangs above - bumped to surface that trail leading up to the
+      # next occurrence.
+      log_level: debug
       log_file: '/proc/self/fd/2'
       # Default 2MiB is too small for heavy pages (e.g. workshops with many LiveComponents).
       buffer_output_size: 8388608
