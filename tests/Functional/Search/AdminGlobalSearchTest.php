@@ -86,11 +86,7 @@ final class AdminGlobalSearchTest extends WebTestCase
             self::getContainer()->get(GlobalSearchQuery::class)->search('X7K2'),
         ));
 
-        self::assertTrue($this->contains(
-            $references,
-            SearchType::Payment,
-            $payment->getId()->toRfc4122(),
-        ));
+        self::assertTrue($this->contains($references, SearchType::Payment, $payment->getId() ->toRfc4122()));
     }
 
     public function testLiveComponentRendersDatabaseResultsWithLinksAndHighlighting(): void
