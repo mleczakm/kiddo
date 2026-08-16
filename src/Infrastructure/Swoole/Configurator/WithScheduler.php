@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Swoole\Configurator;
 
 use App\Infrastructure\Symfony\Scheduler;
-use Doctrine\Bundle\DoctrineBundle\Middleware\BacktraceDebugDataHolder;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Http\Server;
@@ -13,7 +12,6 @@ use Swoole\Timer;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\CoWrapper;
 use SwooleBundle\SwooleBundle\Server\Configurator\Configurator;
 use Symfony\Component\Cache\LockRegistry;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
 
 final class WithScheduler implements Configurator
@@ -24,12 +22,6 @@ final class WithScheduler implements Configurator
 
     public function __construct(
         private readonly Scheduler $scheduler,
-        // Exempted from per-coroutine pooling (services.yaml) so this is always the same
-        // shared instance, safe to inject and reset directly. It's exempt from pooling
-        // specifically because it's exempt from CoWrapper's reset cycle too (see tick()) -
-        // pooling and auto-reset are the same mechanism, opting out of one opts out of both.
-        #[Autowire(service: 'doctrine.debug_data_holder')]
-        private readonly BacktraceDebugDataHolder $debugDataHolder,
         // Every other request/message boundary in the app (HTTP requests via
         // ContextReleasingHttpKernelRequestHandler, async messages via
         // ContextReleasingTransportHandler) calls this to reset all pooled stateful
@@ -142,14 +134,6 @@ final class WithScheduler implements Configurator
                 'exception' => $e,
             ]);
         } finally {
-            // This tick never goes through kernel.terminate, so nothing normally resets
-            // request-scoped accumulators for it. Doctrine's query-debug middleware appends
-            // one entry per query regardless of debug mode, unbounded without this — confirmed
-            // via memory_get_usage before/after isolating this exact call: ~6KB/tick from the
-            // two connection-health-check queries this tick already runs every second. Runs
-            // even on failure so a run that throws partway through doesn't leave stale debug
-            // data behind for the next tick.
-            $this->debugDataHolder->reset();
             $this->running = false;
         }
     }

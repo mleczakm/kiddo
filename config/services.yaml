@@ -62,23 +62,6 @@ services:
     tags:
       - 'swoole_bundle.server_configurator'
 
-  # Purely diagnostic (query text/timing for the web profiler's DB panel) and profiler is
-  # dev/test-only (config/bundles.php) - nothing in prod ever reads this. Exempt from
-  # per-coroutine pooling: it only accumulates without limit, and the scheduler's Timer::tick
-  # (never a coroutine tied to a request) needs one predictable shared instance to reset -
-  # see App\Infrastructure\Swoole\Configurator\WithScheduler.
-  #
-  # Redeclaring this (rather than just adding a tag) replaces DoctrineBundle's own
-  # registration wholesale, including the $connWithBacktraces argument it sets via
-  # replaceArgument() in DoctrineExtension - which only ever lists connections with
-  # profiling_collect_backtrace: true, i.e. never any in prod (%kernel.debug% is false
-  # there), so hardcoding [] here matches prod's real value anyway.
-  doctrine.debug_data_holder:
-    class: Doctrine\Bundle\DoctrineBundle\Middleware\BacktraceDebugDataHolder
-    arguments: [[]]
-    tags:
-      - { name: swoole_bundle.safe_stateful_service }
-
   DirectoryTree\ImapEngine\MailboxInterface:
     class: DirectoryTree\ImapEngine\Mailbox
     arguments:

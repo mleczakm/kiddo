@@ -6,7 +6,6 @@ namespace App\Tests\Infrastructure\Swoole\Configurator;
 
 use App\Infrastructure\Swoole\Configurator\WithScheduler;
 use App\Infrastructure\Symfony\Scheduler;
-use Doctrine\Bundle\DoctrineBundle\Middleware\BacktraceDebugDataHolder;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -46,7 +45,6 @@ final class WithSchedulerTest extends TestCase
         self::assertEmpty(iterator_to_array(Timer::list()));
         ($withScheduler = new WithScheduler(
             new Scheduler($this->createMock(MessageBusInterface::class), []),
-            $this->createMock(BacktraceDebugDataHolder::class),
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
         ))->configure($this->createMock(Server::class));
@@ -66,7 +64,6 @@ final class WithSchedulerTest extends TestCase
 
         ($withScheduler = new WithScheduler(
             new Scheduler($this->createMock(MessageBusInterface::class), []),
-            $this->createMock(BacktraceDebugDataHolder::class),
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
         ))->configure($this->createMock(Server::class));
@@ -76,19 +73,14 @@ final class WithSchedulerTest extends TestCase
         $withScheduler->__destruct();
     }
 
-    public function testTickRunsSchedulerAndResetsDebugDataHolder(): void
+    public function testTickRunsScheduler(): void
     {
         $scheduler = $this->createMock(Scheduler::class);
         $scheduler->expects($this->once())
             ->method('run');
 
-        $debugDataHolder = $this->createMock(BacktraceDebugDataHolder::class);
-        $debugDataHolder->expects($this->once())
-            ->method('reset');
-
         $withScheduler = new WithScheduler(
             $scheduler,
-            $debugDataHolder,
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
         );
@@ -112,7 +104,6 @@ final class WithSchedulerTest extends TestCase
 
         $withScheduler = new WithScheduler(
             $this->createMock(Scheduler::class),
-            $this->createMock(BacktraceDebugDataHolder::class),
             $coWrapper,
             $this->createMock(LoggerInterface::class),
         );
@@ -125,13 +116,9 @@ final class WithSchedulerTest extends TestCase
     public function testTickSkipsWhileAlreadyRunning(): void
     {
         $scheduler = $this->createMock(Scheduler::class);
-        $debugDataHolder = $this->createMock(BacktraceDebugDataHolder::class);
-        $debugDataHolder->expects($this->once())
-            ->method('reset');
 
         $withScheduler = new WithScheduler(
             $scheduler,
-            $debugDataHolder,
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
         );
@@ -162,13 +149,8 @@ final class WithSchedulerTest extends TestCase
                 }
             });
 
-        $debugDataHolder = $this->createMock(BacktraceDebugDataHolder::class);
-        $debugDataHolder->expects($this->exactly(2))
-            ->method('reset');
-
         $withScheduler = new WithScheduler(
             $scheduler,
-            $debugDataHolder,
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
         );
@@ -212,12 +194,7 @@ final class WithSchedulerTest extends TestCase
                 $loggedContext = $context;
             });
 
-        $withScheduler = new WithScheduler(
-            $scheduler,
-            $this->createMock(BacktraceDebugDataHolder::class),
-            self::emptyCoWrapper(),
-            $logger,
-        );
+        $withScheduler = new WithScheduler($scheduler, self::emptyCoWrapper(), $logger);
 
         run(static function () use ($withScheduler): void {
             $withScheduler->tick();
@@ -249,10 +226,6 @@ final class WithSchedulerTest extends TestCase
         $scheduler->expects($this->once())
             ->method('run');
 
-        $debugDataHolder = $this->createMock(BacktraceDebugDataHolder::class);
-        $debugDataHolder->expects($this->once())
-            ->method('reset');
-
         $loggedMessage = null;
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())
@@ -261,7 +234,7 @@ final class WithSchedulerTest extends TestCase
                 $loggedMessage = $message;
             });
 
-        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, $coWrapper, $logger);
+        $withScheduler = new WithScheduler($scheduler, $coWrapper, $logger);
 
         // No run() wrapper - this is the whole point of the test.
         $withScheduler->tick();
