@@ -229,6 +229,47 @@ final class WithSchedulerTest extends TestCase
         ], $loggedContext);
     }
 
+    public function testTickSkipsPooledServiceResetAndLogsAWarningOutsideACoroutine(): void
+    {
+        // Reproduces the actual failure mode directly, without needing swoole's own reload/
+        // recycle timing: calling tick() with no enclosing Coroutine\run() is exactly the
+        // condition (Coroutine::getCid() === -1) that CoWrapper::defer() can't handle -
+        // confirmed live in production and reproduced locally (a Server::reload() mid-tick
+        // crashes the *manager* process, bypassing tick()'s own try/catch entirely). This
+        // must not call defer() at all in that case, and must not crash this test process
+        // doing it (a bare, unguarded defer() call here previously aborted the whole PHP
+        // process, exit 255, not just this test).
+        $pool = $this->createMock(ServicePool::class);
+        $pool->expects($this->never())
+            ->method('releaseFromCoroutine');
+
+        $coWrapper = new CoWrapper(new ServicePoolContainer([new ServicePoolEntry($pool)]));
+
+        $scheduler = $this->createMock(Scheduler::class);
+        $scheduler->expects($this->once())
+            ->method('run');
+
+        $debugDataHolder = $this->createMock(BacktraceDebugDataHolder::class);
+        $debugDataHolder->expects($this->once())
+            ->method('reset');
+
+        $loggedMessage = null;
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('warning')
+            ->willReturnCallback(function (string $message) use (&$loggedMessage): void {
+                $loggedMessage = $message;
+            });
+
+        $withScheduler = new WithScheduler($scheduler, $debugDataHolder, $coWrapper, $logger);
+
+        // No run() wrapper - this is the whole point of the test.
+        $withScheduler->tick();
+
+        self::assertNotNull($loggedMessage);
+        self::assertStringContainsString('no coroutine context', $loggedMessage);
+    }
+
     private static function emptyCoWrapper(): CoWrapper
     {
         return new CoWrapper(new ServicePoolContainer([]));
