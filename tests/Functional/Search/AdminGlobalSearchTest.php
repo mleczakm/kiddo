@@ -203,7 +203,7 @@ final class AdminGlobalSearchTest extends WebTestCase
             static fn($result): bool => $result->reference->type === SearchType::Payment
         );
         self::assertNotNull($paymentResult);
-        self::assertStringContainsString('80,00 zł', $paymentResult->subtitle);
+        self::assertStringContainsString("80\u{00A0}zł", $paymentResult->subtitle);
         self::assertStringNotContainsString('#type', $paymentResult->subtitle);
     }
 
