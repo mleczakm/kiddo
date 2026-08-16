@@ -156,6 +156,9 @@ services:
   App\Infrastructure\Twig\MoneyExtension:
     tags: [ 'twig.extension' ]
 
+  Mleczakm\TwigNow\NowExtension:
+    tags: [ 'twig.extension' ]
+
 
   # Gedmo SoftDeleteable listener
   Gedmo\SoftDeleteable\SoftDeleteableListener:

@@ -8,7 +8,7 @@
                     {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
                     {% set isPaid = booking.payment and booking.payment.status == 'paid' %}
                     {% set childName = booking.child ? booking.child.name : 'booking.no_child'|trans %}
-                    {% set reservationTab = isCancelled ? 'cancelled' : (lesson.schedule > date() ? 'active' : 'past') %}
+                    {% set reservationTab = isCancelled ? 'cancelled' : (lesson.schedule > now() ? 'active' : 'past') %}
                     <div class="flex items-center justify-between gap-3 p-3.5 bg-white rounded-xl border border-slate-100 shadow-sm {{ isCancelled ? 'opacity-70' : '' }}">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm {{ isPaid ? 'bg-green-100 text-green-700' : 'bg-workshop-yellow/20 text-workshop-brown' }}">

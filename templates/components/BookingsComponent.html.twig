@@ -48,7 +48,7 @@
                     {% for lesson in booking.lessons %}
                         {% set isCancelled = booking.lessonsMap.isCancelledLesson(lesson.id) %}
                         {% set isRescheduled = booking.lessonsMap.isRescheduledLesson(lesson.id) %}
-                        {% set isFuture = lesson.schedule > date() %}
+                        {% set isFuture = lesson.schedule > now() %}
                         {% set show =
                             (activeTab == 'cancelled' and isCancelled) or
                             (activeTab == 'active' and (not isCancelled) and isFuture) or

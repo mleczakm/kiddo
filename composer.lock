@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "555e4338b12af534096deac6e96050b1",
+    "content-hash": "a304d0c176f5b1aa9917d1b548f617a1",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2939,6 +2939,85 @@
                 "source": "https://github.com/modelcontextprotocol/php-sdk/tree/v0.7.1"
             },
             "time": "2026-08-10T20:09:23+00:00"
+        },
+        {
+            "name": "mleczakm/twig-now",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mleczakm/twig-now.git",
+                "reference": "bb367e416439d6fc10e2749d4a937902ea3e3f3d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mleczakm/twig-now/zipball/bb367e416439d6fc10e2749d4a937902ea3e3f3d",
+                "reference": "bb367e416439d6fc10e2749d4a937902ea3e3f3d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "symfony/clock": "^6.3 || ^7.0 || ^8.0",
+                "twig/twig": "^3.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.59",
+                "phpstan/phpstan": "^2.2",
+                "phpunit/phpunit": "^11.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mleczakm\\TwigNow\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Mleczakm\\TwigNow\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ],
+                "phpstan": [
+                    "phpstan analyse"
+                ],
+                "cs-check": [
+                    "php-cs-fixer fix --dry-run --diff"
+                ],
+                "cs-fix": [
+                    "php-cs-fixer fix"
+                ],
+                "qa": [
+                    "@cs-check",
+                    "@phpstan",
+                    "@test"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michał Mleczko",
+                    "email": "do@mleczki.pl"
+                }
+            ],
+            "description": "A Twig now() function backed by Symfony's Clock component, so \"the current time\" in templates can be mocked in tests.",
+            "homepage": "https://github.com/mleczakm/twig-now",
+            "keywords": [
+                "clock",
+                "mock",
+                "symfony",
+                "testing",
+                "twig",
+                "twig-extension"
+            ],
+            "support": {
+                "source": "https://github.com/mleczakm/twig-now/tree/v0.1.0",
+                "issues": "https://github.com/mleczakm/twig-now/issues"
+            },
+            "time": "2026-08-16T18:20:17+00:00"
         },
         {
             "name": "mleczakm/zip-bomb-honeypot",

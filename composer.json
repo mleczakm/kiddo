@@ -24,6 +24,10 @@
     {
       "type": "vcs",
       "url": "https://github.com/mleczakm/zip-bomb-honeypot.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/mleczakm/twig-now.git"
     }
   ],
   "require": {
@@ -46,6 +50,7 @@
     "gedmo/doctrine-extensions": "^3.22.1",
     "macpaw/symfony-health-check-bundle": "^2.0",
     "martin-georgiev/postgresql-for-doctrine": "^3.7.0",
+    "mleczakm/twig-now": "^0.1.0",
     "mleczakm/zip-bomb-honeypot": "^1.0",
     "novaway/feature-flag-bundle": "dev-master#2279289d1ac26bc6289256c8210b0ec97c8ef0eb as 3.0.2",
     "nyholm/psr7": "^1.8.2",
