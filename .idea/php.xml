@@ -179,7 +179,6 @@
       <path value="$PROJECT_DIR$/vendor/illuminate/contracts" />
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/vendor/carbonphp/carbon-doctrine-types" />
-      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
       <path value="$PROJECT_DIR$/vendor/php-di/php-di" />
       <path value="$PROJECT_DIR$/vendor/directorytree/imapengine" />
       <path value="$PROJECT_DIR$/vendor/php-di/invoker" />
@@ -433,6 +432,16 @@
       <path value="$PROJECT_DIR$/vendor/psr/http-server-middleware" />
       <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
       <path value="$PROJECT_DIR$/vendor/mcp/sdk" />
+      <path value="$PROJECT_DIR$/vendor/mleczakm/zip-bomb-honeypot" />
+      <path value="$PROJECT_DIR$/../ClassyCash/vendor/mleczakm/zip-bomb-honeypot" />
+      <path value="$PROJECT_DIR$/../ClassyCash/vendor/scienta/doctrine-json-functions" />
+      <path value="$PROJECT_DIR$/../ClassyCash/vendor/martin-georgiev/postgresql-for-doctrine" />
+      <path value="$PROJECT_DIR$/../ClassyCash/vendor/symfony/polyfill-php86" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-deepclone" />
+      <path value="$PROJECT_DIR$/vendor/twig/html-extra" />
+      <path value="$PROJECT_DIR$/vendor/tales-from-a-dev/tailwind-merge-php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/ux-dropzone" />
+      <path value="$PROJECT_DIR$/vendor/symfony/rate-limiter" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
