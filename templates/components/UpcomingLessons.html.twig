@@ -211,13 +211,18 @@
                 : path('workshops', {week: lesson.schedule|date('Y-m-d')}) %}
             {% set availableSpots = lesson.getAvailableSpots() %}
             {% set spotsClass = availableSpots > 4 ? 'border-green-200 text-green-700 bg-green-50/90' : (availableSpots > 2 ? 'border-yellow-200 text-yellow-700 bg-yellow-50/90' : 'border-workshop-red/30 text-workshop-red bg-workshop-red/10') %}
+            {% set gradientPairs = [['yellow', 'red'], ['green', 'yellow'], ['red', 'pink'], ['pink', 'blue'], ['blue', 'green']] %}
+            {% set gradientPair = gradientPairs[loop.index0 % 5] %}
             <div class="workshop-card group relative flex flex-col rounded-2xl border bg-white shadow-sm h-full transition-shadow duration-300 hover:shadow-xl">
-                <a href="{{ workshopUrl }}" class="relative block w-full aspect-[3/4] overflow-hidden rounded-t-2xl"
-                   style="{% if lesson.metadata.hasImage %}background-color: {{ lesson.metadata.safeVisualTheme }};{% else %}background-image: linear-gradient(135deg, {{ lesson.metadata.safeVisualTheme }} 0%, {{ lesson.metadata.safeVisualTheme }} 55%, rgba(0,0,0,.35) 130%);{% endif %}">
+                <a href="{{ workshopUrl }}" class="relative block w-full aspect-[3/4] overflow-hidden rounded-t-2xl">
                     {% if lesson.metadata.hasImage %}
                         <img src="{{ path('workshop_image', {id: lesson.id}) }}"
                              alt="{{ lesson.metadata.title }}"
                              class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    {% else %}
+                        <div class="absolute inset-0 bg-gradient-to-br from-workshop-{{ gradientPair[0] }} to-workshop-{{ gradientPair[1] }}">
+                            <span class="absolute inset-0 flex items-center justify-center p-8 text-center font-display text-3xl font-bold text-white/90">{{ lesson.metadata.title }}</span>
+                        </div>
                     {% endif %}
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                     <div class="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
