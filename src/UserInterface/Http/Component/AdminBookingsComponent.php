@@ -401,7 +401,7 @@ class AdminBookingsComponent extends AbstractController
     {
         $admin = $this->getUser();
         if (! $admin instanceof User) {
-            $this->errorMessage = 'Unable to reactivate booking: not logged in as admin';
+            $this->errorMessage = 'Nie udało się przywrócić rezerwacji: brak uprawnień administratora';
             return;
         }
 
@@ -409,11 +409,11 @@ class AdminBookingsComponent extends AbstractController
             $this->messageBus->dispatch(new ReactivateBooking(
                 Ulid::fromString($bookingId),
                 $admin,
-                'Reactivated by admin',
+                'Przywrócono przez administratora',
             ));
-            $this->successMessage = 'Booking reactivated successfully';
+            $this->successMessage = 'Rezerwacja została przywrócona';
         } catch (\Exception $e) {
-            $this->errorMessage = 'Failed to reactivate booking: ' . $e->getMessage();
+            $this->errorMessage = 'Nie udało się przywrócić rezerwacji: ' . $e->getMessage();
         }
     }
 

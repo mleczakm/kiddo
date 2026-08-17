@@ -182,6 +182,14 @@
                                 <dl class="space-y-3 text-sm"><div class="flex justify-between gap-3"><dt class="text-slate-500">Utworzono</dt><dd class="text-right font-semibold text-slate-700">{{ booking.createdAt|date('d.m.Y H:i') }}</dd></div><div class="flex justify-between gap-3"><dt class="text-slate-500">Ostatnia zmiana</dt><dd class="text-right font-semibold text-slate-700">{{ booking.updatedAt ? booking.updatedAt|date('d.m.Y H:i') : '—' }}</dd></div><div class="flex justify-between gap-3"><dt class="text-slate-500">Rodzaj</dt><dd class="font-semibold text-slate-700">{{ booking.isCarnet ? 'Karnet' : 'Jednorazowa' }}</dd></div></dl>
                             </section>
 
+                            {% if this.canReactivateBooking() %}
+                                <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+                                    <h3 class="mb-3 text-xs font-black uppercase tracking-wider text-emerald-700">Rezerwacja anulowana</h3>
+                                    <p class="mb-4 text-sm text-emerald-800">Jeśli płatność jednak wpłynęła, możesz przywrócić rezerwację.</p>
+                                    <button type="button" data-action="live#action" data-live-action-param="reactivateBooking" class="w-full rounded-xl bg-emerald-600 px-3 py-2.5 text-sm font-bold text-white hover:bg-emerald-700">Przywróć rezerwację</button>
+                                </section>
+                            {% endif %}
+
                             {% if lesson and lesson.future and not booking.isLessonRescheduled(lesson) %}
                                 <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                                     <h3 class="mb-4 text-xs font-black uppercase tracking-wider text-slate-400">Akcje dla wybranego terminu</h3>

@@ -11,6 +11,7 @@ use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\User;
 use App\Message\CancelLessonBooking;
+use App\Message\ReactivateBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\ActivityLogRepository;
@@ -105,6 +106,36 @@ final class ReservationDetailsModal extends AbstractController
     {
         $this->lessonId = $lessonId;
         $this->resetAction();
+    }
+
+    #[LiveAction]
+    public function reactivateBooking(): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
+        $booking = $this->getBooking();
+        $actor = $this->getUser();
+        if (! $booking instanceof Booking || ! $actor instanceof User) {
+            $this->errorMessage = 'Nie udało się odnaleźć rezerwacji.';
+            return;
+        }
+
+        try {
+            $this->messageBus->dispatch(new ReactivateBooking(
+                $booking->getId(),
+                $actor,
+                'Przywrócono przez administratora',
+            ));
+            $this->successMessage = 'Rezerwacja została przywrócona.';
+            $this->errorMessage = null;
+        } catch (\Throwable $exception) {
+            $this->errorMessage = $exception->getMessage();
+            $this->successMessage = null;
+        }
+    }
+
+    public function canReactivateBooking(): bool
+    {
+        return $this->getBooking()?->canBeReactivated() ?? false;
     }
 
     #[LiveAction]
