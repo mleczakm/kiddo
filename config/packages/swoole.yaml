@@ -56,6 +56,11 @@ swoole:
       stateful_services:
         - form.registry
         - Sentry\SentryBundle\Tracing\HttpClient\TraceableHttpClient.inner
+        # DirectoryTree's Mailbox owns a mutable IMAP stream. Giving each coroutine its
+        # own instance prevents reconnect() in one import from closing another import's
+        # in-flight stream. The import lock still serializes workers to avoid fetching
+        # the same unseen message twice.
+        - DirectoryTree\ImapEngine\MailboxInterface
       # Without a cap, each worker/task-worker process pools a separate Doctrine connection
       # instance per coroutine context, which was exhausting Postgres's max_connections (100)
       # within seconds of boot (12 processes x scheduler polling every ~1s).

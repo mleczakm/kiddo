@@ -10,6 +10,8 @@ use App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardD
 use DirectoryTree\ImapEngine\MessageQueryInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\InMemoryStore;
 
 #[Group('unit')]
 final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends TestCase
@@ -33,7 +35,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
             }
         };
 
-        $guard = new IncomingNotificationMailQueryReentrancyGuardDecorator($decorated);
+        $guard = $this->createGuard($decorated);
 
         self::assertSame([$one, $two], iterator_to_array($guard(), false));
     }
@@ -65,8 +67,12 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
             }
         };
 
-        $guard = new IncomingNotificationMailQueryReentrancyGuardDecorator($decorated);
-        $decorated->reentrantCallers = [$guard];
+        $lockFactory = new LockFactory(new InMemoryStore());
+        $guard = new IncomingNotificationMailQueryReentrancyGuardDecorator($decorated, $lockFactory);
+        // A separate decorator instance models another task-worker/container scope.
+        $decorated->reentrantCallers = [
+            new IncomingNotificationMailQueryReentrancyGuardDecorator($decorated, $lockFactory),
+        ];
 
         self::assertSame([$message], iterator_to_array($guard(), false));
     }
@@ -94,7 +100,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
             }
         };
 
-        $guard = new IncomingNotificationMailQueryReentrancyGuardDecorator($decorated);
+        $guard = $this->createGuard($decorated);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('boom');
@@ -104,5 +110,14 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
         } finally {
             self::assertSame([$message], iterator_to_array($guard(), false));
         }
+    }
+
+    private function createGuard(
+        IncomingNotificationMailQuery $decorated
+    ): IncomingNotificationMailQueryReentrancyGuardDecorator {
+        return new IncomingNotificationMailQueryReentrancyGuardDecorator(
+            $decorated,
+            new LockFactory(new InMemoryStore()),
+        );
     }
 }
