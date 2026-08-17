@@ -184,14 +184,19 @@
                         </div>
 
                         <div class="space-y-1.5">
-                            <label class="text-sm font-bold text-slate-700">Zdjęcie warsztatu</label>
+                            <label class="text-sm font-bold text-slate-700">Zdjęcie lub wideo warsztatu</label>
 
                             {% if this.getEditingLessonImageUrl() %}
                                 <div class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                                    <img src="{{ this.getEditingLessonImageUrl() }}" alt="" class="w-16 h-16 rounded-lg object-cover shrink-0" />
+                                    {% if this.getEditingLessonIsVideo() %}
+                                        <video src="{{ this.getEditingLessonImageUrl() }}" muted loop playsinline
+                                               class="w-16 h-16 rounded-lg object-cover shrink-0"></video>
+                                    {% else %}
+                                        <img src="{{ this.getEditingLessonImageUrl() }}" alt="" class="w-16 h-16 rounded-lg object-cover shrink-0" />
+                                    {% endif %}
                                     <label class="flex items-center gap-2 text-xs font-bold text-red-600 cursor-pointer">
                                         <input type="checkbox" data-model="removeImage" class="w-4 h-4 rounded text-red-600" />
-                                        Usuń obecne zdjęcie
+                                        Usuń obecne zdjęcie/wideo
                                     </label>
                                 </div>
                             {% endif %}
@@ -199,13 +204,13 @@
                             <div data-controller="image-upload"
                                  data-action="dropzone:clear->image-upload#clearPreview">
                                 <div class="dropzone-container" data-controller="symfony--ux-dropzone--dropzone">
-                                    <input type="file" accept="image/*" name="imageFile"
+                                    <input type="file" accept="image/*,video/mp4,video/webm" name="imageFile"
                                            data-symfony--ux-dropzone--dropzone-target="input"
                                            data-image-upload-target="input"
                                            data-action="change->image-upload#optimize"
                                            class="dropzone-input" />
                                     <div class="dropzone-placeholder" data-symfony--ux-dropzone--dropzone-target="placeholder">
-                                        Przeciągnij i upuść zdjęcie lub kliknij, aby wybrać
+                                        Przeciągnij i upuść zdjęcie lub wideo, albo kliknij, aby wybrać
                                     </div>
                                     <div class="dropzone-preview" data-symfony--ux-dropzone--dropzone-target="preview" style="display: none">
                                         <button class="dropzone-preview-button" type="button"
@@ -218,10 +223,12 @@
                                 <div class="mt-3 flex items-start gap-3">
                                     <img data-image-upload-target="preview" alt="" hidden
                                          class="w-32 h-24 rounded-xl object-cover border border-slate-200 bg-slate-50" />
+                                    <video data-image-upload-target="videoPreview" muted loop playsinline controls hidden
+                                           class="w-32 h-24 rounded-xl object-cover border border-slate-200 bg-slate-50"></video>
                                     <div class="min-w-0 pt-1 text-xs">
                                         <p data-image-upload-target="status" class="text-slate-500"></p>
                                         <p data-image-upload-target="details" class="mt-1 font-semibold text-slate-700"></p>
-                                        <p class="mt-1 text-slate-400">Zdjęcie zostanie zmniejszone do maks. 1920 px i zapisane jako WebP.</p>
+                                        <p class="mt-1 text-slate-400">Zdjęcia są zmniejszane do maks. 1920 px i zapisywane jako WebP (maks. 3 MB). Wideo (MP4 lub WebM, nie MOV) jest przesyłane bez zmian, maks. 20 MB.</p>
                                     </div>
                                 </div>
                             </div>

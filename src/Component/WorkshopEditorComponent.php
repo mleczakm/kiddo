@@ -299,6 +299,11 @@ class WorkshopEditorComponent extends AbstractController
         ]);
     }
 
+    public function getEditingLessonIsVideo(): bool
+    {
+        return $this->getEditingLesson()?->getMetadata()->isVideo() ?? false;
+    }
+
     /**
      * How many other lessons in the series would also be touched by
      * "cały cykl" — shown so the scope choice is never a guess.
@@ -422,10 +427,25 @@ class WorkshopEditorComponent extends AbstractController
 
     private const int MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 
+    // Larger than the image cap since video files are inherently heavier,
+    // but still bounded to keep the DB row (stored as base64 text) sane.
+    private const int MAX_VIDEO_BYTES = 20 * 1024 * 1024;
+
     /**
      * @var list<string>
      */
     private const array SUPPORTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+    /**
+     * MOV/QuickTime is deliberately excluded: browsers other than Safari
+     * generally refuse to play a <video> whose src reports as
+     * video/quicktime, even when the underlying codec is H.264 — same class
+     * of trap as the HEIC photo issue. Ask for MP4/WebM instead of trying to
+     * transcode client-side.
+     *
+     * @var list<string>
+     */
+    private const array SUPPORTED_VIDEO_MIME_TYPES = ['video/mp4', 'video/webm'];
 
     #[LiveAction]
     public function save(Request $request): void
@@ -440,16 +460,26 @@ class WorkshopEditorComponent extends AbstractController
 
         if ($this->uploadedImage !== null) {
             $mimeType = $this->uploadedImage->getMimeType();
-            if ($mimeType === null || ! str_starts_with($mimeType, 'image/')) {
-                $this->addFlash('error', 'Zdjęcie musi być plikiem graficznym.');
+            $isVideo = $mimeType !== null && str_starts_with($mimeType, 'video/');
+
+            if ($mimeType === null || (! str_starts_with($mimeType, 'image/') && ! $isVideo)) {
+                $this->addFlash('error', 'Plik musi być zdjęciem lub filmem.');
                 return;
             }
-            if (! in_array($mimeType, self::SUPPORTED_IMAGE_MIME_TYPES, true)) {
-                $this->addFlash('error', 'Nieobsługiwany format zdjęcia. Użyj JPG, PNG, WebP lub GIF (nie HEIC).');
+
+            $allowedTypes = $isVideo ? self::SUPPORTED_VIDEO_MIME_TYPES : self::SUPPORTED_IMAGE_MIME_TYPES;
+            if (! in_array($mimeType, $allowedTypes, true)) {
+                $this->addFlash('error', $isVideo
+                    ? 'Nieobsługiwany format wideo. Użyj MP4 lub WebM (nie MOV).'
+                    : 'Nieobsługiwany format zdjęcia. Użyj JPG, PNG, WebP lub GIF (nie HEIC).');
                 return;
             }
-            if ($this->uploadedImage->getSize() > self::MAX_IMAGE_BYTES) {
-                $this->addFlash('error', 'Zdjęcie jest za duże (maks. 3 MB).');
+
+            $maxBytes = $isVideo ? self::MAX_VIDEO_BYTES : self::MAX_IMAGE_BYTES;
+            if ($this->uploadedImage->getSize() > $maxBytes) {
+                $this->addFlash('error', $isVideo
+                    ? 'Plik wideo jest za duży (maks. 20 MB).'
+                    : 'Zdjęcie jest za duże (maks. 3 MB).');
                 return;
             }
         }

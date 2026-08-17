@@ -114,9 +114,16 @@
 
                 {% if lesson.metadata.hasImage %}
                     <div class="rounded-2xl overflow-hidden bg-muted mb-8 flex justify-center">
-                        <img src="{{ path('workshop_image', {id: lesson.id}) }}"
-                             alt="{{ lesson.metadata.title }}"
-                             class="max-h-[60vh] w-auto object-contain">
+                        {% if lesson.metadata.isVideo %}
+                            <video src="{{ path('workshop_image', {id: lesson.id}) }}"
+                                   autoplay muted loop playsinline
+                                   aria-label="{{ lesson.metadata.title }}"
+                                   class="max-h-[60vh] w-auto object-contain"></video>
+                        {% else %}
+                            <img src="{{ path('workshop_image', {id: lesson.id}) }}"
+                                 alt="{{ lesson.metadata.title }}"
+                                 class="max-h-[60vh] w-auto object-contain">
+                        {% endif %}
                     </div>
                 {% else %}
                     <div class="w-full h-40 sm:h-52 rounded-2xl mb-8" style="background-color: {{ lesson.metadata.safeVisualTheme }};"></div>

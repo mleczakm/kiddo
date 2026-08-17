@@ -216,9 +216,16 @@
             <div class="workshop-card group relative flex flex-col rounded-2xl border bg-white shadow-sm h-full transition-shadow duration-300 hover:shadow-xl">
                 <a href="{{ workshopUrl }}" class="relative block w-full aspect-[3/4] overflow-hidden rounded-t-2xl">
                     {% if lesson.metadata.hasImage %}
-                        <img src="{{ path('workshop_image', {id: lesson.id}) }}"
-                             alt="{{ lesson.metadata.title }}"
-                             class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        {% if lesson.metadata.isVideo %}
+                            <video src="{{ path('workshop_image', {id: lesson.id}) }}"
+                                   autoplay muted loop playsinline
+                                   aria-label="{{ lesson.metadata.title }}"
+                                   class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"></video>
+                        {% else %}
+                            <img src="{{ path('workshop_image', {id: lesson.id}) }}"
+                                 alt="{{ lesson.metadata.title }}"
+                                 class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        {% endif %}
                     {% else %}
                         <div class="absolute inset-0 bg-gradient-to-br from-workshop-{{ gradientPair[0] }} to-workshop-{{ gradientPair[1] }}">
                             <span class="absolute inset-0 flex items-center justify-center p-8 text-center font-display text-3xl font-bold text-white/90">{{ lesson.metadata.title }}</span>

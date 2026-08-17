@@ -168,4 +168,9 @@ class LessonMetadata
     {
         return $this->imageData !== null && $this->imageMimeType !== null;
     }
+
+    public function isVideo(): bool
+    {
+        return $this->imageMimeType !== null && str_starts_with($this->imageMimeType, 'video/');
+    }
 }
