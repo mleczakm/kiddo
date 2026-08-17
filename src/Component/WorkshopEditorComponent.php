@@ -301,7 +301,8 @@ class WorkshopEditorComponent extends AbstractController
 
     public function getEditingLessonIsVideo(): bool
     {
-        return $this->getEditingLesson()?->getMetadata()->isVideo() ?? false;
+        return $this->getEditingLesson()?->getMetadata()
+            ->isVideo() ?? false;
     }
 
     /**
