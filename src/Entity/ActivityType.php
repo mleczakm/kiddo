@@ -14,6 +14,7 @@ enum ActivityType: string
     case BOOKING_CANCELLED = 'booking_cancelled';
     case BOOKING_AUTO_CANCELLED = 'booking_auto_cancelled';
     case BOOKING_RESCHEDULED = 'booking_rescheduled';
+    case BOOKING_REACTIVATED = 'booking_reactivated';
     case REFUND_REQUESTED = 'refund_requested';
     case PAYMENT_RECEIVED = 'payment_received';
     case PAYMENT_MARKED_PAID = 'payment_marked_paid';

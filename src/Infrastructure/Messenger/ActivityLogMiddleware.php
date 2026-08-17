@@ -10,6 +10,7 @@ use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Application\Service\ActivityLogger;
 use App\Entity\ActivityType;
 use App\Message\CancelLessonBooking;
+use App\Message\ReactivateBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
@@ -66,6 +67,7 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             $message instanceof AddBooking => $this->logBookingCreated($message),
             $message instanceof CancelLessonBooking => $this->logBookingCancelled($message),
             $message instanceof RescheduleLessonBooking => $this->logBookingRescheduled($message),
+            $message instanceof ReactivateBooking => $this->logBookingReactivated($message),
             $message instanceof RefundLessonBooking => $this->logRefundRequested($message),
             $message instanceof NewUser => $this->logUserRegistered($message),
             $message instanceof TransferNotMatchedCommand => $this->logTransferUnmatched($message),
@@ -146,6 +148,30 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             summary: $oldLesson !== null && $newLesson !== null
                 ? sprintf('%s → %s', $oldLesson->getMetadata()->title, $newLesson->getMetadata()->title)
                 : null,
+            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]) : null,
+            context: [
+                'bookingId' => (string) $command->getBookingId(),
+            ],
+        );
+    }
+
+    private function logBookingReactivated(ReactivateBooking $command): void
+    {
+        $booking = $this->bookingRepository->find($command->getBookingId());
+        if ($booking === null) {
+            return;
+        }
+
+        $user = $booking->getUser();
+        $userId = $user->getId();
+
+        $this->activityLogger->log(
+            type: ActivityType::BOOKING_REACTIVATED,
+            title: sprintf('Rezerwacja %s została przywrócona', $user->getName()),
+            subject: $user,
+            summary: $command->getReason(),
             url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
                 'id' => $userId,
             ]) : null,

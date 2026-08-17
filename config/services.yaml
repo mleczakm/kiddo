@@ -116,6 +116,9 @@ services:
   Sentry\Integration\RequestFetcherInterface:
     class: Sentry\Integration\RequestFetcher
 
+  App\Infrastructure\Sentry\MetricsRecorderInterface:
+    alias: App\Infrastructure\Sentry\MetricsRecorder
+
   Symfony\Contracts\Service\ResetInterface:
     alias: services_resetter
 
