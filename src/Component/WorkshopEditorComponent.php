@@ -422,6 +422,11 @@ class WorkshopEditorComponent extends AbstractController
 
     private const int MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 
+    /**
+     * @var list<string>
+     */
+    private const array SUPPORTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
     #[LiveAction]
     public function save(Request $request): void
     {
@@ -437,6 +442,10 @@ class WorkshopEditorComponent extends AbstractController
             $mimeType = $this->uploadedImage->getMimeType();
             if ($mimeType === null || ! str_starts_with($mimeType, 'image/')) {
                 $this->addFlash('error', 'Zdjęcie musi być plikiem graficznym.');
+                return;
+            }
+            if (! in_array($mimeType, self::SUPPORTED_IMAGE_MIME_TYPES, true)) {
+                $this->addFlash('error', 'Nieobsługiwany format zdjęcia. Użyj JPG, PNG, WebP lub GIF (nie HEIC).');
                 return;
             }
             if ($this->uploadedImage->getSize() > self::MAX_IMAGE_BYTES) {

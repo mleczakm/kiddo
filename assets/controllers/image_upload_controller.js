@@ -22,14 +22,26 @@ export default class extends Controller {
         }
 
         if (!source.type.startsWith('image/')) {
-            this.showStatus('Wybrany plik nie jest obrazem.', true);
+            this.rejectFile('Wybrany plik nie jest obrazem.');
             return;
         }
 
         this.showStatus('Optymalizowanie zdjęcia…');
 
+        let decodable = source;
         try {
-            const bitmap = await createImageBitmap(source, { imageOrientation: 'from-image' });
+            const { isHeic, heicTo } = await import('heic-to');
+            if (await isHeic(source)) {
+                this.showStatus('Konwertowanie zdjęcia HEIC…');
+                decodable = await heicTo({ blob: source, type: 'image/jpeg', quality: 0.92 });
+            }
+        } catch (error) {
+            this.rejectFile('Nie udało się odczytać zdjęcia HEIC. Zapisz je jako JPG lub PNG i spróbuj ponownie.');
+            return;
+        }
+
+        try {
+            const bitmap = await createImageBitmap(decodable, { imageOrientation: 'from-image' });
             const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
             const width = Math.max(1, Math.round(bitmap.width * scale));
             const height = Math.max(1, Math.round(bitmap.height * scale));
@@ -59,9 +71,14 @@ export default class extends Controller {
                 `Gotowe: ${width} × ${height} px, ${this.formatBytes(source.size)} → ${this.formatBytes(optimized.size)} (WebP).`,
             );
         } catch (error) {
-            this.showPreview(source);
-            this.showStatus('Nie udało się przekonwertować zdjęcia. Zostanie wysłany oryginalny plik.', true);
+            this.rejectFile('Nie udało się przetworzyć zdjęcia. Wybierz plik JPG, PNG lub WebP.');
         }
+    }
+
+    rejectFile(message) {
+        this.inputTarget.value = '';
+        this.clearPreview();
+        this.showStatus(message, true);
     }
 
     showPreview(file, width = null, height = null) {
