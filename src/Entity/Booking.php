@@ -179,10 +179,18 @@ class Booking
         return $this->status === self::STATUS_CANCELLED;
     }
 
+    /**
+     * Bucket membership (active/past) is only ever changed by cancel/reschedule/
+     * reactivate — nothing moves a lesson from active to past as its schedule
+     * simply elapses. Gating on active->isEmpty() would mean CheckBookingsToMarkPast
+     * (which selects via shouldBeMarkedAsPast(), the date-based check) could never
+     * actually complete an untouched booking, leaving finished reservations stuck
+     * in the "active" tab forever. Use the same date-based check here instead.
+     */
     public function canBeCompleted(): bool
     {
         return $this->getLessonsMap()
-            ->active->isEmpty();
+            ->areAllLessonsInPast($this);
     }
 
     public function confirm(): self
