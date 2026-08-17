@@ -1,5 +1,7 @@
 # Kiddo
 
+![Unit and functional test coverage](docs/coverage.svg)
+
 Kiddo is a bilingual workshop-booking platform for families and a day-to-day operations system for workshop teams. It combines a public catalog, customer self-service, an administration CRM, payment reconciliation, notifications, and an optional conversational assistant.
 
 ![Kiddo homepage](docs/screenshots/homepage.png)
@@ -133,6 +135,7 @@ docker compose up -d db
 | --- | --- |
 | All tests | `docker compose run --rm php composer tests` |
 | Unit tests | `docker compose run --rm php bin/phpunit --group unit` |
+| Unit and functional tests with coverage | `docker compose run --rm -e XDEBUG_MODE=coverage php sh -lc 'composer tests:functional:setup && bin/phpunit --group unit --group functional --coverage-html target/coverage/html'` |
 | Smoke tests | `docker compose run --rm php composer tests:smoke` |
 | Functional tests | `docker compose run --rm php composer tests:functional` |
 | Filtered test | `docker compose run --rm php bin/phpunit --filter ClassNameOrMethod` |
@@ -140,6 +143,8 @@ docker compose up -d db
 | Full quality gate | `docker compose run --rm php composer qa` |
 
 After code changes, run `composer qa:fix`, review its diff, then run `composer qa`.
+
+Pull requests must cover at least 50% of the executable lines they add or change. CI measures both unit and functional tests, publishes the complete report as the `test-coverage` artifact, and displays its totals in the workflow summary.
 
 ## Useful commands
 

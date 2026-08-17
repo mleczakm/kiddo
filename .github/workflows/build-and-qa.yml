@@ -78,9 +78,44 @@ jobs:
         run: |
             echo "NETWORK_NAME=$(docker network ls --filter name=github --format '{{.Name}}')" >> $GITHUB_ENV
 
-      # Run all tests
-      - name: Run Tests
-        run: docker run --rm --network $NETWORK_NAME ${{ steps.meta.outputs.tags }} composer tests
+      - name: Run unit and functional tests with coverage
+        run: |
+          mkdir -p target/coverage
+          docker run --rm \
+            --network "$NETWORK_NAME" \
+            -e XDEBUG_MODE=coverage \
+            -e DATABASE_URL \
+            -v "$PWD/target/coverage:/app/target/coverage" \
+            ${{ steps.meta.outputs.tags }} \
+            sh -lc 'composer tests:functional:setup && bin/phpunit --group unit --group functional \
+              --coverage-clover target/coverage/clover.xml \
+              --coverage-cobertura target/coverage/cobertura.xml \
+              --coverage-html target/coverage/html'
+        env:
+          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
+
+      - name: Publish test coverage summary
+        id: coverage
+        run: php .github/scripts/coverage-summary.php target/coverage/clover.xml docs/coverage.svg
+
+      - name: Enforce coverage on changed code
+        if: github.event_name == 'pull_request'
+        run: |
+          python -m pip install --disable-pip-version-check diff-cover
+          diff-cover target/coverage/cobertura.xml \
+            --compare-branch="origin/${{ github.base_ref }}" \
+            --fail-under=50
+
+      - name: Upload test coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage
+          path: target/coverage
+          if-no-files-found: error
+
+      - name: Run smoke tests
+        run: docker run --rm --network "$NETWORK_NAME" ${{ steps.meta.outputs.tags }} composer tests:smoke
         env:
           DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
 
@@ -112,3 +147,15 @@ jobs:
           draft: false
           prerelease: false
           token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Update coverage badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          if git diff --quiet -- docs/coverage.svg; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/coverage.svg
+          git commit -m "docs: update test coverage badge [skip ci]"
+          git push
