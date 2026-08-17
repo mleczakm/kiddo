@@ -339,11 +339,19 @@ class LessonMap implements \Countable
         return $this->active->count() > 0;
     }
 
+    /**
+     * A cancelled lesson has nothing left to happen, so it doesn't need a date
+     * check - only a still-active lesson scheduled in the future should block
+     * the booking from being considered done.
+     */
     public function areAllLessonsInPast(Booking $booking): bool
     {
         $this->ensureMapsInitialized();
         $now = Clock::get()->now();
-        foreach ($this->lessons as $bookedLesson) {
+        foreach ($this->lessons as $lessonId => $bookedLesson) {
+            if ($this->cancelled->hasKey($lessonId)) {
+                continue;
+            }
             $lesson = $bookedLesson->entity($booking);
             if ($lesson && $lesson->schedule > $now) {
                 return false;
