@@ -10,7 +10,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
                     <input type="search" placeholder="{{ 'admin_users.search.placeholder'|trans }}" class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" data-model="query"/>
                 </div>
-                <button disabled class="inline-flex items-center justify-center whitespace-nowrap text-sm font-bold transition disabled:pointer-events-none disabled:opacity-50 bg-indigo-600 text-white hover:bg-indigo-700 h-10 px-4 rounded-lg shadow-sm shrink-0">
+                <button
+                    data-action="live#action"
+                    data-live-action-param="openAddModal"
+                    class="inline-flex items-center justify-center whitespace-nowrap text-sm font-bold transition disabled:pointer-events-none disabled:opacity-50 bg-indigo-600 text-white hover:bg-indigo-700 h-10 px-4 rounded-lg shadow-sm shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                     {{ 'admin_users.add_user'|trans }}
                 </button>
@@ -123,6 +126,10 @@
             {% endfor %}
         </div>
     </div>
+
+    {% if this.showAddModal %}
+        {{ component('AddUserModal') }}
+    {% endif %}
 
     {% if this.composingForUser %}
         <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">

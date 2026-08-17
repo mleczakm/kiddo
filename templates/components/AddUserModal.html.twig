@@ -1,0 +1,78 @@
+<div {{ attributes }}>
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+        <div class="bg-white w-full sm:max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+            <div class="flex justify-between items-center p-6 border-b border-slate-100 shrink-0">
+                <h2 class="text-lg font-black text-slate-800">{{ 'admin_users.modal.title'|trans }}</h2>
+                <button data-action="live#action" data-live-action-param="close" class="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4 overflow-y-auto">
+                <div class="space-y-1.5">
+                    <label class="text-sm font-bold text-slate-700">{{ 'admin_users.modal.name'|trans }} *</label>
+                    <input type="text" data-model="name" placeholder="{{ 'admin_users.modal.name_placeholder'|trans }}"
+                           class="w-full p-3 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-1 {{ this.errors.name is defined ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-slate-200 focus:border-indigo-500 focus:ring-indigo-500' }}" />
+                    {% if this.errors.name is defined %}
+                        <p class="text-xs font-semibold text-red-500">{{ this.errors.name }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-sm font-bold text-slate-700">{{ 'admin_users.modal.email'|trans }} *</label>
+                    <input type="email" data-model="email" placeholder="{{ 'admin_users.modal.email_placeholder'|trans }}"
+                           class="w-full p-3 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-1 {{ this.errors.email is defined ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-slate-200 focus:border-indigo-500 focus:ring-indigo-500' }}" />
+                    {% if this.errors.email is defined %}
+                        <p class="text-xs font-semibold text-red-500">{{ this.errors.email }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-sm font-bold text-slate-700">{{ 'admin_users.modal.phone'|trans }}</label>
+                    <input type="tel" data-model="phone" placeholder="{{ 'admin_users.modal.phone_placeholder'|trans }}"
+                           class="w-full p-3 bg-slate-50 border rounded-xl text-sm focus:outline-none focus:ring-1 {{ this.errors.phone is defined ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-slate-200 focus:border-indigo-500 focus:ring-indigo-500' }}" />
+                    {% if this.errors.phone is defined %}
+                        <p class="text-xs font-semibold text-red-500">{{ this.errors.phone }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-sm font-bold text-slate-700">{{ 'admin_users.modal.admin_note'|trans }}</label>
+                    <textarea data-model="adminNote" rows="2" placeholder="{{ 'admin_users.modal.admin_note_placeholder'|trans }}"
+                              class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-sm font-bold text-slate-700">{{ 'admin_users.modal.roles'|trans }}</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {% for role, label in this.assignableRoles %}
+                            <label class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm cursor-pointer hover:bg-slate-100 transition">
+                                <input type="checkbox"
+                                       class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                       {{ role in this.roles ? 'checked' : '' }}
+                                       data-action="live#action"
+                                       data-live-action-param="toggleRole"
+                                       data-live-role-param="{{ role }}" />
+                                <span class="text-slate-700 font-medium">{{ label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" data-model="newsletterSubscribed" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                    <span class="text-sm font-bold text-slate-700">{{ 'admin_users.modal.newsletter'|trans }}</span>
+                </label>
+            </div>
+
+            <div class="p-5 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 rounded-b-2xl shrink-0">
+                <button data-action="live#action" data-live-action-param="close" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition">
+                    {{ 'admin_users.modal.cancel'|trans }}
+                </button>
+                <button data-action="live#action" data-live-action-param="save" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm transition">
+                    {{ 'admin_users.modal.save'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,6 +9,7 @@ use App\Entity\Notification;
 use App\Entity\User;
 use App\UserInterface\Http\Component\UsersComponent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -103,5 +104,65 @@ final class UsersComponentTest extends WebTestCase
         /** @var UsersComponent $usersComponent */
         $usersComponent = $component->component();
         self::assertNull($usersComponent->getComposingForUser());
+    }
+
+    public function testOpenAddModalRequiresManageUsersRole(): void
+    {
+        $client = self::createClient();
+        $container = self::getContainer();
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+
+        // ROLE_HOST does not inherit ROLE_MANAGE_USERS (see security.yaml role_hierarchy).
+        $host = new User();
+        $host->setEmail('host@test.com');
+        $host->setName('Host User');
+        $host->setRoles(['ROLE_HOST']);
+        $entityManager->persist($host);
+        $entityManager->flush();
+
+        $client->loginUser($host);
+
+        $component = $this->createLiveComponent(UsersComponent::class, client: $client);
+
+        $this->expectException(AccessDeniedException::class);
+        $component->call('openAddModal');
+    }
+
+    public function testOpenAddModalShowsTheAddUserModalAndClosingItHidesItAgain(): void
+    {
+        $client = self::createClient();
+        $container = self::getContainer();
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+
+        $adminUser = new User();
+        $adminUser->setEmail('admin@test.com');
+        $adminUser->setName('Admin User');
+        $adminUser->setRoles(['ROLE_ADMIN']);
+        $entityManager->persist($adminUser);
+        $entityManager->flush();
+
+        $client->loginUser($adminUser);
+
+        $component = $this->createLiveComponent(UsersComponent::class, client: $client);
+        $component->call('openAddModal');
+
+        /** @var UsersComponent $usersComponent */
+        $usersComponent = $component->component();
+        self::assertTrue($usersComponent->showAddModal);
+
+        $rendered = $component->render()
+            ->toString();
+        self::assertStringContainsString(
+            'Nowy użytkownik',
+            $rendered,
+            'the embedded AddUserModal must render while open'
+        );
+
+        // Simulates AddUserModal's emitUp('userModalSaved')/emitUp('userModalClosed') bubbling up.
+        $component->emit('userModalSaved');
+
+        /** @var UsersComponent $usersComponent */
+        $usersComponent = $component->component();
+        self::assertFalse($usersComponent->showAddModal);
     }
 }

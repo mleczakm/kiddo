@@ -706,6 +706,20 @@ admin_users:
     body_placeholder: 'Dodatkowa wiadomość dla klienta...'
     cancel: Anuluj
     send: Wyślij
+  modal:
+    title: Nowy użytkownik
+    name: Imię i nazwisko
+    name_placeholder: 'np. Jan Kowalski'
+    email: Adres e-mail
+    email_placeholder: 'np. jan@przyklad.pl'
+    phone: Telefon
+    phone_placeholder: 'np. 600 123 456'
+    admin_note: Notatka administracyjna
+    admin_note_placeholder: 'Widoczna tylko dla administratorów...'
+    roles: Uprawnienia
+    newsletter: Zapisany do newslettera
+    cancel: Anuluj
+    save: Dodaj użytkownika
 
 admin:
   badges:

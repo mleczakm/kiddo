@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -22,6 +23,9 @@ class UsersComponent extends AbstractController
 
     #[LiveProp(writable: true)]
     public string $query = '';
+
+    #[LiveProp(writable: true)]
+    public bool $showAddModal = false;
 
     #[LiveProp(writable: true)]
     public ?string $composingForUserId = null;
@@ -52,6 +56,20 @@ class UsersComponent extends AbstractController
         }
 
         return $this->userRepository->find((int) $this->composingForUserId);
+    }
+
+    #[LiveAction]
+    public function openAddModal(): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_USERS');
+        $this->showAddModal = true;
+    }
+
+    #[LiveListener('userModalClosed')]
+    #[LiveListener('userModalSaved')]
+    public function onUserModalClosed(): void
+    {
+        $this->showAddModal = false;
     }
 
     #[LiveAction]
