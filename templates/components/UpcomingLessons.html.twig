@@ -187,11 +187,12 @@
                                             </div>
                                         </a>
                                         {{ component('LessonModal', {
+                                            key: lesson.id,
                                             lesson: lesson,
                                             modalOpened: this.shouldOpenModal(lesson),
                                             hideOpenButton: true,
                                             closeUrl: this.showSearch
-                                                ? path('workshops', {week: lesson.schedule|date('Y-m-d')})
+                                                ? path('workshops', {week: this.week})
                                                 : path('homepage')
                                         }) }}
                                     {% endfor %}
@@ -293,10 +294,11 @@
                 </a>
                 <div class="p-4 mt-auto">
                     {{ component('LessonModal', {
+                        key: lesson.id,
                         lesson: lesson,
                         modalOpened: this.shouldOpenModal(lesson),
                         closeUrl: this.showSearch
-                            ? path('workshops', {week: lesson.schedule|date('Y-m-d')})
+                            ? path('workshops', {week: this.week})
                             : path('homepage')
                     }) }}
                 </div>
