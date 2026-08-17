@@ -85,13 +85,19 @@ class Lesson
      */
     public function getTicketOptions(): array
     {
+        // Keyed by TicketType so a per-occurrence override replaces the
+        // series-level option of the same type instead of duplicating it.
         $options = [];
         if ($this->series) {
-            $options = array_merge($options, $this->series->ticketOptions);
+            foreach ($this->series->ticketOptions as $option) {
+                $options[$option->type->value] = $option;
+            }
         }
-        $options = array_merge($options, $this->ticketOptions);
+        foreach ($this->ticketOptions as $option) {
+            $options[$option->type->value] = $option;
+        }
 
-        return $options;
+        return array_values($options);
     }
 
     public function getMatchingTicketOption(string $selectedTicketType): TicketOption
