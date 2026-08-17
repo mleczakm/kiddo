@@ -205,22 +205,31 @@
     {% else %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for lesson in this.workshops %}
-            <div class="workshop-card">
-                {% include "components/CapacityBadge.html.twig" with {'capacity': lesson.metadata.capacity, 'available': lesson.availableSpots } %}
-                <div class="rounded-lg bg-white shadow-sm h-full flex flex-col">
-                    {% set workshopUrl = lesson.metadata.slug
-                        ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
-                        : path('workshops', {week: lesson.schedule|date('Y-m-d')}) %}
-                    <a href="{{ workshopUrl }}" class="block h-48 bg-cover bg-center rounded-t-lg"
-                         style="background-color: {{ lesson.metadata.safeVisualTheme }}; {{ lesson.metadata.hasImage ? 'background-image: url(\'' ~ path('workshop_image', {id: lesson.id}) ~ '\');' : 'background-image: none;' }} border-top-left-radius: 12px; border-top-right-radius: 12px;"></a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold font-display"><a href="{{ workshopUrl }}" class="hover:underline">{{ lesson.metadata.title }}</a></h3>
-                            <span class="text-sm font-medium text-workshop-red">{{ lesson.defaultTicketOption.price|money }}</span>
-                        </div>
+            {% set workshopUrl = lesson.metadata.slug
+                ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
+                : path('workshops', {week: lesson.schedule|date('Y-m-d')}) %}
+            {% set availableSpots = lesson.getAvailableSpots() %}
+            {% set spotsClass = availableSpots > 4 ? 'border-green-200 text-green-700 bg-green-50/90' : (availableSpots > 2 ? 'border-yellow-200 text-yellow-700 bg-yellow-50/90' : 'border-workshop-red/30 text-workshop-red bg-workshop-red/10') %}
+            <div class="workshop-card group relative flex flex-col rounded-2xl border bg-white shadow-sm h-full transition-shadow duration-300 hover:shadow-xl">
+                <a href="{{ workshopUrl }}" class="relative block w-full aspect-[3/4] overflow-hidden rounded-t-2xl"
+                   style="{% if lesson.metadata.hasImage %}background-color: {{ lesson.metadata.safeVisualTheme }};{% else %}background-image: linear-gradient(135deg, {{ lesson.metadata.safeVisualTheme }} 0%, {{ lesson.metadata.safeVisualTheme }} 55%, rgba(0,0,0,.35) 130%);{% endif %}">
+                    {% if lesson.metadata.hasImage %}
+                        <img src="{{ path('workshop_image', {id: lesson.id}) }}"
+                             alt="{{ lesson.metadata.title }}"
+                             class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                    <div class="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+                        <span class="inline-flex items-center rounded-full border backdrop-blur-sm px-2.5 py-0.5 text-xs font-semibold {{ spotsClass }}">
+                            {{ 'lesson.spots_available'|trans({spots: availableSpots}) }}
+                        </span>
+                        <span class="rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-workshop-red backdrop-blur-sm shrink-0">{{ lesson.defaultTicketOption.price|money }}</span>
+                    </div>
+                    <div class="absolute inset-x-0 bottom-0 space-y-2 p-4 text-white">
+                        <h3 class="font-display text-xl font-bold leading-tight drop-shadow">{{ lesson.metadata.title }}</h3>
                         {% set lessonBookings = userBookings[lesson.id]|default([]) %}
                         {% if lessonBookings is not empty %}
-                            <div class="flex flex-wrap gap-1.5 mb-3">
+                            <div class="flex flex-wrap gap-1.5">
                                 {% for bookingInfo in lessonBookings %}
                                     {% set paid = bookingInfo.paymentStatus == 'paid' %}
                                     <span class="inline-flex items-center gap-1.5 rounded-full border pl-2.5 pr-3 py-1 text-xs font-semibold {{ paid ? 'bg-green-50 border-green-200 text-green-700' : 'bg-amber-50 border-amber-200 text-amber-700' }}">
@@ -230,68 +239,66 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <p class="text-sm text-muted-foreground mb-4">{{ lesson.metadata.lead }}</p>
-                        <div class="mt-auto space-y-3">
-                            <div class="flex items-center text-sm">
+                        <p class="line-clamp-2 text-sm text-white/80 drop-shadow">{{ lesson.metadata.lead }}</p>
+                        <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-white/90">
+                            <span class="inline-flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-calendar w-4 h-4 mr-2 text-workshop-red">
+                                     class="lucide lucide-calendar w-3.5 h-3.5">
                                     <path d="M8 2v4"></path>
                                     <path d="M16 2v4"></path>
                                     <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                                     <path d="M3 10h18"></path>
                                 </svg>
-                                <span>
-                                    {% if lesson.series and lesson.series.type.value == 'weekly' %}
-                                        {{ 'lesson.every'|trans({
-                                            'day': lesson.schedule|date('l'),
-                                            'hour': lesson.schedule|date('H:i')
-                                        }) }}
-                                    {% else %}
-                                        {{ 'lesson.once'|trans({
-                                            'day': lesson.schedule|date('l'),
-                                            'date': lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
-                                            'hour': lesson.schedule|date('H:i')
-                                        }) }}
-                                    {% endif %}
-                                </span>
-                            </div>
-                            <div class="flex items-center text-sm">
+                                {% if lesson.series and lesson.series.type.value == 'weekly' %}
+                                    {{ 'lesson.every'|trans({
+                                        'day': lesson.schedule|date('l'),
+                                        'hour': lesson.schedule|date('H:i')
+                                    }) }}
+                                {% else %}
+                                    {{ 'lesson.once'|trans({
+                                        'day': lesson.schedule|date('l'),
+                                        'date': lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
+                                        'hour': lesson.schedule|date('H:i')
+                                    }) }}
+                                {% endif %}
+                            </span>
+                            <span class="inline-flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-clock w-4 h-4 mr-2 text-workshop-blue">
+                                     class="lucide lucide-clock w-3.5 h-3.5">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                <span>{{ 'lesson.minutes'|trans({minutes: lesson.metadata.duration}) }}</span>
-                            </div>
-                            <div class="flex items-center text-sm">
+                                {{ 'lesson.minutes'|trans({minutes: lesson.metadata.duration}) }}
+                            </span>
+                            <span class="inline-flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-users w-4 h-4 mr-2 text-workshop-green">
+                                     class="lucide lucide-users w-3.5 h-3.5">
                                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="9" cy="7" r="4"></circle>
                                     <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                 </svg>
-                                <span>
-                                    {{ lesson.metadata.ageRange.max
-                                    ? 'lesson.age_range'|trans({min: lesson.metadata.ageRange.min, max: lesson.metadata.ageRange.max, top: lesson.metadata.ageRange.max})
-                                    : 'lesson.age_above'|trans({min: lesson.metadata.ageRange.min}) }}
-                                </span>
-                            </div>
-                            {{ component('LessonModal', {
-                                lesson: lesson,
-                                modalOpened: this.shouldOpenModal(lesson),
-                                closeUrl: this.showSearch
-                                    ? path('workshops', {week: lesson.schedule|date('Y-m-d')})
-                                    : path('homepage')
-                            }) }}
+                                {{ lesson.metadata.ageRange.max
+                                ? 'lesson.age_range'|trans({min: lesson.metadata.ageRange.min, max: lesson.metadata.ageRange.max, top: lesson.metadata.ageRange.max})
+                                : 'lesson.age_above'|trans({min: lesson.metadata.ageRange.min}) }}
+                            </span>
                         </div>
                     </div>
+                </a>
+                <div class="p-4 mt-auto">
+                    {{ component('LessonModal', {
+                        lesson: lesson,
+                        modalOpened: this.shouldOpenModal(lesson),
+                        closeUrl: this.showSearch
+                            ? path('workshops', {week: lesson.schedule|date('Y-m-d')})
+                            : path('homepage')
+                    }) }}
                 </div>
             </div>
         {% else %}

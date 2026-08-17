@@ -112,7 +112,15 @@
                     <p id="radix-:r2:" class="text-sm text-muted-foreground">{{ lesson.metadata.lead }}</p>
                 </div>
 
-                <div class="w-full h-40 sm:h-52 rounded-2xl mb-8 bg-cover bg-center" style="background-color: {{ lesson.metadata.safeVisualTheme }}; {{ lesson.metadata.hasImage ? 'background-image: url(\'' ~ path('workshop_image', {id: lesson.id}) ~ '\');' : '' }}"></div>
+                {% if lesson.metadata.hasImage %}
+                    <div class="rounded-2xl overflow-hidden bg-muted mb-8 flex justify-center">
+                        <img src="{{ path('workshop_image', {id: lesson.id}) }}"
+                             alt="{{ lesson.metadata.title }}"
+                             class="max-h-[60vh] w-auto object-contain">
+                    </div>
+                {% else %}
+                    <div class="w-full h-40 sm:h-52 rounded-2xl mb-8" style="background-color: {{ lesson.metadata.safeVisualTheme }};"></div>
+                {% endif %}
 
                 {{ component('BookingPreviewComponent', {lesson: lesson}) }}
                 <div class="space-y-8 mt-8">
