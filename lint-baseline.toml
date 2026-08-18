@@ -637,18 +637,6 @@ message = "Class has a high kan defect score."
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Api/AuthController.php"
-code = "no-assign-in-condition"
-message = "Avoid assignments in conditions."
-count = 5
-
-[[issues]]
-file = "src/UserInterface/Http/Api/AuthController.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/Api/ChatSignedUrlAction.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."

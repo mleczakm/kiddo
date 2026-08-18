@@ -118,6 +118,60 @@ final class AuthControllerTest extends WebTestCase
         static::assertArrayNotHasKey('chat_token', $this->decode($verifyResponse));
     }
 
+    public function testLoginConsumesCodeAndRecordsLastLogin(): void
+    {
+        $email = 'auth-login@example.com';
+        static::assertSame(
+            201,
+            $this->register([
+                'email' => $email,
+                'name' => 'Login Flow',
+            ])->getStatusCode(),
+        );
+
+        $sentEmail = $this->mailer()->sentEmails()->first();
+        $code = $this->extractCode((string) $sentEmail->getHtmlBody() . (string) $sentEmail->getTextBody());
+        $response = $this->login([
+            'email' => $email,
+            'code' => $code,
+        ]);
+
+        static::assertSame(200, $response->getStatusCode());
+        static::assertArrayHasKey('chat_token', $this->decode($response));
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy([
+            'email' => $email,
+        ]);
+        static::assertNotNull($user);
+        static::assertNotNull($user->getLastLoginAt());
+        static::assertSame(
+            400,
+            $this->login([
+                'email' => $email,
+                'code' => $code,
+            ])->getStatusCode(),
+        );
+    }
+
+    public function testRegisterRejectsMalformedJson(): void
+    {
+        $request = Request::create(
+            uri: '/api/auth/_test',
+            method: 'POST',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: '{invalid',
+        );
+
+        $response = $this->controller->register($request, $this->validator);
+
+        static::assertSame(400, $response->getStatusCode());
+        static::assertSame('Invalid JSON', $this->decode($response)['error']);
+    }
+
     public function testSendCodeIsRateLimitedPerEmail(): void
     {
         $email = 'auth-rate-limit@example.com';

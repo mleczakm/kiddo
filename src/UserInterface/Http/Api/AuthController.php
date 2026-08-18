@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Api;
 
 use App\Application\Chat\ChatTokenManager;
-use App\Application\Command\Notification\SendVerificationCode;
+use App\Application\Service\AuthVerificationService;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -26,8 +24,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/auth')]
 final class AuthController extends AbstractController
 {
-    private const int CODE_TTL_SECONDS = 600;
-
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -36,14 +32,19 @@ final class AuthController extends AbstractController
         private readonly RateLimiterFactory $authEmailRateLimiter,
         #[Autowire(service: 'limiter.auth_ip_limiter')]
         private readonly RateLimiterFactory $authIpRateLimiter,
-        private readonly CacheItemPoolInterface $cache,
-        private readonly MessageBusInterface $messageBus,
+        private readonly AuthVerificationService $verification,
     ) {}
 
+    /**
+     * @throws \Random\RandomException
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[Route('/register', name: 'api_auth_register', methods: ['POST'])]
     public function register(Request $request, ValidatorInterface $validator): JsonResponse
     {
-        if ($ipLimitResponse = $this->checkIpLimit($request)) {
+        $ipLimitResponse = $this->checkIpLimit($request);
+        if ($ipLimitResponse !== null) {
             return $ipLimitResponse;
         }
 
@@ -84,7 +85,8 @@ final class AuthController extends AbstractController
             ], 409);
         }
 
-        if ($emailLimitResponse = $this->checkEmailLimit($email)) {
+        $emailLimitResponse = $this->checkEmailLimit($email);
+        if ($emailLimitResponse !== null) {
             return $emailLimitResponse;
         }
 
@@ -108,7 +110,7 @@ final class AuthController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->issueVerificationCode($user->getEmail());
+        $this->verification->issue($user->getEmail());
 
         return $this->json([
             'message' => 'Registration successful. Please verify your email.',
@@ -117,10 +119,12 @@ final class AuthController extends AbstractController
         ], 201);
     }
 
+    /** @throws \Psr\Cache\InvalidArgumentException */
     #[Route('/verify', name: 'api_auth_verify', methods: ['POST'])]
     public function verify(Request $request, ValidatorInterface $validator): JsonResponse
     {
-        if ($ipLimitResponse = $this->checkIpLimit($request)) {
+        $ipLimitResponse = $this->checkIpLimit($request);
+        if ($ipLimitResponse !== null) {
             return $ipLimitResponse;
         }
 
@@ -151,7 +155,7 @@ final class AuthController extends AbstractController
             ], 400);
         }
 
-        $user = $this->consumeVerificationCode($email, $code);
+        $user = $this->verification->consume($email, $code);
         if ($user === null) {
             return $this->json([
                 'error' => 'Invalid or expired code',
@@ -167,6 +171,11 @@ final class AuthController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \Random\RandomException
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[Route('/send-code', name: 'api_auth_send_code', methods: ['POST'])]
     public function sendCode(Request $request, ValidatorInterface $validator): JsonResponse
     {
@@ -195,7 +204,8 @@ final class AuthController extends AbstractController
             ], 400);
         }
 
-        if ($emailLimitResponse = $this->checkEmailLimit($email)) {
+        $emailLimitResponse = $this->checkEmailLimit($email);
+        if ($emailLimitResponse !== null) {
             return $emailLimitResponse;
         }
 
@@ -208,17 +218,19 @@ final class AuthController extends AbstractController
             ], 404);
         }
 
-        $this->issueVerificationCode($user->getEmail());
+        $this->verification->issue($user->getEmail());
 
         return $this->json([
             'message' => 'Verification code sent',
         ]);
     }
 
+    /** @throws \Psr\Cache\InvalidArgumentException */
     #[Route('/login', name: 'api_auth_login', methods: ['POST'])]
     public function login(Request $request, ValidatorInterface $validator): JsonResponse
     {
-        if ($ipLimitResponse = $this->checkIpLimit($request)) {
+        $ipLimitResponse = $this->checkIpLimit($request);
+        if ($ipLimitResponse !== null) {
             return $ipLimitResponse;
         }
 
@@ -249,7 +261,7 @@ final class AuthController extends AbstractController
             ], 400);
         }
 
-        $user = $this->consumeVerificationCode($email, $code);
+        $user = $this->verification->consume($email, $code);
         if ($user === null) {
             return $this->json([
                 'error' => 'Invalid or expired code',
@@ -266,48 +278,6 @@ final class AuthController extends AbstractController
             'chat_token' => $chatToken,
             'user' => $this->userPayload($user),
         ]);
-    }
-
-    private function issueVerificationCode(string $email): void
-    {
-        $code = $this->generateVerificationCode();
-        $item = $this->cache->getItem($this->codeCacheKey($email));
-        $item->set($code);
-        $item->expiresAfter(self::CODE_TTL_SECONDS);
-        $this->cache->save($item);
-
-        $this->messageBus->dispatch(new SendVerificationCode($email, $code));
-    }
-
-    /**
-     * Validates the code, deletes it (single use), and marks the account confirmed
-     * on first successful verification. Returns null on any mismatch or missing user.
-     */
-    private function consumeVerificationCode(string $email, string $code): ?User
-    {
-        $cacheKey = $this->codeCacheKey($email);
-        $item = $this->cache->getItem($cacheKey);
-        $storedCode = $item->get();
-
-        if (!$item->isHit() || !is_string($storedCode) || !hash_equals($storedCode, $code)) {
-            return null;
-        }
-
-        $user = $this->userRepository->findOneBy([
-            'email' => $email,
-        ]);
-        if (!$user) {
-            return null;
-        }
-
-        $this->cache->deleteItem($cacheKey);
-
-        if ($user->getConfirmedAt() === null) {
-            $user->setConfirmedAt(Clock::get()->now());
-            $this->entityManager->flush();
-        }
-
-        return $user;
     }
 
     private function checkEmailLimit(string $email): ?JsonResponse
@@ -356,16 +326,5 @@ final class AuthController extends AbstractController
     private function stringField(array $data, string $key): ?string
     {
         return is_string($data[$key] ?? null) ? $data[$key] : null;
-    }
-
-    private function codeCacheKey(string $email): string
-    {
-        // PSR-6 keys forbid {}()/\@: — hash the (lowercased) address instead of sanitizing it.
-        return sprintf('verification_code_%s', hash('xxh3', mb_strtolower($email)));
-    }
-
-    private function generateVerificationCode(): string
-    {
-        return sprintf('%06d', random_int(0, 999_999));
     }
 }
