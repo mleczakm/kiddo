@@ -220,6 +220,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-server-handler" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-server-middleware" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/mcp-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mleczakm/twig-now" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

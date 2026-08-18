@@ -442,6 +442,7 @@
       <path value="$PROJECT_DIR$/vendor/tales-from-a-dev/tailwind-merge-php" />
       <path value="$PROJECT_DIR$/vendor/symfony/ux-dropzone" />
       <path value="$PROJECT_DIR$/vendor/symfony/rate-limiter" />
+      <path value="$PROJECT_DIR$/vendor/mleczakm/twig-now" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
