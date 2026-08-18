@@ -22,7 +22,7 @@ class BookingPreviewComponent extends AbstractController
     public ?Lesson $lesson = null;
 
     public function __construct(
-        private readonly BookingRepository $bookingRepository
+        private readonly BookingRepository $bookingRepository,
     ) {}
 
     /**
@@ -36,7 +36,7 @@ class BookingPreviewComponent extends AbstractController
 
         /** @var ?User $user */
         $user = $this->getUser();
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return [];
         }
 

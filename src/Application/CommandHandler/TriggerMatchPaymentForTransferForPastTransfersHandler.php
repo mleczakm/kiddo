@@ -15,12 +15,13 @@ readonly class TriggerMatchPaymentForTransferForPastTransfersHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBusInterface $bus
+        private MessageBusInterface $bus,
     ) {}
 
     public function __invoke(TriggerMatchPaymentForTransferForPastTransfers $command): void
     {
-        $transfers = $this->entityManager->createQuery('
+        $transfers = $this->entityManager
+            ->createQuery('
             SELECT t
             FROM App\Entity\Transfer t
             WHERE t.payment IS NULL

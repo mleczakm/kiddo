@@ -79,7 +79,7 @@ final class SeedDemoDataCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        if (! in_array($this->environment, ['dev', 'test'], true)) {
+        if (!in_array($this->environment, ['dev', 'test'], true)) {
             $io->error('Demo data can only be seeded in the dev or test environment.');
 
             return Command::FAILURE;
@@ -101,7 +101,7 @@ final class SeedDemoDataCommand extends Command
         $existingAdmin = $this->userRepository->findOneBy([
             'email' => $this->demoEmail('admin'),
         ]);
-        if ($existingAdmin instanceof User && ! $input->getOption('replace')) {
+        if ($existingAdmin instanceof User && !$input->getOption('replace')) {
             $io->note('Demo data already exists. Run with --replace to recreate it.');
             $this->printAccessDetails($io);
 
@@ -129,7 +129,7 @@ final class SeedDemoDataCommand extends Command
             count($bookings),
         ));
         $io->note(
-            '3 unmatched transfers were added at /admin/platnosci — use "Zatwierdź" to search and merge one with a pending payment.'
+            '3 unmatched transfers were added at /admin/platnosci — use "Zatwierdź" to search and merge one with a pending payment.',
         );
         $this->printAccessDetails($io);
 
@@ -174,20 +174,20 @@ final class SeedDemoDataCommand extends Command
      */
     private function createLessons(\DateTimeImmutable $now, User $host): array
     {
-        $weeklySeries = new Series(
-            new ArrayCollection(),
-            WorkshopType::WEEKLY,
-            [
-                new TicketOption(TicketType::ONE_TIME, Money::of(
-                    '79',
-                    'PLN'
-                ), 'Pojedyncze wejście', TicketReschedulePolicy::ONETIME_24H_BEFORE),
-                new TicketOption(TicketType::CARNET_4, Money::of(
-                    '279',
-                    'PLN'
-                ), 'Karnet na cztery spotkania', TicketReschedulePolicy::UNLIMITED_24H_BEFORE),
-            ],
-        );
+        $weeklySeries = new Series(new ArrayCollection(), WorkshopType::WEEKLY, [
+            new TicketOption(
+                TicketType::ONE_TIME,
+                Money::of('79', 'PLN'),
+                'Pojedyncze wejście',
+                TicketReschedulePolicy::ONETIME_24H_BEFORE,
+            ),
+            new TicketOption(
+                TicketType::CARNET_4,
+                Money::of('279', 'PLN'),
+                'Karnet na cztery spotkania',
+                TicketReschedulePolicy::UNLIMITED_24H_BEFORE,
+            ),
+        ]);
         $weeklySeries->addInstructor($host);
         $this->entityManager->persist($weeklySeries);
 
@@ -201,22 +201,19 @@ final class SeedDemoDataCommand extends Command
                 'Sensoryka',
                 '#fef3c7',
             );
-            $lesson->setSeries($weeklySeries)
-                ->addInstructor($host);
+            $lesson->setSeries($weeklySeries)->addInstructor($host);
             $this->entityManager->persist($lesson);
             $weeklyLessons[] = $lesson;
         }
 
-        $oneTimeSeries = new Series(
-            new ArrayCollection(),
-            WorkshopType::ONE_TIME,
-            [
-                new TicketOption(TicketType::ONE_TIME, Money::of(
-                    '95',
-                    'PLN'
-                ), 'Warsztat jednorazowy', TicketReschedulePolicy::ONETIME_24H_BEFORE),
-            ],
-        );
+        $oneTimeSeries = new Series(new ArrayCollection(), WorkshopType::ONE_TIME, [
+            new TicketOption(
+                TicketType::ONE_TIME,
+                Money::of('95', 'PLN'),
+                'Warsztat jednorazowy',
+                TicketReschedulePolicy::ONETIME_24H_BEFORE,
+            ),
+        ]);
         $oneTimeSeries->addInstructor($host);
         $this->entityManager->persist($oneTimeSeries);
 
@@ -227,7 +224,7 @@ final class SeedDemoDataCommand extends Command
                 8,
                 new AgeRange(1, 3),
                 'Muzyka',
-                '#dbeafe'
+                '#dbeafe',
             ),
             $this->newLesson(
                 '[DEMO] Mali odkrywcy',
@@ -235,7 +232,7 @@ final class SeedDemoDataCommand extends Command
                 12,
                 new AgeRange(4, 8),
                 'Eksperymenty',
-                '#dcfce7'
+                '#dcfce7',
             ),
             $this->newLesson(
                 '[DEMO] Rodzinne lepienie z gliny',
@@ -243,7 +240,7 @@ final class SeedDemoDataCommand extends Command
                 10,
                 new AgeRange(3, 9),
                 'Plastyka',
-                '#fae8ff'
+                '#fae8ff',
             ),
             $this->newLesson(
                 '[DEMO] Odwołane warsztaty pokazowe',
@@ -251,13 +248,12 @@ final class SeedDemoDataCommand extends Command
                 10,
                 new AgeRange(2, 7),
                 'Pokazowe',
-                '#fee2e2'
+                '#fee2e2',
             ),
         ];
         $oneTimeLessons[3]->status = 'cancelled';
         foreach ($oneTimeLessons as $lesson) {
-            $lesson->setSeries($oneTimeSeries)
-                ->addInstructor($host);
+            $lesson->setSeries($oneTimeSeries)->addInstructor($host);
             $this->entityManager->persist($lesson);
         }
 
@@ -286,7 +282,7 @@ final class SeedDemoDataCommand extends Command
             'Anna Kowalska',
             'DEMO Zosia Sensoplastyka',
             '79.00',
-            $now->modify('-4 days 3 hours')
+            $now->modify('-4 days 3 hours'),
         );
         $paidOnline->addTransfer($transfer);
         $this->entityManager->persist($transfer);
@@ -297,7 +293,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_ACTIVE,
             $now->modify('-5 days'),
             'Alergia na orzechy — proszę uważać na materiały.',
-            $weekly[1]
+            $weekly[1],
         );
 
         $carnetPayment = $this->payment($parents[1], '279', PaymentMethod::ONLINE, Payment::STATUS_PAID);
@@ -311,7 +307,7 @@ final class SeedDemoDataCommand extends Command
             $weekly[1],
             $weekly[2],
             $weekly[3],
-            $weekly[4]
+            $weekly[4],
         );
 
         $pendingPayment = $this->payment($parents[2], '95', PaymentMethod::ONLINE, Payment::STATUS_PENDING);
@@ -322,7 +318,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_PENDING,
             $now->modify('-2 hours'),
             null,
-            $oneTime[0]
+            $oneTime[0],
         );
 
         $onSitePayment = $this->payment($parents[3], '95', PaymentMethod::PAY_ON_PLACE, Payment::STATUS_PENDING);
@@ -333,7 +329,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_WAITING_APPROVAL,
             $now->modify('-1 day'),
             'Płatność kartą na miejscu.',
-            $oneTime[1]
+            $oneTime[1],
         );
 
         $cancelledPayment = $this->payment($parents[0], '95', PaymentMethod::ONLINE, Payment::STATUS_PAID);
@@ -344,7 +340,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_ACTIVE,
             $now->modify('-10 days'),
             'Anulowano z powodu choroby dziecka.',
-            $oneTime[1]
+            $oneTime[1],
         );
         $cancelled->cancel($admin, 'Choroba dziecka');
 
@@ -356,7 +352,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_ACTIVE,
             $now->modify('-14 days'),
             'Zwrot wykonany na rachunek klienta.',
-            $oneTime[2]
+            $oneTime[2],
         );
         $refunded->cancel($admin, 'Anulowanie ze zwrotem');
 
@@ -368,7 +364,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_ACTIVE,
             $now->modify('-8 days'),
             'Termin przełożony na prośbę rodzica.',
-            $weekly[1]
+            $weekly[1],
         );
         $rescheduled->rescheduleLesson($weekly[1], $weekly[2], $admin);
 
@@ -380,7 +376,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_PAST,
             $now->modify('-20 days'),
             'Uczestnik obecny; zajęcia zakończone.',
-            $weekly[0]
+            $weekly[0],
         );
 
         $unpaidWithoutPayment = $this->booking(
@@ -390,7 +386,7 @@ final class SeedDemoDataCommand extends Command
             Booking::STATUS_ACTIVE,
             $now->modify('-1 day 4 hours'),
             'Rezerwacja ręczna — do rozliczenia.',
-            $oneTime[2]
+            $oneTime[2],
         );
 
         $this->createUnmatchedTransfers($now);
@@ -428,16 +424,19 @@ final class SeedDemoDataCommand extends Command
         string $category,
         string $theme,
     ): Lesson {
-        return new Lesson(new LessonMetadata(
-            title: $title,
-            lead: 'Rozwojowe zajęcia demonstracyjne dla dzieci i rodziców.',
-            visualTheme: $theme,
-            description: 'Kompletny opis przykładowych zajęć. Dane utworzone przez komendę developerską.',
-            capacity: $capacity,
-            duration: 60,
-            ageRange: $ageRange,
-            category: $category,
-        ), $schedule);
+        return new Lesson(
+            new LessonMetadata(
+                title: $title,
+                lead: 'Rozwojowe zajęcia demonstracyjne dla dzieci i rodziców.',
+                visualTheme: $theme,
+                description: 'Kompletny opis przykładowych zajęć. Dane utworzone przez komendę developerską.',
+                capacity: $capacity,
+                duration: 60,
+                ageRange: $ageRange,
+                category: $category,
+            ),
+            $schedule,
+        );
     }
 
     private function payment(User $user, string $amount, PaymentMethod $method, string $status): Payment
@@ -459,10 +458,7 @@ final class SeedDemoDataCommand extends Command
         Lesson ...$lessons,
     ): Booking {
         $booking = new Booking($user, $payment, ...$lessons);
-        $booking->setChild($child)
-            ->setStatus($status)
-            ->setCreatedAt($createdAt)
-            ->setNotes($note);
+        $booking->setChild($child)->setStatus($status)->setCreatedAt($createdAt)->setNotes($note);
         $this->entityManager->persist($booking);
 
         return $booking;
@@ -481,21 +477,21 @@ final class SeedDemoDataCommand extends Command
                 'Ewa Kamińska',
                 self::DEMO_TITLE_PREFIX . 'za warsztaty dla wnuczki',
                 '95.00',
-                $now->modify('-3 hours')
+                $now->modify('-3 hours'),
             ),
             new Transfer(
                 '89 1140 2004 0000 3002 0135 5387',
                 'Grzegorz Zieliński',
                 self::DEMO_TITLE_PREFIX . 'oplata za zajecia syna',
                 '95.00',
-                $now->modify('-6 hours')
+                $now->modify('-6 hours'),
             ),
             new Transfer(
                 '12 1240 0000 0000 0000 0000 0000',
                 'Nieznany Nadawca',
                 self::DEMO_TITLE_PREFIX . 'przelew',
                 '60.00',
-                $now->modify('-1 day 2 hours')
+                $now->modify('-1 day 2 hours'),
             ),
         ];
 
@@ -513,7 +509,8 @@ final class SeedDemoDataCommand extends Command
         $this->entityManager->flush();
 
         /** @var list<User> $users */
-        $users = $this->userRepository->createQueryBuilder('u')
+        $users = $this->userRepository
+            ->createQueryBuilder('u')
             ->where('u.email LIKE :domain')
             ->setParameter('domain', '%@' . self::DEMO_DOMAIN)
             ->getQuery()
@@ -544,7 +541,8 @@ final class SeedDemoDataCommand extends Command
         }
 
         /** @var list<Lesson> $lessons */
-        $lessons = $this->lessonRepository->createQueryBuilder('l')
+        $lessons = $this->lessonRepository
+            ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
             ->where('m.title LIKE :prefix')
             ->setParameter('prefix', self::DEMO_TITLE_PREFIX . '%')

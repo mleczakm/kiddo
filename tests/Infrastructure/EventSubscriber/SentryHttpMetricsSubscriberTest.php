@@ -33,27 +33,20 @@ class SentryHttpMetricsSubscriberTest extends TestCase
 
     public function testOnKernelRequestTracksTotalForMainRequest(): void
     {
-        $this->metrics->expects($this->once())
-            ->method('count')
-            ->with('requests.total', 1);
+        $this->metrics->expects($this->once())->method('count')->with('requests.total', 1);
 
-        $this->subscriber->onKernelRequest(new RequestEvent(
-            $this->kernel,
-            new Request(),
-            HttpKernelInterface::MAIN_REQUEST,
-        ));
+        $this->subscriber->onKernelRequest(
+            new RequestEvent($this->kernel, new Request(), HttpKernelInterface::MAIN_REQUEST),
+        );
     }
 
     public function testOnKernelRequestIgnoresSubRequest(): void
     {
-        $this->metrics->expects($this->never())
-            ->method('count');
+        $this->metrics->expects($this->never())->method('count');
 
-        $this->subscriber->onKernelRequest(new RequestEvent(
-            $this->kernel,
-            new Request(),
-            HttpKernelInterface::SUB_REQUEST,
-        ));
+        $this->subscriber->onKernelRequest(
+            new RequestEvent($this->kernel, new Request(), HttpKernelInterface::SUB_REQUEST),
+        );
     }
 
     public function testOnKernelResponseTracksCountersAndDurationForMainRequest(): void
@@ -62,37 +55,37 @@ class SentryHttpMetricsSubscriberTest extends TestCase
         $request->server->set('REQUEST_TIME_FLOAT', microtime(true) - 0.05);
 
         $calls = [];
-        $this->metrics->expects($this->exactly(2))
+        $this->metrics
+            ->expects($this->exactly(2))
             ->method('count')
             ->willReturnCallback(function (string $name, int|float $value) use (&$calls): void {
                 $calls[] = [$name, $value];
             });
-        $this->metrics->expects($this->once())
+        $this->metrics
+            ->expects($this->once())
             ->method('distribution')
             ->with('requests.duration_ms', $this->greaterThan(0));
 
-        $this->subscriber->onKernelResponse(new ResponseEvent(
-            $this->kernel,
-            $request,
-            HttpKernelInterface::MAIN_REQUEST,
-            new Response('', 404),
-        ));
+        $this->subscriber->onKernelResponse(
+            new ResponseEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, new Response('', 404)),
+        );
 
-        $this->assertSame([['responses.total', 1], ['responses.4xx', 1]], $calls);
+        $this->assertSame(
+            [
+                ['responses.total', 1],
+                ['responses.4xx',   1],
+            ],
+            $calls,
+        );
     }
 
     public function testOnKernelResponseIgnoresSubRequest(): void
     {
-        $this->metrics->expects($this->never())
-            ->method('count');
-        $this->metrics->expects($this->never())
-            ->method('distribution');
+        $this->metrics->expects($this->never())->method('count');
+        $this->metrics->expects($this->never())->method('distribution');
 
-        $this->subscriber->onKernelResponse(new ResponseEvent(
-            $this->kernel,
-            new Request(),
-            HttpKernelInterface::SUB_REQUEST,
-            new Response(),
-        ));
+        $this->subscriber->onKernelResponse(
+            new ResponseEvent($this->kernel, new Request(), HttpKernelInterface::SUB_REQUEST, new Response()),
+        );
     }
 }

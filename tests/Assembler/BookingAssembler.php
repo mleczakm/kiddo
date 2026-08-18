@@ -30,7 +30,7 @@ class BookingAssembler extends EntityAssembler
         return $this->with('payment', $payment);
     }
 
-    public function withLessons(Lesson ... $lessons): static
+    public function withLessons(Lesson ...$lessons): static
     {
         return $this->with('lessons', $lessons);
     }

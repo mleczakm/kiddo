@@ -9,6 +9,6 @@ use App\Entity\Payment;
 readonly class SendPaymentNotificationCommand
 {
     public function __construct(
-        public Payment $payment
+        public Payment $payment,
     ) {}
 }

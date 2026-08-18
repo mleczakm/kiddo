@@ -33,7 +33,7 @@ readonly class AccessDeniedHandler implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        if (! $exception instanceof AccessDeniedException) {
+        if (!$exception instanceof AccessDeniedException) {
             return;
         }
 
@@ -44,13 +44,12 @@ readonly class AccessDeniedHandler implements EventSubscriberInterface
             return;
         }
 
-        $path = $event->getRequest()
-            ->getPathInfo();
+        $path = $event->getRequest()->getPathInfo();
 
-        if (! str_starts_with($path, $this->router->generate('dashboard')) && ! str_starts_with(
-            $path,
-            $this->router->generate('app_admin_dashboard')
-        )) {
+        if (
+            !str_starts_with($path, $this->router->generate('dashboard'))
+            && !str_starts_with($path, $this->router->generate('app_admin_dashboard'))
+        ) {
             return;
         }
 

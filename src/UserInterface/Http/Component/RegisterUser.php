@@ -8,18 +8,18 @@ use App\Application\Command\SendLoginNotification;
 use App\Application\Newsletter\NewsletterSubscriptionManager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsLiveComponent]
 class RegisterUser extends AbstractController
@@ -47,14 +47,14 @@ class RegisterUser extends AbstractController
         $this->user = new User();
 
         /** @var FormInterface<User> $form */
-        $form = $this->createFormBuilder($this->user)
+        $form = $this
+            ->createFormBuilder($this->user)
             ->add('name', TextType::class, [
                 'label' => 'form.register.name',
                 'constraints' => [new Assert\NotBlank(), new Assert\Length(min: 2, max: 100)],
             ])
             ->add('email', EmailType::class, [
                 'constraints' => [new Assert\NotBlank(), new Assert\Email()],
-
             ])
             ->add('newsletterSubscribed', CheckboxType::class, [
                 'label' => 'form.register.newsletter',
@@ -76,8 +76,7 @@ class RegisterUser extends AbstractController
 
         if ($this->getForm()->isValid()) {
             /** @var User $user */
-            $user = $this->getForm()
-                ->getData();
+            $user = $this->getForm()->getData();
             $user->setRoles(['ROLE_USER']);
 
             $desiredNewsletter = $user->isNewsletterSubscribed();

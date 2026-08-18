@@ -21,7 +21,7 @@ class FinanceContact
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class)]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-        private User $user
+        private User $user,
     ) {
         $this->id = new Ulid();
         $this->createdAt = new \DateTimeImmutable();

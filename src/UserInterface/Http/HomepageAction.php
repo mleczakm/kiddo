@@ -10,17 +10,14 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomepageAction extends AbstractController
 {
-    #[Route(path: '/', name: 'homepage',)]
+    #[Route(path: '/', name: 'homepage')]
     public function __invoke(): Response
     {
-        return $this->render(
-            'homepage.html.twig',
-            [
-                'page' => [
-                    'title' => 'Homepage',
-                    'description' => 'Welcome to the homepage.',
-                ],
-            ]
-        );
+        return $this->render('homepage.html.twig', [
+            'page' => [
+                'title' => 'Homepage',
+                'description' => 'Welcome to the homepage.',
+            ],
+        ]);
     }
 }

@@ -37,24 +37,17 @@ class SentryPaymentWorkflowMetricsSubscriberTest extends TestCase
 
     public function testOnPaymentTransitionTracksCountersAndAmountOnPay(): void
     {
-        $payment = PaymentAssembler::new()
-            ->withAmount(Money::of('100.00', 'PLN'))
-            ->assemble();
+        $payment = PaymentAssembler::new()->withAmount(Money::of('100.00', 'PLN'))->assemble();
 
         $transition = new Transition('pay', ['pending'], ['paid']);
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn($payment);
-        $event->method('getTransition')
-            ->willReturn($transition);
+        $event->method('getSubject')->willReturn($payment);
+        $event->method('getTransition')->willReturn($transition);
 
-        $this->metrics->expects($this->exactly(2))
-            ->method('count');
-        $this->metrics->expects($this->once())
-            ->method('distribution')
-            ->with('payments.amount', 100.0, [
-                'currency' => 'PLN',
-            ]);
+        $this->metrics->expects($this->exactly(2))->method('count');
+        $this->metrics->expects($this->once())->method('distribution')->with('payments.amount', 100.0, [
+            'currency' => 'PLN',
+        ]);
 
         $this->subscriber->onPaymentTransition($event);
     }
@@ -63,35 +56,26 @@ class SentryPaymentWorkflowMetricsSubscriberTest extends TestCase
     {
         $transition = new Transition('pay', ['pending'], ['paid']);
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn(new \stdClass());
-        $event->method('getTransition')
-            ->willReturn($transition);
+        $event->method('getSubject')->willReturn(new \stdClass());
+        $event->method('getTransition')->willReturn($transition);
 
-        $this->metrics->expects($this->never())
-            ->method('count');
-        $this->metrics->expects($this->never())
-            ->method('distribution');
+        $this->metrics->expects($this->never())->method('count');
+        $this->metrics->expects($this->never())->method('distribution');
 
         $this->subscriber->onPaymentTransition($event);
     }
 
     public function testOnPaymentTransitionSkipsAmountForNonPayTransitions(): void
     {
-        $payment = PaymentAssembler::new()
-            ->assemble();
+        $payment = PaymentAssembler::new()->assemble();
 
         $transition = new Transition('expire', ['pending'], ['expired']);
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn($payment);
-        $event->method('getTransition')
-            ->willReturn($transition);
+        $event->method('getSubject')->willReturn($payment);
+        $event->method('getTransition')->willReturn($transition);
 
-        $this->metrics->expects($this->exactly(2))
-            ->method('count');
-        $this->metrics->expects($this->never())
-            ->method('distribution');
+        $this->metrics->expects($this->exactly(2))->method('count');
+        $this->metrics->expects($this->never())->method('distribution');
 
         $this->subscriber->onPaymentTransition($event);
     }

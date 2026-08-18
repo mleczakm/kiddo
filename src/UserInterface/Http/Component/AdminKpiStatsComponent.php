@@ -30,10 +30,8 @@ final readonly class AdminKpiStatsComponent
     public function getKpiStats(): array
     {
         $now = Clock::get()->now();
-        $monthStart = $now->modify('first day of this month')
-            ->setTime(0, 0, 0);
-        $monthEnd = $now->modify('last day of this month')
-            ->setTime(23, 59, 59);
+        $monthStart = $now->modify('first day of this month')->setTime(0, 0, 0);
+        $monthEnd = $now->modify('last day of this month')->setTime(23, 59, 59);
 
         $bookingsCount = $this->bookingRepository->countCreatedBetween($monthStart, $monthEnd);
 
@@ -47,12 +45,11 @@ final readonly class AdminKpiStatsComponent
         $totalCapacity = 0;
         $totalBooked = 0;
         foreach ($lessons as $lesson) {
-            $capacity = $lesson->getMetadata()
-                ->capacity;
+            $capacity = $lesson->getMetadata()->capacity;
             $totalCapacity += $capacity;
             $totalBooked += $capacity - $lesson->getAvailableSpots();
         }
-        $occupancyRate = $totalCapacity > 0 ? (int) round($totalBooked / $totalCapacity * 100) : 0;
+        $occupancyRate = $totalCapacity > 0 ? (int) round(($totalBooked / $totalCapacity) * 100) : 0;
 
         $formatter = new \IntlDateFormatter('pl_PL', pattern: 'LLLL');
 

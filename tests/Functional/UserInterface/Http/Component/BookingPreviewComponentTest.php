@@ -33,25 +33,16 @@ final class BookingPreviewComponentTest extends KernelTestCase
     {
         $now = Clock::get()->now();
 
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+2 days'))
             ->assemble();
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->withStatus('paid')
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->withStatus('paid')->assemble();
 
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson)->assemble();
 
         $this->em->persist($user);
         $this->em->persist($lesson);
@@ -69,35 +60,23 @@ final class BookingPreviewComponentTest extends KernelTestCase
     {
         $now = Clock::get()->now();
 
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+2 days'))
             ->assemble();
 
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+3 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+3 days'))
             ->assemble();
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->withStatus('paid')
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->withStatus('paid')->assemble();
 
-        $booking1 = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson1)
-            ->assemble();
+        $booking1 = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson1)->assemble();
 
-        $booking2 = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson2)
-            ->assemble();
+        $booking2 = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson2)->assemble();
 
         $this->em->persist($user);
         $this->em->persist($lesson1);
@@ -117,30 +96,18 @@ final class BookingPreviewComponentTest extends KernelTestCase
     {
         $now = Clock::get()->now();
 
-        $user1 = UserAssembler::new()
-            ->withEmail('user1@example.com')
-            ->withName('User One')
-            ->assemble();
+        $user1 = UserAssembler::new()->withEmail('user1@example.com')->withName('User One')->assemble();
 
-        $user2 = UserAssembler::new()
-            ->withEmail('user2@example.com')
-            ->withName('User Two')
-            ->assemble();
+        $user2 = UserAssembler::new()->withEmail('user2@example.com')->withName('User Two')->assemble();
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+2 days'))
             ->assemble();
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user1)
-            ->withStatus('paid')
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user1)->withStatus('paid')->assemble();
 
-        $booking = BookingAssembler::new()
-            ->withUser($user1)
-            ->withPayment($payment)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user1)->withPayment($payment)->withLessons($lesson)->assemble();
 
         $this->em->persist($user1);
         $this->em->persist($user2);
@@ -158,36 +125,20 @@ final class BookingPreviewComponentTest extends KernelTestCase
     {
         $now = Clock::get()->now();
 
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+2 days'))
             ->assemble();
 
-        $payment1 = PaymentAssembler::new()
-            ->withUser($user)
-            ->withStatus('paid')
-            ->assemble();
+        $payment1 = PaymentAssembler::new()->withUser($user)->withStatus('paid')->assemble();
 
-        $payment2 = PaymentAssembler::new()
-            ->withUser($user)
-            ->withStatus('pending')
-            ->assemble();
+        $payment2 = PaymentAssembler::new()->withUser($user)->withStatus('pending')->assemble();
 
-        $booking1 = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment1)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking1 = BookingAssembler::new()->withUser($user)->withPayment($payment1)->withLessons($lesson)->assemble();
 
-        $booking2 = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment2)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking2 = BookingAssembler::new()->withUser($user)->withPayment($payment2)->withLessons($lesson)->assemble();
 
         $this->em->persist($user);
         $this->em->persist($lesson);

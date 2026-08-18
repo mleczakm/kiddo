@@ -14,7 +14,7 @@ final readonly class RescheduleLessonBooking
         private Ulid $oldLessonId,
         private Ulid $newLessonId,
         private User $rescheduledBy,
-        private ?string $reason = null
+        private ?string $reason = null,
     ) {}
 
     public function getBookingId(): Ulid

@@ -55,9 +55,10 @@ class NewsletterSubscriptionManager
                 type: ActivityType::NEWSLETTER_SUBSCRIBED,
                 title: sprintf('%s zapisał/a się do newslettera', $user->getName()),
                 subject: $user,
-                url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
-                    'id' => $userId,
-                ]) : null,
+                url: $userId !== null
+                    ? $this->urlGenerator->generate('app_admin_user_view', [
+                        'id' => $userId,
+                    ]) : null,
             );
 
             return;

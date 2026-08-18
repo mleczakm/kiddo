@@ -42,11 +42,9 @@ final class BookingPreviewComponentTest extends WebTestCase
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::ONE_TIME)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new() ->withTitle('Yoga') ->withTitle('Yoga') ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Yoga')->withTitle('Yoga')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 09:00:00'))
             ->assemble();
         $lesson->setSeries($series);
@@ -57,11 +55,7 @@ final class BookingPreviewComponentTest extends WebTestCase
             ->withStatus(Payment::STATUS_PENDING)
             ->assemble();
         $paymentCode = new PaymentCode($payment, 'QP12');
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson)->assemble();
 
         $em->persist($user);
         $em->persist($series);

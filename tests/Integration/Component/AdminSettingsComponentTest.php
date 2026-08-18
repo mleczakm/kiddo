@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Component\AdminSettingsComponent;
 use App\Entity\FinanceContact;
 use App\Entity\Setting;
@@ -14,6 +13,7 @@ use App\Repository\SettingRepository;
 use App\Repository\UserRepository;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;

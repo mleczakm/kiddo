@@ -27,8 +27,7 @@ final class LlmTxtControllerTest extends WebTestCase
 
         $client->request('GET', '/llm.txt');
 
-        $content = $client->getResponse()
-            ->getContent();
+        $content = $client->getResponse()->getContent();
         self::assertIsString($content);
         self::assertStringContainsString('Model Context Protocol (MCP) Server', $content);
         self::assertStringContainsString('2026-07-28', $content);
@@ -41,8 +40,7 @@ final class LlmTxtControllerTest extends WebTestCase
 
         $client->request('GET', '/llm.txt');
 
-        $content = $client->getResponse()
-            ->getContent();
+        $content = $client->getResponse()->getContent();
         self::assertIsString($content);
 
         // Check for key user tools
@@ -58,8 +56,7 @@ final class LlmTxtControllerTest extends WebTestCase
 
         $client->request('GET', '/llm.txt');
 
-        $content = $client->getResponse()
-            ->getContent();
+        $content = $client->getResponse()->getContent();
         self::assertIsString($content);
 
         // Check for key admin tools
@@ -74,8 +71,7 @@ final class LlmTxtControllerTest extends WebTestCase
 
         $client->request('GET', '/llm.txt');
 
-        $content = $client->getResponse()
-            ->getContent();
+        $content = $client->getResponse()->getContent();
         self::assertIsString($content);
         self::assertStringContainsString('mcpServers', $content);
         self::assertStringContainsString('kiddo', $content);
@@ -88,8 +84,7 @@ final class LlmTxtControllerTest extends WebTestCase
 
         $client->request('GET', '/llm.txt');
 
-        $content = $client->getResponse()
-            ->getContent();
+        $content = $client->getResponse()->getContent();
         self::assertIsString($content);
         self::assertStringContainsString('Domain Knowledge', $content);
         self::assertStringContainsString('Lesson/Workshop', $content);
@@ -103,8 +98,7 @@ final class LlmTxtControllerTest extends WebTestCase
 
         $client->request('GET', '/llm.txt');
 
-        $content = $client->getResponse()
-            ->getContent();
+        $content = $client->getResponse()->getContent();
         self::assertIsString($content);
         self::assertStringContainsString('AI Agent Behavior Guidelines', $content);
         self::assertStringContainsString('confirm=true', $content);

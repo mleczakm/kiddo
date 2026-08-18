@@ -37,14 +37,12 @@ final readonly class ChatActor
 
     public function isAdmin(): bool
     {
-        return in_array('ROLE_ADMIN', $this->roles, true)
-            || in_array('ROLE_SUPER_ADMIN', $this->roles, true);
+        return in_array('ROLE_ADMIN', $this->roles, true) || in_array('ROLE_SUPER_ADMIN', $this->roles, true);
     }
 
     public function userId(): int
     {
-        $id = $this->requireUser()
-            ->getId();
+        $id = $this->requireUser()->getId();
         if ($id === null) {
             throw new \LogicException('Chat actor user must be persisted');
         }

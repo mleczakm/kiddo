@@ -73,12 +73,15 @@ final readonly class AddBookingHandler
             $this->inAppNotifications->notify(
                 $instructor,
                 $this->translator->trans('notifications.in_app.new_booking.instructor.title', [], 'messages'),
-                $this->translator->trans('notifications.in_app.new_booking.instructor.body', [
-                    'name' => $user->getName(),
-                    'lesson' => $lesson->getMetadata()
-                        ->title,
-                    'date' => $lesson->schedule->format('Y-m-d H:i'),
-                ], 'messages'),
+                $this->translator->trans(
+                    'notifications.in_app.new_booking.instructor.body',
+                    [
+                        'name' => $user->getName(),
+                        'lesson' => $lesson->getMetadata()->title,
+                        'date' => $lesson->schedule->format('Y-m-d H:i'),
+                    ],
+                    'messages',
+                ),
                 $this->urlGenerator->generate('app_admin_lesson_view', [
                     'id' => (string) $lesson->getId(),
                 ]),
@@ -87,18 +90,17 @@ final readonly class AddBookingHandler
         }
 
         // After commit: mailer failures must not roll back the booking/payment code.
-        $this->bus->dispatch(
-            new Envelope(new SendReservationNotification(
+        $this->bus->dispatch(new Envelope(
+            new SendReservationNotification(
                 $user->getEmail(),
                 $user->getName(),
                 $command->paymentCode,
                 $payment?->getAmount() ?? Money::zero(Currency::of('PLN')),
-                lessonTitle: $lesson->getMetadata()
-                    ->title,
+                lessonTitle: $lesson->getMetadata()->title,
                 lessonSchedule: $lesson->schedule,
                 ticketType: $ticketOption->type->value,
                 childName: $booking->getChild()?->getName(),
-            ))->with(new DispatchAfterCurrentBusStamp())
-        );
+            ),
+        )->with(new DispatchAfterCurrentBusStamp()));
     }
 }

@@ -75,9 +75,7 @@ final class SeriesDetailsComponentTest extends WebTestCase
     public function testRenderedActionUsesLiveArgumentParameterName(): void
     {
         $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY);
-        $lesson = LessonAssembler::new()
-            ->withSchedule(new \DateTimeImmutable('+2 days 10:00'))
-            ->assemble();
+        $lesson = LessonAssembler::new()->withSchedule(new \DateTimeImmutable('+2 days 10:00'))->assemble();
         $lesson->setSeries($series);
         $this->em->persist($series);
         $this->em->persist($lesson);
@@ -106,11 +104,7 @@ final class SeriesDetailsComponentTest extends WebTestCase
 
         $parent = UserAssembler::new()->withPhone('+48 501 111 111')->assemble();
         $child = new Child($parent, 'Zosia', new \DateTimeImmutable('2020-04-12'));
-        $booking = BookingAssembler::new()
-            ->withUser($parent)
-            ->withChild($child)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($parent)->withChild($child)->withLessons($lesson)->assemble();
 
         $this->em->persist($series);
         $this->em->persist($lesson);

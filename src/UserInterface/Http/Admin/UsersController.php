@@ -38,8 +38,7 @@ final class UsersController extends AbstractController
         return $this->render('admin/users/view.html.twig', [
             'user' => $user,
             'totalSpent' => $totalSpent,
-            'bookingsCount' => $user->getBookings()
-                ->count(),
+            'bookingsCount' => $user->getBookings()->count(),
         ]);
     }
 }

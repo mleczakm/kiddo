@@ -211,7 +211,7 @@ class LessonModal extends AbstractController
     #[LiveAction]
     public function proceedToPayment(#[LiveArg] string $paymentMethod): void
     {
-        if (! $this->termsAccepted || ! $this->selectedTicketType) {
+        if (!$this->termsAccepted || !$this->selectedTicketType) {
             $this->paymentStatus = 'error';
             return;
         }
@@ -278,18 +278,15 @@ class LessonModal extends AbstractController
     {
         /** @var ?User $user */
         $user = $this->getUser();
-        if (! $user) {
+        if (!$user) {
             return [];
         }
 
-        return array_map(
-            static fn($c) => [
-                'id' => (string) $c->getId(),
-                'name' => $c->getName(),
-                'birthday' => $c->getBirthday()?->format('Y-m-d'),
-            ],
-            $this->childRepository->findByOwner($user)
-        );
+        return array_map(static fn($c) => [
+            'id' => (string) $c->getId(),
+            'name' => $c->getName(),
+            'birthday' => $c->getBirthday()?->format('Y-m-d'),
+        ], $this->childRepository->findByOwner($user));
     }
 
     #[LiveAction]
@@ -297,7 +294,7 @@ class LessonModal extends AbstractController
     {
         $this->selectDefaultTicketType();
 
-        if (! $this->termsAccepted || ! $this->selectedTicketType) {
+        if (!$this->termsAccepted || !$this->selectedTicketType) {
             $this->paymentStatus = 'error';
             return;
         }
@@ -312,14 +309,13 @@ class LessonModal extends AbstractController
                 return;
             }
 
-            if (! $this->ensurePhoneOnAccount($user)) {
+            if (!$this->ensurePhoneOnAccount($user)) {
                 return;
             }
 
             $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
 
-            $paymentCode = new PaymentFactory()
-                ->generateCode();
+            $paymentCode = new PaymentFactory()->generateCode();
 
             $this->bus->dispatch(new AddBooking(
                 userId: $userId,
@@ -375,7 +371,7 @@ class LessonModal extends AbstractController
 
         try {
             $parsed = PhoneNumberUtil::getInstance()->parse($raw, 'PL');
-            if (! PhoneNumberUtil::getInstance()->isValidNumber($parsed)) {
+            if (!PhoneNumberUtil::getInstance()->isValidNumber($parsed)) {
                 $this->phoneError = 'booking.phone.invalid';
                 return false;
             }
@@ -392,10 +388,8 @@ class LessonModal extends AbstractController
 
     private function setPaymentAmount(Money $amount): void
     {
-        $this->paymentAmountMinor = (string) $amount->getMinorAmount()
-            ->toInt();
-        $this->paymentCurrency = $amount->getCurrency()
-            ->getCurrencyCode();
+        $this->paymentAmountMinor = (string) $amount->getMinorAmount()->toInt();
+        $this->paymentCurrency = $amount->getCurrency()->getCurrencyCode();
     }
 
     public function getPaymentAmount(): ?Money
@@ -411,8 +405,7 @@ class LessonModal extends AbstractController
     {
         $paymentCode = $this->paymentCodeRepository->findOneByCode($code);
 
-        return $paymentCode !== null ? (string) $paymentCode->getPayment()
-            ->getId() : null;
+        return $paymentCode !== null ? (string) $paymentCode->getPayment()->getId() : null;
     }
 
     public function getPaymentCode(): ?string
@@ -431,7 +424,7 @@ class LessonModal extends AbstractController
 
         /** @var ?User $user */
         $user = $this->getUser();
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return [];
         }
 
@@ -448,7 +441,7 @@ class LessonModal extends AbstractController
 
         /** @var ?User $user */
         $user = $this->getUser();
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return;
         }
 
@@ -458,12 +451,11 @@ class LessonModal extends AbstractController
             return;
         }
 
-        if (! $booking instanceof Booking) {
+        if (!$booking instanceof Booking) {
             return;
         }
 
-        $bookingUserId = $booking->getUser()
-            ->getId();
+        $bookingUserId = $booking->getUser()->getId();
         $currentUserId = $user->getId();
         if ($bookingUserId === null || $currentUserId === null || $bookingUserId !== $currentUserId) {
             return;
@@ -477,12 +469,12 @@ class LessonModal extends AbstractController
                 break;
             }
         }
-        if (! $belongsToLesson) {
+        if (!$belongsToLesson) {
             return;
         }
 
         $payment = $booking->getPayment();
-        if (! $payment instanceof Payment) {
+        if (!$payment instanceof Payment) {
             return;
         }
 
@@ -547,8 +539,7 @@ class LessonModal extends AbstractController
             return null;
         }
 
-        $this->watchedPaymentId = (string) $paymentCode->getPayment()
-            ->getId();
+        $this->watchedPaymentId = (string) $paymentCode->getPayment()->getId();
 
         return $paymentCode->getPayment();
     }

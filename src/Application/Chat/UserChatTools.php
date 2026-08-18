@@ -66,23 +66,28 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     'properties' => new \stdClass(),
                 ],
             ),
-            new ToolDefinition('user.update_profile', 'Update parent name, email and/or phone.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'name' => [
-                        'type' => 'string',
+            new ToolDefinition(
+                'user.update_profile',
+                'Update parent name, email and/or phone.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'name' => [
+                            'type' => 'string',
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                        ],
+                        'phone' => [
+                            'type' => 'string',
+                            'description' => 'Polish phone number',
+                        ],
                     ],
-                    'email' => [
-                        'type' => 'string',
-                    ],
-                    'phone' => [
-                        'type' => 'string',
-                        'description' => 'Polish phone number',
-                    ],
+                    'required' => ['confirm'],
                 ],
-                'required' => ['confirm'],
-            ], requiresConfirm: true),
+                requiresConfirm: true,
+            ),
             new ToolDefinition(
                 'user.list_children',
                 'List children (id, name, birthday) on the parent account. Use before booking when assigning child_id; do not invent children or ask for names already returned here.',
@@ -91,30 +96,40 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     'properties' => new \stdClass(),
                 ],
             ),
-            new ToolDefinition('user.add_child', 'Add a child to the parent account.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'name' => [
-                        'type' => 'string',
+            new ToolDefinition(
+                'user.add_child',
+                'Add a child to the parent account.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'name' => [
+                            'type' => 'string',
+                        ],
+                        'birthday' => [
+                            'type' => 'string',
+                            'description' => 'YYYY-MM-DD optional',
+                        ],
                     ],
-                    'birthday' => [
-                        'type' => 'string',
-                        'description' => 'YYYY-MM-DD optional',
-                    ],
+                    'required' => ['confirm', 'name'],
                 ],
-                'required' => ['confirm', 'name'],
-            ], requiresConfirm: true),
-            new ToolDefinition('user.delete_child', 'Delete a child from the parent account.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'child_id' => [
-                        'type' => 'string',
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'user.delete_child',
+                'Delete a child from the parent account.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'child_id' => [
+                            'type' => 'string',
+                        ],
                     ],
+                    'required' => ['confirm', 'child_id'],
                 ],
-                'required' => ['confirm', 'child_id'],
-            ], requiresConfirm: true),
+                requiresConfirm: true,
+            ),
             new ToolDefinition(
                 'user.list_upcoming_lessons',
                 'List available workshops/lessons for browsing or booking. Optional filters: age (years), week (Monday YYYY-MM-DD), query, limit. Public — works for guests.',
@@ -234,57 +249,72 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     'required' => ['booking_id', 'lesson_id'],
                 ],
             ),
-            new ToolDefinition('user.reschedule_lesson', 'Reschedule a booked lesson to another lesson in the series.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'booking_id' => [
-                        'type' => 'string',
+            new ToolDefinition(
+                'user.reschedule_lesson',
+                'Reschedule a booked lesson to another lesson in the series.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'new_lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'reason' => [
+                            'type' => 'string',
+                        ],
                     ],
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'new_lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'reason' => [
-                        'type' => 'string',
-                    ],
+                    'required' => ['confirm', 'booking_id', 'lesson_id', 'new_lesson_id'],
                 ],
-                'required' => ['confirm', 'booking_id', 'lesson_id', 'new_lesson_id'],
-            ], requiresConfirm: true),
-            new ToolDefinition('user.cancel_lesson', 'Cancel a lesson on a booking without refund.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'booking_id' => [
-                        'type' => 'string',
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'user.cancel_lesson',
+                'Cancel a lesson on a booking without refund.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'reason' => [
+                            'type' => 'string',
+                        ],
                     ],
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'reason' => [
-                        'type' => 'string',
-                    ],
+                    'required' => ['confirm', 'booking_id', 'lesson_id'],
                 ],
-                'required' => ['confirm', 'booking_id', 'lesson_id'],
-            ], requiresConfirm: true),
-            new ToolDefinition('user.request_refund', 'Request a refund for a paid lesson on a booking.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'booking_id' => [
-                        'type' => 'string',
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'user.request_refund',
+                'Request a refund for a paid lesson on a booking.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'reason' => [
+                            'type' => 'string',
+                        ],
                     ],
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'reason' => [
-                        'type' => 'string',
-                    ],
+                    'required' => ['confirm', 'booking_id', 'lesson_id'],
                 ],
-                'required' => ['confirm', 'booking_id', 'lesson_id'],
-            ], requiresConfirm: true),
+                requiresConfirm: true,
+            ),
             new ToolDefinition('user.list_notifications', 'List recent in-app notifications for the parent.', [
                 'type' => 'object',
                 'properties' => [
@@ -302,58 +332,78 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 'required' => ['notification_id'],
             ]),
-            new ToolDefinition('user.delete_notification', 'Soft-delete a notification.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'notification_id' => [
-                        'type' => 'string',
+            new ToolDefinition(
+                'user.delete_notification',
+                'Soft-delete a notification.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'notification_id' => [
+                            'type' => 'string',
+                        ],
                     ],
+                    'required' => ['confirm', 'notification_id'],
                 ],
-                'required' => ['confirm', 'notification_id'],
-            ], requiresConfirm: true),
-            new ToolDefinition('user.register', 'Register a new user account. A 6-digit verification code is emailed to the user; ask them to read it back, then call user.login_with_code.', [
-                'type' => 'object',
-                'properties' => [
-                    'email' => [
-                        'type' => 'string',
-                        'description' => 'User email address',
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'user.register',
+                'Register a new user account. A 6-digit verification code is emailed to the user; ask them to read it back, then call user.login_with_code.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'email' => [
+                            'type' => 'string',
+                            'description' => 'User email address',
+                        ],
+                        'name' => [
+                            'type' => 'string',
+                            'description' => 'User full name',
+                        ],
+                        'phone' => [
+                            'type' => 'string',
+                            'description' => 'Polish phone number (optional)',
+                        ],
                     ],
-                    'name' => [
-                        'type' => 'string',
-                        'description' => 'User full name',
-                    ],
-                    'phone' => [
-                        'type' => 'string',
-                        'description' => 'Polish phone number (optional)',
-                    ],
+                    'required' => ['email', 'name'],
                 ],
-                'required' => ['email', 'name'],
-            ], requiresAuth: false),
-            new ToolDefinition('user.request_login_code', 'Request a login verification code via email. Rate limited: 3 per hour per email.', [
-                'type' => 'object',
-                'properties' => [
-                    'email' => [
-                        'type' => 'string',
-                        'description' => 'User email address',
+                requiresAuth: false,
+            ),
+            new ToolDefinition(
+                'user.request_login_code',
+                'Request a login verification code via email. Rate limited: 3 per hour per email.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'email' => [
+                            'type' => 'string',
+                            'description' => 'User email address',
+                        ],
                     ],
+                    'required' => ['email'],
                 ],
-                'required' => ['email'],
-            ], requiresAuth: false),
-            new ToolDefinition('user.login_with_code', 'Authenticate with email and verification code to get chat token.', [
-                'type' => 'object',
-                'properties' => [
-                    'email' => [
-                        'type' => 'string',
-                        'description' => 'User email address',
+                requiresAuth: false,
+            ),
+            new ToolDefinition(
+                'user.login_with_code',
+                'Authenticate with email and verification code to get chat token.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'email' => [
+                            'type' => 'string',
+                            'description' => 'User email address',
+                        ],
+                        'code' => [
+                            'type' => 'string',
+                            'description' => '6-digit verification code',
+                        ],
                     ],
-                    'code' => [
-                        'type' => 'string',
-                        'description' => '6-digit verification code',
-                    ],
+                    'required' => ['email', 'code'],
                 ],
-                'required' => ['email', 'code'],
-            ], requiresAuth: false),
+                requiresAuth: false,
+            ),
         ];
     }
 
@@ -438,12 +488,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             ];
         }
 
-        return ToolResult::success(
-            sprintf('Masz %d dzieci na koncie.', count($children)),
-            [
-                'children' => $children,
-            ]
-        );
+        return ToolResult::success(sprintf('Masz %d dzieci na koncie.', count($children)), [
+            'children' => $children,
+        ]);
     }
 
     private function addChild(ChatActor $actor, ToolArguments $args): ToolResult
@@ -460,19 +507,16 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $this->entityManager->persist($child);
         $this->entityManager->flush();
 
-        return ToolResult::success(
-            sprintf('Dodano dziecko %s.', $name),
-            [
-                'child_id' => (string) $child->getId(),
-                'name' => $name,
-            ]
-        );
+        return ToolResult::success(sprintf('Dodano dziecko %s.', $name), [
+            'child_id' => (string) $child->getId(),
+            'name' => $name,
+        ]);
     }
 
     private function deleteChild(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $child = $this->childRepository->find(Ulid::fromString($args->requireString('child_id')));
-        if (! $child instanceof Child || $child->getOwner()->getId() !== $actor->userId()) {
+        if (!$child instanceof Child || $child->getOwner()->getId() !== $actor->userId()) {
             return ToolResult::failure('Child not found');
         }
         $name = $child->getName();
@@ -484,8 +528,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
     private function listUpcomingLessons(ToolArguments $args): ToolResult
     {
-        $week = $args->string('week') ?? new \DateTimeImmutable('today')
-            ->format('Y-m-d');
+        $week = $args->string('week') ?? new \DateTimeImmutable('today')->format('Y-m-d');
         $query = $args->string('query');
         $age = $args->int('age');
         $limit = $args->int('limit', 20) ?? 20;
@@ -493,13 +536,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $lessons = $this->lessonRepository->findByFilters($query, $age, $week, $limit);
         $items = array_map($this->presenter->lesson(...), $lessons);
 
-        return ToolResult::success(
-            sprintf('Znaleziono %d zajęć (tydzień od %s).', count($items), $week),
-            [
-                'week' => $week,
-                'lessons' => $items,
-            ]
-        );
+        return ToolResult::success(sprintf('Znaleziono %d zajęć (tydzień od %s).', count($items), $week), [
+            'week' => $week,
+            'lessons' => $items,
+        ]);
     }
 
     private function getLesson(ToolArguments $args): ToolResult
@@ -515,9 +555,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 '%s — %s, wolne miejsca: %d',
                 $data['title'],
                 new \DateTimeImmutable($data['schedule'])->format('d.m.Y H:i'),
-                $data['available_spots']
+                $data['available_spots'],
             ),
-            $data
+            $data,
         );
     }
 
@@ -535,8 +575,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             return ToolResult::failure('No available spots on this lesson');
         }
 
-        $paymentCode = new PaymentFactory()
-            ->generateCode();
+        $paymentCode = new PaymentFactory()->generateCode();
         $this->bus->dispatch(new AddBooking(
             userId: $actor->userId(),
             lessonId: $lessonId,
@@ -563,7 +602,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             ];
             $summary = sprintf(
                 'Rezerwacja utworzona. Opłać przelewem BLIK z tytułem zawierającym kod %s.',
-                $paymentCode
+                $paymentCode,
             );
         }
 
@@ -615,12 +654,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             $bookings[] = $this->presenter->booking($booking);
         }
 
-        return ToolResult::success(
-            sprintf('Znaleziono %d rezerwacji.', count($bookings)),
-            [
-                'bookings' => $bookings,
-            ]
-        );
+        return ToolResult::success(sprintf('Znaleziono %d rezerwacji.', count($bookings)), [
+            'bookings' => $bookings,
+        ]);
     }
 
     private function getBooking(ChatActor $actor, ToolArguments $args): ToolResult
@@ -638,7 +674,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     {
         $carnets = [];
         foreach ($actor->requireUser()->getBookings() as $booking) {
-            if (! $booking->isCarnet()) {
+            if (!$booking->isCarnet()) {
                 continue;
             }
             $carnets[] = $this->presenter->booking($booking);
@@ -653,7 +689,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     {
         $bookingId = $args->requireString('booking_id');
         $lessonId = $args->requireString('lesson_id');
-        if (! $this->looksLikeUlid($bookingId) || ! $this->looksLikeUlid($lessonId)) {
+        if (!$this->looksLikeUlid($bookingId) || !$this->looksLikeUlid($lessonId)) {
             return ToolResult::failure(
                 'Invalid booking_id/lesson_id. This tool is only for rescheduling an existing booking. To list available workshops call user.list_upcoming_lessons.',
                 'To nie jest przegląd oferty. Do listy zajęć użyj user.list_upcoming_lessons. Ten tool wymaga prawdziwych ULID rezerwacji i lekcji.',
@@ -685,24 +721,21 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             $targets[] = $this->presenter->lesson($candidate);
         }
 
-        return ToolResult::success(
-            sprintf('Dostępnych terminów do przełożenia: %d.', count($targets)),
-            [
-                'targets' => $targets,
-            ]
-        );
+        return ToolResult::success(sprintf('Dostępnych terminów do przełożenia: %d.', count($targets)), [
+            'targets' => $targets,
+        ]);
     }
 
     private function looksLikeUlid(string $value): bool
     {
         $trimmed = trim($value);
-        if ($trimmed === '' || ! Ulid::isValid($trimmed)) {
+        if ($trimmed === '' || !Ulid::isValid($trimmed)) {
             return false;
         }
 
         $blocked = ['any', 'all', 'none', 'null', 'undefined', 'n/a', '*'];
 
-        return ! in_array(strtolower($trimmed), $blocked, true);
+        return !in_array(strtolower($trimmed), $blocked, true);
     }
 
     private function rescheduleLesson(ChatActor $actor, ToolArguments $args): ToolResult
@@ -713,20 +746,22 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         if ($booking === null || $lesson === null || $newLesson === null) {
             return ToolResult::failure('Booking or lesson not found');
         }
-        if ($booking->getUser()->getId() !== $actor->userId() && ! $actor->isAdmin()) {
+        if ($booking->getUser()->getId() !== $actor->userId() && !$actor->isAdmin()) {
             return ToolResult::failure('Booking not found');
         }
-        if (! $booking->canRescheduleLesson($lesson) && ! $actor->isAdmin()) {
+        if (!$booking->canRescheduleLesson($lesson) && !$actor->isAdmin()) {
             return ToolResult::failure('Reschedule is not allowed for this booking/lesson');
         }
 
-        $this->bus->dispatch(new RescheduleLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $newLesson->getId(),
-            $actor->requireUser(),
-            $args->string('reason'),
-        ));
+        $this->bus->dispatch(
+            new RescheduleLessonBooking(
+                $booking->getId(),
+                $lesson->getId(),
+                $newLesson->getId(),
+                $actor->requireUser(),
+                $args->string('reason'),
+            ),
+        );
 
         return ToolResult::success('Lekcja została przełożona.');
     }
@@ -738,16 +773,18 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         if ($booking === null || $lesson === null) {
             return ToolResult::failure('Booking or lesson not found');
         }
-        if ($booking->getUser()->getId() !== $actor->userId() && ! $actor->isAdmin()) {
+        if ($booking->getUser()->getId() !== $actor->userId() && !$actor->isAdmin()) {
             return ToolResult::failure('Booking not found');
         }
 
-        $this->bus->dispatch(new CancelLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $actor->requireUser(),
-            $args->string('reason'),
-        ));
+        $this->bus->dispatch(
+            new CancelLessonBooking(
+                $booking->getId(),
+                $lesson->getId(),
+                $actor->requireUser(),
+                $args->string('reason'),
+            ),
+        );
 
         return ToolResult::success('Lekcja została odwołana z rezerwacji.');
     }
@@ -759,19 +796,21 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         if ($booking === null || $lesson === null) {
             return ToolResult::failure('Booking or lesson not found');
         }
-        if ($booking->getUser()->getId() !== $actor->userId() && ! $actor->isAdmin()) {
+        if ($booking->getUser()->getId() !== $actor->userId() && !$actor->isAdmin()) {
             return ToolResult::failure('Booking not found');
         }
-        if (! $booking->canRequestRefundForLesson($lesson) && ! $actor->isAdmin()) {
+        if (!$booking->canRequestRefundForLesson($lesson) && !$actor->isAdmin()) {
             return ToolResult::failure('Refund is not available within 24h of the lesson');
         }
 
-        $this->bus->dispatch(new RefundLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $actor->requireUser(),
-            $args->string('reason'),
-        ));
+        $this->bus->dispatch(
+            new RefundLessonBooking(
+                $booking->getId(),
+                $lesson->getId(),
+                $actor->requireUser(),
+                $args->string('reason'),
+            ),
+        );
 
         return ToolResult::success('Wysłano prośbę o zwrot.');
     }
@@ -788,8 +827,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'body' => $notification->getBody(),
                 'url' => $notification->getUrl(),
                 'unread' => $notification->isUnread(),
-                'created_at' => $notification->getCreatedAt()
-                    ->format(\DateTimeInterface::ATOM),
+                'created_at' => $notification->getCreatedAt()->format(\DateTimeInterface::ATOM),
             ];
         }
 
@@ -797,11 +835,11 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             sprintf(
                 'Powiadomienia: %d (nieprzeczytane: %d).',
                 count($items),
-                $this->notificationRepository->countUnreadForUser($actor->requireUser())
+                $this->notificationRepository->countUnreadForUser($actor->requireUser()),
             ),
             [
                 'notifications' => $items,
-            ]
+            ],
         );
     }
 
@@ -860,12 +898,9 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
         $this->issueVerificationCode($user->getEmail());
 
-        return ToolResult::success(
-            'Registration successful. A verification code has been sent to the user\'s email. Ask them to read it back to you.',
-            [
-                'user_id' => $user->getId(),
-            ]
-        );
+        return ToolResult::success('Registration successful. A verification code has been sent to the user\'s email. Ask them to read it back to you.', [
+            'user_id' => $user->getId(),
+        ]);
     }
 
     private function requestLoginCode(ToolArguments $args): ToolResult
@@ -875,20 +910,16 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         // Rate limit per email (3 codes per hour)
         $limiter = $this->authEmailRateLimiter->create($email);
         $limit = $limiter->consume(1);
-        if (! $limit->isAccepted()) {
-            $retryAfter = $limit->getRetryAfter()
-                ->getTimestamp() - time();
+        if (!$limit->isAccepted()) {
+            $retryAfter = $limit->getRetryAfter()->getTimestamp() - time();
 
-            return ToolResult::failure(sprintf(
-                'Too many code requests. Please try again in %d seconds.',
-                $retryAfter
-            ));
+            return ToolResult::failure(sprintf('Too many code requests. Please try again in %d seconds.', $retryAfter));
         }
 
         $user = $this->userRepository->findOneBy([
             'email' => $email,
         ]);
-        if (! $user) {
+        if (!$user) {
             return ToolResult::failure('User not found');
         }
 
@@ -906,14 +937,14 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $item = $this->cache->getItem($cacheKey);
         $storedCode = $item->get();
 
-        if (! $item->isHit() || ! is_string($storedCode) || ! hash_equals($storedCode, $code)) {
+        if (!$item->isHit() || !is_string($storedCode) || !hash_equals($storedCode, $code)) {
             return ToolResult::failure('Invalid or expired code');
         }
 
         $user = $this->userRepository->findOneBy([
             'email' => $email,
         ]);
-        if (! $user) {
+        if (!$user) {
             return ToolResult::failure('User not found');
         }
 
@@ -927,17 +958,14 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
         $chatToken = $this->tokenManager->mint($user);
 
-        return ToolResult::success(
-            'Login successful',
-            [
-                'chat_token' => $chatToken,
-                'user' => [
-                    'id' => $user->getId(),
-                    'email' => $user->getEmail(),
-                    'name' => $user->getName(),
-                ],
-            ]
-        );
+        return ToolResult::success('Login successful', [
+            'chat_token' => $chatToken,
+            'user' => [
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'name' => $user->getName(),
+            ],
+        ]);
     }
 
     private function issueVerificationCode(string $email): void

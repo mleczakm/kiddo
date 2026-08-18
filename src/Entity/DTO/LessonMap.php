@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity\DTO;
 
-use Symfony\Component\Clock\Clock;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\User;
 use Ds\Map;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 
 class LessonMap implements \Countable
@@ -262,7 +262,7 @@ class LessonMap implements \Countable
 
         foreach ($booking->getLessons() as $lesson) {
             $lessonId = $lesson->getId();
-            if (! $this->cancelled->hasKey($lessonId)) {
+            if (!$this->cancelled->hasKey($lessonId)) {
                 continue;
             }
 
@@ -289,7 +289,7 @@ class LessonMap implements \Countable
         if ($this->active->hasKey($ulid)) {
             $this->cancelled->put(
                 $ulid,
-                new CancelledLesson($ulid, $cancelledBy?->getId(), new \DateTimeImmutable(), $reason)
+                new CancelledLesson($ulid, $cancelledBy?->getId(), new \DateTimeImmutable(), $reason),
             );
             $this->active->remove($ulid);
             return true;
@@ -329,7 +329,7 @@ class LessonMap implements \Countable
         // Mark the original lesson as rescheduled in the cancelled map
         $this->cancelled->put(
             $fromId,
-            new RescheduledLesson($toId, $fromId, $rescheduledBy->getId() ?? 0, new \DateTimeImmutable())
+            new RescheduledLesson($toId, $fromId, $rescheduledBy->getId() ?? 0, new \DateTimeImmutable()),
         );
     }
 
@@ -481,15 +481,13 @@ class LessonMap implements \Countable
     public function entities(Booking $booking): \Generator
     {
         $this->ensureMapsInitialized();
-        yield from $booking->getLessons()
-            ->filter(fn(Lesson $lesson): bool => $this->lessons->hasKey($lesson->getId()));
+        yield from $booking->getLessons()->filter(fn(Lesson $lesson): bool => $this->lessons->hasKey($lesson->getId()));
     }
 
     public function entity(Booking $booking): \Generator
     {
         $this->ensureMapsInitialized();
-        yield from $booking->getLessons()
-            ->filter(fn(Lesson $lesson): bool => $this->lessons->hasKey($lesson->getId()));
+        yield from $booking->getLessons()->filter(fn(Lesson $lesson): bool => $this->lessons->hasKey($lesson->getId()));
     }
 
     public function getActiveCount(): int
@@ -528,7 +526,7 @@ class LessonMap implements \Countable
     {
         $this->ensureMapsInitialized();
         $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString((string) $lessonId);
-        if (! $this->cancelled->hasKey($ulid)) {
+        if (!$this->cancelled->hasKey($ulid)) {
             return false;
         }
         $value = $this->cancelled->get($ulid);

@@ -31,27 +31,21 @@ final class NewsletterController extends AbstractController
     ): JsonResponse {
         $content = $request->getContent();
         if ($content === '') {
-            return new JsonResponse(
-                [
-                    'error' => 'newsletter.email_required',
-                ],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
+            return new JsonResponse([
+                'error' => 'newsletter.email_required',
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /** @var array<string, mixed>|null $data */
         $data = json_decode($content, true);
-        if (! is_array($data)) {
-            return new JsonResponse(
-                [
-                    'error' => 'newsletter.email_required',
-                ],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
+        if (!is_array($data)) {
+            return new JsonResponse([
+                'error' => 'newsletter.email_required',
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Honeypot check - if the honeypot field is filled, silently succeed.
-        if (! empty($data['website'] ?? '')) {
+        if (!empty($data['website'] ?? '')) {
             return new JsonResponse([
                 'success' => true,
             ], JsonResponse::HTTP_OK);
@@ -59,13 +53,10 @@ final class NewsletterController extends AbstractController
 
         $email = $data['email'] ?? null;
 
-        if (! is_string($email)) {
-            return new JsonResponse(
-                [
-                    'error' => 'newsletter.email_required',
-                ],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
+        if (!is_string($email)) {
+            return new JsonResponse([
+                'error' => 'newsletter.email_required',
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $email = mb_strtolower(trim($email));
@@ -73,12 +64,9 @@ final class NewsletterController extends AbstractController
         $violations = $validator->validate($email, [new Assert\NotBlank(), new Assert\Email()]);
 
         if (count($violations) > 0) {
-            return new JsonResponse(
-                [
-                    'error' => 'newsletter.email_invalid',
-                ],
-                JsonResponse::HTTP_BAD_REQUEST
-            );
+            return new JsonResponse([
+                'error' => 'newsletter.email_invalid',
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // If the email already belongs to a registered user with an active newsletter
@@ -91,12 +79,9 @@ final class NewsletterController extends AbstractController
             'email' => $email,
         ]);
         if ($existingUser !== null && $existingUser->isNewsletterSubscribed()) {
-            return new JsonResponse(
-                [
-                    'message' => 'newsletter.already_subscribed',
-                ],
-                JsonResponse::HTTP_OK
-            );
+            return new JsonResponse([
+                'message' => 'newsletter.already_subscribed',
+            ], JsonResponse::HTTP_OK);
         }
 
         try {
@@ -107,19 +92,13 @@ final class NewsletterController extends AbstractController
                 'exception' => $exception,
             ]);
 
-            return new JsonResponse(
-                [
-                    'error' => 'newsletter.service_error',
-                ],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            return new JsonResponse([
+                'error' => 'newsletter.service_error',
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new JsonResponse(
-            [
-                'message' => 'newsletter.confirmation_sent',
-            ],
-            JsonResponse::HTTP_OK
-        );
+        return new JsonResponse([
+            'message' => 'newsletter.confirmation_sent',
+        ], JsonResponse::HTTP_OK);
     }
 }

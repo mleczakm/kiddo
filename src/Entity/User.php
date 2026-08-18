@@ -166,7 +166,6 @@ class User implements UserInterface
             return sprintf('%s <%s>', $this->name, $this->email);
         }
         return $this->email;
-
     }
 
     public function setEmail(string $email): static

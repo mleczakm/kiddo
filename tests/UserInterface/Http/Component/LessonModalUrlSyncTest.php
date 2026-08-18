@@ -34,16 +34,9 @@ final class LessonModalUrlSyncTest extends WebTestCase
 
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::WEEKLY)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Bałaganki')
-                    ->withTitle('Bałaganki')
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Bałaganki')->withTitle('Bałaganki')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
@@ -62,10 +55,9 @@ final class LessonModalUrlSyncTest extends WebTestCase
 
         $component->call('openModal');
 
-        $this->assertComponentDispatchBrowserEvent($component, 'workshop:url-change')
-            ->withPayload([
-                'url' => '/warsztaty/balaganki?date=2024-02-21&hour=10:30',
-            ]);
+        $this->assertComponentDispatchBrowserEvent($component, 'workshop:url-change')->withPayload([
+            'url' => '/warsztaty/balaganki?date=2024-02-21&hour=10:30',
+        ]);
         $lessonModal = $component->component();
         $this->assertInstanceOf(LessonModal::class, $lessonModal);
         $this->assertTrue($lessonModal->modalOpened);
@@ -77,16 +69,9 @@ final class LessonModalUrlSyncTest extends WebTestCase
 
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::WEEKLY)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Bałaganki')
-                    ->withTitle('Bałaganki')
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Bałaganki')->withTitle('Bałaganki')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
@@ -106,10 +91,9 @@ final class LessonModalUrlSyncTest extends WebTestCase
 
         $component->call('closeModal');
 
-        $this->assertComponentDispatchBrowserEvent($component, 'workshop:url-change')
-            ->withPayload([
-                'url' => '/warsztaty?week=2024-02-21',
-            ]);
+        $this->assertComponentDispatchBrowserEvent($component, 'workshop:url-change')->withPayload([
+            'url' => '/warsztaty?week=2024-02-21',
+        ]);
         $lessonModal = $component->component();
         $this->assertInstanceOf(LessonModal::class, $lessonModal);
         $this->assertFalse($lessonModal->modalOpened);

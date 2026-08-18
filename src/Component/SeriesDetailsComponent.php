@@ -76,7 +76,7 @@ class SeriesDetailsComponent extends AbstractController
         usort($lessons, fn(Lesson $a, Lesson $b) => $a->schedule <=> $b->schedule);
 
         // Filter based on showPast
-        if (! $this->showPast) {
+        if (!$this->showPast) {
             $now = Clock::get()->now();
             $lessons = array_filter($lessons, fn(Lesson $lesson) => $lesson->schedule >= $now);
         }
@@ -127,8 +127,7 @@ class SeriesDetailsComponent extends AbstractController
         $bookings = $this->getBookingsForLesson($lesson);
         return array_filter(
             $bookings,
-            fn(Booking $b)
-            => $b->getStatus() !== Booking::STATUS_CANCELLED && $b->getStatus() !== Booking::STATUS_PAST
+            fn(Booking $b) => $b->getStatus() !== Booking::STATUS_CANCELLED && $b->getStatus() !== Booking::STATUS_PAST,
         );
     }
 
@@ -174,7 +173,7 @@ class SeriesDetailsComponent extends AbstractController
     #[LiveAction]
     public function toggleShowPast(): void
     {
-        $this->showPast = ! $this->showPast;
+        $this->showPast = !$this->showPast;
     }
 
     #[LiveAction]
@@ -193,7 +192,7 @@ class SeriesDetailsComponent extends AbstractController
         }
 
         $currentUser = $this->getUser();
-        if (! $currentUser instanceof User) {
+        if (!$currentUser instanceof User) {
             return;
         }
 

@@ -15,9 +15,11 @@ final class ChatTokenManagerTest extends TestCase
     public function testMintAndParseRoundTrip(): void
     {
         $manager = new ChatTokenManager('test-secret');
-        $user = UserAssembler::new()->withId(42)->withEmail('chat-token@example.com')->withRoles(
-            'ROLE_USER'
-        )->assemble();
+        $user = UserAssembler::new()
+            ->withId(42)
+            ->withEmail('chat-token@example.com')
+            ->withRoles('ROLE_USER')
+            ->assemble();
 
         $token = $manager->mint($user, 600);
         $parsed = $manager->parse($token);
@@ -43,9 +45,11 @@ final class ChatTokenManagerTest extends TestCase
     public function testRejectsTamperedToken(): void
     {
         $manager = new ChatTokenManager('test-secret');
-        $user = UserAssembler::new()->withId(7)->withEmail('chat-token2@example.com')->withRoles(
-            'ROLE_USER'
-        )->assemble();
+        $user = UserAssembler::new()
+            ->withId(7)
+            ->withEmail('chat-token2@example.com')
+            ->withRoles('ROLE_USER')
+            ->assemble();
         $token = $manager->mint($user);
 
         $this->expectException(\InvalidArgumentException::class);

@@ -38,8 +38,7 @@ class PlatformBillingSubscriberTest extends KernelTestCase
 
     public function testOnPaymentPaidAddsCommission(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
 
         // Set up initial billing data
         $setting = new Setting();
@@ -57,8 +56,7 @@ class PlatformBillingSubscriberTest extends KernelTestCase
 
         // Create event with payment as subject
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn($payment);
+        $event->method('getSubject')->willReturn($payment);
 
         // Call the subscriber
         $this->subscriber->onPaymentPaid($event);
@@ -73,8 +71,7 @@ class PlatformBillingSubscriberTest extends KernelTestCase
 
     public function testOnPaymentPaidDoesNothingWhenSubjectIsNotPayment(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
 
         // Set up initial billing data
         $setting = new Setting();
@@ -88,8 +85,7 @@ class PlatformBillingSubscriberTest extends KernelTestCase
 
         // Create event with non-payment subject
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn(new \stdClass());
+        $event->method('getSubject')->willReturn(new \stdClass());
 
         // Call the subscriber
         $this->subscriber->onPaymentPaid($event);

@@ -10,7 +10,7 @@ use Symfony\Contracts\Service\ResetInterface;
 final class ConnectionCloserOnResetSubscriber implements ResetInterface
 {
     public function __construct(
-        private MailboxInterface $mailbox
+        private MailboxInterface $mailbox,
     ) {}
 
     public function reset(): void

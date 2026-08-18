@@ -43,24 +43,23 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
         $userId = $user->getId();
         self::assertNotNull($userId);
 
-        $this->bus()
-            ->dispatch(new AddBooking(
-                userId: $userId,
-                lessonId: (string) $lesson->getId(),
-                ticketType: TicketType::ONE_TIME->value,
-                childId: null,
-                paymentCode: 'AB12',
-            ));
+        $this->bus()->dispatch(new AddBooking(
+            userId: $userId,
+            lessonId: (string) $lesson->getId(),
+            ticketType: TicketType::ONE_TIME->value,
+            childId: null,
+            paymentCode: 'AB12',
+        ));
 
         $activityLogs = $em->getRepository(ActivityLog::class)->findBy([
             'type' => ActivityType::BOOKING_CREATED,
             'subject' => $user,
         ]);
 
-        self::assertContains(
-            'AB12',
-            array_map(static fn(ActivityLog $log): mixed => $log->getContext()['paymentCode'] ?? null, $activityLogs),
-        );
+        self::assertContains('AB12', array_map(
+            static fn(ActivityLog $log): mixed => $log->getContext()['paymentCode'] ?? null,
+            $activityLogs,
+        ));
     }
 
     public function testCancellingABookingWritesAnActivityLogEntry(): void
@@ -85,12 +84,11 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()
-            ->dispatch(new CancelLessonBooking($booking->getId(), $lesson->getId(), $user, 'Nie damy rady przyjść'));
-        $this->transport('async')
-            ->process();
-        $this->transport('async')
-            ->process();
+        $this->bus()->dispatch(
+            new CancelLessonBooking($booking->getId(), $lesson->getId(), $user, 'Nie damy rady przyjść'),
+        );
+        $this->transport('async')->process();
+        $this->transport('async')->process();
 
         $activityLogs = $em->getRepository(ActivityLog::class)->findBy([
             'type' => ActivityType::BOOKING_CANCELLED,

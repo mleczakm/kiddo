@@ -25,7 +25,7 @@ final readonly class SentryBookingWorkflowMetricsSubscriber implements EventSubs
     public function onBookingTransition(Event $event): void
     {
         $subject = $event->getSubject();
-        if (! $subject instanceof Booking) {
+        if (!$subject instanceof Booking) {
             return;
         }
 

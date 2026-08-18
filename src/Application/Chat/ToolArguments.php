@@ -15,7 +15,7 @@ final readonly class ToolArguments
 
     public function string(string $key, ?string $default = null): ?string
     {
-        if (! array_key_exists($key, $this->arguments)) {
+        if (!array_key_exists($key, $this->arguments)) {
             return $default;
         }
         $value = $this->arguments[$key];
@@ -41,7 +41,7 @@ final readonly class ToolArguments
 
     public function int(string $key, ?int $default = null): ?int
     {
-        if (! array_key_exists($key, $this->arguments)) {
+        if (!array_key_exists($key, $this->arguments)) {
             return $default;
         }
         $value = $this->arguments[$key];
@@ -73,7 +73,7 @@ final readonly class ToolArguments
 
     public function bool(string $key, bool $default = false): bool
     {
-        if (! array_key_exists($key, $this->arguments)) {
+        if (!array_key_exists($key, $this->arguments)) {
             return $default;
         }
         $value = $this->arguments[$key];
@@ -92,10 +92,11 @@ final readonly class ToolArguments
 
     public function has(string $key): bool
     {
-        return array_key_exists(
-            $key,
-            $this->arguments
-        ) && $this->arguments[$key] !== null && $this->arguments[$key] !== '';
+        return (
+            array_key_exists($key, $this->arguments)
+            && $this->arguments[$key] !== null
+            && $this->arguments[$key] !== ''
+        );
     }
 
     /**
@@ -103,14 +104,14 @@ final readonly class ToolArguments
      */
     public function array(string $key): ?array
     {
-        if (! array_key_exists($key, $this->arguments)) {
+        if (!array_key_exists($key, $this->arguments)) {
             return null;
         }
         $value = $this->arguments[$key];
         if ($value === null) {
             return null;
         }
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             throw new \InvalidArgumentException(sprintf('Argument "%s" must be an array', $key));
         }
 

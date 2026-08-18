@@ -25,7 +25,8 @@ class ChildRepository extends ServiceEntityRepository
     public function findByOwner(User $user): array
     {
         /** @var list<Child> $children */
-        $children = $this->createQueryBuilder('c')
+        $children = $this
+            ->createQueryBuilder('c')
             ->andWhere('c.owner = :owner')
             ->setParameter('owner', $user)
             ->orderBy('c.createdAt', 'DESC')

@@ -44,9 +44,9 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
         $capture = new \stdClass();
         $capture->nestedEnvelope = null;
 
-        $terminal = new readonly class ($capture) implements MiddlewareInterface {
+        $terminal = new readonly class($capture) implements MiddlewareInterface {
             public function __construct(
-                private \stdClass $capture
+                private \stdClass $capture,
             ) {}
 
             public function handle(Envelope $envelope, StackInterface $stack): Envelope
@@ -59,7 +59,7 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
 
         $stack = new StackMiddleware([
             $middleware,
-            new readonly class ($middleware, $terminal) implements MiddlewareInterface {
+            new readonly class($middleware, $terminal) implements MiddlewareInterface {
                 public function __construct(
                     private PreventAsyncDispatchInTaskWorkerMiddleware $middleware,
                     private MiddlewareInterface $terminal,
@@ -67,8 +67,7 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
 
                 public function handle(Envelope $envelope, StackInterface $stack): Envelope
                 {
-                    $envelope = $stack->next()
-                        ->handle($envelope, $stack);
+                    $envelope = $stack->next()->handle($envelope, $stack);
 
                     if ($envelope->last(ReceivedStamp::class) !== null) {
                         return $this->middleware->handle(
@@ -101,9 +100,9 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
 
     private function createMiddleware(bool $inTaskWorker): PreventAsyncDispatchInTaskWorkerMiddleware
     {
-        $context = new readonly class ($inTaskWorker) implements TaskWorkerContextInterface {
+        $context = new readonly class($inTaskWorker) implements TaskWorkerContextInterface {
             public function __construct(
-                private bool $inTaskWorker
+                private bool $inTaskWorker,
             ) {}
 
             public function isInTaskWorker(): bool

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
-use Symfony\Component\Uid\Ulid;
 use App\Entity\Lesson;
 use App\Entity\Series;
 use App\Entity\User;
@@ -13,6 +12,7 @@ use App\Security\Voter\LessonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
+use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -69,9 +69,9 @@ final class AdminScheduleComponent extends AbstractController
         $start = new \DateTimeImmutable($this->week);
         $end = $start->modify('+7 days');
 
-        if (! $this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             $user = $this->getUser();
-            if (! $user instanceof User) {
+            if (!$user instanceof User) {
                 return [];
             }
 
@@ -80,21 +80,20 @@ final class AdminScheduleComponent extends AbstractController
                 $start,
                 $end,
                 $this->showCancelled,
-                $user
+                $user,
             );
         } else {
             /** @var list<Lesson> $lessons */
             $lessons = $this->lessonRepository->findUpcomingInRange($start, $end, $this->showCancelled);
         }
 
-        if (! $this->showCancelled) {
+        if (!$this->showCancelled) {
             // A cancelled Series doesn't cancel its individual Lessons (each
             // keeps its own status) — filter those out here so a cancelled
             // series' occurrences stay hidden by default, same as before.
             $lessons = array_values(array_filter(
                 $lessons,
-                static fn(Lesson $l) => $l->getSeries() === null || $l->getSeries()
-                    ->status === 'active'
+                static fn(Lesson $l) => $l->getSeries() === null || $l->getSeries()->status === 'active',
             ));
         }
 
@@ -116,7 +115,7 @@ final class AdminScheduleComponent extends AbstractController
         foreach ($this->getLessons() as $lesson) {
             $series = $lesson->getSeries();
             $key = $series !== null ? (string) $series->getId() : 'lesson-' . (string) $lesson->getId();
-            if (! isset($groups[$key])) {
+            if (!isset($groups[$key])) {
                 $groups[$key] = [
                     'series' => $series,
                     'lessons' => [],
@@ -136,8 +135,7 @@ final class AdminScheduleComponent extends AbstractController
 
     public function getWeekEnd(): \DateTimeImmutable
     {
-        return $this->getWeekStart()
-            ->modify('+7 days');
+        return $this->getWeekStart()->modify('+7 days');
     }
 
     /**
@@ -199,7 +197,7 @@ final class AdminScheduleComponent extends AbstractController
     #[LiveAction]
     public function toggleCancelled(): void
     {
-        $this->showCancelled = ! $this->showCancelled;
+        $this->showCancelled = !$this->showCancelled;
     }
 
     #[LiveAction]
@@ -207,11 +205,11 @@ final class AdminScheduleComponent extends AbstractController
     {
         $id = Ulid::fromString($lessonId);
         $lesson = $this->em->find(Lesson::class, $id);
-        if (! $lesson instanceof Lesson) {
+        if (!$lesson instanceof Lesson) {
             return;
         }
 
-        if (! $this->isGranted(LessonVoter::MANAGE, $lesson)) {
+        if (!$this->isGranted(LessonVoter::MANAGE, $lesson)) {
             return;
         }
 

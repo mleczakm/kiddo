@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Symfony;
 
-use Sentry\State\HubInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Sentry\State\HubInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -33,9 +33,9 @@ final class SentryHubServiceWiringTest extends TestCase
             HubInterface::class,
             $this->block(null),
             'config/services.yaml must not define Sentry\State\HubInterface at the top level: '
-                . 'doing so overrides the client-bound Hub that sentry/sentry-symfony registers for prod, '
-                . 'silently dropping every event sent through BGalati\MonologSentryHandler\SentryHandler '
-                . '(see the comment above the `when@dev`/`when@test` blocks in this same file).'
+            . 'doing so overrides the client-bound Hub that sentry/sentry-symfony registers for prod, '
+            . 'silently dropping every event sent through BGalati\MonologSentryHandler\SentryHandler '
+            . '(see the comment above the `when@dev`/`when@test` blocks in this same file).',
         );
     }
 
@@ -46,8 +46,8 @@ final class SentryHubServiceWiringTest extends TestCase
                 HubInterface::class,
                 $this->block($block),
                 "config/services.yaml's \"{$block}\" block must provide a fallback Sentry\State\HubInterface "
-                    . 'so BGalati\MonologSentryHandler\SentryHandler can still be autowired outside prod '
-                    . '(SentryBundle is only registered for the prod environment).'
+                . 'so BGalati\MonologSentryHandler\SentryHandler can still be autowired outside prod '
+                . '(SentryBundle is only registered for the prod environment).',
             );
         }
     }

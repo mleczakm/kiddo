@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler\Notification;
 
-use App\Entity\Notification;
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\NewUser;
 use App\Application\CommandHandler\Notification\NewUserHandler;
+use App\Entity\Notification;
 use App\Entity\User;
 use App\Tests\Assembler\UserAssembler;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\NotificationAssertionsTrait;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
@@ -24,18 +24,9 @@ class NewUserHandlerTest extends KernelTestCase
     public function testSendEmailsToUserAndAdmins(): void
     {
         // Arrange
-        $user = UserAssembler::new()
-            ->withEmail('user@example.com')
-            ->withRoles('ROLE_USER')
-            ->assemble();
-        $admin1 = UserAssembler::new()
-            ->withEmail('admin1@example.com')
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
-        $admin2 = UserAssembler::new()
-            ->withEmail('admin2@example.com')
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('user@example.com')->withRoles('ROLE_USER')->assemble();
+        $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $admin2 = UserAssembler::new()->withEmail('admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
@@ -49,8 +40,7 @@ class NewUserHandlerTest extends KernelTestCase
         $handler(new NewUser($user));
 
         // Assert
-        $this->mailer()
-            ->assertSentEmailCount(3);
+        $this->mailer()->assertSentEmailCount(3);
 
         $userId = $user->getId();
         $em->clear();
@@ -58,8 +48,7 @@ class NewUserHandlerTest extends KernelTestCase
         self::assertNotNull($persistedUser);
         self::assertNotEmpty($persistedUser->getConfirmedAt());
 
-        $emails = $this->mailer()
-            ->sentEmails();
+        $emails = $this->mailer()->sentEmails();
 
         $recipients = array_map(fn(TestEmail $email) => $email->getTo()[0]->getAddress(), $emails->all());
         $this->assertContains('user@example.com', $recipients);
@@ -70,8 +59,7 @@ class NewUserHandlerTest extends KernelTestCase
         $userEmail = $persistedUser->getEmail();
         $userName = $persistedUser->getName();
         foreach ($emails as $email) {
-            $to = $email->getTo()[0]
-                ->getAddress();
+            $to = $email->getTo()[0]->getAddress();
             if (in_array($to, ['admin1@example.com', 'admin2@example.com'], true)) {
                 $body = (string) ($email->getHtmlBody() ?? $email->getTextBody());
                 $this->assertStringContainsString((string) $userId, $body);
@@ -87,14 +75,8 @@ class NewUserHandlerTest extends KernelTestCase
     public function testDoesNotSendEmailsIfUserAlreadyConfirmed(): void
     {
         // Arrange
-        $user = UserAssembler::new()
-            ->withEmail('user@example.com')
-            ->withRoles('ROLE_USER')
-            ->assemble();
-        $admin1 = UserAssembler::new()
-            ->withEmail('admin1@example.com')
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('user@example.com')->withRoles('ROLE_USER')->assemble();
+        $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
@@ -111,7 +93,6 @@ class NewUserHandlerTest extends KernelTestCase
         $handler(new NewUser($user));
 
         // Assert - no emails should be sent
-        $this->mailer()
-            ->assertSentEmailCount(0);
+        $this->mailer()->assertSentEmailCount(0);
     }
 }

@@ -60,114 +60,152 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ];
 
         return [
-            new ToolDefinition('admin.today_schedule', 'List today’s lessons with attendee counts (admin schedule).', [
-                'type' => 'object',
-                'properties' => [
-                    'date' => [
-                        'type' => 'string',
-                        'description' => 'YYYY-MM-DD, defaults to today',
-                    ],
-                ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.list_lessons', 'List lessons for a week (admin ops). Optional query/week. For age-filtered public catalog use user.list_upcoming_lessons.', [
-                'type' => 'object',
-                'properties' => [
-                    'week' => [
-                        'type' => 'string',
-                        'description' => 'Week start YYYY-MM-DD',
-                    ],
-                    'include_cancelled' => [
-                        'type' => 'boolean',
-                    ],
-                    'query' => [
-                        'type' => 'string',
-                    ],
-                    'limit' => [
-                        'type' => 'integer',
-                    ],
-                ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.get_lesson', 'Get lesson details for admin ops.', [
-                'type' => 'object',
-                'properties' => [
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                ],
-                'required' => ['lesson_id'],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.toggle_lesson', 'Toggle lesson status between active and cancelled.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                ],
-                'required' => ['confirm', 'lesson_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.update_lesson_capacity', 'Set lesson capacity (spots).', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'capacity' => [
-                        'type' => 'integer',
-                        'minimum' => 1,
-                    ],
-                ],
-                'required' => ['confirm', 'lesson_id', 'capacity'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.list_series', 'List series in a date range.', [
-                'type' => 'object',
-                'properties' => [
-                    'week' => [
-                        'type' => 'string',
-                        'description' => 'Week start YYYY-MM-DD',
-                    ],
-                    'include_cancelled' => [
-                        'type' => 'boolean',
-                    ],
-                ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.update_series', 'Replace ticket options for a series.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'series_id' => [
-                        'type' => 'string',
-                    ],
-                    'ticket_options' => [
-                        'type' => 'array',
-                        'description' => 'Optional full replacement of ticket options',
-                        'items' => [
-                            'type' => 'object',
-                            'properties' => [
-                                'type' => [
-                                    'type' => 'string',
-                                    'enum' => ['one_time', 'carnet_4'],
-                                ],
-                                'amount' => [
-                                    'type' => 'string',
-                                ],
-                                'currency' => [
-                                    'type' => 'string',
-                                ],
-                                'description' => [
-                                    'type' => 'string',
-                                ],
-                                'reschedule_policy' => [
-                                    'type' => 'string',
-                                ],
-                            ],
-                            'required' => ['type', 'amount'],
+            new ToolDefinition(
+                'admin.today_schedule',
+                'List today’s lessons with attendee counts (admin schedule).',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'date' => [
+                            'type' => 'string',
+                            'description' => 'YYYY-MM-DD, defaults to today',
                         ],
                     ],
                 ],
-                'required' => ['confirm', 'series_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.list_lessons',
+                'List lessons for a week (admin ops). Optional query/week. For age-filtered public catalog use user.list_upcoming_lessons.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'week' => [
+                            'type' => 'string',
+                            'description' => 'Week start YYYY-MM-DD',
+                        ],
+                        'include_cancelled' => [
+                            'type' => 'boolean',
+                        ],
+                        'query' => [
+                            'type' => 'string',
+                        ],
+                        'limit' => [
+                            'type' => 'integer',
+                        ],
+                    ],
+                ],
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.get_lesson',
+                'Get lesson details for admin ops.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['lesson_id'],
+                ],
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.toggle_lesson',
+                'Toggle lesson status between active and cancelled.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'lesson_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.update_lesson_capacity',
+                'Set lesson capacity (spots).',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'capacity' => [
+                            'type' => 'integer',
+                            'minimum' => 1,
+                        ],
+                    ],
+                    'required' => ['confirm', 'lesson_id', 'capacity'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.list_series',
+                'List series in a date range.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'week' => [
+                            'type' => 'string',
+                            'description' => 'Week start YYYY-MM-DD',
+                        ],
+                        'include_cancelled' => [
+                            'type' => 'boolean',
+                        ],
+                    ],
+                ],
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.update_series',
+                'Replace ticket options for a series.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'series_id' => [
+                            'type' => 'string',
+                        ],
+                        'ticket_options' => [
+                            'type' => 'array',
+                            'description' => 'Optional full replacement of ticket options',
+                            'items' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'type' => [
+                                        'type' => 'string',
+                                        'enum' => ['one_time', 'carnet_4'],
+                                    ],
+                                    'amount' => [
+                                        'type' => 'string',
+                                    ],
+                                    'currency' => [
+                                        'type' => 'string',
+                                    ],
+                                    'description' => [
+                                        'type' => 'string',
+                                    ],
+                                    'reschedule_policy' => [
+                                        'type' => 'string',
+                                    ],
+                                ],
+                                'required' => ['type', 'amount'],
+                            ],
+                        ],
+                    ],
+                    'required' => ['confirm', 'series_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
             new ToolDefinition(
                 'admin.clone_template_lesson',
                 'Create a new lesson occurrence by cloning a template lesson. Requires template_lesson_id ULID, schedule (ISO datetime), confirm=true. Not for listing workshops — use user.list_upcoming_lessons.',
@@ -192,189 +230,268 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
-            new ToolDefinition('admin.list_bookings', 'Search bookings by status or user email fragment.', [
-                'type' => 'object',
-                'properties' => [
-                    'status' => [
-                        'type' => 'string',
-                    ],
-                    'query' => [
-                        'type' => 'string',
-                    ],
-                    'limit' => [
-                        'type' => 'integer',
-                    ],
-                ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.create_booking', 'Create an active booking for a user (fast booking, no payment).', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'email' => [
-                        'type' => 'string',
-                    ],
-                    'name' => [
-                        'type' => 'string',
-                    ],
-                    'notes' => [
-                        'type' => 'string',
+            new ToolDefinition(
+                'admin.list_bookings',
+                'Search bookings by status or user email fragment.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'status' => [
+                            'type' => 'string',
+                        ],
+                        'query' => [
+                            'type' => 'string',
+                        ],
+                        'limit' => [
+                            'type' => 'integer',
+                        ],
                     ],
                 ],
-                'required' => ['confirm', 'lesson_id', 'email'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.mark_booking_paid', 'Mark booking payment as paid.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'booking_id' => [
-                        'type' => 'string',
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.create_booking',
+                'Create an active booking for a user (fast booking, no payment).',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                        ],
+                        'name' => [
+                            'type' => 'string',
+                        ],
+                        'notes' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'lesson_id', 'email'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.mark_booking_paid',
+                'Mark booking payment as paid.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'booking_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.cancel_lesson',
+                'Cancel a lesson on any booking (admin).',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'reason' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'booking_id', 'lesson_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.refund_lesson',
+                'Refund a lesson on any booking (admin).',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'reason' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'booking_id', 'lesson_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.reschedule_lesson',
+                'Reschedule any booking lesson (admin).',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'booking_id' => [
+                            'type' => 'string',
+                        ],
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'new_lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'reason' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'booking_id', 'lesson_id', 'new_lesson_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.list_payments',
+                'List pending payments, optional search.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'search' => [
+                            'type' => 'string',
+                        ],
                     ],
                 ],
-                'required' => ['confirm', 'booking_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.cancel_lesson', 'Cancel a lesson on any booking (admin).', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'booking_id' => [
-                        'type' => 'string',
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.list_unmatched_transfers',
+                'List bank transfers not yet assigned to a payment.',
+                [
+                    'type' => 'object',
+                    'properties' => new \stdClass(),
+                ],
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.assign_transfer',
+                'Assign an unmatched transfer to a pending payment and mark paid.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'transfer_id' => [
+                            'type' => 'integer',
+                        ],
+                        'payment_id' => [
+                            'type' => 'string',
+                        ],
                     ],
-                    'lesson_id' => [
-                        'type' => 'string',
+                    'required' => ['confirm', 'transfer_id', 'payment_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.reject_transfer',
+                'Reject/delete an unmatched transfer.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'transfer_id' => [
+                            'type' => 'integer',
+                        ],
                     ],
-                    'reason' => [
-                        'type' => 'string',
+                    'required' => ['confirm', 'transfer_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.trigger_import_transfers',
+                'Trigger IMAP bank-transfer import.',
+                [
+                    'type' => 'object',
+                    'properties' => [...$confirm],
+                    'required' => ['confirm'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.search_users',
+                'Search users by name or email.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'query' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['query'],
+                ],
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.get_user',
+                'Get user profile, children and booking summary.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'user_id' => [
+                            'type' => 'integer',
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                        ],
                     ],
                 ],
-                'required' => ['confirm', 'booking_id', 'lesson_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.refund_lesson', 'Refund a lesson on any booking (admin).', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'booking_id' => [
-                        'type' => 'string',
+                requiresAdmin: true,
+            ),
+            new ToolDefinition(
+                'admin.notify_user',
+                'Send an in-app notification to a user.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'user_id' => [
+                            'type' => 'integer',
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                        ],
+                        'title' => [
+                            'type' => 'string',
+                        ],
+                        'body' => [
+                            'type' => 'string',
+                        ],
+                        'url' => [
+                            'type' => 'string',
+                        ],
+                        'severity' => [
+                            'type' => 'string',
+                            'enum' => array_map(
+                                static fn(NotificationSeverity $s) => $s->value,
+                                NotificationSeverity::cases(),
+                            ),
+                        ],
                     ],
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'reason' => [
-                        'type' => 'string',
-                    ],
+                    'required' => ['confirm', 'title'],
                 ],
-                'required' => ['confirm', 'booking_id', 'lesson_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.reschedule_lesson', 'Reschedule any booking lesson (admin).', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'booking_id' => [
-                        'type' => 'string',
-                    ],
-                    'lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'new_lesson_id' => [
-                        'type' => 'string',
-                    ],
-                    'reason' => [
-                        'type' => 'string',
-                    ],
-                ],
-                'required' => ['confirm', 'booking_id', 'lesson_id', 'new_lesson_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.list_payments', 'List pending payments, optional search.', [
-                'type' => 'object',
-                'properties' => [
-                    'search' => [
-                        'type' => 'string',
-                    ],
-                ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.list_unmatched_transfers', 'List bank transfers not yet assigned to a payment.', [
-                'type' => 'object',
-                'properties' => new \stdClass(),
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.assign_transfer', 'Assign an unmatched transfer to a pending payment and mark paid.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'transfer_id' => [
-                        'type' => 'integer',
-                    ],
-                    'payment_id' => [
-                        'type' => 'string',
-                    ],
-                ],
-                'required' => ['confirm', 'transfer_id', 'payment_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.reject_transfer', 'Reject/delete an unmatched transfer.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'transfer_id' => [
-                        'type' => 'integer',
-                    ],
-                ],
-                'required' => ['confirm', 'transfer_id'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.trigger_import_transfers', 'Trigger IMAP bank-transfer import.', [
-                'type' => 'object',
-                'properties' => [...$confirm],
-                'required' => ['confirm'],
-            ], requiresAdmin: true, requiresConfirm: true),
-            new ToolDefinition('admin.search_users', 'Search users by name or email.', [
-                'type' => 'object',
-                'properties' => [
-                    'query' => [
-                        'type' => 'string',
-                    ],
-                ],
-                'required' => ['query'],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.get_user', 'Get user profile, children and booking summary.', [
-                'type' => 'object',
-                'properties' => [
-                    'user_id' => [
-                        'type' => 'integer',
-                    ],
-                    'email' => [
-                        'type' => 'string',
-                    ],
-                ],
-            ], requiresAdmin: true),
-            new ToolDefinition('admin.notify_user', 'Send an in-app notification to a user.', [
-                'type' => 'object',
-                'properties' => [
-                    ...$confirm,
-                    'user_id' => [
-                        'type' => 'integer',
-                    ],
-                    'email' => [
-                        'type' => 'string',
-                    ],
-                    'title' => [
-                        'type' => 'string',
-                    ],
-                    'body' => [
-                        'type' => 'string',
-                    ],
-                    'url' => [
-                        'type' => 'string',
-                    ],
-                    'severity' => [
-                        'type' => 'string',
-                        'enum' => array_map(
-                            static fn(NotificationSeverity $s) => $s->value,
-                            NotificationSeverity::cases()
-                        ),
-                    ],
-                ],
-                'required' => ['confirm', 'title'],
-            ], requiresAdmin: true, requiresConfirm: true),
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
         ];
     }
 
@@ -431,19 +548,15 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             $items[] = $data;
         }
 
-        return ToolResult::success(
-            sprintf('Zajęcia %s: %d.', $date->format('Y-m-d'), count($items)),
-            [
-                'date' => $date->format('Y-m-d'),
-                'lessons' => $items,
-            ]
-        );
+        return ToolResult::success(sprintf('Zajęcia %s: %d.', $date->format('Y-m-d'), count($items)), [
+            'date' => $date->format('Y-m-d'),
+            'lessons' => $items,
+        ]);
     }
 
     private function listLessons(ToolArguments $args): ToolResult
     {
-        $week = $args->string('week') ?? new \DateTimeImmutable('today')
-            ->format('Y-m-d');
+        $week = $args->string('week') ?? new \DateTimeImmutable('today')->format('Y-m-d');
         $query = $args->string('query');
         $limit = $args->int('limit', 50) ?? 50;
         $includeCancelled = $args->bool('include_cancelled');
@@ -454,7 +567,8 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             $weekStart = new \DateTimeImmutable($week);
             $weekEnd = $weekStart->modify('+7 days 23:59:59');
             /** @var list<Lesson> $cancelled */
-            $cancelled = $this->lessonRepository->createQueryBuilder('l')
+            $cancelled = $this->lessonRepository
+                ->createQueryBuilder('l')
                 ->andWhere('l.status = :status')
                 ->andWhere('l.schedule BETWEEN :weekStart AND :weekEnd')
                 ->setParameter('status', 'cancelled')
@@ -468,13 +582,10 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         $items = array_map($this->presenter->lesson(...), $lessons);
 
-        return ToolResult::success(
-            sprintf('Lekcje w tygodniu od %s: %d.', $week, count($items)),
-            [
-                'week' => $week,
-                'lessons' => $items,
-            ]
-        );
+        return ToolResult::success(sprintf('Lekcje w tygodniu od %s: %d.', $week, count($items)), [
+            'week' => $week,
+            'lessons' => $items,
+        ]);
     }
 
     private function getLesson(ToolArguments $args): ToolResult
@@ -491,10 +602,8 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             }
             $attendees[] = [
                 'booking_id' => (string) $booking->getId(),
-                'user' => $booking->getUser()
-                    ->getName(),
-                'email' => $booking->getUser()
-                    ->getEmail(),
+                'user' => $booking->getUser()->getName(),
+                'email' => $booking->getUser()->getEmail(),
                 'status' => $booking->getStatus(),
                 'payment_status' => $booking->getPayment()?->getStatus(),
             ];
@@ -517,7 +626,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         return ToolResult::success(
             sprintf('Status lekcji ustawiony na %s.', $lesson->status),
-            $this->presenter->lesson($lesson)
+            $this->presenter->lesson($lesson),
         );
     }
 
@@ -536,13 +645,14 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         return ToolResult::success(
             sprintf('Ustawiono pojemność na %d (wolne: %d).', $capacity, $lesson->getAvailableSpots()),
-            $this->presenter->lesson($lesson)
+            $this->presenter->lesson($lesson),
         );
     }
 
     private function listBookings(ToolArguments $args): ToolResult
     {
-        $qb = $this->bookingRepository->createQueryBuilder('b')
+        $qb = $this->bookingRepository
+            ->createQueryBuilder('b')
             ->leftJoin('b.user', 'u')
             ->addSelect('u')
             ->orderBy('b.createdAt', 'DESC')
@@ -550,18 +660,18 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         $status = $args->string('status');
         if ($status !== null) {
-            $qb->andWhere('b.status = :status')
-                ->setParameter('status', $status);
+            $qb->andWhere('b.status = :status')->setParameter('status', $status);
         }
         $query = $args->string('query');
         if ($query !== null) {
-            $qb->andWhere('LOWER(u.email) LIKE :q OR LOWER(u.name) LIKE :q')
-                ->setParameter('q', '%' . strtolower($query) . '%');
+            $qb->andWhere('LOWER(u.email) LIKE :q OR LOWER(u.name) LIKE :q')->setParameter(
+                'q',
+                '%' . strtolower($query) . '%',
+            );
         }
 
         /** @var list<Booking> $bookings */
-        $bookings = $qb->getQuery()
-            ->getResult();
+        $bookings = $qb->getQuery()->getResult();
         $items = array_map($this->presenter->booking(...), $bookings);
 
         return ToolResult::success(sprintf('Rezerwacje: %d.', count($items)), [
@@ -579,7 +689,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         $user = $this->userRepository->findOneBy([
             'email' => $email,
         ]);
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             $user = new User($email, $args->string('name') ?? $email);
             $this->entityManager->persist($user);
         }
@@ -593,7 +703,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         return ToolResult::success(
             sprintf('Utworzono aktywną rezerwację dla %s.', $email),
-            $this->presenter->booking($booking)
+            $this->presenter->booking($booking),
         );
     }
 
@@ -629,12 +739,14 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         if ($booking === null || $lesson === null) {
             return ToolResult::failure('Booking or lesson not found');
         }
-        $this->bus->dispatch(new CancelLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $actor->requireUser(),
-            $args->string('reason'),
-        ));
+        $this->bus->dispatch(
+            new CancelLessonBooking(
+                $booking->getId(),
+                $lesson->getId(),
+                $actor->requireUser(),
+                $args->string('reason'),
+            ),
+        );
 
         return ToolResult::success('Lekcja odwołana (admin).');
     }
@@ -646,12 +758,14 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         if ($booking === null || $lesson === null) {
             return ToolResult::failure('Booking or lesson not found');
         }
-        $this->bus->dispatch(new RefundLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $actor->requireUser(),
-            $args->string('reason'),
-        ));
+        $this->bus->dispatch(
+            new RefundLessonBooking(
+                $booking->getId(),
+                $lesson->getId(),
+                $actor->requireUser(),
+                $args->string('reason'),
+            ),
+        );
 
         return ToolResult::success('Zwrot zlecony (admin).');
     }
@@ -664,13 +778,15 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         if ($booking === null || $lesson === null || $newLesson === null) {
             return ToolResult::failure('Booking or lesson not found');
         }
-        $this->bus->dispatch(new RescheduleLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $newLesson->getId(),
-            $actor->requireUser(),
-            $args->string('reason'),
-        ));
+        $this->bus->dispatch(
+            new RescheduleLessonBooking(
+                $booking->getId(),
+                $lesson->getId(),
+                $newLesson->getId(),
+                $actor->requireUser(),
+                $args->string('reason'),
+            ),
+        );
 
         return ToolResult::success('Lekcja przełożona (admin).');
     }
@@ -681,12 +797,9 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         $payments = $this->paymentRepository->findPendingWithSearch($search);
         $items = array_map($this->presenter->payment(...), $payments);
 
-        return ToolResult::success(
-            sprintf('Oczekujące płatności: %d.', count($items)),
-            [
-                'payments' => $items,
-            ]
-        );
+        return ToolResult::success(sprintf('Oczekujące płatności: %d.', count($items)), [
+            'payments' => $items,
+        ]);
     }
 
     private function listUnmatchedTransfers(): ToolResult
@@ -703,17 +816,13 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'sender' => $transfer->getSender(),
                 'title' => $transfer->title,
                 'amount' => $transfer->amount,
-                'transferred_at' => $transfer->getTransferredAt()
-                    ->format(\DateTimeInterface::ATOM),
+                'transferred_at' => $transfer->getTransferredAt()->format(\DateTimeInterface::ATOM),
             ];
         }
 
-        return ToolResult::success(
-            sprintf('Nieprzypisane przelewy: %d.', count($items)),
-            [
-                'transfers' => $items,
-            ]
-        );
+        return ToolResult::success(sprintf('Nieprzypisane przelewy: %d.', count($items)), [
+            'transfers' => $items,
+        ]);
     }
 
     private function assignTransfer(ToolArguments $args): ToolResult
@@ -774,7 +883,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'email' => strtolower($args->requireString('email')),
             ]);
         }
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return ToolResult::failure('User not found');
         }
         $data = $this->presenter->userSummary($user);
@@ -793,14 +902,13 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         return ToolResult::success(
             sprintf('%s <%s>, rezerwacji: %d.', $user->getName(), $user->getEmail(), count($data['bookings'])),
-            $data
+            $data,
         );
     }
 
     private function listSeries(ToolArguments $args): ToolResult
     {
-        $week = $args->string('week') ?? new \DateTimeImmutable('today')
-            ->format('Y-m-d');
+        $week = $args->string('week') ?? new \DateTimeImmutable('today')->format('Y-m-d');
         $start = new \DateTimeImmutable($week);
         $end = $start->modify('+7 days 23:59:59');
         $seriesList = $this->seriesRepository->findInRange($start, $end, $args->bool('include_cancelled'));
@@ -812,32 +920,28 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'status' => $series->status,
                 'type' => $series->type->value,
                 'lessons_count' => $series->lessons->count(),
-                'title' => $first?->getMetadata()
-                    ->title,
+                'title' => $first?->getMetadata()->title,
                 'ticket_options' => array_map($this->presenter->ticketOption(...), $series->ticketOptions),
             ];
         }
 
-        return ToolResult::success(
-            sprintf('Serie w tygodniu od %s: %d.', $week, count($items)),
-            [
-                'week' => $week,
-                'series' => $items,
-            ]
-        );
+        return ToolResult::success(sprintf('Serie w tygodniu od %s: %d.', $week, count($items)), [
+            'week' => $week,
+            'series' => $items,
+        ]);
     }
 
     private function updateSeries(ToolArguments $args): ToolResult
     {
         $series = $this->seriesRepository->find(Ulid::fromString($args->requireString('series_id')));
-        if (! $series instanceof Series) {
+        if (!$series instanceof Series) {
             return ToolResult::failure('Series not found');
         }
         $ticketOptionsInput = $args->array('ticket_options');
         if ($ticketOptionsInput !== null) {
             $ticketOptions = [];
             foreach ($ticketOptionsInput as $row) {
-                if (! is_array($row)) {
+                if (!is_array($row)) {
                     return ToolResult::failure('Each ticket_options item must be an object');
                 }
                 $typeRaw = $row['type'] ?? null;
@@ -845,18 +949,16 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 $currencyRaw = $row['currency'] ?? 'PLN';
                 $descriptionRaw = $row['description'] ?? '';
                 $policyRaw = $row['reschedule_policy'] ?? TicketReschedulePolicy::ONETIME_24H_BEFORE->value;
-                if (! is_string($typeRaw) && ! is_int($typeRaw)) {
+                if (!is_string($typeRaw) && !is_int($typeRaw)) {
                     return ToolResult::failure('ticket_options.type must be a string');
                 }
                 $type = TicketType::from((string) $typeRaw);
-                $amount = is_string($amountRaw) || is_int($amountRaw) || is_float(
-                    $amountRaw
-                ) ? (string) $amountRaw : '0.00';
+                $amount = is_string($amountRaw) || is_int($amountRaw) || is_float($amountRaw)
+                    ? (string) $amountRaw
+                    : '0.00';
                 $currency = is_string($currencyRaw) ? $currencyRaw : 'PLN';
                 $description = is_string($descriptionRaw) ? $descriptionRaw : '';
-                $policyValue = is_string($policyRaw)
-                    ? $policyRaw
-                    : TicketReschedulePolicy::ONETIME_24H_BEFORE->value;
+                $policyValue = is_string($policyRaw) ? $policyRaw : TicketReschedulePolicy::ONETIME_24H_BEFORE->value;
                 $ticketOptions[] = new TicketOption(
                     $type,
                     Money::of($amount, $currency !== '' ? $currency : 'PLN'),
@@ -875,14 +977,14 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'id' => (string) $series->getId(),
                 'status' => $series->status,
                 'ticket_options' => array_map($this->presenter->ticketOption(...), $series->ticketOptions),
-            ]
+            ],
         );
     }
 
     private function cloneTemplateLesson(ToolArguments $args): ToolResult
     {
         $templateId = $args->requireString('template_lesson_id');
-        if (! Ulid::isValid(trim($templateId))) {
+        if (!Ulid::isValid(trim($templateId))) {
             return ToolResult::failure(
                 'Invalid template_lesson_id ULID. To list workshops use user.list_upcoming_lessons. To create a lesson use admin.clone_template_lesson with a real ULID.',
                 'Niepoprawny ULID szablonu. Lista zajęć: user.list_upcoming_lessons. Tworzenie: admin.clone_template_lesson z prawdziwym ULID.',
@@ -909,7 +1011,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         return ToolResult::success(
             sprintf('Utworzono lekcję %s na %s.', $metadata->title, $schedule->format('Y-m-d H:i')),
-            $this->presenter->lesson($lesson)
+            $this->presenter->lesson($lesson),
         );
     }
 
@@ -923,7 +1025,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'email' => strtolower($args->requireString('email')),
             ]);
         }
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return ToolResult::failure('User not found (provide user_id or email)');
         }
 
@@ -940,12 +1042,9 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             $severity,
         );
 
-        return ToolResult::success(
-            sprintf('Wysłano powiadomienie do %s.', $user->getEmail()),
-            [
-                'notification_id' => (string) $notification->getId(),
-                'user_id' => $user->getId(),
-            ]
-        );
+        return ToolResult::success(sprintf('Wysłano powiadomienie do %s.', $user->getEmail()), [
+            'notification_id' => (string) $notification->getId(),
+            'user_id' => $user->getId(),
+        ]);
     }
 }

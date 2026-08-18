@@ -22,7 +22,7 @@ final class LessonsController extends AbstractController
     ])]
     public function view(Lesson $lesson): Response
     {
-        if (! $this->isGranted(LessonVoter::VIEW, $lesson)) {
+        if (!$this->isGranted(LessonVoter::VIEW, $lesson)) {
             throw $this->createNotFoundException();
         }
 
@@ -38,20 +38,22 @@ final class LessonsController extends AbstractController
     }
 
     #[IsGranted('ROLE_MANAGE_LESSONS')]
-    #[Route('/admin/zajecia/{id}/toggle', name: 'app_admin_lesson_toggle', methods: ['POST'], requirements: [
-        'id' => '[A-Za-z0-9]+',
-    ])]
-    public function toggle(
-        Lesson $lesson,
-        Request $request,
-        EntityManagerInterface $entityManager
-    ): RedirectResponse {
-        if (! $this->isGranted(LessonVoter::MANAGE, $lesson)) {
+    #[Route(
+        '/admin/zajecia/{id}/toggle',
+        name: 'app_admin_lesson_toggle',
+        methods: ['POST'],
+        requirements: [
+            'id' => '[A-Za-z0-9]+',
+        ],
+    )]
+    public function toggle(Lesson $lesson, Request $request, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        if (!$this->isGranted(LessonVoter::MANAGE, $lesson)) {
             throw $this->createNotFoundException();
         }
 
         $token = $request->request->get('_token');
-        if (! $this->isCsrfTokenValid('toggle_lesson_' . $lesson->getId(), (string) $token)) {
+        if (!$this->isCsrfTokenValid('toggle_lesson_' . $lesson->getId(), (string) $token)) {
             $this->addFlash('error', 'Invalid CSRF token.');
             return $this->redirectToRoute('app_admin_lesson_view', [
                 'id' => (string) $lesson->getId(),

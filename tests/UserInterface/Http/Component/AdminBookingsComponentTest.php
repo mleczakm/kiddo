@@ -65,9 +65,7 @@ final class AdminBookingsComponentTest extends WebTestCase
             'lessonId' => (string) $lesson->getId(),
         ]);
 
-        $this->transport('async')
-            ->queue()
-            ->assertContains(CancelLessonBooking::class, 1);
+        $this->transport('async')->queue()->assertContains(CancelLessonBooking::class, 1);
     }
 
     public function testRescheduleFlowDispatchesRescheduleCommand(): void
@@ -107,23 +105,23 @@ final class AdminBookingsComponentTest extends WebTestCase
 
         /** @var AdminBookingsComponent $adminBookingsComponent */
         $adminBookingsComponent = $component->component();
-        self::assertTrue(
-            $adminBookingsComponent->isReschedulingLesson((string) $booking->getId(), (string) $oldLesson->getId())
-        );
+        self::assertTrue($adminBookingsComponent->isReschedulingLesson(
+            (string) $booking->getId(),
+            (string) $oldLesson->getId(),
+        ));
 
         $component->set('newLessonId', (string) $newLesson->getId());
         $component->call('reschedule');
 
-        $this->transport('async')
-            ->queue()
-            ->assertContains(RescheduleLessonBooking::class, 1);
+        $this->transport('async')->queue()->assertContains(RescheduleLessonBooking::class, 1);
 
         // Picker state is cleared after a successful dispatch
         /** @var AdminBookingsComponent $adminBookingsComponent */
         $adminBookingsComponent = $component->component();
-        self::assertFalse(
-            $adminBookingsComponent->isReschedulingLesson((string) $booking->getId(), (string) $oldLesson->getId())
-        );
+        self::assertFalse($adminBookingsComponent->isReschedulingLesson(
+            (string) $booking->getId(),
+            (string) $oldLesson->getId(),
+        ));
     }
 
     public function testHostOnlySeesBookingsForLessonsTheyInstruct(): void

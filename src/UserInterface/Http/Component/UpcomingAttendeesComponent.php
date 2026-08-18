@@ -142,7 +142,7 @@ final class UpcomingAttendeesComponent extends AbstractController
 
         foreach ($lesson->getBookings() as $booking) {
             // Skip cancelled bookings if not showing them; pending holds a seat and must be visible
-            if (! $booking->occupiesSeat() && ! $this->showCancelled) {
+            if (!$booking->occupiesSeat() && !$this->showCancelled) {
                 continue;
             }
 
@@ -161,8 +161,7 @@ final class UpcomingAttendeesComponent extends AbstractController
 
     public function getWeekEnd(): \DateTimeImmutable
     {
-        return $this->getWeekStart()
-            ->modify('+7 days');
+        return $this->getWeekStart()->modify('+7 days');
     }
 
     public function getWeekStart(): \DateTimeImmutable
@@ -177,8 +176,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         $id = Ulid::fromString($lessonId);
         $lesson = $this->lessonRepository->find($id);
         if ($lesson) {
-            $lesson->getMetadata()
-                ->capacity++;
+            $lesson->getMetadata()->capacity++;
             $this->entityManager->flush();
         }
     }
@@ -189,8 +187,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         $id = Ulid::fromString($lessonId);
         $lesson = $this->lessonRepository->find($id);
         if ($lesson && $lesson->getAvailableSpots() > 0) {
-            $lesson->getMetadata()
-                ->capacity--;
+            $lesson->getMetadata()->capacity--;
             $this->entityManager->flush();
         }
     }
@@ -198,7 +195,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     #[LiveAction]
     public function toggleCancelled(): void
     {
-        $this->showCancelled = ! $this->showCancelled;
+        $this->showCancelled = !$this->showCancelled;
     }
 
     #[LiveAction]
@@ -260,9 +257,8 @@ final class UpcomingAttendeesComponent extends AbstractController
         $this->errorMessage = null;
         $this->successMessage = null;
 
-        if ($action === 'reschedule' && ! $this->rescheduleDate) {
-            $this->rescheduleDate = new \DateTime()
-                ->format('Y-m-d');
+        if ($action === 'reschedule' && !$this->rescheduleDate) {
+            $this->rescheduleDate = new \DateTime()->format('Y-m-d');
             $this->rescheduleTime = '18:00';
         }
     }
@@ -274,7 +270,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             $booking = $this->bookingRepository->find($this->adminModalBookingId);
             $currentLesson = $this->lessonRepository->find($this->adminModalLessonId);
 
-            if (! $booking || ! $currentLesson) {
+            if (!$booking || !$currentLesson) {
                 throw new \RuntimeException('Booking or lesson not found');
             }
 
@@ -296,8 +292,7 @@ final class UpcomingAttendeesComponent extends AbstractController
 
                 case 'mark_refund':
                     if ($booking->getPayment()) {
-                        $booking->getPayment()
-                            ->setStatus('refund_requested');
+                        $booking->getPayment()->setStatus('refund_requested');
                         $this->entityManager->flush();
                     } else {
                         throw new \RuntimeException('No payment found for this booking');
@@ -305,18 +300,16 @@ final class UpcomingAttendeesComponent extends AbstractController
                     break;
 
                 case 'reschedule':
-                    if (! $this->rescheduleDate || ! $this->rescheduleTime) {
+                    if (!$this->rescheduleDate || !$this->rescheduleTime) {
                         throw new \RuntimeException('Please select a date and time');
                     }
 
                     $newDateTime = \DateTime::createFromFormat(
                         'Y-m-d H:i',
-                        $this->rescheduleDate . ' ' . $this->rescheduleTime
+                        $this->rescheduleDate . ' ' . $this->rescheduleTime,
                     );
 
                     throw new \RuntimeException('Invalid date or time format');
-
-
 
                 default:
                     throw new \RuntimeException('Invalid action');
@@ -330,7 +323,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     public function saveBookingNote(#[LiveArg] string $bookingId): void
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
-        if (! $booking instanceof Booking) {
+        if (!$booking instanceof Booking) {
             return;
         }
         $booking->setNotes($this->adminNote);
@@ -341,7 +334,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     public function markToRefund(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
-        if (! $booking instanceof Booking) {
+        if (!$booking instanceof Booking) {
             return;
         }
         $booking->refundLesson($lessonId, 'Marked to refund by admin');
@@ -379,14 +372,14 @@ final class UpcomingAttendeesComponent extends AbstractController
         if ($this->userSearch === null || strlen(trim($this->userSearch)) < 2) {
             return [];
         }
-        $qb = $this->userRepository->createQueryBuilder('u')
+        $qb = $this->userRepository
+            ->createQueryBuilder('u')
             ->where('u.name LIKE :q OR u.email LIKE :q')
             ->setParameter('q', '%' . trim($this->userSearch) . '%')
             ->orderBy('u.name', 'ASC')
             ->setMaxResults(10);
         /** @var list<User> $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 
@@ -395,17 +388,16 @@ final class UpcomingAttendeesComponent extends AbstractController
      */
     public function getSelectedUserChildren(): array
     {
-        if (! $this->selectedUserId) {
+        if (!$this->selectedUserId) {
             return [];
         }
 
         $user = $this->userRepository->find((int) $this->selectedUserId);
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return [];
         }
 
-        return $user->getChildren()
-            ->toArray();
+        return $user->getChildren()->toArray();
     }
 
     #[LiveAction]
@@ -413,7 +405,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     {
         $user = $this->userRepository->find($userId);
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return;
         }
         $this->selectedUserId = (string) $user->getId();
@@ -441,7 +433,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         $this->errorMessage = null;
         $this->successMessage = null;
 
-        if (! $this->selectedLessonId) {
+        if (!$this->selectedLessonId) {
             $this->errorMessage = 'Brak wybranych zajęć';
             return;
         }
@@ -459,11 +451,11 @@ final class UpcomingAttendeesComponent extends AbstractController
         } catch (\Throwable) {
             $lesson = null;
         }
-        if (! $lesson) {
+        if (!$lesson) {
             $this->errorMessage = 'Nie znaleziono zajęć';
             return;
         }
-        if (! $lesson->canBeBooked()) {
+        if (!$lesson->canBeBooked()) {
             $this->errorMessage = 'Brak miejsc lub zajęcia nieaktywne';
             return;
         }
@@ -472,7 +464,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         $user = $this->userRepository->findOneBy([
             'email' => $this->customerEmail,
         ]);
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             $user = new User($this->customerEmail, $this->customerName);
             $this->entityManager->persist($user);
         } else {
@@ -506,11 +498,11 @@ final class UpcomingAttendeesComponent extends AbstractController
             type: ActivityType::BOOKING_CREATED,
             title: sprintf('%s zarezerwował/a zajęcia (dodane przez admina)', $user->getName()),
             subject: $user,
-            summary: $lesson->getMetadata()
-                ->title,
-            url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
-                'id' => $userId,
-            ]) : null,
+            summary: $lesson->getMetadata()->title,
+            url: $userId !== null
+                ? $this->urlGenerator->generate('app_admin_user_view', [
+                    'id' => $userId,
+                ]) : null,
             context: [
                 'bookingId' => (string) $booking->getId(),
             ],
@@ -526,10 +518,10 @@ final class UpcomingAttendeesComponent extends AbstractController
     {
         try {
             $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
-            if (! $booking) {
+            if (!$booking) {
                 return;
             }
-            if (! $booking->payment) {
+            if (!$booking->payment) {
                 // Create zero-amount payment to mark as paid if none exists
                 $payment = new Payment($booking->getUser(), Money::of(0, 'PLN'));
                 $this->entityManager->persist($payment);
@@ -544,9 +536,10 @@ final class UpcomingAttendeesComponent extends AbstractController
                 type: ActivityType::PAYMENT_MARKED_PAID,
                 title: sprintf('%s oznaczony/a jako opłacony/a przez admina', $user->getName()),
                 subject: $user,
-                url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
-                    'id' => $userId,
-                ]) : null,
+                url: $userId !== null
+                    ? $this->urlGenerator->generate('app_admin_user_view', [
+                        'id' => $userId,
+                    ]) : null,
                 context: [
                     'bookingId' => (string) $booking->getId(),
                 ],
@@ -561,7 +554,7 @@ final class UpcomingAttendeesComponent extends AbstractController
     {
         try {
             $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
-            if (! $booking || ! $booking->payment) {
+            if (!$booking || !$booking->payment) {
                 return;
             }
             $booking->payment->setStatus(Payment::STATUS_PENDING);
@@ -583,17 +576,16 @@ final class UpcomingAttendeesComponent extends AbstractController
             $booking = null;
             $lesson = null;
         }
-        if (! $booking || ! $lesson) {
+        if (!$booking || !$lesson) {
             return;
         }
 
         // Determine amount from lesson default ticket option
-        $amount = $lesson->defaultTicketOption()
-            ->price ?? Money::of(0, 'PLN');
+        $amount = $lesson->defaultTicketOption()->price ?? Money::of(0, 'PLN');
 
         // Ensure booking has a Payment
         $payment = $booking->payment;
-        if (! $payment) {
+        if (!$payment) {
             $payment = new Payment($booking->getUser(), $amount);
             $this->entityManager->persist($payment);
             $booking->payment = $payment;
@@ -609,7 +601,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         }
 
         // Ensure PaymentCode exists
-        if (! $payment->getPaymentCode()) {
+        if (!$payment->getPaymentCode()) {
             $code = new PaymentCode($payment);
             $this->entityManager->persist($code);
         }

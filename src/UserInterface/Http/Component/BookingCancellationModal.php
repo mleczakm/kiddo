@@ -27,7 +27,7 @@ class BookingCancellationModal extends AbstractController
 
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        private readonly LessonRepository $lessonRepository
+        private readonly LessonRepository $lessonRepository,
     ) {}
 
     #[LiveProp]
@@ -58,12 +58,12 @@ class BookingCancellationModal extends AbstractController
      */
     public function getAvailableLessons(): array
     {
-        if (! $this->booking || ! $this->lesson) {
+        if (!$this->booking || !$this->lesson) {
             return [];
         }
 
         $series = $this->lesson->getSeries();
-        if (! $series) {
+        if (!$series) {
             return [];
         }
 
@@ -74,11 +74,11 @@ class BookingCancellationModal extends AbstractController
 
         return array_values(array_filter(
             $availableLessons,
-            fn(Lesson $lesson): bool => ! $lesson->getId()
-                ->equals($this->lesson->getId())
-                && ! $this->booking->getLessons()
-                    ->contains($lesson)
+            fn(Lesson $lesson): bool => (
+                !$lesson->getId()->equals($this->lesson->getId())
+                && !$this->booking->getLessons()->contains($lesson)
                 && $lesson->getAvailableSpots() > 0
+            ),
         ));
     }
 
@@ -94,14 +94,16 @@ class BookingCancellationModal extends AbstractController
 
     public function isLateCancellation(): bool
     {
-        return $this->lesson !== null && ! $this->lesson->cancellationAvailable();
+        return $this->lesson !== null && !$this->lesson->cancellationAvailable();
     }
 
     public function requiresLateCancelAcknowledgment(): bool
     {
-        return $this->booking !== null
+        return (
+            $this->booking !== null
             && $this->lesson !== null
-            && $this->booking->requiresNoRefundCancelWarning($this->lesson);
+            && $this->booking->requiresNoRefundCancelWarning($this->lesson)
+        );
     }
 
     public function canShowRescheduleTab(): bool
@@ -111,11 +113,11 @@ class BookingCancellationModal extends AbstractController
 
     public function canShowRefundTab(): bool
     {
-        if (! $this->booking || ! $this->lesson) {
+        if (!$this->booking || !$this->lesson) {
             return false;
         }
 
-        if (! $this->booking->hasPaidPayment()) {
+        if (!$this->booking->hasPaidPayment()) {
             return false;
         }
 
@@ -124,7 +126,7 @@ class BookingCancellationModal extends AbstractController
 
     public function canShowCancelTab(): bool
     {
-        if (! $this->booking || ! $this->lesson) {
+        if (!$this->booking || !$this->lesson) {
             return false;
         }
 
@@ -157,66 +159,75 @@ class BookingCancellationModal extends AbstractController
     #[LiveAction]
     public function processCancellation(#[LiveArg('type')] string $typeParam): void
     {
-        if (! in_array($typeParam, self::CANCELLATION_TYPES, true)) {
+        if (!in_array($typeParam, self::CANCELLATION_TYPES, true)) {
             throw new \InvalidArgumentException('Invalid cancellation type: ' . $typeParam);
         }
 
-        if (! $this->booking || ! $this->lesson) {
+        if (!$this->booking || !$this->lesson) {
             throw new \RuntimeException('Booking or lesson not set');
         }
 
         $securityUser = $this->getUser();
-        if (! $securityUser instanceof User) {
+        if (!$securityUser instanceof User) {
             throw new \RuntimeException('User not authenticated or invalid user type');
         }
 
-        if ($typeParam === 'cancel' && $this->requiresLateCancelAcknowledgment() && ! $this->lateCancelAcknowledged && ! $this->isAdmin()) {
+        if (
+            $typeParam === 'cancel'
+            && $this->requiresLateCancelAcknowledgment()
+            && !$this->lateCancelAcknowledged
+            && !$this->isAdmin()
+        ) {
             throw new \RuntimeException('Late cancellation must be acknowledged');
         }
 
-        if ($typeParam === 'reschedule' && ! $this->booking->canRescheduleLesson($this->lesson) && ! $this->isAdmin()) {
+        if ($typeParam === 'reschedule' && !$this->booking->canRescheduleLesson($this->lesson) && !$this->isAdmin()) {
             throw new \RuntimeException('Reschedule is not allowed for this booking');
         }
 
-        if ($typeParam === 'refund' && ! $this->booking->canRequestRefundForLesson(
-            $this->lesson
-        ) && ! $this->isAdmin()) {
+        if ($typeParam === 'refund' && !$this->booking->canRequestRefundForLesson($this->lesson) && !$this->isAdmin()) {
             throw new \RuntimeException('Refund is not available within 24h of the lesson');
         }
 
         switch ($typeParam) {
             case 'reschedule':
                 $newLesson = $this->lessonRepository->find($this->selectedLessonId);
-                if (! $newLesson) {
+                if (!$newLesson) {
                     throw new \RuntimeException('Selected lesson not found');
                 }
 
-                $this->messageBus->dispatch(new RescheduleLessonBooking(
-                    $this->booking->getId(),
-                    $this->lesson->getId(),
-                    $newLesson->getId(),
-                    $securityUser,
-                    $this->cancellationReason
-                ));
+                $this->messageBus->dispatch(
+                    new RescheduleLessonBooking(
+                        $this->booking->getId(),
+                        $this->lesson->getId(),
+                        $newLesson->getId(),
+                        $securityUser,
+                        $this->cancellationReason,
+                    ),
+                );
                 break;
 
             case 'refund':
-                $this->messageBus->dispatch(new RefundLessonBooking(
-                    $this->booking->getId(),
-                    $this->lesson->getId(),
-                    $securityUser,
-                    $this->cancellationReason
-                ));
+                $this->messageBus->dispatch(
+                    new RefundLessonBooking(
+                        $this->booking->getId(),
+                        $this->lesson->getId(),
+                        $securityUser,
+                        $this->cancellationReason,
+                    ),
+                );
                 break;
 
             case 'cancel':
             default:
-                $this->messageBus->dispatch(new CancelLessonBooking(
-                    $this->booking->getId(),
-                    $this->lesson->getId(),
-                    $securityUser,
-                    $this->cancellationReason
-                ));
+                $this->messageBus->dispatch(
+                    new CancelLessonBooking(
+                        $this->booking->getId(),
+                        $this->lesson->getId(),
+                        $securityUser,
+                        $this->cancellationReason,
+                    ),
+                );
                 break;
         }
 
@@ -235,20 +246,17 @@ class BookingCancellationModal extends AbstractController
 
     public function canBeRescheduled(): bool
     {
-        if (! $this->booking || ! $this->lesson) {
+        if (!$this->booking || !$this->lesson) {
             return false;
         }
 
         if ($this->isAdmin()) {
             $series = $this->lesson->getSeries();
 
-            return $series !== null
-                && $this->lesson->future()
-                && count($this->getAvailableLessons()) > 0;
+            return $series !== null && $this->lesson->future() && count($this->getAvailableLessons()) > 0;
         }
 
-        return $this->booking->canRescheduleLesson($this->lesson)
-            && count($this->getAvailableLessons()) > 0;
+        return $this->booking->canRescheduleLesson($this->lesson) && count($this->getAvailableLessons()) > 0;
     }
 
     public function isButtonDisabled(): bool
@@ -257,8 +265,8 @@ class BookingCancellationModal extends AbstractController
             return $this->selectedLessonId === null;
         }
 
-        if ($this->selectedOption === 'cancel' && $this->requiresLateCancelAcknowledgment() && ! $this->isAdmin()) {
-            return ! $this->lateCancelAcknowledged;
+        if ($this->selectedOption === 'cancel' && $this->requiresLateCancelAcknowledgment() && !$this->isAdmin()) {
+            return !$this->lateCancelAcknowledged;
         }
 
         return false;
@@ -266,15 +274,15 @@ class BookingCancellationModal extends AbstractController
 
     private function ensureValidSelectedOption(): void
     {
-        if ($this->selectedOption === 'reschedule' && ! $this->canShowRescheduleTab()) {
+        if ($this->selectedOption === 'reschedule' && !$this->canShowRescheduleTab()) {
             $this->selectedOption = $this->canShowRefundTab() ? 'refund' : 'cancel';
         }
 
-        if ($this->selectedOption === 'refund' && ! $this->canShowRefundTab()) {
+        if ($this->selectedOption === 'refund' && !$this->canShowRefundTab()) {
             $this->selectedOption = $this->canShowRescheduleTab() ? 'reschedule' : 'cancel';
         }
 
-        if ($this->isLateCancellation() && ! $this->canShowRescheduleTab() && ! $this->canShowRefundTab()) {
+        if ($this->isLateCancellation() && !$this->canShowRescheduleTab() && !$this->canShowRefundTab()) {
             $this->selectedOption = 'cancel';
         }
     }

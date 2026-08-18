@@ -19,7 +19,7 @@ final readonly class SentryHttpMetricsSubscriber
     #[AsEventListener(event: RequestEvent::class)]
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (! $event->isMainRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -29,18 +29,16 @@ final readonly class SentryHttpMetricsSubscriber
     #[AsEventListener(event: ResponseEvent::class)]
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (! $event->isMainRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
-        $statusCode = $event->getResponse()
-            ->getStatusCode();
+        $statusCode = $event->getResponse()->getStatusCode();
 
         $this->metrics->count('responses.total', 1);
         $this->metrics->count('responses.' . intdiv($statusCode, 100) . 'xx', 1);
 
-        $requestTime = $event->getRequest()
-            ->server->get('REQUEST_TIME_FLOAT');
+        $requestTime = $event->getRequest()->server->get('REQUEST_TIME_FLOAT');
         if (is_numeric($requestTime)) {
             $this->metrics->distribution(
                 'requests.duration_ms',

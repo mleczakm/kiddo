@@ -22,7 +22,7 @@ final readonly class CheckBookingsToMarkPastHandler
         $activeBookings = $this->bookingRepository->findActiveBookings();
 
         foreach ($activeBookings as $booking) {
-            if (! $booking->shouldBeMarkedAsPast()) {
+            if (!$booking->shouldBeMarkedAsPast()) {
                 continue;
             }
 

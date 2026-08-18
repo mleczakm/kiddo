@@ -45,7 +45,7 @@ final class BookingReschedulePolicyTest extends TestCase
             ->withUser(UserAssembler::new()->assemble())
             ->withLessons($lesson)
             ->withStatus(Booking::STATUS_ACTIVE)
-            ->withPayment(PaymentAssembler::new() ->withStatus(Payment::STATUS_PAID) ->assemble())
+            ->withPayment(PaymentAssembler::new()->withStatus(Payment::STATUS_PAID)->assemble())
             ->assemble();
 
         self::assertTrue($booking->canRescheduleLesson($lesson));
@@ -68,9 +68,7 @@ final class BookingReschedulePolicyTest extends TestCase
                 ),
             ])
             ->assemble();
-        $to = LessonAssembler::new()
-            ->withSchedule(new \DateTimeImmutable('2026-07-17 10:00:00'))
-            ->assemble();
+        $to = LessonAssembler::new()->withSchedule(new \DateTimeImmutable('2026-07-17 10:00:00'))->assemble();
         $user = UserAssembler::new()->withId(1)->assemble();
 
         $booking = BookingAssembler::new()
@@ -102,10 +100,7 @@ final class BookingReschedulePolicyTest extends TestCase
             ])
             ->assemble();
 
-        $booking = BookingAssembler::new()
-            ->withLessons($lesson)
-            ->withStatus(Booking::STATUS_ACTIVE)
-            ->assemble();
+        $booking = BookingAssembler::new()->withLessons($lesson)->withStatus(Booking::STATUS_ACTIVE)->assemble();
 
         self::assertFalse($booking->canRescheduleLesson($lesson));
     }
@@ -115,14 +110,12 @@ final class BookingReschedulePolicyTest extends TestCase
     {
         self::mockTime('2026-07-10 09:00:00');
 
-        $lesson = LessonAssembler::new()
-            ->withSchedule(new \DateTimeImmutable('2026-07-10 18:00:00'))
-            ->assemble();
+        $lesson = LessonAssembler::new()->withSchedule(new \DateTimeImmutable('2026-07-10 18:00:00'))->assemble();
 
         $booking = BookingAssembler::new()
             ->withLessons($lesson)
             ->withStatus(Booking::STATUS_ACTIVE)
-            ->withPayment(PaymentAssembler::new() ->withStatus(Payment::STATUS_PAID) ->assemble())
+            ->withPayment(PaymentAssembler::new()->withStatus(Payment::STATUS_PAID)->assemble())
             ->assemble();
 
         self::assertTrue($booking->canCancelLesson($lesson));
@@ -136,14 +129,9 @@ final class BookingReschedulePolicyTest extends TestCase
     {
         self::mockTime('2026-07-10 09:00:00');
 
-        $lesson = LessonAssembler::new()
-            ->withSchedule(new \DateTimeImmutable('2026-07-10 18:00:00'))
-            ->assemble();
+        $lesson = LessonAssembler::new()->withSchedule(new \DateTimeImmutable('2026-07-10 18:00:00'))->assemble();
 
-        $booking = BookingAssembler::new()
-            ->withLessons($lesson)
-            ->withStatus(Booking::STATUS_PENDING)
-            ->assemble();
+        $booking = BookingAssembler::new()->withLessons($lesson)->withStatus(Booking::STATUS_PENDING)->assemble();
 
         self::assertTrue($booking->canCancelLesson($lesson));
         self::assertFalse($booking->requiresNoRefundCancelWarning($lesson));

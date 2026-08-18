@@ -9,6 +9,6 @@ use App\Entity\User;
 readonly class NewUser
 {
     public function __construct(
-        public User $user
+        public User $user,
     ) {}
 }

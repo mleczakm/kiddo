@@ -22,9 +22,8 @@ final readonly class UserLoginSubscriber
     #[AsEventListener(event: InteractiveLoginEvent::class)]
     public function onUserLogin(InteractiveLoginEvent $event): void
     {
-        $user = $event->getAuthenticationToken()
-            ->getUser();
-        if (! $user instanceof User) {
+        $user = $event->getAuthenticationToken()->getUser();
+        if (!$user instanceof User) {
             return;
         }
 

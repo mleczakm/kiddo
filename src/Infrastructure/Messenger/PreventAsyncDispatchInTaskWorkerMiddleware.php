@@ -26,8 +26,8 @@ final class PreventAsyncDispatchInTaskWorkerMiddleware implements MiddlewareInte
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
         if (
-            ! $envelope->last(ReceivedStamp::class)
-            && ! $envelope->all(TransportNamesStamp::class)
+            !$envelope->last(ReceivedStamp::class)
+            && !$envelope->all(TransportNamesStamp::class)
             && ($this->asyncHandlerDepth > 0 || $this->taskWorkerContext->isInTaskWorker())
         ) {
             $envelope = $envelope->with(new TransportNamesStamp('sync'));
@@ -41,8 +41,7 @@ final class PreventAsyncDispatchInTaskWorkerMiddleware implements MiddlewareInte
         }
 
         try {
-            return $stack->next()
-                ->handle($envelope, $stack);
+            return $stack->next()->handle($envelope, $stack);
         } finally {
             if ($isHandlingAsyncMessage) {
                 --$this->asyncHandlerDepth;

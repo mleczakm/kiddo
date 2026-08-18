@@ -14,10 +14,10 @@ use App\Entity\Transfer;
 use App\Repository\SettingRepository;
 use App\Repository\TransferRepository;
 use App\Tests\Util\MessengerFake;
-use Doctrine\ORM\EntityManagerInterface;
 use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
 use DirectoryTree\ImapEngine\Testing\FakeMessage;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -32,7 +32,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
         $transferRepository = $this->createMock(TransferRepository::class);
         $logger = $this->createMock(LoggerInterface::class);
 
-        new ImportTransfersFromMailHandler(
+        (new ImportTransfersFromMailHandler(
             new AliorMailParser(),
             $messengerFake = new MessengerFake(),
             new FakeQuery(),
@@ -42,7 +42,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             $logger,
             mailboxUsername: 'user@example.com',
             mailboxPassword: 'secret',
-        )(new ImportTransfersFromMail());
+        ))(new ImportTransfersFromMail());
 
         self::assertNotEmpty($messengerFake->dispatched);
         self::assertInstanceOf(SaveTransfer::class, $messengerFake->dispatched[0]->getMessage());
@@ -53,7 +53,8 @@ class ImportTransfersFromMailHandlerTest extends TestCase
         $transfer = new Transfer('123', 'Sender', 'WW5J', '60.00', new \DateTimeImmutable());
 
         $transferRepository = $this->createMock(TransferRepository::class);
-        $transferRepository->expects($this->once())
+        $transferRepository
+            ->expects($this->once())
             ->method('findBy')
             ->with([
                 'payment' => null,
@@ -61,17 +62,15 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             ->willReturn([$transfer]);
 
         $incomingQuery = $this->createMock(IncomingNotificationMailQuery::class);
-        $incomingQuery->expects($this->never())
-            ->method('__invoke');
+        $incomingQuery->expects($this->never())->method('__invoke');
 
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())
+        $logger
+            ->expects($this->once())
             ->method('info')
-            ->with(
-                'Mailbox credentials missing/invalid: skipping IMAP read, rematching unmatched transfers instead'
-            );
+            ->with('Mailbox credentials missing/invalid: skipping IMAP read, rematching unmatched transfers instead');
 
-        new ImportTransfersFromMailHandler(
+        (new ImportTransfersFromMailHandler(
             new AliorMailParser(),
             $messengerFake = new MessengerFake(),
             $incomingQuery,
@@ -81,7 +80,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             $logger,
             mailboxUsername: '',
             mailboxPassword: '',
-        )(new ImportTransfersFromMail());
+        ))(new ImportTransfersFromMail());
 
         self::assertCount(1, $messengerFake->dispatched);
         $message = $messengerFake->dispatched[0]->getMessage();
@@ -106,7 +105,7 @@ class FakeQuery implements IncomingNotificationMailQuery
             // Folders
             folders: [new FakeFolder('inbox'), new FakeFolder('sent'), new FakeFolder('trash')],
             // Capabilities
-            capabilities: ['IMAP4rev1', 'IDLE', 'UIDPLUS']
+            capabilities: ['IMAP4rev1', 'IDLE', 'UIDPLUS'],
         );
 
         $emailContent = <<<EMAIL
@@ -139,7 +138,6 @@ class FakeQuery implements IncomingNotificationMailQuery
         $inbox = $mailbox->inbox();
         $inbox->addMessage(new FakeMessage(uid: 1, flags: [], contents: $emailContent));
 
-        yield from $inbox->messages()
-            ->get();
+        yield from $inbox->messages()->get();
     }
 }

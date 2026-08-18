@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Application\Command;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\SeedDemoDataCommand;
 use App\Entity\Booking;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -48,14 +48,16 @@ final class SeedDemoDataCommandTest extends KernelTestCase
         $lessons = self::getContainer()->get(LessonRepository::class);
         $bookings = self::getContainer()->get(BookingRepository::class);
         /** @var list<object> $demoUsers */
-        $demoUsers = $users->createQueryBuilder('u')
+        $demoUsers = $users
+            ->createQueryBuilder('u')
             ->where('u.email LIKE :domain')
             ->setParameter('domain', '%@demo.kiddo.local')
             ->getQuery()
             ->getResult();
         self::assertCount(6, $demoUsers);
         /** @var list<object> $demoLessons */
-        $demoLessons = $lessons->createQueryBuilder('l')
+        $demoLessons = $lessons
+            ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
             ->where('m.title LIKE :prefix')
             ->setParameter('prefix', '[DEMO] %')
@@ -64,27 +66,29 @@ final class SeedDemoDataCommandTest extends KernelTestCase
         self::assertCount(10, $demoLessons);
 
         /** @var list<Booking> $demoBookings */
-        $demoBookings = $bookings->createQueryBuilder('b')
+        $demoBookings = $bookings
+            ->createQueryBuilder('b')
             ->join('b.user', 'u')
             ->where('u.email LIKE :domain')
             ->setParameter('domain', '%@demo.kiddo.local')
             ->getQuery()
             ->getResult();
         self::assertCount(9, $demoBookings);
-        self::assertContains(
-            Booking::STATUS_PENDING,
-            array_map(static fn(Booking $booking): string => $booking->getStatus(), $demoBookings)
-        );
-        self::assertContains(
-            Booking::STATUS_WAITING_APPROVAL,
-            array_map(static fn(Booking $booking): string => $booking->getStatus(), $demoBookings)
-        );
+        self::assertContains(Booking::STATUS_PENDING, array_map(
+            static fn(Booking $booking): string => $booking->getStatus(),
+            $demoBookings,
+        ));
+        self::assertContains(Booking::STATUS_WAITING_APPROVAL, array_map(
+            static fn(Booking $booking): string => $booking->getStatus(),
+            $demoBookings,
+        ));
         self::assertTrue(array_any($demoBookings, static fn(Booking $booking): bool => $booking->hasBeenRescheduled()));
 
         self::assertSame(0, $this->commandTester->execute([]));
         self::assertStringContainsString('already exists', $this->commandTester->getDisplay());
         /** @var list<Booking> $unchangedBookings */
-        $unchangedBookings = $bookings->createQueryBuilder('b')
+        $unchangedBookings = $bookings
+            ->createQueryBuilder('b')
             ->join('b.user', 'u')
             ->where('u.email LIKE :domain')
             ->setParameter('domain', '%@demo.kiddo.local')

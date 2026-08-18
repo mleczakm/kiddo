@@ -57,7 +57,7 @@ final readonly class KiddoMcpController
                 400,
                 [
                     'Content-Type' => 'application/json',
-                ]
+                ],
             );
         }
 
@@ -67,10 +67,8 @@ final readonly class KiddoMcpController
             'content_type' => $request->headers->get('Content-Type'),
             'accept' => $request->headers->get('Accept'),
             'has_session' => $request->headers->has('Mcp-Session-Id'),
-            'looks_like_json' => $content === '' || str_starts_with(ltrim($content), '{') || str_starts_with(
-                ltrim($content),
-                '['
-            ),
+            'looks_like_json' =>
+                $content === '' || str_starts_with(ltrim($content), '{') || str_starts_with(ltrim($content), '['),
         ]);
 
         // Spec allows GET SSE; the PHP SDK returns 405. Accept GET so clients that open an

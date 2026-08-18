@@ -23,22 +23,20 @@ class SeriesRepository extends ServiceEntityRepository
      */
     public function findInRange(\DateTimeImmutable $start, \DateTimeImmutable $end, bool $showCancelled = false): array
     {
-        $qb = $this->createQueryBuilder('s')
+        $qb = $this
+            ->createQueryBuilder('s')
             ->leftJoin('s.lessons', 'l')
             ->andWhere('l.schedule BETWEEN :start AND :end')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
-            ->orderBy('l.schedule', 'ASC')
-        ;
+            ->orderBy('l.schedule', 'ASC');
 
-        if (! $showCancelled) {
-            $qb->andWhere('s.status = :status')
-                ->setParameter('status', 'active');
+        if (!$showCancelled) {
+            $qb->andWhere('s.status = :status')->setParameter('status', 'active');
         }
 
         /** @var array<int, Series> $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 
@@ -48,7 +46,8 @@ class SeriesRepository extends ServiceEntityRepository
     public function findActive(): array
     {
         /** @var array<int, Series> $result */
-        $result = $this->createQueryBuilder('s')
+        $result = $this
+            ->createQueryBuilder('s')
             ->andWhere('s.status = :status')
             ->setParameter('status', 'active')
             ->getQuery()

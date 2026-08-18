@@ -20,8 +20,8 @@ use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -82,7 +82,7 @@ final class ReservationDetailsModal extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->findBooking($bookingId);
-        if (! $booking instanceof Booking) {
+        if (!$booking instanceof Booking) {
             return;
         }
 
@@ -114,17 +114,15 @@ final class ReservationDetailsModal extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->getBooking();
         $actor = $this->getUser();
-        if (! $booking instanceof Booking || ! $actor instanceof User) {
+        if (!$booking instanceof Booking || !$actor instanceof User) {
             $this->errorMessage = 'Nie udało się odnaleźć rezerwacji.';
             return;
         }
 
         try {
-            $this->messageBus->dispatch(new ReactivateBooking(
-                $booking->getId(),
-                $actor,
-                'Przywrócono przez administratora',
-            ));
+            $this->messageBus->dispatch(
+                new ReactivateBooking($booking->getId(), $actor, 'Przywrócono przez administratora'),
+            );
             $this->successMessage = 'Rezerwacja została przywrócona.';
             $this->errorMessage = null;
         } catch (\Throwable $exception) {
@@ -142,7 +140,7 @@ final class ReservationDetailsModal extends AbstractController
     public function selectAction(#[LiveArg] string $value): void
     {
         $action = $value;
-        if (! in_array($action, ['cancel', 'refund', 'reschedule'], true)) {
+        if (!in_array($action, ['cancel', 'refund', 'reschedule'], true)) {
             $action = '';
         }
 
@@ -158,7 +156,7 @@ final class ReservationDetailsModal extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->getBooking();
-        if (! $booking instanceof Booking) {
+        if (!$booking instanceof Booking) {
             return;
         }
 
@@ -174,13 +172,15 @@ final class ReservationDetailsModal extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $payment = $this->getBooking()?->getPayment();
         $actor = $this->getUser();
-        if (! $payment instanceof Payment || ! $actor instanceof User) {
+        if (!$payment instanceof Payment || !$actor instanceof User) {
             $this->errorMessage = 'Nie udało się odnaleźć płatności.';
             return;
         }
 
-        if (! in_array($transition, [Payment::TRANSITION_REFUND, Payment::TRANSITION_CANCEL], true)
-            || ! $this->paymentStateMachine->can($payment, $transition)) {
+        if (
+            !in_array($transition, [Payment::TRANSITION_REFUND, Payment::TRANSITION_CANCEL], true)
+            || !$this->paymentStateMachine->can($payment, $transition)
+        ) {
             $this->errorMessage = 'Ta zmiana statusu płatności nie jest dostępna.';
             return;
         }
@@ -210,25 +210,19 @@ final class ReservationDetailsModal extends AbstractController
         $booking = $this->getBooking();
         $lesson = $this->getLesson();
         $actor = $this->getUser();
-        if (! $booking instanceof Booking || ! $lesson instanceof Lesson || ! $actor instanceof User) {
+        if (!$booking instanceof Booking || !$lesson instanceof Lesson || !$actor instanceof User) {
             $this->errorMessage = 'Nie udało się odnaleźć rezerwacji lub zajęć.';
             return;
         }
 
         try {
             match ($this->action) {
-                'cancel' => $this->messageBus->dispatch(new CancelLessonBooking(
-                    $booking->getId(),
-                    $lesson->getId(),
-                    $actor,
-                    trim($this->reason),
-                )),
-                'refund' => $this->messageBus->dispatch(new RefundLessonBooking(
-                    $booking->getId(),
-                    $lesson->getId(),
-                    $actor,
-                    trim($this->reason),
-                )),
+                'cancel' => $this->messageBus->dispatch(
+                    new CancelLessonBooking($booking->getId(), $lesson->getId(), $actor, trim($this->reason)),
+                ),
+                'refund' => $this->messageBus->dispatch(
+                    new RefundLessonBooking($booking->getId(), $lesson->getId(), $actor, trim($this->reason)),
+                ),
                 'reschedule' => $this->reschedule($booking, $lesson, $actor),
                 default => throw new \InvalidArgumentException('Wybierz akcję.'),
             };
@@ -273,17 +267,17 @@ final class ReservationDetailsModal extends AbstractController
         $booking = $this->getBooking();
         $lesson = $this->getLesson();
         $series = $lesson?->getSeries();
-        if (! $booking instanceof Booking || ! $lesson instanceof Lesson || $series === null) {
+        if (!$booking instanceof Booking || !$lesson instanceof Lesson || $series === null) {
             return [];
         }
 
         return array_values(array_filter(
             $this->lessonRepository->findAvailableLessonsForReschedule($series, $lesson->schedule),
-            static fn(Lesson $candidate): bool => ! $candidate->getId()
-                ->equals($lesson->getId())
-                && ! $booking->getLessons()
-                    ->contains($candidate)
-                && $candidate->getAvailableSpots() > 0,
+            static fn(Lesson $candidate): bool => (
+                !$candidate->getId()->equals($lesson->getId())
+                && !$booking->getLessons()->contains($candidate)
+                && $candidate->getAvailableSpots() > 0
+            ),
         ));
     }
 
@@ -293,13 +287,13 @@ final class ReservationDetailsModal extends AbstractController
     public function getRescheduleHistory(): array
     {
         $booking = $this->getBooking();
-        if (! $booking instanceof Booking) {
+        if (!$booking instanceof Booking) {
             return [];
         }
 
         $history = [];
         foreach ($booking->getLessonsMap()->getRescheduled() as $entry) {
-            if (! $entry instanceof RescheduledLesson) {
+            if (!$entry instanceof RescheduledLesson) {
                 continue;
             }
             $history[] = [
@@ -321,16 +315,12 @@ final class ReservationDetailsModal extends AbstractController
             return [];
         }
 
-        return array_values(array_map(
-            static fn(ActivityLog $log): array => [
-                'type' => $log->getType()
-                    ->value,
-                'title' => $log->getTitle(),
-                'summary' => $log->getSummary(),
-                'createdAt' => $log->getCreatedAt(),
-            ],
-            $this->activityLogRepository->findByBookingId($this->bookingId),
-        ));
+        return array_values(array_map(static fn(ActivityLog $log): array => [
+            'type' => $log->getType()->value,
+            'title' => $log->getTitle(),
+            'summary' => $log->getSummary(),
+            'createdAt' => $log->getCreatedAt(),
+        ], $this->activityLogRepository->findByBookingId($this->bookingId)));
     }
 
     private function reschedule(Booking $booking, Lesson $lesson, User $actor): Envelope
@@ -339,19 +329,20 @@ final class ReservationDetailsModal extends AbstractController
             throw new \InvalidArgumentException('Wybierz nowe zajęcia z serii.');
         }
         $target = $this->lessonRepository->find(Ulid::fromString($this->targetLessonId));
-        if (! $target instanceof Lesson) {
+        if (!$target instanceof Lesson) {
             throw new \InvalidArgumentException('Wybrane zajęcia nie istnieją.');
         }
 
-        $envelope = $this->messageBus->dispatch(new RescheduleLessonBooking(
-            $booking->getId(),
-            $lesson->getId(),
-            $target->getId(),
-            $actor,
-            trim($this->reason),
-        ));
-        $this->lessonId = $target->getId()
-            ->toString();
+        $envelope = $this->messageBus->dispatch(
+            new RescheduleLessonBooking(
+                $booking->getId(),
+                $lesson->getId(),
+                $target->getId(),
+                $actor,
+                trim($this->reason),
+            ),
+        );
+        $this->lessonId = $target->getId()->toString();
 
         return $envelope;
     }
@@ -370,11 +361,9 @@ final class ReservationDetailsModal extends AbstractController
         foreach ($booking->getModifiableLessons() as $bookedLesson) {
             return $bookedLesson->lessonId->toString();
         }
-        $lesson = $booking->getLessons()
-            ->first();
+        $lesson = $booking->getLessons()->first();
 
-        return $lesson instanceof Lesson ? $lesson->getId()
-            ->toString() : null;
+        return $lesson instanceof Lesson ? $lesson->getId()->toString() : null;
     }
 
     private function resetAction(bool $keepMessages = false): void
@@ -382,7 +371,7 @@ final class ReservationDetailsModal extends AbstractController
         $this->action = '';
         $this->reason = '';
         $this->targetLessonId = null;
-        if (! $keepMessages) {
+        if (!$keepMessages) {
             $this->successMessage = null;
             $this->errorMessage = null;
         }

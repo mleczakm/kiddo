@@ -16,15 +16,12 @@ final class CompositeConnectionEnsurerTest extends TestCase
     public function testEnsureConnectionDelegatesToAllEnsurers(): void
     {
         $first = $this->createMock(ConnectionEnsurerInterface::class);
-        $first->expects($this->once())
-            ->method('ensureConnection');
+        $first->expects($this->once())->method('ensureConnection');
 
         $second = $this->createMock(ConnectionEnsurerInterface::class);
-        $second->expects($this->once())
-            ->method('ensureConnection');
+        $second->expects($this->once())->method('ensureConnection');
 
-        new CompositeConnectionEnsurer([$first, $second])
-            ->ensureConnection();
+        new CompositeConnectionEnsurer([$first, $second])->ensureConnection();
     }
 
     public function testEnsureConnectionStopsAndPropagatesFirstFailure(): void
@@ -33,15 +30,14 @@ final class CompositeConnectionEnsurerTest extends TestCase
         $this->expectExceptionMessage('first failed');
 
         $first = $this->createMock(ConnectionEnsurerInterface::class);
-        $first->expects($this->once())
+        $first
+            ->expects($this->once())
             ->method('ensureConnection')
             ->willThrowException(new RuntimeException('first failed'));
 
         $second = $this->createMock(ConnectionEnsurerInterface::class);
-        $second->expects($this->never())
-            ->method('ensureConnection');
+        $second->expects($this->never())->method('ensureConnection');
 
-        new CompositeConnectionEnsurer([$first, $second])
-            ->ensureConnection();
+        new CompositeConnectionEnsurer([$first, $second])->ensureConnection();
     }
 }

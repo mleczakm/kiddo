@@ -21,8 +21,7 @@ class MainScheduleTest extends TestCase
 {
     public function testCreateSchedule(): void
     {
-        $schedule = new MainSchedule(new NullAdapter())
-            ->getSchedule();
+        $schedule = new MainSchedule(new NullAdapter())->getSchedule();
 
         self::assertCount(8, $schedule->getRecurringMessages());
         self::assertNotNull($schedule->getState());
@@ -30,8 +29,7 @@ class MainScheduleTest extends TestCase
 
     public function testRecurringMessagesWithDatesAreCreatedDynamically(): void
     {
-        $schedule = new MainSchedule(new ArrayAdapter())
-            ->getSchedule();
+        $schedule = new MainSchedule(new ArrayAdapter())->getSchedule();
 
         $messageGenerator = new MessageGenerator($schedule, 'name', $mockClock = new MockClock());
 
@@ -67,14 +65,14 @@ class MainScheduleTest extends TestCase
             self::assertNotEquals(
                 $reminderDates[$i - 1],
                 $reminderDates[$i],
-                'DailyLessonsReminder dates should be dynamically created and not equal'
+                'DailyLessonsReminder dates should be dynamically created and not equal',
             );
         }
         for ($i = 1; $i < count($expiredBookingDates); $i++) {
             self::assertNotEquals(
                 $expiredBookingDates[$i - 1],
                 $expiredBookingDates[$i],
-                'CheckExpiredBookings expirationTime should be dynamically created and not equal'
+                'CheckExpiredBookings expirationTime should be dynamically created and not equal',
             );
         }
     }

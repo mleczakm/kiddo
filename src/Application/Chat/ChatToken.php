@@ -30,7 +30,6 @@ final readonly class ChatToken
 
     public function isAdmin(): bool
     {
-        return in_array('ROLE_ADMIN', $this->roles, true)
-            || in_array('ROLE_SUPER_ADMIN', $this->roles, true);
+        return in_array('ROLE_ADMIN', $this->roles, true) || in_array('ROLE_SUPER_ADMIN', $this->roles, true);
     }
 }

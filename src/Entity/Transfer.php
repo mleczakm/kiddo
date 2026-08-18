@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 #[ORM\Entity]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
@@ -31,7 +31,7 @@ class Transfer
         #[ORM\Column(type: 'string', length: 255)]
         public string $amount,
         #[ORM\Column(type: 'datetime_immutable')]
-        private \DateTimeImmutable $transferredAt
+        private \DateTimeImmutable $transferredAt,
     ) {}
 
     public function getId(): ?int
@@ -55,17 +55,15 @@ class Transfer
             $prev = $this->payment;
             // Use getter to access collection and remove without triggering recursion
             if ($prev->getTransfers()->contains($this)) {
-                $prev->getTransfers()
-                    ->removeElement($this);
+                $prev->getTransfers()->removeElement($this);
             }
         }
 
         $this->payment = $payment;
 
         // Attach to new payment's collection to keep bidirectional sync
-        if ($payment !== null && ! $payment->getTransfers()->contains($this)) {
-            $payment->getTransfers()
-                ->add($this);
+        if ($payment !== null && !$payment->getTransfers()->contains($this)) {
+            $payment->getTransfers()->add($this);
         }
 
         return $this;

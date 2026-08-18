@@ -38,7 +38,7 @@ class LessonRepository extends ServiceEntityRepository
     public function findAvailableLessonsForReschedule(
         Series $series,
         \DateTimeInterface $afterDate,
-        int $maxResults = 10
+        int $maxResults = 10,
     ): array {
         $qb = $this->createQueryBuilder('l');
 
@@ -67,7 +67,8 @@ class LessonRepository extends ServiceEntityRepository
         $end = $date->setTime(23, 59, 59);
 
         /** @var Lesson[] $result */
-        $result = $this->createQueryBuilder('l')
+        $result = $this
+            ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
             ->leftJoin('b.child', 'c')
             ->leftJoin('b.user', 'u')
@@ -92,47 +93,46 @@ class LessonRepository extends ServiceEntityRepository
         ?int $age,
         string $week,
         ?int $limit = null,
-        bool $orderByPopularity = false
+        bool $orderByPopularity = false,
     ): array {
-        $qb = $this->createQueryBuilder('l')
+        $qb = $this
+            ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
             ->andWhere('l.status = :status')
             ->setParameter('status', 'active')
             ->orderBy('l.schedule', 'ASC');
 
         if ($query !== null) {
-            $qb->andWhere('ILIKE(m.title, :query) = TRUE')
-                ->setParameter('query', '%' . $query . '%');
+            $qb->andWhere('ILIKE(m.title, :query) = TRUE')->setParameter('query', '%' . $query . '%');
         }
 
         if ($age !== null) {
-            $qb->andWhere('m.ageRange.min <= :age')
-                ->andWhere('m.ageRange.max >= :age')
-                ->setParameter('age', $age);
+            $qb->andWhere('m.ageRange.min <= :age')->andWhere('m.ageRange.max >= :age')->setParameter('age', $age);
         }
 
         $weekStart = new \DateTimeImmutable($week);
         $weekEnd = $weekStart->modify('+7 days 23:59:59');
 
-        $qb->andWhere('l.schedule BETWEEN :weekStart AND :weekEnd')
+        $qb
+            ->andWhere('l.schedule BETWEEN :weekStart AND :weekEnd')
             ->setParameter('weekStart', $weekStart)
             ->setParameter('weekEnd', $weekEnd);
 
-        if ($limit !== null && ! $orderByPopularity) {
+        if ($limit !== null && !$orderByPopularity) {
             $qb->setMaxResults($limit);
         }
 
         /** @var Lesson[] $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
 
         if ($orderByPopularity) {
             /** @var Lesson[] $result */
             $result = new Vector($result)
-                ->reduce(
-                    fn(PriorityQueue $queue, Lesson $lesson) => $queue->push($lesson, $lesson->getBookings()->count()),
-                    new PriorityQueue()
-                )?->toArray();
+                ->reduce(fn(PriorityQueue $queue, Lesson $lesson) => $queue->push(
+                    $lesson,
+                    $lesson->getBookings()->count(),
+                ), new PriorityQueue())
+                ?->toArray();
 
             if ($limit !== null) {
                 $result = array_slice($result, 0, $limit);
@@ -148,7 +148,8 @@ class LessonRepository extends ServiceEntityRepository
     public function findUpcoming(\DateTimeImmutable $since, int $limit): array
     {
         /** @var Lesson[] $lessons */
-        $lessons = $this->createQueryBuilder('l')
+        $lessons = $this
+            ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
             ->where('l.schedule > :since')
             ->setParameter('since', $since)
@@ -166,7 +167,8 @@ class LessonRepository extends ServiceEntityRepository
     public function findUpcomingWithBookings(\DateTimeImmutable $since, int $limit): array
     {
         /** @var Lesson[] $lessons */
-        $lessons = $this->createQueryBuilder('l')
+        $lessons = $this
+            ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
             ->leftJoin('b.child', 'c')
             ->leftJoin('b.user', 'u')
@@ -189,9 +191,10 @@ class LessonRepository extends ServiceEntityRepository
     public function findUpcomingWithBookingsInRange(
         \DateTimeImmutable $startDate,
         \DateTimeImmutable $endDate,
-        bool $showCancelled = false
+        bool $showCancelled = false,
     ): array {
-        $qb = $this->createQueryBuilder('l')
+        $qb = $this
+            ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
             ->leftJoin('b.child', 'c')
             ->leftJoin('b.user', 'u')
@@ -204,20 +207,21 @@ class LessonRepository extends ServiceEntityRepository
             ->setParameter('endDate', $endDate)
             ->orderBy('l.schedule', 'ASC');
 
-        if (! $showCancelled) {
-            $qb->andWhere('l.status = :status')
+        if (!$showCancelled) {
+            $qb
+                ->andWhere('l.status = :status')
                 ->setParameter('status', 'active')
                 ->setParameter('bookingStatus', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE]);
         } else {
-            $qb->setParameter(
-                'bookingStatus',
-                [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE, Booking::STATUS_CANCELLED]
-            );
+            $qb->setParameter('bookingStatus', [
+                Booking::STATUS_PENDING,
+                Booking::STATUS_ACTIVE,
+                Booking::STATUS_CANCELLED,
+            ]);
         }
 
         /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()
-            ->getResult();
+        $lessons = $qb->getQuery()->getResult();
 
         return $lessons;
     }
@@ -228,23 +232,22 @@ class LessonRepository extends ServiceEntityRepository
     public function findUpcomingInRange(
         \DateTimeImmutable $startDate,
         \DateTimeImmutable $endDate,
-        bool $showCancelled = false
+        bool $showCancelled = false,
     ): array {
-        $qb = $this->createQueryBuilder('l')
+        $qb = $this
+            ->createQueryBuilder('l')
             ->andWhere('l.schedule >= :startDate')
             ->andWhere('l.schedule <= :endDate')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
             ->orderBy('l.schedule', 'ASC');
 
-        if (! $showCancelled) {
-            $qb->andWhere('l.status = :status')
-                ->setParameter('status', 'active');
+        if (!$showCancelled) {
+            $qb->andWhere('l.status = :status')->setParameter('status', 'active');
         }
 
         /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()
-            ->getResult();
+        $lessons = $qb->getQuery()->getResult();
 
         return $lessons;
     }
@@ -261,9 +264,10 @@ class LessonRepository extends ServiceEntityRepository
         \DateTimeImmutable $startDate,
         \DateTimeImmutable $endDate,
         bool $showCancelled,
-        User $instructor
+        User $instructor,
     ): array {
-        $qb = $this->createQueryBuilder('l')
+        $qb = $this
+            ->createQueryBuilder('l')
             ->leftJoin('l.series', 's')
             ->andWhere('l.schedule >= :startDate')
             ->andWhere('l.schedule <= :endDate')
@@ -273,14 +277,12 @@ class LessonRepository extends ServiceEntityRepository
             ->setParameter('instructor', $instructor)
             ->orderBy('l.schedule', 'ASC');
 
-        if (! $showCancelled) {
-            $qb->andWhere('l.status = :status')
-                ->setParameter('status', 'active');
+        if (!$showCancelled) {
+            $qb->andWhere('l.status = :status')->setParameter('status', 'active');
         }
 
         /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()
-            ->getResult();
+        $lessons = $qb->getQuery()->getResult();
 
         return $lessons;
     }

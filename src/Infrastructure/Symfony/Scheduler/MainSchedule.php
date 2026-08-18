@@ -31,28 +31,17 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->processOnlyLastMissedRun(true)
             ->add(
                 RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 24 * 60)),
-                RecurringMessage::every(
-                    '60 minutes',
-                    new CallbackMessageProvider(fn() => [new CheckExpiredBookings()])
-                ),
+                RecurringMessage::every('60 minutes', new CallbackMessageProvider(fn() => [new CheckExpiredBookings()])),
                 RecurringMessage::every(30, new ImportTransfersFromMail()),
                 RecurringMessage::cron(
                     '45 8 * * *',
                     new CallbackMessageProvider(fn() => [new DailyLessonsReminder()]),
-                    new \DateTimeZone('Europe/Warsaw')
+                    new \DateTimeZone('Europe/Warsaw'),
                 ),
                 RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers()),
-                RecurringMessage::cron(
-                    '5 * * * *',
-                    new CheckBookingsToMarkPast(),
-                    new \DateTimeZone('Europe/Warsaw')
-                ),
+                RecurringMessage::cron('5 * * * *', new CheckBookingsToMarkPast(), new \DateTimeZone('Europe/Warsaw')),
                 RecurringMessage::cron('1 0 * * *', new ExtendSeriesSchedule(), new \DateTimeZone('Europe/Warsaw')),
-                RecurringMessage::cron(
-                    '15 3 * * *',
-                    new PurgeOldNotifications(),
-                    new \DateTimeZone('Europe/Warsaw')
-                ),
+                RecurringMessage::cron('15 3 * * *', new PurgeOldNotifications(), new \DateTimeZone('Europe/Warsaw')),
             );
     }
 }

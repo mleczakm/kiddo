@@ -27,7 +27,7 @@ class BookingWorkflowSubscriber implements EventSubscriberInterface
     {
         $payment = $event->getSubject();
 
-        if (! $payment instanceof Payment) {
+        if (!$payment instanceof Payment) {
             return;
         }
 
@@ -50,7 +50,7 @@ class BookingWorkflowSubscriber implements EventSubscriberInterface
     {
         $payment = $event->getSubject();
 
-        if (! $payment instanceof Payment) {
+        if (!$payment instanceof Payment) {
             return;
         }
 

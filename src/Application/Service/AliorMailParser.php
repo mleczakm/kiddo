@@ -8,16 +8,16 @@ class AliorMailParser implements TransferNotificationMailParserInterface
 {
     public function fromMailSubjectAndContent(string $subject, string $content): ?TransferNotificationMailParserResult
     {
-        if (! preg_match('/Uznanie rachunku ([0-9.]+) kwotą ([0-9 ,.]+) PLN/u', $subject, $matches)) {
+        if (!preg_match('/Uznanie rachunku ([0-9.]+) kwotą ([0-9 ,.]+) PLN/u', $subject, $matches)) {
             return null;
         }
         [
             1 => $accountNumber,
         ] = $matches;
-        if (! preg_match(
+        if (!preg_match(
             '/kwotą ([0-9., ]+) PLN.*?Nadawca: (.*?)<br.*?Tytuł zlecenia: (.*?)<br/us',
             $content,
-            $matches
+            $matches,
         )) {
             return null;
         }

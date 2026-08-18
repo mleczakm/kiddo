@@ -33,7 +33,7 @@ final readonly class SendBookingCancellationNotificationHandler
         $user = $booking->getUser();
         $lessons = $booking->getLessons();
 
-        if (! $firstLesson = $lessons->first()) {
+        if (!($firstLesson = $lessons->first())) {
             return;
         }
 
@@ -47,19 +47,26 @@ final readonly class SendBookingCancellationNotificationHandler
             'hour' => $lessonDate->format('H:i'),
         ]);
 
-        $lessonTitle = $firstLesson->getMetadata()
-            ->title;
+        $lessonTitle = $firstLesson->getMetadata()->title;
 
-        $subject = $this->translator->trans('booking_cancellation.subject', [
-            'date' => $dayOfWeek,
-            'lesson' => $lessonTitle,
-        ], 'emails');
+        $subject = $this->translator->trans(
+            'booking_cancellation.subject',
+            [
+                'date' => $dayOfWeek,
+                'lesson' => $lessonTitle,
+            ],
+            'emails',
+        );
 
-        $content = $this->translator->trans('booking_cancellation.content', [
-            'name' => $user->getName(),
-            'date' => $dayOfWeek,
-            'lesson' => $lessonTitle,
-        ], 'emails');
+        $content = $this->translator->trans(
+            'booking_cancellation.content',
+            [
+                'name' => $user->getName(),
+                'date' => $dayOfWeek,
+                'lesson' => $lessonTitle,
+            ],
+            'emails',
+        );
 
         $notification = new Notification()
             ->importance('')
@@ -73,10 +80,14 @@ final readonly class SendBookingCancellationNotificationHandler
         $this->inAppNotifications->notify(
             $user,
             $this->translator->trans('notifications.in_app.cancellation.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.cancellation.body', [
-                'lesson' => $lessonTitle,
-                'date' => $dayOfWeek,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.cancellation.body',
+                [
+                    'lesson' => $lessonTitle,
+                    'date' => $dayOfWeek,
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('dashboard'),
             NotificationSeverity::Warning,
         );
@@ -90,19 +101,27 @@ final readonly class SendBookingCancellationNotificationHandler
         $user = $booking->getUser();
 
         foreach ($admins as $admin) {
-            $subject = $this->translator->trans('booking_cancellation.admin.subject', [
-                'user' => $user->getName(),
-                'date' => $dayOfWeek,
-                'lesson' => $lessonTitle,
-            ], 'emails');
+            $subject = $this->translator->trans(
+                'booking_cancellation.admin.subject',
+                [
+                    'user' => $user->getName(),
+                    'date' => $dayOfWeek,
+                    'lesson' => $lessonTitle,
+                ],
+                'emails',
+            );
 
-            $content = $this->translator->trans('booking_cancellation.admin.content', [
-                'user' => $user->getName(),
-                'email' => $user->getEmail(),
-                'date' => $dayOfWeek,
-                'lesson' => $lessonTitle,
-                'booking_id' => (string) $booking->getId(),
-            ], 'emails');
+            $content = $this->translator->trans(
+                'booking_cancellation.admin.content',
+                [
+                    'user' => $user->getName(),
+                    'email' => $user->getEmail(),
+                    'date' => $dayOfWeek,
+                    'lesson' => $lessonTitle,
+                    'booking_id' => (string) $booking->getId(),
+                ],
+                'emails',
+            );
 
             $notification = new Notification()
                 ->importance('')
@@ -114,11 +133,15 @@ final readonly class SendBookingCancellationNotificationHandler
 
         $this->inAppNotifications->notifyAdmins(
             $this->translator->trans('notifications.in_app.cancellation_admin.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.cancellation_admin.body', [
-                'email' => $user->getEmail(),
-                'lesson' => $lessonTitle,
-                'date' => $dayOfWeek,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.cancellation_admin.body',
+                [
+                    'email' => $user->getEmail(),
+                    'lesson' => $lessonTitle,
+                    'date' => $dayOfWeek,
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('app_admin_bookings'),
             NotificationSeverity::Warning,
         );

@@ -33,7 +33,7 @@ readonly class BrevoNewsletterService
      */
     public function addOrUpdateContact(string $email, ?string $name = null, array $attributes = []): void
     {
-        if (! $this->isConfigured()) {
+        if (!$this->isConfigured()) {
             throw new \RuntimeException('Brevo is not configured (BREVO_API_KEY / BREVO_NEWSLETTER_LIST_ID)');
         }
 
@@ -47,21 +47,17 @@ readonly class BrevoNewsletterService
             $data['attributes'] = array_merge($attributes, [
                 'FIRSTNAME' => $name,
             ]);
-        } elseif (! empty($attributes)) {
+        } elseif (!empty($attributes)) {
             $data['attributes'] = $attributes;
         }
 
-        $this->httpClient->request(
-            'POST',
-            'https://api.brevo.com/v3/contacts',
-            [
-                'headers' => [
-                    'api-key' => $this->apiKey,
-                    'Content-Type' => 'application/json',
-                ],
-                'json' => $data,
-            ]
-        );
+        $this->httpClient->request('POST', 'https://api.brevo.com/v3/contacts', [
+            'headers' => [
+                'api-key' => $this->apiKey,
+                'Content-Type' => 'application/json',
+            ],
+            'json' => $data,
+        ]);
     }
 
     /**
@@ -69,23 +65,19 @@ readonly class BrevoNewsletterService
      */
     public function removeContactFromList(string $email): void
     {
-        if (! $this->isConfigured()) {
+        if (!$this->isConfigured()) {
             throw new \RuntimeException('Brevo is not configured (BREVO_API_KEY / BREVO_NEWSLETTER_LIST_ID)');
         }
 
-        $this->httpClient->request(
-            'POST',
-            sprintf('https://api.brevo.com/v3/contacts/%s/removeList', $email),
-            [
-                'headers' => [
-                    'api-key' => $this->apiKey,
-                    'Content-Type' => 'application/json',
-                ],
-                'json' => [
-                    'listIds' => [$this->newsletterListId],
-                ],
-            ]
-        );
+        $this->httpClient->request('POST', sprintf('https://api.brevo.com/v3/contacts/%s/removeList', $email), [
+            'headers' => [
+                'api-key' => $this->apiKey,
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'listIds' => [$this->newsletterListId],
+            ],
+        ]);
     }
 
     /**
@@ -93,27 +85,23 @@ readonly class BrevoNewsletterService
      */
     public function sendDoubleOptInConfirmation(string $email): void
     {
-        if (! $this->isConfigured()) {
+        if (!$this->isConfigured()) {
             throw new \RuntimeException(
-                'Brevo is not configured (BREVO_API_KEY / BREVO_NEWSLETTER_LIST_ID / BREVO_DOI_TEMPLATE_ID)'
+                'Brevo is not configured (BREVO_API_KEY / BREVO_NEWSLETTER_LIST_ID / BREVO_DOI_TEMPLATE_ID)',
             );
         }
 
-        $this->httpClient->request(
-            'POST',
-            'https://api.brevo.com/v3/doubleOptInConfirmations',
-            [
-                'headers' => [
-                    'api-key' => $this->apiKey,
-                    'Content-Type' => 'application/json',
-                ],
-                'json' => [
-                    'email' => $email,
-                    'includeListIds' => [$this->newsletterListId],
-                    'templateId' => $this->doiTemplateId,
-                    'redirectionUrl' => $this->doiRedirectionUrl,
-                ],
-            ]
-        );
+        $this->httpClient->request('POST', 'https://api.brevo.com/v3/doubleOptInConfirmations', [
+            'headers' => [
+                'api-key' => $this->apiKey,
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'email' => $email,
+                'includeListIds' => [$this->newsletterListId],
+                'templateId' => $this->doiTemplateId,
+                'redirectionUrl' => $this->doiRedirectionUrl,
+            ],
+        ]);
     }
 }

@@ -76,8 +76,7 @@ final class WithSchedulerTest extends TestCase
     public function testTickRunsScheduler(): void
     {
         $scheduler = $this->createMock(Scheduler::class);
-        $scheduler->expects($this->once())
-            ->method('run');
+        $scheduler->expects($this->once())->method('run');
 
         $withScheduler = new WithScheduler(
             $scheduler,
@@ -97,8 +96,7 @@ final class WithSchedulerTest extends TestCase
         // ContextReleasingTransportHandler rely on for every HTTP request/async message, so
         // it's worth verifying tick() plugs into the real thing rather than just a stub.
         $pool = $this->createMock(ServicePool::class);
-        $pool->expects($this->once())
-            ->method('releaseFromCoroutine');
+        $pool->expects($this->once())->method('releaseFromCoroutine');
 
         $coWrapper = new CoWrapper(new ServicePoolContainer([new ServicePoolEntry($pool)]));
 
@@ -123,7 +121,8 @@ final class WithSchedulerTest extends TestCase
             $this->createMock(LoggerInterface::class),
         );
 
-        $scheduler->expects($this->once())
+        $scheduler
+            ->expects($this->once())
             ->method('run')
             ->willReturnCallback(function () use ($withScheduler): void {
                 // Simulates an overlapping tick firing while this one is still in-flight.
@@ -138,7 +137,8 @@ final class WithSchedulerTest extends TestCase
     public function testTickResetsRunningFlagAfterExceptionSoLaterTicksAreNotSkipped(): void
     {
         $scheduler = $this->createMock(Scheduler::class);
-        $scheduler->expects($this->exactly(2))
+        $scheduler
+            ->expects($this->exactly(2))
             ->method('run')
             ->willReturnCallback(function (): void {
                 static $calls = 0;
@@ -173,9 +173,7 @@ final class WithSchedulerTest extends TestCase
     {
         $scheduler = $this->createMock(Scheduler::class);
         $exception = new RuntimeException('boom');
-        $scheduler->expects($this->once())
-            ->method('run')
-            ->willThrowException($exception);
+        $scheduler->expects($this->once())->method('run')->willThrowException($exception);
 
         // Asserting via ->with() on a mock invoked from inside Swoole\Coroutine\run() crashes
         // PHPUnit 11's parameter-matcher (it walks the call stack for the enclosing TestCase,
@@ -184,11 +182,12 @@ final class WithSchedulerTest extends TestCase
         $loggedMessage = null;
         $loggedContext = null;
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())
+        $logger
+            ->expects($this->once())
             ->method('error')
             ->willReturnCallback(function (string $message, array $context) use (
                 &$loggedMessage,
-                &$loggedContext
+                &$loggedContext,
             ): void {
                 $loggedMessage = $message;
                 $loggedContext = $context;
@@ -201,9 +200,12 @@ final class WithSchedulerTest extends TestCase
         });
 
         self::assertSame('Scheduler tick failed', $loggedMessage);
-        self::assertSame([
-            'exception' => $exception,
-        ], $loggedContext);
+        self::assertSame(
+            [
+                'exception' => $exception,
+            ],
+            $loggedContext,
+        );
     }
 
     public function testTickSkipsPooledServiceResetAndLogsAWarningOutsideACoroutine(): void
@@ -217,18 +219,17 @@ final class WithSchedulerTest extends TestCase
         // doing it (a bare, unguarded defer() call here previously aborted the whole PHP
         // process, exit 255, not just this test).
         $pool = $this->createMock(ServicePool::class);
-        $pool->expects($this->never())
-            ->method('releaseFromCoroutine');
+        $pool->expects($this->never())->method('releaseFromCoroutine');
 
         $coWrapper = new CoWrapper(new ServicePoolContainer([new ServicePoolEntry($pool)]));
 
         $scheduler = $this->createMock(Scheduler::class);
-        $scheduler->expects($this->once())
-            ->method('run');
+        $scheduler->expects($this->once())->method('run');
 
         $loggedMessage = null;
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())
+        $logger
+            ->expects($this->once())
             ->method('warning')
             ->willReturnCallback(function (string $message) use (&$loggedMessage): void {
                 $loggedMessage = $message;

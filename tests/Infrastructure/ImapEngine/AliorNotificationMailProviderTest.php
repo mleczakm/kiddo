@@ -18,20 +18,15 @@ class AliorNotificationMailProviderTest extends TestCase
     public function testSkipsImapWhenCredentialsAreMissing(): void
     {
         $mailbox = $this->createMock(FakeMailbox::class);
-        $mailbox->expects($this->never())
-            ->method('reconnect');
+        $mailbox->expects($this->never())->method('reconnect');
 
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())
+        $logger
+            ->expects($this->once())
             ->method('info')
             ->with('Gmail IMAP skipped: mailbox credentials are not configured');
 
-        $provider = new AliorNotificationMailProvider(
-            $mailbox,
-            $logger,
-            mailboxUsername: '',
-            mailboxPassword: '',
-        );
+        $provider = new AliorNotificationMailProvider($mailbox, $logger, mailboxUsername: '', mailboxPassword: '');
 
         $this->assertSame([], iterator_to_array($provider()));
     }
@@ -44,7 +39,8 @@ class AliorNotificationMailProviderTest extends TestCase
         $testMailbox = new FakeMailbox(folders: [new ThrowingFolder('inbox')]);
 
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())
+        $logger
+            ->expects($this->once())
             ->method('error')
             ->with('Gmail IMAP query failed', $this->arrayHasKey('exception'));
 

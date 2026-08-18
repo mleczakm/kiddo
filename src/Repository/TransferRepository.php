@@ -24,15 +24,11 @@ class TransferRepository extends ServiceEntityRepository
      */
     public function findAllWithDeleted(): array
     {
-        $this->getEntityManager()
-            ->getFilters()
-            ->disable('softdeleteable');
+        $this->getEntityManager()->getFilters()->disable('softdeleteable');
         try {
             return $this->findAll();
         } finally {
-            $this->getEntityManager()
-                ->getFilters()
-                ->enable('softdeleteable');
+            $this->getEntityManager()->getFilters()->enable('softdeleteable');
         }
     }
 
@@ -42,21 +38,14 @@ class TransferRepository extends ServiceEntityRepository
      */
     public function findOnlyDeleted(): array
     {
-        $this->getEntityManager()
-            ->getFilters()
-            ->disable('softdeleteable');
+        $this->getEntityManager()->getFilters()->disable('softdeleteable');
         try {
             /** @var Transfer[] $result */
-            $result = $this->createQueryBuilder('t')
-                ->where('t.deletedAt IS NOT NULL')
-                ->getQuery()
-                ->getResult();
+            $result = $this->createQueryBuilder('t')->where('t.deletedAt IS NOT NULL')->getQuery()->getResult();
 
             return $result;
         } finally {
-            $this->getEntityManager()
-                ->getFilters()
-                ->enable('softdeleteable');
+            $this->getEntityManager()->getFilters()->enable('softdeleteable');
         }
     }
 
@@ -66,7 +55,8 @@ class TransferRepository extends ServiceEntityRepository
     public function findByTitleStartingWith(string $prefix): array
     {
         /** @var Transfer[] $result */
-        $result = $this->createQueryBuilder('t')
+        $result = $this
+            ->createQueryBuilder('t')
             ->where('t.title LIKE :prefix')
             ->setParameter('prefix', $prefix . '%')
             ->getQuery()
@@ -80,19 +70,13 @@ class TransferRepository extends ServiceEntityRepository
      */
     public function restore(Transfer $transfer): void
     {
-        $this->getEntityManager()
-            ->getFilters()
-            ->disable('softdeleteable');
+        $this->getEntityManager()->getFilters()->disable('softdeleteable');
         try {
             $transfer->setDeletedAt(null);
-            $this->getEntityManager()
-                ->persist($transfer);
-            $this->getEntityManager()
-                ->flush();
+            $this->getEntityManager()->persist($transfer);
+            $this->getEntityManager()->flush();
         } finally {
-            $this->getEntityManager()
-                ->getFilters()
-                ->enable('softdeleteable');
+            $this->getEntityManager()->getFilters()->enable('softdeleteable');
         }
     }
 }

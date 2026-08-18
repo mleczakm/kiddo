@@ -22,10 +22,15 @@ final class ChatToolRegistryTest extends TestCase
             public function definitions(): array
             {
                 return [
-                    new ToolDefinition('user.demo', 'demo', [
-                        'type' => 'object',
-                        'properties' => new \stdClass(),
-                    ], requiresConfirm: true),
+                    new ToolDefinition(
+                        'user.demo',
+                        'demo',
+                        [
+                            'type' => 'object',
+                            'properties' => new \stdClass(),
+                        ],
+                        requiresConfirm: true,
+                    ),
                 ];
             }
 
@@ -63,10 +68,15 @@ final class ChatToolRegistryTest extends TestCase
                         'type' => 'object',
                         'properties' => new \stdClass(),
                     ]),
-                    new ToolDefinition('admin.today_schedule', 'admin', [
-                        'type' => 'object',
-                        'properties' => new \stdClass(),
-                    ], requiresAdmin: true),
+                    new ToolDefinition(
+                        'admin.today_schedule',
+                        'admin',
+                        [
+                            'type' => 'object',
+                            'properties' => new \stdClass(),
+                        ],
+                        requiresAdmin: true,
+                    ),
                 ];
             }
 
@@ -100,10 +110,15 @@ final class ChatToolRegistryTest extends TestCase
                         'type' => 'object',
                         'properties' => new \stdClass(),
                     ]),
-                    new ToolDefinition('user.list_upcoming_lessons', 'lessons', [
-                        'type' => 'object',
-                        'properties' => new \stdClass(),
-                    ], requiresAuth: false),
+                    new ToolDefinition(
+                        'user.list_upcoming_lessons',
+                        'lessons',
+                        [
+                            'type' => 'object',
+                            'properties' => new \stdClass(),
+                        ],
+                        requiresAuth: false,
+                    ),
                 ];
             }
 

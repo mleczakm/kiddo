@@ -18,45 +18,37 @@ final class CacheConnectionEnsurerTest extends TestCase
     public function testEnsureConnectionPingsDatabase(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
-            ->method('isTransactionActive')
-            ->willReturn(false);
-        $connection->expects($this->once())
+        $connection->expects($this->once())->method('isTransactionActive')->willReturn(false);
+        $connection
+            ->expects($this->once())
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturn($this->createMock(Result::class));
 
-        new CacheConnectionEnsurer($connection)
-            ->ensureConnection();
+        new CacheConnectionEnsurer($connection)->ensureConnection();
     }
 
     public function testEnsureConnectionDiscardsActiveTransactionBeforePing(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
-            ->method('isTransactionActive')
-            ->willReturn(true);
-        $connection->expects($this->once())
-            ->method('rollBack');
-        $connection->expects($this->once())
+        $connection->expects($this->once())->method('isTransactionActive')->willReturn(true);
+        $connection->expects($this->once())->method('rollBack');
+        $connection
+            ->expects($this->once())
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturn($this->createMock(Result::class));
 
-        new CacheConnectionEnsurer($connection)
-            ->ensureConnection();
+        new CacheConnectionEnsurer($connection)->ensureConnection();
     }
 
     public function testEnsureConnectionRetriesOnConnectionFailure(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
-            ->method('isTransactionActive')
-            ->willReturn(false);
-        $connection->expects($this->exactly(2))
-            ->method('isConnected')
-            ->willReturn(true, true);
-        $connection->expects($this->exactly(3))
+        $connection->expects($this->once())->method('isTransactionActive')->willReturn(false);
+        $connection->expects($this->exactly(2))->method('isConnected')->willReturn(true, true);
+        $connection
+            ->expects($this->exactly(3))
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturnCallback(function () {
@@ -68,11 +60,9 @@ final class CacheConnectionEnsurerTest extends TestCase
                     default => $this->createMock(Result::class),
                 };
             });
-        $connection->expects($this->exactly(2))
-            ->method('close');
+        $connection->expects($this->exactly(2))->method('close');
 
-        new CacheConnectionEnsurer($connection)
-            ->ensureConnection();
+        new CacheConnectionEnsurer($connection)->ensureConnection();
     }
 
     public function testEnsureConnectionThrowsExceptionAfterMaxRetries(): void
@@ -81,22 +71,17 @@ final class CacheConnectionEnsurerTest extends TestCase
         $this->expectExceptionMessage('no connection to the server');
 
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
-            ->method('isTransactionActive')
-            ->willReturn(false);
-        $connection->expects($this->exactly(2))
-            ->method('isConnected')
-            ->willReturn(true, true);
-        $connection->expects($this->exactly(3))
+        $connection->expects($this->once())->method('isTransactionActive')->willReturn(false);
+        $connection->expects($this->exactly(2))->method('isConnected')->willReturn(true, true);
+        $connection
+            ->expects($this->exactly(3))
             ->method('executeQuery')
             ->with('SELECT 1')
             ->willReturnCallback(function (): void {
                 throw new ConnectionException('no connection to the server');
             });
-        $connection->expects($this->exactly(2))
-            ->method('close');
+        $connection->expects($this->exactly(2))->method('close');
 
-        new CacheConnectionEnsurer($connection)
-            ->ensureConnection();
+        new CacheConnectionEnsurer($connection)->ensureConnection();
     }
 }

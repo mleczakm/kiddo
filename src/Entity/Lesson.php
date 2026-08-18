@@ -129,7 +129,7 @@ class Lesson
 
     public function addBooking(Booking $booking): self
     {
-        if (! $this->bookings->contains($booking)) {
+        if (!$this->bookings->contains($booking)) {
             $this->bookings[] = $booking;
         }
 
@@ -157,11 +157,12 @@ class Lesson
         return max(
             0,
             $this->metadata->capacity
-            - $this->bookings->filter(
-                fn(Booking $booking): bool => $booking->occupiesSeat() && $booking->getLessonsMap()
-                    ->active->hasKey($this->id)
-            )
-                ->count()
+            - $this->bookings
+                ->filter(
+                    fn(Booking $booking): bool => $booking->occupiesSeat()
+                    && $booking->getLessonsMap()->active->hasKey($this->id),
+                )
+                ->count(),
         );
     }
 
@@ -180,18 +181,18 @@ class Lesson
      */
     public function getAttendants(): array
     {
-        return $this->bookings->filter(fn(Booking $booking): bool => $booking->isConfirmed())
+        return $this->bookings
+            ->filter(fn(Booking $booking): bool => $booking->isConfirmed())
             ->map(fn(Booking $booking): User => $booking->getUser())
             ->toArray();
     }
 
     public function cancellationAvailable(): bool
     {
-        return $this->status === 'active'
-            && $this->schedule >= Clock::get()->now()->modify('+24 hours');
+        return $this->status === 'active' && $this->schedule >= Clock::get()->now()->modify('+24 hours');
     }
 
-    public function setTicketOptions(TicketOption ... $options): void
+    public function setTicketOptions(TicketOption ...$options): void
     {
         $this->ticketOptions = array_values($options);
     }
@@ -211,7 +212,7 @@ class Lesson
 
     public function addInstructor(User $instructor): self
     {
-        if (! $this->instructors->contains($instructor)) {
+        if (!$this->instructors->contains($instructor)) {
             $this->instructors->add($instructor);
         }
 
@@ -241,7 +242,7 @@ class Lesson
         $seen = [];
         foreach ($instructors as $instructor) {
             $id = $instructor->getId();
-            if (! in_array($id, $seen, true)) {
+            if (!in_array($id, $seen, true)) {
                 $seen[] = $id;
                 $uniqueInstructors[] = $instructor;
             }

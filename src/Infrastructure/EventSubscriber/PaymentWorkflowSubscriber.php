@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\EventSubscriber;
 
-use App\Entity\Payment;
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
+use App\Entity\Payment;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -13,7 +13,7 @@ use Symfony\Component\Workflow\Event\Event;
 readonly class PaymentWorkflowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -27,7 +27,7 @@ readonly class PaymentWorkflowSubscriber implements EventSubscriberInterface
     {
         $payment = $event->getSubject();
 
-        if (! $payment instanceof Payment) {
+        if (!$payment instanceof Payment) {
             return;
         }
 

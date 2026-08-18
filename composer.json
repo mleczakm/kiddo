@@ -56,7 +56,6 @@
     "nyholm/psr7": "^1.8.2",
     "odolbeau/phone-number-bundle": "^4.2.5",
     "phpdocumentor/reflection-docblock": "^5.6.7",
-    "phpstan/phpdoc-parser": "^2.3.3",
     "scienta/doctrine-json-functions": "^6.5",
     "sentry/sentry-symfony": "^5.11.0",
     "swoole-bundle/resetter-bundle": "^2.0",
@@ -117,7 +116,6 @@
   "config": {
     "allow-plugins": {
       "php-http/discovery": true,
-      "phpstan/extension-installer": true,
       "symfony/flex": true,
       "symfony/runtime": true
     },
@@ -167,9 +165,9 @@
       "Validate composer.json": "@composer validate",
       "Security audit": "@composer audit",
       "lint:twig": "bin/console lint:twig src templates",
-      "Rector": "rector --dry-run",
-      "Phpstan": "phpstan analyse --memory-limit=-1",
-      "ECS": "ecs check"
+      "Mago lint": "mago lint",
+      "Mago analyze": "mago analyze",
+      "Mago format": "mago format --check"
     },
     "tests": {
       "Unit tests": "bin/phpunit --group unit",
@@ -194,10 +192,8 @@
     ],
     "sa:fix": {
       "Disable timeout": "Composer\\Config::disableProcessTimeout",
-      "Rector": "rector",
-      "ECS fix": "ecs check --fix",
-      "Phpstan fix baseline step 1": "phpstan analyse --memory-limit=-1 --configuration=phpstan.regenerate-baseline.neon",
-      "Phpstan fix baseline step 2": "phpstan analyse --memory-limit=-1 --generate-baseline"
+      "Mago lint fix": "mago lint --fix",
+      "Mago format": "mago format"
     }
   },
   "conflict": {
@@ -313,14 +309,10 @@
     }
   },
   "require-dev": {
+    "carthage-software/mago": "^1.47.1",
     "dama/doctrine-test-bundle": "^8.6.0",
     "kodus/mock-cache": "^2.1",
-    "phpstan/extension-installer": "^1.4.3",
-    "phpstan/phpstan": "^2.2.8",
-    "phpstan/phpstan-doctrine": "^2.0.28",
-    "phpstan/phpstan-symfony": "^2.0.20",
     "phpunit/phpunit": "^11.5.56",
-    "rector/rector": "^2.6.2",
     "roave/security-advisories": "dev-latest",
     "rregeer/phpunit-coverage-check": "^0.3.1",
     "symfony/browser-kit": "8.0.*",
@@ -331,7 +323,6 @@
     "symfony/phpunit-bridge": "^8.0",
     "symfony/stopwatch": "8.0.*",
     "symfony/web-profiler-bundle": "8.1.*",
-    "symplify/easy-coding-standard": "^12.6.2",
     "zenstruck/foundry": "^2.12.0",
     "zenstruck/mailer-test": "^1.5.0",
     "zenstruck/messenger-test": "^1.15"

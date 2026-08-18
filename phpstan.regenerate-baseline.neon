@@ -1,5 +1,0 @@
-includes:
-  - phpstan.dist.neon
-
-parameters:
-  reportUnmatchedIgnoredErrors: false

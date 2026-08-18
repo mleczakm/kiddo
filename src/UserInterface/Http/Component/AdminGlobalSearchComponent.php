@@ -68,9 +68,9 @@ final class AdminGlobalSearchComponent extends AbstractController
     {
         $ownerId = $this->connection->fetchOne('SELECT owner_id FROM child WHERE id = :id', [
             'id' => $childId,
-        ],);
+        ]);
 
-        if (! is_int($ownerId) && ! is_string($ownerId)) {
+        if (!is_int($ownerId) && !is_string($ownerId)) {
             throw new \RuntimeException('Child owner not found.');
         }
 

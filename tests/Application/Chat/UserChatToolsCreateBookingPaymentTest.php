@@ -28,9 +28,7 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $user = UserAssembler::new()->assemble();
         $lesson = LessonAssembler::new()->assemble();
-        $paymentSettings = SettingAssembler::new()
-            ->asPayment()
-            ->assemble();
+        $paymentSettings = SettingAssembler::new()->asPayment()->assemble();
         $em->persist($user);
         $em->persist($lesson);
         $em->persist($paymentSettings);
@@ -79,11 +77,8 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
         self::assertTrue($byBooking->ok, $byBooking->error ?? $byBooking->summary);
         self::assertSame($paymentCode, $byBooking->data['code'] ?? null);
 
-        $this->mailer()
-            ->assertSentEmailCount(1);
-        $email = $this->mailer()
-            ->sentEmails()
-            ->first();
+        $this->mailer()->assertSentEmailCount(1);
+        $email = $this->mailer()->sentEmails()->first();
         self::assertStringContainsString($paymentCode, (string) ($email->getHtmlBody() ?? $email->getTextBody()));
     }
 

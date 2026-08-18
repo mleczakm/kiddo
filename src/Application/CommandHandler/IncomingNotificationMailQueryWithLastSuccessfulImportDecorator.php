@@ -7,7 +7,8 @@ namespace App\Application\CommandHandler;
 use App\Repository\SettingRepository;
 use DirectoryTree\ImapEngine\MessageQueryInterface;
 
-final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecorator implements IncomingNotificationMailQuery
+final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecorator implements
+    IncomingNotificationMailQuery
 {
     public function __construct(
         private IncomingNotificationMailQuery $decorated,
@@ -30,7 +31,7 @@ final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecora
         }
 
         $content = $setting->getContent();
-        if (! isset($content['date']) || ! is_string($content['date'])) {
+        if (!isset($content['date']) || !is_string($content['date'])) {
             return null;
         }
 

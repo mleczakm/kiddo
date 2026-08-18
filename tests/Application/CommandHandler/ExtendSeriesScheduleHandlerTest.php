@@ -29,13 +29,12 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         $lastLessonDate = $now->modify('+1 day'); // ensure future
 
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::WEEKLY)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $em->persist($series);
 
         $lastLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($lastLessonDate)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($lastLessonDate)
             ->withSeries($series)
             ->assemble();
         $lastLesson->setSeries($series);
@@ -99,7 +98,8 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         $em->persist($series);
 
         $lastLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($lastLessonDate)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($lastLessonDate)
             ->withSeries($series)
             ->assemble();
         $lastLesson->setSeries($series);
@@ -140,7 +140,8 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         $em->persist($series);
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule(new \DateTimeImmutable('-8 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule(new \DateTimeImmutable('-8 days'))
             ->withSeries($series)
             ->assemble();
         $lesson->setSeries($series);

@@ -16,7 +16,7 @@ final readonly class RequestConnectionEnsurer
     #[AsEventListener(event: RequestEvent::class, priority: 10)]
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (! $event->isMainRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

@@ -48,13 +48,12 @@ final class UpcomingLessonsComponent extends AbstractController
 
     public function getWeekEnd(): \DateTimeImmutable
     {
-        return $this->getWeekStart()
-            ->modify('+7 days');
+        return $this->getWeekStart()->modify('+7 days');
     }
 
     #[LiveAction]
     public function toggleCancelled(): void
     {
-        $this->showCancelled = ! $this->showCancelled;
+        $this->showCancelled = !$this->showCancelled;
     }
 }

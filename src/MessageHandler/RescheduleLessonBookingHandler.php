@@ -38,28 +38,26 @@ readonly class RescheduleLessonBookingHandler
     public function __invoke(RescheduleLessonBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
-        if (! $booking) {
+        if (!$booking) {
             $this->logger->error('Booking not found for rescheduling', [
                 'bookingId' => $command->getBookingId(),
-                'rescheduledById' => $command->getRescheduledBy()
-                    ->getId(),
+                'rescheduledById' => $command->getRescheduledBy()->getId(),
             ]);
             return;
         }
 
         $oldLesson = $this->lessonRepository->find($command->getOldLessonId());
-        if (! $oldLesson || ! $booking->getLessons()->contains($oldLesson)) {
+        if (!$oldLesson || !$booking->getLessons()->contains($oldLesson)) {
             $this->logger->error('Old lesson not found in booking', [
                 'bookingId' => $booking->getId(),
                 'oldLessonId' => $command->getOldLessonId(),
-                'rescheduledById' => $command->getRescheduledBy()
-                    ->getId(),
+                'rescheduledById' => $command->getRescheduledBy()->getId(),
             ]);
             return;
         }
 
         // Rescheduling is only allowed for active lessons
-        if (! $booking->getLessonsMap()->isActiveLesson($oldLesson->getId())) {
+        if (!$booking->getLessonsMap()->isActiveLesson($oldLesson->getId())) {
             $this->logger->warning('Attempt to reschedule a non-active lesson ignored', [
                 'bookingId' => $booking->getId(),
                 'oldLessonId' => $command->getOldLessonId(),
@@ -69,24 +67,21 @@ readonly class RescheduleLessonBookingHandler
         }
 
         $newLesson = $this->lessonRepository->find($command->getNewLessonId());
-        if (! $newLesson) {
+        if (!$newLesson) {
             $this->logger->error('New lesson not found', [
                 'newLessonId' => $command->getNewLessonId(),
-                'rescheduledById' => $command->getRescheduledBy()
-                    ->getId(),
+                'rescheduledById' => $command->getRescheduledBy()->getId(),
             ]);
             return;
         }
 
         $isAdmin = in_array('ROLE_ADMIN', $command->getRescheduledBy()->getRoles(), true);
-        if (! $isAdmin && ! $booking->canRescheduleLesson($oldLesson)) {
+        if (!$isAdmin && !$booking->canRescheduleLesson($oldLesson)) {
             $this->logger->warning('Reschedule blocked by ticket policy or 24h rule', [
                 'bookingId' => $booking->getId(),
                 'oldLessonId' => $command->getOldLessonId(),
-                'policy' => $booking->getReschedulePolicyFor($oldLesson)
-                    ->value,
-                'rescheduledById' => $command->getRescheduledBy()
-                    ->getId(),
+                'policy' => $booking->getReschedulePolicyFor($oldLesson)->value,
+                'rescheduledById' => $command->getRescheduledBy()->getId(),
             ]);
             throw new \RuntimeException('Reschedule is not allowed for this booking');
         }
@@ -100,10 +95,9 @@ readonly class RescheduleLessonBookingHandler
         }
 
         // Check workflow transition first
-        if (! $this->bookingStateMachine->can($booking, 'reschedule')) {
+        if (!$this->bookingStateMachine->can($booking, 'reschedule')) {
             $this->logger->error('Cannot apply reschedule transition to booking', [
-                'bookingId' => $booking->getId()
-                    ->toRfc4122(),
+                'bookingId' => $booking->getId()->toRfc4122(),
                 'status' => $booking->getStatus(),
             ]);
             throw new \RuntimeException('Cannot reschedule this booking in its current state');
@@ -114,8 +108,7 @@ readonly class RescheduleLessonBookingHandler
             'oldLessonId' => $command->getOldLessonId(),
             'newLessonId' => $command->getNewLessonId(),
             'reason' => $command->getReason(),
-            'by' => $command->getRescheduledBy()
-                ->getId(),
+            'by' => $command->getRescheduledBy()->getId(),
         ]);
 
         // Perform domain reschedule operation on lessons map
@@ -130,20 +123,22 @@ readonly class RescheduleLessonBookingHandler
             reason: $command->getReason(),
         ));
 
-        $oldTitle = $oldLesson->getMetadata()
-            ->title;
-        $newTitle = $newLesson->getMetadata()
-            ->title;
+        $oldTitle = $oldLesson->getMetadata()->title;
+        $newTitle = $newLesson->getMetadata()->title;
 
         // Notify the customer in-app that their booking moved (the admin
         // notification above covers admins; this one covers the booking owner).
         $this->inAppNotifications->notify(
             $booking->getUser(),
             $this->translator->trans('notifications.in_app.reschedule.user.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.reschedule.user.body', [
-                'from' => $oldTitle,
-                'to' => $newTitle,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.reschedule.user.body',
+                [
+                    'from' => $oldTitle,
+                    'to' => $newTitle,
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('dashboard'),
             NotificationSeverity::Info,
         );
@@ -152,17 +147,20 @@ readonly class RescheduleLessonBookingHandler
         // moved — excluding the person who performed the reschedule.
         $instructors = $this->instructorResolver->resolve(
             [$oldLesson, $newLesson],
-            exclude: $command->getRescheduledBy()
+            exclude: $command->getRescheduledBy(),
         );
         $this->inAppNotifications->notifyUsers(
             $instructors,
             $this->translator->trans('notifications.in_app.reschedule.instructor.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.reschedule.instructor.body', [
-                'name' => $booking->getUser()
-                    ->getName(),
-                'from' => $oldTitle,
-                'to' => $newTitle,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.reschedule.instructor.body',
+                [
+                    'name' => $booking->getUser()->getName(),
+                    'from' => $oldTitle,
+                    'to' => $newTitle,
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('app_admin_lesson_view', [
                 'id' => (string) $newLesson->getId(),
             ]),

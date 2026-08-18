@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Entity;
 
-use PHPUnit\Framework\Attributes\Group;
+use App\Entity\AgeRange;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Entity\Payment;
 use App\Entity\PaymentMethod;
-use App\Entity\AgeRange;
 use App\Entity\User;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 

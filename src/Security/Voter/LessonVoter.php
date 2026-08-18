@@ -40,18 +40,18 @@ final class LessonVoter extends Voter
         string $attribute,
         mixed $subject,
         TokenInterface $token,
-        ?Vote $vote = null
+        ?Vote $vote = null,
     ): bool {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
 
         $user = $token->getUser();
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return false;
         }
 
-        if (! $this->security->isGranted('ROLE_HOST')) {
+        if (!$this->security->isGranted('ROLE_HOST')) {
             return false;
         }
 

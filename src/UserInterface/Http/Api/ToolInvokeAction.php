@@ -28,7 +28,7 @@ final class ToolInvokeAction extends AbstractController
     #[Route('/api/v1/tools', name: 'api_v1_tools_list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
-        if (! $this->featureManager->isEnabled('chat_assistant')) {
+        if (!$this->featureManager->isEnabled('chat_assistant')) {
             return $this->json([
                 'error' => 'Chat assistant is disabled',
             ], Response::HTTP_NOT_FOUND);
@@ -42,28 +42,30 @@ final class ToolInvokeAction extends AbstractController
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $tools = array_map(
-            static fn($d) => [
-                'name' => $d->name,
-                'description' => $d->description,
-                'input_schema' => $d->inputSchema,
-                'requires_admin' => $d->requiresAdmin,
-                'requires_confirm' => $d->requiresConfirm,
-            ],
-            $this->registry->definitions($actor)
-        );
+        $tools = array_map(static fn($d) => [
+            'name' => $d->name,
+            'description' => $d->description,
+            'input_schema' => $d->inputSchema,
+            'requires_admin' => $d->requiresAdmin,
+            'requires_confirm' => $d->requiresConfirm,
+        ], $this->registry->definitions($actor));
 
         return $this->json([
             'tools' => $tools,
         ]);
     }
 
-    #[Route('/api/v1/tools/{name}', name: 'api_v1_tools_invoke', methods: ['POST'], requirements: [
-        'name' => '.+',
-    ])]
+    #[Route(
+        '/api/v1/tools/{name}',
+        name: 'api_v1_tools_invoke',
+        methods: ['POST'],
+        requirements: [
+            'name' => '.+',
+        ],
+    )]
     public function invoke(string $name, Request $request): JsonResponse
     {
-        if (! $this->featureManager->isEnabled('chat_assistant')) {
+        if (!$this->featureManager->isEnabled('chat_assistant')) {
             return $this->json([
                 'error' => 'Chat assistant is disabled',
             ], Response::HTTP_NOT_FOUND);
@@ -78,7 +80,7 @@ final class ToolInvokeAction extends AbstractController
         }
 
         $decoded = json_decode($request->getContent() ?: '{}', true);
-        if (! is_array($decoded)) {
+        if (!is_array($decoded)) {
             return $this->json([
                 'error' => 'Invalid JSON body',
             ], Response::HTTP_BAD_REQUEST);

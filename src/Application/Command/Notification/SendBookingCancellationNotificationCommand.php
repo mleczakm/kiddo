@@ -9,6 +9,6 @@ use App\Entity\Booking;
 readonly class SendBookingCancellationNotificationCommand
 {
     public function __construct(
-        public Booking $booking
+        public Booking $booking,
     ) {}
 }

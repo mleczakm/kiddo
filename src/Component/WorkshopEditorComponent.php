@@ -290,7 +290,7 @@ class WorkshopEditorComponent extends AbstractController
     public function getEditingLessonImageUrl(): ?string
     {
         $lesson = $this->getEditingLesson();
-        if ($lesson === null || ! $lesson->getMetadata()->hasImage()) {
+        if ($lesson === null || !$lesson->getMetadata()->hasImage()) {
             return null;
         }
 
@@ -301,8 +301,7 @@ class WorkshopEditorComponent extends AbstractController
 
     public function getEditingLessonIsVideo(): bool
     {
-        return $this->getEditingLesson()?->getMetadata()
-            ->isVideo() ?? false;
+        return $this->getEditingLesson()?->getMetadata()->isVideo() ?? false;
     }
 
     /**
@@ -369,7 +368,7 @@ class WorkshopEditorComponent extends AbstractController
 
         return array_values(array_filter(
             $results,
-            fn(User $user) => ! in_array((string) $user->getId(), $this->instructorIds, true)
+            fn(User $user) => !in_array((string) $user->getId(), $this->instructorIds, true),
         ));
     }
 
@@ -413,7 +412,7 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveAction]
     public function addInstructor(#[LiveArg] string $userId): void
     {
-        if (! in_array($userId, $this->instructorIds, true)) {
+        if (!in_array($userId, $this->instructorIds, true)) {
             $this->instructorIds[] = $userId;
         }
 
@@ -463,24 +462,28 @@ class WorkshopEditorComponent extends AbstractController
             $mimeType = $this->uploadedImage->getMimeType();
             $isVideo = $mimeType !== null && str_starts_with($mimeType, 'video/');
 
-            if ($mimeType === null || (! str_starts_with($mimeType, 'image/') && ! $isVideo)) {
+            if ($mimeType === null || !str_starts_with($mimeType, 'image/') && !$isVideo) {
                 $this->addFlash('error', 'Plik musi być zdjęciem lub filmem.');
                 return;
             }
 
             $allowedTypes = $isVideo ? self::SUPPORTED_VIDEO_MIME_TYPES : self::SUPPORTED_IMAGE_MIME_TYPES;
-            if (! in_array($mimeType, $allowedTypes, true)) {
-                $this->addFlash('error', $isVideo
-                    ? 'Nieobsługiwany format wideo. Użyj MP4 lub WebM (nie MOV).'
-                    : 'Nieobsługiwany format zdjęcia. Użyj JPG, PNG, WebP lub GIF (nie HEIC).');
+            if (!in_array($mimeType, $allowedTypes, true)) {
+                $this->addFlash(
+                    'error',
+                    $isVideo
+                        ? 'Nieobsługiwany format wideo. Użyj MP4 lub WebM (nie MOV).'
+                        : 'Nieobsługiwany format zdjęcia. Użyj JPG, PNG, WebP lub GIF (nie HEIC).',
+                );
                 return;
             }
 
             $maxBytes = $isVideo ? self::MAX_VIDEO_BYTES : self::MAX_IMAGE_BYTES;
             if ($this->uploadedImage->getSize() > $maxBytes) {
-                $this->addFlash('error', $isVideo
-                    ? 'Plik wideo jest za duży (maks. 20 MB).'
-                    : 'Zdjęcie jest za duże (maks. 3 MB).');
+                $this->addFlash(
+                    'error',
+                    $isVideo ? 'Plik wideo jest za duży (maks. 20 MB).' : 'Zdjęcie jest za duże (maks. 3 MB).',
+                );
                 return;
             }
         }
@@ -510,13 +513,13 @@ class WorkshopEditorComponent extends AbstractController
             return;
         }
 
-        if (! $this->isGranted(LessonVoter::MANAGE, $lesson)) {
+        if (!$this->isGranted(LessonVoter::MANAGE, $lesson)) {
             $this->addFlash('error', 'Nie masz uprawnień do edycji tych zajęć.');
             return;
         }
 
         $series = $lesson->getSeries();
-        $scope = ($this->editScope === 'series' && $series !== null) ? 'series' : 'occurrence';
+        $scope = $this->editScope === 'series' && $series !== null ? 'series' : 'occurrence';
 
         $scheduleString = trim(($this->occurrenceDate ?? '') . ' ' . ($this->occurrenceTime ?? ''));
         try {
@@ -568,12 +571,10 @@ class WorkshopEditorComponent extends AbstractController
             foreach ($instructors as $user) {
                 $series->addInstructor($user);
             }
-            $lesson->getInstructors()
-                ->clear();
+            $lesson->getInstructors()->clear();
         } else {
             $lesson->setTicketOptions(...$ticketOptions);
-            $lesson->getInstructors()
-                ->clear();
+            $lesson->getInstructors()->clear();
             foreach ($instructors as $user) {
                 $lesson->addInstructor($user);
             }
@@ -593,7 +594,7 @@ class WorkshopEditorComponent extends AbstractController
      */
     private function saveNewSeries(array $ticketOptions): void
     {
-        if (! $this->isGranted('ROLE_MANAGE_SCHEDULE')) {
+        if (!$this->isGranted('ROLE_MANAGE_SCHEDULE')) {
             $this->addFlash('error', 'Nie masz uprawnień do tworzenia nowych warsztatów.');
             return;
         }
@@ -641,7 +642,8 @@ class WorkshopEditorComponent extends AbstractController
 
     private function buildMetadataFor(Lesson $lesson): LessonMetadata
     {
-        $metadata = $lesson->getMetadata()
+        $metadata = $lesson
+            ->getMetadata()
             ->withTitle((string) $this->title)
             ->withLead($this->lead ?? '')
             ->withVisualTheme($this->visualTheme ?? LessonMetadata::DEFAULT_VISUAL_THEME)
@@ -748,15 +750,17 @@ class WorkshopEditorComponent extends AbstractController
     private function notifyAboutEdit(array $affectedLessons, string $scope): void
     {
         $editor = $this->getUser();
-        if (! $editor instanceof User || $affectedLessons === []) {
+        if (!$editor instanceof User || $affectedLessons === []) {
             return;
         }
 
         $lessonTitle = $affectedLessons[0]->getMetadata()->title;
         $scopeLabel = $this->translator->trans(
-            $scope === 'series' ? 'admin.workshop_editor.scope.series_short' : 'admin.workshop_editor.scope.occurrence_short',
+            $scope === 'series'
+                ? 'admin.workshop_editor.scope.series_short'
+                : 'admin.workshop_editor.scope.occurrence_short',
             [],
-            'messages'
+            'messages',
         );
         $url = $this->urlGenerator->generate('app_admin_lesson_view', [
             'id' => (string) $affectedLessons[0]->getId(),
@@ -766,11 +770,15 @@ class WorkshopEditorComponent extends AbstractController
         $this->inAppNotifications->notifyUsers(
             $instructors,
             $this->translator->trans('notifications.in_app.workshop_edited.instructor.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.workshop_edited.instructor.body', [
-                'editor' => $editor->getName(),
-                'lesson' => $lessonTitle,
-                'scope' => $scopeLabel,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.workshop_edited.instructor.body',
+                [
+                    'editor' => $editor->getName(),
+                    'lesson' => $lessonTitle,
+                    'scope' => $scopeLabel,
+                ],
+                'messages',
+            ),
             $url,
             NotificationSeverity::Info,
         );
@@ -778,16 +786,20 @@ class WorkshopEditorComponent extends AbstractController
         $instructorIds = array_map(fn(User $u) => $u->getId(), $instructors);
         $admins = array_values(array_filter(
             $this->userRepository->findByRole('ROLE_ADMIN'),
-            fn(User $admin) => $admin->getId() !== $editor->getId() && ! in_array($admin->getId(), $instructorIds, true)
+            fn(User $admin) => $admin->getId() !== $editor->getId() && !in_array($admin->getId(), $instructorIds, true),
         ));
         $this->inAppNotifications->notifyUsers(
             $admins,
             $this->translator->trans('notifications.in_app.workshop_edited.admin.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.workshop_edited.admin.body', [
-                'editor' => $editor->getName(),
-                'lesson' => $lessonTitle,
-                'scope' => $scopeLabel,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.workshop_edited.admin.body',
+                [
+                    'editor' => $editor->getName(),
+                    'lesson' => $lessonTitle,
+                    'scope' => $scopeLabel,
+                ],
+                'messages',
+            ),
             $url,
             NotificationSeverity::Info,
         );

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Doctrine\Query;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Infrastructure\Doctrine\Query\DoctrineTodayLessonsQuery;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]
@@ -22,13 +22,16 @@ class DoctrineTodayLessonsQueryTest extends KernelTestCase
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date)
             ->assemble();
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date->setTime(15, 0))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date->setTime(15, 0))
             ->assemble();
         $lessonOther = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($otherDate)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($otherDate)
             ->assemble();
 
         $em->persist($lesson1);

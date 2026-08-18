@@ -42,8 +42,7 @@ final class KiddoMcpServerTest extends KernelTestCase
         $kernel = static::$kernel;
         self::assertNotNull($kernel);
 
-        $em = $container->get('doctrine')
-            ->getManager();
+        $em = $container->get('doctrine')->getManager();
         $user = UserAssembler::new()->withEmail('chat-mcp-http@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $em->persist($user);
         $em->flush();
@@ -73,7 +72,7 @@ final class KiddoMcpServerTest extends KernelTestCase
                         'version' => '1.0.0',
                     ],
                 ],
-            ], JSON_THROW_ON_ERROR)
+            ], JSON_THROW_ON_ERROR),
         );
 
         $initResponse = $kernel->handle($init);
@@ -102,7 +101,7 @@ final class KiddoMcpServerTest extends KernelTestCase
                 'jsonrpc' => '2.0',
                 'id' => 2,
                 'method' => 'tools/list',
-            ], JSON_THROW_ON_ERROR)
+            ], JSON_THROW_ON_ERROR),
         );
 
         $listResponse = $kernel->handle($list);

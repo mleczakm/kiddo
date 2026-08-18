@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use App\Entity\User;
 use App\Entity\Booking;
 use App\Entity\Payment;
+use App\Entity\User;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
@@ -52,7 +52,7 @@ final class BookingsComponentTest extends WebTestCase
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia przeszle w karnecie')
                     ->withTitle('Zajecia przeszle w karnecie')
-                    ->assemble()
+                    ->assemble(),
             )
             ->withSchedule(new \DateTimeImmutable('2026-08-01 09:00:00'))
             ->assemble();
@@ -61,7 +61,7 @@ final class BookingsComponentTest extends WebTestCase
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia przyszle w karnecie')
                     ->withTitle('Zajecia przyszle w karnecie')
-                    ->assemble()
+                    ->assemble(),
             )
             ->withSchedule(new \DateTimeImmutable('2026-08-15 09:00:00'))
             ->assemble();
@@ -112,7 +112,7 @@ final class BookingsComponentTest extends WebTestCase
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia odwolane w karnecie')
                     ->withTitle('Zajecia odwolane w karnecie')
-                    ->assemble()
+                    ->assemble(),
             )
             ->withSchedule(new \DateTimeImmutable('2026-08-20 09:00:00'))
             ->assemble();
@@ -121,7 +121,7 @@ final class BookingsComponentTest extends WebTestCase
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia aktywne w karnecie')
                     ->withTitle('Zajecia aktywne w karnecie')
-                    ->assemble()
+                    ->assemble(),
             )
             ->withSchedule(new \DateTimeImmutable('2026-08-25 09:00:00'))
             ->assemble();
@@ -179,11 +179,7 @@ final class BookingsComponentTest extends WebTestCase
 
         $user = UserAssembler::new()->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Zajecia anulowane automatycznie')
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Zajecia anulowane automatycznie')->assemble())
             ->withSchedule(new \DateTimeImmutable('2026-08-20 09:00:00'))
             ->assemble();
 
@@ -236,14 +232,11 @@ final class BookingsComponentTest extends WebTestCase
                 LessonMetadataAssembler::new()
                     ->withTitle('Zajecia oplacone')
                     ->withTitle('Zajecia oplacone')
-                    ->assemble()
+                    ->assemble(),
             )
             ->withSchedule(new \DateTimeImmutable('2026-08-15 09:00:00'))
             ->assemble();
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->withAmount(Money::of(50, 'PLN'))
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->withAmount(Money::of(50, 'PLN'))->assemble();
         // Go through the real setStatus() transition (not the assembler's
         // reflection-based withStatus()) so paidAt gets populated exactly
         // like it would for a real payment.
@@ -319,8 +312,7 @@ final class BookingsComponentTest extends WebTestCase
         $client->request('GET', '/panel?activeTab=cancelled');
 
         self::assertResponseIsSuccessful();
-        $content = (string) $client->getResponse()
-            ->getContent();
+        $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('aria-selected="true"', $content);
         // The cancelled tab button must be the one carrying aria-selected="true".
         self::assertMatchesRegularExpression('/id="tab-cancelled"[^>]*aria-selected="true"/', $content);

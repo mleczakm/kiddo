@@ -181,7 +181,7 @@ class AdminControllersSmokeTest extends WebTestCase
             $client->request('GET', $route);
             $this->assertResponseStatusCodeSame(
                 Response::HTTP_FORBIDDEN,
-                "Route {$route} should be forbidden for regular users"
+                "Route {$route} should be forbidden for regular users",
             );
         }
     }
@@ -231,7 +231,7 @@ class AdminControllersSmokeTest extends WebTestCase
             $client->request('GET', $route);
             $this->assertResponseStatusCodeSame(
                 Response::HTTP_FORBIDDEN,
-                "Route {$route} should be forbidden for a host"
+                "Route {$route} should be forbidden for a host",
             );
         }
     }
@@ -239,8 +239,7 @@ class AdminControllersSmokeTest extends WebTestCase
     private function createAdminUser(KernelBrowser $client): User
     {
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = $client->getContainer()
-            ->get(EntityManagerInterface::class);
+        $entityManager = $client->getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()
             ->withEmail('admin@test.com')
@@ -257,8 +256,7 @@ class AdminControllersSmokeTest extends WebTestCase
     private function createHostUser(KernelBrowser $client): User
     {
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = $client->getContainer()
-            ->get(EntityManagerInterface::class);
+        $entityManager = $client->getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()
             ->withEmail('host@test.com')
@@ -275,8 +273,7 @@ class AdminControllersSmokeTest extends WebTestCase
     private function createRegularUser(KernelBrowser $client): User
     {
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = $client->getContainer()
-            ->get(EntityManagerInterface::class);
+        $entityManager = $client->getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()
             ->withEmail('user@test.com')

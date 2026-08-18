@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
-use PHPUnit\Framework\Assert;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
 use App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecorator;
 use DirectoryTree\ImapEngine\MessageQueryInterface;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Lock\LockFactory;
@@ -21,12 +21,12 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
         $one = $this->createMock(MessageQueryInterface::class);
         $two = $this->createMock(MessageQueryInterface::class);
 
-        $decorated = new readonly class ([$one, $two]) implements IncomingNotificationMailQuery {
+        $decorated = new readonly class([$one, $two]) implements IncomingNotificationMailQuery {
             /**
              * @param list<MessageQueryInterface> $messages
              */
             public function __construct(
-                private array $messages
+                private array $messages,
             ) {}
 
             public function __invoke(): iterable
@@ -44,9 +44,9 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
     {
         $message = $this->createMock(MessageQueryInterface::class);
 
-        $decorated = new class ($message) implements IncomingNotificationMailQuery {
+        $decorated = new class($message) implements IncomingNotificationMailQuery {
             public function __construct(
-                private readonly MessageQueryInterface $message
+                private readonly MessageQueryInterface $message,
             ) {}
 
             /**
@@ -81,11 +81,11 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
     {
         $message = $this->createMock(MessageQueryInterface::class);
 
-        $decorated = new class ($message) implements IncomingNotificationMailQuery {
+        $decorated = new class($message) implements IncomingNotificationMailQuery {
             private int $calls = 0;
 
             public function __construct(
-                private readonly MessageQueryInterface $message
+                private readonly MessageQueryInterface $message,
             ) {}
 
             public function __invoke(): iterable
@@ -112,9 +112,8 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
         }
     }
 
-    private function createGuard(
-        IncomingNotificationMailQuery $decorated
-    ): IncomingNotificationMailQueryReentrancyGuardDecorator {
+    private function createGuard(IncomingNotificationMailQuery $decorated): IncomingNotificationMailQueryReentrancyGuardDecorator
+    {
         return new IncomingNotificationMailQueryReentrancyGuardDecorator(
             $decorated,
             new LockFactory(new InMemoryStore()),

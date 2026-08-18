@@ -65,7 +65,7 @@ class TransferAssembler extends EntityAssembler
             sender: $sender,
             title: $title,
             amount: $amount,
-            transferredAt: $transferredAt
+            transferredAt: $transferredAt,
         );
 
         if (isset($this->properties['id'])) {

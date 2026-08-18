@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\UserInterface\Http\Component\CarnetsComponent;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 

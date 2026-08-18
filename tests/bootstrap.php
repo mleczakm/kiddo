@@ -7,8 +7,7 @@ use Symfony\Component\ErrorHandler\Debug;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-new Dotenv()
-    ->bootEnv(dirname(__DIR__) . '/.env');
+new Dotenv()->bootEnv(dirname(__DIR__) . '/.env');
 
 // bin/console and the real swoole server go through symfony/runtime, which installs an
 // error handler before anything boots the kernel. Without one already registered,

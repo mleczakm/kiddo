@@ -38,7 +38,7 @@ readonly class ImportTransfersFromMailHandler
     {
         if ($this->mailboxUsername === '' || $this->mailboxPassword === '') {
             $this->logger->info(
-                'Mailbox credentials missing/invalid: skipping IMAP read, rematching unmatched transfers instead'
+                'Mailbox credentials missing/invalid: skipping IMAP read, rematching unmatched transfers instead',
             );
             $this->rematchUnmatchedTransfers();
 
@@ -51,7 +51,7 @@ readonly class ImportTransfersFromMailHandler
             if (str_starts_with($incomingNotification->subject() ?: '', 'Uznanie rachunku')) {
                 $parsed = $this->mailParser->fromMailSubjectAndContent(
                     $incomingNotification->subject() ?: '',
-                    $incomingNotification->html() ?: ','
+                    $incomingNotification->html() ?: ',',
                 );
                 if ($parsed) {
                     $transfers[] = new Transfer(
@@ -59,7 +59,7 @@ readonly class ImportTransfersFromMailHandler
                         $parsed->sender,
                         $parsed->title,
                         $parsed->amount,
-                        Clock::get()->now()
+                        Clock::get()->now(),
                     );
                 }
             }

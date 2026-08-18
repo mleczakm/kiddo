@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Repository\LessonRepository;
 use App\UserInterface\Http\Component\UpcomingLessonsComponent;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Clock\Clock;
@@ -59,7 +59,7 @@ class UpcomingLessonsComponentTest extends TestCase
             ->method('findUpcomingInRange')
             ->with(
                 $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
-                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'))
+                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d')),
             )
             ->willReturn([]);
 
@@ -92,9 +92,7 @@ class UpcomingLessonsComponentTest extends TestCase
             $this->createMockLesson('Upcoming Lesson 3'),
         ];
 
-        $this->lessonRepository
-            ->method('findUpcomingInRange')
-            ->willReturn($expectedLessons);
+        $this->lessonRepository->method('findUpcomingInRange')->willReturn($expectedLessons);
 
         $result = $this->component->getLessons();
 
@@ -117,20 +115,14 @@ class UpcomingLessonsComponentTest extends TestCase
             $weekStart = $this->component->getWeekStart();
             $weekEnd = $this->component->getWeekEnd();
 
-            $this->assertEquals(
-                $expectedStart,
-                $weekStart->format('Y-m-d'),
-                "Week start failed for date: {$weekDate}"
-            );
+            $this->assertEquals($expectedStart, $weekStart->format('Y-m-d'), "Week start failed for date: {$weekDate}");
             $this->assertEquals($expectedEnd, $weekEnd->format('Y-m-d'), "Week end failed for date: {$weekDate}");
         }
     }
 
     public function testGetLessonsWithEmptyRepository(): void
     {
-        $this->lessonRepository
-            ->method('findUpcomingInRange')
-            ->willReturn([]);
+        $this->lessonRepository->method('findUpcomingInRange')->willReturn([]);
 
         $result = $this->component->getLessons();
 
@@ -160,7 +152,7 @@ class UpcomingLessonsComponentTest extends TestCase
             ->with(
                 $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
                 $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d')),
-                true // showCancelled = true
+                true, // showCancelled = true
             )
             ->willReturn([]);
 
@@ -182,12 +174,11 @@ class UpcomingLessonsComponentTest extends TestCase
             capacity: 15,
             duration: 90,
             ageRange: new AgeRange(2, 5),
-            category: 'Test Category'
+            category: 'Test Category',
         );
 
         $lesson = $this->createMock(Lesson::class);
-        $lesson->method('getMetadata')
-            ->willReturn($metadata);
+        $lesson->method('getMetadata')->willReturn($metadata);
         $lesson->schedule = new \DateTimeImmutable();
 
         return $lesson;

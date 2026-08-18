@@ -49,13 +49,9 @@ class PlatformBillingAlertTest extends WebTestCase
     private function createAdminUser(KernelBrowser $client): User
     {
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = $client->getContainer()
-            ->get(EntityManagerInterface::class);
+        $entityManager = $client->getContainer()->get(EntityManagerInterface::class);
 
-        $user = UserAssembler::new()
-            ->withEmail('admin_billing@test.com')
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('admin_billing@test.com')->withRoles('ROLE_ADMIN')->assemble();
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -66,13 +62,14 @@ class PlatformBillingAlertTest extends WebTestCase
     private function setBillingPastDue(KernelBrowser $client, float $pastDue): void
     {
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = $client->getContainer()
-            ->get(EntityManagerInterface::class);
+        $entityManager = $client->getContainer()->get(EntityManagerInterface::class);
 
-        $setting = $entityManager->getRepository(Setting::class)->findOneBy([
-            'key' => 'platform_billing',
-        ]);
-        if (! $setting) {
+        $setting = $entityManager
+            ->getRepository(Setting::class)
+            ->findOneBy([
+                'key' => 'platform_billing',
+            ]);
+        if (!$setting) {
             $setting = new Setting();
             $setting->setKey('platform_billing');
         }

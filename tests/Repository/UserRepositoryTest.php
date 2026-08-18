@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]
@@ -19,22 +19,15 @@ class UserRepositoryTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->userRepository = self::getContainer()
-            ->get(UserRepository::class);
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
     }
 
     public function testFindByRole(): void
     {
         // Create test users with different roles using the existing assembler
-        $adminUser = UserAssembler::new()
-            ->withEmail('admin@example.com')
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
-        $regularUser = UserAssembler::new()
-            ->withEmail('user@example.com')
-            ->withRoles('ROLE_USER')
-            ->assemble();
+        $regularUser = UserAssembler::new()->withEmail('user@example.com')->withRoles('ROLE_USER')->assemble();
 
         $anotherAdmin = UserAssembler::new()
             ->withEmail('admin2@example.com')
@@ -73,18 +66,9 @@ class UserRepositoryTest extends KernelTestCase
 
     public function testFindAllMatching(): void
     {
-        $user1 = UserAssembler::new()
-            ->withName('John Doe')
-            ->withEmail('john.doe@example.com')
-            ->assemble();
-        $user2 = UserAssembler::new()
-            ->withName('Jane Doe')
-            ->withEmail('jane.doe@example.com')
-            ->assemble();
-        $user3 = UserAssembler::new()
-            ->withName('Bob Smith')
-            ->withEmail('bob.smith@example.com')
-            ->assemble();
+        $user1 = UserAssembler::new()->withName('John Doe')->withEmail('john.doe@example.com')->assemble();
+        $user2 = UserAssembler::new()->withName('Jane Doe')->withEmail('jane.doe@example.com')->assemble();
+        $user3 = UserAssembler::new()->withName('Bob Smith')->withEmail('bob.smith@example.com')->assemble();
 
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);

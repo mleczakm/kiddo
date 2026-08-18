@@ -67,9 +67,7 @@ final class ReservationDetailsModalTest extends WebTestCase
             ->withSchedule(Clock::get()->now()->modify('+1 day'))
             ->assemble();
 
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::WEEKLY)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $lesson->setSeries($series);
 
         $this->em->persist($series);
@@ -166,9 +164,10 @@ final class ReservationDetailsModalTest extends WebTestCase
         $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $customer = UserAssembler::new()->assemble();
         $lesson = LessonAssembler::new()->withSchedule(Clock::get()->now()->modify('+1 day'))->assemble();
-        $payment = PaymentAssembler::new()->withUser($customer)->withStatus(
-            Payment::STATUS_REFUND_REQUESTED
-        )->assemble();
+        $payment = PaymentAssembler::new()
+            ->withUser($customer)
+            ->withStatus(Payment::STATUS_REFUND_REQUESTED)
+            ->assemble();
         $booking = BookingAssembler::new()
             ->withUser($customer)
             ->withPayment($payment)

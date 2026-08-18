@@ -31,7 +31,7 @@ final readonly class IncomingNotificationMailQueryReentrancyGuardDecorator imple
     {
         $lock = $this->lockFactory->createLock(self::LOCK_RESOURCE);
 
-        if (! $lock->acquire()) {
+        if (!$lock->acquire()) {
             return;
         }
 

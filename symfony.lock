@@ -1,4 +1,16 @@
 {
+    "carthage-software/mago": {
+        "version": "1.47",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "0be125d45ff145f21b54f21d33f7e62846940db6"
+        },
+        "files": [
+            "mago.toml"
+        ]
+    },
     "dama/doctrine-test-bundle": {
         "version": "8.3",
         "recipe": {
@@ -106,18 +118,6 @@
         },
         "files": [
             "config/packages/http_discovery.yaml"
-        ]
-    },
-    "phpstan/phpstan": {
-        "version": "2.1",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "1.0",
-            "ref": "5e490cc197fb6bb1ae22e5abbc531ddc633b6767"
-        },
-        "files": [
-            "phpstan.dist.neon"
         ]
     },
     "phpunit/phpunit": {

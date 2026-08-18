@@ -50,7 +50,7 @@ final readonly class ChatTokenManager
         }
 
         [$body, $signature] = $parts;
-        if (! hash_equals($this->sign($body), $signature)) {
+        if (!hash_equals($this->sign($body), $signature)) {
             throw new \InvalidArgumentException('Invalid chat token signature');
         }
 
@@ -60,9 +60,10 @@ final readonly class ChatTokenManager
         }
 
         $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        if (! is_array($decoded)
-            || ! isset($decoded['roles'], $decoded['exp'], $decoded['jti'])
-            || ! is_array($decoded['roles'])
+        if (
+            !is_array($decoded)
+            || !isset($decoded['roles'], $decoded['exp'], $decoded['jti'])
+            || !is_array($decoded['roles'])
         ) {
             throw new \InvalidArgumentException('Invalid chat token payload');
         }
@@ -71,16 +72,13 @@ final readonly class ChatTokenManager
         $roles = array_values(array_filter($decoded['roles'], is_string(...)));
 
         $uidRaw = $decoded['uid'] ?? null;
-        $isGuest = ($decoded['guest'] ?? false) === true
-            || $uidRaw === null
-            || $uidRaw === 0;
+        $isGuest = ($decoded['guest'] ?? false) === true || $uidRaw === null || $uidRaw === 0;
         $userId = $isGuest ? null : (int) $uidRaw;
 
         $chatToken = new ChatToken(
             userId: $userId,
             roles: $roles,
-            expiresAt: new \DateTimeImmutable()
-                ->setTimestamp((int) $decoded['exp']),
+            expiresAt: new \DateTimeImmutable()->setTimestamp((int) $decoded['exp']),
             jti: (string) $decoded['jti'],
         );
 

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Application\CommandHandler;
 
-use PHPUnit\Framework\Attributes\Group;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\Entity\Payment;
 use App\Application\Command\TriggerMatchPaymentForTransferForPastTransfers;
 use App\Application\CommandHandler\TriggerMatchPaymentForTransferForPastTransfersHandler;
-use App\Tests\Assembler\UserAssembler;
+use App\Entity\Payment;
 use App\Tests\Assembler\PaymentAssembler;
-use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\PaymentCodeAssembler;
+use App\Tests\Assembler\TransferAssembler;
+use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 #[Group('functional')]
 class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestCase
@@ -31,10 +31,7 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestC
     public function testHandlerDispatchesMatchPaymentForEligibleTransfers(): void
     {
         // Arrange: create user, payment, and transfer older than 12 hours using assemblers
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
         $this->entityManager->persist($user);
 
         $payment = PaymentAssembler::new()
@@ -44,10 +41,7 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestC
             ->assemble();
         $this->entityManager->persist($payment);
 
-        $paymentCode = PaymentCodeAssembler::new()
-            ->withCode('ABCD')
-            ->withPayment($payment)
-            ->assemble();
+        $paymentCode = PaymentCodeAssembler::new()->withCode('ABCD')->withPayment($payment)->assemble();
         $this->entityManager->persist($paymentCode);
         $payment->setPaymentCode($paymentCode);
 
@@ -75,10 +69,7 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestC
     public function testHandlerIgnoresTransfersOlderThanThreshold(): void
     {
         // Arrange: create user, payment, and transfer older than threshold (e.g. 2 days)
-        $user = UserAssembler::new()
-            ->withEmail('olduser@example.com')
-            ->withName('Old User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('olduser@example.com')->withName('Old User')->assemble();
         $this->entityManager->persist($user);
 
         $payment = PaymentAssembler::new()
@@ -88,10 +79,7 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestC
             ->assemble();
         $this->entityManager->persist($payment);
 
-        $paymentCode = PaymentCodeAssembler::new()
-            ->withCode('OLDC')
-            ->withPayment($payment)
-            ->assemble();
+        $paymentCode = PaymentCodeAssembler::new()->withCode('OLDC')->withPayment($payment)->assemble();
         $this->entityManager->persist($paymentCode);
         $payment->setPaymentCode($paymentCode);
 

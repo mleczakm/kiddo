@@ -34,7 +34,7 @@ class TransferMoneyParser
         }
 
         // If there's no decimal part, add .00
-        if (! str_contains($number, '.')) {
+        if (!str_contains($number, '.')) {
             $number .= '.00';
         }
 

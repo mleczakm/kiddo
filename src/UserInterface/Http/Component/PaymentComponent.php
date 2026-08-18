@@ -45,7 +45,7 @@ final class PaymentComponent extends AbstractController
         }
 
         $content = $setting->getContent();
-        if (! isset($content['date']) || ! is_string($content['date'])) {
+        if (!isset($content['date']) || !is_string($content['date'])) {
             return null;
         }
 

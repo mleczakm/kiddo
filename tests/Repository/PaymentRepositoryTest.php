@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Payment;
 use App\Repository\PaymentRepository;
 use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\PaymentCodeAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]
@@ -37,7 +37,7 @@ class PaymentRepositoryTest extends KernelTestCase
         $this->assertCount(
             1,
             $this->paymentRepository->findPendingWithSearch(''),
-            'Empty search should return all pending'
+            'Empty search should return all pending',
         );
         $this->assertCount(0, $this->paymentRepository->findPendingWithSearch('nonexistent'), 'Search with no match');
     }
@@ -55,15 +55,10 @@ class PaymentRepositoryTest extends KernelTestCase
     {
         $em = self::getContainer()->get('doctrine')->getManager();
         // Setup test data
-        $user = UserAssembler::new()
-            ->withName('Test User')
-            ->withEmail('test@example.com')
-            ->assemble();
+        $user = UserAssembler::new()->withName('Test User')->withEmail('test@example.com')->assemble();
         $em->persist($user);
 
-        $paymentCode = PaymentCodeAssembler::new()
-            ->withCode('1234')
-            ->assemble();
+        $paymentCode = PaymentCodeAssembler::new()->withCode('1234')->assemble();
         $em->persist($paymentCode);
 
         $payment = PaymentAssembler::new()

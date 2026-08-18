@@ -17,15 +17,14 @@ class DoctrineDbalCacheHealthcheck implements CheckInterface
     public function check(): Response
     {
         try {
-            $this->cacheConnection->executeQuery(
-                $this->cacheConnection->getDatabasePlatform()
-                    ->getDummySelectSQL()
-            )->free();
+            $this->cacheConnection
+                ->executeQuery($this->cacheConnection->getDatabasePlatform()->getDummySelectSQL())
+                ->free();
         } catch (\Throwable $e) {
             return new Response(
                 'doctrine_dbal_cache',
                 false,
-                'Doctrine DBAL cache connection failed: ' . $e->getMessage()
+                'Doctrine DBAL cache connection failed: ' . $e->getMessage(),
             );
         }
 

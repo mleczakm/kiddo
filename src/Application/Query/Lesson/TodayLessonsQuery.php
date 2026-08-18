@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Query\Lesson;
 
-use DateTimeImmutable;
 use App\Entity\Lesson;
+use DateTimeImmutable;
 
 interface TodayLessonsQuery
 {

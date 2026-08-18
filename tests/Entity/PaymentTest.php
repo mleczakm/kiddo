@@ -44,9 +44,7 @@ class PaymentTest extends TestCase
 
     public function testGetBookingsSummaryWithNoBookings(): void
     {
-        $payment = PaymentAssembler::new()
-            ->withUser(UserAssembler::new()->assemble())
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser(UserAssembler::new()->assemble())->assemble();
 
         $result = $payment->getBookingsSummary();
 
@@ -55,14 +53,9 @@ class PaymentTest extends TestCase
 
     public function testGetBookingsSummaryWithSingleBooking(): void
     {
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->assemble();
 
         // Create a lesson with a specific schedule
         $schedule = new \DateTimeImmutable('2025-10-26 15:30:00');
@@ -74,7 +67,7 @@ class PaymentTest extends TestCase
             10,
             60,
             new AgeRange(18, 65),
-            'fitness'
+            'fitness',
         );
         $lesson = new Lesson($lessonMetadata, $schedule);
 
@@ -89,14 +82,9 @@ class PaymentTest extends TestCase
 
     public function testGetBookingsSummaryWithMultipleBookings(): void
     {
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->assemble();
 
         // Create first lesson
         $schedule1 = new \DateTimeImmutable('2025-10-26 15:30:00');
@@ -108,7 +96,7 @@ class PaymentTest extends TestCase
             10,
             60,
             new AgeRange(18, 65),
-            'fitness'
+            'fitness',
         );
         $lesson1 = new Lesson($lessonMetadata1, $schedule1);
 
@@ -122,7 +110,7 @@ class PaymentTest extends TestCase
             10,
             60,
             new AgeRange(18, 65),
-            'fitness'
+            'fitness',
         );
         $lesson2 = new Lesson($lessonMetadata2, $schedule2);
 
@@ -140,14 +128,9 @@ class PaymentTest extends TestCase
 
     public function testGetTextSummaryForSingleLesson(): void
     {
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->assemble();
 
         $schedule = new \DateTimeImmutable('2025-10-26 15:30:00');
         $lessonMetadata = new LessonMetadata(
@@ -158,7 +141,7 @@ class PaymentTest extends TestCase
             10,
             60,
             new AgeRange(18, 65),
-            'fitness'
+            'fitness',
         );
         $lesson = new Lesson($lessonMetadata, $schedule);
 
@@ -171,14 +154,9 @@ class PaymentTest extends TestCase
 
     public function testGetTextSummaryForMultipleLessons(): void
     {
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->assemble();
 
         $schedule1 = new \DateTimeImmutable('2025-10-26 15:30:00');
         $lessonMetadata1 = new LessonMetadata(
@@ -189,7 +167,7 @@ class PaymentTest extends TestCase
             10,
             60,
             new AgeRange(18, 65),
-            'fitness'
+            'fitness',
         );
         $lesson1 = new Lesson($lessonMetadata1, $schedule1);
 
@@ -202,7 +180,7 @@ class PaymentTest extends TestCase
             10,
             60,
             new AgeRange(18, 65),
-            'fitness'
+            'fitness',
         );
         $lesson2 = new Lesson($lessonMetadata2, $schedule2);
 

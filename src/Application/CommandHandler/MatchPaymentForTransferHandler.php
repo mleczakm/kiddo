@@ -25,7 +25,8 @@ final readonly class MatchPaymentForTransferHandler
         $title = $command->transfer->title;
 
         foreach ($this->tokenizeTitle($title) as $word) {
-            $paymentCode = $this->entityManager->getRepository(PaymentCode::class)
+            $paymentCode = $this->entityManager
+                ->getRepository(PaymentCode::class)
                 ->findOneBy([
                     'code' => $word,
                 ]);
@@ -52,7 +53,7 @@ final readonly class MatchPaymentForTransferHandler
     {
         $tokens = array_values(array_filter(
             explode(' ', preg_replace('/[^A-Za-z0-9]/', ' ', mb_strtoupper($title)) ?? ''),
-            fn(string $word): bool => $word !== ''
+            fn(string $word): bool => $word !== '',
         ));
 
         $emitted = [];
@@ -63,7 +64,7 @@ final readonly class MatchPaymentForTransferHandler
 
         $count = count($tokens);
 
-        for ($i = 0; $i < $count - 1; $i++) {
+        for ($i = 0; $i < ($count - 1); $i++) {
             yield $emitted[] = $tokens[$i] . $tokens[$i + 1];
         }
 

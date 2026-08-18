@@ -6,8 +6,8 @@ namespace App\Application\Service;
 
 use App\Entity\Setting;
 use App\Repository\SettingRepository;
-use Brick\Money\Money;
 use Brick\Math\RoundingMode;
+use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PlatformBillingService
@@ -16,7 +16,7 @@ class PlatformBillingService
 
     public function __construct(
         private readonly SettingRepository $settingRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     /**
@@ -34,7 +34,7 @@ class PlatformBillingService
         }
 
         $content = $setting->getContent();
-        if (! is_array($content)) {
+        if (!is_array($content)) {
             return [
                 'currentDue' => '0.00',
                 'pastDue' => '0.00',
@@ -56,11 +56,7 @@ class PlatformBillingService
         $currentDue = Money::of($this->getBillingData()['currentDue'], 'PLN');
         $newCurrentDue = $currentDue->plus($commission);
 
-        $this->updateBillingData(
-            $newCurrentDue->getAmount()
-                ->toFloat(),
-            (float) $this->getBillingData()['pastDue']
-        );
+        $this->updateBillingData($newCurrentDue->getAmount()->toFloat(), (float) $this->getBillingData()['pastDue']);
     }
 
     /**
@@ -133,7 +129,6 @@ class PlatformBillingService
 
     public function hasPastDue(): bool
     {
-        return $this->getPastDue()
-            ->isGreaterThan(Money::zero('PLN'));
+        return $this->getPastDue()->isGreaterThan(Money::zero('PLN'));
     }
 }

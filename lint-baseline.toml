@@ -1,0 +1,2569 @@
+variant = "loose"
+
+[[issues]]
+file = "src/Application/Chat/AdminChatTools.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/AdminChatTools.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/AdminChatTools.php"
+code = "halstead"
+message = "Method has a high halstead volume and effort"
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/AdminChatTools.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/AdminChatTools.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/AdminChatTools.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 2
+
+[[issues]]
+file = "src/Application/Chat/AdminChatTools.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ChatActorResolver.php"
+code = "sensitive-parameter"
+message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ChatTokenManager.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ChatTokenManager.php"
+code = "sensitive-parameter"
+message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
+count = 2
+
+[[issues]]
+file = "src/Application/Chat/ChatToolRegistry.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ChatToolRegistry.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ChatToolRegistry.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ChatToolRegistry.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ToolArguments.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ToolDefinition.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/ToolDefinition.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "halstead"
+message = "Method has a high halstead volume and effort"
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "readable-literal"
+message = "Numeric literal could use underscore separators for readability."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/UserChatTools.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Application/Command/SeedDemoDataCommand.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Application/Command/SeedDemoDataCommand.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 4
+
+[[issues]]
+file = "src/Application/Command/SeedDemoDataCommand.php"
+code = "halstead"
+message = "Method has a high halstead volume"
+count = 1
+
+[[issues]]
+file = "src/Application/Command/SeedDemoDataCommand.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/Command/SeedDemoDataCommand.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Application/Command/SendReservationNotification.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/AddBookingHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/DoctrineInsideTaskWorkerCheckHandler.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/ExtendSeriesScheduleHandler.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 3
+
+[[issues]]
+file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
+code = "sensitive-parameter"
+message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/IncomingNotificationMailQueryWithLastSuccessfulImportDecorator.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
+code = "no-insecure-comparison"
+message = "Insecure comparison of sensitive data."
+count = 3
+
+[[issues]]
+file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 2
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
+code = "halstead"
+message = "Method has a high halstead volume"
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 2
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/SendReservationNotificationHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Event/ActivityOccurred.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 2
+
+[[issues]]
+file = "src/Application/Service/ActivityLogger.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/MoneyInputParser.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/PlatformBillingService.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/TransferMoneyParser.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 2
+
+[[issues]]
+file = "src/Application/Workflow/EventSubscriber/BookingWorkflowSubscriber.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 2
+
+[[issues]]
+file = "src/Component/AdminSettingsComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Component/AdminSettingsComponent.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 5
+
+[[issues]]
+file = "src/Component/AdminSettingsComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Component/SeriesDetailsComponent.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 1
+
+[[issues]]
+file = "src/Component/SeriesDetailsComponent.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 7
+
+[[issues]]
+file = "src/Component/SeriesDetailsComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 4
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 2
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 4
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Component/WorkshopEditorComponent.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/Entity/ActivityLog.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Entity/Booking.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Entity/Booking.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Entity/Booking.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "src/Entity/Booking.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "src/Entity/Booking.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Entity/Booking.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "halstead"
+message = "Closure has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 3
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 1
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 4
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 5
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "src/Entity/DTO/LessonMap.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Entity/Lesson.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 2
+
+[[issues]]
+file = "src/Entity/Lesson.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Entity/LessonMetadata.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Entity/LessonMetadata.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 3
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/Entity/PaymentCode.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Entity/Series.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Entity/Series.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 2
+
+[[issues]]
+file = "src/Entity/Series.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 2
+
+[[issues]]
+file = "src/Entity/Transfer.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/Entity/User.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Brevo/BrevoNewsletterService.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Brevo/BrevoNewsletterService.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Brevo/BrevoNewsletterService.php"
+code = "sensitive-parameter"
+message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/CacheConnectionEnsurer.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/DoctrineConnectionEnsurer.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "cyclomatic-complexity"
+message = "Closure has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "halstead"
+message = "Closure has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 2
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 9
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "no-nested-ternary"
+message = "Nested ternary expressions are confusing due to PHP's operator associativity rules."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/LessonMapType.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/ElevenLabs/ElevenLabsClient.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/ElevenLabs/ElevenLabsClient.php"
+code = "sensitive-parameter"
+message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Healthcheck/DoctrineInsideTaskWorkerHealthcheck.php"
+code = "readable-literal"
+message = "Numeric literal could use underscore separators for readability."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Healthcheck/ProcessCountHealthcheck.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/ImapEngine/AliorNotificationMailProvider.php"
+code = "sensitive-parameter"
+message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Mcp/KiddoChatToolLoader.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Mcp/KiddoInitializeHandler.php"
+code = "assert-description"
+message = "Missing description in assert function."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Mcp/KiddoMcpController.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Mcp/KiddoMcpController.php"
+code = "readable-literal"
+message = "Numeric literal could use underscore separators for readability."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Messenger/ActivityLogMiddleware.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Scheduler/MainSchedule.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 2
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
+code = "cyclomatic-complexity"
+message = "Closure has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Serializer/MoneyNormalizer.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "src/Infrastructure/Twig/AppVersionExtension.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "src/MessageHandler/CancelLessonBookingHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/MessageHandler/CancelLessonBookingHandler.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/MessageHandler/RefundLessonBookingHandler.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "src/Repository/ActivityLogRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 3
+
+[[issues]]
+file = "src/Repository/BookingRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 6
+
+[[issues]]
+file = "src/Repository/ChildRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/Repository/FinanceContactRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/Repository/LessonRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 7
+
+[[issues]]
+file = "src/Repository/LessonRepository.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 4
+
+[[issues]]
+file = "src/Repository/LessonRepository.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Repository/LessonRepository.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "src/Repository/NotificationRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/Repository/PaymentRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 3
+
+[[issues]]
+file = "src/Repository/SeriesRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 2
+
+[[issues]]
+file = "src/Repository/SeriesRepository.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/Repository/TransferRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 2
+
+[[issues]]
+file = "src/Repository/UserRepository.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 4
+
+[[issues]]
+file = "src/Repository/UserRepository.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
+file = "src/Security/Voter/LessonVoter.php"
+code = "sensitive-parameter"
+message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Api/AuthController.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Api/AuthController.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Api/AuthController.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Api/AuthController.php"
+code = "no-assign-in-condition"
+message = "Avoid assignments in conditions."
+count = 5
+
+[[issues]]
+file = "src/UserInterface/Http/Api/AuthController.php"
+code = "readable-literal"
+message = "Numeric literal could use underscore separators for readability."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Api/AuthController.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Api/ChatSignedUrlAction.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Api/ToolInvokeAction.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AddUserModal.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AddUserModal.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AddUserModal.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminActivityLogComponent.php"
+code = "no-duplicate-match-arm"
+message = "This `match` arm has the same result as an earlier arm."
+count = 4
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingModal.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingModal.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 3
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingModal.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 7
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingModal.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingModal.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingModal.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 4
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 3
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 5
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPaymentComponent.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPaymentsListComponent.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminUserDetailComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminUserDetailComponent.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminUserDetailComponent.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminUserDetailComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminUserDetailComponent.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CarnetsComponent.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ChildrenManager.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LoginUser.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LoginUser.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/PaymentComponent.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/PaymentsListComponent.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/RegisterUser.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/RegisterUser.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "loop-does-not-iterate"
+message = "Loop is unconditionally terminated and will not iterate."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 4
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingLessons.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/UpcomingLessons.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/LlmTxtController.php"
+code = "final-controller"
+message = "Controller classes should be declared as `final`."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/NewsletterController.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/SecurityController.php"
+code = "final-controller"
+message = "Controller classes should be declared as `final`."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/WorkshopImageAction.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/WorkshopsAction.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/WorkshopsAction.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/WorkshopsAction.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 2
+
+[[issues]]
+file = "tests/Application/Chat/ChatTokenManagerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Application/Chat/ChatToolRegistryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/Application/Chat/UserChatToolsCreateBookingPaymentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 23
+
+[[issues]]
+file = "tests/Application/Command/DoctrineInsideTaskWorkerCheckTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Application/CommandHandler/AddBookingHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 9
+
+[[issues]]
+file = "tests/Application/CommandHandler/CancelLessonBookingHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 7
+
+[[issues]]
+file = "tests/Application/CommandHandler/CheckBookingsToMarkPastHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/Application/CommandHandler/CheckExpiredBookingsHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 9
+
+[[issues]]
+file = "tests/Application/CommandHandler/DoctrineInsideTaskWorkerCheckHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Application/CommandHandler/ExtendSeriesScheduleHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 11
+
+[[issues]]
+file = "tests/Application/CommandHandler/ExtendSeriesScheduleHandlerTest.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 5
+
+[[issues]]
+file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
+code = "no-literal-password"
+message = "Literal passwords or sensitive data should not be stored in code."
+count = 2
+
+[[issues]]
+file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
+code = "single-class-per-file"
+message = "File contains multiple class-like definitions; found class `FakeQuery` but class `ImportTransfersFromMailHandlerTest` is already defined in this file."
+count = 1
+
+[[issues]]
+file = "tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Application/CommandHandler/MatchPaymentForTransferHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 12
+
+[[issues]]
+file = "tests/Application/CommandHandler/MatchPaymentForTransferHandlerTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/DailyLessonsReminderHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 9
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 16
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/SendPaymentNotificationHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 16
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 7
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Application/CommandHandler/PurgeOldNotificationsHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Application/CommandHandler/RescheduleLessonBookingHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/Application/CommandHandler/SaveTransferHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 10
+
+[[issues]]
+file = "tests/Application/Newsletter/NewsletterSubscriptionManagerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/Application/Newsletter/NewsletterSubscriptionManagerTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Application/Service/ActivityLoggerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Application/Service/AliorMailParserTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 5
+
+[[issues]]
+file = "tests/Application/Service/AliorMailParserTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 4
+
+[[issues]]
+file = "tests/Application/Service/InAppNotificationServiceTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 12
+
+[[issues]]
+file = "tests/Application/Service/PlatformBillingServiceTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 19
+
+[[issues]]
+file = "tests/Application/Service/PlatformBillingServiceTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 12
+
+[[issues]]
+file = "tests/Application/Service/PlatformBillingServiceTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Application/Service/TransferMoneyParserTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Assembler/BookingAssembler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 5
+
+[[issues]]
+file = "tests/Assembler/EntityAssembler.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/EntityAssembler.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/LessonAssembler.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/LessonAssembler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 5
+
+[[issues]]
+file = "tests/Assembler/LessonAssembler.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/LessonMetadataAssembler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/LessonMetadataAssembler.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/PaymentAssembler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/PaymentCodeAssembler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 3
+
+[[issues]]
+file = "tests/Assembler/SeriesAssembler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/TransferAssembler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "tests/Assembler/UserAssembler.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/UserAssembler.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "tests/Assembler/UserAssemblerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/Domain/Entity/AwaitingPaymentFactoryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Entity/LessonMetadataTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 9
+
+[[issues]]
+file = "tests/Entity/PaymentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Entity/TicketOptionTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/Entity/TransferTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 11
+
+[[issues]]
+file = "tests/Functional/Application/CommandHandler/TriggerMatchPaymentForTransferForPastTransfersHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Functional/BookingPersistenceTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 11
+
+[[issues]]
+file = "tests/Functional/Entity/SeriesFunctionalTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Functional/ImpersonationSuggestTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Functional/Infrastructure/Healthcheck/DoctrineDbalCacheHealthcheckTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 11
+
+[[issues]]
+file = "tests/Functional/Infrastructure/ImapEngine/AliorNotificationMailProviderFunctionalTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Functional/Infrastructure/Mcp/KiddoMcpServerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 18
+
+[[issues]]
+file = "tests/Functional/Infrastructure/Swoole/ExceptionLoggingTaskHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Functional/Infrastructure/Swoole/HttpServerSwooleServerProviderTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Functional/Infrastructure/Symfony/SchedulerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Functional/Search/AdminGlobalSearchTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 28
+
+[[issues]]
+file = "tests/Functional/Search/AdminGlobalSearchTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 18
+
+[[issues]]
+file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 10
+
+[[issues]]
+file = "tests/Functional/UserInterface/Http/Component/BookingPreviewComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Functional/UserInterface/Http/Component/BookingPreviewComponentTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 21
+
+[[issues]]
+file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
+code = "no-literal-password"
+message = "Literal passwords or sensitive data should not be stored in code."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 4
+
+[[issues]]
+file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/CacheConnectionEnsurerTest.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/DoctrineConnectionEnsurerTest.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Query/DoctrineTodayLessonsQueryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/RequestConnectionEnsurerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/PlatformBillingSubscriberTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/PlatformBillingSubscriberTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 5
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryActivityMetricsSubscriberTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryActivityMetricsSubscriberTest.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryBookingWorkflowMetricsSubscriberTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryBookingWorkflowMetricsSubscriberTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryHttpMetricsSubscriberTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryHttpMetricsSubscriberTest.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryPaymentWorkflowMetricsSubscriberTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Infrastructure/EventSubscriber/SentryPaymentWorkflowMetricsSubscriberTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Healthcheck/HttpClientHealthcheckTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 9
+
+[[issues]]
+file = "tests/Infrastructure/Healthcheck/ProcessCountHealthcheckTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 5
+
+[[issues]]
+file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
+code = "no-literal-password"
+message = "Literal passwords or sensitive data should not be stored in code."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
+code = "single-class-per-file"
+message = "File contains multiple class-like definitions; found class `ThrowingFolder` but class `AliorNotificationMailProviderTest` is already defined in this file."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Mcp/McpAuthSubscriberTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 11
+
+[[issues]]
+file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 7
+
+[[issues]]
+file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 5
+
+[[issues]]
+file = "tests/Infrastructure/Messenger/SwooleTaskWorkerContextTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Infrastructure/Repository/NotificationRepositoryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 4
+
+[[issues]]
+file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Symfony/Scheduler/MainScheduleTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/Infrastructure/Symfony/SentryHubServiceWiringTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/Infrastructure/Twig/AppVersionExtensionTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Twig/MoneyExtensionTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Twig/MoneyExtensionTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Component/AdminSettingsComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 30
+
+[[issues]]
+file = "tests/Integration/Component/AdminSettingsComponentTest.php"
+code = "no-redundant-method-override"
+message = "Redundant method override."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Component/AdminSettingsComponentTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Component/AdminSettingsComponentTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Component/SeriesDetailsComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/Integration/Component/WorkshopEditorComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 37
+
+[[issues]]
+file = "tests/Integration/Component/WorkshopEditorComponentTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Entity/BookingStatusTransitionsTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 16
+
+[[issues]]
+file = "tests/Integration/Entity/BookingStatusTransitionsTest.php"
+code = "no-redundant-method-override"
+message = "Redundant method override."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Entity/BookingStatusTransitionsTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Entity/MultiInstructorSupportTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 21
+
+[[issues]]
+file = "tests/Integration/Entity/MultiInstructorSupportTest.php"
+code = "no-redundant-method-override"
+message = "Redundant method override."
+count = 1
+
+[[issues]]
+file = "tests/Integration/Entity/PaymentApprovalWorkflowTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/Integration/Entity/PaymentApprovalWorkflowTest.php"
+code = "no-redundant-method-override"
+message = "Redundant method override."
+count = 1
+
+[[issues]]
+file = "tests/KernelTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/MessageHandler/RefundLessonBookingHandlerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/Repository/BookingRepositoryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 43
+
+[[issues]]
+file = "tests/Repository/BookingRepositoryTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 4
+
+[[issues]]
+file = "tests/Repository/BookingRepositoryTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Repository/LessonRepositoryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 14
+
+[[issues]]
+file = "tests/Repository/LessonRepositoryWeekFilteringTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/Repository/LessonRepositoryWeekFilteringTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 9
+
+[[issues]]
+file = "tests/Repository/PaymentRepositoryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 8
+
+[[issues]]
+file = "tests/Repository/UserRepositoryTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 11
+
+[[issues]]
+file = "tests/Repository/UserRepositoryTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/Repository/UserRepositoryTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 1
+
+[[issues]]
+file = "tests/Security/Voter/LessonVoterTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 5
+
+[[issues]]
+file = "tests/StimulusEmitActionPrefixTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/StimulusEmitActionPrefixTest.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "tests/StimulusEmitActionPrefixTest.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/AdminBookingsTabTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/UserInterface/AdminBookingsTabTest.php"
+code = "readable-literal"
+message = "Numeric literal could use underscore separators for readability."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/AdminBookingsTabTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/Admin/AdminControllersSmokeTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AddUserModalTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 22
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AdminActivityLogComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AdminBookingsComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AdminKpiStatsComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AdminPaymentsListComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AdminScheduleComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 29
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AdminScheduleComponentTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/BookingPreviewComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 17
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/CarnetsComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 26
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/LessonModalUrlSyncTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/PaymentsListComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 12
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/PlatformBillingComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 4
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/ProfileComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 21
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/RegisterUserTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 6
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/ReservationDetailsModalTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 17
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingAttendeesComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 15
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingAttendeesComponentTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 3
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 15
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 4
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 3
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 56
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 3
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 24
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 13
+
+[[issues]]
+file = "tests/UserInterface/Http/LlmTxtControllerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 26
+
+[[issues]]
+file = "tests/UserInterface/Http/NewsletterConfirmationActionTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 2
+
+[[issues]]
+file = "tests/UserInterface/Http/NewsletterControllerTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 5
+
+[[issues]]
+file = "tests/UserInterface/Http/NewsletterControllerTest.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/StaticEndpointActionTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 12
+
+[[issues]]
+file = "tests/UserInterface/Http/StaticEndpointActionTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 7
+
+[[issues]]
+file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3
+
+[[issues]]
+file = "tests/UserInterface/WeekFilteringIntegrationTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 17
+
+[[issues]]
+file = "tests/UserInterface/WeekFilteringIntegrationTest.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 2
+
+[[issues]]
+file = "tests/UserInterface/WeekFilteringIntegrationTest.php"
+code = "strict-assertions"
+message = "Use strict assertions in PHPUnit tests."
+count = 3
+
+[[issues]]
+file = "tests/UserInterface/WorkshopsPageResponseSizeTest.php"
+code = "assertion-style"
+message = "Inconsistent assertions style."
+count = 3

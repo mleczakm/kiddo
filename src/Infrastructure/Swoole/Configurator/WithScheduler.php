@@ -67,7 +67,7 @@ final class WithScheduler implements Configurator
         $this->tickId = Timer::tick(1000, $this->tick(...));
 
         $server->on('shutdown', function (): void {
-            if (! isset($this->tickId)) {
+            if (!isset($this->tickId)) {
                 return;
             }
             Timer::clear($this->tickId);

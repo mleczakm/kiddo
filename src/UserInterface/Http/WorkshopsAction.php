@@ -54,8 +54,7 @@ class WorkshopsAction extends AbstractController
 
         return $this->render('workshops.html.twig', [
             'week' => $this->resolveBrowsedWeek($request, $schedule),
-            'openSlug' => $lesson->getMetadata()
-                ->slug,
+            'openSlug' => $lesson->getMetadata()->slug,
             'openDate' => $schedule->format('Y-m-d'),
             'openHour' => $schedule->format('H:i'),
         ]);
@@ -73,7 +72,7 @@ class WorkshopsAction extends AbstractController
 
         if ($weekParam) {
             try {
-                return (new \DateTimeImmutable($weekParam))->format('Y-m-d');
+                return new \DateTimeImmutable($weekParam)->format('Y-m-d');
             } catch (\Exception) {
                 // Fall through to the workshop's own week.
             }
@@ -92,14 +91,15 @@ class WorkshopsAction extends AbstractController
             try {
                 $schedule = new \DateTimeImmutable($date . ' ' . $hour);
 
-                $query = $entityManager->createQuery(<<<DQL
-                    SELECT l
-                    FROM App\Entity\Lesson l
-                    JOIN l.metadata m
-                    WHERE m.slug = :slug
-                    AND l.schedule = :schedule
-                    AND l.status = 'active'
-                    DQL)
+                $query = $entityManager
+                    ->createQuery(<<<DQL
+                        SELECT l
+                        FROM App\Entity\Lesson l
+                        JOIN l.metadata m
+                        WHERE m.slug = :slug
+                        AND l.schedule = :schedule
+                        AND l.status = 'active'
+                        DQL)
                     ->setParameter('slug', $slug)
                     ->setParameter('schedule', $schedule);
 
@@ -117,15 +117,16 @@ class WorkshopsAction extends AbstractController
         $startDate = $now;
         $endDate = $startDate->modify('+7 days');
 
-        $query = $entityManager->createQuery(<<<DQL
-            SELECT l
-            FROM App\Entity\Lesson l
-            JOIN l.metadata m
-            WHERE m.slug = :slug
-            AND l.schedule BETWEEN :start AND :end
-            AND l.status = 'active'
-            ORDER BY l.schedule ASC
-            DQL)
+        $query = $entityManager
+            ->createQuery(<<<DQL
+                SELECT l
+                FROM App\Entity\Lesson l
+                JOIN l.metadata m
+                WHERE m.slug = :slug
+                AND l.schedule BETWEEN :start AND :end
+                AND l.status = 'active'
+                ORDER BY l.schedule ASC
+                DQL)
             ->setParameter('slug', $slug)
             ->setParameter('start', $startDate)
             ->setParameter('end', $endDate);
@@ -137,15 +138,16 @@ class WorkshopsAction extends AbstractController
             return $lesson;
         }
 
-        $query = $entityManager->createQuery(<<<DQL
-            SELECT l
-            FROM App\Entity\Lesson l
-            JOIN l.metadata m
-            WHERE m.slug = :slug
-            AND l.status = 'active'
-            AND l.schedule >= :now
-            ORDER BY l.schedule ASC
-            DQL)
+        $query = $entityManager
+            ->createQuery(<<<DQL
+                SELECT l
+                FROM App\Entity\Lesson l
+                JOIN l.metadata m
+                WHERE m.slug = :slug
+                AND l.status = 'active'
+                AND l.schedule >= :now
+                ORDER BY l.schedule ASC
+                DQL)
             ->setParameter('slug', $slug)
             ->setParameter('now', $now);
 

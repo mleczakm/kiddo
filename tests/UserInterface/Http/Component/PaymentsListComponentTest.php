@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use App\Entity\Payment;
 use App\Entity\Booking;
+use App\Entity\Payment;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\UserAssembler;
+use App\UserInterface\Http\Component\PaymentsListComponent;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
-use App\UserInterface\Http\Component\PaymentsListComponent;
 
 #[Group('functional')]
 final class PaymentsListComponentTest extends WebTestCase
@@ -65,9 +65,10 @@ final class PaymentsListComponentTest extends WebTestCase
         $payment->setStatus(Payment::STATUS_PAID);
 
         // Link a transfer so amountPaid > 0
-        $transfer = TransferAssembler::new()->withAmount('100,00')->withTransferredAt(
-            $weekStart->modify('+2 days')
-        )->assemble();
+        $transfer = TransferAssembler::new()
+            ->withAmount('100,00')
+            ->withTransferredAt($weekStart->modify('+2 days'))
+            ->assemble();
         $this->em->persist($transfer);
 
         $payment->addTransfer($transfer);
@@ -151,28 +152,40 @@ final class PaymentsListComponentTest extends WebTestCase
         $secondWeek = $firstWeek->modify('+7 days');
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($firstWeek->modify('+1 day'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($firstWeek->modify('+1 day'))
             ->withTitle('Week1 Lesson')
             ->assemble();
-        $payment1 = PaymentAssembler::new()->withUser($user)->withAmount(Money::of('10.00', 'PLN'))->withCreatedAt(
-            $firstWeek->modify('+2 days')
-        )->assemble();
+        $payment1 = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('10.00', 'PLN'))
+            ->withCreatedAt($firstWeek->modify('+2 days'))
+            ->assemble();
         $payment1->setStatus(Payment::STATUS_PAID);
-        $booking1 = BookingAssembler::new()->withUser($user)->withPayment($payment1)->withLessons($lesson1)->withStatus(
-            Booking::STATUS_ACTIVE
-        )->assemble();
+        $booking1 = BookingAssembler::new()
+            ->withUser($user)
+            ->withPayment($payment1)
+            ->withLessons($lesson1)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
 
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($secondWeek->modify('+1 day'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($secondWeek->modify('+1 day'))
             ->withTitle('Week2 Lesson')
             ->assemble();
-        $payment2 = PaymentAssembler::new()->withUser($user)->withAmount(Money::of('20.00', 'PLN'))->withCreatedAt(
-            $secondWeek->modify('+2 days')
-        )->assemble();
+        $payment2 = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('20.00', 'PLN'))
+            ->withCreatedAt($secondWeek->modify('+2 days'))
+            ->assemble();
         $payment2->setStatus(Payment::STATUS_PAID);
-        $booking2 = BookingAssembler::new()->withUser($user)->withPayment($payment2)->withLessons($lesson2)->withStatus(
-            Booking::STATUS_ACTIVE
-        )->assemble();
+        $booking2 = BookingAssembler::new()
+            ->withUser($user)
+            ->withPayment($payment2)
+            ->withLessons($lesson2)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
 
         $payment1->addBooking($booking1);
         $payment2->addBooking($booking2);
@@ -187,17 +200,25 @@ final class PaymentsListComponentTest extends WebTestCase
         $this->em->flush();
 
         // First week should include Week1 Lesson, not Week2 Lesson
-        $component1 = $this->createLiveComponent(PaymentsListComponent::class, [
-            'week' => $firstWeek->format('Y-m-d'),
-        ], $this->client);
+        $component1 = $this->createLiveComponent(
+            PaymentsListComponent::class,
+            [
+                'week' => $firstWeek->format('Y-m-d'),
+            ],
+            $this->client,
+        );
         $html1 = (string) $component1->render();
         self::assertStringContainsString('Week1 Lesson', $html1);
         self::assertStringNotContainsString('Week2 Lesson', $html1);
 
         // Second week should include Week2 Lesson, not Week1 Lesson
-        $component2 = $this->createLiveComponent(name: PaymentsListComponent::class, data: [
-            'week' => $secondWeek->format('Y-m-d'),
-        ], client: $this->client);
+        $component2 = $this->createLiveComponent(
+            name: PaymentsListComponent::class,
+            data: [
+                'week' => $secondWeek->format('Y-m-d'),
+            ],
+            client: $this->client,
+        );
         $html2 = (string) $component2->render();
         self::assertStringContainsString('Week2 Lesson', $html2);
         self::assertStringNotContainsString('Week1 Lesson', $html2);

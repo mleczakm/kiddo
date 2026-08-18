@@ -70,8 +70,7 @@ final readonly class AdminActivityLogComponent
     private function format(ActivityLog $log): array
     {
         return [
-            'type' => $log->getType()
-                ->value,
+            'type' => $log->getType()->value,
             'icon' => $this->iconFor($log->getType()),
             'color' => $this->colorFor($log->getType()),
             'title' => $log->getTitle(),

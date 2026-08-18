@@ -26,7 +26,7 @@ final readonly class CacheConnectionEnsurer implements ConnectionEnsurerInterfac
 
                 return;
             } catch (Exception $e) {
-                if ($i < $maxRetries - 1) {
+                if ($i < ($maxRetries - 1)) {
                     if ($this->connection->isConnected()) {
                         $this->connection->close();
                     }
@@ -41,7 +41,7 @@ final readonly class CacheConnectionEnsurer implements ConnectionEnsurerInterfac
 
     private function discardActiveTransaction(): void
     {
-        if (! $this->connection->isTransactionActive()) {
+        if (!$this->connection->isTransactionActive()) {
             return;
         }
 

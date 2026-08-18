@@ -36,7 +36,7 @@ final class DoctrineDbalCacheHealthcheckTest extends KernelTestCase
         $mockConnection
             ->method('getDatabasePlatform')
             ->willThrowException(
-                new \RuntimeException('SQLSTATE[HY000]: General error: 7 no connection to the server')
+                new \RuntimeException('SQLSTATE[HY000]: General error: 7 no connection to the server'),
             );
 
         $healthcheckWithBrokenConnection = new DoctrineDbalCacheHealthcheck($mockConnection);
@@ -51,9 +51,7 @@ final class DoctrineDbalCacheHealthcheckTest extends KernelTestCase
     public function testHealthcheckFailsWhenDatabaseThrowsGenericException(): void
     {
         $mockConnection = $this->createMock(Connection::class);
-        $mockConnection
-            ->method('getDatabasePlatform')
-            ->willThrowException(new \Exception('Some database error'));
+        $mockConnection->method('getDatabasePlatform')->willThrowException(new \Exception('Some database error'));
 
         $healthcheckWithBrokenConnection = new DoctrineDbalCacheHealthcheck($mockConnection);
         $response = $healthcheckWithBrokenConnection->check();

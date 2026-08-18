@@ -17,7 +17,7 @@ class CarnetsComponent extends AbstractController
     use DefaultActionTrait;
 
     public function __construct(
-        private readonly BookingRepository $bookingRepository
+        private readonly BookingRepository $bookingRepository,
     ) {}
 
     /**
@@ -27,12 +27,13 @@ class CarnetsComponent extends AbstractController
     public function getCarnets(): array
     {
         $user = $this->getUser();
-        if (! $user) {
+        if (!$user) {
             return [];
         }
 
         /** @var list<Booking> $bookings */
-        $bookings = $this->bookingRepository->createQueryBuilder('b')
+        $bookings = $this->bookingRepository
+            ->createQueryBuilder('b')
             ->select('b', 'l', 's')
             ->leftJoin('b.lessons', 'l')
             ->leftJoin('l.series', 's')
@@ -50,8 +51,6 @@ class CarnetsComponent extends AbstractController
             if ($booking->getLessonsMap()->lessons->count() > 1) {
                 $carnets[] = $booking;
             }
-
-
         }
 
         return array_reverse($carnets);

@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use App\Entity\LessonMetadata;
 use App\Entity\AgeRange;
-use PHPUnit\Framework\Attributes\Group;
-use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use App\Entity\Lesson;
+use App\Entity\LessonMetadata;
 use App\Repository\BookingRepository;
 use App\Repository\LessonRepository;
 use App\UserInterface\Http\Component\UpcomingLessons;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Clock\NativeClock;
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
 #[Group('unit')]
 class UpcomingLessonsTest extends TestCase
@@ -68,10 +68,8 @@ class UpcomingLessonsTest extends TestCase
 
     public function testGetUserBookingsByLessonReturnsEmptyWhenGuest(): void
     {
-        $this->security->method('getUser')
-            ->willReturn(null);
-        $this->bookingRepository->expects($this->never())
-            ->method('findForUserAndLessons');
+        $this->security->method('getUser')->willReturn(null);
+        $this->bookingRepository->expects($this->never())->method('findForUserAndLessons');
 
         $this->assertSame([], $this->component->getUserBookingsByLesson());
     }
@@ -79,8 +77,7 @@ class UpcomingLessonsTest extends TestCase
     public function testGetWorkshopsByDayReturnsSevenDays(): void
     {
         $this->component->week = '2024-02-19';
-        $this->lessonRepository->method('findByFilters')
-            ->willReturn([]);
+        $this->lessonRepository->method('findByFilters')->willReturn([]);
 
         $days = $this->component->getWorkshopsByDay();
 
@@ -169,9 +166,7 @@ class UpcomingLessonsTest extends TestCase
             $this->createMock(Lesson::class),
         ];
 
-        $this->lessonRepository
-            ->method('findByFilters')
-            ->willReturn($expectedLessons);
+        $this->lessonRepository->method('findByFilters')->willReturn($expectedLessons);
 
         $result = $this->component->getWorkshops();
 
@@ -193,8 +188,7 @@ class UpcomingLessonsTest extends TestCase
             slug: 'balaganki',
         );
         $lesson = $this->createMock(Lesson::class);
-        $lesson->method('getMetadata')
-            ->willReturn($metadata);
+        $lesson->method('getMetadata')->willReturn($metadata);
         $lesson->schedule = new \DateTimeImmutable('2024-02-21 10:30:00');
 
         $this->component->openSlug = 'balaganki';
@@ -354,7 +348,7 @@ class UpcomingLessonsTest extends TestCase
         $this->assertNotEmpty($attributes);
         $liveComponentAttribute = array_find(
             $attributes,
-            fn($attribute) => $attribute->getName() === AsLiveComponent::class
+            fn($attribute) => $attribute->getName() === AsLiveComponent::class,
         );
 
         $this->assertNotNull($liveComponentAttribute);

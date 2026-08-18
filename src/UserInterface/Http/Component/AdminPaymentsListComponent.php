@@ -42,7 +42,8 @@ final class AdminPaymentsListComponent extends AbstractController
         $end = $start->modify('+7 days 23:59:59');
 
         // Order latest to oldest: prefer paidAt desc, then createdAt desc
-        $qb = $this->paymentRepository->createQueryBuilder('p')
+        $qb = $this->paymentRepository
+            ->createQueryBuilder('p')
             ->leftJoin('p.user', 'u')
             ->leftJoin('p.bookings', 'b')
             ->leftJoin('b.lessons', 'l')
@@ -54,13 +55,11 @@ final class AdminPaymentsListComponent extends AbstractController
             ->addOrderBy('p.createdAt', 'DESC');
 
         if (in_array($this->status, Payment::STATUSES, true)) {
-            $qb->andWhere('p.status = :status')
-                ->setParameter('status', $this->status);
+            $qb->andWhere('p.status = :status')->setParameter('status', $this->status);
         }
 
         /** @var list<Payment> $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 
@@ -79,7 +78,6 @@ final class AdminPaymentsListComponent extends AbstractController
 
     public function getWeekEnd(): \DateTimeImmutable
     {
-        return $this->getWeekStart()
-            ->modify('+7 days');
+        return $this->getWeekStart()->modify('+7 days');
     }
 }

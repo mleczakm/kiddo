@@ -68,9 +68,7 @@ final class AuthControllerTest extends WebTestCase
         self::assertTrue($registerPayload['requires_verification']);
 
         $this->assertEmailCount(1);
-        $sentEmail = $this->mailer()
-            ->sentEmails()
-            ->first();
+        $sentEmail = $this->mailer()->sentEmails()->first();
         $sentEmail->assertSubject('Twój kod weryfikacyjny');
         $code = $this->extractCode((string) $sentEmail->getHtmlBody() . (string) $sentEmail->getTextBody());
 
@@ -123,10 +121,13 @@ final class AuthControllerTest extends WebTestCase
         $email = 'auth-rate-limit@example.com';
 
         // register() consumes the first of 3 email-limiter slots (shared budget with send-code).
-        self::assertSame(201, $this->register([
-            'email' => $email,
-            'name' => 'Rate Limit',
-        ])->getStatusCode());
+        self::assertSame(
+            201,
+            $this->register([
+                'email' => $email,
+                'name' => 'Rate Limit',
+            ])->getStatusCode(),
+        );
 
         // 2nd and 3rd slots.
         self::assertSame(200, $this->sendCode($email)->getStatusCode());
@@ -148,10 +149,13 @@ final class AuthControllerTest extends WebTestCase
             self::assertSame(400, $response->getStatusCode(), "attempt {$i} should be a plain invalid-code rejection");
         }
 
-        self::assertSame(429, $this->login([
-            'email' => $email,
-            'code' => '123456',
-        ])->getStatusCode());
+        self::assertSame(
+            429,
+            $this->login([
+                'email' => $email,
+                'code' => '123456',
+            ])->getStatusCode(),
+        );
     }
 
     /**

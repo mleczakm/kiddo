@@ -23,15 +23,16 @@ final class StimulusEmitActionPrefixTest extends TestCase
         $templatesDir = dirname(__DIR__) . '/templates';
         $offenders = [];
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($templatesDir, \FilesystemIterator::SKIP_DOTS)
-        );
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(
+            $templatesDir,
+            \FilesystemIterator::SKIP_DOTS,
+        ));
         foreach ($iterator as $file) {
-            if (! $file instanceof \SplFileInfo) {
+            if (!$file instanceof \SplFileInfo) {
                 continue;
             }
 
-            if (! $file->isFile() || ! str_ends_with($file->getFilename(), '.html.twig')) {
+            if (!$file->isFile() || !str_ends_with($file->getFilename(), '.html.twig')) {
                 continue;
             }
 
@@ -59,17 +60,16 @@ final class StimulusEmitActionPrefixTest extends TestCase
                             $hasBareLiveAction = true;
                         }
                     }
-                    if (! $hasBareLiveAction) {
+                    if (!$hasBareLiveAction) {
                         continue;
                     }
 
                     $precedingTagOpen = strrpos(substr($contents, 0, $offset), '<');
                     $tagName = null;
-                    if ($precedingTagOpen !== false && preg_match(
-                        '/<([a-zA-Z0-9]+)/',
-                        substr($contents, $precedingTagOpen),
-                        $tagMatch
-                    )) {
+                    if (
+                        $precedingTagOpen !== false
+                        && preg_match('/<([a-zA-Z0-9]+)/', substr($contents, $precedingTagOpen), $tagMatch)
+                    ) {
                         $tagName = strtolower($tagMatch[1]);
                     }
 
@@ -77,7 +77,8 @@ final class StimulusEmitActionPrefixTest extends TestCase
                         continue;
                     }
 
-                    $offenders[] = $file->getPathname() . ' -> <' . ($tagName ?? '?') . '> data-action="' . $actionValue . '"';
+                    $offenders[] =
+                        $file->getPathname() . ' -> <' . ($tagName ?? '?') . '> data-action="' . $actionValue . '"';
                 }
             }
         }
@@ -85,10 +86,8 @@ final class StimulusEmitActionPrefixTest extends TestCase
         self::assertSame(
             [],
             $offenders,
-            "Found un-prefixed 'live#*' Stimulus actions (needs 'click->' prefix on div/tr/li/p elements):\n" . implode(
-                "\n",
-                $offenders
-            )
+            "Found un-prefixed 'live#*' Stimulus actions (needs 'click->' prefix on div/tr/li/p elements):\n"
+                . implode("\n", $offenders),
         );
     }
 }

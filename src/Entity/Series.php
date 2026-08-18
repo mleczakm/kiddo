@@ -6,8 +6,8 @@ namespace App\Entity;
 
 use App\Repository\SeriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
@@ -73,8 +73,7 @@ class Series
                 'id' => Order::Ascending,
             ]);
 
-        return $this->lessons->matching($criteria)
-            ->toArray();
+        return $this->lessons->matching($criteria)->toArray();
     }
 
     public function getLessonsGt(Lesson $lesson): ?Lesson
@@ -86,8 +85,7 @@ class Series
                 'id' => Order::Ascending,
             ]);
 
-        return $this->lessons->matching($criteria)
-            ->first() ?: null;
+        return $this->lessons->matching($criteria)->first() ?: null;
     }
 
     public function getLessonsLt(Lesson $lesson): ?Lesson
@@ -99,8 +97,7 @@ class Series
                 'id' => Order::Descending,
             ]);
 
-        return $this->lessons->matching($criteria)
-            ->first() ?: null;
+        return $this->lessons->matching($criteria)->first() ?: null;
     }
 
     public function getFirstLesson(): Lesson
@@ -155,7 +152,7 @@ class Series
 
     public function addInstructor(User $instructor): self
     {
-        if (! $this->instructors->contains($instructor)) {
+        if (!$this->instructors->contains($instructor)) {
             $this->instructors->add($instructor);
         }
 

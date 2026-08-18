@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Assembler;
 
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use libphonenumber\PhoneNumberUtil;
-use libphonenumber\PhoneNumberFormat;
 
 #[Group('unit')]
 class UserAssemblerTest extends TestCase
 {
     public function testAssembleWithoutPhone(): void
     {
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
         $this->assertNull($user->getPhone());
     }
 

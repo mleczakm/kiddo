@@ -10,7 +10,7 @@ class AgeRangeAssembler
 {
     public function __construct(
         private int $min = 5,
-        private ?int $max = 12
+        private ?int $max = 12,
     ) {}
 
     public static function new(): self

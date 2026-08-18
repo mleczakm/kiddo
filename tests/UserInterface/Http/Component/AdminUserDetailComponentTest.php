@@ -63,7 +63,7 @@ final class AdminUserDetailComponentTest extends WebTestCase
         self::assertNull($state->editingField, 'saving must return to display mode');
 
         $reloaded = $this->em->getRepository(User::class)->find($customer->getId()) ?? throw new \LogicException(
-            'User not found'
+            'User not found',
         );
         self::assertSame('Preferuje kontakt telefoniczny po 16:00.', $reloaded->getAdminNote());
 
@@ -127,9 +127,11 @@ final class AdminUserDetailComponentTest extends WebTestCase
         $component->set('notifyBody', 'Twoje konto jest gotowe.');
         $component->call('sendNotification');
 
-        $notifications = $this->em->getRepository(Notification::class)->findBy([
-            'user' => $customer,
-        ]);
+        $notifications = $this->em
+            ->getRepository(Notification::class)
+            ->findBy([
+                'user' => $customer,
+            ]);
         self::assertCount(1, $notifications);
         self::assertSame('Witamy!', $notifications[0]->getTitle());
 

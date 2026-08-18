@@ -13,12 +13,17 @@ use Symfony\Component\Routing\Attribute\Route;
 class StaticEndpointAction extends AbstractController
 {
     public function __construct(
-        private readonly SettingRepository $settingRepository
+        private readonly SettingRepository $settingRepository,
     ) {}
 
-    #[Route('/{path}', name: 'static_endpoint', requirements: [
-        'path' => 'robots\.txt|sitemap\.xml|security\.txt',
-    ], methods: ['GET'])]
+    #[Route(
+        '/{path}',
+        name: 'static_endpoint',
+        requirements: [
+            'path' => 'robots\.txt|sitemap\.xml|security\.txt',
+        ],
+        methods: ['GET'],
+    )]
     public function __invoke(Request $request, string $path): Response
     {
         $setting = $this->settingRepository->findOneByKey('static_endpoint_' . $path);

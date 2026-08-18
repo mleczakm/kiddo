@@ -14,13 +14,12 @@ final readonly class SwooleTaskWorkerContext implements TaskWorkerContextInterfa
 
     public function isInTaskWorker(): bool
     {
-        if (! extension_loaded('swoole') || $this->serverProvider === null) {
+        if (!extension_loaded('swoole') || $this->serverProvider === null) {
             return false;
         }
 
         try {
-            return $this->serverProvider->getServer()
-                ->taskworker;
+            return $this->serverProvider->getServer()->taskworker;
         } catch (\Throwable) {
             return false;
         }

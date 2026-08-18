@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\Service;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
 use App\Repository\NotificationRepository;
 use App\Tests\Assembler\UserAssembler;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]

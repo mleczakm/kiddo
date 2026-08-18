@@ -19,10 +19,11 @@ class BookingFactory
 
         return match ($ticketOption->type) {
             TicketType::ONE_TIME => new Booking($user, $payment, $lesson),
-            TicketType::CARNET_4 => new Booking($user, $payment, ... $lesson->getSeries()?->getLessonsGte(
-                $lesson,
-                4
-            ) ?? []),
+            TicketType::CARNET_4 => new Booking(
+                $user,
+                $payment,
+                ...$lesson->getSeries()?->getLessonsGte($lesson, 4) ?? [],
+            ),
         };
     }
 }

@@ -44,14 +44,13 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()
-            ->dispatch(new CancelLessonBooking($booking->getId(), $lesson->getId(), $user, 'Nie damy rady przyjść'));
+        $this->bus()->dispatch(
+            new CancelLessonBooking($booking->getId(), $lesson->getId(), $user, 'Nie damy rady przyjść'),
+        );
         // The cancel handler dispatches a further notification command, also
         // routed to the async transport, so drain the queue until it settles.
-        $this->transport('async')
-            ->process();
-        $this->transport('async')
-            ->process();
+        $this->transport('async')->process();
+        $this->transport('async')->process();
 
         $em->clear();
         /** @var Booking $reloaded */
@@ -59,11 +58,8 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         self::assertSame(Booking::STATUS_CANCELLED, $reloaded->getStatus());
 
         // Cancellation email sent to the customer (workflow.booking.transition.cancel fired)
-        $this->mailer()
-            ->assertSentEmailCount(1);
-        $sentEmail = $this->mailer()
-            ->sentEmails()
-            ->first();
+        $this->mailer()->assertSentEmailCount(1);
+        $sentEmail = $this->mailer()->sentEmails()->first();
         self::assertSame($user->getEmail(), $sentEmail->getTo()[0]->getAddress());
 
         // In-app notification created for the customer
@@ -100,10 +96,8 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()
-            ->dispatch(new CancelLessonBooking($booking->getId(), $lesson1->getId(), $user));
-        $this->transport('async')
-            ->process();
+        $this->bus()->dispatch(new CancelLessonBooking($booking->getId(), $lesson1->getId(), $user));
+        $this->transport('async')->process();
 
         $em->clear();
         /** @var Booking $reloaded */
@@ -112,8 +106,7 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         self::assertSame(Booking::STATUS_ACTIVE, $reloaded->getStatus());
 
         // No workflow transition fired at the booking level, so no cancellation email
-        $this->mailer()
-            ->assertSentEmailCount(0);
+        $this->mailer()->assertSentEmailCount(0);
 
         // The per-lesson cancelled state must survive a fresh DB round-trip
         // (regression guard: LessonMap is a custom-typed field, mutating it
@@ -123,9 +116,8 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         self::assertFalse($reloaded->isLessonCancelled($lesson2), 'lesson2 should still be active after reload');
         self::assertSame(
             $user->getId(),
-            $reloaded->getLessonsMap()
-                ->getCancelledByUserId($lesson1->getId()),
-            'cancellation should record who cancelled it'
+            $reloaded->getLessonsMap()->getCancelledByUserId($lesson1->getId()),
+            'cancellation should record who cancelled it',
         );
     }
 }

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use App\Tests\Assembler\LessonAssembler;
-use App\Tests\Assembler\LessonMetadataAssembler;
-use App\Tests\Assembler\UserAssembler;
-use Brick\Money\Money;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
@@ -16,13 +12,17 @@ use App\Entity\TicketOption;
 use App\Entity\TicketReschedulePolicy;
 use App\Entity\TicketType;
 use App\Entity\WorkshopType;
+use App\Tests\Assembler\LessonAssembler;
+use App\Tests\Assembler\LessonMetadataAssembler;
+use App\Tests\Assembler\UserAssembler;
+use App\UserInterface\Http\Component\AdminScheduleComponent;
+use Brick\Money\Money;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
-use App\UserInterface\Http\Component\AdminScheduleComponent;
 
 /**
  * Covers the merged Warsztaty (Series) + Zajęcia (Lesson) admin view: a
@@ -65,14 +65,18 @@ final class AdminScheduleComponentTest extends WebTestCase
 
         // Create a Series with two lessons in this week
         $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY, [
-            new TicketOption(TicketType::ONE_TIME, Money::of(
-                50,
-                'PLN'
-            ), 'Bilet jednorazowy', TicketReschedulePolicy::UNLIMITED_24H_BEFORE),
-            new TicketOption(TicketType::CARNET_4, Money::of(
-                180,
-                'PLN'
-            ), 'Karnet 4', TicketReschedulePolicy::ONETIME_24H_BEFORE),
+            new TicketOption(
+                TicketType::ONE_TIME,
+                Money::of(50, 'PLN'),
+                'Bilet jednorazowy',
+                TicketReschedulePolicy::UNLIMITED_24H_BEFORE,
+            ),
+            new TicketOption(
+                TicketType::CARNET_4,
+                Money::of(180, 'PLN'),
+                'Karnet 4',
+                TicketReschedulePolicy::ONETIME_24H_BEFORE,
+            ),
         ]);
         $this->em->persist($series);
 
@@ -227,7 +231,8 @@ final class AdminScheduleComponentTest extends WebTestCase
         $weekStart = new \DateTimeImmutable('2025-02-03');
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+1 day'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($weekStart->modify('+1 day'))
             ->withTitle('Togglable Lesson')
             ->withStatus('active')
             ->assemble();
@@ -265,12 +270,14 @@ final class AdminScheduleComponentTest extends WebTestCase
         $prevWeek = $weekStart->modify('-7 days');
 
         $inWeek = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+1 day'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($weekStart->modify('+1 day'))
             ->withTitle('In Week Lesson')
             ->withStatus('active')
             ->assemble();
         $outOfWeek = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($prevWeek->modify('+1 day'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($prevWeek->modify('+1 day'))
             ->withTitle('Out Lesson')
             ->withStatus('active')
             ->assemble();
@@ -296,14 +303,16 @@ final class AdminScheduleComponentTest extends WebTestCase
         $this->em->persist($host);
 
         $ownLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+1 day'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($weekStart->modify('+1 day'))
             ->withTitle('Own Lesson')
             ->withStatus('active')
             ->assemble();
         $ownLesson->addInstructor($host);
 
         $otherLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($weekStart->modify('+2 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($weekStart->modify('+2 days'))
             ->withTitle('Other Lesson')
             ->withStatus('active')
             ->assemble();
@@ -333,7 +342,7 @@ final class AdminScheduleComponentTest extends WebTestCase
             capacity: 10,
             duration: 60,
             ageRange: new AgeRange(3, 8),
-            category: 'test'
+            category: 'test',
         );
         return new Lesson($metadata, $schedule);
     }

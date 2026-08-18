@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler\Notification;
 
-use App\Entity\Notification;
-use App\Entity\NotificationSeverity;
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\SendBookingCancellationNotificationCommand;
 use App\Application\CommandHandler\Notification\SendBookingCancellationNotificationHandler;
+use App\Entity\Notification;
+use App\Entity\NotificationSeverity;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use App\Tests\Assembler\UserAssembler;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
 
@@ -25,15 +25,9 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
     public function testSendsCancellationNotificationWithCorrectContent(): void
     {
         $date = new DateTimeImmutable('2025-07-16 10:00:00');
-        $user = UserAssembler::new()
-            ->withEmail('user@example.com')
-            ->withName('Jan Kowalski')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
 
-        $admin = UserAssembler::new()
-            ->withEmail('admin@example.com')
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
@@ -46,11 +40,7 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
 
         $em->persist($lesson);
 
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withLessons($lesson)
-            ->withStatus('cancelled')
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withLessons($lesson)->withStatus('cancelled')->assemble();
 
         $lesson->addBooking($booking);
         $em->persist($booking);
@@ -78,7 +68,7 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
         $this->assertNotNull($userEmail);
         $this->assertStringContainsString(
             'Anulowanie rezerwacji - Joga ze środy 16.07, o 10:00',
-            (string) $userEmail->getSubject()
+            (string) $userEmail->getSubject(),
         );
 
         $body = (string) ($userEmail->getHtmlBody() ?? $userEmail->getTextBody());
@@ -89,13 +79,13 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
         $this->assertNotNull($adminEmail);
         $this->assertStringContainsString(
             'Rezerwacja anulowana (brak wpłaty) - Jan Kowalski - ze środy 16.07, o 10:00',
-            (string) $adminEmail->getSubject()
+            (string) $adminEmail->getSubject(),
         );
 
         $adminBody = (string) ($adminEmail->getHtmlBody() ?? $adminEmail->getTextBody());
         $this->assertStringContainsString(
             'Rezerwacja użytkownika Jan Kowalski (user@example.com) na zajęcia Joga w dniu ze środy 16.07, o 10:00 została automatycznie anulowana',
-            $adminBody
+            $adminBody,
         );
 
         // Verify user in-app notification

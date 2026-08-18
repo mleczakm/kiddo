@@ -31,7 +31,7 @@ final readonly class ElevenLabsClient
      */
     public function getSignedUrl(array $dynamicVariables = [], bool $admin = false): array
     {
-        if (! $this->isConfigured()) {
+        if (!$this->isConfigured()) {
             throw new \RuntimeException('ElevenLabs is not configured (ELEVENLABS_API_KEY / ELEVENLABS_AGENT_ID)');
         }
 
@@ -47,12 +47,12 @@ final readonly class ElevenLabsClient
                 'query' => [
                     'agent_id' => $agentId,
                 ],
-            ]
+            ],
         );
 
         $data = $response->toArray(false);
         $signedUrl = $data['signed_url'] ?? null;
-        if (! is_string($signedUrl) || $signedUrl === '') {
+        if (!is_string($signedUrl) || $signedUrl === '') {
             throw new \RuntimeException('ElevenLabs did not return a signed_url');
         }
 

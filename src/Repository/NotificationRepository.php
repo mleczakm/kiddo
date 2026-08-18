@@ -25,7 +25,8 @@ class NotificationRepository extends ServiceEntityRepository
     public function findRecentForUser(User $user, int $limit = 20): array
     {
         /** @var list<Notification> $notifications */
-        $notifications = $this->createQueryBuilder('n')
+        $notifications = $this
+            ->createQueryBuilder('n')
             ->andWhere('n.user = :user')
             ->andWhere('n.deletedAt IS NULL')
             ->setParameter('user', $user)
@@ -39,7 +40,8 @@ class NotificationRepository extends ServiceEntityRepository
 
     public function countUnreadForUser(User $user): int
     {
-        return (int) $this->createQueryBuilder('n')
+        return (int) $this
+            ->createQueryBuilder('n')
             ->select('COUNT(n.id)')
             ->andWhere('n.user = :user')
             ->andWhere('n.deletedAt IS NULL')
@@ -51,7 +53,8 @@ class NotificationRepository extends ServiceEntityRepository
 
     public function hardDeleteOlderThan(\DateTimeImmutable $cutoff): int
     {
-        $deleted = $this->createQueryBuilder('n')
+        $deleted = $this
+            ->createQueryBuilder('n')
             ->delete()
             ->andWhere('n.createdAt < :cutoff')
             ->setParameter('cutoff', $cutoff)

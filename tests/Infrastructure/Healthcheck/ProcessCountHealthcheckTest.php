@@ -16,8 +16,7 @@ final class ProcessCountHealthcheckTest extends TestCase
         // The real process count in this PID namespace is unpredictable across environments,
         // but always >= 1 (this PHP process itself), so a threshold this high is always
         // "within" regardless of where the test runs.
-        $response = new ProcessCountHealthcheck(PHP_INT_MAX)
-            ->check();
+        $response = new ProcessCountHealthcheck(PHP_INT_MAX)->check();
 
         self::assertTrue($response->getResult());
         self::assertSame('process_count', $response->getName());
@@ -28,8 +27,7 @@ final class ProcessCountHealthcheckTest extends TestCase
     {
         // Symmetric to the above: a threshold of 0 is always exceeded, since at least this
         // PHP process is running.
-        $response = new ProcessCountHealthcheck(0)
-            ->check();
+        $response = new ProcessCountHealthcheck(0)->check();
 
         self::assertFalse($response->getResult());
         self::assertStringContainsString('exceeds threshold 0', $response->getMessage());

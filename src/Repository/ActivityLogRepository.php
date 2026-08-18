@@ -25,7 +25,8 @@ class ActivityLogRepository extends ServiceEntityRepository
     public function findRecent(int $limit = 12): array
     {
         /** @var list<ActivityLog> $result */
-        $result = $this->createQueryBuilder('a')
+        $result = $this
+            ->createQueryBuilder('a')
             // createdAt has only second precision in the DB; break ties with the
             // ULID (itself time-ordered) so rows created in the same second still
             // come back in the order they actually happened.
@@ -44,7 +45,8 @@ class ActivityLogRepository extends ServiceEntityRepository
     public function findBySubject(User $subject, int $limit = 20): array
     {
         /** @var list<ActivityLog> $result */
-        $result = $this->createQueryBuilder('a')
+        $result = $this
+            ->createQueryBuilder('a')
             ->andWhere('a.subject = :subject')
             ->setParameter('subject', $subject)
             ->orderBy('a.createdAt', 'DESC')
@@ -62,7 +64,8 @@ class ActivityLogRepository extends ServiceEntityRepository
     public function findByBookingId(string $bookingId, int $limit = 20): array
     {
         /** @var list<ActivityLog> $result */
-        $result = $this->createQueryBuilder('a')
+        $result = $this
+            ->createQueryBuilder('a')
             ->andWhere("JSON_GET_TEXT(a.context, 'bookingId') = :bookingId")
             ->setParameter('bookingId', $bookingId)
             ->orderBy('a.createdAt', 'DESC')
@@ -76,7 +79,8 @@ class ActivityLogRepository extends ServiceEntityRepository
 
     public function existsByDedupeKey(string $dedupeKey): bool
     {
-        $count = $this->createQueryBuilder('a')
+        $count = $this
+            ->createQueryBuilder('a')
             ->select('COUNT(a.id)')
             ->andWhere('a.dedupeKey = :key')
             ->setParameter('key', $dedupeKey)

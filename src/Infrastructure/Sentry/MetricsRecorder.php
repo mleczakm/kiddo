@@ -22,14 +22,12 @@ final readonly class MetricsRecorder implements MetricsRecorderInterface
     public function count(string $name, int|float $value, array $attributes = []): void
     {
         trace_metrics()->count($name, $value, $attributes);
-        trace_metrics()
-            ->flush();
+        trace_metrics()->flush();
     }
 
     public function distribution(string $name, int|float $value, array $attributes = [], ?Unit $unit = null): void
     {
         trace_metrics()->distribution($name, $value, $attributes, $unit);
-        trace_metrics()
-            ->flush();
+        trace_metrics()->flush();
     }
 }

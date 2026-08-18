@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler\Notification;
 
-use App\Entity\Payment;
-use App\Tests\Assembler\PaymentAssembler;
-use Brick\Money\Money;
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Application\CommandHandler\Notification\TransferNotMatchedHandler;
+use App\Entity\Payment;
+use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\UserAssembler;
+use Brick\Money\Money;
+use PHPUnit\Framework\Attributes\Group;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\Clock;
@@ -82,8 +82,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         // Assert emails were sent to all admins
         $this->assertEmailCount(2);
 
-        $emails = $this->mailer()
-            ->sentEmails();
+        $emails = $this->mailer()->sentEmails();
 
         $recipients = array_map(fn($email) => $email->getTo()[0]->toString(), $emails->all());
 
@@ -94,15 +93,14 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         $email = $emails->first();
         $email->assertSubject('Nie znaleziono dopasowania dla przelewu');
         $email->assertContains(
-            'Otrzymaliśmy nowy przelew, którego nie udało się automatycznie dopasować do żadnej płatności'
+            'Otrzymaliśmy nowy przelew, którego nie udało się automatycznie dopasować do żadnej płatności',
         );
         $email->assertContains('John Doe');
         $email->assertContains('100.00');
         $email->assertContains($now->format('Y-m-d H:i'));
 
         // Test caching - should not send another notification
-        $this->mailer()
-            ->reset();
+        $this->mailer()->reset();
         ($this->handler)($command);
         $this->assertCount(0, $this->mailer()->sentEmails()->all());
     }

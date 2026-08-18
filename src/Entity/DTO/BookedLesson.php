@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity\DTO;
 
-use App\Entity\Lesson;
 use App\Entity\Booking;
+use App\Entity\Lesson;
 use Symfony\Component\Uid\Ulid;
 
 class BookedLesson
 {
     public function __construct(
-        public readonly Ulid $lessonId
+        public readonly Ulid $lessonId,
     ) {}
 
     /**

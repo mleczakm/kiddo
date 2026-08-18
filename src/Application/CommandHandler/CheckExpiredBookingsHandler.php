@@ -31,7 +31,7 @@ class CheckExpiredBookingsHandler
                 continue;
             }
 
-            if (! $this->bookingStateMachine->can($booking, 'cancel')) {
+            if (!$this->bookingStateMachine->can($booking, 'cancel')) {
                 continue;
             }
 
@@ -51,9 +51,10 @@ class CheckExpiredBookingsHandler
                 title: sprintf('Rezerwacja %s wygasła automatycznie', $user->getName()),
                 subject: $user,
                 summary: self::CANCELLATION_REASON,
-                url: $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
-                    'id' => $userId,
-                ]) : null,
+                url: $userId !== null
+                    ? $this->urlGenerator->generate('app_admin_user_view', [
+                        'id' => $userId,
+                    ]) : null,
                 context: [
                     'bookingId' => (string) $booking->getId(),
                 ],

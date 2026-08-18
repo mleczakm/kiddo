@@ -111,10 +111,15 @@ class Payment
     #[ORM\OneToMany(mappedBy: 'payment', targetEntity: Booking::class)]
     private Collection $bookings;
 
-    #[ORM\OneToOne(targetEntity: PaymentCode::class, mappedBy: 'payment', cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[ORM\OneToOne(
+        targetEntity: PaymentCode::class,
+        mappedBy: 'payment',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true,
+    )]
     private ?PaymentCode $paymentCode = null;
 
     /**
@@ -130,7 +135,7 @@ class Payment
         #[ORM\Column(type: 'json_document')]
         private Money $amount,
         #[ORM\Column(type: 'string', enumType: PaymentMethod::class, nullable: true)]
-        private ?PaymentMethod $method = null
+        private ?PaymentMethod $method = null,
     ) {
         $this->id = new Ulid();
         $this->createdAt = new \DateTimeImmutable();
@@ -156,7 +161,7 @@ class Payment
 
     public function setStatus(string $status): self
     {
-        if (! in_array($status, self::STATUSES, true)) {
+        if (!in_array($status, self::STATUSES, true)) {
             throw new \InvalidArgumentException(sprintf('Invalid payment status: %s', $status));
         }
 
@@ -256,7 +261,7 @@ class Payment
 
     public function addBooking(Booking $booking): self
     {
-        if (! $this->bookings->contains($booking)) {
+        if (!$this->bookings->contains($booking)) {
             $this->bookings[] = $booking;
             $booking->setPayment($this);
         }
@@ -308,7 +313,7 @@ class Payment
 
     public function addTransfer(Transfer $transfer): self
     {
-        if (! $this->transfers->contains($transfer)) {
+        if (!$this->transfers->contains($transfer)) {
             $this->transfers->add($transfer);
             $transfer->setPayment($this);
         }
@@ -335,17 +340,16 @@ class Payment
 
     public function getAmountPaid(): Money
     {
-        return $this->transfers->map(
-            fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject(
-                $transfer->amount
-            )
-        )->reduce(fn(Money $carry, Money $transfer) => $carry->plus($transfer), Money::zero('PLN'));
+        return $this->transfers->map(fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount))->reduce(
+            fn(Money $carry, Money $transfer) => $carry->plus($transfer),
+            Money::zero('PLN'),
+        );
     }
 
     public function amountMatch(Transfer $transfer): bool
     {
         return $this->amount->isEqualTo(
-            TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount)->getAmount()
+            TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount)->getAmount(),
         );
     }
 
@@ -356,7 +360,7 @@ class Payment
 
     public function getBookingsSummary(): string
     {
-        return implode(', ', $this->bookings->map(fn(Booking $booking) => $booking->getTextSummary()) ->toArray());
+        return implode(', ', $this->bookings->map(fn(Booking $booking) => $booking->getTextSummary())->toArray());
     }
 
     public function getMethod(): ?PaymentMethod

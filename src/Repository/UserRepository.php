@@ -49,7 +49,8 @@ class UserRepository extends ServiceEntityRepository
     public function findByRole(string $role): array
     {
         /** @var User[] $users */
-        $users = $this->createQueryBuilder('u')
+        $users = $this
+            ->createQueryBuilder('u')
             ->andWhere('JSONB_CONTAINS(u.roles, :role) = true')
             ->setParameter('role', '"' . $role . '"') // Wrap the role in quotes to make it a valid JSON string
             ->getQuery()
@@ -64,7 +65,8 @@ class UserRepository extends ServiceEntityRepository
     public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
         /** @var User[] $users */
-        $users = $this->createQueryBuilder('u')
+        $users = $this
+            ->createQueryBuilder('u')
             ->where('u.createdAt BETWEEN :start AND :end')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
@@ -82,15 +84,15 @@ class UserRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('u');
 
-        if (! empty($query)) {
-            $qb->andWhere('LOWER(u.name) LIKE :query OR LOWER(u.email) LIKE :query')
-                ->setParameter('query', '%' . strtolower($query) . '%');
+        if (!empty($query)) {
+            $qb->andWhere('LOWER(u.name) LIKE :query OR LOWER(u.email) LIKE :query')->setParameter(
+                'query',
+                '%' . strtolower($query) . '%',
+            );
         }
 
         /** @var User[] $result */
-        $result = $qb->orderBy('u.id', 'DESC')
-            ->getQuery()
-            ->getResult();
+        $result = $qb->orderBy('u.id', 'DESC')->getQuery()->getResult();
 
         return $result;
     }
@@ -111,7 +113,8 @@ class UserRepository extends ServiceEntityRepository
             return [];
         }
 
-        $qb = $this->createQueryBuilder('u')
+        $qb = $this
+            ->createQueryBuilder('u')
             ->leftJoin('u.children', 'c')
             ->andWhere('LOWER(u.name) LIKE :query OR LOWER(u.email) LIKE :query OR LOWER(c.name) LIKE :query')
             ->setParameter('query', '%' . strtolower($query) . '%')
@@ -120,13 +123,11 @@ class UserRepository extends ServiceEntityRepository
             ->setMaxResults($limit);
 
         if (ctype_digit($query)) {
-            $qb->orWhere('u.id = :id')
-                ->setParameter('id', (int) $query);
+            $qb->orWhere('u.id = :id')->setParameter('id', (int) $query);
         }
 
         /** @var User[] $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
 
         return $result;
     }

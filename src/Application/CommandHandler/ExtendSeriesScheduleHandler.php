@@ -28,8 +28,7 @@ final readonly class ExtendSeriesScheduleHandler
 
         $activeSeries = $this->seriesRepository->findActive();
         foreach ($activeSeries as $series) {
-            if ($series->lastOccurrenceDate !== null
-                && $now >= $series->lastOccurrenceDate->modify('+1 week')) {
+            if ($series->lastOccurrenceDate !== null && $now >= $series->lastOccurrenceDate->modify('+1 week')) {
                 $series->status = 'cancelled';
                 continue;
             }
@@ -68,7 +67,7 @@ final readonly class ExtendSeriesScheduleHandler
                     }
                 }
 
-                if (! $exists) {
+                if (!$exists) {
                     // Reuses the same LessonMetadata row as $last (rather than
                     // cloning a new one per occurrence) since content is
                     // identical across a weekly series' generated occurrences

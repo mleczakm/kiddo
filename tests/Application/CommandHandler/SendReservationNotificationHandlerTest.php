@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
-use App\Entity\Notification;
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\SendReservationNotification;
+use App\Entity\Notification;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\PaymentCodeAssembler;
 use App\Tests\Assembler\UserAssembler;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
@@ -32,9 +32,9 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
 
         BookingAssembler::new()
             ->withPayment(
-                $payment = PaymentAssembler::new()
-                    ->withPaymentCode($paymentCode = PaymentCodeAssembler::new() ->withCode('TEST123') ->assemble())
-                    ->assemble()
+                $payment = PaymentAssembler::new()->withPaymentCode(
+                    $paymentCode = PaymentCodeAssembler::new()->withCode('TEST123')->assemble(),
+                )->assemble(),
             )
             ->withUser($user)
             ->assemble();
@@ -45,39 +45,34 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
             $email,
             $user->getEmailString(),
             $paymentCode->getCode(),
-            $paymentAmount
+            $paymentAmount,
         );
 
-        $this->bus()
-            ->dispatch($command);
+        $this->bus()->dispatch($command);
 
-        $this->mailer()
-            ->assertSentEmailCount(1);
+        $this->mailer()->assertSentEmailCount(1);
 
-        $firstEmail = $this->mailer()
-            ->sentEmails()
-            ->first();
+        $firstEmail = $this->mailer()->sentEmails()->first();
         $this->assertSame($firstEmail->getTo()[0]->getAddress(), $email);
         $this->assertSame(
             'Twoja rezerwacja w Warsztatowni Sensorycznej – oczekujemy na płatność',
-            $firstEmail->getSubject()
+            $firstEmail->getSubject(),
         );
         $this->assertStringContainsString(
             'TEST123',
-            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody())
+            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
         $this->assertStringContainsString(
-            $paymentAmount->getAmount()
-                ->toScale(0) . ' zł',
-            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody())
+            $paymentAmount->getAmount()->toScale(0) . ' zł',
+            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
         $this->assertStringContainsString(
             '571 531 213',
-            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody())
+            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
         $this->assertStringContainsString(
             '46 2490 0005 0000 4000 1897 5420',
-            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody())
+            (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
 
         $inApp = $em->getRepository(Notification::class)->findBy([

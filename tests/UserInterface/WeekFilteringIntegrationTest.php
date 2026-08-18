@@ -75,9 +75,9 @@ class WeekFilteringIntegrationTest extends KernelTestCase
     {
         // Test various week start dates and their corresponding end dates
         $testCases = [
-            ['2024-01-01', '2024-01-08'],  // Monday to next Monday
-            ['2024-06-15', '2024-06-22'],  // Saturday to next Saturday
-            ['2024-12-31', '2025-01-07'],  // New Year boundary
+            ['2024-01-01', '2024-01-08'], // Monday to next Monday
+            ['2024-06-15', '2024-06-22'], // Saturday to next Saturday
+            ['2024-12-31', '2025-01-07'], // New Year boundary
         ];
 
         foreach ($testCases as [$startWeek, $expectedEndWeek]) {
@@ -150,7 +150,7 @@ class WeekFilteringIntegrationTest extends KernelTestCase
             capacity: 10,
             duration: 60,
             ageRange: new AgeRange(3, 6),
-            category: 'Integration Test'
+            category: 'Integration Test',
         );
 
         return new Lesson($metadata, $schedule);

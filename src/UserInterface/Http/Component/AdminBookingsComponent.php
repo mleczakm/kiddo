@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
-use Brick\Money\Money;
 use App\Application\Service\MoneyInputParser;
 use App\Entity\Booking;
 use App\Entity\Lesson;
-use App\Entity\User;
 use App\Entity\Payment;
+use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\ReactivateBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
 use App\Repository\BookingRepository;
-use App\Repository\UserRepository;
 use App\Repository\LessonRepository;
+use App\Repository\UserRepository;
+use Brick\Math\RoundingMode;
+use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Brick\Math\RoundingMode;
-use Symfony\Component\Clock\Clock;
 
 #[AsLiveComponent]
 class AdminBookingsComponent extends AbstractController
@@ -106,7 +106,8 @@ class AdminBookingsComponent extends AbstractController
      */
     public function getAllBookings(): array
     {
-        $qb = $this->bookingRepository->createQueryBuilder('b')
+        $qb = $this->bookingRepository
+            ->createQueryBuilder('b')
             ->select('b', 'u', 'l', 'p', 's')
             ->leftJoin('b.user', 'u')
             ->leftJoin('b.lessons', 'l')
@@ -117,48 +118,49 @@ class AdminBookingsComponent extends AbstractController
         // ROLE_HOST (without ROLE_ADMIN) only ever sees bookings for lessons
         // they're assigned to as an instructor — directly, or via the
         // lesson's series (mirrors Lesson::getAllInstructors() semantics).
-        if (! $this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             $host = $this->getUser();
-            if (! $host instanceof User) {
+            if (!$host instanceof User) {
                 return [];
             }
 
-            $qb->andWhere(':host MEMBER OF l.instructors OR :host MEMBER OF s.instructors')
-                ->setParameter('host', $host);
+            $qb->andWhere(':host MEMBER OF l.instructors OR :host MEMBER OF s.instructors')->setParameter(
+                'host',
+                $host,
+            );
         }
 
         // Apply status filter
         if ($this->filter === 'active') {
-            $qb->andWhere('b.status IN (:statuses)')
-                ->setParameter('statuses', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE]);
+            $qb->andWhere('b.status IN (:statuses)')->setParameter('statuses', [
+                Booking::STATUS_PENDING,
+                Booking::STATUS_ACTIVE,
+            ]);
         } elseif ($this->filter === 'completed') {
-            $qb->andWhere('b.status = :status')
-                ->setParameter('status', Booking::STATUS_PAST);
+            $qb->andWhere('b.status = :status')->setParameter('status', Booking::STATUS_PAST);
         } elseif ($this->filter === 'cancelled') {
-            $qb->andWhere('b.status = :status')
-                ->setParameter('status', Booking::STATUS_CANCELLED);
+            $qb->andWhere('b.status = :status')->setParameter('status', Booking::STATUS_CANCELLED);
         } else {
-            $qb->andWhere('b.status IN (:statuses)')
-                ->setParameter('statuses', [
-                    Booking::STATUS_PENDING,
-                    Booking::STATUS_ACTIVE,
-                    Booking::STATUS_CANCELLED,
-                    Booking::STATUS_PAST,
-                ]);
+            $qb->andWhere('b.status IN (:statuses)')->setParameter('statuses', [
+                Booking::STATUS_PENDING,
+                Booking::STATUS_ACTIVE,
+                Booking::STATUS_CANCELLED,
+                Booking::STATUS_PAST,
+            ]);
         }
 
         // Apply search filter
         if ($this->search) {
-            $qb->andWhere('u.name LIKE :search OR u.email LIKE :search OR m.title LIKE :search')
-                ->setParameter('search', '%' . $this->search . '%');
+            $qb->andWhere('u.name LIKE :search OR u.email LIKE :search OR m.title LIKE :search')->setParameter(
+                'search',
+                '%' . $this->search . '%',
+            );
         }
 
-        $qb->orderBy('b.createdAt', 'DESC')
-            ->setMaxResults(50);
+        $qb->orderBy('b.createdAt', 'DESC')->setMaxResults(50);
 
         /** @var Booking[] $bookings */
-        $bookings = $qb->getQuery()
-            ->getResult();
+        $bookings = $qb->getQuery()->getResult();
 
         $result = [];
         foreach ($bookings as $booking) {
@@ -207,7 +209,8 @@ class AdminBookingsComponent extends AbstractController
     public function getFilterCounts(): array
     {
         /** @var list<array{status: string, count: string}> $counts */
-        $counts = $this->bookingRepository->createQueryBuilder('b')
+        $counts = $this->bookingRepository
+            ->createQueryBuilder('b')
             ->select('b.status', 'COUNT(b.id) as count')
             ->groupBy('b.status')
             ->getQuery()
@@ -251,7 +254,8 @@ class AdminBookingsComponent extends AbstractController
     public function getAvailableLessons(): array
     {
         /** @var Lesson[] $result */
-        $result = $this->lessonRepository->createQueryBuilder('l')
+        $result = $this->lessonRepository
+            ->createQueryBuilder('l')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
             ->andWhere('l.schedule > :now')
@@ -269,7 +273,7 @@ class AdminBookingsComponent extends AbstractController
     {
         try {
             // Validate required fields
-            if (! $this->customerName || ! $this->customerEmail || ! $this->amount || ! $this->paymentMethod) {
+            if (!$this->customerName || !$this->customerEmail || !$this->amount || !$this->paymentMethod) {
                 $this->errorMessage = 'Imię, email, kwota i sposób płatności są wymagane';
                 return;
             }
@@ -287,7 +291,7 @@ class AdminBookingsComponent extends AbstractController
             $user = $this->userRepository->findOneBy([
                 'email' => $this->customerEmail,
             ]);
-            if (! $user) {
+            if (!$user) {
                 $user = new User($this->customerEmail, $this->customerName);
                 $this->entityManager->persist($user);
             }
@@ -327,7 +331,6 @@ class AdminBookingsComponent extends AbstractController
             $this->clearForm();
             $this->successMessage = 'Rezerwacja została pomyślnie dodana';
             $this->errorMessage = null;
-
         } catch (\InvalidArgumentException) {
             $this->errorMessage = 'Podaj poprawną kwotę, np. 150,00';
         } catch (\Exception $e) {
@@ -341,7 +344,7 @@ class AdminBookingsComponent extends AbstractController
         try {
             $id = Ulid::fromString($bookingId);
             $booking = $this->bookingRepository->find($id);
-            if (! $booking) {
+            if (!$booking) {
                 $this->errorMessage = 'Nie znaleziono rezerwacji';
                 return;
             }
@@ -362,7 +365,7 @@ class AdminBookingsComponent extends AbstractController
         if (in_array($bookingId, $this->expandedBookings, true)) {
             $this->expandedBookings = array_values(array_filter(
                 $this->expandedBookings,
-                fn($id) => $id !== $bookingId
+                fn($id) => $id !== $bookingId,
             ));
         } else {
             $this->expandedBookings[] = $bookingId;
@@ -378,18 +381,20 @@ class AdminBookingsComponent extends AbstractController
     public function cancelLesson(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
         $admin = $this->getUser();
-        if (! $admin instanceof User) {
+        if (!$admin instanceof User) {
             $this->errorMessage = 'Unable to cancel lesson: not logged in as admin';
             return;
         }
 
         try {
-            $this->messageBus->dispatch(new CancelLessonBooking(
-                Ulid::fromString($bookingId),
-                Ulid::fromString($lessonId),
-                $admin,
-                'Cancelled by admin',
-            ));
+            $this->messageBus->dispatch(
+                new CancelLessonBooking(
+                    Ulid::fromString($bookingId),
+                    Ulid::fromString($lessonId),
+                    $admin,
+                    'Cancelled by admin',
+                ),
+            );
             $this->successMessage = 'Lesson cancelled successfully';
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to cancel lesson: ' . $e->getMessage();
@@ -400,17 +405,15 @@ class AdminBookingsComponent extends AbstractController
     public function reactivateBooking(#[LiveArg] string $bookingId): void
     {
         $admin = $this->getUser();
-        if (! $admin instanceof User) {
+        if (!$admin instanceof User) {
             $this->errorMessage = 'Nie udało się przywrócić rezerwacji: brak uprawnień administratora';
             return;
         }
 
         try {
-            $this->messageBus->dispatch(new ReactivateBooking(
-                Ulid::fromString($bookingId),
-                $admin,
-                'Przywrócono przez administratora',
-            ));
+            $this->messageBus->dispatch(
+                new ReactivateBooking(Ulid::fromString($bookingId), $admin, 'Przywrócono przez administratora'),
+            );
             $this->successMessage = 'Rezerwacja została przywrócona';
         } catch (\Exception $e) {
             $this->errorMessage = 'Nie udało się przywrócić rezerwacji: ' . $e->getMessage();
@@ -421,18 +424,20 @@ class AdminBookingsComponent extends AbstractController
     public function refundLesson(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
         $admin = $this->getUser();
-        if (! $admin instanceof User) {
+        if (!$admin instanceof User) {
             $this->errorMessage = 'Unable to refund lesson: not logged in as admin';
             return;
         }
 
         try {
-            $this->messageBus->dispatch(new RefundLessonBooking(
-                Ulid::fromString($bookingId),
-                Ulid::fromString($lessonId),
-                $admin,
-                'Refunded by admin',
-            ));
+            $this->messageBus->dispatch(
+                new RefundLessonBooking(
+                    Ulid::fromString($bookingId),
+                    Ulid::fromString($lessonId),
+                    $admin,
+                    'Refunded by admin',
+                ),
+            );
             $this->successMessage = 'Lesson refunded successfully';
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to refund lesson: ' . $e->getMessage();
@@ -459,24 +464,26 @@ class AdminBookingsComponent extends AbstractController
     public function reschedule(): void
     {
         $admin = $this->getUser();
-        if (! $admin instanceof User) {
+        if (!$admin instanceof User) {
             $this->errorMessage = 'Unable to reschedule: not logged in as admin';
             return;
         }
 
-        if (! $this->reschedulingBookingId || ! $this->reschedulingLessonId || ! $this->newLessonId) {
+        if (!$this->reschedulingBookingId || !$this->reschedulingLessonId || !$this->newLessonId) {
             $this->errorMessage = 'Wybierz nowy termin, aby przełożyć zajęcia';
             return;
         }
 
         try {
-            $this->messageBus->dispatch(new RescheduleLessonBooking(
-                Ulid::fromString($this->reschedulingBookingId),
-                Ulid::fromString($this->reschedulingLessonId),
-                Ulid::fromString($this->newLessonId),
-                $admin,
-                'Rescheduled by admin',
-            ));
+            $this->messageBus->dispatch(
+                new RescheduleLessonBooking(
+                    Ulid::fromString($this->reschedulingBookingId),
+                    Ulid::fromString($this->reschedulingLessonId),
+                    Ulid::fromString($this->newLessonId),
+                    $admin,
+                    'Rescheduled by admin',
+                ),
+            );
             $this->successMessage = 'Lesson rescheduled successfully';
             $this->cancelReschedule();
         } catch (\Exception $e) {
@@ -545,10 +552,7 @@ class AdminBookingsComponent extends AbstractController
         $lessonId = $lesson->getId();
 
         // Can modify only if lesson is in active map and in the future
-        return $lesson->schedule > $now
-                        && $booking->canBeRescheduled()
-            && $lessonMap->active()
-                ->hasKey($lessonId);
+        return $lesson->schedule > $now && $booking->canBeRescheduled() && $lessonMap->active()->hasKey($lessonId);
     }
 
     #[LiveAction]
@@ -577,7 +581,7 @@ class AdminBookingsComponent extends AbstractController
     {
         try {
             $decoded = json_decode($this->selectedLessonIds, true);
-            if (! is_array($decoded)) {
+            if (!is_array($decoded)) {
                 return [];
             }
             /** @var list<string> $ids */
@@ -613,7 +617,8 @@ class AdminBookingsComponent extends AbstractController
      */
     public function getFilteredLessons(): array
     {
-        $qb = $this->lessonRepository->createQueryBuilder('l')
+        $qb = $this->lessonRepository
+            ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
@@ -625,12 +630,10 @@ class AdminBookingsComponent extends AbstractController
 
         // Apply search filter
         $searchTerm = '%' . $this->lessonSearch . '%';
-        $qb->andWhere('m.title LIKE :search OR m.description LIKE :search')
-            ->setParameter('search', $searchTerm);
+        $qb->andWhere('m.title LIKE :search OR m.description LIKE :search')->setParameter('search', $searchTerm);
 
         /** @var Lesson[] $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 
@@ -648,7 +651,7 @@ class AdminBookingsComponent extends AbstractController
         $lessonIdString = (string) $lessonId;
         $selectedIds = $this->getSelectedLessonIdsArray();
 
-        if (! in_array($lessonIdString, $selectedIds, true)) {
+        if (!in_array($lessonIdString, $selectedIds, true)) {
             $selectedIds[] = $lessonIdString;
             $this->selectedLessonIds = (string) json_encode($selectedIds);
         }
@@ -668,12 +671,11 @@ class AdminBookingsComponent extends AbstractController
      */
     public function getAmountPerLesson(Booking $booking): ?Money
     {
-        if (! $booking->getPayment() || count($booking->getLessons()) === 0) {
+        if (!$booking->getPayment() || count($booking->getLessons()) === 0) {
             return null;
         }
 
-        $totalAmount = $booking->getPayment()
-            ->getAmount();
+        $totalAmount = $booking->getPayment()->getAmount();
         $lessonCount = count($booking->getLessons());
 
         // Divide the money amount by lesson count

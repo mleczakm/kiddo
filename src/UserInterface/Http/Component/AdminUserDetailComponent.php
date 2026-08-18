@@ -106,20 +106,17 @@ final class AdminUserDetailComponent extends AbstractController
      */
     public function getHistory(): array
     {
-        return array_values(array_map(
-            static fn($log): array => [
-                'title' => $log->getTitle(),
-                'summary' => $log->getSummary(),
-                'createdAt' => $log->getCreatedAt(),
-            ],
-            $this->activityLogRepository->findBySubject($this->getUser()),
-        ));
+        return array_values(array_map(static fn($log): array => [
+            'title' => $log->getTitle(),
+            'summary' => $log->getSummary(),
+            'createdAt' => $log->getCreatedAt(),
+        ], $this->activityLogRepository->findBySubject($this->getUser())));
     }
 
     #[LiveAction]
     public function startEditField(#[LiveArg] string $field): void
     {
-        if (! in_array($field, self::EDITABLE_FIELDS, true)) {
+        if (!in_array($field, self::EDITABLE_FIELDS, true)) {
             return;
         }
 
@@ -149,7 +146,7 @@ final class AdminUserDetailComponent extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_MANAGE_USERS');
 
         $field = $this->editingField;
-        if ($field === null || ! in_array($field, self::EDITABLE_FIELDS, true)) {
+        if ($field === null || !in_array($field, self::EDITABLE_FIELDS, true)) {
             return;
         }
 
@@ -209,7 +206,7 @@ final class AdminUserDetailComponent extends AbstractController
                 '%s: „%s” → „%s”',
                 $fieldLabel,
                 $before !== '' ? $before : '—',
-                $value !== '' ? $value : '—'
+                $value !== '' ? $value : '—',
             ),
         );
 

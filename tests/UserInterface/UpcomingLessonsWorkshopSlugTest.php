@@ -54,21 +54,21 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
         $lesson = $this->persistLessonWithSeries($em, 'Senso Bobasy', $schedule);
 
         // Simulate legacy rows that still have an empty slug in the database.
-        $em->getConnection()
-            ->update('lesson_metadata', [
+        $em->getConnection()->update(
+            'lesson_metadata',
+            [
                 'slug' => '',
-            ], [
-                'id' => $lesson->getMetadata()
-                    ->getId()
-                    ->toRfc4122(),
-            ]);
+            ],
+            [
+                'id' => $lesson->getMetadata()->getId()->toRfc4122(),
+            ],
+        );
         $em->clear();
 
         $client->request('GET', '/');
 
         $this->assertResponseIsSuccessful();
-        $content = (string) $client->getResponse()
-            ->getContent();
+        $content = (string) $client->getResponse()->getContent();
         $this->assertStringContainsString('/warsztaty?week=2024-02-21', $content);
         $this->assertStringNotContainsString('/warsztaty/senso-bobasy', $content);
     }
@@ -95,11 +95,9 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
         string $title,
         \DateTimeImmutable $schedule,
     ): Lesson {
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::WEEKLY)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new() ->withTitle($title) ->withTitle($title) ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle($title)->withTitle($title)->assemble())
             ->withSchedule($schedule)
             ->assemble();
         $lesson->setSeries($series);

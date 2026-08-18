@@ -29,7 +29,7 @@ final readonly class ToolDefinition
         if ($this->requiresConfirm) {
             $description .= ' Requires confirm=true in arguments before mutation.';
         }
-        if (! $this->requiresAuth) {
+        if (!$this->requiresAuth) {
             $description .= ' Available without login (public catalog).';
         } else {
             $description .= ' Requires a logged-in parent; guests receive a login prompt.';

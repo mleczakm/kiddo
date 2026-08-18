@@ -12,7 +12,7 @@ use Symfony\Component\Workflow\Event\Event;
 readonly class PlatformBillingSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private PlatformBillingService $platformBillingService
+        private PlatformBillingService $platformBillingService,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -26,7 +26,7 @@ readonly class PlatformBillingSubscriber implements EventSubscriberInterface
     {
         $payment = $event->getSubject();
 
-        if (! $payment instanceof Payment) {
+        if (!$payment instanceof Payment) {
             return;
         }
 

@@ -61,7 +61,7 @@ class AdminSettingsComponent extends AbstractController
             'key' => 'robots.txt',
         ]);
         $content = $robotsSetting?->getContent();
-        $this->robotsTxtContent = (is_array($content) && is_string($content['content'] ?? null))
+        $this->robotsTxtContent = is_array($content) && is_string($content['content'] ?? null)
             ? $content['content']
             : "User-agent: *\nAllow: /\nDisallow: /admin/";
     }
@@ -135,7 +135,7 @@ class AdminSettingsComponent extends AbstractController
 
         return array_values(array_filter(
             $results,
-            fn(User $user) => ! in_array((string) $user->getId(), $excludeIds, true)
+            fn(User $user) => !in_array((string) $user->getId(), $excludeIds, true),
         ));
     }
 
@@ -186,7 +186,7 @@ class AdminSettingsComponent extends AbstractController
             return;
         }
 
-        if (! $user->hasRole('ROLE_ADMIN')) {
+        if (!$user->hasRole('ROLE_ADMIN')) {
             $user->setRoles([...$user->getRoles(), 'ROLE_ADMIN']);
             $this->entityManager->flush();
         }
@@ -215,7 +215,7 @@ class AdminSettingsComponent extends AbstractController
             return;
         }
 
-        if (! $user->hasRole('ROLE_HOST')) {
+        if (!$user->hasRole('ROLE_HOST')) {
             $user->setRoles([...$user->getRoles(), 'ROLE_HOST']);
             $this->entityManager->flush();
         }

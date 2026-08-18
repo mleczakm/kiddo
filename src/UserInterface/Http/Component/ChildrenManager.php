@@ -51,15 +51,12 @@ class ChildrenManager extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $this->children = array_map(
-            static fn(Child $c) => [
-                'id' => (string) $c->getId(),
-                'name' => $c->getName(),
-                'birthday' => $c->getBirthday()?->format('Y-m-d'),
-                'age' => $c->getAgeYears(),
-            ],
-            $this->childRepository->findByOwner($user)
-        );
+        $this->children = array_map(static fn(Child $c) => [
+            'id' => (string) $c->getId(),
+            'name' => $c->getName(),
+            'birthday' => $c->getBirthday()?->format('Y-m-d'),
+            'age' => $c->getAgeYears(),
+        ], $this->childRepository->findByOwner($user));
     }
 
     #[LiveAction]

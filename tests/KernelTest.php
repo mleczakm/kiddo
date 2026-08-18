@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Kernel;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use App\Kernel;
 
 #[Group('unit')]
 class KernelTest extends TestCase

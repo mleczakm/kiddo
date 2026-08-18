@@ -19,16 +19,15 @@ class StaticEndpointActionTest extends TestCase
     public function testInvokeReturnsContentFromSetting(): void
     {
         $setting = $this->createMock(Setting::class);
-        $setting->method('getContent')
+        $setting
+            ->method('getContent')
             ->willReturn([
                 'content_type' => 'text/plain',
                 'body' => 'User-agent: *Disallow: /',
             ]);
 
         $settingRepository = $this->createMock(SettingRepository::class);
-        $settingRepository->method('findOneByKey')
-            ->with('static_endpoint_robots.txt')
-            ->willReturn($setting);
+        $settingRepository->method('findOneByKey')->with('static_endpoint_robots.txt')->willReturn($setting);
 
         $action = new StaticEndpointAction($settingRepository);
         $request = Request::create('/robots.txt');
@@ -42,9 +41,7 @@ class StaticEndpointActionTest extends TestCase
     public function testInvokeReturns404WhenSettingNotFound(): void
     {
         $settingRepository = $this->createMock(SettingRepository::class);
-        $settingRepository->method('findOneByKey')
-            ->with('static_endpoint_robots.txt')
-            ->willReturn(null);
+        $settingRepository->method('findOneByKey')->with('static_endpoint_robots.txt')->willReturn(null);
 
         $action = new StaticEndpointAction($settingRepository);
         $request = Request::create('/robots.txt');
@@ -57,14 +54,14 @@ class StaticEndpointActionTest extends TestCase
     public function testInvokeHandlesMissingContentType(): void
     {
         $setting = $this->createMock(Setting::class);
-        $setting->method('getContent')
+        $setting
+            ->method('getContent')
             ->willReturn([
                 'body' => 'Some content',
             ]);
 
         $settingRepository = $this->createMock(SettingRepository::class);
-        $settingRepository->method('findOneByKey')
-            ->willReturn($setting);
+        $settingRepository->method('findOneByKey')->willReturn($setting);
 
         $action = new StaticEndpointAction($settingRepository);
         $request = Request::create('/sitemap.xml');
@@ -78,14 +75,14 @@ class StaticEndpointActionTest extends TestCase
     public function testInvokeHandlesMissingBody(): void
     {
         $setting = $this->createMock(Setting::class);
-        $setting->method('getContent')
+        $setting
+            ->method('getContent')
             ->willReturn([
                 'content_type' => 'application/xml',
             ]);
 
         $settingRepository = $this->createMock(SettingRepository::class);
-        $settingRepository->method('findOneByKey')
-            ->willReturn($setting);
+        $settingRepository->method('findOneByKey')->willReturn($setting);
 
         $action = new StaticEndpointAction($settingRepository);
         $request = Request::create('/security.txt');
@@ -112,14 +109,16 @@ class StaticEndpointActionTest extends TestCase
     public function testValidStaticEndpoints(string $path): void
     {
         $setting = $this->createMock(Setting::class);
-        $setting->method('getContent')
+        $setting
+            ->method('getContent')
             ->willReturn([
                 'content_type' => 'text/plain',
                 'body' => 'Test content',
             ]);
 
         $settingRepository = $this->createMock(SettingRepository::class);
-        $settingRepository->method('findOneByKey')
+        $settingRepository
+            ->method('findOneByKey')
             ->with('static_endpoint_' . $path)
             ->willReturn($setting);
 

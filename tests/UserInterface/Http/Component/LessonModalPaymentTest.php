@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use App\Entity\Booking;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
-use App\Entity\Booking;
 use App\Entity\WorkshopType;
 use App\Repository\BookingRepository;
 use App\Tests\Assembler\BookingAssembler;
@@ -24,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Clock\NativeClock;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
@@ -45,12 +45,8 @@ final class LessonModalPaymentTest extends WebTestCase
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
-        $user = UserAssembler::new()
-            ->withPhone('501111111')
-            ->assemble();
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::ONE_TIME)
-            ->assemble();
+        $user = UserAssembler::new()->withPhone('501111111')->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
@@ -88,8 +84,7 @@ final class LessonModalPaymentTest extends WebTestCase
             'user' => $user,
         ]);
         self::assertInstanceOf(Booking::class, $booking);
-        $bookedLesson = $booking->getLessons()
-            ->first();
+        $bookedLesson = $booking->getLessons()->first();
         self::assertNotFalse($bookedLesson);
         self::assertSame((string) $lesson->getId(), (string) $bookedLesson->getId());
         self::assertSame($lessonModal->paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
@@ -103,16 +98,9 @@ final class LessonModalPaymentTest extends WebTestCase
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::ONE_TIME)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Sensory')
-                    ->withTitle('Sensory')
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->withTitle('Sensory')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
@@ -123,11 +111,7 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withStatus(Payment::STATUS_PENDING)
             ->assemble();
         $paymentCode = new PaymentCode($payment, 'AB12');
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson)->assemble();
 
         $em->persist($user);
         $em->persist($series);
@@ -169,16 +153,9 @@ final class LessonModalPaymentTest extends WebTestCase
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::ONE_TIME)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Sensory')
-                    ->withTitle('Sensory')
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->withTitle('Sensory')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
@@ -189,11 +166,7 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withStatus(Payment::STATUS_PENDING)
             ->assemble();
         $paymentCode = new PaymentCode($payment, 'XY99');
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson)->assemble();
 
         $em->persist($user);
         $em->persist($series);
@@ -242,16 +215,9 @@ final class LessonModalPaymentTest extends WebTestCase
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::ONE_TIME)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withTitle('Sensory')
-                    ->withTitle('Sensory')
-                    ->assemble()
-            )
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->withTitle('Sensory')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
             ->assemble();
         $lesson->setSeries($series);
@@ -291,11 +257,9 @@ final class LessonModalPaymentTest extends WebTestCase
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::ONE_TIME)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new() ->withTitle('Music') ->withTitle('Music') ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Music')->withTitle('Music')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-21 11:00:00'))
             ->assemble();
         $lesson->setSeries($series);
@@ -306,11 +270,7 @@ final class LessonModalPaymentTest extends WebTestCase
             ->withStatus(Payment::STATUS_PENDING)
             ->assemble();
         $paymentCode = new PaymentCode($payment, 'CD34');
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson)->assemble();
 
         $em->persist($user);
         $em->persist($series);
@@ -364,25 +324,16 @@ final class LessonModalPaymentTest extends WebTestCase
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::ONE_TIME)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new() ->withTitle('Art') ->withTitle('Art') ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Art')->withTitle('Art')->assemble())
             ->withSchedule(new \DateTimeImmutable('2024-02-22 12:00:00'))
             ->assemble();
         $lesson->setSeries($series);
 
-        $payment = PaymentAssembler::new()
-            ->withUser($user)
-            ->withAmount(Money::of(45, 'PLN'))
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($user)->withAmount(Money::of(45, 'PLN'))->assemble();
         $paymentCode = new PaymentCode($payment, 'EF56');
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withPayment($payment)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withPayment($payment)->withLessons($lesson)->assemble();
 
         $em->persist($user);
         $em->persist($series);

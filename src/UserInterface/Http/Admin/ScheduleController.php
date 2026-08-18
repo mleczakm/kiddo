@@ -16,7 +16,7 @@ final class ScheduleController extends AbstractController
         // Merged Warsztaty (Series) + Zajęcia (Lesson) view: an admin with
         // either capability can open it — the component itself scopes what
         // a ROLE_HOST-only user (ROLE_MANAGE_LESSONS) sees and can act on.
-        if (! $this->isGranted('ROLE_MANAGE_SCHEDULE') && ! $this->isGranted('ROLE_MANAGE_LESSONS')) {
+        if (!$this->isGranted('ROLE_MANAGE_SCHEDULE') && !$this->isGranted('ROLE_MANAGE_LESSONS')) {
             throw $this->createAccessDeniedException();
         }
 

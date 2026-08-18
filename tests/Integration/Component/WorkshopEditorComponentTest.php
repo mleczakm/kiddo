@@ -10,10 +10,10 @@ use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\WorkshopType;
 use App\Repository\NotificationRepository;
-use Brick\Money\Money;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\SeriesAssembler;
 use App\Tests\Assembler\UserAssembler;
+use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -159,7 +159,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
         self::assertNotFalse($imagePath);
         $imageData = base64_decode(
             'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
-            true
+            true,
         );
         self::assertNotFalse($imageData);
         file_put_contents($imagePath, $imageData);

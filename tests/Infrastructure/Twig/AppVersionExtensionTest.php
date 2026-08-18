@@ -45,8 +45,7 @@ class AppVersionExtensionTest extends TestCase
         $extension = new AppVersionExtension($datetime);
         $this->assertEquals(
             ($date = \DateTimeImmutable::createFromFormat('YmdHi', $datetime)) ? $date->format('YmdHi') : null,
-            $extension->lastRelease()
-                ->format('YmdHi')
+            $extension->lastRelease()->format('YmdHi'),
         );
     }
 }

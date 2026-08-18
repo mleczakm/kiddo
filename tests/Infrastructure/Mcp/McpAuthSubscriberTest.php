@@ -116,8 +116,7 @@ final class McpAuthSubscriberTest extends TestCase
     private function featureManagerAlwaysEnabled(): FeatureManager
     {
         $featureManager = $this->createMock(FeatureManager::class);
-        $featureManager->method('isEnabled')
-            ->willReturn(true);
+        $featureManager->method('isEnabled')->willReturn(true);
 
         return $featureManager;
     }

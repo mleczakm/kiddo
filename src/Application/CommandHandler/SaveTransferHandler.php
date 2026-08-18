@@ -22,17 +22,17 @@ final readonly class SaveTransferHandler
 
     public function __invoke(SaveTransfer $command): void
     {
-        if (TransferMoneyParser::transferMoneyStringToMoneyObject($command->transfer->amount)->isGreaterThan(
-            Money::of(340, 'PLN')
-        )) {
+        if (TransferMoneyParser::transferMoneyStringToMoneyObject($command->transfer->amount)->isGreaterThan(Money::of(
+            340,
+            'PLN',
+        ))) {
             return;
         }
 
         $this->entityManager->persist($command->transfer);
 
-        $this->commandBus->dispatch(
-            new Envelope(new MatchPaymentForTransfer($command->transfer))
-                ->with(new DispatchAfterCurrentBusStamp())
-        );
+        $this->commandBus->dispatch(new Envelope(new MatchPaymentForTransfer($command->transfer))->with(
+            new DispatchAfterCurrentBusStamp(),
+        ));
     }
 }

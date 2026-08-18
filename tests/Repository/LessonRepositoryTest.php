@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Repository\LessonRepository;
 use App\Tests\Assembler\AgeRangeAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]
@@ -23,17 +23,21 @@ class LessonRepositoryTest extends KernelTestCase
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date)
             ->assemble();
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date->setTime(15, 0))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date->setTime(15, 0))
             ->assemble();
         $lessonOther = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($otherDate)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($otherDate)
             ->assemble();
         $lessonOther2 = LessonAssembler::new()
             ->withStatus('cancelled')
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date)
             ->assemble();
 
         $em->persist($lesson1);
@@ -62,18 +66,18 @@ class LessonRepositoryTest extends KernelTestCase
 
         $lesson1 = LessonAssembler::new()
             ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withAgeRange(AgeRangeAssembler::new()->withMin(1)->withMax(2)->assemble())
-                    ->assemble()
+                LessonMetadataAssembler::new()->withAgeRange(
+                    AgeRangeAssembler::new()->withMin(1)->withMax(2)->assemble(),
+                )->assemble(),
             )
             ->withSchedule($date)
             ->withTitle('ooooo')
             ->assemble();
         $lesson2 = LessonAssembler::new()
             ->withMetadata(
-                LessonMetadataAssembler::new()
-                    ->withAgeRange(AgeRangeAssembler::new()->withMin(0)->withMax(1)->assemble())
-                    ->assemble()
+                LessonMetadataAssembler::new()->withAgeRange(
+                    AgeRangeAssembler::new()->withMin(0)->withMax(1)->assemble(),
+                )->assemble(),
             )
             ->withSchedule($date->setTime(15, 0))
             ->assemble();
@@ -99,20 +103,22 @@ class LessonRepositoryTest extends KernelTestCase
 
     public function testFindUpcoming(): void
     {
-        $date = new DateTimeImmutable('+2 day')
-            ->setTime(12, 12);
+        $date = new DateTimeImmutable('+2 day')->setTime(12, 12);
         $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
 
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date)
             ->assemble();
         $lesson2 = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($date->setTime(12, 13))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date->setTime(12, 13))
             ->assemble();
         $lessonOther = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($otherDate)
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($otherDate)
             ->assemble();
 
         $em->persist($lesson1);

@@ -34,7 +34,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
             $handler = \Closure::bind(
                 static fn(array $arguments): mixed => $invoker->invoke($canonical, $arguments),
                 null,
-                ReferenceHandler::class
+                ReferenceHandler::class,
             );
 
             $registry->registerTool(
@@ -44,9 +44,9 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
                     inputSchema: $this->normalizeInputSchema($definition),
                     description: $this->description($definition),
                     annotations: new ToolAnnotations(
-                        readOnlyHint: ! $definition->requiresConfirm,
+                        readOnlyHint: !$definition->requiresConfirm,
                         destructiveHint: $definition->requiresConfirm,
-                        idempotentHint: ! $definition->requiresConfirm,
+                        idempotentHint: !$definition->requiresConfirm,
                         openWorldHint: false,
                     ),
                 ),
@@ -68,10 +68,10 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         if (in_array($definition->name, ['user.list_upcoming_lessons', 'user.get_lesson'], true)) {
             return 0;
         }
-        if (! $definition->requiresConfirm && ! $definition->requiresAdmin) {
+        if (!$definition->requiresConfirm && !$definition->requiresAdmin) {
             return 1;
         }
-        if (! $definition->requiresConfirm) {
+        if (!$definition->requiresConfirm) {
             return 2;
         }
 
@@ -88,7 +88,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         if ($properties instanceof \stdClass) {
             $properties = [];
         }
-        if (! is_array($properties)) {
+        if (!is_array($properties)) {
             $properties = [];
         }
 
@@ -115,7 +115,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         if ($definition->requiresAdmin) {
             $description .= ' Requires ROLE_ADMIN.';
         }
-        if (! $definition->requiresAuth) {
+        if (!$definition->requiresAuth) {
             $description .= ' Public (no login).';
         }
 

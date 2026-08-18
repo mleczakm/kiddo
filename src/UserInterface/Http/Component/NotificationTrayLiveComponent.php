@@ -90,7 +90,7 @@ final class NotificationTrayLiveComponent extends AbstractController
     #[LiveAction]
     public function suggest(): void
     {
-        if (! $this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             $this->suggestions = [];
 
             return;

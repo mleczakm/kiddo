@@ -50,16 +50,13 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        $this->bus()
-            ->dispatch(
-                new RescheduleLessonBooking($booking->getId(), $oldLesson->getId(), $newLesson->getId(), $admin)
-            );
+        $this->bus()->dispatch(
+            new RescheduleLessonBooking($booking->getId(), $oldLesson->getId(), $newLesson->getId(), $admin),
+        );
         // Drain the queue: the handler itself dispatches a further admin
         // notification command, also routed to the async transport.
-        $this->transport('async')
-            ->process();
-        $this->transport('async')
-            ->process();
+        $this->transport('async')->process();
+        $this->transport('async')->process();
 
         $em->clear();
 
@@ -78,27 +75,20 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
         // CancelLessonBookingHandlerTest for the same concern on cancel).
         self::assertTrue(
             $reloaded->isLessonRescheduled($oldLesson),
-            'old lesson should be marked rescheduled after reload'
+            'old lesson should be marked rescheduled after reload',
         );
         // $newLesson is a detached instance from before em->clear(), so compare
         // by id rather than Collection::contains() (which is identity-based).
-        $reloadedLessonIds = array_map(
-            static fn($l) => $l->getId()
-                ->toRfc4122(),
-            $reloaded->getLessons()
-                ->toArray()
-        );
+        $reloadedLessonIds = array_map(static fn($l) => $l->getId()->toRfc4122(), $reloaded->getLessons()->toArray());
         self::assertContains(
-            $newLesson->getId()
-                ->toRfc4122(),
+            $newLesson->getId()->toRfc4122(),
             $reloadedLessonIds,
-            'new lesson should be attached to the booking after reload'
+            'new lesson should be attached to the booking after reload',
         );
         self::assertSame(
             $admin->getId(),
-            $reloaded->getLessonsMap()
-                ->getRescheduledByUserId($oldLesson->getId()),
-            'reschedule should record who rescheduled it'
+            $reloaded->getLessonsMap()->getRescheduledByUserId($oldLesson->getId()),
+            'reschedule should record who rescheduled it',
         );
     }
 }

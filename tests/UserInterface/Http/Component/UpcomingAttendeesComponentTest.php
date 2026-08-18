@@ -66,7 +66,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         ]);
 
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
-            'Lesson not found'
+            'Lesson not found',
         );
         $this->assertEquals(6, $updatedLesson->getMetadata()->capacity);
     }
@@ -89,7 +89,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         ]);
 
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
-            'Lesson not found'
+            'Lesson not found',
         );
         $this->assertEquals(0, $updatedLesson->getMetadata()->capacity);
     }
@@ -105,21 +105,9 @@ class UpcomingAttendeesComponentTest extends WebTestCase
 
         $user = UserAssembler::new()->assemble();
 
-        $booking1 = BookingAssembler::new()
-            ->withStatus('active')
-            ->withUser($user)
-            ->withLessons($lesson)
-            ->assemble();
-        $booking2 = BookingAssembler::new()
-            ->withStatus('active')
-            ->withLessons($lesson)
-            ->withUser($user)
-            ->assemble();
-        $booking3 = BookingAssembler::new()
-            ->withStatus('active')
-            ->withUser($user)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking1 = BookingAssembler::new()->withStatus('active')->withUser($user)->withLessons($lesson)->assemble();
+        $booking2 = BookingAssembler::new()->withStatus('active')->withLessons($lesson)->withUser($user)->assemble();
+        $booking3 = BookingAssembler::new()->withStatus('active')->withUser($user)->withLessons($lesson)->assemble();
 
         $lesson->addBooking($booking1);
         $lesson->addBooking($booking2);
@@ -140,7 +128,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         ]);
 
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
-            'Lesson not found'
+            'Lesson not found',
         );
         $this->assertEquals(3, $updatedLesson->getMetadata()->capacity);
     }
@@ -183,13 +171,13 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->assertStringContainsString(
             (string) $activeBooking->getId(),
             $rendered,
-            'Active booking should be shown'
+            'Active booking should be shown',
         );
 
         $this->assertStringNotContainsString(
             (string) $cancelledBooking->getId(),
             $rendered,
-            'Cancelled booking should not be shown by default'
+            'Cancelled booking should not be shown by default',
         );
 
         $testComponent->set('showCancelled', true);
@@ -198,12 +186,12 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $this->assertStringContainsString(
             (string) $activeBooking->getId(),
             $rendered,
-            'Active booking should be shown when showCancelled is true'
+            'Active booking should be shown when showCancelled is true',
         );
         $this->assertStringContainsString(
             (string) $cancelledBooking->getId(),
             $rendered,
-            'Cancelled booking should be shown when showCancelled is true'
+            'Cancelled booking should be shown when showCancelled is true',
         );
     }
 
@@ -224,7 +212,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $testComponent->set('customerName', 'Kasia Wiśniewska');
         $testComponent->call('confirmFastBooking');
 
-        $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
+        $activityLogs = $this->entityManager
+            ->getRepository(ActivityLog::class)
             ->findBy([
                 'type' => ActivityType::BOOKING_CREATED,
             ]);
@@ -258,7 +247,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
             'bookingId' => (string) $booking->getId(),
         ]);
 
-        $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
+        $activityLogs = $this->entityManager
+            ->getRepository(ActivityLog::class)
             ->findBy([
                 'type' => ActivityType::PAYMENT_MARKED_PAID,
             ]);

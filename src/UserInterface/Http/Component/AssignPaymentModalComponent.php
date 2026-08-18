@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
-use Symfony\Component\Uid\Ulid;
 use App\Entity\Payment;
 use App\Entity\Transfer;
 use App\Repository\PaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -63,12 +63,12 @@ class AssignPaymentModalComponent extends AbstractController
     #[LiveAction]
     public function confirmAssignment(): void
     {
-        if (! $this->selectedPaymentId) {
+        if (!$this->selectedPaymentId) {
             return;
         }
 
         $payment = $this->paymentRepository->find(Ulid::fromString($this->selectedPaymentId));
-        if (! $payment) {
+        if (!$payment) {
             return;
         }
 

@@ -44,9 +44,7 @@ final class AdminPaymentsListComponentTest extends WebTestCase
         // App\Entity\PaymentMethod could not be converted to string", since Twig's
         // `default` filter only substitutes on empty values and leaves a non-empty
         // enum instance to be string-cast.
-        $payment = PaymentAssembler::new()
-            ->withUser($customer)
-            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($customer)->assemble();
         $this->em->persist($payment);
         $this->em->flush();
 
@@ -66,9 +64,10 @@ final class AdminPaymentsListComponentTest extends WebTestCase
         $this->em->persist($customer);
 
         $paid = PaymentAssembler::new()->withUser($customer)->withStatus(Payment::STATUS_PAID)->assemble();
-        $refundRequested = PaymentAssembler::new()->withUser($customer)->withStatus(
-            Payment::STATUS_REFUND_REQUESTED
-        )->assemble();
+        $refundRequested = PaymentAssembler::new()
+            ->withUser($customer)
+            ->withStatus(Payment::STATUS_REFUND_REQUESTED)
+            ->assemble();
         $this->em->persist($paid);
         $this->em->persist($refundRequested);
         $this->em->flush();
@@ -79,9 +78,9 @@ final class AdminPaymentsListComponentTest extends WebTestCase
 
         /** @var AdminPaymentsListComponent $liveComponent */
         $liveComponent = $component->component();
-        self::assertSame([(string) $refundRequested->getId()], array_map(
-            static fn(Payment $payment): string => (string) $payment->getId(),
-            $liveComponent->getPayments(),
-        ));
+        self::assertSame(
+            [(string) $refundRequested->getId()],
+            array_map(static fn(Payment $payment): string => (string) $payment->getId(), $liveComponent->getPayments()),
+        );
     }
 }

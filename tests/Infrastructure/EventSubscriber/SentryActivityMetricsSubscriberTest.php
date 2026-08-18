@@ -30,7 +30,8 @@ class SentryActivityMetricsSubscriberTest extends TestCase
         $event = new ActivityOccurred(ActivityType::BOOKING_CANCELLED, 'Booking cancelled');
 
         $calls = [];
-        $this->metrics->expects($this->exactly(2))
+        $this->metrics
+            ->expects($this->exactly(2))
             ->method('count')
             ->willReturnCallback(function (string $name, int|float $value) use (&$calls): void {
                 $calls[] = [$name, $value];
@@ -38,6 +39,12 @@ class SentryActivityMetricsSubscriberTest extends TestCase
 
         $this->subscriber->onActivityOccurred($event);
 
-        $this->assertSame([['activities.total', 1], ['activities.booking_cancelled', 1]], $calls);
+        $this->assertSame(
+            [
+                ['activities.total',             1],
+                ['activities.booking_cancelled', 1],
+            ],
+            $calls,
+        );
     }
 }

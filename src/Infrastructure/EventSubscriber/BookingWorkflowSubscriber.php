@@ -13,7 +13,7 @@ use Symfony\Component\Workflow\Event\Event;
 readonly class BookingWorkflowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -27,7 +27,7 @@ readonly class BookingWorkflowSubscriber implements EventSubscriberInterface
     {
         $booking = $event->getSubject();
 
-        if (! $booking instanceof Booking) {
+        if (!$booking instanceof Booking) {
             return;
         }
 

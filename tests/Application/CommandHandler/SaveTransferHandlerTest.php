@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\CommandHandler;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Command\SaveTransfer;
 use App\Tests\Assembler\TransferAssembler;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -28,7 +28,6 @@ class SaveTransferHandlerTest extends KernelTestCase
     {
         $transfer = TransferAssembler::new()->withAmount('340')->assemble();
         self::bootKernel();
-
 
         $messageBus = self::getContainer()->get(MessageBusInterface::class);
         $messageBus->dispatch(new SaveTransfer($transfer));

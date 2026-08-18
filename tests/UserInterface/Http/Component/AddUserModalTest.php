@@ -68,9 +68,11 @@ final class AddUserModalTest extends WebTestCase
         $state = $component->component();
         self::assertSame([], $state->errors);
 
-        $user = $this->em->getRepository(User::class)->findOneBy([
-            'email' => 'testowy.uzytkownik@example.com',
-        ]);
+        $user = $this->em
+            ->getRepository(User::class)
+            ->findOneBy([
+                'email' => 'testowy.uzytkownik@example.com',
+            ]);
         self::assertNotNull($user, 'user must be persisted with the lower-cased email');
         self::assertSame('Testowy Użytkownik', $user->getName());
         self::assertSame(['ROLE_HOST', 'ROLE_USER'], $user->getRoles());
@@ -96,9 +98,11 @@ final class AddUserModalTest extends WebTestCase
         $component->set('email', 'zwykly.klient@example.com');
         $component->call('save');
 
-        $user = $this->em->getRepository(User::class)->findOneBy([
-            'email' => 'zwykly.klient@example.com',
-        ]);
+        $user = $this->em
+            ->getRepository(User::class)
+            ->findOneBy([
+                'email' => 'zwykly.klient@example.com',
+            ]);
         self::assertNotNull($user);
         self::assertSame(['ROLE_USER'], $user->getRoles());
     }
@@ -185,9 +189,11 @@ final class AddUserModalTest extends WebTestCase
         $state = $component->component();
         self::assertArrayHasKey('phone', $state->errors);
 
-        $user = $this->em->getRepository(User::class)->findOneBy([
-            'email' => 'ktos@example.com',
-        ]);
+        $user = $this->em
+            ->getRepository(User::class)
+            ->findOneBy([
+                'email' => 'ktos@example.com',
+            ]);
         self::assertNull($user, 'must not persist while any field is invalid');
     }
 

@@ -34,9 +34,8 @@ class Scheduler
         array $scheduleProviders,
         private readonly ClockInterface $clock = new Clock(),
         private readonly ?EventDispatcherInterface $dispatcher = null,
-        private readonly ?ConnectionEnsurerInterface $connectionResetter = null
+        private readonly ?ConnectionEnsurerInterface $connectionResetter = null,
     ) {
-
         foreach ($scheduleProviders as $scheduleProvider) {
             $this->addSchedule($scheduleProvider->getSchedule());
         }
@@ -65,7 +64,7 @@ class Scheduler
                     $this->connectionResetter->ensureConnection();
                 }
 
-                if (! $this->dispatcher) {
+                if (!$this->dispatcher) {
                     $this->bus->dispatch($message);
 
                     continue;
@@ -86,7 +85,7 @@ class Scheduler
                     $failureEvent = new FailureEvent($generator->getSchedule(), $context, $message, $error);
                     $this->dispatcher->dispatch($failureEvent);
 
-                    if (! $failureEvent->shouldIgnore()) {
+                    if (!$failureEvent->shouldIgnore()) {
                         throw $error;
                     }
                 }

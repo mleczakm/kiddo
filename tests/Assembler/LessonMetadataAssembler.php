@@ -17,7 +17,7 @@ class LessonMetadataAssembler
         private int $capacity,
         private int $duration,
         private AgeRange $ageRange,
-        private string $category = 'Category'
+        private string $category = 'Category',
     ) {}
 
     public static function new(): self
@@ -100,7 +100,7 @@ class LessonMetadataAssembler
             $this->capacity,
             $this->duration,
             $this->ageRange,
-            $this->category
+            $this->category,
         );
     }
 }

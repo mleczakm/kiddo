@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\Service;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Application\Service\MoneyInputParser;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

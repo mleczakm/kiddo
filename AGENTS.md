@@ -30,11 +30,11 @@ Runs unit → smoke → functional (with test DB create + schema update).
 
 | Goal | Command |
 |------|---------|
-| Auto-fix (Rector, ECS, PHPStan baseline) | `docker compose run --rm php composer qa:fix` |
+| Auto-fix (Mago lint + format) | `docker compose run --rm php composer qa:fix` |
 | Full gate (static analysis + tests) | `docker compose run --rm php composer qa` |
 
 - **`composer qa:fix`** writes changes — review the diff afterward.
-- **`composer qa`** = `composer sa` (validate, audit, Twig lint, Rector dry-run, PHPStan, ECS) + `composer tests`.
+- **`composer qa`** = `composer sa` (validate, audit, Twig lint, Mago lint/analyze/format check) + `composer tests`.
 
 ### After code changes
 

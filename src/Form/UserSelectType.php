@@ -43,17 +43,17 @@ final class UserSelectType extends AbstractType
                     // normal choice-loading/validation still applies.
                     $ids = array_map(
                         static fn(User $user): int => (int) $user->getId(),
-                        $repository->findForAutocomplete($query)
+                        $repository->findForAutocomplete($query),
                     );
 
-                    return $repository->createQueryBuilder('u')
+                    return $repository
+                        ->createQueryBuilder('u')
                         ->andWhere('u.id IN (:ids)')
                         ->setParameter('ids', $ids === [] ? [0] : $ids)
                         ->orderBy('u.name', 'ASC');
                 }
 
-                return $repository->createQueryBuilder('u')
-                    ->orderBy('u.name', 'ASC');
+                return $repository->createQueryBuilder('u')->orderBy('u.name', 'ASC');
             },
             'placeholder' => 'Wybierz użytkownika...',
             'translation_domain' => 'messages',

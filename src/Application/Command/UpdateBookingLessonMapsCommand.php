@@ -21,7 +21,7 @@ class UpdateBookingLessonMapsCommand extends Command
 {
     public function __construct(
         private readonly BookingRepository $bookingRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }

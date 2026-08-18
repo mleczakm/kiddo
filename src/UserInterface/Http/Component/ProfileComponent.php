@@ -95,7 +95,7 @@ class ProfileComponent extends AbstractController
 
         try {
             $parsed = PhoneNumberUtil::getInstance()->parse($rawPhone, 'PL');
-            if (! PhoneNumberUtil::getInstance()->isValidNumber($parsed)) {
+            if (!PhoneNumberUtil::getInstance()->isValidNumber($parsed)) {
                 $this->phoneError = 'profile.phone.invalid';
                 return;
             }
@@ -121,8 +121,7 @@ class ProfileComponent extends AbstractController
 
     public function getFormattedPhone(): ?string
     {
-        $phone = $this->getUser()
-            ->getPhone();
+        $phone = $this->getUser()->getPhone();
         if ($phone === null) {
             return null;
         }

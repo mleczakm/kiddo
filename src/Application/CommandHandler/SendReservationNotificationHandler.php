@@ -62,10 +62,14 @@ readonly class SendReservationNotificationHandler
             $this->inAppNotifications->notify(
                 $user,
                 $this->translator->trans('notifications.in_app.reservation.title', [], 'messages'),
-                $this->translator->trans('notifications.in_app.reservation.body', [
-                    'code' => $command->paymentCode,
-                    'amount' => (string) $command->paymentAmount->getAmount(),
-                ], 'messages'),
+                $this->translator->trans(
+                    'notifications.in_app.reservation.body',
+                    [
+                        'code' => $command->paymentCode,
+                        'amount' => (string) $command->paymentAmount->getAmount(),
+                    ],
+                    'messages',
+                ),
                 $this->urlGenerator->generate('dashboard'),
                 NotificationSeverity::Success,
             );
@@ -76,7 +80,7 @@ readonly class SendReservationNotificationHandler
     {
         $setting = $this->settingRepository->findOneByKey('payment');
         $content = $setting?->getContent();
-        if (! is_array($content)) {
+        if (!is_array($content)) {
             return $default;
         }
 

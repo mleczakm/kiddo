@@ -9,6 +9,6 @@ use App\Entity\Transfer;
 final readonly class SaveTransfer
 {
     public function __construct(
-        public Transfer $transfer
+        public Transfer $transfer,
     ) {}
 }

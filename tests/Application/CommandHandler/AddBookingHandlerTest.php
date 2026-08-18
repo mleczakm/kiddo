@@ -62,17 +62,13 @@ final class AddBookingHandlerTest extends KernelTestCase
         self::assertInstanceOf(Booking::class, $booking);
         self::assertSame(Booking::STATUS_PENDING, $booking->getStatus());
         self::assertCount(1, $booking->getLessons());
-        $bookedLesson = $booking->getLessons()
-            ->first();
+        $bookedLesson = $booking->getLessons()->first();
         self::assertInstanceOf(Lesson::class, $bookedLesson);
         self::assertSame($lessonId, (string) $bookedLesson->getId());
         self::assertSame($paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
 
-        $this->mailer()
-            ->assertSentEmailCount(1);
-        $email = $this->mailer()
-            ->sentEmails()
-            ->first();
+        $this->mailer()->assertSentEmailCount(1);
+        $email = $this->mailer()->sentEmails()->first();
         self::assertStringContainsString($paymentCode, (string) ($email->getHtmlBody() ?? $email->getTextBody()));
     }
 }

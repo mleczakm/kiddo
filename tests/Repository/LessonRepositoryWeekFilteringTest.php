@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Repository\LessonRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]
@@ -26,16 +26,14 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
         $this->lessonRepository = self::getContainer()->get(LessonRepository::class);
 
         // Clean up before tests
-        $this->entityManager->createQuery('DELETE FROM App\Entity\Lesson')
-            ->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Lesson')->execute();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
         // Clean up after tests
-        $this->entityManager->createQuery('DELETE FROM App\Entity\Lesson')
-            ->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Lesson')->execute();
         parent::tearDown();
     }
 
@@ -157,7 +155,7 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
             capacity: 10,
             duration: 60,
             ageRange: new AgeRange(3, 6),
-            category: 'Test Category'
+            category: 'Test Category',
         );
 
         return new Lesson($metadata, $schedule);

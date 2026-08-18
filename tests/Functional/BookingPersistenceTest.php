@@ -31,13 +31,16 @@ final class BookingPersistenceTest extends KernelTestCase
 
         // Create lessons: one in the past, two in the future
         $pastLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('-2 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('-2 days'))
             ->assemble();
         $futureA = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+2 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+2 days'))
             ->assemble();
         $futureB = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+3 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+3 days'))
             ->assemble();
 
         $user = UserAssembler::new()->withEmail('booker@example.com')->withName('Booker')->assemble();
@@ -76,7 +79,8 @@ final class BookingPersistenceTest extends KernelTestCase
 
         // Now reschedule futureA to a new future lesson
         $newFuture = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->assemble())->withSchedule($now->modify('+5 days'))
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+5 days'))
             ->assemble();
         $this->em->persist($newFuture);
         $this->em->flush();

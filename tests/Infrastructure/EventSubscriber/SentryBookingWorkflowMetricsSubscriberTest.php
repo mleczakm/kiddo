@@ -36,22 +36,17 @@ class SentryBookingWorkflowMetricsSubscriberTest extends TestCase
 
     public function testOnBookingTransitionTracksMetrics(): void
     {
-        $booking = BookingAssembler::new()
-            ->assemble();
+        $booking = BookingAssembler::new()->assemble();
 
         $transition = new Transition('cancel', ['pending'], ['cancelled']);
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn($booking);
-        $event->method('getTransition')
-            ->willReturn($transition);
+        $event->method('getSubject')->willReturn($booking);
+        $event->method('getTransition')->willReturn($transition);
 
-        $this->metrics->expects($this->exactly(2))
+        $this->metrics
+            ->expects($this->exactly(2))
             ->method('count')
-            ->with(
-                $this->logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.cancel'),
-                1,
-            );
+            ->with($this->logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.cancel'), 1);
 
         $this->subscriber->onBookingTransition($event);
     }
@@ -60,35 +55,27 @@ class SentryBookingWorkflowMetricsSubscriberTest extends TestCase
     {
         $transition = new Transition('cancel', ['pending'], ['cancelled']);
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn(new \stdClass());
-        $event->method('getTransition')
-            ->willReturn($transition);
+        $event->method('getSubject')->willReturn(new \stdClass());
+        $event->method('getTransition')->willReturn($transition);
 
-        $this->metrics->expects($this->never())
-            ->method('count');
+        $this->metrics->expects($this->never())->method('count');
 
         $this->subscriber->onBookingTransition($event);
     }
 
     public function testOnBookingTransitionTracksDifferentTransitionTypes(): void
     {
-        $booking = BookingAssembler::new()
-            ->assemble();
+        $booking = BookingAssembler::new()->assemble();
 
         $transition = new Transition('confirm', ['pending'], ['active']);
         $event = $this->createMock(Event::class);
-        $event->method('getSubject')
-            ->willReturn($booking);
-        $event->method('getTransition')
-            ->willReturn($transition);
+        $event->method('getSubject')->willReturn($booking);
+        $event->method('getTransition')->willReturn($transition);
 
-        $this->metrics->expects($this->exactly(2))
+        $this->metrics
+            ->expects($this->exactly(2))
             ->method('count')
-            ->with(
-                $this->logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.confirm'),
-                1,
-            );
+            ->with($this->logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.confirm'), 1);
 
         $this->subscriber->onBookingTransition($event);
     }

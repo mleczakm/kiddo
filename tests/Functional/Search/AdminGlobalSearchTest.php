@@ -15,8 +15,8 @@ use App\Entity\Payment;
 use App\Entity\PaymentCode;
 use App\Entity\User;
 use App\Infrastructure\Search\SearchResultHydrator;
-use Brick\Money\Money;
 use App\UserInterface\Http\Component\AdminGlobalSearchComponent;
+use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -86,7 +86,7 @@ final class AdminGlobalSearchTest extends WebTestCase
             self::getContainer()->get(GlobalSearchQuery::class)->search('X7K2'),
         ));
 
-        self::assertTrue($this->contains($references, SearchType::Payment, $payment->getId() ->toRfc4122()));
+        self::assertTrue($this->contains($references, SearchType::Payment, $payment->getId()->toRfc4122()));
     }
 
     public function testLiveComponentRendersDatabaseResultsWithLinksAndHighlighting(): void
@@ -99,8 +99,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         $this->browser->loginUser($this->admin);
         $component = $this->createLiveComponent(AdminGlobalSearchComponent::class, client: $this->browser);
         $component->set('query', $needle);
-        $html = $component->render()
-            ->toString();
+        $html = $component->render()->toString();
 
         self::assertStringContainsString('Client</span>', $html);
         self::assertStringContainsString('<mark class="bg-amber-200', $html);
@@ -119,8 +118,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         $this->browser->loginUser($this->admin);
         $component = $this->createLiveComponent(AdminGlobalSearchComponent::class, client: $this->browser);
         $component->set('query', $needle);
-        $lessonHtml = $component->render()
-            ->toString();
+        $lessonHtml = $component->render()->toString();
 
         self::assertStringContainsString('</mark> Workshops', $lessonHtml);
         self::assertStringContainsString('/admin/zajecia/' . $lesson->getId(), $lessonHtml);
@@ -159,18 +157,15 @@ final class AdminGlobalSearchTest extends WebTestCase
         ]);
         $connection->executeStatement('UPDATE lesson SET schedule = :date WHERE id = :id', [
             'date' => $date,
-            'id' => $lesson->getId()
-                ->toRfc4122(),
+            'id' => $lesson->getId()->toRfc4122(),
         ]);
         $connection->executeStatement('UPDATE booking SET created_at = :date WHERE id = :id', [
             'date' => $date,
-            'id' => $booking->getId()
-                ->toRfc4122(),
+            'id' => $booking->getId()->toRfc4122(),
         ]);
         $connection->executeStatement('UPDATE payment SET created_at = :date WHERE id = :id', [
             'date' => $date,
-            'id' => $payment->getId()
-                ->toRfc4122(),
+            'id' => $payment->getId()->toRfc4122(),
         ]);
 
         $references = array_values(iterator_to_array(
@@ -192,15 +187,17 @@ final class AdminGlobalSearchTest extends WebTestCase
         // $customer, asserting against the wrong row's (real, "today") subtitle date.
         $datedResult = array_find(
             $results,
-            static fn($result): bool => $result->reference->type === SearchType::Client
+            static fn($result): bool => (
+                $result->reference->type === SearchType::Client
                 && $result->reference->id === (string) $customer->getId()
+            ),
         );
         self::assertNotNull($datedResult);
         self::assertStringContainsString('15.08.2042', $datedResult->subtitle);
 
         $paymentResult = array_find(
             $results,
-            static fn($result): bool => $result->reference->type === SearchType::Payment
+            static fn($result): bool => $result->reference->type === SearchType::Payment,
         );
         self::assertNotNull($paymentResult);
         self::assertStringContainsString("80\u{00A0}zł", $paymentResult->subtitle);

@@ -13,7 +13,7 @@ readonly class AppVersionExtension
     public function __construct(string $appVersion)
     {
         $this->lastReleaseTime = \DateTimeImmutable::createFromFormat('YmdHi', $appVersion)
-            ?: throw new \InvalidArgumentException('Invalid app version format: ' . $appVersion);
+        ?: throw new \InvalidArgumentException('Invalid app version format: ' . $appVersion);
     }
 
     #[AsTwigFunction('last_release')]

@@ -324,17 +324,15 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $codeProperty->setValue($paymentCode, 'ACTV');
         $this->entityManager->persist($paymentCode);
 
-        $transfer = TransferAssembler::new()
-            ->withTitle('Payment for order ACTV')
-            ->withAmount('100.00')
-            ->assemble();
+        $transfer = TransferAssembler::new()->withTitle('Payment for order ACTV')->withAmount('100.00')->assemble();
         $this->entityManager->persist($transfer);
         $this->entityManager->flush();
 
         $command = new MatchPaymentForTransfer($transfer);
         $this->messageBus->dispatch($command);
 
-        $activityLogs = $this->entityManager->getRepository(ActivityLog::class)
+        $activityLogs = $this->entityManager
+            ->getRepository(ActivityLog::class)
             ->findBy([
                 'type' => ActivityType::PAYMENT_RECEIVED,
             ]);
@@ -415,9 +413,7 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         // Assert
         $this->entityManager->refresh($transfer);
         $this->assertNull($transfer->getPayment());
-        $this->bus()
-            ->dispatched()
-            ->assertContains(TransferNotMatchedCommand::class);
+        $this->bus()->dispatched()->assertContains(TransferNotMatchedCommand::class);
     }
 
     #[Test]
@@ -445,9 +441,7 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         // Assert
         $this->entityManager->refresh($transfer);
         $this->assertNull($transfer->getPayment());
-        $this->bus()
-            ->dispatched()
-            ->assertContains(TransferNotMatchedCommand::class);
+        $this->bus()->dispatched()->assertContains(TransferNotMatchedCommand::class);
     }
 
     protected function setUp(): void
@@ -461,15 +455,10 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
 
     private function setupPendingPayment(): void
     {
-        $user = UserAssembler::new()
-            ->withName('Test User')
-            ->withEmail('test@example.com')
-            ->assemble();
+        $user = UserAssembler::new()->withName('Test User')->withEmail('test@example.com')->assemble();
         $this->entityManager->persist($user);
 
-        $paymentCode = PaymentCodeAssembler::new()
-            ->withCode('1234')
-            ->assemble();
+        $paymentCode = PaymentCodeAssembler::new()->withCode('1234')->assemble();
         $this->entityManager->persist($paymentCode);
 
         $payment = PaymentAssembler::new()

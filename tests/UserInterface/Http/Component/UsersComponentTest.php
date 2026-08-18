@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\UserInterface\Http\Component\UsersComponent;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
@@ -49,8 +49,7 @@ final class UsersComponentTest extends WebTestCase
 
         $test = $this->createLiveComponent(UsersComponent::class, client: $client);
 
-        $rendered = $test->render()
-            ->toString();
+        $rendered = $test->render()->toString();
         $this->assertStringContainsString('John Doe', $rendered);
         $this->assertStringContainsString('Jane Doe', $rendered);
         $this->assertStringContainsString('admin@test.com', $rendered);
@@ -93,9 +92,11 @@ final class UsersComponentTest extends WebTestCase
         $component->set('notifyBody', 'Do zobaczenia jutro o 10:00!');
         $component->call('sendNotification');
 
-        $notifications = $entityManager->getRepository(Notification::class)->findBy([
-            'user' => $customer,
-        ]);
+        $notifications = $entityManager
+            ->getRepository(Notification::class)
+            ->findBy([
+                'user' => $customer,
+            ]);
         self::assertCount(1, $notifications);
         self::assertSame('Przypomnienie o zajęciach', $notifications[0]->getTitle());
         self::assertSame('Do zobaczenia jutro o 10:00!', $notifications[0]->getBody());
@@ -150,12 +151,11 @@ final class UsersComponentTest extends WebTestCase
         $usersComponent = $component->component();
         self::assertTrue($usersComponent->showAddModal);
 
-        $rendered = $component->render()
-            ->toString();
+        $rendered = $component->render()->toString();
         self::assertStringContainsString(
             'Nowy użytkownik',
             $rendered,
-            'the embedded AddUserModal must render while open'
+            'the embedded AddUserModal must render while open',
         );
 
         // Simulates AddUserModal's emitUp('userModalSaved')/emitUp('userModalClosed') bubbling up.

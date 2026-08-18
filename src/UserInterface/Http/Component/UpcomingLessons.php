@@ -81,7 +81,7 @@ class UpcomingLessons
     public function getUserBookingsByLesson(): array
     {
         $user = $this->security->getUser();
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return [];
         }
 
@@ -101,13 +101,11 @@ class UpcomingLessons
         foreach ($bookings as $booking) {
             foreach ($booking->getLessons() as $lesson) {
                 $lessonId = (string) $lesson->getId();
-                if (! isset($lessonIdSet[$lessonId])) {
+                if (!isset($lessonIdSet[$lessonId])) {
                     continue;
                 }
 
-                $paymentStatus = $booking->getPayment()?->getStatus() === Payment::STATUS_PAID
-                    ? 'paid'
-                    : 'unpaid';
+                $paymentStatus = $booking->getPayment()?->getStatus() === Payment::STATUS_PAID ? 'paid' : 'unpaid';
 
                 $result[$lessonId][] = [
                     'childName' => $booking->getChild()?->getName(),
@@ -170,8 +168,10 @@ class UpcomingLessons
             return true;
         }
 
-        return $lesson->schedule->format('Y-m-d') === $this->openDate
-            && $lesson->schedule->format('H:i') === $this->openHour;
+        return (
+            $lesson->schedule->format('Y-m-d') === $this->openDate
+            && $lesson->schedule->format('H:i') === $this->openHour
+        );
     }
 
     public function getCurrentWeek(): string
@@ -186,7 +186,6 @@ class UpcomingLessons
 
     public function getWeekEnd(): \DateTimeImmutable
     {
-        return $this->getWeekStart()
-            ->modify('+7 days');
+        return $this->getWeekStart()->modify('+7 days');
     }
 }

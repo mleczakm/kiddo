@@ -30,9 +30,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create and authenticate an admin user
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($adminUser);
@@ -46,7 +44,7 @@ class AdminBookingsTabTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists(
             '.rounded-2xl.border.border-slate-200',
-            'Admin bookings component should be present'
+            'Admin bookings component should be present',
         );
         $this->assertSelectorTextContains('h3', 'Wszystkie rezerwacje');
     }
@@ -66,9 +64,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create and authenticate an admin user
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($adminUser);
@@ -88,7 +84,7 @@ class AdminBookingsTabTest extends WebTestCase
         $this->assertSelectorExists('textarea[placeholder*="Notatki"]', 'Notes textarea should be present');
         $this->assertSelectorExists(
             'button:contains("Dodaj ręczną rezerwację")',
-            'Add booking button should be present'
+            'Add booking button should be present',
         );
     }
 
@@ -97,9 +93,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create and authenticate an admin user
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($adminUser);
@@ -127,9 +121,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create and authenticate an admin user
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($adminUser);
@@ -153,9 +145,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create and authenticate an admin user
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($adminUser);
@@ -176,9 +166,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create test data
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $testUser = new User('test@example.com', 'Test User');
         $payment = new Payment($testUser, Money::of(10000, 'PLN')); // 100 PLN
         $payment->setStatus(Payment::STATUS_PAID);
@@ -192,7 +180,7 @@ class AdminBookingsTabTest extends WebTestCase
             capacity: 10,
             duration: 60,
             ageRange: $ageRange,
-            category: 'test'
+            category: 'test',
         );
 
         $lesson = new Lesson($metadata, new \DateTimeImmutable('+1 day'), []);
@@ -213,10 +201,7 @@ class AdminBookingsTabTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $attendeeCell = $crawler->filter('table tbody tr')
-            ->first()
-            ->filter('td')
-            ->first();
+        $attendeeCell = $crawler->filter('table tbody tr')->first()->filter('td')->first();
         $this->assertStringContainsString('—', $attendeeCell->text());
         $this->assertStringContainsString('Test User', $attendeeCell->text());
         $this->assertStringContainsString('test@example.com', $attendeeCell->text());
@@ -228,9 +213,7 @@ class AdminBookingsTabTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $testUser = new User('parent@example.com', 'Parent Name');
         $child = new Child($testUser, 'Ala', new \DateTimeImmutable('2019-05-01'));
         $payment = new Payment($testUser, Money::of(8000, 'PLN'));
@@ -245,7 +228,7 @@ class AdminBookingsTabTest extends WebTestCase
             capacity: 10,
             duration: 60,
             ageRange: $ageRange,
-            category: 'test'
+            category: 'test',
         );
 
         $lesson = new Lesson($metadata, new \DateTimeImmutable('+1 day'), []);
@@ -268,10 +251,7 @@ class AdminBookingsTabTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $attendeeCell = $crawler->filter('table tbody tr')
-            ->first()
-            ->filter('td')
-            ->first();
+        $attendeeCell = $crawler->filter('table tbody tr')->first()->filter('td')->first();
         $this->assertStringContainsString('Ala', $attendeeCell->text());
         $this->assertStringContainsString('Parent Name', $attendeeCell->text());
         $this->assertStringContainsString('parent@example.com', $attendeeCell->text());
@@ -283,9 +263,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create test data with unpaid booking
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $testUser = new User('unpaid@example.com', 'Unpaid User');
         $payment = new Payment($testUser, Money::of(5000, 'PLN')); // 50 PLN
         $payment->setStatus(Payment::STATUS_PENDING);
@@ -299,7 +277,7 @@ class AdminBookingsTabTest extends WebTestCase
             capacity: 10,
             duration: 60,
             ageRange: $ageRange,
-            category: 'test'
+            category: 'test',
         );
 
         $lesson = new Lesson($metadata, new \DateTimeImmutable('+1 day'), []);
@@ -323,7 +301,7 @@ class AdminBookingsTabTest extends WebTestCase
         // Check if "Mark as Paid" button is visible for unpaid bookings
         $this->assertSelectorExists(
             'button:contains("Oznacz jako opłacone")',
-            'Mark as paid button should be visible for unpaid bookings'
+            'Mark as paid button should be visible for unpaid bookings',
         );
     }
 
@@ -332,9 +310,7 @@ class AdminBookingsTabTest extends WebTestCase
         $client = static::createClient();
 
         // Create test lesson for selection
-        $adminUser = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
 
         $ageRange = new AgeRange(5, 15);
         $metadata = new LessonMetadata(
@@ -345,7 +321,7 @@ class AdminBookingsTabTest extends WebTestCase
             capacity: 15,
             duration: 90,
             ageRange: $ageRange,
-            category: 'workshop'
+            category: 'workshop',
         );
 
         $lesson = new Lesson($metadata, new \DateTimeImmutable('+2 days'), []);

@@ -72,14 +72,22 @@ readonly class NewUserHandler
     private function sendAdminInformation(User $user): void
     {
         $admins = $this->userRepository->findByRole('ROLE_ADMIN');
-        $subject = $this->translator->trans('user.notification.admin.subject', [
-            'email' => $user->getEmail(),
-        ], 'emails');
-        $content = $this->translator->trans('user.notification.admin.content', [
-            'email' => $user->getEmail(),
-            'name' => $user->getName(),
-            'id' => $user->getId(),
-        ], 'emails');
+        $subject = $this->translator->trans(
+            'user.notification.admin.subject',
+            [
+                'email' => $user->getEmail(),
+            ],
+            'emails',
+        );
+        $content = $this->translator->trans(
+            'user.notification.admin.content',
+            [
+                'email' => $user->getEmail(),
+                'name' => $user->getName(),
+                'id' => $user->getId(),
+            ],
+            'emails',
+        );
 
         $notification = new Notification()
             ->importance('')
@@ -93,13 +101,18 @@ readonly class NewUserHandler
         $userId = $user->getId();
         $this->inAppNotifications->notifyAdmins(
             $this->translator->trans('notifications.in_app.new_user.admin.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.new_user.admin.body', [
-                'email' => $user->getEmail(),
-                'name' => $user->getName(),
-            ], 'messages'),
-            $userId !== null ? $this->urlGenerator->generate('app_admin_user_view', [
-                'id' => $userId,
-            ]) : $this->urlGenerator->generate('app_admin_users'),
+            $this->translator->trans(
+                'notifications.in_app.new_user.admin.body',
+                [
+                    'email' => $user->getEmail(),
+                    'name' => $user->getName(),
+                ],
+                'messages',
+            ),
+            $userId !== null
+                ? $this->urlGenerator->generate('app_admin_user_view', [
+                    'id' => $userId,
+                ]) : $this->urlGenerator->generate('app_admin_users'),
             NotificationSeverity::Info,
         );
     }

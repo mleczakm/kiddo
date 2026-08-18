@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Entity;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Transfer;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]
@@ -27,7 +27,7 @@ class TransferTest extends KernelTestCase
             'Test Sender',
             'Test Title',
             '100.00',
-            new \DateTimeImmutable('2024-01-01')
+            new \DateTimeImmutable('2024-01-01'),
         );
 
         $this->entityManager->persist($transfer);
@@ -53,26 +53,22 @@ class TransferTest extends KernelTestCase
         self::assertNull($deletedTransfer, 'Transfer should not be found when soft delete filter is active');
 
         // But should be found when soft delete filter is disabled
-        $this->entityManager->getFilters()
-            ->disable('softdeleteable');
+        $this->entityManager->getFilters()->disable('softdeleteable');
         try {
             $softDeletedTransfer = $this->entityManager->find(Transfer::class, $transferId);
             self::assertNotNull($softDeletedTransfer, 'Transfer should be found when soft delete filter is disabled');
             self::assertNotNull($softDeletedTransfer->getDeletedAt(), 'deletedAt should be set');
         } finally {
-            $this->entityManager->getFilters()
-                ->enable('softdeleteable');
+            $this->entityManager->getFilters()->enable('softdeleteable');
         }
 
         // Clean up - hard delete
-        $this->entityManager->getFilters()
-            ->disable('softdeleteable');
+        $this->entityManager->getFilters()->disable('softdeleteable');
         try {
             $this->entityManager->remove($softDeletedTransfer);
             $this->entityManager->flush();
         } finally {
-            $this->entityManager->getFilters()
-                ->enable('softdeleteable');
+            $this->entityManager->getFilters()->enable('softdeleteable');
         }
     }
 }

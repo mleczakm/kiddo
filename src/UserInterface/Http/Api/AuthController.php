@@ -48,7 +48,7 @@ final class AuthController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             return $this->json([
                 'error' => 'Invalid JSON',
             ], 400);
@@ -125,7 +125,7 @@ final class AuthController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             return $this->json([
                 'error' => 'Invalid JSON',
             ], 400);
@@ -171,7 +171,7 @@ final class AuthController extends AbstractController
     public function sendCode(Request $request, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             return $this->json([
                 'error' => 'Invalid JSON',
             ], 400);
@@ -202,7 +202,7 @@ final class AuthController extends AbstractController
         $user = $this->userRepository->findOneBy([
             'email' => $email,
         ]);
-        if (! $user) {
+        if (!$user) {
             return $this->json([
                 'error' => 'User not found',
             ], 404);
@@ -223,7 +223,7 @@ final class AuthController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             return $this->json([
                 'error' => 'Invalid JSON',
             ], 400);
@@ -289,14 +289,14 @@ final class AuthController extends AbstractController
         $item = $this->cache->getItem($cacheKey);
         $storedCode = $item->get();
 
-        if (! $item->isHit() || ! is_string($storedCode) || ! hash_equals($storedCode, $code)) {
+        if (!$item->isHit() || !is_string($storedCode) || !hash_equals($storedCode, $code)) {
             return null;
         }
 
         $user = $this->userRepository->findOneBy([
             'email' => $email,
         ]);
-        if (! $user) {
+        if (!$user) {
             return null;
         }
 
@@ -314,11 +314,10 @@ final class AuthController extends AbstractController
     {
         $limiter = $this->authEmailRateLimiter->create($email);
         $limit = $limiter->consume(1);
-        if (! $limit->isAccepted()) {
+        if (!$limit->isAccepted()) {
             return $this->json([
                 'error' => 'Too many code requests. Please try again later.',
-                'retry_after' => $limit->getRetryAfter()
-                    ->getTimestamp() - time(),
+                'retry_after' => $limit->getRetryAfter()->getTimestamp() - time(),
             ], 429);
         }
 
@@ -329,11 +328,10 @@ final class AuthController extends AbstractController
     {
         $limiter = $this->authIpRateLimiter->create($request->getClientIp());
         $limit = $limiter->consume(1);
-        if (! $limit->isAccepted()) {
+        if (!$limit->isAccepted()) {
             return $this->json([
                 'error' => 'Too many attempts. Please try again later.',
-                'retry_after' => $limit->getRetryAfter()
-                    ->getTimestamp() - time(),
+                'retry_after' => $limit->getRetryAfter()->getTimestamp() - time(),
             ], 429);
         }
 

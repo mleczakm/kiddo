@@ -30,7 +30,7 @@ class Child
         private string $name,
         #[ORM\Column(type: 'date_immutable', nullable: true)]
         #[Assert\LessThan('today')]
-        private ?\DateTimeImmutable $birthday
+        private ?\DateTimeImmutable $birthday,
     ) {
         $this->id = new Ulid();
         $this->createdAt = Clock::get()->now();

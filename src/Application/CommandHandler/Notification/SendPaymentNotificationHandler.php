@@ -34,10 +34,9 @@ readonly class SendPaymentNotificationHandler
     {
         $payment = $command->payment;
 
-        $booking = $payment->getBookings()
-            ->first();
+        $booking = $payment->getBookings()->first();
 
-        if (! $booking) {
+        if (!$booking) {
             return;
         }
 
@@ -78,16 +77,18 @@ readonly class SendPaymentNotificationHandler
             ->content($content);
         $this->notifier->send($notification, new Recipient($user->getEmailString()));
 
-        $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()
-            ->title;
+        $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()->title;
         $this->inAppNotifications->notify(
             $user,
             $this->translator->trans('notifications.in_app.payment.user.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.payment.user.body', [
-                'amount' => (string) $payment->getAmount()
-                    ->getAmount(),
-                'lesson' => $lessonTitle,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.payment.user.body',
+                [
+                    'amount' => (string) $payment->getAmount()->getAmount(),
+                    'lesson' => $lessonTitle,
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('dashboard'),
             NotificationSeverity::Success,
         );
@@ -124,16 +125,18 @@ readonly class SendPaymentNotificationHandler
         }
 
         $payer = $firstBooking->getUser();
-        $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()
-            ->title;
+        $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()->title;
         $this->inAppNotifications->notifyAdmins(
             $this->translator->trans('notifications.in_app.payment.admin.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.payment.admin.body', [
-                'email' => $payer->getEmailString(),
-                'amount' => (string) $payment->getAmount()
-                    ->getAmount(),
-                'lesson' => $lessonTitle,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.payment.admin.body',
+                [
+                    'email' => $payer->getEmailString(),
+                    'amount' => (string) $payment->getAmount()->getAmount(),
+                    'lesson' => $lessonTitle,
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('app_admin_transfers'),
             NotificationSeverity::Success,
         );

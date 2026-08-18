@@ -27,7 +27,8 @@ class BookingRepository extends ServiceEntityRepository
     public function findExpiredPendingBookings(\DateTimeImmutable $expirationTime): array
     {
         /** @var array<Booking> $bookings */
-        $bookings =  $this->createQueryBuilder('b')
+        $bookings = $this
+            ->createQueryBuilder('b')
             ->leftJoin('b.payment', 'p')
             ->where('b.status = :status')
             ->andWhere('b.createdAt < :expirationTime')
@@ -47,7 +48,8 @@ class BookingRepository extends ServiceEntityRepository
     public function findActiveBookings(): array
     {
         /** @var array<Booking> $bookings */
-        $bookings = $this->createQueryBuilder('b')
+        $bookings = $this
+            ->createQueryBuilder('b')
             ->where('b.status = :status')
             ->setParameter('status', Booking::STATUS_ACTIVE)
             ->getQuery()
@@ -74,7 +76,8 @@ class BookingRepository extends ServiceEntityRepository
     public function findVisibleForUser(User $user): array
     {
         /** @var list<Booking> $result */
-        $result = $this->createQueryBuilder('b')
+        $result = $this
+            ->createQueryBuilder('b')
             ->select('b', 'l', 's', 'p')
             ->leftJoin('b.lessons', 'l')
             ->leftJoin('l.series', 's')
@@ -108,7 +111,8 @@ class BookingRepository extends ServiceEntityRepository
             return [];
         }
 
-        $qb = $this->createQueryBuilder('b')
+        $qb = $this
+            ->createQueryBuilder('b')
             ->innerJoin('b.lessons', 'l')
             ->leftJoin('b.payment', 'p')
             ->leftJoin('b.child', 'c')
@@ -120,8 +124,7 @@ class BookingRepository extends ServiceEntityRepository
 
         // Bind each Ulid with the doctrine "ulid" type so Postgres receives UUID (RFC4122),
         // not the Ulid base32 string (IN (:ids) with a string array skips Ulid conversion).
-        $orX = $qb->expr()
-            ->orX();
+        $orX = $qb->expr()->orX();
         foreach (array_values($lessons) as $index => $lesson) {
             $param = 'lessonId' . $index;
             $orX->add($qb->expr()->eq('l.id', ':' . $param));
@@ -130,8 +133,7 @@ class BookingRepository extends ServiceEntityRepository
         $qb->andWhere($orX);
 
         /** @var array<Booking> $bookings */
-        $bookings = $qb->getQuery()
-            ->getResult();
+        $bookings = $qb->getQuery()->getResult();
 
         return $bookings;
     }
@@ -152,7 +154,8 @@ class BookingRepository extends ServiceEntityRepository
     public function findByLesson(Lesson $lesson): array
     {
         /** @var array<Booking> $bookings */
-        $bookings = $this->createQueryBuilder('b')
+        $bookings = $this
+            ->createQueryBuilder('b')
             ->innerJoin('b.lessons', 'l')
             ->where('l.id = :lessonId')
             ->setParameter('lessonId', $lesson->getId(), 'ulid')
@@ -164,7 +167,8 @@ class BookingRepository extends ServiceEntityRepository
 
     public function countCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): int
     {
-        return (int) $this->createQueryBuilder('b')
+        return (int) $this
+            ->createQueryBuilder('b')
             ->select('COUNT(b.id)')
             ->where('b.createdAt BETWEEN :start AND :end')
             ->andWhere('b.status != :cancelled')
@@ -181,7 +185,8 @@ class BookingRepository extends ServiceEntityRepository
     public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
         /** @var array<Booking> $bookings */
-        $bookings = $this->createQueryBuilder('b')
+        $bookings = $this
+            ->createQueryBuilder('b')
             ->leftJoin('b.lessons', 'l')
             ->leftJoin('b.user', 'u')
             ->leftJoin('b.child', 'c')

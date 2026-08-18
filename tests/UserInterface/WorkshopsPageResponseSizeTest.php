@@ -33,9 +33,7 @@ final class WorkshopsPageResponseSizeTest extends WebTestCase
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
-        $series = SeriesAssembler::new()
-            ->withType(WorkshopType::WEEKLY)
-            ->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $em->persist($series);
 
         for ($i = 0; $i < 40; ++$i) {
@@ -46,7 +44,7 @@ final class WorkshopsPageResponseSizeTest extends WebTestCase
                         ->withDescription(str_repeat('Long description for size pressure. ', 20))
                         ->withTitle(sprintf('Workshop %d', $i))
                         ->withDescription(str_repeat('Long description for size pressure. ', 20))
-                        ->assemble()
+                        ->assemble(),
                 )
                 ->withSchedule(new \DateTimeImmutable(sprintf('2024-02-21 %02d:00:00', 8 + ($i % 10))))
                 ->assemble();
@@ -58,13 +56,12 @@ final class WorkshopsPageResponseSizeTest extends WebTestCase
         $client->request('GET', '/warsztaty');
 
         $this->assertResponseIsSuccessful();
-        $content = (string) $client->getResponse()
-            ->getContent();
+        $content = (string) $client->getResponse()->getContent();
 
         $this->assertLessThan(
             self::SWOOLE_DEFAULT_OUTPUT_BUFFER,
             strlen($content),
-            'Closed LessonModal markup must stay deferred so /warsztaty fits Swoole output buffer'
+            'Closed LessonModal markup must stay deferred so /warsztaty fits Swoole output buffer',
         );
         $this->assertStringContainsString('data-modal-state="closed"', $content);
         $this->assertStringNotContainsString('data-modal-target="dialog"', $content);

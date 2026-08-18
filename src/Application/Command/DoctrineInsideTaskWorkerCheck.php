@@ -7,6 +7,6 @@ namespace App\Application\Command;
 final readonly class DoctrineInsideTaskWorkerCheck
 {
     public function __construct(
-        public string $cacheKey
+        public string $cacheKey,
     ) {}
 }

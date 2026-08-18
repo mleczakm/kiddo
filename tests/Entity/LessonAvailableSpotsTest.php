@@ -17,14 +17,9 @@ final class LessonAvailableSpotsTest extends TestCase
     #[Test]
     public function pendingBookingsReduceAvailableSpots(): void
     {
-        $lesson = LessonAssembler::new()
-            ->withCapacity(2)
-            ->assemble();
+        $lesson = LessonAssembler::new()->withCapacity(2)->assemble();
 
-        $pending = BookingAssembler::new()
-            ->withLessons($lesson)
-            ->withStatus(Booking::STATUS_PENDING)
-            ->assemble();
+        $pending = BookingAssembler::new()->withLessons($lesson)->withStatus(Booking::STATUS_PENDING)->assemble();
         $lesson->addBooking($pending);
 
         self::assertSame(1, $lesson->getAvailableSpots());
@@ -34,14 +29,9 @@ final class LessonAvailableSpotsTest extends TestCase
     #[Test]
     public function cancelledBookingsDoNotOccupySeats(): void
     {
-        $lesson = LessonAssembler::new()
-            ->withCapacity(2)
-            ->assemble();
+        $lesson = LessonAssembler::new()->withCapacity(2)->assemble();
 
-        $cancelled = BookingAssembler::new()
-            ->withLessons($lesson)
-            ->withStatus(Booking::STATUS_CANCELLED)
-            ->assemble();
+        $cancelled = BookingAssembler::new()->withLessons($lesson)->withStatus(Booking::STATUS_CANCELLED)->assemble();
         $lesson->addBooking($cancelled);
 
         self::assertSame(2, $lesson->getAvailableSpots());

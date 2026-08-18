@@ -58,7 +58,7 @@ final class BrevoNewsletterServiceTest extends TestCase
     {
         $captured = [];
         $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
-            &$captured
+            &$captured,
         ): MockResponse {
             $captured = [
                 'method' => $method,
@@ -85,16 +85,19 @@ final class BrevoNewsletterServiceTest extends TestCase
         self::assertSame('User@Example.com', $payload['email']);
         self::assertSame([self::LIST_ID], $payload['listIds']);
         self::assertTrue($payload['updateEnabled']);
-        self::assertSame([
-            'FIRSTNAME' => 'Alice',
-        ], $payload['attributes']);
+        self::assertSame(
+            [
+                'FIRSTNAME' => 'Alice',
+            ],
+            $payload['attributes'],
+        );
     }
 
     public function testAddOrUpdateContactWithoutName(): void
     {
         $captured = [];
         $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
-            &$captured
+            &$captured,
         ): MockResponse {
             $captured['body'] = $options['body'] ?? null;
 
@@ -129,7 +132,7 @@ final class BrevoNewsletterServiceTest extends TestCase
     {
         $captured = [];
         $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
-            &$captured
+            &$captured,
         ): MockResponse {
             $captured['method'] = $method;
             $captured['url'] = $url;
@@ -169,7 +172,7 @@ final class BrevoNewsletterServiceTest extends TestCase
     {
         $captured = [];
         $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
-            &$captured
+            &$captured,
         ): MockResponse {
             $captured['method'] = $method;
             $captured['url'] = $url;

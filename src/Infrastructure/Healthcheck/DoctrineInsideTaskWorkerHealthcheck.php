@@ -39,18 +39,18 @@ class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
                     'Doctrine inside task worker is not healthy (timeout)',
                     [
                         'retry' => $retry,
-                    ]
+                    ],
                 );
             }
 
-            if (! $result) {
+            if (!$result) {
                 return new Response(
                     'doctrine_inside_task_worker',
                     false,
                     'Doctrine inside task worker is not healthy (handler reported failure)',
                     [
                         'retry' => $retry,
-                    ]
+                    ],
                 );
             }
 
@@ -62,7 +62,7 @@ class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
                 'Doctrine inside task worker check failed: ' . $e->getMessage(),
                 [
                     'retry' => $retry,
-                ]
+                ],
             );
         }
 

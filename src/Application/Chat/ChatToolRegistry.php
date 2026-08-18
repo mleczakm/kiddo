@@ -24,11 +24,7 @@ final readonly class ChatToolRegistry
         $definitions = [];
         foreach ($this->providers as $provider) {
             foreach ($provider->definitions() as $definition) {
-                if (
-                    ! $includeAll
-                    && $definition->requiresAdmin
-                    && ($actor === null || ! $actor->isAdmin())
-                ) {
+                if (!$includeAll && $definition->requiresAdmin && ($actor === null || !$actor->isAdmin())) {
                     continue;
                 }
                 $definitions[] = $definition;
@@ -74,12 +70,12 @@ final readonly class ChatToolRegistry
         if ($canonical === null) {
             return ToolResult::failure(sprintf(
                 'Unknown tool: %s. To list workshops call user.list_upcoming_lessons.',
-                $name
+                $name,
             ));
         }
 
         foreach ($this->providers as $provider) {
-            if (! $provider->supports($canonical)) {
+            if (!$provider->supports($canonical)) {
                 continue;
             }
 
@@ -87,7 +83,7 @@ final readonly class ChatToolRegistry
                 if ($definition->name !== $canonical) {
                     continue;
                 }
-                if ($definition->requiresAdmin && ! $actor->isAdmin()) {
+                if ($definition->requiresAdmin && !$actor->isAdmin()) {
                     return ToolResult::failure('This tool requires ROLE_ADMIN');
                 }
                 if ($definition->requiresAuth && $actor->isGuest()) {
@@ -99,7 +95,7 @@ final readonly class ChatToolRegistry
                 if ($definition->requiresConfirm && ($arguments['confirm'] ?? false) !== true) {
                     return ToolResult::failure(
                         'Mutation not confirmed. Call again with confirm=true after user approval.',
-                        'Potrzebne potwierdzenie użytkownika (confirm=true).'
+                        'Potrzebne potwierdzenie użytkownika (confirm=true).',
                     );
                 }
 

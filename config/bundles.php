@@ -2,36 +2,36 @@
 
 declare(strict_types=1);
 
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use Dunglas\DoctrineJsonOdm\Bundle\DunglasDoctrineJsonOdmBundle;
+use Misd\PhoneNumberBundle\MisdPhoneNumberBundle;
+use Novaway\Bundle\FeatureFlagBundle\NovawayFeatureFlagBundle;
+use Sentry\SentryBundle\SentryBundle;
+use SwooleBundle\ResetterBundle\SwooleBundleResetterBundle;
+use SwooleBundle\SwooleBundle\Bridge\Symfony\Bundle\SwooleBundle;
+use Symfony\AI\McpBundle\McpBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\MakerBundle\MakerBundle;
+use Symfony\Bundle\MonologBundle\MonologBundle;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+use Symfony\UX\Dropzone\DropzoneBundle;
+use Symfony\UX\LiveComponent\LiveComponentBundle;
 use Symfony\UX\StimulusBundle\StimulusBundle;
 use Symfony\UX\Turbo\TurboBundle;
-use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
-use Symfony\Bundle\SecurityBundle\SecurityBundle;
-use Symfony\Bundle\MonologBundle\MonologBundle;
-use Symfony\Bundle\MakerBundle\MakerBundle;
-use SwooleBundle\SwooleBundle\Bridge\Symfony\Bundle\SwooleBundle;
-use Symfonycasts\TailwindBundle\SymfonycastsTailwindBundle;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
-use Symfony\UX\LiveComponent\LiveComponentBundle;
-use TalesFromADev\Twig\Extra\Tailwind\Bridge\Symfony\Bundle\TalesFromADevTwigExtraTailwindBundle;
-use TalesFromADev\FlowbiteBundle\TalesFromADevFlowbiteBundle;
-use Misd\PhoneNumberBundle\MisdPhoneNumberBundle;
-use Zenstruck\Foundry\ZenstruckFoundryBundle;
-use Dunglas\DoctrineJsonOdm\Bundle\DunglasDoctrineJsonOdmBundle;
-use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
-use SwooleBundle\ResetterBundle\SwooleBundleResetterBundle;
+use Symfonycasts\TailwindBundle\SymfonycastsTailwindBundle;
 use SymfonyHealthCheckBundle\SymfonyHealthCheckBundle;
-use Sentry\SentryBundle\SentryBundle;
+use TalesFromADev\FlowbiteBundle\TalesFromADevFlowbiteBundle;
+use TalesFromADev\Twig\Extra\Tailwind\Bridge\Symfony\Bundle\TalesFromADevTwigExtraTailwindBundle;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
+use Zenstruck\Foundry\ZenstruckFoundryBundle;
 use Zenstruck\Mailer\Test\ZenstruckMailerTestBundle;
-use Novaway\Bundle\FeatureFlagBundle\NovawayFeatureFlagBundle;
 use Zenstruck\Messenger\Test\ZenstruckMessengerTestBundle;
-use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
-use Symfony\AI\McpBundle\McpBundle;
-use Symfony\UX\Dropzone\DropzoneBundle;
 
 return [
     FrameworkBundle::class => [

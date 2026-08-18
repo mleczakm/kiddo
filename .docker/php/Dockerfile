@@ -39,7 +39,7 @@ COPY src/ src/
 COPY templates/ templates/
 COPY tests/ tests/
 COPY translations/ translations/
-COPY .env .env.test ecs.php importmap.php phpstan.dist.neon phpstan-baseline.neon phpunit.xml.dist rector.php ./
+COPY .env .env.test analysis-baseline.toml importmap.php lint-baseline.toml mago.toml phpunit.xml.dist ./
 
 
 # cache:warmup can crash the first time it runs in a clean container: swoole-bundle's Opcache

@@ -26,14 +26,11 @@ class ProfileAction extends AbstractController
         #[CurrentUser]
         User $user,
     ): Response {
-        return $this->render(
-            'profile.html.twig',
-            [
-                'page' => [
-                    'title' => 'profile.title',
-                    'description' => 'profile.description',
-                ],
-            ]
-        );
+        return $this->render('profile.html.twig', [
+            'page' => [
+                'title' => 'profile.title',
+                'description' => 'profile.description',
+            ],
+        ]);
     }
 }

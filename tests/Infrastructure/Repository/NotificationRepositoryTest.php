@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Repository;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Notification;
 use App\Entity\NotificationSeverity;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]

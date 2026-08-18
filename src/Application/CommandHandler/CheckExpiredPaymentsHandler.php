@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\CheckExpiredPayments;
+use App\Entity\Payment;
 use App\Repository\PaymentRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use App\Entity\Payment;
 use Symfony\Component\Workflow\Registry as WorkflowRegistry;
 
 #[AsMessageHandler]

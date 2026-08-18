@@ -18,12 +18,9 @@ final class HttpClientHealthcheckTest extends TestCase
 
     public function testPassesWhenEndpointReturnsNoContent(): void
     {
-        $healthcheck = new HttpClientHealthcheck(
-            new MockHttpClient(new MockResponse('', [
-                'http_code' => 204,
-            ])),
-            self::URL
-        );
+        $healthcheck = new HttpClientHealthcheck(new MockHttpClient(new MockResponse('', [
+            'http_code' => 204,
+        ])), self::URL);
 
         $response = $healthcheck->check();
 
@@ -34,12 +31,9 @@ final class HttpClientHealthcheckTest extends TestCase
 
     public function testFailsWhenEndpointReturnsUnexpectedStatusCode(): void
     {
-        $healthcheck = new HttpClientHealthcheck(
-            new MockHttpClient(new MockResponse('', [
-                'http_code' => 503,
-            ])),
-            self::URL
-        );
+        $healthcheck = new HttpClientHealthcheck(new MockHttpClient(new MockResponse('', [
+            'http_code' => 503,
+        ])), self::URL);
 
         $response = $healthcheck->check();
 
@@ -50,12 +44,9 @@ final class HttpClientHealthcheckTest extends TestCase
 
     public function testFailsWhenHttpClientThrows(): void
     {
-        $healthcheck = new HttpClientHealthcheck(
-            new MockHttpClient(static function (): never {
-                throw new TransportException('cURL option is not supported');
-            }),
-            self::URL
-        );
+        $healthcheck = new HttpClientHealthcheck(new MockHttpClient(static function (): never {
+            throw new TransportException('cURL option is not supported');
+        }), self::URL);
 
         $response = $healthcheck->check();
 

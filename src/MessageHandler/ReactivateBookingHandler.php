@@ -25,19 +25,17 @@ class ReactivateBookingHandler
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
 
-        if (! $booking) {
+        if (!$booking) {
             $this->logger->error('Booking not found for reactivation', [
                 'bookingId' => $command->getBookingId(),
-                'reactivatedById' => $command->getReactivatedBy()
-                    ->getId(),
+                'reactivatedById' => $command->getReactivatedBy()->getId(),
             ]);
             return;
         }
 
-        if (! $this->bookingStateMachine->can($booking, 'reactivate')) {
+        if (!$this->bookingStateMachine->can($booking, 'reactivate')) {
             $this->logger->error('Cannot apply reactivate transition to booking', [
-                'bookingId' => $booking->getId()
-                    ->toRfc4122(),
+                'bookingId' => $booking->getId()->toRfc4122(),
                 'status' => $booking->getStatus(),
             ]);
             throw new \RuntimeException('Cannot reactivate this booking in its current state');
@@ -47,10 +45,8 @@ class ReactivateBookingHandler
         $booking->reactivate();
 
         $this->logger->info('Booking reactivated', [
-            'bookingId' => $booking->getId()
-                ->toRfc4122(),
-            'reactivatedById' => $command->getReactivatedBy()
-                ->getId(),
+            'bookingId' => $booking->getId()->toRfc4122(),
+            'reactivatedById' => $command->getReactivatedBy()->getId(),
             'reason' => $command->getReason(),
         ]);
     }

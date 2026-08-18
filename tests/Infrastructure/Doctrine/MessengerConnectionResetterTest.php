@@ -17,8 +17,7 @@ final class MessengerConnectionResetterTest extends TestCase
     public function testOnWorkerMessageReceivedEnsuresConnection(): void
     {
         $connectionEnsurer = $this->createMock(ConnectionEnsurerInterface::class);
-        $connectionEnsurer->expects($this->once())
-            ->method('ensureConnection');
+        $connectionEnsurer->expects($this->once())->method('ensureConnection');
 
         $resetter = new MessengerConnectionResetter($connectionEnsurer);
         $resetter->onWorkerMessageReceived(new WorkerMessageReceivedEvent(new Envelope(new \stdClass()), 'async'));

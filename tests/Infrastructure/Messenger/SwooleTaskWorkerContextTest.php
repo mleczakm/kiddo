@@ -23,7 +23,8 @@ final class SwooleTaskWorkerContextTest extends TestCase
     public function testReturnsFalseWhenServerCannotBeResolved(): void
     {
         $provider = $this->createMock(SwooleServerProviderInterface::class);
-        $provider->expects($this->once())
+        $provider
+            ->expects($this->once())
             ->method('getServer')
             ->willThrowException(new \RuntimeException('Server not initialized'));
 
@@ -38,9 +39,7 @@ final class SwooleTaskWorkerContextTest extends TestCase
         $server->taskworker = true;
 
         $provider = $this->createMock(SwooleServerProviderInterface::class);
-        $provider->expects($this->once())
-            ->method('getServer')
-            ->willReturn($server);
+        $provider->expects($this->once())->method('getServer')->willReturn($server);
 
         $context = new SwooleTaskWorkerContext($provider);
 

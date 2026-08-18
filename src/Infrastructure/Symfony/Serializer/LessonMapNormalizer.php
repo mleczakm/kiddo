@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Serializer;
 
-use Ds\Map;
-use Symfony\Component\Uid\Ulid;
 use App\Entity\DTO\BookedLesson;
 use App\Entity\DTO\LessonMap;
+use Ds\Map;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Uid\Ulid;
 
 class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface, NormalizerAwareInterface
 {
@@ -22,7 +22,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
         $denormalizeMap = function ($mapData) use ($format, $context): Map {
             /** @var Map<Ulid, BookedLesson> $result */
             $result = new Map();
-            if (! is_iterable($mapData)) {
+            if (!is_iterable($mapData)) {
                 return $result;
             }
             foreach ($mapData as $lessonId => $lessonData) {
@@ -30,13 +30,15 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                 $lessonIdStr = (string) $lessonId;
 
                 // If the key is not a valid ULID (e.g. numeric index like "0"), try to extract from payload
-                if (! Ulid::isValid($lessonIdStr)) {
+                if (!Ulid::isValid($lessonIdStr)) {
                     $candidate = null;
                     if (is_array($lessonData)) {
                         // Common shapes produced by nested normalizers
-                        $candidate = $lessonData['lessonId']
-                            ?? ($lessonData['id'] ?? null)
-                            ?? (is_array($lessonData['lesson'] ?? null) ? ($lessonData['lesson']['id'] ?? null) : null);
+                        $candidate =
+                            $lessonData['lessonId'] ?? $lessonData['id'] ?? null
+                                ?? (
+                                    is_array($lessonData['lesson'] ?? null) ? $lessonData['lesson']['id'] ?? null : null
+                                );
                     } elseif (is_string($lessonData) && Ulid::isValid($lessonData)) {
                         // Handle legacy form: list of ULID strings with numeric keys
                         $candidate = $lessonData;
@@ -55,15 +57,15 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                 }
 
                 // Detect object type from 'type' field, default to BookedLesson
-                $typeField = is_array($lessonData) ? ($lessonData['type'] ?? null) : null;
+                $typeField = is_array($lessonData) ? $lessonData['type'] ?? null : null;
                 $class = is_string($typeField) ? $typeField : BookedLesson::class;
 
-                if (! $this->normalizer instanceof DenormalizerInterface) {
+                if (!$this->normalizer instanceof DenormalizerInterface) {
                     throw new \LogicException('Normalizer must implement DenormalizerInterface');
                 }
                 $result->put(
                     Ulid::fromString($lessonIdStr),
-                    $this->normalizer->denormalize($lessonData, $class, $format, $context)
+                    $this->normalizer->denormalize($lessonData, $class, $format, $context),
                 );
             }
             return $result;
@@ -71,9 +73,9 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
 
         $payload = is_array($data) ? $data : [];
         $lessonMap = new LessonMap();
-        $lessonMap->lessons   = $denormalizeMap($payload['lessons'] ?? []);
-        $lessonMap->active    = $denormalizeMap($payload['active'] ?? []);
-        $lessonMap->past      = $denormalizeMap($payload['past'] ?? []);
+        $lessonMap->lessons = $denormalizeMap($payload['lessons'] ?? []);
+        $lessonMap->active = $denormalizeMap($payload['active'] ?? []);
+        $lessonMap->past = $denormalizeMap($payload['past'] ?? []);
         $lessonMap->cancelled = $denormalizeMap($payload['cancelled'] ?? []);
         return $lessonMap;
     }
@@ -82,7 +84,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
         mixed $data,
         string $type,
         ?string $format = null,
-        array $context = []
+        array $context = [],
     ): bool {
         return $type === LessonMap::class;
     }
@@ -92,7 +94,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
      */
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        if (! $data instanceof LessonMap) {
+        if (!$data instanceof LessonMap) {
             throw new \InvalidArgumentException();
         }
         $normalizeMap = function ($map) use ($format, $context) {
@@ -108,9 +110,9 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
             return $result;
         };
         return [
-            'lessons'   => $normalizeMap($data->lessons),
-            'active'    => $normalizeMap($data->active),
-            'past'      => $normalizeMap($data->past),
+            'lessons' => $normalizeMap($data->lessons),
+            'active' => $normalizeMap($data->active),
+            'past' => $normalizeMap($data->past),
             'cancelled' => $normalizeMap($data->cancelled),
         ];
     }

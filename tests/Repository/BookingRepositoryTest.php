@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use App\Entity\Lesson;
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\Booking;
+use App\Entity\Lesson;
 use App\Repository\BookingRepository;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
@@ -14,6 +13,7 @@ use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 #[Group('functional')]
@@ -40,10 +40,7 @@ class BookingRepositoryTest extends KernelTestCase
     public function testSaveBookingWithBasicData(): void
     {
         // Arrange: Create a user and booking with minimal data
-        $user = UserAssembler::new()
-            ->withEmail('test@example.com')
-            ->withName('Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('test@example.com')->withName('Test User')->assemble();
 
         $booking = BookingAssembler::new()
             ->withUser($user)
@@ -113,15 +110,9 @@ class BookingRepositoryTest extends KernelTestCase
             ->withName('User With Lessons')
             ->assemble();
 
-        $lesson1 = LessonAssembler::new()
-            ->withTitle('Art Workshop')
-            ->withStatus('active')
-            ->assemble();
+        $lesson1 = LessonAssembler::new()->withTitle('Art Workshop')->withStatus('active')->assemble();
 
-        $lesson2 = LessonAssembler::new()
-            ->withTitle('Music Class')
-            ->withStatus('active')
-            ->assemble();
+        $lesson2 = LessonAssembler::new()->withTitle('Music Class')->withStatus('active')->assemble();
 
         $booking = BookingAssembler::new()
             ->withUser($user)
@@ -166,10 +157,7 @@ class BookingRepositoryTest extends KernelTestCase
             ->withStatus('paid')
             ->assemble();
 
-        $lesson = LessonAssembler::new()
-            ->withTitle('Complete Workshop')
-            ->withStatus('active')
-            ->assemble();
+        $lesson = LessonAssembler::new()->withTitle('Complete Workshop')->withStatus('active')->assemble();
 
         $createdAt = new \DateTimeImmutable('2024-01-15 10:30:00');
 
@@ -204,8 +192,7 @@ class BookingRepositoryTest extends KernelTestCase
         $this->assertEquals($payment->getId(), $savedPayment->getId());
         $this->assertCount(1, $savedBooking->getLessons());
         /** @var Lesson $firstLesson */
-        $firstLesson = $savedBooking->getLessons()
-            ->first();
+        $firstLesson = $savedBooking->getLessons()->first();
         $this->assertNotFalse($firstLesson);
         $this->assertEquals('Complete Workshop', $firstLesson->getMetadata()->title);
     }
@@ -213,10 +200,7 @@ class BookingRepositoryTest extends KernelTestCase
     public function testSaveBookingWithDifferentStatuses(): void
     {
         // Arrange: Create bookings with different statuses
-        $user = UserAssembler::new()
-            ->withEmail('status-test@example.com')
-            ->withName('Status Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('status-test@example.com')->withName('Status Test User')->assemble();
 
         $statuses = [
             Booking::STATUS_PENDING,
@@ -261,30 +245,15 @@ class BookingRepositoryTest extends KernelTestCase
     public function testSaveBookingAndRetrieveByUser(): void
     {
         // Arrange: Create multiple users with bookings
-        $user1 = UserAssembler::new()
-            ->withEmail('user1@example.com')
-            ->withName('User One')
-            ->assemble();
+        $user1 = UserAssembler::new()->withEmail('user1@example.com')->withName('User One')->assemble();
 
-        $user2 = UserAssembler::new()
-            ->withEmail('user2@example.com')
-            ->withName('User Two')
-            ->assemble();
+        $user2 = UserAssembler::new()->withEmail('user2@example.com')->withName('User Two')->assemble();
 
-        $booking1 = BookingAssembler::new()
-            ->withUser($user1)
-            ->withStatus(Booking::STATUS_ACTIVE)
-            ->assemble();
+        $booking1 = BookingAssembler::new()->withUser($user1)->withStatus(Booking::STATUS_ACTIVE)->assemble();
 
-        $booking2 = BookingAssembler::new()
-            ->withUser($user1)
-            ->withStatus(Booking::STATUS_PENDING)
-            ->assemble();
+        $booking2 = BookingAssembler::new()->withUser($user1)->withStatus(Booking::STATUS_PENDING)->assemble();
 
-        $booking3 = BookingAssembler::new()
-            ->withUser($user2)
-            ->withStatus(Booking::STATUS_ACTIVE)
-            ->assemble();
+        $booking3 = BookingAssembler::new()->withUser($user2)->withStatus(Booking::STATUS_ACTIVE)->assemble();
 
         // Act: Save all users and bookings
         $this->entityManager->persist($user1);
@@ -317,15 +286,9 @@ class BookingRepositoryTest extends KernelTestCase
     public function testUpdateBookingStatus(): void
     {
         // Arrange: Create and save a booking
-        $user = UserAssembler::new()
-            ->withEmail('update-test@example.com')
-            ->withName('Update Test User')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('update-test@example.com')->withName('Update Test User')->assemble();
 
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withStatus(Booking::STATUS_PENDING)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withStatus(Booking::STATUS_PENDING)->assemble();
 
         $this->entityManager->persist($user);
         $this->entityManager->persist($booking);
@@ -360,14 +323,8 @@ class BookingRepositoryTest extends KernelTestCase
             ->withLessons($lesson)
             ->withStatus(Booking::STATUS_CANCELLED)
             ->assemble();
-        $otherUsersBooking = BookingAssembler::new()
-            ->withUser($otherUser)
-            ->withLessons($lesson)
-            ->assemble();
-        $otherLessonBooking = BookingAssembler::new()
-            ->withUser($user)
-            ->withLessons($otherLesson)
-            ->assemble();
+        $otherUsersBooking = BookingAssembler::new()->withUser($otherUser)->withLessons($lesson)->assemble();
+        $otherLessonBooking = BookingAssembler::new()->withUser($user)->withLessons($otherLesson)->assemble();
 
         $this->entityManager->persist($user);
         $this->entityManager->persist($otherUser);
@@ -392,18 +349,9 @@ class BookingRepositoryTest extends KernelTestCase
         $lessonB = LessonAssembler::new()->assemble();
         $lessonC = LessonAssembler::new()->assemble();
 
-        $bookingA = BookingAssembler::new()
-            ->withUser($user)
-            ->withLessons($lessonA)
-            ->assemble();
-        $bookingB = BookingAssembler::new()
-            ->withUser($user)
-            ->withLessons($lessonB)
-            ->assemble();
-        $bookingC = BookingAssembler::new()
-            ->withUser($user)
-            ->withLessons($lessonC)
-            ->assemble();
+        $bookingA = BookingAssembler::new()->withUser($user)->withLessons($lessonA)->assemble();
+        $bookingB = BookingAssembler::new()->withUser($user)->withLessons($lessonB)->assemble();
+        $bookingC = BookingAssembler::new()->withUser($user)->withLessons($lessonC)->assemble();
 
         $this->entityManager->persist($user);
         $this->entityManager->persist($lessonA);

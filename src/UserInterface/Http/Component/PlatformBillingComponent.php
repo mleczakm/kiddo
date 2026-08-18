@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
-use App\Form\PlatformBillingPaymentType;
 use App\Application\Service\MoneyInputParser;
 use App\Application\Service\PlatformBillingService;
+use App\Form\PlatformBillingPaymentType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -31,21 +31,17 @@ class PlatformBillingComponent extends AbstractController
     public ?string $errorMessage = null;
 
     public function __construct(
-        private readonly PlatformBillingService $platformBillingService
+        private readonly PlatformBillingService $platformBillingService,
     ) {}
 
     public function getCurrentDue(): float
     {
-        return $this->platformBillingService->getCurrentDue()
-            ->getAmount()
-            ->toFloat();
+        return $this->platformBillingService->getCurrentDue()->getAmount()->toFloat();
     }
 
     public function getPastDue(): float
     {
-        return $this->platformBillingService->getPastDue()
-            ->getAmount()
-            ->toFloat();
+        return $this->platformBillingService->getPastDue()->getAmount()->toFloat();
     }
 
     public function hasPastDue(): bool
@@ -87,11 +83,11 @@ class PlatformBillingComponent extends AbstractController
     {
         $form = $this->getForm();
 
-        if (! $form->isSubmitted()) {
+        if (!$form->isSubmitted()) {
             return;
         }
 
-        if (! $form->isValid()) {
+        if (!$form->isValid()) {
             $this->errorMessage = 'Invalid form data';
             return;
         }
@@ -120,9 +116,6 @@ class PlatformBillingComponent extends AbstractController
         }
     }
 
-    /**
-     * @phpstan-ignore missingType.generics
-     */
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(PlatformBillingPaymentType::class);

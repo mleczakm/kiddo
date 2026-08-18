@@ -37,7 +37,7 @@ final readonly class ProcessCountHealthcheck implements CheckInterface
                 [
                     'count' => $count,
                     'threshold' => $this->maxProcesses,
-                ]
+                ],
             );
         }
 

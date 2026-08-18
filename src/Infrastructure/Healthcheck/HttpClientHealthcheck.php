@@ -23,14 +23,9 @@ final readonly class HttpClientHealthcheck implements CheckInterface
                 'timeout' => 3,
             ])->getStatusCode();
         } catch (\Throwable $e) {
-            return new Response(
-                'http_client',
-                false,
-                'External HTTP client request failed: ' . $e->getMessage(),
-                [
-                    'url' => $this->url,
-                ]
-            );
+            return new Response('http_client', false, 'External HTTP client request failed: ' . $e->getMessage(), [
+                'url' => $this->url,
+            ]);
         }
 
         if ($statusCode !== 204) {
@@ -41,18 +36,13 @@ final readonly class HttpClientHealthcheck implements CheckInterface
                 [
                     'url' => $this->url,
                     'status_code' => $statusCode,
-                ]
+                ],
             );
         }
 
-        return new Response(
-            'http_client',
-            true,
-            'External HTTP client request is healthy',
-            [
-                'url' => $this->url,
-                'status_code' => $statusCode,
-            ]
-        );
+        return new Response('http_client', true, 'External HTTP client request is healthy', [
+            'url' => $this->url,
+            'status_code' => $statusCode,
+        ]);
     }
 }

@@ -7,20 +7,20 @@ namespace App\UserInterface\Http\Component;
 use App\Application\Service\MoneyInputParser;
 use App\Entity\Booking;
 use App\Entity\Lesson;
-use App\Entity\User;
 use App\Entity\Payment;
-use App\Repository\UserRepository;
+use App\Entity\User;
 use App\Repository\LessonRepository;
+use App\Repository\UserRepository;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\Component\Clock\Clock;
 
 #[AsLiveComponent]
 class AdminBookingModal extends AbstractController
@@ -63,7 +63,7 @@ class AdminBookingModal extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly LessonRepository $lessonRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     #[LiveAction]
@@ -89,7 +89,8 @@ class AdminBookingModal extends AbstractController
             return [];
         }
 
-        $qb = $this->lessonRepository->createQueryBuilder('l')
+        $qb = $this->lessonRepository
+            ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
@@ -100,12 +101,13 @@ class AdminBookingModal extends AbstractController
             ->setMaxResults(10);
 
         $searchTerm = '%' . $this->lessonSearch . '%';
-        $qb->andWhere('m.title LIKE :search OR m.description LIKE :search OR s.name LIKE :search')
-            ->setParameter('search', $searchTerm);
+        $qb->andWhere('m.title LIKE :search OR m.description LIKE :search OR s.name LIKE :search')->setParameter(
+            'search',
+            $searchTerm,
+        );
 
         /** @var Lesson[] $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 
@@ -119,15 +121,15 @@ class AdminBookingModal extends AbstractController
             return [];
         }
 
-        $qb = $this->userRepository->createQueryBuilder('u')
+        $qb = $this->userRepository
+            ->createQueryBuilder('u')
             ->where('u.name LIKE :search OR u.email LIKE :search')
             ->setParameter('search', '%' . $this->userSearch . '%')
             ->orderBy('u.name', 'ASC')
             ->setMaxResults(10);
 
         /** @var User[] $result */
-        $result = $qb->getQuery()
-            ->getResult();
+        $result = $qb->getQuery()->getResult();
         return $result;
     }
 
@@ -139,7 +141,7 @@ class AdminBookingModal extends AbstractController
     {
         try {
             $decoded = json_decode($this->selectedLessonIds, true);
-            if (! is_array($decoded)) {
+            if (!is_array($decoded)) {
                 return [];
             }
             /** @var list<string> $ids */
@@ -169,7 +171,7 @@ class AdminBookingModal extends AbstractController
 
     public function getSelectedUser(): ?User
     {
-        if (! $this->selectedUserId) {
+        if (!$this->selectedUserId) {
             return null;
         }
 
@@ -194,7 +196,7 @@ class AdminBookingModal extends AbstractController
     {
         $selectedIds = $this->getSelectedLessonIdsArray();
 
-        if (! in_array($lessonId, $selectedIds, true)) {
+        if (!in_array($lessonId, $selectedIds, true)) {
             $selectedIds[] = $lessonId;
             $this->selectedLessonIds = (string) json_encode($selectedIds);
         }
@@ -232,13 +234,13 @@ class AdminBookingModal extends AbstractController
                 return;
             }
 
-            if (! $this->selectedUserId) {
+            if (!$this->selectedUserId) {
                 $this->errorMessage = 'Please select a user';
                 return;
             }
 
             $user = $this->getSelectedUser();
-            if (! $user) {
+            if (!$user) {
                 $this->errorMessage = 'Selected user not found';
                 return;
             }
@@ -286,7 +288,6 @@ class AdminBookingModal extends AbstractController
             // Reset form and close modal
             $this->resetForm();
             $this->modalOpened = false;
-
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to create booking: ' . $e->getMessage();
             $this->successMessage = null;
@@ -307,7 +308,7 @@ class AdminBookingModal extends AbstractController
 
     public function isFormValid(): bool
     {
-        return ! empty($this->getSelectedLessonIdsArray()) && ! empty($this->selectedUserId);
+        return !empty($this->getSelectedLessonIdsArray()) && !empty($this->selectedUserId);
     }
 
     public function getTotalSelectedLessons(): int

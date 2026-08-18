@@ -34,11 +34,10 @@ class CancelLessonBookingHandler
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
 
-        if (! $booking) {
+        if (!$booking) {
             $this->logger->error('Booking not found', [
                 'bookingId' => $command->getBookingId(),
-                'cancelledById' => $command->getCancelledBy()
-                    ->getId(),
+                'cancelledById' => $command->getCancelledBy()->getId(),
             ]);
             return;
         }
@@ -47,12 +46,9 @@ class CancelLessonBookingHandler
         $bookedLesson = $booking->getBookedLesson($command->getLessonId()->toRfc4122());
         if ($bookedLesson === null) {
             $this->logger->error('Lesson not found in booking', [
-                'bookingId' => $booking->getId()
-                    ->toRfc4122(),
-                'lessonId' => $command->getLessonId()
-                    ->toRfc4122(),
-                'cancelledById' => $command->getCancelledBy()
-                    ->getId(),
+                'bookingId' => $booking->getId()->toRfc4122(),
+                'lessonId' => $command->getLessonId()->toRfc4122(),
+                'cancelledById' => $command->getCancelledBy()->getId(),
             ]);
             return;
         }
@@ -60,10 +56,9 @@ class CancelLessonBookingHandler
         // Always use plain cancel here; refund is handled by a separate command/handler
         $transition = 'cancel';
 
-        if (! $this->bookingStateMachine->can($booking, $transition)) {
+        if (!$this->bookingStateMachine->can($booking, $transition)) {
             $this->logger->error('Cannot apply cancel transition to booking', [
-                'bookingId' => $booking->getId()
-                    ->toRfc4122(),
+                'bookingId' => $booking->getId()->toRfc4122(),
                 'status' => $booking->getStatus(),
             ]);
             throw new \RuntimeException(sprintf('Cannot %s this booking in its current state', $transition));
@@ -71,20 +66,16 @@ class CancelLessonBookingHandler
 
         // Perform domain operation: cancel the specific lesson ONLY (do not cancel the whole booking)
         $wasCancelled = $booking->cancelLesson(
-            $command->getLessonId()
-                ->toRfc4122(),
+            $command->getLessonId()->toRfc4122(),
             $command->getReason(),
             $command->getCancelledBy(),
         );
 
-        if (! $wasCancelled) {
+        if (!$wasCancelled) {
             $this->logger->warning('Requested lesson was not active or could not be cancelled', [
-                'bookingId' => $booking->getId()
-                    ->toRfc4122(),
-                'lessonId' => $command->getLessonId()
-                    ->toRfc4122(),
-                'cancelledById' => $command->getCancelledBy()
-                    ->getId(),
+                'bookingId' => $booking->getId()->toRfc4122(),
+                'lessonId' => $command->getLessonId()->toRfc4122(),
+                'cancelledById' => $command->getCancelledBy()->getId(),
             ]);
             return;
         }
@@ -93,7 +84,7 @@ class CancelLessonBookingHandler
         // workflow transition (instead of setting the status directly) so that
         // workflow.booking.transition.cancel fires and the cancellation notification
         // (email + in-app, to both the customer and admins) actually gets sent.
-        if (! $booking->hasActiveBookedLessons()) {
+        if (!$booking->hasActiveBookedLessons()) {
             $this->bookingStateMachine->apply($booking, 'cancel');
         }
 
@@ -101,8 +92,7 @@ class CancelLessonBookingHandler
         $cancelledLesson = null;
         foreach ($booking->getLessons() as $lesson) {
             if ($lesson->getId()->equals($command->getLessonId())) {
-                $lessonTitle = $lesson->getMetadata()
-                    ->title;
+                $lessonTitle = $lesson->getMetadata()->title;
                 $cancelledLesson = $lesson;
                 break;
             }
@@ -113,12 +103,15 @@ class CancelLessonBookingHandler
             $this->inAppNotifications->notifyUsers(
                 $instructors,
                 $this->translator->trans('notifications.in_app.cancellation.instructor.title', [], 'messages'),
-                $this->translator->trans('notifications.in_app.cancellation.instructor.body', [
-                    'name' => $booking->getUser()
-                        ->getName(),
-                    'lesson' => $lessonTitle,
-                    'date' => $cancelledLesson->schedule->format('Y-m-d H:i'),
-                ], 'messages'),
+                $this->translator->trans(
+                    'notifications.in_app.cancellation.instructor.body',
+                    [
+                        'name' => $booking->getUser()->getName(),
+                        'lesson' => $lessonTitle,
+                        'date' => $cancelledLesson->schedule->format('Y-m-d H:i'),
+                    ],
+                    'messages',
+                ),
                 $this->urlGenerator->generate('app_admin_lesson_view', [
                     'id' => (string) $cancelledLesson->getId(),
                 ]),
@@ -127,12 +120,9 @@ class CancelLessonBookingHandler
         }
 
         $this->logger->info('Lesson cancelled within booking', [
-            'bookingId' => $booking->getId()
-                ->toRfc4122(),
-            'lessonId' => $command->getLessonId()
-                ->toRfc4122(),
-            'cancelledById' => $command->getCancelledBy()
-                ->getId(),
+            'bookingId' => $booking->getId()->toRfc4122(),
+            'lessonId' => $command->getLessonId()->toRfc4122(),
+            'cancelledById' => $command->getCancelledBy()->getId(),
             'reason' => $command->getReason(),
             'bookingStatus' => $booking->getStatus(),
         ]);

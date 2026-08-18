@@ -25,10 +25,7 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $fromDate = new DateTimeImmutable('2025-08-24 10:00:00');
         $toDate = new DateTimeImmutable('2025-08-26 12:30:00');
 
-        $user = UserAssembler::new()
-            ->withEmail('user@example.com')
-            ->withName('Jan Kowalski')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
 
         $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $admin2 = UserAssembler::new()->withEmail('admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();
@@ -39,10 +36,12 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $em->persist($admin2);
 
         $oldLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())->withSchedule($fromDate)
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())
+            ->withSchedule($fromDate)
             ->assemble();
         $newLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())->withSchedule($toDate)
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())
+            ->withSchedule($toDate)
             ->assemble();
         $em->persist($oldLesson);
         $em->persist($newLesson);
@@ -61,15 +60,11 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
             reason: 'Urlop',
         ));
 
-        $this->mailer()
-            ->assertSentEmailCount(2);
+        $this->mailer()->assertSentEmailCount(2);
 
-        $emails = $this->mailer()
-            ->sentEmails();
-        $adminEmail1 = $emails->whereTo($admin1->getEmail())
-            ->first();
-        $adminEmail2 = $emails->whereTo($admin2->getEmail())
-            ->first();
+        $emails = $this->mailer()->sentEmails();
+        $adminEmail1 = $emails->whereTo($admin1->getEmail())->first();
+        $adminEmail2 = $emails->whereTo($admin2->getEmail())->first();
 
         // Subject contains user email and lesson title
         self::assertStringContainsString('user@example.com', (string) $adminEmail1->getSubject());
@@ -93,7 +88,8 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $em->persist($user);
 
         $oldLesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Pilates')->assemble())->withSchedule($date)
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Pilates')->assemble())
+            ->withSchedule($date)
             ->assemble();
         $newLesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Pilates')->assemble())
@@ -116,7 +112,6 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
             reason: null,
         ));
 
-        $this->mailer()
-            ->assertSentEmailCount(0);
+        $this->mailer()->assertSentEmailCount(0);
     }
 }

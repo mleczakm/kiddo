@@ -8,5 +8,6 @@ enum WorkshopType: string
 {
     case ONE_TIME = 'one_time';
     case WEEKLY = 'weekly';
+
     // Możesz dodać inne typy np. INVITE, STAFF_ONLY itd.
 }

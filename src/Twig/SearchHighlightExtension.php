@@ -16,7 +16,8 @@ final class SearchHighlightExtension extends AbstractExtension
         return [
             new TwigFilter('highlight_search', $this->highlight(...), [
                 'is_safe' => ['html'],
-            ])];
+            ]),
+        ];
     }
 
     public function highlight(string $value, string $query): Markup

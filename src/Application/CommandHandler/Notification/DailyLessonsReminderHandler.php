@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\CommandHandler\Notification;
 
-use App\Entity\Booking;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
@@ -78,10 +78,14 @@ readonly class DailyLessonsReminderHandler
 
         $this->inAppNotifications->notifyAdmins(
             $this->translator->trans('notifications.in_app.daily_reminder.admin.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.daily_reminder.admin.body', [
-                'count' => count($lessons),
-                'date' => $date->format('d.m.Y'),
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.daily_reminder.admin.body',
+                [
+                    'count' => count($lessons),
+                    'date' => $date->format('d.m.Y'),
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('app_admin_schedule'),
             NotificationSeverity::Info,
         );
@@ -151,10 +155,14 @@ readonly class DailyLessonsReminderHandler
             $this->inAppNotifications->notify(
                 $user,
                 $this->translator->trans('notifications.in_app.daily_reminder.user.title', [], 'messages'),
-                $this->translator->trans('notifications.in_app.daily_reminder.user.body', [
-                    'lessons' => implode(', ', $titles),
-                    'date' => $date->format('d.m.Y'),
-                ], 'messages'),
+                $this->translator->trans(
+                    'notifications.in_app.daily_reminder.user.body',
+                    [
+                        'lessons' => implode(', ', $titles),
+                        'date' => $date->format('d.m.Y'),
+                    ],
+                    'messages',
+                ),
                 $this->urlGenerator->generate('dashboard'),
                 NotificationSeverity::Info,
             );

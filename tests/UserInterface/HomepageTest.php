@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface;
 
 use App\Entity\Child;
-use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\BookingAssembler;
+use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -45,9 +45,7 @@ class HomepageTest extends WebTestCase
     public function testPagesAccessibleForUsers(string $path, int $code = 200): void
     {
         $client = self::createClient();
-        $user = UserAssembler::new()
-            ->withRoles('ROLE_USER')
-            ->assemble();
+        $user = UserAssembler::new()->withRoles('ROLE_USER')->assemble();
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $em->persist($user);
         $em->flush();
@@ -74,9 +72,7 @@ class HomepageTest extends WebTestCase
     public function testAdminDashboardRequiresAuthentication(): void
     {
         $client = static::createClient();
-        $user = UserAssembler::new()
-            ->withRoles('ROLE_ADMIN')
-            ->assemble();
+        $user = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $em->persist($user);
         $em->flush();
@@ -95,9 +91,7 @@ class HomepageTest extends WebTestCase
         $client = static::createClient();
         $em = self::getContainer()->get(EntityManagerInterface::class);
 
-        $user = UserAssembler::new()
-            ->withRoles('ROLE_USER')
-            ->assemble();
+        $user = UserAssembler::new()->withRoles('ROLE_USER')->assemble();
         $em->persist($user);
 
         $child = new Child($user, 'Antoś', new \DateTimeImmutable('2020-01-01'));
@@ -106,10 +100,7 @@ class HomepageTest extends WebTestCase
         $lesson = LessonAssembler::new()->assemble();
         $em->persist($lesson);
 
-        $booking = BookingAssembler::new()
-            ->withUser($user)
-            ->withLessons($lesson)
-            ->assemble();
+        $booking = BookingAssembler::new()->withUser($user)->withLessons($lesson)->assemble();
         $booking->setChild($child);
         $em->persist($booking);
 

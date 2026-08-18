@@ -24,9 +24,13 @@ final readonly class SendVerificationCodeHandler
         $notification = new Notification()
             ->importance('')
             ->subject($this->translator->trans('verification_code.subject', [], 'emails'))
-            ->content($this->translator->trans('verification_code.content', [
-                'code' => $command->code,
-            ], 'emails'));
+            ->content($this->translator->trans(
+                'verification_code.content',
+                [
+                    'code' => $command->code,
+                ],
+                'emails',
+            ));
 
         $this->notifier->send($notification, new Recipient($command->email));
     }

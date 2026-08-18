@@ -27,18 +27,18 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     protected function tearDown(): void
     {
-        $this->entityManager->getConnection()
-            ->rollBack();
+        $this->entityManager->getConnection()->rollBack();
         parent::tearDown();
     }
 
     public function testGetBillingDataReturnsDefaultWhenNoSettingExists(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
-        $setting = $this->entityManager->getRepository(Setting::class)->findOneBy([
-            'key' => 'platform_billing',
-        ]);
+        $this->entityManager->getConnection()->beginTransaction();
+        $setting = $this->entityManager
+            ->getRepository(Setting::class)
+            ->findOneBy([
+                'key' => 'platform_billing',
+            ]);
         if ($setting) {
             $this->entityManager->remove($setting);
             $this->entityManager->flush();
@@ -46,16 +46,18 @@ class PlatformBillingServiceTest extends KernelTestCase
 
         $result = $this->service->getBillingData();
 
-        $this->assertEquals([
-            'currentDue' => '0.00',
-            'pastDue' => '0.00',
-        ], $result);
+        $this->assertEquals(
+            [
+                'currentDue' => '0.00',
+                'pastDue' => '0.00',
+            ],
+            $result,
+        );
     }
 
     public function testGetBillingDataReturnsExistingData(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -67,16 +69,18 @@ class PlatformBillingServiceTest extends KernelTestCase
 
         $result = $this->service->getBillingData();
 
-        $this->assertEquals([
-            'currentDue' => '100.50',
-            'pastDue' => '50.25',
-        ], $result);
+        $this->assertEquals(
+            [
+                'currentDue' => '100.50',
+                'pastDue' => '50.25',
+            ],
+            $result,
+        );
     }
 
     public function testAddCommissionToCurrentDue(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -98,11 +102,12 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testAddCommissionToCurrentDueCreatesNewSetting(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
-        $setting = $this->entityManager->getRepository(Setting::class)->findOneBy([
-            'key' => 'platform_billing',
-        ]);
+        $this->entityManager->getConnection()->beginTransaction();
+        $setting = $this->entityManager
+            ->getRepository(Setting::class)
+            ->findOneBy([
+                'key' => 'platform_billing',
+            ]);
         if ($setting) {
             $this->entityManager->remove($setting);
             $this->entityManager->flush();
@@ -111,9 +116,11 @@ class PlatformBillingServiceTest extends KernelTestCase
         $paymentAmount = Money::of('500.00', 'PLN');
         $this->service->addCommissionToCurrentDue($paymentAmount);
 
-        $setting = $this->entityManager->getRepository(Setting::class)->findOneBy([
-            'key' => 'platform_billing',
-        ]);
+        $setting = $this->entityManager
+            ->getRepository(Setting::class)
+            ->findOneBy([
+                'key' => 'platform_billing',
+            ]);
         $this->assertNotNull($setting);
         $updatedContent = $setting->getContent();
         /** @var array{currentDue: string, pastDue: string} $updatedContent */
@@ -123,8 +130,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testProcessPastDuePayment(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -145,8 +151,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testProcessPastDuePaymentWithExcess(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -167,8 +172,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testProcessPastDuePaymentWithExcessToNegative(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -189,8 +193,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testSetPastDueAsPaid(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -211,8 +214,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testGetCurrentDue(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -229,8 +231,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testGetPastDue(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -247,8 +248,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testHasPastDueReturnsTrueWhenPastDueExists(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([
@@ -263,8 +263,7 @@ class PlatformBillingServiceTest extends KernelTestCase
 
     public function testHasPastDueReturnsFalseWhenNoPastDue(): void
     {
-        $this->entityManager->getConnection()
-            ->beginTransaction();
+        $this->entityManager->getConnection()->beginTransaction();
         $setting = new Setting();
         $setting->setKey('platform_billing');
         $setting->setContent([

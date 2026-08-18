@@ -77,8 +77,7 @@ final readonly class SearchResultHydrator
                    d.amount_value, d.amount_currency, d.amount_text, d.timestamp_str
             FROM wanted w
             JOIN details d USING (entity_type, id)
-            SQL
-            , implode(', ', $values));
+            SQL, implode(', ', $values));
 
         /**
          * @var list<array{
@@ -137,9 +136,9 @@ final readonly class SearchResultHydrator
             SearchType::Transfer => [
                 $row['part1'],
                 $row['amount_text'] !== null
-                    ? $this->moneyExtension->formatMoney(
-                        TransferMoneyParser::transferMoneyStringToMoneyObject($row['amount_text'])
-                    )
+                    ? $this->moneyExtension->formatMoney(TransferMoneyParser::transferMoneyStringToMoneyObject(
+                        $row['amount_text'],
+                    ))
                     : null,
                 $row['timestamp_str'],
             ],

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Mcp;
 
-use Symfony\Component\HttpFoundation\Request;
 use App\Application\Chat\ChatActorResolver;
 use App\Application\Chat\ChatToolRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -74,7 +74,7 @@ final readonly class KiddoMcpToolInvoker
         }
 
         throw new \InvalidArgumentException(
-            'Missing chat identity. Configure MCP request header X-Kiddo-Chat-Token={{kiddo_chat_token}} (dynamic variable from signed-url).'
+            'Missing chat identity. Configure MCP request header X-Kiddo-Chat-Token={{kiddo_chat_token}} (dynamic variable from signed-url).',
         );
     }
 }

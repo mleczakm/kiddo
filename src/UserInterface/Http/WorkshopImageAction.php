@@ -18,7 +18,7 @@ final class WorkshopImageAction extends AbstractController
     public function __invoke(Request $request, Lesson $lesson): Response
     {
         $metadata = $lesson->getMetadata();
-        if (! $metadata->hasImage()) {
+        if (!$metadata->hasImage()) {
             throw $this->createNotFoundException();
         }
 

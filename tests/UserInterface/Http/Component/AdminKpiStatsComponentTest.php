@@ -41,43 +41,55 @@ final class AdminKpiStatsComponentTest extends WebTestCase
         $customer = UserAssembler::new()->assemble();
         $em->persist($customer);
 
-        $em->persist(BookingAssembler::new()
-            ->withUser($customer)
-            ->withCreatedAt(new \DateTimeImmutable('2025-03-10'))
-            ->withStatus('active')
-            ->assemble());
-        $em->persist(BookingAssembler::new()
-            ->withUser($customer)
-            ->withCreatedAt(new \DateTimeImmutable('2025-02-10'))
-            ->withStatus('active')
-            ->assemble());
-        $em->persist(BookingAssembler::new()
-            ->withUser($customer)
-            ->withCreatedAt(new \DateTimeImmutable('2025-03-12'))
-            ->withStatus('cancelled')
-            ->assemble());
+        $em->persist(
+            BookingAssembler::new()
+                ->withUser($customer)
+                ->withCreatedAt(new \DateTimeImmutable('2025-03-10'))
+                ->withStatus('active')
+                ->assemble(),
+        );
+        $em->persist(
+            BookingAssembler::new()
+                ->withUser($customer)
+                ->withCreatedAt(new \DateTimeImmutable('2025-02-10'))
+                ->withStatus('active')
+                ->assemble(),
+        );
+        $em->persist(
+            BookingAssembler::new()
+                ->withUser($customer)
+                ->withCreatedAt(new \DateTimeImmutable('2025-03-12'))
+                ->withStatus('cancelled')
+                ->assemble(),
+        );
 
-        $em->persist(PaymentAssembler::new()
-            ->withUser($customer)
-            ->withAmount(Money::of(100, 'PLN'))
-            ->withStatus(Payment::STATUS_PAID)
-            ->withCreatedAt(new \DateTimeImmutable('2025-03-05'))
-            ->assemble());
-        $em->persist(PaymentAssembler::new()
-            ->withUser($customer)
-            ->withAmount(Money::of(50, 'PLN'))
-            ->withStatus(Payment::STATUS_PENDING)
-            ->withCreatedAt(new \DateTimeImmutable('2025-03-06'))
-            ->assemble());
-        $em->persist(PaymentAssembler::new()
-            ->withUser($customer)
-            ->withAmount(Money::of(999, 'PLN'))
-            ->withStatus(Payment::STATUS_PAID)
-            ->withCreatedAt(new \DateTimeImmutable('2025-02-05'))
-            ->assemble());
+        $em->persist(
+            PaymentAssembler::new()
+                ->withUser($customer)
+                ->withAmount(Money::of(100, 'PLN'))
+                ->withStatus(Payment::STATUS_PAID)
+                ->withCreatedAt(new \DateTimeImmutable('2025-03-05'))
+                ->assemble(),
+        );
+        $em->persist(
+            PaymentAssembler::new()
+                ->withUser($customer)
+                ->withAmount(Money::of(50, 'PLN'))
+                ->withStatus(Payment::STATUS_PENDING)
+                ->withCreatedAt(new \DateTimeImmutable('2025-03-06'))
+                ->assemble(),
+        );
+        $em->persist(
+            PaymentAssembler::new()
+                ->withUser($customer)
+                ->withAmount(Money::of(999, 'PLN'))
+                ->withStatus(Payment::STATUS_PAID)
+                ->withCreatedAt(new \DateTimeImmutable('2025-02-05'))
+                ->assemble(),
+        );
 
         $lesson = LessonAssembler::new()
-            ->withMetadata(LessonMetadataAssembler::new() ->withCapacity(10) ->assemble())
+            ->withMetadata(LessonMetadataAssembler::new()->withCapacity(10)->assemble())
             ->withSchedule(new \DateTimeImmutable('2025-03-20 10:00:00'))
             ->withStatus('active')
             ->assemble();
@@ -86,12 +98,14 @@ final class AdminKpiStatsComponentTest extends WebTestCase
         for ($i = 0; $i < 3; $i++) {
             $attendee = UserAssembler::new()->assemble();
             $em->persist($attendee);
-            $em->persist(BookingAssembler::new()
-                ->withUser($attendee)
-                ->withLessons($lesson)
-                ->withStatus('active')
-                ->withCreatedAt(new \DateTimeImmutable('2025-01-01'))
-                ->assemble());
+            $em->persist(
+                BookingAssembler::new()
+                    ->withUser($attendee)
+                    ->withLessons($lesson)
+                    ->withStatus('active')
+                    ->withCreatedAt(new \DateTimeImmutable('2025-01-01'))
+                    ->assemble(),
+            );
         }
 
         $em->flush();

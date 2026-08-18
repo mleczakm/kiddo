@@ -13,7 +13,7 @@ final readonly class CancelLessonBooking
         private Ulid $bookingId,
         private Ulid $lessonId,
         private User $cancelledBy,
-        private ?string $reason = null
+        private ?string $reason = null,
     ) {}
 
     public function getBookingId(): Ulid

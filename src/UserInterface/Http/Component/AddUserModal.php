@@ -98,7 +98,7 @@ final class AddUserModal extends AbstractController
     #[LiveAction]
     public function toggleRole(#[LiveArg] string $role): void
     {
-        if (! array_key_exists($role, self::ASSIGNABLE_ROLES)) {
+        if (!array_key_exists($role, self::ASSIGNABLE_ROLES)) {
             return;
         }
 
@@ -130,11 +130,13 @@ final class AddUserModal extends AbstractController
         $email = mb_strtolower(trim($this->email));
         if ($email === '') {
             $this->errors['email'] = 'Adres e-mail jest wymagany.';
-        } elseif (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->errors['email'] = 'Nieprawidłowy adres e-mail.';
-        } elseif ($this->userRepository->findOneBy([
-            'email' => $email,
-        ]) !== null) {
+        } elseif (
+            $this->userRepository->findOneBy([
+                'email' => $email,
+            ]) !== null
+        ) {
             $this->errors['email'] = 'Użytkownik z tym adresem e-mail już istnieje.';
         }
 

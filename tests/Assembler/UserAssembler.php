@@ -62,7 +62,7 @@ class UserAssembler
         return $this;
     }
 
-    public function withRoles(string ... $roles): self
+    public function withRoles(string ...$roles): self
     {
         $this->roles = array_values($roles);
 
@@ -103,9 +103,7 @@ class UserAssembler
     public function withNewsletterSubscribed(bool $subscribed = true, ?\DateTimeImmutable $consentDate = null): self
     {
         $this->newsletterSubscribed = $subscribed;
-        $this->newsletterConsentDate = $subscribed
-            ? ($consentDate ?? Clock::get()->now())
-            : null;
+        $this->newsletterConsentDate = $subscribed ? $consentDate ?? Clock::get()->now() : null;
 
         return $this;
     }
@@ -132,8 +130,7 @@ class UserAssembler
 
         // Set timestamps if provided, otherwise let the entity handle them
         if ($this->createdAt !== null) {
-            $createdAtProperty = new \ReflectionClass($user)
-                ->getProperty('createdAt');
+            $createdAtProperty = new \ReflectionClass($user)->getProperty('createdAt');
             $createdAtProperty->setValue($user, $this->createdAt);
         }
 

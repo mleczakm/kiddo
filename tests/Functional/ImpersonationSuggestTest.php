@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
-use App\UserInterface\Http\Component\NotificationTrayLiveComponent;
 use App\Tests\Assembler\UserAssembler;
+use App\UserInterface\Http\Component\NotificationTrayLiveComponent;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 #[Group('functional')]
 final class ImpersonationSuggestTest extends WebTestCase
@@ -44,10 +44,8 @@ final class ImpersonationSuggestTest extends WebTestCase
         $this->client->loginUser($admin);
 
         $lc = $this->createLiveComponent(NotificationTrayLiveComponent::class, client: $this->client);
-        $lc->set('query', 'al')
-            ->call('suggest');
-        $html = $lc->render()
-            ->toString();
+        $lc->set('query', 'al')->call('suggest');
+        $html = $lc->render()->toString();
         self::assertStringContainsString('alice@example.com', $html);
     }
 
@@ -60,10 +58,7 @@ final class ImpersonationSuggestTest extends WebTestCase
 
     public function testNonAdminHasNoSuggestions(): void
     {
-        $user = UserAssembler::new()
-            ->withEmail('user2@example.com')
-            ->withName('User Two')
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('user2@example.com')->withName('User Two')->assemble();
         $this->em->persist($user);
         $this->em->flush();
 
@@ -71,10 +66,8 @@ final class ImpersonationSuggestTest extends WebTestCase
         $this->client->loginUser($user);
 
         $lc = $this->createLiveComponent(NotificationTrayLiveComponent::class, client: $this->client);
-        $lc->set('query', 'us')
-            ->call('suggest');
-        $html = $lc->render()
-            ->toString();
+        $lc->set('query', 'us')->call('suggest');
+        $html = $lc->render()->toString();
         // For non-admins, component should not expose any suggestion entries
         self::assertStringNotContainsString('id="impersonate-suggestions"', $html);
     }

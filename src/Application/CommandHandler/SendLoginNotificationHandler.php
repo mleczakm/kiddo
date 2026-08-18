@@ -47,24 +47,15 @@ readonly class SendLoginNotificationHandler
             'name' => $user->getName(),
         ];
 
-        $notification = new LoginLinkNotification(
-            $loginLinkDetails,
-            $this->translator->trans(
-                $user->getConfirmedAt()
-                    ? 'login_link.subject'
-                    : 'login_link.register_subject',
-                [],
-                'emails'
-            ),
-        )->content(
-            $this->translator->trans(
-                $user->getConfirmedAt()
-                    ? 'login_link.content.html'
-                    : 'login_link.register_content.html',
-                $translatorContext,
-                'emails'
-            )
-        );
+        $notification = new LoginLinkNotification($loginLinkDetails, $this->translator->trans(
+            $user->getConfirmedAt() ? 'login_link.subject' : 'login_link.register_subject',
+            [],
+            'emails',
+        ))->content($this->translator->trans(
+            $user->getConfirmedAt() ? 'login_link.content.html' : 'login_link.register_content.html',
+            $translatorContext,
+            'emails',
+        ));
 
         $recipient = new Recipient($command->email);
 

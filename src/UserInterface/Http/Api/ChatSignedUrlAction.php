@@ -25,7 +25,7 @@ final class ChatSignedUrlAction extends AbstractController
     #[Route('/api/chat/signed-url', name: 'api_chat_signed_url', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse
     {
-        if (! $this->featureManager->isEnabled('chat_assistant')) {
+        if (!$this->featureManager->isEnabled('chat_assistant')) {
             return $this->json([
                 'error' => 'Chat assistant is disabled',
             ], Response::HTTP_NOT_FOUND);
@@ -59,7 +59,7 @@ final class ChatSignedUrlAction extends AbstractController
             ];
         }
 
-        if (! $this->elevenLabsClient->isConfigured()) {
+        if (!$this->elevenLabsClient->isConfigured()) {
             // Dev / test fallback: return token + mock WS placeholder so UI can still boot.
             return $this->json([
                 'signed_url' => null,
@@ -68,7 +68,7 @@ final class ChatSignedUrlAction extends AbstractController
                 'dynamic_variables' => $dynamicVariables,
                 'text_only' => true,
                 'configured' => false,
-                'guest' => ! $isLoggedIn,
+                'guest' => !$isLoggedIn,
             ]);
         }
 
@@ -87,7 +87,7 @@ final class ChatSignedUrlAction extends AbstractController
             'dynamic_variables' => $dynamicVariables,
             'text_only' => true,
             'configured' => true,
-            'guest' => ! $isLoggedIn,
+            'guest' => !$isLoggedIn,
         ]);
     }
 }

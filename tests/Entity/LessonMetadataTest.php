@@ -42,8 +42,7 @@ final class LessonMetadataTest extends TestCase
 
     public function testWithTitleRegeneratesSlug(): void
     {
-        $metadata = $this->createMetadata('Senso Bobasy')
-            ->withTitle('Bałaganki');
+        $metadata = $this->createMetadata('Senso Bobasy')->withTitle('Bałaganki');
 
         $this->assertSame('Bałaganki', $metadata->title);
         $this->assertSame('balaganki', $metadata->slug);

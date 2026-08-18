@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\User;
 use App\Tests\Assembler\UserAssembler;
 use App\UserInterface\Http\Component\ProfileComponent;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
@@ -21,11 +21,11 @@ class ProfileComponentTest extends WebTestCase
 
     protected function setUp(): void {}
 
-    private function createUser(string ... $roles): User
+    private function createUser(string ...$roles): User
     {
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
 
-        $user = UserAssembler::new()->withRoles(... $roles)->assemble();
+        $user = UserAssembler::new()->withRoles(...$roles)->assemble();
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -37,10 +37,7 @@ class ProfileComponentTest extends WebTestCase
     {
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
 
-        $user = UserAssembler::new()
-            ->withRoles('ROLE_USER')
-            ->withNewsletterSubscribed(true)
-            ->assemble();
+        $user = UserAssembler::new()->withRoles('ROLE_USER')->withNewsletterSubscribed(true)->assemble();
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -87,14 +84,11 @@ class ProfileComponentTest extends WebTestCase
         $this->assertTrue($profileComponent->isEditing);
         $this->assertStringContainsString(
             '<form data-action="live#action" data-live-action-param="save">',
-            (string) $testComponent->render()
+            (string) $testComponent->render(),
         );
 
         // Set new values (phone is required on profile save)
-        $testComponent
-            ->set('name', 'New Name')
-            ->set('email', 'new.email@example.com')
-            ->set('phone', '500 600 700');
+        $testComponent->set('name', 'New Name')->set('email', 'new.email@example.com')->set('phone', '500 600 700');
 
         // Save changes
         $testComponent->call('save');
@@ -127,11 +121,10 @@ class ProfileComponentTest extends WebTestCase
         $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
         $testComponent->call('startEditing');
 
-        $testComponent
-            ->set('name', $user->getName())
-            ->set('email', $user->getEmail())
-            ->set('phone', '500 600 700')
-            ->set('newsletterSubscribed', true);
+        $testComponent->set('name', $user->getName())->set('email', $user->getEmail())->set(
+            'phone',
+            '500 600 700',
+        )->set('newsletterSubscribed', true);
 
         $testComponent->call('save');
 
@@ -150,11 +143,10 @@ class ProfileComponentTest extends WebTestCase
         $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
         $testComponent->call('startEditing');
 
-        $testComponent
-            ->set('name', $user->getName())
-            ->set('email', $user->getEmail())
-            ->set('phone', '500 600 700')
-            ->set('newsletterSubscribed', false);
+        $testComponent->set('name', $user->getName())->set('email', $user->getEmail())->set(
+            'phone',
+            '500 600 700',
+        )->set('newsletterSubscribed', false);
 
         $testComponent->call('save');
 
@@ -174,11 +166,10 @@ class ProfileComponentTest extends WebTestCase
         $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
         $testComponent->call('startEditing');
 
-        $testComponent
-            ->set('name', 'Renamed User')
-            ->set('email', $user->getEmail())
-            ->set('phone', '500 600 700')
-            ->set('newsletterSubscribed', true);
+        $testComponent->set('name', 'Renamed User')->set('email', $user->getEmail())->set('phone', '500 600 700')->set(
+            'newsletterSubscribed',
+            true,
+        );
 
         $testComponent->call('save');
 
@@ -191,8 +182,7 @@ class ProfileComponentTest extends WebTestCase
         self::assertNotNull($originalConsent);
         self::assertEqualsWithDelta(
             $originalConsent->getTimestamp(),
-            $updatedUser->getNewsletterConsentDate()
-                ->getTimestamp(),
+            $updatedUser->getNewsletterConsentDate()->getTimestamp(),
             1.0,
         );
     }

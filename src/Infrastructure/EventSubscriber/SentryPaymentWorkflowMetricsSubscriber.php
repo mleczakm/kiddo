@@ -25,7 +25,7 @@ final readonly class SentryPaymentWorkflowMetricsSubscriber implements EventSubs
     public function onPaymentTransition(Event $event): void
     {
         $subject = $event->getSubject();
-        if (! $subject instanceof Payment) {
+        if (!$subject instanceof Payment) {
             return;
         }
 
@@ -40,8 +40,7 @@ final readonly class SentryPaymentWorkflowMetricsSubscriber implements EventSubs
         if ($transition === 'pay') {
             $amount = $subject->getAmount();
             $this->metrics->distribution('payments.amount', $amount->getAmount()->toFloat(), [
-                'currency' => $amount->getCurrency()
-                    ->getCurrencyCode(),
+                'currency' => $amount->getCurrency()->getCurrencyCode(),
             ]);
         }
     }

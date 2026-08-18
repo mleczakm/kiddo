@@ -73,7 +73,7 @@ final class ChatToolsApiTest extends WebTestCase
                         'version' => '1.0.0',
                     ],
                 ],
-            ], JSON_THROW_ON_ERROR)
+            ], JSON_THROW_ON_ERROR),
         );
 
         self::assertResponseIsSuccessful();
@@ -86,16 +86,24 @@ final class ChatToolsApiTest extends WebTestCase
     public function testSignedUrlWorksForGuests(): void
     {
         $client = static::createClient();
-        static::getContainer()->set(ElevenLabsClient::class, new ElevenLabsClient(
-            new MockHttpClient(new MockResponse(json_encode([
-                'signed_url' => 'wss://example.test/conversation',
-            ], JSON_THROW_ON_ERROR))),
-            'test-api-key',
-            'test-agent-id',
-        ));
-        $client->request('POST', '/api/chat/signed-url', server: [
-            'CONTENT_TYPE' => 'application/json',
-        ], content: '{}');
+        static::getContainer()->set(
+            ElevenLabsClient::class,
+            new ElevenLabsClient(
+                new MockHttpClient(new MockResponse(json_encode([
+                    'signed_url' => 'wss://example.test/conversation',
+                ], JSON_THROW_ON_ERROR))),
+                'test-api-key',
+                'test-agent-id',
+            ),
+        );
+        $client->request(
+            'POST',
+            '/api/chat/signed-url',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: '{}',
+        );
 
         self::assertResponseIsSuccessful();
         /** @var array{signed_url: string, guest: bool, chat_token: string, dynamic_variables: array{kiddo_is_guest: string}} $payload */
@@ -126,7 +134,7 @@ final class ChatToolsApiTest extends WebTestCase
                 'HTTP_X_KIDDO_CHAT_TOKEN' => $token,
                 'CONTENT_TYPE' => 'application/json',
             ],
-            content: '{}'
+            content: '{}',
         );
         self::assertResponseStatusCodeSame(422);
         /** @var array{ok: bool, summary: string} $payload */

@@ -12,7 +12,7 @@ use DateTimeImmutable;
 readonly class DoctrineTodayLessonsQuery implements TodayLessonsQuery
 {
     public function __construct(
-        private LessonRepository $lessonRepository
+        private LessonRepository $lessonRepository,
     ) {}
 
     /**
@@ -20,8 +20,6 @@ readonly class DoctrineTodayLessonsQuery implements TodayLessonsQuery
      */
     public function forDate(DateTimeImmutable $date): array
     {
-        return $this->lessonRepository
-
-            ->findActiveByDate($date);
+        return $this->lessonRepository->findActiveByDate($date);
     }
 }

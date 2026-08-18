@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Search;
 
-use Doctrine\DBAL\ParameterType;
 use App\Application\Search\GlobalSearchQuery;
 use App\Application\Search\SearchReference;
 use App\Application\Search\SearchType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Ds\PriorityQueue;
 
 final readonly class PostgresGlobalSearchQuery implements GlobalSearchQuery
@@ -87,7 +87,7 @@ final readonly class PostgresGlobalSearchQuery implements GlobalSearchQuery
         SQL;
 
     public function __construct(
-        private Connection $connection
+        private Connection $connection,
     ) {}
 
     public function search(string $query, int $limit = 15): PriorityQueue
@@ -100,14 +100,18 @@ final readonly class PostgresGlobalSearchQuery implements GlobalSearchQuery
         }
 
         /** @var list<array{type: string, id: string, score: string|float}> $rows */
-        $rows = $this->connection->fetchAllAssociative(self::SQL, [
-            'query' => $query,
-            'prefix' => $query . '%',
-            'contains' => '%' . $query . '%',
-            'limit' => max(1, min($limit, 30)),
-        ], [
-            'limit' => ParameterType::INTEGER,
-        ]);
+        $rows = $this->connection->fetchAllAssociative(
+            self::SQL,
+            [
+                'query' => $query,
+                'prefix' => $query . '%',
+                'contains' => '%' . $query . '%',
+                'limit' => max(1, min($limit, 30)),
+            ],
+            [
+                'limit' => ParameterType::INTEGER,
+            ],
+        );
 
         foreach ($rows as $row) {
             $queue->push(

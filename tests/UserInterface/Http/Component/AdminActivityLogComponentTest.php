@@ -35,9 +35,7 @@ final class AdminActivityLogComponentTest extends WebTestCase
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
-        $customer = UserAssembler::new()
-            ->withName('Jan Kowalski')
-            ->assemble();
+        $customer = UserAssembler::new()->withName('Jan Kowalski')->assemble();
         $em->persist($customer);
 
         $em->persist(new ActivityLog(

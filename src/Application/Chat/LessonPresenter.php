@@ -66,8 +66,7 @@ final readonly class LessonPresenter
             'slug' => $meta->slug,
             'lead' => $meta->lead,
             'ticket_options' => array_map($this->ticketOption(...), $lesson->getTicketOptions()),
-            'series_id' => $lesson->getSeries() ? (string) $lesson->getSeries()
-                ->getId() : null,
+            'series_id' => $lesson->getSeries() ? (string) $lesson->getSeries()->getId() : null,
         ];
     }
 
@@ -84,10 +83,8 @@ final readonly class LessonPresenter
     {
         return [
             'type' => $option->type->value,
-            'price' => (string) $option->price->getAmount()
-                ->toFloat(),
-            'currency' => $option->price->getCurrency()
-                ->getCurrencyCode(),
+            'price' => (string) $option->price->getAmount()->toFloat(),
+            'currency' => $option->price->getCurrency()->getCurrencyCode(),
             'description' => $option->description,
             'reschedule_policy' => $option->reschedulePolicy->value,
         ];
@@ -118,8 +115,7 @@ final readonly class LessonPresenter
         foreach ($booking->getLessons() as $lesson) {
             $lessons[] = [
                 'id' => (string) $lesson->getId(),
-                'title' => $lesson->getMetadata()
-                    ->title,
+                'title' => $lesson->getMetadata()->title,
                 'schedule' => $lesson->schedule->format(\DateTimeInterface::ATOM),
                 'cancelled' => $booking->isLessonCancelled($lesson),
                 'rescheduled' => $booking->isLessonRescheduled($lesson),
@@ -129,10 +125,8 @@ final readonly class LessonPresenter
         return [
             'id' => (string) $booking->getId(),
             'status' => $booking->getStatus(),
-            'created_at' => $booking->getCreatedAt()
-                ->format(\DateTimeInterface::ATOM),
-            'child_id' => $booking->getChild() ? (string) $booking->getChild()
-                ->getId() : null,
+            'created_at' => $booking->getCreatedAt()->format(\DateTimeInterface::ATOM),
+            'child_id' => $booking->getChild() ? (string) $booking->getChild()->getId() : null,
             'child_name' => $booking->getChild()?->getName(),
             'notes' => $booking->getNotes(),
             'payment' => $payment !== null ? $this->paymentInstructions($payment) : null,
@@ -156,15 +150,10 @@ final readonly class LessonPresenter
         return [
             'id' => (string) $payment->getId(),
             'status' => $payment->getStatus(),
-            'amount' => (string) $payment->getAmount()
-                ->getAmount()
-                ->toFloat(),
-            'currency' => $payment->getAmount()
-                ->getCurrency()
-                ->getCurrencyCode(),
+            'amount' => (string) $payment->getAmount()->getAmount()->toFloat(),
+            'currency' => $payment->getAmount()->getCurrency()->getCurrencyCode(),
             'code' => $payment->getPaymentCode()?->getCode(),
-            'created_at' => $payment->getCreatedAt()
-                ->format(\DateTimeInterface::ATOM),
+            'created_at' => $payment->getCreatedAt()->format(\DateTimeInterface::ATOM),
             'paid_at' => $payment->getPaidAt()?->format(\DateTimeInterface::ATOM),
         ];
     }
@@ -193,21 +182,24 @@ final readonly class LessonPresenter
         $base = $this->payment($payment);
         $blikPhone = $this->paymentSetting('blik_phone');
         $bankAccount = $this->paymentSetting('bank_account');
-        $expiresAt = $payment->getCreatedAt()
-            ->modify(sprintf('+%d hours', self::PAYMENT_CODE_VALID_HOURS));
+        $expiresAt = $payment->getCreatedAt()->modify(sprintf('+%d hours', self::PAYMENT_CODE_VALID_HOURS));
         $code = $base['code'] ?? '—';
         $amount = $base['amount'];
         $currency = $base['currency'];
 
-        $instruction = $this->translator->trans('payment.blik_instruction', [
-            'blik_phone' => $blikPhone,
-            'amount' => $amount,
-            'currency' => $currency,
-            'code' => $code,
-            'valid_hours' => self::PAYMENT_CODE_VALID_HOURS,
-            'expires_at' => $expiresAt->format('d.m.Y H:i'),
-            'bank_account' => $bankAccount,
-        ], 'messages');
+        $instruction = $this->translator->trans(
+            'payment.blik_instruction',
+            [
+                'blik_phone' => $blikPhone,
+                'amount' => $amount,
+                'currency' => $currency,
+                'code' => $code,
+                'valid_hours' => self::PAYMENT_CODE_VALID_HOURS,
+                'expires_at' => $expiresAt->format('d.m.Y H:i'),
+                'bank_account' => $bankAccount,
+            ],
+            'messages',
+        );
 
         return [
             ...$base,
@@ -238,8 +230,7 @@ final readonly class LessonPresenter
             'email' => $user->getEmail(),
             'phone' => $user->getPhone() !== null ? (string) $user->getPhone() : null,
             'roles' => $user->getRoles(),
-            'children_count' => $user->getChildren()
-                ->count(),
+            'children_count' => $user->getChildren()->count(),
         ];
     }
 
@@ -247,13 +238,13 @@ final readonly class LessonPresenter
     {
         $setting = $this->settingRepository->findOneByKey('payment');
         $content = $setting?->getContent();
-        if (! is_array($content)) {
+        if (!is_array($content)) {
             throw new \RuntimeException('Payment settings not configured');
         }
 
         $value = $content[$key] ?? null;
 
-        if (! is_string($value) || $value === '') {
+        if (!is_string($value) || $value === '') {
             throw new \RuntimeException(sprintf('Payment setting %s not configured', $key));
         }
 

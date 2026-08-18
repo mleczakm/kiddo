@@ -67,13 +67,15 @@ final readonly class SendRescheduleAdminNotificationHandler
 
         $this->inAppNotifications->notifyAdmins(
             $this->translator->trans('notifications.in_app.reschedule.admin.title', [], 'messages'),
-            $this->translator->trans('notifications.in_app.reschedule.admin.body', [
-                'email' => $user->getEmailString(),
-                'from' => $oldLesson->getMetadata()
-                    ->title,
-                'to' => $newLesson->getMetadata()
-                    ->title,
-            ], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.reschedule.admin.body',
+                [
+                    'email' => $user->getEmailString(),
+                    'from' => $oldLesson->getMetadata()->title,
+                    'to' => $newLesson->getMetadata()->title,
+                ],
+                'messages',
+            ),
             $this->urlGenerator->generate('app_admin_bookings'),
             NotificationSeverity::Info,
         );

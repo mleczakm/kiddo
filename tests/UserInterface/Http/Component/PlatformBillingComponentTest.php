@@ -35,7 +35,6 @@ class PlatformBillingComponentTest extends WebTestCase
         $user = $this->createAdminUser();
         $client->loginUser($user);
 
-
         $platformBillingService = self::getContainer()->get(PlatformBillingService::class);
         $platformBillingService->addCommissionToCurrentDue(Money::of('1000.00', 'PLN'));
         $testComponent = $this->createLiveComponent(name: PlatformBillingComponent::class, client: $client);

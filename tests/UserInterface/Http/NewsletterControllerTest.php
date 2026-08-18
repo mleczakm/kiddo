@@ -21,9 +21,7 @@ final class NewsletterControllerTest extends WebTestCase
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
 
-        $brevo->expects(self::once())
-            ->method('sendDoubleOptInConfirmation')
-            ->with('new@example.com');
+        $brevo->expects(self::once())->method('sendDoubleOptInConfirmation')->with('new@example.com');
 
         $client->request(
             'POST',
@@ -46,14 +44,10 @@ final class NewsletterControllerTest extends WebTestCase
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
 
-        $brevo->expects(self::never())
-            ->method('sendDoubleOptInConfirmation');
+        $brevo->expects(self::never())->method('sendDoubleOptInConfirmation');
 
         $em = self::getContainer()->get(EntityManagerInterface::class);
-        $user = UserAssembler::new()
-            ->withEmail('subscribed@example.com')
-            ->withNewsletterSubscribed(true)
-            ->assemble();
+        $user = UserAssembler::new()->withEmail('subscribed@example.com')->withNewsletterSubscribed(true)->assemble();
         $em->persist($user);
         $em->flush();
 
@@ -78,9 +72,7 @@ final class NewsletterControllerTest extends WebTestCase
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
 
-        $brevo->expects(self::once())
-            ->method('sendDoubleOptInConfirmation')
-            ->with('unsubscribed@example.com');
+        $brevo->expects(self::once())->method('sendDoubleOptInConfirmation')->with('unsubscribed@example.com');
 
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $user = UserAssembler::new()
@@ -108,8 +100,7 @@ final class NewsletterControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
-        $brevo->expects(self::never())
-            ->method('sendDoubleOptInConfirmation');
+        $brevo->expects(self::never())->method('sendDoubleOptInConfirmation');
 
         $client->request(
             'POST',
@@ -158,8 +149,7 @@ final class NewsletterControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
-        $brevo->expects(self::never())
-            ->method('sendDoubleOptInConfirmation');
+        $brevo->expects(self::never())->method('sendDoubleOptInConfirmation');
 
         $client->request(
             'POST',
@@ -182,8 +172,7 @@ final class NewsletterControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
-        $brevo->method('sendDoubleOptInConfirmation')
-            ->willThrowException(new \RuntimeException('Brevo down'));
+        $brevo->method('sendDoubleOptInConfirmation')->willThrowException(new \RuntimeException('Brevo down'));
 
         $client->request(
             'POST',
@@ -215,7 +204,7 @@ final class NewsletterControllerTest extends WebTestCase
     private function decode(KernelBrowser $client): array
     {
         /** @var array<string, mixed> $data */
-        $data = json_decode((string) $client->getResponse() ->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        $data = json_decode((string) $client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
 
         return $data;
     }

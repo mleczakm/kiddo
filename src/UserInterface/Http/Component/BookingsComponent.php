@@ -61,7 +61,7 @@ class BookingsComponent extends AbstractController
     {
         $user = $this->getUser();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return [];
         }
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Entity;
 
-use PHPUnit\Framework\Attributes\Group;
 use App\Entity\TicketOption;
-use App\Entity\TicketType;
 use App\Entity\TicketReschedulePolicy;
+use App\Entity\TicketType;
 use Brick\Money\Money;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
@@ -20,7 +20,7 @@ class TicketOptionTest extends TestCase
             TicketType::CARNET_4,
             Money::of(180, 'PLN'),
             'Testowy opis',
-            TicketReschedulePolicy::UNLIMITED_24H_BEFORE
+            TicketReschedulePolicy::UNLIMITED_24H_BEFORE,
         );
 
         $this->assertSame(TicketType::CARNET_4, $option->type);

@@ -49,7 +49,6 @@ final readonly class TransferNotMatchedHandler
                 return;
             }
 
-
             // Get all admin users
             $admins = $this->userRepository->findByRole('ROLE_ADMIN');
             if (empty($admins)) {
@@ -58,13 +57,16 @@ final readonly class TransferNotMatchedHandler
 
             // Prepare notification
             $subject = $this->translator->trans('transfer.notification.not_matched.subject', [], 'emails');
-            $content = $this->translator->trans('transfer.notification.not_matched.content', [
-                'amount' => $transfer->amount,
-                'sender' => $transfer->getSender(),
-                'title'  => $transfer->title,
-                'date'   => $transfer->getTransferredAt()
-                    ->format('Y-m-d H:i'),
-            ], 'emails');
+            $content = $this->translator->trans(
+                'transfer.notification.not_matched.content',
+                [
+                    'amount' => $transfer->amount,
+                    'sender' => $transfer->getSender(),
+                    'title' => $transfer->title,
+                    'date' => $transfer->getTransferredAt()->format('Y-m-d H:i'),
+                ],
+                'emails',
+            );
 
             $notification = new Notification()
                 ->importance('')
@@ -78,15 +80,18 @@ final readonly class TransferNotMatchedHandler
 
             $this->inAppNotifications->notifyAdmins(
                 $this->translator->trans('notifications.in_app.transfer_not_matched.title', [], 'messages'),
-                $this->translator->trans('notifications.in_app.transfer_not_matched.body', [
-                    'amount' => (string) $transfer->amount,
-                    'sender' => $transfer->getSender(),
-                    'title' => $transfer->title,
-                ], 'messages'),
+                $this->translator->trans(
+                    'notifications.in_app.transfer_not_matched.body',
+                    [
+                        'amount' => (string) $transfer->amount,
+                        'sender' => $transfer->getSender(),
+                        'title' => $transfer->title,
+                    ],
+                    'messages',
+                ),
                 $this->urlGenerator->generate('app_admin_transfers'),
                 NotificationSeverity::Warning,
             );
-
         } finally {
             // Cache the notification for today
             $cacheItem = $this->cache->getItem($cacheKey);
@@ -94,6 +99,5 @@ final readonly class TransferNotMatchedHandler
             $cacheItem->expiresAfter(self::CACHE_TTL);
             $this->cache->save($cacheItem);
         }
-
     }
 }
