@@ -404,18 +404,6 @@ count = 1
 
 [[issues]]
 file = "src/Entity/DTO/LessonMap.php"
-code = "halstead"
-message = "Closure has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
 code = "kan-defect"
 message = "Class has a high kan defect score."
 count = 1
@@ -424,19 +412,7 @@ count = 1
 file = "src/Entity/DTO/LessonMap.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 3
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 4
+count = 2
 
 [[issues]]
 file = "src/Entity/DTO/LessonMap.php"

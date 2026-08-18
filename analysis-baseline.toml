@@ -1490,66 +1490,6 @@ count = 1
 
 [[issues]]
 file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `Ds\Map<_, _>|Ds\Map<mixed, mixed>` is being assigned to property `$active` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `Ds\Map<_, _>|Ds\Map<mixed, mixed>` is being assigned to property `$cancelled` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `Ds\Map<_, _>|Ds\Map<mixed, mixed>` is being assigned to property `$lessons` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `Ds\Map<_, _>|Ds\Map<mixed, mixed>` is being assigned to property `$past` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$active` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$cancelled` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$lessons` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$past` (Ds\Map<Symfony\Component\Uid\Ulid, App\Entity\DTO\BookedLesson>).'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "non-existent-method"
-message = 'Method `clear` does not exist on type `Ds\Map`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `OutOfBoundsException` in `App\Entity\DTO\LessonMap::cancelLesson`.'
 count = 1
@@ -1594,12 +1534,6 @@ count = 1
 file = "src/Entity/DTO/LessonMap.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `OutOfBoundsException` in `App\Entity\DTO\LessonMap::rescheduleLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Entity\DTO\LessonMap::__construct`.'
 count = 1
 
 [[issues]]
