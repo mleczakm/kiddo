@@ -112,6 +112,8 @@ class User implements UserInterface
     #[\Override]
     public function getUserIdentifier(): string
     {
+        \assert($this->email !== '', 'A user identifier cannot be empty.');
+
         return $this->email;
     }
 

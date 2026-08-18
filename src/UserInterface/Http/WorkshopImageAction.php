@@ -60,6 +60,7 @@ final class WorkshopImageAction extends AbstractController
     {
         $size = \strlen($data);
         $range = $request->headers->get('Range');
+        $matches = [];
 
         if ($range === null || preg_match('/^bytes=(\d*)-(\d*)$/', $range, $matches) !== 1) {
             $response = new Response($data, 200, [

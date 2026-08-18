@@ -115,10 +115,8 @@ final readonly class PostgresGlobalSearchQuery implements GlobalSearchQuery
         );
 
         foreach ($rows as $row) {
-            $queue->push(
-                new SearchReference(SearchType::from($row['type']), $row['id']),
-                (int) round((float) $row['score'] * 10_000),
-            );
+            $score = is_numeric($row['score']) ? (float) $row['score'] : 0.0;
+            $queue->push(new SearchReference(SearchType::from($row['type']), $row['id']), (int) round($score * 10_000));
         }
 
         return $queue;

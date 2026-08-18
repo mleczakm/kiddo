@@ -47,6 +47,7 @@ final class StimulusEmitActionPrefixTest extends TestCase
             // form's own data-action).
             $tagsWithDefaultClick = ['a', 'button', 'form'];
 
+            $matches = [];
             $matchCount = preg_match_all('/data-action="([^"]*)"/', $contents, $matches, \PREG_OFFSET_CAPTURE);
             if ($matchCount !== false && $matchCount > 0) {
                 foreach ($matches[1] as [$actionValue, $offset]) {
@@ -68,6 +69,7 @@ final class StimulusEmitActionPrefixTest extends TestCase
 
                     $precedingTagOpen = strrpos(substr($contents, 0, $offset), '<');
                     $tagName = null;
+                    $tagMatch = [];
                     if (
                         $precedingTagOpen !== false
                         && preg_match('/<([a-zA-Z0-9]+)/', substr($contents, $precedingTagOpen), $tagMatch)

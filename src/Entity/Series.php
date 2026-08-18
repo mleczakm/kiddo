@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Order;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 
@@ -20,12 +21,12 @@ class Series
     private Ulid $id;
 
     /**
-     * @param Collection<int, Lesson> $lessons
+     * @param Collection<int, Lesson>&Selectable<int, Lesson> $lessons
      * @param list<TicketOption> $ticketOptions
      */
     public function __construct(
         #[ORM\OneToMany(targetEntity: Lesson::class, mappedBy: 'series')]
-        public Collection $lessons,
+        public Collection&Selectable $lessons,
         #[ORM\Column(type: 'string', enumType: WorkshopType::class)]
         public WorkshopType $type = WorkshopType::WEEKLY,
         #[ORM\Column(type: 'json_document', options: [

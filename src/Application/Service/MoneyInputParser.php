@@ -57,6 +57,8 @@ final class MoneyInputParser
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid monetary amount', $input));
         }
 
+        \assert($normalized !== '', 'A valid normalized monetary amount cannot be empty.');
+
         return $normalized;
     }
 }

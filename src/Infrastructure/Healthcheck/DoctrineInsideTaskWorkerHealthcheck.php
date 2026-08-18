@@ -21,6 +21,7 @@ class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
     public function check(): Response
     {
         $retry = 0;
+        $result = null;
         try {
             $this->cache->delete('doctrine_inside_task_worker');
 

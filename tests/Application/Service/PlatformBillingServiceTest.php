@@ -80,6 +80,27 @@ class PlatformBillingServiceTest extends KernelTestCase
         );
     }
 
+    public function testGetBillingDataFallsBackToZeroForMalformedStoredAmounts(): void
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        $setting = new Setting();
+        $setting->setKey('platform_billing');
+        $setting->setContent([
+            'currentDue' => 'not-a-number',
+            'pastDue' => null,
+        ]);
+        $this->entityManager->persist($setting);
+        $this->entityManager->flush();
+
+        static::assertSame(
+            [
+                'currentDue' => '0.00',
+                'pastDue' => '0.00',
+            ],
+            $this->service->getBillingData(),
+        );
+    }
+
     public function testAddCommissionToCurrentDue(): void
     {
         $this->entityManager->getConnection()->beginTransaction();

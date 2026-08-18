@@ -272,7 +272,7 @@ class LessonModal extends AbstractController
     }
 
     /**
-     * @return array<array{id: non-empty-string, name: string, birthday: non-falsy-string|null}>
+     * @return array<array{id: non-empty-string, name: string, birthday: non-empty-string|null}>
      */
     public function getChildren(): array
     {

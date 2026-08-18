@@ -222,6 +222,7 @@ final class AuthControllerTest extends WebTestCase
     private function extractCode(string $body): string
     {
         self::assertMatchesRegularExpression('/\d{6}/', $body);
+        $matches = [];
         preg_match('/\d{6}/', $body, $matches);
 
         return $matches[0] ?? '';

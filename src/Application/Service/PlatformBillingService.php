@@ -20,7 +20,7 @@ class PlatformBillingService
     ) {}
 
     /**
-     * @return array{currentDue: string, pastDue: string}
+     * @return array{currentDue: numeric-string, pastDue: numeric-string}
      */
     public function getBillingData(): array
     {
@@ -42,8 +42,8 @@ class PlatformBillingService
         }
 
         return [
-            'currentDue' => is_string($content['currentDue'] ?? null) ? $content['currentDue'] : '0.00',
-            'pastDue' => is_string($content['pastDue'] ?? null) ? $content['pastDue'] : '0.00',
+            'currentDue' => $this->numericAmountOrZero($content['currentDue'] ?? null),
+            'pastDue' => $this->numericAmountOrZero($content['pastDue'] ?? null),
         ];
     }
 
@@ -115,6 +115,12 @@ class PlatformBillingService
         ]);
 
         $this->entityManager->flush();
+    }
+
+    /** @return numeric-string */
+    private function numericAmountOrZero(mixed $amount): string
+    {
+        return is_string($amount) && is_numeric($amount) ? $amount : '0.00';
     }
 
     public function getCurrentDue(): Money

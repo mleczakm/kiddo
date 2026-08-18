@@ -1135,28 +1135,10 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/Application/Service/AliorMailParser.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$matches`."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/MoneyInputParser.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `App\Application\Service\MoneyInputParser::parse`: expected `non-empty-string|null`, but found `string`.'
-count = 1
-
-[[issues]]
 file = "src/Application/Service/MoneyInputParser.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\MoneyInputParser::parse`.'
 count = 1
-
-[[issues]]
-file = "src/Application/Service/PlatformBillingService.php"
-code = "invalid-type-cast"
-message = "Non numeric string of type `string` implicitly cast to `float`."
-count = 5
 
 [[issues]]
 file = "src/Application/Service/PlatformBillingService.php"
@@ -1766,36 +1748,6 @@ count = 1
 
 [[issues]]
 file = "src/Entity/Series.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 3
-
-[[issues]]
-file = "src/Entity/Series.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Entity\Series::getLessonsGt`. Saw type `nonnull`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/Series.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Entity\Series::getLessonsGte`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/Series.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Entity\Series::getLessonsLt`. Saw type `nonnull`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/Series.php"
-code = "non-existent-method"
-message = 'Method `matching` does not exist on type `Doctrine\Common\Collections\Collection`.'
-count = 3
-
-[[issues]]
-file = "src/Entity/Series.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\Entity\Series::getFirstLesson`.'
 count = 1
@@ -1804,12 +1756,6 @@ count = 1
 file = "src/Entity/Series.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\Entity\Series::getLastLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/User.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `App\Entity\User::getUserIdentifier`: expected `non-empty-string`, but found `string`.'
 count = 1
 
 [[issues]]
@@ -2029,12 +1975,6 @@ message = "Assigning `mixed` type to a variable may lead to unexpected behavior.
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Healthcheck/DoctrineInsideTaskWorkerHealthcheck.php"
-code = "possibly-undefined-variable"
-message = "Variable `$result` might not have been defined on all execution paths leading to this point."
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/ImapEngine/AliorNotificationMailProvider.php"
 code = "possibly-non-existent-method"
 message = 'Method `from` might not exist on type `DirectoryTree\ImapEngine\MessageQueryInterface` at runtime.'
@@ -2098,12 +2038,6 @@ count = 1
 file = "src/Infrastructure/Mcp/KiddoMcpToolInvoker.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\Infrastructure\Mcp\KiddoMcpToolInvoker::invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Mcp/McpAuthSubscriber.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$matches`."
 count = 1
 
 [[issues]]
@@ -2242,18 +2176,6 @@ count = 1
 file = "src/Infrastructure/Messenger/SwooleTaskWorkerContext.php"
 code = "invalid-property-access"
 message = 'Attempting to access a property on a non-object type (`unknown-ref(Swoole\Http\Server)`).'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Messenger/SwooleTaskWorkerContext.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `App\Infrastructure\Messenger\SwooleTaskWorkerContext::isInTaskWorker`: expected `bool`, but found `null`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Search/PostgresGlobalSearchQuery.php"
-code = "invalid-type-cast"
-message = "Non numeric string of type `string` implicitly cast to `float`."
 count = 1
 
 [[issues]]
@@ -3500,12 +3422,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "invalid-return-statement"
-message = '''Invalid return type for function `App\UserInterface\Http\Component\LessonModal::getChildren`: expected `array<array-key, array{'birthday': null|truthy-string, 'id': non-empty-string, 'name': string}>`, but found `array<array-key, array{'birthday': non-empty-string|null, 'id': non-empty-string, 'name': string}>|list<array{'birthday': non-empty-string|null, 'id': non-empty-string, 'name': string}>`.'''
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `App\UserInterface\Http\Component\LessonModal::setPaymentAmount`: expected `Brick\Money\Money`, but found `mixed`.'
 count = 1
@@ -3676,12 +3592,6 @@ count = 1
 file = "src/UserInterface/Http/Component/PaymentsListComponent.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\PaymentsListComponent::getPayments`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
-code = "invalid-type-cast"
-message = "Non numeric string of type `non-empty-string` implicitly cast to `float`."
 count = 1
 
 [[issues]]
@@ -3982,12 +3892,6 @@ count = 1
 file = "src/UserInterface/Http/StaticEndpointAction.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\UserInterface\Http\StaticEndpointAction::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/WorkshopImageAction.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$matches`."
 count = 1
 
 [[issues]]
@@ -6523,6 +6427,18 @@ message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedE
 count = 1
 
 [[issues]]
+file = "tests/Application/Service/AliorMailParserTest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\Application\Service\AliorMailParserTest::testReturnsNullWhenMessageBodyDoesNotContainTransferDetails`.'
+count = 1
+
+[[issues]]
+file = "tests/Application/Service/AliorMailParserTest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\Application\Service\AliorMailParserTest::testReturnsNullWhenSubjectDoesNotDescribeAnIncomingTransfer`.'
+count = 1
+
+[[issues]]
 file = "tests/Application/Service/InAppNotificationServiceTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
@@ -6759,6 +6675,12 @@ count = 1
 [[issues]]
 file = "tests/Application/Service/PlatformBillingServiceTest.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Tests\Application\Service\PlatformBillingServiceTest::testGetBillingDataFallsBackToZeroForMalformedStoredAmounts`.'
+count = 1
+
+[[issues]]
+file = "tests/Application/Service/PlatformBillingServiceTest.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Tests\Application\Service\PlatformBillingServiceTest::testGetBillingDataReturnsDefaultWhenNoSettingExists`.'
 count = 1
 
@@ -6916,6 +6838,12 @@ count = 1
 file = "tests/Application/Service/PlatformBillingServiceTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\Application\Service\PlatformBillingServiceTest::testAddCommissionToCurrentDue`.'
+count = 1
+
+[[issues]]
+file = "tests/Application/Service/PlatformBillingServiceTest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\Application\Service\PlatformBillingServiceTest::testGetBillingDataFallsBackToZeroForMalformedStoredAmounts`.'
 count = 1
 
 [[issues]]
@@ -7112,8 +7040,8 @@ count = 1
 
 [[issues]]
 file = "tests/Assembler/SeriesAssembler.php"
-code = "less-specific-argument"
-message = 'Argument type mismatch for argument #1 of `App\Entity\Series::__construct`: expected `Doctrine\Common\Collections\Collection<int, App\Entity\Lesson>`, but provided type `Doctrine\Common\Collections\ArrayCollection<array-key, App\Entity\Lesson>` is less specific.'
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `array_values`: expected `array<('K.array_values() extends array-key), ('V.array_values() extends mixed)>`, but found `nonnull`."
 count = 1
 
 [[issues]]
@@ -8542,12 +8470,6 @@ count = 1
 file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$validator` (Symfony\Component\Validator\Validator\ValidatorInterface).'
-count = 1
-
-[[issues]]
-file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$matches`."
 count = 1
 
 [[issues]]
@@ -13348,18 +13270,6 @@ count = 2
 file = "tests/StimulusEmitActionPrefixTest.php"
 code = "mixed-operand"
 message = "Invalid middle operand: type `mixed` cannot be reliably used in string concatenation."
-count = 1
-
-[[issues]]
-file = "tests/StimulusEmitActionPrefixTest.php"
-code = "possibly-undefined-variable"
-message = "Variable `$matches` might not have been defined on all execution paths leading to this point."
-count = 1
-
-[[issues]]
-file = "tests/StimulusEmitActionPrefixTest.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$tagMatch`."
 count = 1
 
 [[issues]]

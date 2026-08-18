@@ -43,4 +43,21 @@ class AliorMailParserTest extends TestCase
         static::assertSame('X2el', $result->title);
         static::assertSame('50,00', $result->amount);
     }
+
+    public function testReturnsNullWhenSubjectDoesNotDescribeAnIncomingTransfer(): void
+    {
+        $parser = new AliorMailParser();
+
+        static::assertNull($parser->fromMailSubjectAndContent('Monthly account statement', 'irrelevant'));
+    }
+
+    public function testReturnsNullWhenMessageBodyDoesNotContainTransferDetails(): void
+    {
+        $parser = new AliorMailParser();
+
+        static::assertNull($parser->fromMailSubjectAndContent(
+            'Uznanie rachunku 91...6978 kwotą 50,00 PLN',
+            'The message body is incomplete.',
+        ));
+    }
 }

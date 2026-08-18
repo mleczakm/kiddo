@@ -992,12 +992,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
-code = "loop-does-not-iterate"
-message = "Loop is unconditionally terminated and will not iterate."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 1

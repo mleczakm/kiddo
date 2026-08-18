@@ -7,6 +7,7 @@ namespace App\UserInterface\Http\Component;
 use App\Application\Service\MoneyInputParser;
 use App\Application\Service\PlatformBillingService;
 use App\Form\PlatformBillingPaymentType;
+use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -97,7 +98,7 @@ class PlatformBillingComponent extends AbstractController
 
         try {
             $normalized = MoneyInputParser::parse(is_string($data['amount']) ? $data['amount'] : null);
-            $amount = $normalized !== null ? (float) $normalized : 0.0;
+            $amount = $normalized !== null ? Money::of($normalized, 'PLN')->getAmount()->toFloat() : 0.0;
 
             if ($amount <= 0) {
                 $this->errorMessage = 'Podaj poprawną kwotę, np. 150,00';

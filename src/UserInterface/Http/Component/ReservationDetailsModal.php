@@ -358,9 +358,12 @@ final class ReservationDetailsModal extends AbstractController
 
     private function firstRelevantLessonId(Booking $booking): ?string
     {
-        foreach ($booking->getModifiableLessons() as $bookedLesson) {
-            return $bookedLesson->lessonId->toString();
+        $modifiableLessons = $booking->getModifiableLessons();
+        $firstKey = array_key_first($modifiableLessons);
+        if ($firstKey !== null) {
+            return $modifiableLessons[$firstKey]->lessonId->toString();
         }
+
         $lesson = $booking->getLessons()->first();
 
         return $lesson instanceof Lesson ? $lesson->getId()->toString() : null;

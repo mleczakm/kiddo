@@ -78,6 +78,7 @@ final readonly class McpAuthSubscriber implements EventSubscriberInterface
         $key = $request->headers->get('X-Kiddo-Mcp-Key') ?? $request->headers->get('X-Api-Key');
         if (!is_string($key) || $key === '') {
             $authorization = $request->headers->get('Authorization');
+            $matches = [];
             if (is_string($authorization) && preg_match('/^Bearer\s+(\S+)/i', $authorization, $matches) === 1) {
                 $key = $matches[1];
             }
