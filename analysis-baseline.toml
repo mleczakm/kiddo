@@ -452,12 +452,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Command/SeedDemoDataCommand.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `Doctrine\Persistence\ObjectManager::remove` is possibly `null`, but parameter type `object` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Application/Command/SeedDemoDataCommand.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\Command\SeedDemoDataCommand::createLessons`.'
 count = 1
@@ -3010,12 +3004,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
-code = "possibly-null-operand"
-message = "Possibly null middle operand used in string concatenation (type `null|string`)."
 count = 1
 
 [[issues]]

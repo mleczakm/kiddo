@@ -626,7 +626,7 @@ class AdminBookingsComponent extends AbstractController
             ->setMaxResults(10);
 
         // Apply search filter
-        $searchTerm = '%' . $this->lessonSearch . '%';
+        $searchTerm = '%' . ($this->lessonSearch ?? '') . '%';
         $qb->andWhere('m.title LIKE :search OR m.description LIKE :search')->setParameter('search', $searchTerm);
 
         /** @var Lesson[] $result */

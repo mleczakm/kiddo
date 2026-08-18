@@ -560,6 +560,10 @@ final class SeedDemoDataCommand extends Command
         }
         $this->entityManager->flush();
         foreach ($series as $demoSeries) {
+            if (!$demoSeries instanceof Series) {
+                continue;
+            }
+
             $this->entityManager->remove($demoSeries);
         }
         foreach ($users as $user) {
