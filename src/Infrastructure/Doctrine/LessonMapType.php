@@ -17,6 +17,11 @@ class LessonMapType extends JsonType
 {
     public const NAME = 'lesson_map';
 
+    /**
+     * @throws \UnexpectedValueException When stored lesson data has an invalid shape.
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException When a stored ULID is invalid.
+     * @throws \Doctrine\DBAL\Types\ConversionException When the JSON value cannot be decoded.
+     */
     #[\Override]
     public function convertToPHPValue($value, AbstractPlatform $platform): ?LessonMap
     {
@@ -31,60 +36,11 @@ class LessonMapType extends JsonType
         }
 
         $lessonMap = new LessonMap();
-
-        $deserializeMap = static function (mixed $mapData): Map {
-            if (!is_array($mapData)) {
-                return new Map();
-            }
-
-            $map = new Map();
-            foreach ($mapData as $key => $itemData) {
-                $ulid = is_string($key)
-                    ? Ulid::fromString($key)
-                    : Ulid::fromString(
-                        is_string($itemData)
-                            ? $itemData
-                            : (
-                                is_array($itemData) && isset($itemData['lessonId'])
-                                    ? (string) $itemData['lessonId']
-                                    : ''
-                            ),
-                    );
-                if (is_array($itemData) && isset($itemData['rescheduledFrom'])) {
-                    $map->put(
-                        $ulid,
-                        new RescheduledLesson(
-                            Ulid::fromString(isset($itemData['lessonId']) ? (string) $itemData['lessonId'] : ''),
-                            Ulid::fromString((string) $itemData['rescheduledFrom']),
-                            isset($itemData['rescheduledBy']) ? (int) $itemData['rescheduledBy'] : 0,
-                            isset($itemData['rescheduledAt'])
-                                ? new \DateTimeImmutable((string) $itemData['rescheduledAt'])
-                                : null,
-                        ),
-                    );
-                } elseif (is_array($itemData) && array_key_exists('cancelledAt', $itemData)) {
-                    $map->put(
-                        $ulid,
-                        new CancelledLesson(
-                            Ulid::fromString(isset($itemData['lessonId']) ? (string) $itemData['lessonId'] : ''),
-                            isset($itemData['cancelledBy']) ? (int) $itemData['cancelledBy'] : null,
-                            isset($itemData['cancelledAt'])
-                                ? new \DateTimeImmutable((string) $itemData['cancelledAt'])
-                                : null,
-                            isset($itemData['reason']) ? (string) $itemData['reason'] : null,
-                        ),
-                    );
-                } else {
-                    $map->put($ulid, new BookedLesson($ulid));
-                }
-            }
-            return $map;
-        };
-
-        $lessonMap->lessons = $deserializeMap($data['lessons'] ?? []);
-        $lessonMap->active = $deserializeMap($data['active'] ?? []);
-        $lessonMap->past = $deserializeMap($data['past'] ?? []);
-        $lessonMap->cancelled = $deserializeMap($data['cancelled'] ?? []);
+        $hydrator = new LessonMapHydrator();
+        $lessonMap->lessons = $hydrator->hydrate($data['lessons'] ?? []);
+        $lessonMap->active = $hydrator->hydrate($data['active'] ?? []);
+        $lessonMap->past = $hydrator->hydrate($data['past'] ?? []);
+        $lessonMap->cancelled = $hydrator->hydrate($data['cancelled'] ?? []);
 
         return $lessonMap;
     }

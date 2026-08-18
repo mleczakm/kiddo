@@ -506,50 +506,8 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Doctrine/LessonMapType.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/LessonMapType.php"
-code = "cyclomatic-complexity"
-message = "Closure has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/LessonMapType.php"
-code = "halstead"
-message = "Closure has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/LessonMapType.php"
-code = "halstead"
-message = "Method has a high halstead effort"
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/LessonMapType.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/LessonMapType.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
-count = 2
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/LessonMapType.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 9
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/LessonMapType.php"
-code = "no-nested-ternary"
-message = "Nested ternary expressions are confusing due to PHP's operator associativity rules."
 count = 1
 
 [[issues]]
