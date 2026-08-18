@@ -4,11 +4,13 @@
 
 {% block body %}
     <main class="flex-grow">
-        <div class="page-container">
+        <div class="page-container relative">
 
-            <div class="text-center mb-12">
-                <h1 class="section-title">{{ 'lesson.page.header'|trans }}</h1>
-                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">{{ 'lesson.page.lead'|trans }}</p>
+            <div class="workshops-hero relative overflow-hidden rounded-3xl mb-12 px-6 py-10 text-center shadow-sm">
+                <div class="decorative-orb decorative-orb--hero-left" aria-hidden="true"></div>
+                <div class="decorative-orb decorative-orb--hero-right" aria-hidden="true"></div>
+                <h1 class="section-title relative mb-3">{{ 'lesson.page.header'|trans }}</h1>
+                <p class="relative text-lg text-muted-foreground max-w-2xl mx-auto">{{ 'lesson.page.lead'|trans }}</p>
             </div>
             {{ component('UpcomingLessons', {
                 week: week|default(null),

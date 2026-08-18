@@ -213,7 +213,7 @@
             {% set spotsClass = availableSpots > 4 ? 'border-green-200 text-green-700 bg-green-50/90' : (availableSpots > 2 ? 'border-yellow-200 text-yellow-700 bg-yellow-50/90' : 'border-workshop-red/30 text-workshop-red bg-workshop-red/10') %}
             {% set gradientPairs = [['yellow', 'red'], ['green', 'yellow'], ['red', 'pink'], ['pink', 'blue'], ['blue', 'green']] %}
             {% set gradientPair = gradientPairs[loop.index0 % 5] %}
-            <div class="workshop-card group relative flex flex-col rounded-2xl border bg-white shadow-sm h-full transition-shadow duration-300 hover:shadow-xl">
+            <div class="workshop-card group relative flex flex-col rounded-2xl border bg-white shadow-sm h-full">
                 <a href="{{ workshopUrl }}" class="relative block w-full aspect-[3/4] overflow-hidden rounded-t-2xl">
                     {% if lesson.metadata.hasImage %}
                         {% if lesson.metadata.isVideo %}
