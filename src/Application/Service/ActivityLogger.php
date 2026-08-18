@@ -38,7 +38,7 @@ final readonly class ActivityLogger
         $this->eventDispatcher->dispatch(new ActivityOccurred(
             type: $type,
             title: $title,
-            subject: $subject,
+            subjectId: $subject?->getId(),
             summary: $summary,
             url: $url,
             context: $context,

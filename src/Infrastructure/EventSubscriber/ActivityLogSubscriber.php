@@ -6,6 +6,7 @@ namespace App\Infrastructure\EventSubscriber;
 
 use App\Application\Event\ActivityOccurred;
 use App\Entity\ActivityLog;
+use App\Entity\User;
 use App\Repository\ActivityLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,16 +32,23 @@ final readonly class ActivityLogSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     */
     public function onActivityOccurred(ActivityOccurred $event): void
     {
         if ($event->dedupeKey !== null && $this->activityLogRepository->existsByDedupeKey($event->dedupeKey)) {
             return;
         }
 
+        $subject = $event->subjectId !== null
+            ? $this->entityManager->getReference(User::class, $event->subjectId)
+            : null;
+
         $this->entityManager->persist(new ActivityLog(
             type: $event->type,
             title: $event->title,
-            subject: $event->subject,
+            subject: $subject,
             summary: $event->summary,
             url: $event->url,
             context: $event->context,
