@@ -44,6 +44,9 @@ class LessonModal extends AbstractController
     public string $closeUrl = '/';
 
     #[LiveProp]
+    public ?string $week = null;
+
+    #[LiveProp]
     public bool $hideOpenButton = false;
 
     #[LiveProp(writable: true)]
@@ -181,6 +184,7 @@ class LessonModal extends AbstractController
             'slug' => $metadata->slug,
             'date' => $lesson->schedule->format('Y-m-d'),
             'hour' => $lesson->schedule->format('H:i'),
+            'week' => $this->week,
         ]);
     }
 

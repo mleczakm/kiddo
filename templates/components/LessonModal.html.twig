@@ -1,7 +1,7 @@
 <div
         {% if modalOpened %}data-modal-state="open"{% else %}data-modal-state="closed"{% endif %}
         {% set workshopUrl = lesson and lesson.metadata.slug
-            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
+            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i'), week: week})
             : closeUrl %}
         {{ attributes.defaults(stimulus_controller('workshop-url', {
             openUrl: workshopUrl,

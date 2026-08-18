@@ -53,12 +53,33 @@ class WorkshopsAction extends AbstractController
         $schedule = $lesson->schedule;
 
         return $this->render('workshops.html.twig', [
-            'week' => $schedule->format('Y-m-d'),
+            'week' => $this->resolveBrowsedWeek($request, $schedule),
             'openSlug' => $lesson->getMetadata()
                 ->slug,
             'openDate' => $schedule->format('Y-m-d'),
             'openHour' => $schedule->format('H:i'),
         ]);
+    }
+
+    /**
+     * Keeps the calendar/list positioned on the week the user was already browsing
+     * when they open a workshop's details, instead of snapping to the week of the
+     * opened workshop. Falls back to the workshop's own week when there is no
+     * browsing context (e.g. a direct/shared link).
+     */
+    private function resolveBrowsedWeek(Request $request, \DateTimeImmutable $scheduleFallback): string
+    {
+        $weekParam = $request->query->get('week');
+
+        if ($weekParam) {
+            try {
+                return (new \DateTimeImmutable($weekParam))->format('Y-m-d');
+            } catch (\Exception) {
+                // Fall through to the workshop's own week.
+            }
+        }
+
+        return $scheduleFallback->format('Y-m-d');
     }
 
     private function findLessonBySlug(string $slug, Request $request, EntityManagerInterface $entityManager): ?Lesson

@@ -160,7 +160,7 @@
                                 <div class="space-y-2.5">
                                     {% for lesson in dayData.workshops %}
                                         {% set workshopUrl = lesson.metadata.slug
-                                            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
+                                            ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i'), week: this.week})
                                             : path('workshops', {week: lesson.schedule|date('Y-m-d')}) %}
                                         <a href="{{ workshopUrl }}" class="group block relative rounded-xl border bg-card text-card-foreground shadow-sm pl-4 pr-3 py-3 hover:shadow-md hover:-translate-y-0.5 transition-all">
                                             <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style="background-color: {{ lesson.metadata.safeVisualTheme }};"></div>
@@ -193,6 +193,7 @@
                                             lesson: lesson,
                                             modalOpened: this.shouldOpenModal(lesson),
                                             hideOpenButton: true,
+                                            week: this.week,
                                             closeUrl: this.showSearch
                                                 ? path('workshops', {week: this.week})
                                                 : path('homepage')
@@ -209,7 +210,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for lesson in this.workshops %}
             {% set workshopUrl = lesson.metadata.slug
-                ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i')})
+                ? path('workshop_by_slug', {slug: lesson.metadata.slug, date: lesson.schedule|date('Y-m-d'), hour: lesson.schedule|date('H:i'), week: this.week})
                 : path('workshops', {week: lesson.schedule|date('Y-m-d')}) %}
             {% set availableSpots = lesson.getAvailableSpots() %}
             {% set spotsClass = availableSpots > 4 ? 'border-green-200 text-green-700 bg-green-50/90' : (availableSpots > 2 ? 'border-yellow-200 text-yellow-700 bg-yellow-50/90' : 'border-workshop-red/30 text-workshop-red bg-workshop-red/10') %}
@@ -311,6 +312,7 @@
                         key: lesson.id,
                         lesson: lesson,
                         modalOpened: this.shouldOpenModal(lesson),
+                        week: this.week,
                         closeUrl: this.showSearch
                             ? path('workshops', {week: this.week})
                             : path('homepage')
