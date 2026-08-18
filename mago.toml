@@ -38,3 +38,9 @@ analyze-dead-code = false
 check-throws = true
 allow-possibly-undefined-array-keys = true
 perform-heuristic-checks = true
+
+# Test methods rarely declare @throws, so `check-throws` mostly just adds
+# noise here; keep it enforced for production code in src/.
+[[analyzer.ignore]]
+code = "unhandled-thrown-type"
+in = ["tests/"]
