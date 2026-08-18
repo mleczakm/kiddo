@@ -46,6 +46,7 @@ class SeriesAssembler extends EntityAssembler
         return $this->with('lastOccurrenceDate', $lastOccurrenceDate);
     }
 
+    #[\Override]
     public function assemble(): Series
     {
         /** @var array<Lesson> $lessons */

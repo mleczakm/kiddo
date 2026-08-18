@@ -55,18 +55,18 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         $em->clear();
         /** @var Booking $reloaded */
         $reloaded = $em->getRepository(Booking::class)->find($booking->getId());
-        self::assertSame(Booking::STATUS_CANCELLED, $reloaded->getStatus());
+        static::assertSame(Booking::STATUS_CANCELLED, $reloaded->getStatus());
 
         // Cancellation email sent to the customer (workflow.booking.transition.cancel fired)
         $this->mailer()->assertSentEmailCount(1);
         $sentEmail = $this->mailer()->sentEmails()->first();
-        self::assertSame($user->getEmail(), $sentEmail->getTo()[0]->getAddress());
+        static::assertSame($user->getEmail(), $sentEmail->getTo()[0]->getAddress());
 
         // In-app notification created for the customer
         $notifications = $em->getRepository(Notification::class)->findBy([
             'user' => $user,
         ]);
-        self::assertCount(1, $notifications);
+        static::assertCount(1, $notifications);
     }
 
     public function testCancellingOneLessonOfAMultiLessonBookingKeepsBookingActive(): void
@@ -103,7 +103,7 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         /** @var Booking $reloaded */
         $reloaded = $em->getRepository(Booking::class)->find($booking->getId());
         // One active lesson remains, so the booking as a whole is still active
-        self::assertSame(Booking::STATUS_ACTIVE, $reloaded->getStatus());
+        static::assertSame(Booking::STATUS_ACTIVE, $reloaded->getStatus());
 
         // No workflow transition fired at the booking level, so no cancellation email
         $this->mailer()->assertSentEmailCount(0);
@@ -112,9 +112,9 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         // (regression guard: LessonMap is a custom-typed field, mutating it
         // in place without reassigning the property is invisible to
         // Doctrine's change tracking).
-        self::assertTrue($reloaded->isLessonCancelled($lesson1), 'lesson1 should be cancelled after reload');
-        self::assertFalse($reloaded->isLessonCancelled($lesson2), 'lesson2 should still be active after reload');
-        self::assertSame(
+        static::assertTrue($reloaded->isLessonCancelled($lesson1), 'lesson1 should be cancelled after reload');
+        static::assertFalse($reloaded->isLessonCancelled($lesson2), 'lesson2 should still be active after reload');
+        static::assertSame(
             $user->getId(),
             $reloaded->getLessonsMap()->getCancelledByUserId($lesson1->getId()),
             'cancellation should record who cancelled it',

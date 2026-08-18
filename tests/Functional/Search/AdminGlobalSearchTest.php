@@ -34,6 +34,7 @@ final class AdminGlobalSearchTest extends WebTestCase
 
     private KernelBrowser $browser;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
@@ -57,14 +58,14 @@ final class AdminGlobalSearchTest extends WebTestCase
         $search = self::getContainer()->get(GlobalSearchQuery::class);
         $references = array_values(iterator_to_array($search->search($needle)));
 
-        self::assertNotEmpty($references);
-        self::assertSame(SearchType::Client, $references[0]->type);
-        self::assertSame((string) $client->getId(), $references[0]->id);
-        self::assertTrue($this->contains($references, SearchType::Lesson, $lesson->getId()->toRfc4122()));
+        static::assertNotEmpty($references);
+        static::assertSame(SearchType::Client, $references[0]->type);
+        static::assertSame((string) $client->getId(), $references[0]->id);
+        static::assertTrue(static::contains($references, SearchType::Lesson, $lesson->getId()->toRfc4122()));
 
         $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
         $resultTypes = array_map(static fn($result): SearchType => $result->reference->type, $results);
-        self::assertContains(SearchType::Lesson, $resultTypes);
+        static::assertContains(SearchType::Lesson, $resultTypes);
     }
 
     public function testSearchesPaymentByCodeAfterCodeEntityIsRemovedOnPayment(): void
@@ -79,14 +80,14 @@ final class AdminGlobalSearchTest extends WebTestCase
         $payment->setStatus(Payment::STATUS_PAID);
         $this->entityManager->flush();
 
-        self::assertNull($payment->getPaymentCode());
-        self::assertSame('X7K2', $payment->getPaymentCodeSnapshot());
+        static::assertNull($payment->getPaymentCode());
+        static::assertSame('X7K2', $payment->getPaymentCodeSnapshot());
 
         $references = array_values(iterator_to_array(
             self::getContainer()->get(GlobalSearchQuery::class)->search('X7K2'),
         ));
 
-        self::assertTrue($this->contains($references, SearchType::Payment, $payment->getId()->toRfc4122()));
+        static::assertTrue(static::contains($references, SearchType::Payment, $payment->getId()->toRfc4122()));
     }
 
     public function testLiveComponentRendersDatabaseResultsWithLinksAndHighlighting(): void
@@ -101,11 +102,11 @@ final class AdminGlobalSearchTest extends WebTestCase
         $component->set('query', $needle);
         $html = $component->render()->toString();
 
-        self::assertStringContainsString('Client</span>', $html);
-        self::assertStringContainsString('<mark class="bg-amber-200', $html);
-        self::assertStringContainsString('/admin/uzytkownicy/' . $customer->getId(), $html);
-        self::assertStringContainsString('data-search-result-icon="client"', $html);
-        self::assertStringContainsString('bg-sky-100 text-sky-700', $html);
+        static::assertStringContainsString('Client</span>', $html);
+        static::assertStringContainsString('<mark class="bg-amber-200', $html);
+        static::assertStringContainsString('/admin/uzytkownicy/' . $customer->getId(), $html);
+        static::assertStringContainsString('data-search-result-icon="client"', $html);
+        static::assertStringContainsString('bg-sky-100 text-sky-700', $html);
     }
 
     public function testLiveComponentGeneratesAValidLinkForDatabaseUlid(): void
@@ -120,10 +121,10 @@ final class AdminGlobalSearchTest extends WebTestCase
         $component->set('query', $needle);
         $lessonHtml = $component->render()->toString();
 
-        self::assertStringContainsString('</mark> Workshops', $lessonHtml);
-        self::assertStringContainsString('/admin/zajecia/' . $lesson->getId(), $lessonHtml);
-        self::assertStringContainsString('data-search-result-icon="lesson"', $lessonHtml);
-        self::assertStringContainsString('bg-indigo-100 text-indigo-700', $lessonHtml);
+        static::assertStringContainsString('</mark> Workshops', $lessonHtml);
+        static::assertStringContainsString('/admin/zajecia/' . $lesson->getId(), $lessonHtml);
+        static::assertStringContainsString('data-search-result-icon="lesson"', $lessonHtml);
+        static::assertStringContainsString('bg-indigo-100 text-indigo-700', $lessonHtml);
     }
 
     public function testAdminTourIncludesGlobalSearchStep(): void
@@ -173,10 +174,10 @@ final class AdminGlobalSearchTest extends WebTestCase
         ));
         $types = array_map(static fn(SearchReference $reference): SearchType => $reference->type, $references);
 
-        self::assertContains(SearchType::Client, $types);
-        self::assertContains(SearchType::Lesson, $types);
-        self::assertContains(SearchType::Booking, $types);
-        self::assertContains(SearchType::Payment, $types);
+        static::assertContains(SearchType::Client, $types);
+        static::assertContains(SearchType::Lesson, $types);
+        static::assertContains(SearchType::Booking, $types);
+        static::assertContains(SearchType::Payment, $types);
 
         $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
         // Matched by id, not just type: $this->admin (persisted in setUp() with a real,
@@ -192,16 +193,16 @@ final class AdminGlobalSearchTest extends WebTestCase
                 && $result->reference->id === (string) $customer->getId()
             ),
         );
-        self::assertNotNull($datedResult);
-        self::assertStringContainsString('15.08.2042', $datedResult->subtitle);
+        static::assertNotNull($datedResult);
+        static::assertStringContainsString('15.08.2042', $datedResult->subtitle);
 
         $paymentResult = array_find(
             $results,
             static fn($result): bool => $result->reference->type === SearchType::Payment,
         );
-        self::assertNotNull($paymentResult);
-        self::assertStringContainsString("80\u{00A0}zł", $paymentResult->subtitle);
-        self::assertStringNotContainsString('#type', $paymentResult->subtitle);
+        static::assertNotNull($paymentResult);
+        static::assertStringContainsString("80\u{00A0}zł", $paymentResult->subtitle);
+        static::assertStringNotContainsString('#type', $paymentResult->subtitle);
     }
 
     /**
@@ -209,7 +210,7 @@ final class AdminGlobalSearchTest extends WebTestCase
      */
     private function contains(array $references, SearchType $type, string $id): bool
     {
-        return array_any($references, fn($reference) => $reference->type === $type && $reference->id === $id);
+        return array_any($references, static fn($reference) => $reference->type === $type && $reference->id === $id);
     }
 
     private function lesson(string $title): Lesson

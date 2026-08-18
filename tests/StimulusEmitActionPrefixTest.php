@@ -56,9 +56,11 @@ final class StimulusEmitActionPrefixTest extends TestCase
                         continue;
                     }
                     foreach ($directives as $directive) {
-                        if ($directive !== '' && str_starts_with($directive, 'live#')) {
-                            $hasBareLiveAction = true;
+                        if (!($directive !== '' && str_starts_with($directive, 'live#'))) {
+                            continue;
                         }
+
+                        $hasBareLiveAction = true;
                     }
                     if (!$hasBareLiveAction) {
                         continue;
@@ -83,7 +85,7 @@ final class StimulusEmitActionPrefixTest extends TestCase
             }
         }
 
-        self::assertSame(
+        static::assertSame(
             [],
             $offenders,
             "Found un-prefixed 'live#*' Stimulus actions (needs 'click->' prefix on div/tr/li/p elements):\n"

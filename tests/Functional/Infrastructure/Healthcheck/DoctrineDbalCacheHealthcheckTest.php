@@ -14,6 +14,7 @@ final class DoctrineDbalCacheHealthcheckTest extends KernelTestCase
 {
     private DoctrineDbalCacheHealthcheck $healthcheck;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -24,9 +25,9 @@ final class DoctrineDbalCacheHealthcheckTest extends KernelTestCase
     {
         $response = $this->healthcheck->check();
 
-        self::assertTrue($response->getResult());
-        self::assertSame('doctrine_dbal_cache', $response->getName());
-        self::assertStringContainsString('healthy', $response->getMessage());
+        static::assertTrue($response->getResult());
+        static::assertSame('doctrine_dbal_cache', $response->getName());
+        static::assertStringContainsString('healthy', $response->getMessage());
     }
 
     public function testHealthcheckFailsWhenDatabaseConnectionIsUnavailable(): void
@@ -42,10 +43,10 @@ final class DoctrineDbalCacheHealthcheckTest extends KernelTestCase
         $healthcheckWithBrokenConnection = new DoctrineDbalCacheHealthcheck($mockConnection);
         $response = $healthcheckWithBrokenConnection->check();
 
-        self::assertFalse($response->getResult());
-        self::assertSame('doctrine_dbal_cache', $response->getName());
-        self::assertStringContainsString('failed', $response->getMessage());
-        self::assertStringContainsString('no connection to the server', $response->getMessage());
+        static::assertFalse($response->getResult());
+        static::assertSame('doctrine_dbal_cache', $response->getName());
+        static::assertStringContainsString('failed', $response->getMessage());
+        static::assertStringContainsString('no connection to the server', $response->getMessage());
     }
 
     public function testHealthcheckFailsWhenDatabaseThrowsGenericException(): void
@@ -56,9 +57,9 @@ final class DoctrineDbalCacheHealthcheckTest extends KernelTestCase
         $healthcheckWithBrokenConnection = new DoctrineDbalCacheHealthcheck($mockConnection);
         $response = $healthcheckWithBrokenConnection->check();
 
-        self::assertFalse($response->getResult());
-        self::assertSame('doctrine_dbal_cache', $response->getName());
-        self::assertStringContainsString('failed', $response->getMessage());
-        self::assertStringContainsString('Some database error', $response->getMessage());
+        static::assertFalse($response->getResult());
+        static::assertSame('doctrine_dbal_cache', $response->getName());
+        static::assertStringContainsString('failed', $response->getMessage());
+        static::assertStringContainsString('Some database error', $response->getMessage());
     }
 }

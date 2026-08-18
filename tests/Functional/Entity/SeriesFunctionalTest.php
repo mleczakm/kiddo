@@ -18,6 +18,7 @@ final class SeriesFunctionalTest extends WebTestCase
 {
     private EntityManagerInterface $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -60,8 +61,8 @@ final class SeriesFunctionalTest extends WebTestCase
         $first = $reloaded->getFirstLesson();
         $last = $reloaded->getLastLesson();
 
-        self::assertSame($lEarly->schedule->format('Y-m-d'), $first->schedule->format('Y-m-d'));
-        self::assertSame($lLate->schedule->format('Y-m-d'), $last->schedule->format('Y-m-d'));
+        static::assertSame($lEarly->schedule->format('Y-m-d'), $first->schedule->format('Y-m-d'));
+        static::assertSame($lLate->schedule->format('Y-m-d'), $last->schedule->format('Y-m-d'));
     }
 
     public function testGetFirstOrLastLessonThrowsWhenEmpty(): void

@@ -27,6 +27,7 @@ class MultiInstructorSupportTest extends WebTestCase
 
     private User $instructor3;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
@@ -47,6 +48,7 @@ class MultiInstructorSupportTest extends WebTestCase
         $this->entityManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -60,9 +62,9 @@ class MultiInstructorSupportTest extends WebTestCase
         $this->entityManager->persist($series);
         $this->entityManager->flush();
 
-        $this->assertCount(2, $series->getInstructors());
-        $this->assertTrue($series->getInstructors()->contains($this->instructor1));
-        $this->assertTrue($series->getInstructors()->contains($this->instructor2));
+        static::assertCount(2, $series->getInstructors());
+        static::assertTrue($series->getInstructors()->contains($this->instructor1));
+        static::assertTrue($series->getInstructors()->contains($this->instructor2));
     }
 
     public function testInstructorCanBeRemovedFromSeries(): void
@@ -73,14 +75,14 @@ class MultiInstructorSupportTest extends WebTestCase
         $this->entityManager->persist($series);
         $this->entityManager->flush();
 
-        $this->assertCount(2, $series->getInstructors());
+        static::assertCount(2, $series->getInstructors());
 
         $series->removeInstructor($this->instructor1);
         $this->entityManager->flush();
 
-        $this->assertCount(1, $series->getInstructors());
-        $this->assertFalse($series->getInstructors()->contains($this->instructor1));
-        $this->assertTrue($series->getInstructors()->contains($this->instructor2));
+        static::assertCount(1, $series->getInstructors());
+        static::assertFalse($series->getInstructors()->contains($this->instructor1));
+        static::assertTrue($series->getInstructors()->contains($this->instructor2));
     }
 
     public function testLessonCanHaveMultipleInstructors(): void
@@ -101,9 +103,9 @@ class MultiInstructorSupportTest extends WebTestCase
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
-        $this->assertCount(2, $lesson->getInstructors());
-        $this->assertTrue($lesson->getInstructors()->contains($this->instructor1));
-        $this->assertTrue($lesson->getInstructors()->contains($this->instructor2));
+        static::assertCount(2, $lesson->getInstructors());
+        static::assertTrue($lesson->getInstructors()->contains($this->instructor1));
+        static::assertTrue($lesson->getInstructors()->contains($this->instructor2));
     }
 
     public function testLessonCanHaveInstructorsFromSeries(): void
@@ -133,10 +135,10 @@ class MultiInstructorSupportTest extends WebTestCase
 
         // getAllInstructors should return all unique instructors
         $allInstructors = $lesson->getAllInstructors();
-        $this->assertCount(3, $allInstructors);
-        $this->assertContains($this->instructor1, $allInstructors);
-        $this->assertContains($this->instructor2, $allInstructors);
-        $this->assertContains($this->instructor3, $allInstructors);
+        static::assertCount(3, $allInstructors);
+        static::assertContains($this->instructor1, $allInstructors);
+        static::assertContains($this->instructor2, $allInstructors);
+        static::assertContains($this->instructor3, $allInstructors);
     }
 
     public function testInstructorCanBeRemovedFromLesson(): void
@@ -157,14 +159,14 @@ class MultiInstructorSupportTest extends WebTestCase
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
-        $this->assertCount(2, $lesson->getInstructors());
+        static::assertCount(2, $lesson->getInstructors());
 
         $lesson->removeInstructor($this->instructor1);
         $this->entityManager->flush();
 
-        $this->assertCount(1, $lesson->getInstructors());
-        $this->assertFalse($lesson->getInstructors()->contains($this->instructor1));
-        $this->assertTrue($lesson->getInstructors()->contains($this->instructor2));
+        static::assertCount(1, $lesson->getInstructors());
+        static::assertFalse($lesson->getInstructors()->contains($this->instructor1));
+        static::assertTrue($lesson->getInstructors()->contains($this->instructor2));
     }
 
     public function testDuplicateInstructorsAreRemoved(): void
@@ -194,8 +196,8 @@ class MultiInstructorSupportTest extends WebTestCase
 
         // getAllInstructors should remove duplicates
         $allInstructors = $lesson->getAllInstructors();
-        $this->assertCount(2, $allInstructors);
-        $this->assertContains($this->instructor1, $allInstructors);
-        $this->assertContains($this->instructor2, $allInstructors);
+        static::assertCount(2, $allInstructors);
+        static::assertContains($this->instructor1, $allInstructors);
+        static::assertContains($this->instructor2, $allInstructors);
     }
 }

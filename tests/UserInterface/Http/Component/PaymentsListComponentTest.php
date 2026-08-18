@@ -29,6 +29,7 @@ final class PaymentsListComponentTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -40,8 +41,8 @@ final class PaymentsListComponentTest extends WebTestCase
         $component = $this->createLiveComponent(name: PaymentsListComponent::class, client: $this->client);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Płatności', $html); // header
-        self::assertStringContainsString('Brak płatności w wybranym tygodniu', $html); // empty state
+        static::assertStringContainsString('Płatności', $html); // header
+        static::assertStringContainsString('Brak płatności w wybranym tygodniu', $html); // empty state
     }
 
     public function testDisplaysPaidPaymentWithLessonTitleAndStatus(): void
@@ -93,10 +94,10 @@ final class PaymentsListComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Default Title', $html);
-        self::assertStringContainsString('Paid User', $html);
+        static::assertStringContainsString('Default Title', $html);
+        static::assertStringContainsString('Paid User', $html);
         // Status badge (Polish translation of paid)
-        self::assertStringContainsString('Opłacone', $html);
+        static::assertStringContainsString('Opłacone', $html);
     }
 
     public function testDisplaysPendingPaymentShowsPendingStatus(): void
@@ -138,10 +139,10 @@ final class PaymentsListComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Pending Workshop', $html);
-        self::assertStringContainsString('Pending User', $html);
+        static::assertStringContainsString('Pending Workshop', $html);
+        static::assertStringContainsString('Pending User', $html);
         // Status badge (Polish translation for pending: Oczekuje)
-        self::assertStringContainsString('Oczekuje', $html);
+        static::assertStringContainsString('Oczekuje', $html);
     }
 
     public function testWeekFilteringShowsOnlyPaymentsInSelectedWeek(): void
@@ -208,8 +209,8 @@ final class PaymentsListComponentTest extends WebTestCase
             $this->client,
         );
         $html1 = (string) $component1->render();
-        self::assertStringContainsString('Week1 Lesson', $html1);
-        self::assertStringNotContainsString('Week2 Lesson', $html1);
+        static::assertStringContainsString('Week1 Lesson', $html1);
+        static::assertStringNotContainsString('Week2 Lesson', $html1);
 
         // Second week should include Week2 Lesson, not Week1 Lesson
         $component2 = $this->createLiveComponent(
@@ -220,7 +221,7 @@ final class PaymentsListComponentTest extends WebTestCase
             client: $this->client,
         );
         $html2 = (string) $component2->render();
-        self::assertStringContainsString('Week2 Lesson', $html2);
-        self::assertStringNotContainsString('Week1 Lesson', $html2);
+        static::assertStringContainsString('Week2 Lesson', $html2);
+        static::assertStringNotContainsString('Week1 Lesson', $html2);
     }
 }

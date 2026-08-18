@@ -13,6 +13,7 @@ final readonly class HttpServerSwooleServerProvider implements SwooleServerProvi
         private HttpServer $httpServer,
     ) {}
 
+    #[\Override]
     public function getServer(): Server
     {
         return $this->httpServer->getServer();

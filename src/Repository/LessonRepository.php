@@ -43,7 +43,7 @@ class LessonRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('l');
 
         /** @var array<int, Lesson> $result */
-        $result = $qb
+        return $qb
             ->andWhere('l.schedule > :afterDate')
             ->andWhere('l.status = :status')
             ->andWhere('l.series = :series')
@@ -54,8 +54,6 @@ class LessonRepository extends ServiceEntityRepository
             ->setMaxResults($maxResults)
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 
     /**
@@ -67,7 +65,7 @@ class LessonRepository extends ServiceEntityRepository
         $end = $date->setTime(23, 59, 59);
 
         /** @var Lesson[] $result */
-        $result = $this
+        return $this
             ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
             ->leftJoin('b.child', 'c')
@@ -81,8 +79,6 @@ class LessonRepository extends ServiceEntityRepository
             ->setParameter('end', $end)
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 
     /**
@@ -128,10 +124,11 @@ class LessonRepository extends ServiceEntityRepository
         if ($orderByPopularity) {
             /** @var Lesson[] $result */
             $result = new Vector($result)
-                ->reduce(fn(PriorityQueue $queue, Lesson $lesson) => $queue->push(
-                    $lesson,
-                    $lesson->getBookings()->count(),
-                ), new PriorityQueue())
+                ->reduce(static function (PriorityQueue $queue, Lesson $lesson): PriorityQueue {
+                    $queue->push($lesson, $lesson->getBookings()->count());
+
+                    return $queue;
+                }, new PriorityQueue())
                 ?->toArray();
 
             if ($limit !== null) {
@@ -148,7 +145,7 @@ class LessonRepository extends ServiceEntityRepository
     public function findUpcoming(\DateTimeImmutable $since, int $limit): array
     {
         /** @var Lesson[] $lessons */
-        $lessons = $this
+        return $this
             ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
             ->where('l.schedule > :since')
@@ -157,8 +154,6 @@ class LessonRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
-
-        return $lessons;
     }
 
     /**
@@ -167,7 +162,7 @@ class LessonRepository extends ServiceEntityRepository
     public function findUpcomingWithBookings(\DateTimeImmutable $since, int $limit): array
     {
         /** @var Lesson[] $lessons */
-        $lessons = $this
+        return $this
             ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
             ->leftJoin('b.child', 'c')
@@ -181,8 +176,6 @@ class LessonRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
-
-        return $lessons;
     }
 
     /**
@@ -221,9 +214,7 @@ class LessonRepository extends ServiceEntityRepository
         }
 
         /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()->getResult();
-
-        return $lessons;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -247,9 +238,7 @@ class LessonRepository extends ServiceEntityRepository
         }
 
         /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()->getResult();
-
-        return $lessons;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -282,8 +271,6 @@ class LessonRepository extends ServiceEntityRepository
         }
 
         /** @var Lesson[] $lessons */
-        $lessons = $qb->getQuery()->getResult();
-
-        return $lessons;
+        return $qb->getQuery()->getResult();
     }
 }

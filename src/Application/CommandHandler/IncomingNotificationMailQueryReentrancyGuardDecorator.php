@@ -27,6 +27,7 @@ final readonly class IncomingNotificationMailQueryReentrancyGuardDecorator imple
      *
      * @return iterable<MessageQueryInterface>
      */
+    #[\Override]
     public function __invoke(): iterable
     {
         $lock = $this->lockFactory->createLock(self::LOCK_RESOURCE);

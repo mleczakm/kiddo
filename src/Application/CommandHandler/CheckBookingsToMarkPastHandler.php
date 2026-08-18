@@ -17,7 +17,7 @@ final readonly class CheckBookingsToMarkPastHandler
         private WorkflowRegistry $workflowRegistry,
     ) {}
 
-    public function __invoke(CheckBookingsToMarkPast $command): void
+    public function __invoke(CheckBookingsToMarkPast $_command): void
     {
         $activeBookings = $this->bookingRepository->findActiveBookings();
 

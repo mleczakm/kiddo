@@ -11,6 +11,7 @@ final readonly class ElevenLabsClient
 {
     public function __construct(
         private HttpClientInterface $httpClient,
+        #[\SensitiveParameter]
         #[Autowire('%env(ELEVENLABS_API_KEY)%')]
         private string $apiKey,
         #[Autowire('%env(ELEVENLABS_AGENT_ID)%')]

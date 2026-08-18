@@ -24,7 +24,7 @@ class StaticEndpointAction extends AbstractController
         ],
         methods: ['GET'],
     )]
-    public function __invoke(Request $request, string $path): Response
+    public function __invoke(Request $_request, string $path): Response
     {
         $setting = $this->settingRepository->findOneByKey('static_endpoint_' . $path);
 

@@ -50,11 +50,11 @@ class LessonRepositoryTest extends KernelTestCase
         $repo = self::getContainer()->get(LessonRepository::class);
         $results = $repo->findActiveByDate($date);
 
-        $this->assertCount(2, $results);
-        $this->assertContains($lesson1, $results);
-        $this->assertContains($lesson2, $results);
-        $this->assertNotContains($lessonOther, $results);
-        $this->assertNotContains($lessonOther2, $results);
+        static::assertCount(2, $results);
+        static::assertContains($lesson1, $results);
+        static::assertContains($lesson2, $results);
+        static::assertNotContains($lessonOther, $results);
+        static::assertNotContains($lessonOther2, $results);
     }
 
     public function testFindByFilters(): void
@@ -93,12 +93,12 @@ class LessonRepositoryTest extends KernelTestCase
 
         /** @var LessonRepository $repo */
         $repo = self::getContainer()->get(LessonRepository::class);
-        $this->assertCount(2, $repo->findByFilters(null, null, week: $date->format('Y-m-d')));
-        $this->assertCount(1, $repo->findByFilters(null, 0, week: $date->format('Y-m-d')));
-        $this->assertCount(2, $repo->findByFilters(null, 1, week: $date->format('Y-m-d')));
-        $this->assertEmpty($repo->findByFilters(null, 99, week: $date->format('Y-m-d')));
-        $this->assertCount(1, $repo->findByFilters(null, 2, week: $date->format('Y-m-d')));
-        $this->assertCount(1, $repo->findByFilters('OOOOO', null, week: $date->format('Y-m-d')));
+        static::assertCount(2, $repo->findByFilters(null, null, week: $date->format('Y-m-d')));
+        static::assertCount(1, $repo->findByFilters(null, 0, week: $date->format('Y-m-d')));
+        static::assertCount(2, $repo->findByFilters(null, 1, week: $date->format('Y-m-d')));
+        static::assertEmpty($repo->findByFilters(null, 99, week: $date->format('Y-m-d')));
+        static::assertCount(1, $repo->findByFilters(null, 2, week: $date->format('Y-m-d')));
+        static::assertCount(1, $repo->findByFilters('OOOOO', null, week: $date->format('Y-m-d')));
     }
 
     public function testFindUpcoming(): void
@@ -128,8 +128,8 @@ class LessonRepositoryTest extends KernelTestCase
 
         /** @var LessonRepository $repo */
         $repo = self::getContainer()->get(LessonRepository::class);
-        $this->assertCount(2, $repo->findUpcoming($now = new DateTimeImmutable(), 10));
-        $this->assertEquals($lesson1, $repo->findUpcoming($now, 10)[0]);
-        $this->assertEquals($lesson2, $repo->findUpcoming($now, 10)[1]);
+        static::assertCount(2, $repo->findUpcoming($now = new DateTimeImmutable(), 10));
+        static::assertEquals($lesson1, $repo->findUpcoming($now, 10)[0]);
+        static::assertEquals($lesson2, $repo->findUpcoming($now, 10)[1]);
     }
 }

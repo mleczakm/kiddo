@@ -366,6 +366,6 @@ final class AuthController extends AbstractController
 
     private function generateVerificationCode(): string
     {
-        return sprintf('%06d', random_int(0, 999999));
+        return sprintf('%06d', random_int(0, 999_999));
     }
 }

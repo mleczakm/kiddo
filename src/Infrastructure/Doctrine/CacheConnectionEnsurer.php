@@ -13,6 +13,7 @@ final readonly class CacheConnectionEnsurer implements ConnectionEnsurerInterfac
         private Connection $connection,
     ) {}
 
+    #[\Override]
     public function ensureConnection(): void
     {
         $this->discardActiveTransaction();

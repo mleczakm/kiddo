@@ -32,6 +32,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
     private NotificationRepository $notificationRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -59,9 +60,9 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         /** @var WorkshopEditorComponent $workshopEditorComponent */
         $workshopEditorComponent = $component->component();
-        self::assertSame('Błotna Kuchnia', $workshopEditorComponent->title);
-        self::assertSame('2030-06-15', $workshopEditorComponent->occurrenceDate);
-        self::assertSame('10:30', $workshopEditorComponent->occurrenceTime);
+        static::assertSame('Błotna Kuchnia', $workshopEditorComponent->title);
+        static::assertSame('2030-06-15', $workshopEditorComponent->occurrenceDate);
+        static::assertSame('10:30', $workshopEditorComponent->occurrenceTime);
     }
 
     public function testMountPrefillsTicketPriceInZlotyNotGrosze(): void
@@ -86,7 +87,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         /** @var WorkshopEditorComponent $workshopEditorComponent */
         $workshopEditorComponent = $component->component();
-        self::assertSame('50.00', $workshopEditorComponent->singleTicketPrice);
+        static::assertSame('50.00', $workshopEditorComponent->singleTicketPrice);
     }
 
     public function testSavingTicketPriceAcceptsCommaDecimalAndPersistsCorrectAmount(): void
@@ -110,10 +111,10 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         $this->em->clear();
         $reloaded = $this->em->find(Lesson::class, $lessonId);
-        self::assertNotNull($reloaded);
+        static::assertNotNull($reloaded);
         $ticketOption = $reloaded->getTicketOptions()[0] ?? null;
-        self::assertNotNull($ticketOption);
-        self::assertTrue($ticketOption->price->isEqualTo(Money::of('75.50', 'PLN')));
+        static::assertNotNull($ticketOption);
+        static::assertTrue($ticketOption->price->isEqualTo(Money::of('75.50', 'PLN')));
     }
 
     public function testInvalidTicketPriceIsRejectedWithoutSaving(): void
@@ -138,11 +139,11 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         $this->em->clear();
         $reloaded = $this->em->find(Lesson::class, $lessonId);
-        self::assertNotNull($reloaded);
-        self::assertNotSame('Should Not Persist', $reloaded->getMetadata()->title);
+        static::assertNotNull($reloaded);
+        static::assertNotSame('Should Not Persist', $reloaded->getMetadata()->title);
         $ticketOption = $reloaded->getTicketOptions()[0] ?? null;
-        self::assertNotNull($ticketOption);
-        self::assertTrue($ticketOption->price->isEqualTo(Money::of('50.00', 'PLN')));
+        static::assertNotNull($ticketOption);
+        static::assertTrue($ticketOption->price->isEqualTo(Money::of('50.00', 'PLN')));
     }
 
     public function testImageUploadIsPersistedWhenSavingExistingLesson(): void
@@ -156,12 +157,12 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $lessonId = $lesson->getId();
 
         $imagePath = tempnam(sys_get_temp_dir(), 'workshop-image-');
-        self::assertNotFalse($imagePath);
+        static::assertNotFalse($imagePath);
         $imageData = base64_decode(
             'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
             true,
         );
-        self::assertNotFalse($imageData);
+        static::assertNotFalse($imageData);
         file_put_contents($imagePath, $imageData);
 
         try {
@@ -177,9 +178,9 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
             $this->em->clear();
             $reloaded = $this->em->find(Lesson::class, $lessonId);
-            self::assertNotNull($reloaded);
-            self::assertSame('image/png', $reloaded->getMetadata()->imageMimeType);
-            self::assertSame(base64_encode($imageData), $reloaded->getMetadata()->imageData);
+            static::assertNotNull($reloaded);
+            static::assertSame('image/png', $reloaded->getMetadata()->imageMimeType);
+            static::assertSame(base64_encode($imageData), $reloaded->getMetadata()->imageData);
         } finally {
             if (is_file($imagePath)) {
                 unlink($imagePath);
@@ -211,8 +212,8 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         $this->em->clear();
         $reloaded = $this->em->find(Lesson::class, $lessonId);
-        self::assertNotNull($reloaded);
-        self::assertSame('Original Title', $reloaded->getMetadata()->title);
+        static::assertNotNull($reloaded);
+        static::assertSame('Original Title', $reloaded->getMetadata()->title);
     }
 
     public function testInstructorCanEditTheirOwnStandaloneLesson(): void
@@ -240,8 +241,8 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         $this->em->clear();
         $reloaded = $this->em->find(Lesson::class, $lessonId);
-        self::assertNotNull($reloaded);
-        self::assertSame('Updated By Host', $reloaded->getMetadata()->title);
+        static::assertNotNull($reloaded);
+        static::assertSame('Updated By Host', $reloaded->getMetadata()->title);
     }
 
     public function testOccurrenceScopeEditDoesNotTouchSiblingLessons(): void
@@ -259,7 +260,7 @@ final class WorkshopEditorComponentTest extends WebTestCase
 
         /** @var WorkshopEditorComponent $workshopEditorComponent */
         $workshopEditorComponent = $component->component();
-        self::assertSame('occurrence', $workshopEditorComponent->editScope);
+        static::assertSame('occurrence', $workshopEditorComponent->editScope);
 
         $component->set('title', 'Occurrence Only Update');
         $component->call('save');
@@ -267,10 +268,10 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $this->em->clear();
         $reloadedCurrent = $this->em->find(Lesson::class, $current->getId());
         $reloadedSibling = $this->em->find(Lesson::class, $sibling->getId());
-        self::assertNotNull($reloadedCurrent);
-        self::assertNotNull($reloadedSibling);
-        self::assertSame('Occurrence Only Update', $reloadedCurrent->getMetadata()->title);
-        self::assertSame('Sibling Title', $reloadedSibling->getMetadata()->title);
+        static::assertNotNull($reloadedCurrent);
+        static::assertNotNull($reloadedSibling);
+        static::assertSame('Occurrence Only Update', $reloadedCurrent->getMetadata()->title);
+        static::assertSame('Sibling Title', $reloadedSibling->getMetadata()->title);
     }
 
     public function testSeriesScopeEditPropagatesContentButKeepsEachOccurrenceDate(): void
@@ -301,18 +302,18 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $reloadedPast = $this->em->find(Lesson::class, $pastLesson->getId());
         $reloadedCancelled = $this->em->find(Lesson::class, $cancelledLesson->getId());
 
-        self::assertNotNull($reloadedCurrent);
-        self::assertNotNull($reloadedSibling);
-        self::assertNotNull($reloadedPast);
-        self::assertNotNull($reloadedCancelled);
+        static::assertNotNull($reloadedCurrent);
+        static::assertNotNull($reloadedSibling);
+        static::assertNotNull($reloadedPast);
+        static::assertNotNull($reloadedCancelled);
 
-        self::assertSame('Series Wide Update', $reloadedCurrent->getMetadata()->title);
-        self::assertSame('Series Wide Update', $reloadedSibling->getMetadata()->title);
-        self::assertEquals($siblingOriginalSchedule, $reloadedSibling->schedule);
+        static::assertSame('Series Wide Update', $reloadedCurrent->getMetadata()->title);
+        static::assertSame('Series Wide Update', $reloadedSibling->getMetadata()->title);
+        static::assertEquals($siblingOriginalSchedule, $reloadedSibling->schedule);
 
         // Past and cancelled lessons are never touched by a series-wide edit.
-        self::assertSame('Past Title', $reloadedPast->getMetadata()->title);
-        self::assertSame('Cancelled Title', $reloadedCancelled->getMetadata()->title);
+        static::assertSame('Past Title', $reloadedPast->getMetadata()->title);
+        static::assertSame('Cancelled Title', $reloadedCancelled->getMetadata()->title);
     }
 
     public function testSaveNotifiesOtherInstructorsAndAdminsButExcludesTheEditor(): void
@@ -347,9 +348,9 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $otherInstructorNotifications = $this->notificationRepository->findRecentForUser($otherInstructor);
         $adminNotifications = $this->notificationRepository->findRecentForUser($admin);
 
-        self::assertCount(0, $editorNotifications);
-        self::assertCount(1, $otherInstructorNotifications);
-        self::assertCount(1, $adminNotifications);
+        static::assertCount(0, $editorNotifications);
+        static::assertCount(1, $otherInstructorNotifications);
+        static::assertCount(1, $adminNotifications);
     }
 
     /**

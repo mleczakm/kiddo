@@ -28,7 +28,7 @@ class AliorNotificationMailProviderTest extends TestCase
 
         $provider = new AliorNotificationMailProvider($mailbox, $logger, mailboxUsername: '', mailboxPassword: '');
 
-        $this->assertSame([], iterator_to_array($provider()));
+        static::assertSame([], iterator_to_array($provider()));
     }
 
     public function testLogsErrorAndDoesNotThrowOnThrowableWhenCredentialsConfigured(): void
@@ -42,7 +42,7 @@ class AliorNotificationMailProviderTest extends TestCase
         $logger
             ->expects($this->once())
             ->method('error')
-            ->with('Gmail IMAP query failed', $this->arrayHasKey('exception'));
+            ->with('Gmail IMAP query failed', static::arrayHasKey('exception'));
 
         $provider = new AliorNotificationMailProvider(
             $testMailbox,
@@ -51,7 +51,7 @@ class AliorNotificationMailProviderTest extends TestCase
             mailboxPassword: 'secret',
         );
 
-        $this->assertSame([], iterator_to_array($provider()));
+        static::assertSame([], iterator_to_array($provider()));
     }
 }
 

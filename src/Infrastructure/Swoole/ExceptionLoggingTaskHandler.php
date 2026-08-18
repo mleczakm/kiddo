@@ -17,6 +17,7 @@ final readonly class ExceptionLoggingTaskHandler implements TaskHandler
         private TaskHandler $innerHandler,
     ) {}
 
+    #[\Override]
     public function handle(Server $server, Task $task): void
     {
         try {

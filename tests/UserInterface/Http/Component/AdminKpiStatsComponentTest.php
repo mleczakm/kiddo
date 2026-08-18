@@ -25,6 +25,7 @@ final class AdminKpiStatsComponentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -115,9 +116,9 @@ final class AdminKpiStatsComponentTest extends WebTestCase
         $adminKpiStatsComponent = $component->component();
         $kpi = $adminKpiStatsComponent->getKpiStats();
 
-        self::assertSame(1, $kpi['bookingsCount']);
-        self::assertTrue($kpi['revenue']->isEqualTo(Money::of(100, 'PLN')));
-        self::assertSame('30%', $kpi['occupancyRate']);
-        self::assertSame('Marzec', $kpi['monthLabel']);
+        static::assertSame(1, $kpi['bookingsCount']);
+        static::assertTrue($kpi['revenue']->isEqualTo(Money::of(100, 'PLN')));
+        static::assertSame('30%', $kpi['occupancyRate']);
+        static::assertSame('Marzec', $kpi['monthLabel']);
     }
 }

@@ -13,6 +13,7 @@ final class SchedulerTest extends KernelTestCase
 {
     private Scheduler $scheduler;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -21,7 +22,7 @@ final class SchedulerTest extends KernelTestCase
 
     public function testSchedulerCanBeInstantiated(): void
     {
-        $this->assertInstanceOf(Scheduler::class, $this->scheduler);
+        static::assertInstanceOf(Scheduler::class, $this->scheduler);
     }
 
     public function testSchedulerRunDoesNotThrow(): void

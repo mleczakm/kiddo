@@ -27,7 +27,7 @@ class DoctrineInsideTaskWorkerCheckHandlerTest extends TestCase
 
         $doctrineInsideTaskWorkerHandler->__invoke(new DoctrineInsideTaskWorkerCheck('doctrine_inside_task_worker'));
 
-        self::assertFalse($nullCache->get('doctrine_inside_task_worker'));
+        static::assertFalse($nullCache->get('doctrine_inside_task_worker'));
     }
 
     public function testFailOnNativeCheckFatal(): void
@@ -42,7 +42,7 @@ class DoctrineInsideTaskWorkerCheckHandlerTest extends TestCase
 
         $doctrineInsideTaskWorkerHandler->__invoke(new DoctrineInsideTaskWorkerCheck('doctrine_inside_task_worker'));
 
-        self::assertFalse($nullCache->get('doctrine_inside_task_worker'));
+        static::assertFalse($nullCache->get('doctrine_inside_task_worker'));
     }
 
     public function testPassOnNativeCheckSuccess(): void
@@ -57,6 +57,6 @@ class DoctrineInsideTaskWorkerCheckHandlerTest extends TestCase
 
         $doctrineInsideTaskWorkerHandler->__invoke(new DoctrineInsideTaskWorkerCheck('doctrine_inside_task_worker'));
 
-        self::assertTrue($nullCache->get('doctrine_inside_task_worker'));
+        static::assertTrue($nullCache->get('doctrine_inside_task_worker'));
     }
 }

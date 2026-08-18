@@ -41,7 +41,7 @@ class PlatformBillingComponentTest extends WebTestCase
 
         /** @var PlatformBillingComponent $component */
         $component = $testComponent->component();
-        $this->assertNotEmpty($component->getCurrentDue());
+        static::assertNotEmpty($component->getCurrentDue());
     }
 
     public function testCanOpenModal(): void
@@ -57,7 +57,7 @@ class PlatformBillingComponentTest extends WebTestCase
 
         /** @var PlatformBillingComponent $component */
         $component = $testComponent->component();
-        $this->assertTrue($component->showModal);
+        static::assertTrue($component->showModal);
     }
 
     public function testCanCloseModal(): void
@@ -74,7 +74,7 @@ class PlatformBillingComponentTest extends WebTestCase
 
         /** @var PlatformBillingComponent $component */
         $component = $testComponent->component();
-        $this->assertFalse($component->showModal);
+        static::assertFalse($component->showModal);
     }
 
     public function testCanSetPastDueAsPaid(): void
@@ -90,6 +90,6 @@ class PlatformBillingComponentTest extends WebTestCase
 
         /** @var PlatformBillingComponent $component */
         $component = $testComponent->component();
-        $this->assertNotNull($component->successMessage);
+        static::assertNotNull($component->successMessage);
     }
 }

@@ -11,6 +11,7 @@ readonly class BrevoNewsletterService
 {
     public function __construct(
         private HttpClientInterface $httpClient,
+        #[\SensitiveParameter]
         #[Autowire('%env(BREVO_API_KEY)%')]
         private string $apiKey,
         #[Autowire('%env(int:BREVO_NEWSLETTER_LIST_ID)%')]

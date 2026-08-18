@@ -29,6 +29,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
                 private array $messages,
             ) {}
 
+            #[\Override]
             public function __invoke(): iterable
             {
                 yield from $this->messages;
@@ -37,7 +38,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
 
         $guard = $this->createGuard($decorated);
 
-        self::assertSame([$one, $two], iterator_to_array($guard(), false));
+        static::assertSame([$one, $two], iterator_to_array($guard(), false));
     }
 
     public function testOverlappingInvocationYieldsNothingInsteadOfRacing(): void
@@ -54,6 +55,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
              */
             public array $reentrantCallers = [];
 
+            #[\Override]
             public function __invoke(): iterable
             {
                 // Simulates a second scheduled run starting while this one is still
@@ -74,7 +76,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
             new IncomingNotificationMailQueryReentrancyGuardDecorator($decorated, $lockFactory),
         ];
 
-        self::assertSame([$message], iterator_to_array($guard(), false));
+        static::assertSame([$message], iterator_to_array($guard(), false));
     }
 
     public function testRunningFlagResetsAfterExceptionSoLaterCallsAreNotSkipped(): void
@@ -88,6 +90,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
                 private readonly MessageQueryInterface $message,
             ) {}
 
+            #[\Override]
             public function __invoke(): iterable
             {
                 ++$this->calls;
@@ -108,7 +111,7 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
         try {
             iterator_to_array($guard(), false);
         } finally {
-            self::assertSame([$message], iterator_to_array($guard(), false));
+            static::assertSame([$message], iterator_to_array($guard(), false));
         }
     }
 

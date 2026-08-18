@@ -13,6 +13,7 @@ final readonly class DoctrineConnectionEnsurer implements ConnectionEnsurerInter
         private Connection $connection,
     ) {}
 
+    #[\Override]
     public function ensureConnection(): void
     {
         $this->discardActiveTransaction();

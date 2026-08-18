@@ -18,6 +18,7 @@ class PaymentRepositoryTest extends KernelTestCase
 {
     private PaymentRepository $paymentRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -30,25 +31,25 @@ class PaymentRepositoryTest extends KernelTestCase
         $this->preparePendingPayment();
 
         // Test cases
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('Test User'), 'Search by name');
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('test@example.com'), 'Search by email');
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('1234'), 'Search by payment code');
-        $this->assertCount(1, $this->paymentRepository->findPendingWithSearch('150'), 'Search by amount');
-        $this->assertCount(
+        static::assertCount(1, $this->paymentRepository->findPendingWithSearch('Test User'), 'Search by name');
+        static::assertCount(1, $this->paymentRepository->findPendingWithSearch('test@example.com'), 'Search by email');
+        static::assertCount(1, $this->paymentRepository->findPendingWithSearch('1234'), 'Search by payment code');
+        static::assertCount(1, $this->paymentRepository->findPendingWithSearch('150'), 'Search by amount');
+        static::assertCount(
             1,
             $this->paymentRepository->findPendingWithSearch(''),
             'Empty search should return all pending',
         );
-        $this->assertCount(0, $this->paymentRepository->findPendingWithSearch('nonexistent'), 'Search with no match');
+        static::assertCount(0, $this->paymentRepository->findPendingWithSearch('nonexistent'), 'Search with no match');
     }
 
     public function testCountPendingPayments(): void
     {
-        self::assertSame(0, $this->paymentRepository->countPendingPayments());
+        static::assertSame(0, $this->paymentRepository->countPendingPayments());
 
         $this->preparePendingPayment();
 
-        self::assertSame(1, $this->paymentRepository->countPendingPayments());
+        static::assertSame(1, $this->paymentRepository->countPendingPayments());
     }
 
     private function preparePendingPayment(): void

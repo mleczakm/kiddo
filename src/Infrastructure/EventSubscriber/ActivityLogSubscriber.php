@@ -23,6 +23,7 @@ final readonly class ActivityLogSubscriber implements EventSubscriberInterface
         private ActivityLogRepository $activityLogRepository,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

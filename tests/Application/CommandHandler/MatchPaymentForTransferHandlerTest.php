@@ -156,9 +156,9 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->entityManager->refresh($payment);
         $this->entityManager->refresh($transfer);
 
-        $this->assertTrue($payment->getTransfers()->contains($transfer));
-        $this->assertSame($payment, $transfer->getPayment());
-        $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertTrue($payment->getTransfers()->contains($transfer));
+        static::assertSame($payment, $transfer->getPayment());
+        static::assertEquals(Payment::STATUS_PAID, $payment->getStatus());
     }
 
     public function testMatchesPaymentWithCodeAtEndOfTitle(): void
@@ -198,9 +198,9 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->entityManager->refresh($payment);
         $this->entityManager->refresh($transfer);
 
-        $this->assertTrue($payment->getTransfers()->contains($transfer));
-        $this->assertSame($payment, $transfer->getPayment());
-        $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertTrue($payment->getTransfers()->contains($transfer));
+        static::assertSame($payment, $transfer->getPayment());
+        static::assertEquals(Payment::STATUS_PAID, $payment->getStatus());
     }
 
     #[Test]
@@ -337,9 +337,9 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
                 'type' => ActivityType::PAYMENT_RECEIVED,
             ]);
 
-        $this->assertCount(1, $activityLogs);
-        $this->assertSame($user, $activityLogs[0]->getSubject());
-        $this->assertStringContainsString('Marta Kowalczyk', $activityLogs[0]->getTitle());
+        static::assertCount(1, $activityLogs);
+        static::assertSame($user, $activityLogs[0]->getSubject());
+        static::assertStringContainsString('Marta Kowalczyk', $activityLogs[0]->getTitle());
     }
 
     public function testDoesNotTransitionPaymentIfCannotPay(): void
@@ -380,11 +380,11 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->entityManager->refresh($transfer);
 
         // Transfer should still be associated with payment
-        $this->assertTrue($payment->getTransfers()->contains($transfer));
-        $this->assertSame($payment, $transfer->getPayment());
+        static::assertTrue($payment->getTransfers()->contains($transfer));
+        static::assertSame($payment, $transfer->getPayment());
 
         // But status should remain the same since transition is not allowed
-        $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertEquals(Payment::STATUS_PAID, $payment->getStatus());
     }
 
     #[Test]
@@ -444,6 +444,7 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->bus()->dispatched()->assertContains(TransferNotMatchedCommand::class);
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();

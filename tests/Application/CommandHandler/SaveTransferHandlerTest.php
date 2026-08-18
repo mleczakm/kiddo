@@ -21,7 +21,7 @@ class SaveTransferHandlerTest extends KernelTestCase
         $messageBus = self::getContainer()->get(MessageBusInterface::class);
         $messageBus->dispatch(new SaveTransfer($transfer));
 
-        self::assertNull($transfer->getId());
+        static::assertNull($transfer->getId());
     }
 
     public function testExpectedAmountsAreGettingSaved(): void
@@ -32,6 +32,6 @@ class SaveTransferHandlerTest extends KernelTestCase
         $messageBus = self::getContainer()->get(MessageBusInterface::class);
         $messageBus->dispatch(new SaveTransfer($transfer));
 
-        self::assertIsNumeric($transfer->getId());
+        static::assertIsNumeric($transfer->getId());
     }
 }

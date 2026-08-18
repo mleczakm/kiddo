@@ -13,6 +13,7 @@ final readonly class CompositeConnectionEnsurer implements ConnectionEnsurerInte
         private array $ensurers,
     ) {}
 
+    #[\Override]
     public function ensureConnection(): void
     {
         foreach ($this->ensurers as $ensurer) {

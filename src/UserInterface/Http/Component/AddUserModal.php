@@ -103,7 +103,7 @@ final class AddUserModal extends AbstractController
         }
 
         if (in_array($role, $this->roles, true)) {
-            $this->roles = array_values(array_filter($this->roles, fn(string $r) => $r !== $role));
+            $this->roles = array_values(array_filter($this->roles, static fn(string $r) => $r !== $role));
         } else {
             $this->roles[] = $role;
         }

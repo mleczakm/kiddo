@@ -50,6 +50,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         private InAppNotificationService $inAppNotificationService,
     ) {}
 
+    #[\Override]
     public function definitions(): array
     {
         $confirm = [
@@ -495,11 +496,13 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ];
     }
 
+    #[\Override]
     public function supports(string $name): bool
     {
         return str_starts_with($name, 'admin.');
     }
 
+    #[\Override]
     public function call(string $name, ChatActor $actor, array $arguments): ToolResult
     {
         try {

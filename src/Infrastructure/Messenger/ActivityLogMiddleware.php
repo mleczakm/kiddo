@@ -45,6 +45,7 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         private BookingRepository $bookingRepository,
     ) {}
 
+    #[\Override]
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
         $envelope = $stack->next()->handle($envelope, $stack);

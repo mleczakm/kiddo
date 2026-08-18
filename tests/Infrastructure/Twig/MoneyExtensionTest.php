@@ -17,6 +17,6 @@ class MoneyExtensionTest extends TestCase
         $extension = new MoneyExtension();
         $money = Money::of(5000, 'PLN');
 
-        $this->assertEquals('5 000 zł', $extension->formatMoney($money));
+        static::assertSame('5 000 zł', $extension->formatMoney($money));
     }
 }

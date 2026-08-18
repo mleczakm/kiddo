@@ -87,7 +87,7 @@ class AdminSettingsComponent extends AbstractController
      */
     public function getFinanceContactUsers(): array
     {
-        return array_map(fn(FinanceContact $fc) => $fc->getUser(), $this->financeContactRepository->findAll());
+        return array_map(static fn(FinanceContact $fc) => $fc->getUser(), $this->financeContactRepository->findAll());
     }
 
     /**
@@ -130,12 +130,12 @@ class AdminSettingsComponent extends AbstractController
             return [];
         }
 
-        $excludeIds = array_map(fn(User $user) => (string) $user->getId(), $exclude);
+        $excludeIds = array_map(static fn(User $user) => (string) $user->getId(), $exclude);
         $results = $this->userRepository->findForAutocomplete($search);
 
         return array_values(array_filter(
             $results,
-            fn(User $user) => !in_array((string) $user->getId(), $excludeIds, true),
+            static fn(User $user) => !in_array((string) $user->getId(), $excludeIds, true),
         ));
     }
 
@@ -202,7 +202,7 @@ class AdminSettingsComponent extends AbstractController
             return;
         }
 
-        $roles = array_filter($user->getRoles(), fn(string $role) => $role !== 'ROLE_ADMIN');
+        $roles = array_filter($user->getRoles(), static fn(string $role) => $role !== 'ROLE_ADMIN');
         $user->setRoles(array_values($roles));
         $this->entityManager->flush();
     }
@@ -231,7 +231,7 @@ class AdminSettingsComponent extends AbstractController
             return;
         }
 
-        $roles = array_filter($user->getRoles(), fn(string $role) => $role !== 'ROLE_HOST');
+        $roles = array_filter($user->getRoles(), static fn(string $role) => $role !== 'ROLE_HOST');
         $user->setRoles(array_values($roles));
         $this->entityManager->flush();
     }

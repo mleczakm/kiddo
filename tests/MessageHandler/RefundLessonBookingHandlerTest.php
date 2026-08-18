@@ -48,8 +48,8 @@ final class RefundLessonBookingHandlerTest extends KernelTestCase
         $handler(new RefundLessonBooking($booking->getId(), $lesson->getId(), $customer, 'Proszę o zwrot.'));
         $em->flush();
 
-        self::assertSame(Payment::STATUS_REFUND_REQUESTED, $payment->getStatus());
-        self::assertSame('Proszę o zwrot.', $payment->getRefundRequestMessage());
-        self::assertTrue($payment->isRefundRequestedViaUserPanel());
+        static::assertSame(Payment::STATUS_REFUND_REQUESTED, $payment->getStatus());
+        static::assertSame('Proszę o zwrot.', $payment->getRefundRequestMessage());
+        static::assertTrue($payment->isRefundRequestedViaUserPanel());
     }
 }

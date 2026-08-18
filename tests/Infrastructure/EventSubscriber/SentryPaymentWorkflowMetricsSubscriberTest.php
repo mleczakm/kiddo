@@ -21,6 +21,7 @@ class SentryPaymentWorkflowMetricsSubscriberTest extends TestCase
 
     private SentryPaymentWorkflowMetricsSubscriber $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->metrics = $this->createMock(MetricsRecorderInterface::class);
@@ -31,8 +32,8 @@ class SentryPaymentWorkflowMetricsSubscriberTest extends TestCase
     {
         $events = SentryPaymentWorkflowMetricsSubscriber::getSubscribedEvents();
 
-        $this->assertArrayHasKey('workflow.payment.transition', $events);
-        $this->assertEquals('onPaymentTransition', $events['workflow.payment.transition']);
+        static::assertArrayHasKey('workflow.payment.transition', $events);
+        static::assertSame('onPaymentTransition', $events['workflow.payment.transition']);
     }
 
     public function testOnPaymentTransitionTracksCountersAndAmountOnPay(): void

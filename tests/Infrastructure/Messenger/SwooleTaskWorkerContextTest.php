@@ -17,7 +17,7 @@ final class SwooleTaskWorkerContextTest extends TestCase
     {
         $context = new SwooleTaskWorkerContext();
 
-        self::assertFalse($context->isInTaskWorker());
+        static::assertFalse($context->isInTaskWorker());
     }
 
     public function testReturnsFalseWhenServerCannotBeResolved(): void
@@ -30,7 +30,7 @@ final class SwooleTaskWorkerContextTest extends TestCase
 
         $context = new SwooleTaskWorkerContext($provider);
 
-        self::assertFalse($context->isInTaskWorker());
+        static::assertFalse($context->isInTaskWorker());
     }
 
     public function testReturnsTaskWorkerFlagFromServer(): void
@@ -43,6 +43,6 @@ final class SwooleTaskWorkerContextTest extends TestCase
 
         $context = new SwooleTaskWorkerContext($provider);
 
-        self::assertTrue($context->isInTaskWorker());
+        static::assertTrue($context->isInTaskWorker());
     }
 }

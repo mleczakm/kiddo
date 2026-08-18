@@ -18,7 +18,7 @@ final class LlmTxtControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'text/plain; charset=utf-8');
-        self::assertTrue($client->getResponse()->headers->has('cache-control'));
+        static::assertTrue($client->getResponse()->headers->has('cache-control'));
     }
 
     public function testLlmTxtContainsMcpEndpoint(): void
@@ -28,10 +28,10 @@ final class LlmTxtControllerTest extends WebTestCase
         $client->request('GET', '/llm.txt');
 
         $content = $client->getResponse()->getContent();
-        self::assertIsString($content);
-        self::assertStringContainsString('Model Context Protocol (MCP) Server', $content);
-        self::assertStringContainsString('2026-07-28', $content);
-        self::assertStringContainsString('HTTP', $content);
+        static::assertIsString($content);
+        static::assertStringContainsString('Model Context Protocol (MCP) Server', $content);
+        static::assertStringContainsString('2026-07-28', $content);
+        static::assertStringContainsString('HTTP', $content);
     }
 
     public function testLlmTxtListsUserTools(): void
@@ -41,13 +41,13 @@ final class LlmTxtControllerTest extends WebTestCase
         $client->request('GET', '/llm.txt');
 
         $content = $client->getResponse()->getContent();
-        self::assertIsString($content);
+        static::assertIsString($content);
 
         // Check for key user tools
-        self::assertStringContainsString('user_me', $content);
-        self::assertStringContainsString('user_list_upcoming_lessons', $content);
-        self::assertStringContainsString('user_create_booking', $content);
-        self::assertStringContainsString('user_list_children', $content);
+        static::assertStringContainsString('user_me', $content);
+        static::assertStringContainsString('user_list_upcoming_lessons', $content);
+        static::assertStringContainsString('user_create_booking', $content);
+        static::assertStringContainsString('user_list_children', $content);
     }
 
     public function testLlmTxtListsAdminTools(): void
@@ -57,12 +57,12 @@ final class LlmTxtControllerTest extends WebTestCase
         $client->request('GET', '/llm.txt');
 
         $content = $client->getResponse()->getContent();
-        self::assertIsString($content);
+        static::assertIsString($content);
 
         // Check for key admin tools
-        self::assertStringContainsString('admin_today_schedule', $content);
-        self::assertStringContainsString('admin_list_lessons', $content);
-        self::assertStringContainsString('admin_create_booking', $content);
+        static::assertStringContainsString('admin_today_schedule', $content);
+        static::assertStringContainsString('admin_list_lessons', $content);
+        static::assertStringContainsString('admin_create_booking', $content);
     }
 
     public function testLlmTxtContainsConfigurationExample(): void
@@ -72,10 +72,10 @@ final class LlmTxtControllerTest extends WebTestCase
         $client->request('GET', '/llm.txt');
 
         $content = $client->getResponse()->getContent();
-        self::assertIsString($content);
-        self::assertStringContainsString('mcpServers', $content);
-        self::assertStringContainsString('kiddo', $content);
-        self::assertStringContainsString('X-Kiddo-Chat-Token', $content);
+        static::assertIsString($content);
+        static::assertStringContainsString('mcpServers', $content);
+        static::assertStringContainsString('kiddo', $content);
+        static::assertStringContainsString('X-Kiddo-Chat-Token', $content);
     }
 
     public function testLlmTxtContainsDomainKnowledge(): void
@@ -85,11 +85,11 @@ final class LlmTxtControllerTest extends WebTestCase
         $client->request('GET', '/llm.txt');
 
         $content = $client->getResponse()->getContent();
-        self::assertIsString($content);
-        self::assertStringContainsString('Domain Knowledge', $content);
-        self::assertStringContainsString('Lesson/Workshop', $content);
-        self::assertStringContainsString('Booking', $content);
-        self::assertStringContainsString('Carnet', $content);
+        static::assertIsString($content);
+        static::assertStringContainsString('Domain Knowledge', $content);
+        static::assertStringContainsString('Lesson/Workshop', $content);
+        static::assertStringContainsString('Booking', $content);
+        static::assertStringContainsString('Carnet', $content);
     }
 
     public function testLlmTxtContainsBehaviorGuidelines(): void
@@ -99,8 +99,8 @@ final class LlmTxtControllerTest extends WebTestCase
         $client->request('GET', '/llm.txt');
 
         $content = $client->getResponse()->getContent();
-        self::assertIsString($content);
-        self::assertStringContainsString('AI Agent Behavior Guidelines', $content);
-        self::assertStringContainsString('confirm=true', $content);
+        static::assertIsString($content);
+        static::assertStringContainsString('AI Agent Behavior Guidelines', $content);
+        static::assertStringContainsString('confirm=true', $content);
     }
 }

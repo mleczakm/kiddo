@@ -45,15 +45,15 @@ class NewUserHandlerTest extends KernelTestCase
         $userId = $user->getId();
         $em->clear();
         $persistedUser = $em->find(User::class, $userId);
-        self::assertNotNull($persistedUser);
-        self::assertNotEmpty($persistedUser->getConfirmedAt());
+        static::assertNotNull($persistedUser);
+        static::assertNotEmpty($persistedUser->getConfirmedAt());
 
         $emails = $this->mailer()->sentEmails();
 
-        $recipients = array_map(fn(TestEmail $email) => $email->getTo()[0]->getAddress(), $emails->all());
-        $this->assertContains('user@example.com', $recipients);
-        $this->assertContains('admin1@example.com', $recipients);
-        $this->assertContains('admin2@example.com', $recipients);
+        $recipients = array_map(static fn(TestEmail $email) => $email->getTo()[0]->getAddress(), $emails->all());
+        static::assertContains('user@example.com', $recipients);
+        static::assertContains('admin1@example.com', $recipients);
+        static::assertContains('admin2@example.com', $recipients);
 
         // Assert admin email content contains user data
         $userEmail = $persistedUser->getEmail();
@@ -62,14 +62,14 @@ class NewUserHandlerTest extends KernelTestCase
             $to = $email->getTo()[0]->getAddress();
             if (in_array($to, ['admin1@example.com', 'admin2@example.com'], true)) {
                 $body = (string) ($email->getHtmlBody() ?? $email->getTextBody());
-                $this->assertStringContainsString((string) $userId, $body);
-                $this->assertStringContainsString($userEmail, $body);
-                $this->assertStringContainsString($userName, $body);
+                static::assertStringContainsString((string) $userId, $body);
+                static::assertStringContainsString($userEmail, $body);
+                static::assertStringContainsString($userName, $body);
             }
         }
 
         $notifications = $em->getRepository(Notification::class)->findAll();
-        self::assertCount(3, $notifications);
+        static::assertCount(3, $notifications);
     }
 
     public function testDoesNotSendEmailsIfUserAlreadyConfirmed(): void

@@ -30,9 +30,9 @@ final class RegisterUserTest extends WebTestCase
         ], action: 'save');
 
         $user = $this->findUserByEmail('brand.new@example.com');
-        self::assertNotNull($user);
-        self::assertTrue($user->isNewsletterSubscribed());
-        self::assertNotNull($user->getNewsletterConsentDate());
+        static::assertNotNull($user);
+        static::assertTrue($user->isNewsletterSubscribed());
+        static::assertNotNull($user->getNewsletterConsentDate());
     }
 
     public function testSubmittingWithoutNewsletterDoesNotSubscribe(): void
@@ -48,9 +48,9 @@ final class RegisterUserTest extends WebTestCase
         ], action: 'save');
 
         $user = $this->findUserByEmail('no.newsletter@example.com');
-        self::assertNotNull($user);
-        self::assertFalse($user->isNewsletterSubscribed());
-        self::assertNull($user->getNewsletterConsentDate());
+        static::assertNotNull($user);
+        static::assertFalse($user->isNewsletterSubscribed());
+        static::assertNull($user->getNewsletterConsentDate());
     }
 
     private function findUserByEmail(string $email): ?User

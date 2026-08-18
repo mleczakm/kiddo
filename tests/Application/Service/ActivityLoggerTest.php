@@ -23,7 +23,7 @@ final class ActivityLoggerTest extends KernelTestCase
         $em->flush();
 
         $logger = self::getContainer()->get(ActivityLogger::class);
-        self::assertInstanceOf(ActivityLogger::class, $logger);
+        static::assertInstanceOf(ActivityLogger::class, $logger);
 
         $logger->log(
             type: ActivityType::BOOKING_CREATED,
@@ -37,16 +37,16 @@ final class ActivityLoggerTest extends KernelTestCase
         $repo = self::getContainer()->get(ActivityLogRepository::class);
         $recent = $repo->findRecent(10);
 
-        self::assertCount(1, $recent);
-        self::assertSame(ActivityType::BOOKING_CREATED, $recent[0]->getType());
-        self::assertSame('Ola Nowak zarezerwowała zajęcia', $recent[0]->getTitle());
-        self::assertSame($user, $recent[0]->getSubject());
+        static::assertCount(1, $recent);
+        static::assertSame(ActivityType::BOOKING_CREATED, $recent[0]->getType());
+        static::assertSame('Ola Nowak zarezerwowała zajęcia', $recent[0]->getTitle());
+        static::assertSame($user, $recent[0]->getSubject());
     }
 
     public function testDedupeKeySkipsASecondEntry(): void
     {
         $logger = self::getContainer()->get(ActivityLogger::class);
-        self::assertInstanceOf(ActivityLogger::class, $logger);
+        static::assertInstanceOf(ActivityLogger::class, $logger);
 
         $logger->log(
             type: ActivityType::TRANSFER_UNMATCHED,
@@ -66,7 +66,7 @@ final class ActivityLoggerTest extends KernelTestCase
             'dedupeKey' => 'transfer_unmatched:123',
         ]);
 
-        self::assertCount(1, $matching);
-        self::assertSame('Nierozpoznany przelew', $matching[0]->getTitle());
+        static::assertCount(1, $matching);
+        static::assertSame('Nierozpoznany przelew', $matching[0]->getTitle());
     }
 }

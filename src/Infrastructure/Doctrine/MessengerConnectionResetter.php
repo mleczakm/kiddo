@@ -14,7 +14,7 @@ readonly class MessengerConnectionResetter
     ) {}
 
     #[AsEventListener(event: WorkerMessageReceivedEvent::class)]
-    public function onWorkerMessageReceived(WorkerMessageReceivedEvent $event): void
+    public function onWorkerMessageReceived(WorkerMessageReceivedEvent $_event): void
     {
         $this->connectionEnsurer->ensureConnection();
     }

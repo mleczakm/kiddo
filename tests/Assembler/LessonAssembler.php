@@ -91,6 +91,7 @@ class LessonAssembler extends EntityAssembler
         return $this->with('series', $series);
     }
 
+    #[\Override]
     public function assemble(): Lesson
     {
         /** @var LessonMetadata $metadata */

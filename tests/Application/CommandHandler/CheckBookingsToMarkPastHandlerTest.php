@@ -87,13 +87,13 @@ class CheckBookingsToMarkPastHandlerTest extends KernelTestCase
         $savedB = $bookingRepository->find($bookingB->getId());
         $savedC = $bookingRepository->find($bookingC->getId());
 
-        self::assertNotNull($savedA);
-        self::assertNotNull($savedB);
-        self::assertNotNull($savedC);
+        static::assertNotNull($savedA);
+        static::assertNotNull($savedB);
+        static::assertNotNull($savedC);
 
-        self::assertSame(Booking::STATUS_PAST, $savedA->getStatus(), 'Booking A should be marked as past');
-        self::assertSame(Booking::STATUS_ACTIVE, $savedB->getStatus(), 'Booking B should remain active');
-        self::assertSame(
+        static::assertSame(Booking::STATUS_PAST, $savedA->getStatus(), 'Booking A should be marked as past');
+        static::assertSame(Booking::STATUS_ACTIVE, $savedB->getStatus(), 'Booking B should remain active');
+        static::assertSame(
             Booking::STATUS_PAST,
             $savedC->getStatus(),
             'Booking C with all lessons cancelled/past should be marked as past',

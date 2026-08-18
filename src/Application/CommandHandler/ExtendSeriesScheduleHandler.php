@@ -21,7 +21,7 @@ final readonly class ExtendSeriesScheduleHandler
         private LoggerInterface $logger,
     ) {}
 
-    public function __invoke(ExtendSeriesSchedule $command): void
+    public function __invoke(ExtendSeriesSchedule $_command): void
     {
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         $horizon = $now->modify('+2 months');
@@ -61,10 +61,12 @@ final readonly class ExtendSeriesScheduleHandler
                 // Prevent duplicates if a lesson at this schedule already exists in the series
                 $exists = false;
                 foreach ($series->lessons as $existing) {
-                    if ($existing->schedule->getTimestamp() === $cursor->getTimestamp()) {
-                        $exists = true;
-                        break;
+                    if ($existing->schedule->getTimestamp() !== $cursor->getTimestamp()) {
+                        continue;
                     }
+
+                    $exists = true;
+                    break;
                 }
 
                 if (!$exists) {

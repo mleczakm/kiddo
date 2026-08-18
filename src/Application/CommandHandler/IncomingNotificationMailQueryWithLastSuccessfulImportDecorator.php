@@ -18,6 +18,7 @@ final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecora
     /**
      * @return iterable<MessageQueryInterface>
      */
+    #[\Override]
     public function __invoke(): iterable
     {
         yield from ($this->decorated)();

@@ -53,7 +53,7 @@ final readonly class MatchPaymentForTransferHandler
     {
         $tokens = array_values(array_filter(
             explode(' ', preg_replace('/[^A-Za-z0-9]/', ' ', mb_strtoupper($title)) ?? ''),
-            fn(string $word): bool => $word !== '',
+            static fn(string $word): bool => $word !== '',
         ));
 
         $emitted = [];

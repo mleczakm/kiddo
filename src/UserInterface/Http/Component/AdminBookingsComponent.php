@@ -254,7 +254,7 @@ class AdminBookingsComponent extends AbstractController
     public function getAvailableLessons(): array
     {
         /** @var Lesson[] $result */
-        $result = $this->lessonRepository
+        return $this->lessonRepository
             ->createQueryBuilder('l')
             ->leftJoin('l.series', 's')
             ->where('l.status = :status')
@@ -265,7 +265,6 @@ class AdminBookingsComponent extends AbstractController
             ->setMaxResults(50)
             ->getQuery()
             ->getResult();
-        return $result;
     }
 
     #[LiveAction]
@@ -365,7 +364,7 @@ class AdminBookingsComponent extends AbstractController
         if (in_array($bookingId, $this->expandedBookings, true)) {
             $this->expandedBookings = array_values(array_filter(
                 $this->expandedBookings,
-                fn($id) => $id !== $bookingId,
+                static fn($id) => $id !== $bookingId,
             ));
         } else {
             $this->expandedBookings[] = $bookingId;
@@ -585,8 +584,7 @@ class AdminBookingsComponent extends AbstractController
                 return [];
             }
             /** @var list<string> $ids */
-            $ids = array_values(array_filter($decoded, static fn($v) => is_string($v) && Ulid::isValid($v)));
-            return $ids;
+            return array_values(array_filter($decoded, static fn($v) => is_string($v) && Ulid::isValid($v)));
         } catch (\Exception) {
             return [];
         }
@@ -605,10 +603,9 @@ class AdminBookingsComponent extends AbstractController
         $ids = array_map(Ulid::fromString(...), $idStrings);
 
         /** @var Lesson[] $lessons */
-        $lessons = $this->lessonRepository->findBy([
+        return $this->lessonRepository->findBy([
             'id' => $ids,
         ]);
-        return $lessons;
     }
 
     /**
@@ -633,8 +630,7 @@ class AdminBookingsComponent extends AbstractController
         $qb->andWhere('m.title LIKE :search OR m.description LIKE :search')->setParameter('search', $searchTerm);
 
         /** @var Lesson[] $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -648,7 +644,7 @@ class AdminBookingsComponent extends AbstractController
     #[LiveAction]
     public function selectLesson(#[LiveArg] string $lessonId): void
     {
-        $lessonIdString = (string) $lessonId;
+        $lessonIdString = $lessonId;
         $selectedIds = $this->getSelectedLessonIdsArray();
 
         if (!in_array($lessonIdString, $selectedIds, true)) {
@@ -660,9 +656,9 @@ class AdminBookingsComponent extends AbstractController
     #[LiveAction]
     public function removeLesson(#[LiveArg] string $lessonId): void
     {
-        $lessonIdString = (string) $lessonId;
+        $lessonIdString = $lessonId;
         $selectedIds = $this->getSelectedLessonIdsArray();
-        $selectedIds = array_values(array_filter($selectedIds, fn($id) => $id !== $lessonIdString));
+        $selectedIds = array_values(array_filter($selectedIds, static fn($id) => $id !== $lessonIdString));
         $this->selectedLessonIds = (string) json_encode($selectedIds);
     }
 

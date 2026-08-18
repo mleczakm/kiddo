@@ -19,6 +19,7 @@ readonly class AccessDeniedHandler implements EventSubscriberInterface
         private Security $security,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

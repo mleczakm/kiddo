@@ -22,6 +22,7 @@ class WeekFilteringIntegrationTest extends KernelTestCase
 
     private UpcomingLessonsComponent $lessonsComponent;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -53,22 +54,22 @@ class WeekFilteringIntegrationTest extends KernelTestCase
         $this->attendeesComponent->week = '2024-01-01';
         $attendeesResults = $this->attendeesComponent->getLessons();
 
-        $this->assertCount(3, $attendeesResults, 'Should find 3 lessons in first week range (Jan 1-7)');
+        static::assertCount(3, $attendeesResults, 'Should find 3 lessons in first week range (Jan 1-7)');
 
-        $titles = array_map(fn($lesson) => $lesson->getMetadata()->title, $attendeesResults);
-        $this->assertContains('Week 1 Lesson 1', $titles);
-        $this->assertContains('Week 1 Lesson 2', $titles);
-        $this->assertContains('Week 1 Lesson 3', $titles);
+        $titles = array_map(static fn($lesson) => $lesson->getMetadata()->title, $attendeesResults);
+        static::assertContains('Week 1 Lesson 1', $titles);
+        static::assertContains('Week 1 Lesson 2', $titles);
+        static::assertContains('Week 1 Lesson 3', $titles);
 
         // Test UpcomingLessonsComponent week filtering
         $this->lessonsComponent->week = '2024-01-08';
         $lessonsResults = $this->lessonsComponent->getLessons();
 
-        $this->assertCount(2, $lessonsResults, 'Should find 2 lessons in second week range (Jan 8-14)');
+        static::assertCount(2, $lessonsResults, 'Should find 2 lessons in second week range (Jan 8-14)');
 
-        $titles = array_map(fn($lesson) => $lesson->getMetadata()->title, $lessonsResults);
-        $this->assertContains('Week 2 Lesson 1', $titles);
-        $this->assertContains('Week 2 Lesson 2', $titles);
+        $titles = array_map(static fn($lesson) => $lesson->getMetadata()->title, $lessonsResults);
+        static::assertContains('Week 2 Lesson 1', $titles);
+        static::assertContains('Week 2 Lesson 2', $titles);
     }
 
     public function testWeekNavigationDatesAreCorrect(): void
@@ -86,16 +87,16 @@ class WeekFilteringIntegrationTest extends KernelTestCase
             $attendeesStart = $this->attendeesComponent->getWeekStart();
             $attendeesEnd = $this->attendeesComponent->getWeekEnd();
 
-            $this->assertEquals($startWeek, $attendeesStart->format('Y-m-d'));
-            $this->assertEquals($expectedEndWeek, $attendeesEnd->format('Y-m-d'));
+            static::assertEquals($startWeek, $attendeesStart->format('Y-m-d'));
+            static::assertEquals($expectedEndWeek, $attendeesEnd->format('Y-m-d'));
 
             // Test UpcomingLessonsComponent
             $this->lessonsComponent->week = $startWeek;
             $lessonsStart = $this->lessonsComponent->getWeekStart();
             $lessonsEnd = $this->lessonsComponent->getWeekEnd();
 
-            $this->assertEquals($startWeek, $lessonsStart->format('Y-m-d'));
-            $this->assertEquals($expectedEndWeek, $lessonsEnd->format('Y-m-d'));
+            static::assertEquals($startWeek, $lessonsStart->format('Y-m-d'));
+            static::assertEquals($expectedEndWeek, $lessonsEnd->format('Y-m-d'));
         }
     }
 
@@ -113,8 +114,8 @@ class WeekFilteringIntegrationTest extends KernelTestCase
         $this->lessonsComponent->week = '2024-01-01';
         $lessonsResults = $this->lessonsComponent->getLessons();
 
-        $this->assertCount(0, $attendeesResults, 'UpcomingAttendeesComponent should return empty array');
-        $this->assertCount(0, $lessonsResults, 'UpcomingLessonsComponent should return empty array');
+        static::assertCount(0, $attendeesResults, 'UpcomingAttendeesComponent should return empty array');
+        static::assertCount(0, $lessonsResults, 'UpcomingLessonsComponent should return empty array');
     }
 
     public function testLessonsAreOrderedBySchedule(): void
@@ -134,10 +135,10 @@ class WeekFilteringIntegrationTest extends KernelTestCase
         $this->attendeesComponent->week = '2024-03-01';
         $results = $this->attendeesComponent->getLessons();
 
-        $this->assertCount(3, $results);
-        $this->assertEquals('First', $results[0]->getMetadata()->title);
-        $this->assertEquals('Second', $results[1]->getMetadata()->title);
-        $this->assertEquals('Third', $results[2]->getMetadata()->title);
+        static::assertCount(3, $results);
+        static::assertSame('First', $results[0]->getMetadata()->title);
+        static::assertSame('Second', $results[1]->getMetadata()->title);
+        static::assertSame('Third', $results[2]->getMetadata()->title);
     }
 
     private function createLesson(string $title, \DateTimeImmutable $schedule): Lesson

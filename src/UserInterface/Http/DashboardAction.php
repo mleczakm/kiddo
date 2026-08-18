@@ -21,10 +21,10 @@ class DashboardAction extends AbstractController
     ], name: 'dashboard')]
     #[IsGranted('ROLE_USER')]
     public function __invoke(
-        BookingRepository $bookingRepository,
-        EntityManagerInterface $entityManager,
+        BookingRepository $_bookingRepository,
+        EntityManagerInterface $_entityManager,
         #[CurrentUser]
-        User $user,
+        User $_user,
     ): Response {
         return $this->render('dashboard.html.twig', [
             'page' => [

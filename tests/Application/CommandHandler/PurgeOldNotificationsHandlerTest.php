@@ -38,13 +38,13 @@ final class PurgeOldNotificationsHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(PurgeOldNotificationsHandler::class);
-        self::assertInstanceOf(PurgeOldNotificationsHandler::class, $handler);
+        static::assertInstanceOf(PurgeOldNotificationsHandler::class, $handler);
         $handler(new PurgeOldNotifications());
 
         /** @var NotificationRepository $repo */
         $repo = self::getContainer()->get(NotificationRepository::class);
         $remaining = $repo->findRecentForUser($user, 10);
-        self::assertCount(1, $remaining);
-        self::assertSame('Fresh', $remaining[0]->getTitle());
+        static::assertCount(1, $remaining);
+        static::assertSame('Fresh', $remaining[0]->getTitle());
     }
 }

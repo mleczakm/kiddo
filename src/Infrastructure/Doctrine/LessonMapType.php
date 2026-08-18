@@ -32,7 +32,7 @@ class LessonMapType extends JsonType
 
         $lessonMap = new LessonMap();
 
-        $deserializeMap = function (mixed $mapData): Map {
+        $deserializeMap = static function (mixed $mapData): Map {
             if (!is_array($mapData)) {
                 return new Map();
             }

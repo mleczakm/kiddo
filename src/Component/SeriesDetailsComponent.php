@@ -73,12 +73,12 @@ class SeriesDetailsComponent extends AbstractController
         $lessons = $series->lessons->toArray();
 
         // Sort by schedule
-        usort($lessons, fn(Lesson $a, Lesson $b) => $a->schedule <=> $b->schedule);
+        usort($lessons, static fn(Lesson $a, Lesson $b) => $a->schedule <=> $b->schedule);
 
         // Filter based on showPast
         if (!$this->showPast) {
             $now = Clock::get()->now();
-            $lessons = array_filter($lessons, fn(Lesson $lesson) => $lesson->schedule >= $now);
+            $lessons = array_filter($lessons, static fn(Lesson $lesson) => $lesson->schedule >= $now);
         }
 
         return array_values($lessons);
@@ -97,11 +97,11 @@ class SeriesDetailsComponent extends AbstractController
         $lessons = $series->lessons->toArray();
 
         // Sort by schedule
-        usort($lessons, fn(Lesson $a, Lesson $b) => $b->schedule <=> $a->schedule);
+        usort($lessons, static fn(Lesson $a, Lesson $b) => $b->schedule <=> $a->schedule);
 
         // Only past lessons
         $now = Clock::get()->now();
-        $lessons = array_filter($lessons, fn(Lesson $lesson) => $lesson->schedule < $now);
+        $lessons = array_filter($lessons, static fn(Lesson $lesson) => $lesson->schedule < $now);
 
         return array_values($lessons);
     }
@@ -127,7 +127,10 @@ class SeriesDetailsComponent extends AbstractController
         $bookings = $this->getBookingsForLesson($lesson);
         return array_filter(
             $bookings,
-            fn(Booking $b) => $b->getStatus() !== Booking::STATUS_CANCELLED && $b->getStatus() !== Booking::STATUS_PAST,
+            static fn(Booking $b) => (
+                $b->getStatus() !== Booking::STATUS_CANCELLED
+                && $b->getStatus() !== Booking::STATUS_PAST
+            ),
         );
     }
 
@@ -137,13 +140,13 @@ class SeriesDetailsComponent extends AbstractController
     public function getWaitingApprovalBookingsForLesson(Lesson $lesson): array
     {
         $bookings = $this->getBookingsForLesson($lesson);
-        return array_filter($bookings, fn(Booking $b) => $b->isWaitingApproval());
+        return array_filter($bookings, static fn(Booking $b) => $b->isWaitingApproval());
     }
 
     public function getPaidCountForLesson(Lesson $lesson): int
     {
         $bookings = $this->getBookingsForLesson($lesson);
-        return count(array_filter($bookings, fn(Booking $b) => $b->isConfirmed()));
+        return count(array_filter($bookings, static fn(Booking $b) => $b->isConfirmed()));
     }
 
     public function getStatusBadgeClass(string $status): string

@@ -41,9 +41,7 @@ class TransferRepository extends ServiceEntityRepository
         $this->getEntityManager()->getFilters()->disable('softdeleteable');
         try {
             /** @var Transfer[] $result */
-            $result = $this->createQueryBuilder('t')->where('t.deletedAt IS NOT NULL')->getQuery()->getResult();
-
-            return $result;
+            return $this->createQueryBuilder('t')->where('t.deletedAt IS NOT NULL')->getQuery()->getResult();
         } finally {
             $this->getEntityManager()->getFilters()->enable('softdeleteable');
         }
@@ -55,14 +53,12 @@ class TransferRepository extends ServiceEntityRepository
     public function findByTitleStartingWith(string $prefix): array
     {
         /** @var Transfer[] $result */
-        $result = $this
+        return $this
             ->createQueryBuilder('t')
             ->where('t.title LIKE :prefix')
             ->setParameter('prefix', $prefix . '%')
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 
     /**

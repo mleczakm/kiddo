@@ -37,10 +37,10 @@ class AliorMailParserTest extends TestCase
         $parser = new AliorMailParser();
         $result = $parser->fromMailSubjectAndContent($subject, $mailContent);
 
-        self::assertNotNull($result);
-        self::assertEquals('91...6978', $result->accountNumber);
-        self::assertEquals('JAKIŚ RANDOM', $result->sender);
-        self::assertEquals('X2el', $result->title);
-        self::assertEquals('50,00', $result->amount);
+        static::assertNotNull($result);
+        static::assertSame('91...6978', $result->accountNumber);
+        static::assertSame('JAKIŚ RANDOM', $result->sender);
+        static::assertSame('X2el', $result->title);
+        static::assertSame('50,00', $result->amount);
     }
 }

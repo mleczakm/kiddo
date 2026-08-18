@@ -77,7 +77,7 @@ final class CacheConnectionEnsurerTest extends TestCase
             ->expects($this->exactly(3))
             ->method('executeQuery')
             ->with('SELECT 1')
-            ->willReturnCallback(function (): void {
+            ->willReturnCallback(static function (): void {
                 throw new ConnectionException('no connection to the server');
             });
         $connection->expects($this->exactly(2))->method('close');

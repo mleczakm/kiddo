@@ -24,9 +24,9 @@ final class HttpClientHealthcheckTest extends TestCase
 
         $response = $healthcheck->check();
 
-        self::assertTrue($response->getResult());
-        self::assertSame('http_client', $response->getName());
-        self::assertSame(204, $response->getParams()['status_code']);
+        static::assertTrue($response->getResult());
+        static::assertSame('http_client', $response->getName());
+        static::assertSame(204, $response->getParams()['status_code']);
     }
 
     public function testFailsWhenEndpointReturnsUnexpectedStatusCode(): void
@@ -37,9 +37,9 @@ final class HttpClientHealthcheckTest extends TestCase
 
         $response = $healthcheck->check();
 
-        self::assertFalse($response->getResult());
-        self::assertStringContainsString('503', $response->getMessage());
-        self::assertSame(503, $response->getParams()['status_code']);
+        static::assertFalse($response->getResult());
+        static::assertStringContainsString('503', $response->getMessage());
+        static::assertSame(503, $response->getParams()['status_code']);
     }
 
     public function testFailsWhenHttpClientThrows(): void
@@ -50,8 +50,8 @@ final class HttpClientHealthcheckTest extends TestCase
 
         $response = $healthcheck->check();
 
-        self::assertFalse($response->getResult());
-        self::assertStringContainsString('cURL option is not supported', $response->getMessage());
-        self::assertSame(self::URL, $response->getParams()['url']);
+        static::assertFalse($response->getResult());
+        static::assertStringContainsString('cURL option is not supported', $response->getMessage());
+        static::assertSame(self::URL, $response->getParams()['url']);
     }
 }

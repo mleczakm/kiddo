@@ -12,6 +12,7 @@ final readonly class SwooleTaskWorkerContext implements TaskWorkerContextInterfa
         private ?SwooleServerProviderInterface $serverProvider = null,
     ) {}
 
+    #[\Override]
     public function isInTaskWorker(): bool
     {
         if (!extension_loaded('swoole') || $this->serverProvider === null) {

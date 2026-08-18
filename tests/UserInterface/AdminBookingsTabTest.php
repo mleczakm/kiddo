@@ -22,6 +22,7 @@ class AdminBookingsTabTest extends WebTestCase
 {
     private function getEntityManager(): EntityManagerInterface
     {
+        /** @var EntityManagerInterface */
         return self::getContainer()->get(EntityManagerInterface::class);
     }
 
@@ -168,7 +169,7 @@ class AdminBookingsTabTest extends WebTestCase
         // Create test data
         $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $testUser = new User('test@example.com', 'Test User');
-        $payment = new Payment($testUser, Money::of(10000, 'PLN')); // 100 PLN
+        $payment = new Payment($testUser, Money::of(10_000, 'PLN')); // 100 PLN
         $payment->setStatus(Payment::STATUS_PAID);
 
         $ageRange = new AgeRange(3, 12);
@@ -202,9 +203,9 @@ class AdminBookingsTabTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $attendeeCell = $crawler->filter('table tbody tr')->first()->filter('td')->first();
-        $this->assertStringContainsString('—', $attendeeCell->text());
-        $this->assertStringContainsString('Test User', $attendeeCell->text());
-        $this->assertStringContainsString('test@example.com', $attendeeCell->text());
+        static::assertStringContainsString('—', $attendeeCell->text());
+        static::assertStringContainsString('Test User', $attendeeCell->text());
+        static::assertStringContainsString('test@example.com', $attendeeCell->text());
         $this->assertSelectorTextContains('td', 'Test Workshop');
         $this->assertSelectorTextContains('td', '10 000 zł');
     }
@@ -252,9 +253,9 @@ class AdminBookingsTabTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $attendeeCell = $crawler->filter('table tbody tr')->first()->filter('td')->first();
-        $this->assertStringContainsString('Ala', $attendeeCell->text());
-        $this->assertStringContainsString('Parent Name', $attendeeCell->text());
-        $this->assertStringContainsString('parent@example.com', $attendeeCell->text());
+        static::assertStringContainsString('Ala', $attendeeCell->text());
+        static::assertStringContainsString('Parent Name', $attendeeCell->text());
+        static::assertStringContainsString('parent@example.com', $attendeeCell->text());
         $this->assertSelectorTextContains('td', 'Child Workshop');
     }
 

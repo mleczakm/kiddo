@@ -24,7 +24,7 @@ class ChildrenManager extends AbstractController
     use ValidatableComponentTrait;
 
     /**
-     * @var array<array{id: non-empty-string, name: string, birthday: non-falsy-string|null, age: int|null}>
+     * @var array<array{id: non-empty-string, name: string, birthday: non-empty-string|null, age: int|null}>
      */
     #[LiveProp]
     public array $children = [];
@@ -69,7 +69,7 @@ class ChildrenManager extends AbstractController
 
         $birthday = null;
         if ($this->childBirthday) {
-            $birthday = \DateTimeImmutable::createFromFormat('Y-m-d', (string) $this->childBirthday) ?: null;
+            $birthday = \DateTimeImmutable::createFromFormat('Y-m-d', $this->childBirthday) ?: null;
             if ($birthday === null) {
                 $this->addFlash('error', 'Invalid birthday format.');
                 return;

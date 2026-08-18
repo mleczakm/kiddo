@@ -12,6 +12,7 @@ final readonly class ChatTokenManager
     private const int DEFAULT_TTL_SECONDS = 3600;
 
     public function __construct(
+        #[\SensitiveParameter]
         #[Autowire('%kernel.secret%')]
         private string $secret,
     ) {}
@@ -42,7 +43,7 @@ final readonly class ChatTokenManager
         ]);
     }
 
-    public function parse(string $token): ChatToken
+    public function parse(#[\SensitiveParameter] string $token): ChatToken
     {
         $parts = explode('.', $token);
         if (count($parts) !== 2) {

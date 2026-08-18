@@ -14,6 +14,7 @@ class TransferTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -34,12 +35,12 @@ class TransferTest extends KernelTestCase
         $this->entityManager->flush();
 
         $transferId = $transfer->getId();
-        self::assertNotNull($transferId);
+        static::assertNotNull($transferId);
 
         // Verify transfer exists before soft delete
         $foundTransfer = $this->entityManager->find(Transfer::class, $transferId);
-        self::assertNotNull($foundTransfer);
-        self::assertNull($foundTransfer->getDeletedAt());
+        static::assertNotNull($foundTransfer);
+        static::assertNull($foundTransfer->getDeletedAt());
 
         // Soft delete the transfer
         $this->entityManager->remove($transfer);
@@ -50,14 +51,14 @@ class TransferTest extends KernelTestCase
 
         // Transfer should not be found with regular find (soft delete filter active)
         $deletedTransfer = $this->entityManager->find(Transfer::class, $transferId);
-        self::assertNull($deletedTransfer, 'Transfer should not be found when soft delete filter is active');
+        static::assertNull($deletedTransfer, 'Transfer should not be found when soft delete filter is active');
 
         // But should be found when soft delete filter is disabled
         $this->entityManager->getFilters()->disable('softdeleteable');
         try {
             $softDeletedTransfer = $this->entityManager->find(Transfer::class, $transferId);
-            self::assertNotNull($softDeletedTransfer, 'Transfer should be found when soft delete filter is disabled');
-            self::assertNotNull($softDeletedTransfer->getDeletedAt(), 'deletedAt should be set');
+            static::assertNotNull($softDeletedTransfer, 'Transfer should be found when soft delete filter is disabled');
+            static::assertNotNull($softDeletedTransfer->getDeletedAt(), 'deletedAt should be set');
         } finally {
             $this->entityManager->getFilters()->enable('softdeleteable');
         }

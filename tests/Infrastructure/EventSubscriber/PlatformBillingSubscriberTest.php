@@ -21,6 +21,7 @@ class PlatformBillingSubscriberTest extends KernelTestCase
 
     private PlatformBillingSubscriber $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -32,8 +33,8 @@ class PlatformBillingSubscriberTest extends KernelTestCase
     {
         $events = PlatformBillingSubscriber::getSubscribedEvents();
 
-        $this->assertArrayHasKey('workflow.payment.transition.pay', $events);
-        $this->assertEquals('onPaymentPaid', $events['workflow.payment.transition.pay']);
+        static::assertArrayHasKey('workflow.payment.transition.pay', $events);
+        static::assertSame('onPaymentPaid', $events['workflow.payment.transition.pay']);
     }
 
     public function testOnPaymentPaidAddsCommission(): void
@@ -65,8 +66,8 @@ class PlatformBillingSubscriberTest extends KernelTestCase
         $this->entityManager->refresh($setting);
         $updatedContent = $setting->getContent();
         /** @var array{currentDue: string, pastDue: string} $updatedContent */
-        $this->assertEquals('120.00', $updatedContent['currentDue']); // 100 + (1000 * 0.02) = 120
-        $this->assertEquals('0.00', $updatedContent['pastDue']);
+        static::assertSame('120.00', $updatedContent['currentDue']); // 100 + (1000 * 0.02) = 120
+        static::assertSame('0.00', $updatedContent['pastDue']);
     }
 
     public function testOnPaymentPaidDoesNothingWhenSubjectIsNotPayment(): void
@@ -94,7 +95,7 @@ class PlatformBillingSubscriberTest extends KernelTestCase
         $this->entityManager->refresh($setting);
         $updatedContent = $setting->getContent();
         /** @var array{currentDue: string, pastDue: string} $updatedContent */
-        $this->assertEquals('100.00', $updatedContent['currentDue']);
-        $this->assertEquals('0.00', $updatedContent['pastDue']);
+        static::assertSame('100.00', $updatedContent['currentDue']);
+        static::assertSame('0.00', $updatedContent['pastDue']);
     }
 }

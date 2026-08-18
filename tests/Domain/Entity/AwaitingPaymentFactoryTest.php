@@ -15,7 +15,7 @@ class AwaitingPaymentFactoryTest extends TestCase
     {
         $code = new PaymentFactory()->generateCode(4);
 
-        $this->assertMatchesRegularExpression(
+        static::assertMatchesRegularExpression(
             '/^[A-Z0-9]{4}$/',
             $code,
             'Code should be 4 characters long and contain only uppercase letters and digits.',

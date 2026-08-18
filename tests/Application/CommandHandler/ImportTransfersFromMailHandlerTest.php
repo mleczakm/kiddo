@@ -44,8 +44,8 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             mailboxPassword: 'secret',
         ))(new ImportTransfersFromMail());
 
-        self::assertNotEmpty($messengerFake->dispatched);
-        self::assertInstanceOf(SaveTransfer::class, $messengerFake->dispatched[0]->getMessage());
+        static::assertNotEmpty($messengerFake->dispatched);
+        static::assertInstanceOf(SaveTransfer::class, $messengerFake->dispatched[0]->getMessage());
     }
 
     public function testSkipsImapAndRematchesUnmatchedTransfersWhenCredentialsMissing(): void
@@ -82,15 +82,16 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             mailboxPassword: '',
         ))(new ImportTransfersFromMail());
 
-        self::assertCount(1, $messengerFake->dispatched);
+        static::assertCount(1, $messengerFake->dispatched);
         $message = $messengerFake->dispatched[0]->getMessage();
-        self::assertInstanceOf(MatchPaymentForTransfer::class, $message);
-        self::assertSame($transfer, $message->transfer);
+        static::assertInstanceOf(MatchPaymentForTransfer::class, $message);
+        static::assertSame($transfer, $message->transfer);
     }
 }
 
 class FakeQuery implements IncomingNotificationMailQuery
 {
+    #[\Override]
     public function __invoke(): iterable
     {
         $mailbox = new FakeMailbox(

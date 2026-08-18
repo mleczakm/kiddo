@@ -18,7 +18,7 @@ readonly class TriggerMatchPaymentForTransferForPastTransfersHandler
         private MessageBusInterface $bus,
     ) {}
 
-    public function __invoke(TriggerMatchPaymentForTransferForPastTransfers $command): void
+    public function __invoke(TriggerMatchPaymentForTransferForPastTransfers $_command): void
     {
         $transfers = $this->entityManager
             ->createQuery('

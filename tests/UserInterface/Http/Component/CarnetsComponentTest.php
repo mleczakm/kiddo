@@ -18,6 +18,6 @@ class CarnetsComponentTest extends KernelTestCase
     {
         $testComponent = $this->createLiveComponent(name: CarnetsComponent::class);
 
-        $this->assertStringContainsString('div', (string) $testComponent->render());
+        static::assertStringContainsString('div', (string) $testComponent->render());
     }
 }

@@ -16,6 +16,7 @@ class UserRepositoryTest extends KernelTestCase
 {
     private UserRepository $userRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
@@ -46,22 +47,22 @@ class UserRepositoryTest extends KernelTestCase
         $adminUsers = $this->userRepository->findByRole('ROLE_ADMIN');
 
         // Should find both admin users (one with only ROLE_ADMIN and one with multiple roles including ROLE_ADMIN)
-        $this->assertCount(2, $adminUsers);
+        static::assertCount(2, $adminUsers);
 
         // Verify the emails of the found admin users
-        $emails = array_map(fn(User $user): string => $user->getEmail(), $adminUsers);
-        $this->assertContains('admin@example.com', $emails);
-        $this->assertContains('admin2@example.com', $emails);
-        $this->assertNotContains('user@example.com', $emails);
+        $emails = array_map(static fn(User $user): string => $user->getEmail(), $adminUsers);
+        static::assertContains('admin@example.com', $emails);
+        static::assertContains('admin2@example.com', $emails);
+        static::assertNotContains('user@example.com', $emails);
 
         // Test finding regular users
         $regularUsers = $this->userRepository->findByRole('ROLE_USER');
-        $this->assertCount(1, $regularUsers);
-        $this->assertEquals('user@example.com', $regularUsers[0]->getEmail());
+        static::assertCount(1, $regularUsers);
+        static::assertSame('user@example.com', $regularUsers[0]->getEmail());
 
         // Test finding non-existent role
         $nonExistentRoleUsers = $this->userRepository->findByRole('ROLE_NON_EXISTENT');
-        $this->assertCount(0, $nonExistentRoleUsers);
+        static::assertCount(0, $nonExistentRoleUsers);
     }
 
     public function testFindAllMatching(): void
@@ -78,11 +79,11 @@ class UserRepositoryTest extends KernelTestCase
         $entityManager->flush();
 
         $matchingUsers = $this->userRepository->findAllMatching('jane.doe');
-        $this->assertCount(1, $matchingUsers);
-        $this->assertEquals($user2, $matchingUsers[0]);
+        static::assertCount(1, $matchingUsers);
+        static::assertEquals($user2, $matchingUsers[0]);
 
         $matchingUsers = $this->userRepository->findAllMatching('smith');
-        $this->assertCount(1, $matchingUsers);
-        $this->assertEquals($user3, $matchingUsers[0]);
+        static::assertCount(1, $matchingUsers);
+        static::assertEquals($user3, $matchingUsers[0]);
     }
 }

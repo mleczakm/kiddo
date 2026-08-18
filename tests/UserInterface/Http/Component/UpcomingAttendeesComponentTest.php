@@ -44,8 +44,8 @@ class UpcomingAttendeesComponentTest extends WebTestCase
 
         $testComponent = $this->createLiveComponent(name: UpcomingAttendeesComponent::class, client: $this->client);
         $rendered = (string) $testComponent->render();
-        $this->assertStringContainsString($lesson->getMetadata()->title, $rendered);
-        $this->assertStringContainsString('5', $rendered);
+        static::assertStringContainsString($lesson->getMetadata()->title, $rendered);
+        static::assertStringContainsString('5', $rendered);
     }
 
     public function testIncreaseCapacity(): void
@@ -68,7 +68,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
             'Lesson not found',
         );
-        $this->assertEquals(6, $updatedLesson->getMetadata()->capacity);
+        static::assertSame(6, $updatedLesson->getMetadata()->capacity);
     }
 
     public function testDecreaseCapacity(): void
@@ -91,7 +91,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
             'Lesson not found',
         );
-        $this->assertEquals(0, $updatedLesson->getMetadata()->capacity);
+        static::assertSame(0, $updatedLesson->getMetadata()->capacity);
     }
 
     public function testCannotDecreaseCapacityBelowBookings(): void
@@ -130,7 +130,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $updatedLesson = $this->lessonRepository->find($lesson->getId()) ?? throw new \LogicException(
             'Lesson not found',
         );
-        $this->assertEquals(3, $updatedLesson->getMetadata()->capacity);
+        static::assertSame(3, $updatedLesson->getMetadata()->capacity);
     }
 
     public function testDoNotShowCancelledBookingsWhenFilterNotEnabled(): void
@@ -168,13 +168,13 @@ class UpcomingAttendeesComponentTest extends WebTestCase
 
         $rendered = (string) $testComponent->render();
 
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             (string) $activeBooking->getId(),
             $rendered,
             'Active booking should be shown',
         );
 
-        $this->assertStringNotContainsString(
+        static::assertStringNotContainsString(
             (string) $cancelledBooking->getId(),
             $rendered,
             'Cancelled booking should not be shown by default',
@@ -183,12 +183,12 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         $testComponent->set('showCancelled', true);
         $rendered = (string) $testComponent->render();
 
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             (string) $activeBooking->getId(),
             $rendered,
             'Active booking should be shown when showCancelled is true',
         );
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             (string) $cancelledBooking->getId(),
             $rendered,
             'Cancelled booking should be shown when showCancelled is true',
@@ -218,9 +218,9 @@ class UpcomingAttendeesComponentTest extends WebTestCase
                 'type' => ActivityType::BOOKING_CREATED,
             ]);
 
-        $this->assertCount(1, $activityLogs);
-        $this->assertStringContainsString('Kasia Wiśniewska', $activityLogs[0]->getTitle());
-        $this->assertSame($lesson->getMetadata()->title, $activityLogs[0]->getSummary());
+        static::assertCount(1, $activityLogs);
+        static::assertStringContainsString('Kasia Wiśniewska', $activityLogs[0]->getTitle());
+        static::assertSame($lesson->getMetadata()->title, $activityLogs[0]->getSummary());
     }
 
     public function testMarkPaidWritesAnActivityLogEntry(): void
@@ -253,11 +253,12 @@ class UpcomingAttendeesComponentTest extends WebTestCase
                 'type' => ActivityType::PAYMENT_MARKED_PAID,
             ]);
 
-        $this->assertCount(1, $activityLogs);
-        $this->assertSame($user->getId(), $activityLogs[0]->getSubject()?->getId());
-        $this->assertStringContainsString('Piotr Zając', $activityLogs[0]->getTitle());
+        static::assertCount(1, $activityLogs);
+        static::assertSame($user->getId(), $activityLogs[0]->getSubject()?->getId());
+        static::assertStringContainsString('Piotr Zając', $activityLogs[0]->getTitle());
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();

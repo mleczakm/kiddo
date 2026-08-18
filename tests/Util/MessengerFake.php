@@ -14,6 +14,7 @@ class MessengerFake implements MessageBusInterface
      */
     public array $dispatched = [];
 
+    #[\Override]
     public function dispatch(object $message, array $stamps = []): Envelope
     {
         return $this->dispatched[] = new Envelope($message, $stamps);

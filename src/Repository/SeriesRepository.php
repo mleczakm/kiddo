@@ -36,8 +36,7 @@ class SeriesRepository extends ServiceEntityRepository
         }
 
         /** @var array<int, Series> $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -46,13 +45,11 @@ class SeriesRepository extends ServiceEntityRepository
     public function findActive(): array
     {
         /** @var array<int, Series> $result */
-        $result = $this
+        return $this
             ->createQueryBuilder('s')
             ->andWhere('s.status = :status')
             ->setParameter('status', 'active')
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 }

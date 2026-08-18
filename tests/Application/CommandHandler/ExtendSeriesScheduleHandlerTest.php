@@ -44,8 +44,8 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
 
         // Sanity: series should have exactly one lesson initially
         $savedSeries = $seriesRepository->find($series->getId());
-        self::assertNotNull($savedSeries);
-        self::assertCount(1, $savedSeries->lessons);
+        static::assertNotNull($savedSeries);
+        static::assertCount(1, $savedSeries->lessons);
 
         /** @var ExtendSeriesScheduleHandler $handler */
         $handler = self::getContainer()->get(ExtendSeriesScheduleHandler::class);
@@ -53,7 +53,7 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
 
         // Reload series and verify new lessons created up to +2 months horizon
         $savedSeries = $seriesRepository->find($series->getId());
-        self::assertNotNull($savedSeries);
+        static::assertNotNull($savedSeries);
 
         $horizon = $now->modify('+2 months');
 
@@ -72,11 +72,11 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         }
 
         foreach ($expectedDates as $d) {
-            self::assertContains($d->format('c'), $actualDates, 'Missing lesson for date ' . $d->format('c'));
+            static::assertContains($d->format('c'), $actualDates, 'Missing lesson for date ' . $d->format('c'));
         }
 
         // And total count matches original + expected additions (no duplicates)
-        self::assertCount(1 + count($expectedDates), $savedSeries->lessons);
+        static::assertCount(1 + count($expectedDates), $savedSeries->lessons);
     }
 
     public function testStopsGeneratingOccurrencesPastLastOccurrenceDate(): void
@@ -112,19 +112,21 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
         $handler(new ExtendSeriesSchedule());
 
         $savedSeries = $seriesRepository->find($series->getId());
-        self::assertNotNull($savedSeries);
+        static::assertNotNull($savedSeries);
 
         $latestSchedule = null;
         foreach ($savedSeries->lessons as $l) {
-            if ($latestSchedule === null || $l->schedule > $latestSchedule) {
-                $latestSchedule = $l->schedule;
+            if (!($latestSchedule === null || $l->schedule > $latestSchedule)) {
+                continue;
             }
+
+            $latestSchedule = $l->schedule;
         }
 
-        self::assertNotNull($latestSchedule);
-        self::assertLessThanOrEqual($lastOccurrenceDate, $latestSchedule);
+        static::assertNotNull($latestSchedule);
+        static::assertLessThanOrEqual($lastOccurrenceDate, $latestSchedule);
         // Two extra weekly occurrences fit within the 2-week cutoff (original + 2 = 3)
-        self::assertCount(3, $savedSeries->lessons);
+        static::assertCount(3, $savedSeries->lessons);
     }
 
     public function testMarksSeriesCancelledOneWeekAfterItsEndingDate(): void
@@ -154,7 +156,7 @@ final class ExtendSeriesScheduleHandlerTest extends KernelTestCase
 
         $em->clear();
         $savedSeries = $seriesRepository->find($series->getId());
-        self::assertNotNull($savedSeries);
-        self::assertSame('cancelled', $savedSeries->status);
+        static::assertNotNull($savedSeries);
+        static::assertSame('cancelled', $savedSeries->status);
     }
 }

@@ -20,6 +20,7 @@ class RequestConnectionEnsurerTest extends TestCase
         $innerEnsurer = new class implements ConnectionEnsurerInterface {
             public bool $called = false;
 
+            #[\Override]
             public function ensureConnection(): void
             {
                 $this->called = true;
@@ -36,6 +37,6 @@ class RequestConnectionEnsurerTest extends TestCase
         $requestConnectionEnsurer = new RequestConnectionEnsurer($innerEnsurer);
         $requestConnectionEnsurer->onKernelRequest($event);
 
-        $this->assertTrue($innerEnsurer->called);
+        static::assertTrue($innerEnsurer->called);
     }
 }

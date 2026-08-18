@@ -30,11 +30,13 @@ final class WithSchedulerTest extends TestCase
      */
     private array $originalLockRegistryFiles;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->originalLockRegistryFiles = self::lockRegistryFiles();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         LockRegistry::setFiles($this->originalLockRegistryFiles);
@@ -42,7 +44,7 @@ final class WithSchedulerTest extends TestCase
 
     public function testRegisterSwooleTick(): void
     {
-        self::assertEmpty(iterator_to_array(Timer::list()));
+        static::assertEmpty(iterator_to_array(Timer::list()));
         ($withScheduler = new WithScheduler(
             new Scheduler($this->createMock(MessageBusInterface::class), []),
             self::emptyCoWrapper(),
@@ -51,11 +53,11 @@ final class WithSchedulerTest extends TestCase
 
         $ticks = iterator_to_array(Timer::list());
 
-        self::assertNotEmpty($ticks);
+        static::assertNotEmpty($ticks);
 
         $withScheduler->__destruct();
 
-        self::assertEmpty(iterator_to_array(Timer::list()));
+        static::assertEmpty(iterator_to_array(Timer::list()));
     }
 
     public function testConfigureDisablesLockRegistryFileLocking(): void
@@ -68,7 +70,7 @@ final class WithSchedulerTest extends TestCase
             $this->createMock(LoggerInterface::class),
         ))->configure($this->createMock(Server::class));
 
-        self::assertSame([], self::lockRegistryFiles());
+        static::assertSame([], self::lockRegistryFiles());
 
         $withScheduler->__destruct();
     }
@@ -124,7 +126,7 @@ final class WithSchedulerTest extends TestCase
         $scheduler
             ->expects($this->once())
             ->method('run')
-            ->willReturnCallback(function () use ($withScheduler): void {
+            ->willReturnCallback(static function () use ($withScheduler): void {
                 // Simulates an overlapping tick firing while this one is still in-flight.
                 $withScheduler->tick();
             });
@@ -140,7 +142,7 @@ final class WithSchedulerTest extends TestCase
         $scheduler
             ->expects($this->exactly(2))
             ->method('run')
-            ->willReturnCallback(function (): void {
+            ->willReturnCallback(static function (): void {
                 static $calls = 0;
                 ++$calls;
 
@@ -185,7 +187,7 @@ final class WithSchedulerTest extends TestCase
         $logger
             ->expects($this->once())
             ->method('error')
-            ->willReturnCallback(function (string $message, array $context) use (
+            ->willReturnCallback(static function (string $message, array $context) use (
                 &$loggedMessage,
                 &$loggedContext,
             ): void {
@@ -199,8 +201,8 @@ final class WithSchedulerTest extends TestCase
             $withScheduler->tick();
         });
 
-        self::assertSame('Scheduler tick failed', $loggedMessage);
-        self::assertSame(
+        static::assertSame('Scheduler tick failed', $loggedMessage);
+        static::assertSame(
             [
                 'exception' => $exception,
             ],
@@ -231,7 +233,7 @@ final class WithSchedulerTest extends TestCase
         $logger
             ->expects($this->once())
             ->method('warning')
-            ->willReturnCallback(function (string $message) use (&$loggedMessage): void {
+            ->willReturnCallback(static function (string $message) use (&$loggedMessage): void {
                 $loggedMessage = $message;
             });
 
@@ -240,8 +242,8 @@ final class WithSchedulerTest extends TestCase
         // No run() wrapper - this is the whole point of the test.
         $withScheduler->tick();
 
-        self::assertNotNull($loggedMessage);
-        self::assertStringContainsString('no coroutine context', $loggedMessage);
+        static::assertNotNull($loggedMessage);
+        static::assertStringContainsString('no coroutine context', $loggedMessage);
     }
 
     private static function emptyCoWrapper(): CoWrapper
@@ -257,8 +259,6 @@ final class WithSchedulerTest extends TestCase
         $property = new ReflectionClass(LockRegistry::class)->getProperty('files');
 
         /** @var list<string> $files */
-        $files = $property->getValue();
-
-        return $files;
+        return $property->getValue();
     }
 }

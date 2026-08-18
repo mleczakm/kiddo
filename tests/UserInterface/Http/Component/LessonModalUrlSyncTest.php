@@ -22,6 +22,7 @@ final class LessonModalUrlSyncTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -59,8 +60,8 @@ final class LessonModalUrlSyncTest extends WebTestCase
             'url' => '/warsztaty/balaganki?date=2024-02-21&hour=10:30',
         ]);
         $lessonModal = $component->component();
-        $this->assertInstanceOf(LessonModal::class, $lessonModal);
-        $this->assertTrue($lessonModal->modalOpened);
+        static::assertInstanceOf(LessonModal::class, $lessonModal);
+        static::assertTrue($lessonModal->modalOpened);
     }
 
     public function testCloseModalDispatchesCloseUrl(): void
@@ -95,7 +96,7 @@ final class LessonModalUrlSyncTest extends WebTestCase
             'url' => '/warsztaty?week=2024-02-21',
         ]);
         $lessonModal = $component->component();
-        $this->assertInstanceOf(LessonModal::class, $lessonModal);
-        $this->assertFalse($lessonModal->modalOpened);
+        static::assertInstanceOf(LessonModal::class, $lessonModal);
+        static::assertFalse($lessonModal->modalOpened);
     }
 }

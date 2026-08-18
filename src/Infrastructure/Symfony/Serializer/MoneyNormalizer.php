@@ -10,20 +10,17 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MoneyNormalizer implements DenormalizerInterface, NormalizerInterface
 {
+    #[\Override]
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
-        if (
-            !is_array($data)
-            || !isset($data['amount'], $data['currency'])
-            || !is_string($data['amount'])
-            || !is_string($data['currency'])
-        ) {
+        if (!is_array($data) || !is_string($data['amount'] ?? null) || !is_string($data['currency'] ?? null)) {
             throw new \InvalidArgumentException('Invalid data for Money denormalization');
         }
 
         return Money::of($data['amount'], $data['currency']);
     }
 
+    #[\Override]
     public function supportsDenormalization(
         mixed $data,
         string $type,
@@ -33,12 +30,12 @@ class MoneyNormalizer implements DenormalizerInterface, NormalizerInterface
         return (
             $type === Money::class
             && is_array($data)
-            && isset($data['amount'], $data['currency'])
-            && is_string($data['amount'])
-            && is_string($data['currency'])
+            && is_string($data['amount'] ?? null)
+            && is_string($data['currency'] ?? null)
         );
     }
 
+    #[\Override]
     public function getSupportedTypes(?string $format): array
     {
         return [
@@ -46,6 +43,7 @@ class MoneyNormalizer implements DenormalizerInterface, NormalizerInterface
         ];
     }
 
+    #[\Override]
     public function normalize(
         mixed $data,
         ?string $format = null,
@@ -60,6 +58,7 @@ class MoneyNormalizer implements DenormalizerInterface, NormalizerInterface
         ];
     }
 
+    #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Money;

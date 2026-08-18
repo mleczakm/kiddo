@@ -38,8 +38,8 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
         $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: true);
 
-        self::assertTrue($user->isNewsletterSubscribed());
-        self::assertNotNull($user->getNewsletterConsentDate());
+        static::assertTrue($user->isNewsletterSubscribed());
+        static::assertNotNull($user->getNewsletterConsentDate());
     }
 
     public function testTrueToFalseUnsubscribesAndCallsBrevo(): void
@@ -55,8 +55,8 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
         $manager->applyTransition($user, wasSubscribed: true, desiredSubscribed: false);
 
-        self::assertFalse($user->isNewsletterSubscribed());
-        self::assertNull($user->getNewsletterConsentDate());
+        static::assertFalse($user->isNewsletterSubscribed());
+        static::assertNull($user->getNewsletterConsentDate());
     }
 
     public function testNoChangeSkipsBrevo(): void
@@ -70,7 +70,7 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
         $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: false);
 
-        self::assertFalse($user->isNewsletterSubscribed());
+        static::assertFalse($user->isNewsletterSubscribed());
     }
 
     public function testBrevoFailureIsLoggedButStateStillApplied(): void
@@ -85,15 +85,15 @@ final class NewsletterSubscriptionManagerTest extends TestCase
             ->expects(self::once())
             ->method('warning')
             ->with(
-                self::stringContains('Failed to add contact'),
-                self::callback(fn(array $context) => ($context['email'] ?? null) === 'boom@example.com'),
+                static::stringContains('Failed to add contact'),
+                static::callback(static fn(array $context) => ($context['email'] ?? null) === 'boom@example.com'),
             );
 
         $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $logger);
         $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: true);
 
-        self::assertTrue($user->isNewsletterSubscribed());
-        self::assertNotNull($user->getNewsletterConsentDate());
+        static::assertTrue($user->isNewsletterSubscribed());
+        static::assertNotNull($user->getNewsletterConsentDate());
     }
 
     public function testBrevoRemovalFailureIsLoggedButStateStillApplied(): void
@@ -109,12 +109,12 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $logger
             ->expects(self::once())
             ->method('warning')
-            ->with(self::stringContains('Failed to remove contact'), self::anything());
+            ->with(static::stringContains('Failed to remove contact'), static::anything());
 
         $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $logger);
         $manager->applyTransition($user, wasSubscribed: true, desiredSubscribed: false);
 
-        self::assertFalse($user->isNewsletterSubscribed());
-        self::assertNull($user->getNewsletterConsentDate());
+        static::assertFalse($user->isNewsletterSubscribed());
+        static::assertNull($user->getNewsletterConsentDate());
     }
 }

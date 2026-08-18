@@ -15,6 +15,6 @@ class DoctrineInsideTaskWorkerCheckTest extends TestCase
     {
         $key = 'asd';
         $command = new DoctrineInsideTaskWorkerCheck($key);
-        $this->assertSame($key, $command->cacheKey);
+        static::assertSame($key, $command->cacheKey);
     }
 }

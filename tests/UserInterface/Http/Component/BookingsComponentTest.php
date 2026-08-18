@@ -27,6 +27,7 @@ final class BookingsComponentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -90,8 +91,8 @@ final class BookingsComponentTest extends WebTestCase
 
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Zajecia przeszle w karnecie', $html);
-        self::assertStringNotContainsString('Zajecia przyszle w karnecie', $html);
+        static::assertStringContainsString('Zajecia przeszle w karnecie', $html);
+        static::assertStringNotContainsString('Zajecia przyszle w karnecie', $html);
     }
 
     /**
@@ -143,7 +144,7 @@ final class BookingsComponentTest extends WebTestCase
         $em->clear();
 
         $reloadedUser = $em->getRepository(User::class)->find($user->getId());
-        self::assertNotNull($reloadedUser);
+        static::assertNotNull($reloadedUser);
         $client->loginUser($reloadedUser);
 
         $component = $this->createLiveComponent(
@@ -156,10 +157,10 @@ final class BookingsComponentTest extends WebTestCase
 
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Zajecia odwolane w karnecie', $html);
-        self::assertStringNotContainsString('Zajecia aktywne w karnecie', $html);
+        static::assertStringContainsString('Zajecia odwolane w karnecie', $html);
+        static::assertStringNotContainsString('Zajecia aktywne w karnecie', $html);
         // Attribution: who cancelled it and when.
-        self::assertStringContainsString('Jan Testowy', $html);
+        static::assertStringContainsString('Jan Testowy', $html);
     }
 
     /**
@@ -201,7 +202,7 @@ final class BookingsComponentTest extends WebTestCase
         $em->clear();
 
         $reloadedUser = $em->getRepository(User::class)->find($user->getId());
-        self::assertNotNull($reloadedUser);
+        static::assertNotNull($reloadedUser);
         $client->loginUser($reloadedUser);
 
         $component = $this->createLiveComponent(
@@ -214,9 +215,9 @@ final class BookingsComponentTest extends WebTestCase
 
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Zajecia anulowane automatycznie', $html);
-        self::assertStringContainsString('Anulowane automatycznie', $html);
-        self::assertStringContainsString('brak płatności w wymaganym terminie', $html);
+        static::assertStringContainsString('Zajecia anulowane automatycznie', $html);
+        static::assertStringContainsString('Anulowane automatycznie', $html);
+        static::assertStringContainsString('brak płatności w wymaganym terminie', $html);
     }
 
     public function testPaidAtIsShownForPaidBooking(): void
@@ -266,8 +267,8 @@ final class BookingsComponentTest extends WebTestCase
 
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Zajecia oplacone', $html);
-        self::assertMatchesRegularExpression('/Opłacono \d{2}\.\d{2}\.\d{4}/', $html);
+        static::assertStringContainsString('Zajecia oplacone', $html);
+        static::assertMatchesRegularExpression('/Opłacono \d{2}\.\d{2}\.\d{4}/', $html);
     }
 
     public function testEmptyStateMessageMatchesSelectedTab(): void
@@ -287,8 +288,8 @@ final class BookingsComponentTest extends WebTestCase
             client: $client,
         );
         $pastHtml = (string) $pastComponent->render();
-        self::assertStringContainsString('przeszłych', $pastHtml);
-        self::assertStringNotContainsString('aktywnych rezerwacji', $pastHtml);
+        static::assertStringContainsString('przeszłych', $pastHtml);
+        static::assertStringNotContainsString('aktywnych rezerwacji', $pastHtml);
 
         $cancelledComponent = $this->createLiveComponent(
             name: BookingsComponent::class,
@@ -298,7 +299,7 @@ final class BookingsComponentTest extends WebTestCase
             client: $client,
         );
         $cancelledHtml = (string) $cancelledComponent->render();
-        self::assertStringContainsString('anulowanych', $cancelledHtml);
+        static::assertStringContainsString('anulowanych', $cancelledHtml);
     }
 
     public function testActiveTabIsDeepLinkableViaUrlQuery(): void
@@ -313,8 +314,8 @@ final class BookingsComponentTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();
-        self::assertStringContainsString('aria-selected="true"', $content);
+        static::assertStringContainsString('aria-selected="true"', $content);
         // The cancelled tab button must be the one carrying aria-selected="true".
-        self::assertMatchesRegularExpression('/id="tab-cancelled"[^>]*aria-selected="true"/', $content);
+        static::assertMatchesRegularExpression('/id="tab-cancelled"[^>]*aria-selected="true"/', $content);
     }
 }

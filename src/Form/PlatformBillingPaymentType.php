@@ -13,11 +13,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
- * @template TData of array
- * @template-extends AbstractType<TData>
+ * @extends AbstractType<array{amount: string}>
  */
 class PlatformBillingPaymentType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('amount', TextType::class, [
@@ -42,6 +42,7 @@ class PlatformBillingPaymentType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

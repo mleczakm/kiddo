@@ -19,6 +19,7 @@ final class BookingPersistenceTest extends KernelTestCase
 {
     private EntityManagerInterface $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -70,12 +71,12 @@ final class BookingPersistenceTest extends KernelTestCase
 
         $map = $reloaded->getLessonsMap();
         // Lessons map should contain all three
-        self::assertSame(3, $map->count());
+        static::assertSame(3, $map->count());
         // Active should include the two future lessons
-        self::assertTrue($map->active->hasKey($futureA->getId()));
-        self::assertTrue($map->active->hasKey($futureB->getId()));
+        static::assertTrue($map->active->hasKey($futureA->getId()));
+        static::assertTrue($map->active->hasKey($futureB->getId()));
         // Past should include the past lesson
-        self::assertTrue($map->past->hasKey($pastLesson->getId()));
+        static::assertTrue($map->past->hasKey($pastLesson->getId()));
 
         // Now reschedule futureA to a new future lesson
         $newFuture = LessonAssembler::new()
@@ -97,16 +98,16 @@ final class BookingPersistenceTest extends KernelTestCase
         $map2 = $reloaded2->getLessonsMap();
 
         // New lesson should be in lessons and active
-        self::assertTrue($map2->lessons->hasKey($newFuture->getId()));
-        self::assertTrue($map2->active->hasKey($newFuture->getId()));
+        static::assertTrue($map2->lessons->hasKey($newFuture->getId()));
+        static::assertTrue($map2->active->hasKey($newFuture->getId()));
         // Original rescheduled-from lesson should be in cancelled with RescheduledLesson payload
-        self::assertTrue($map2->cancelled->hasKey($futureA->getId()));
+        static::assertTrue($map2->cancelled->hasKey($futureA->getId()));
         $cancelledEntry = $map2->cancelled->get($futureA->getId());
-        self::assertInstanceOf(RescheduledLesson::class, $cancelledEntry);
-        self::assertSame((string) $newFuture->getId(), (string) $cancelledEntry->lessonId);
+        static::assertInstanceOf(RescheduledLesson::class, $cancelledEntry);
+        static::assertSame((string) $newFuture->getId(), (string) $cancelledEntry->lessonId);
         // Past lesson remains in past
-        self::assertTrue($map2->past->hasKey($pastLesson->getId()));
+        static::assertTrue($map2->past->hasKey($pastLesson->getId()));
         // Active should still include futureB and newFuture
-        self::assertTrue($map2->active->hasKey($futureB->getId()));
+        static::assertTrue($map2->active->hasKey($futureB->getId()));
     }
 }

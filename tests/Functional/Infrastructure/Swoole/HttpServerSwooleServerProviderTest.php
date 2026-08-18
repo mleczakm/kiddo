@@ -15,6 +15,7 @@ final class HttpServerSwooleServerProviderTest extends KernelTestCase
 {
     private SwooleServerProviderInterface $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -23,7 +24,7 @@ final class HttpServerSwooleServerProviderTest extends KernelTestCase
 
     public function testProviderIsInstanceOfHttpServerSwooleServerProvider(): void
     {
-        $this->assertInstanceOf(HttpServerSwooleServerProvider::class, $this->provider);
+        static::assertInstanceOf(HttpServerSwooleServerProvider::class, $this->provider);
     }
 
     public function testGetServerReturnsSwooleServer(): void
@@ -37,6 +38,6 @@ final class HttpServerSwooleServerProviderTest extends KernelTestCase
 
     public function testProviderImplementsInterface(): void
     {
-        $this->assertInstanceOf(SwooleServerProviderInterface::class, $this->provider);
+        static::assertInstanceOf(SwooleServerProviderInterface::class, $this->provider);
     }
 }

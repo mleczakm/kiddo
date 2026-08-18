@@ -23,8 +23,8 @@ class MainScheduleTest extends TestCase
     {
         $schedule = new MainSchedule(new NullAdapter())->getSchedule();
 
-        self::assertCount(8, $schedule->getRecurringMessages());
-        self::assertNotNull($schedule->getState());
+        static::assertCount(8, $schedule->getRecurringMessages());
+        static::assertNotNull($schedule->getState());
     }
 
     public function testRecurringMessagesWithDatesAreCreatedDynamically(): void
@@ -62,14 +62,14 @@ class MainScheduleTest extends TestCase
 
         // Assert that consecutive datetimes are not equal for each type
         for ($i = 1; $i < count($reminderDates); $i++) {
-            self::assertNotEquals(
+            static::assertNotEquals(
                 $reminderDates[$i - 1],
                 $reminderDates[$i],
                 'DailyLessonsReminder dates should be dynamically created and not equal',
             );
         }
         for ($i = 1; $i < count($expiredBookingDates); $i++) {
-            self::assertNotEquals(
+            static::assertNotEquals(
                 $expiredBookingDates[$i - 1],
                 $expiredBookingDates[$i],
                 'CheckExpiredBookings expirationTime should be dynamically created and not equal',

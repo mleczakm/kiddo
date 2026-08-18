@@ -47,10 +47,10 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $userEmail = $emails->whereTo('user@example.com');
         $userEmail = $userEmail->first();
         $body = (string) ($userEmail->getHtmlBody() ?? $userEmail->getTextBody());
-        $this->assertStringContainsString('Cześć Jan Kowalski', $body);
-        $this->assertStringContainsString('Joga', $body);
-        $this->assertStringContainsString('09.07', $body);
-        $this->assertStringContainsString('12:00', $body);
+        static::assertStringContainsString('Cześć Jan Kowalski', $body);
+        static::assertStringContainsString('Joga', $body);
+        static::assertStringContainsString('09.07', $body);
+        static::assertStringContainsString('12:00', $body);
     }
 
     public function testAdminScheduleAndUserReminderIncludeChildName(): void
@@ -86,12 +86,12 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
 
         $adminEmail = $emails->whereTo('admin@example.com')->first();
         $adminBody = (string) ($adminEmail->getHtmlBody() ?? $adminEmail->getTextBody());
-        $this->assertStringContainsString('Zosia', $adminBody);
-        $this->assertStringContainsString('Anna Nowak', $adminBody);
+        static::assertStringContainsString('Zosia', $adminBody);
+        static::assertStringContainsString('Anna Nowak', $adminBody);
 
         $userEmail = $emails->whereTo('parent@example.com')->first();
         $userBody = (string) ($userEmail->getHtmlBody() ?? $userEmail->getTextBody());
-        $this->assertStringContainsString('Sensoryka', $userBody);
-        $this->assertStringContainsString('Zosia', $userBody);
+        static::assertStringContainsString('Sensoryka', $userBody);
+        static::assertStringContainsString('Zosia', $userBody);
     }
 }

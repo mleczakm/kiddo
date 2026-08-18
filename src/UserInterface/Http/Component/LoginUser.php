@@ -34,10 +34,11 @@ class LoginUser extends AbstractController
     /**
      * @return FormInterface<array{email: string}>
      */
+    #[\Override]
     protected function instantiateForm(): FormInterface
     {
         /** @var FormInterface<array{email: string}> $form */
-        $form = $this
+        return $this
             ->createFormBuilder()
             ->add('email', EmailType::class, [
                 'constraints' => [new Email(), new NotBlank()],
@@ -46,8 +47,6 @@ class LoginUser extends AbstractController
                 'label' => 'form.login.submit',
             ])
             ->getForm();
-
-        return $form;
     }
 
     #[LiveAction]

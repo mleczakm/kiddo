@@ -134,10 +134,12 @@ final readonly class ChatToolRegistry
     {
         $name = trim($name);
         foreach (['Warsztatownia_', 'Kiddo_', 'kiddo_'] as $prefix) {
-            if (str_starts_with($name, $prefix)) {
-                $name = substr($name, strlen($prefix));
-                break;
+            if (!str_starts_with($name, $prefix)) {
+                continue;
             }
+
+            $name = substr($name, strlen($prefix));
+            break;
         }
 
         return $name;

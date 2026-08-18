@@ -33,9 +33,9 @@ class StaticEndpointActionTest extends TestCase
         $request = Request::create('/robots.txt');
         $response = $action($request, 'robots.txt');
 
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals('text/plain', $response->headers->get('Content-Type'));
-        $this->assertEquals('User-agent: *Disallow: /', $response->getContent());
+        static::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        static::assertSame('text/plain', $response->headers->get('Content-Type'));
+        static::assertSame('User-agent: *Disallow: /', $response->getContent());
     }
 
     public function testInvokeReturns404WhenSettingNotFound(): void
@@ -47,8 +47,8 @@ class StaticEndpointActionTest extends TestCase
         $request = Request::create('/robots.txt');
         $response = $action($request, 'robots.txt');
 
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
-        $this->assertEquals('Not found', $response->getContent());
+        static::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        static::assertSame('Not found', $response->getContent());
     }
 
     public function testInvokeHandlesMissingContentType(): void
@@ -67,9 +67,9 @@ class StaticEndpointActionTest extends TestCase
         $request = Request::create('/sitemap.xml');
         $response = $action($request, 'sitemap.xml');
 
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals('text/plain', $response->headers->get('Content-Type')); // Default
-        $this->assertEquals('Some content', $response->getContent());
+        static::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        static::assertSame('text/plain', $response->headers->get('Content-Type')); // Default
+        static::assertSame('Some content', $response->getContent());
     }
 
     public function testInvokeHandlesMissingBody(): void
@@ -88,9 +88,9 @@ class StaticEndpointActionTest extends TestCase
         $request = Request::create('/security.txt');
         $response = $action($request, 'security.txt');
 
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals('application/xml', $response->headers->get('Content-Type'));
-        $this->assertEquals('', $response->getContent()); // Empty body
+        static::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        static::assertSame('application/xml', $response->headers->get('Content-Type'));
+        static::assertSame('', $response->getContent()); // Empty body
     }
 
     /**
@@ -126,6 +126,6 @@ class StaticEndpointActionTest extends TestCase
         $request = Request::create('/' . $path);
         $response = $action($request, $path);
 
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        static::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 }

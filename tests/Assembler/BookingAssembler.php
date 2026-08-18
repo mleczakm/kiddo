@@ -60,6 +60,7 @@ class BookingAssembler extends EntityAssembler
         return $this->with('updatedAt', $updatedAt);
     }
 
+    #[\Override]
     public function assemble(): Booking
     {
         /** @var User $user */

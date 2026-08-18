@@ -14,6 +14,6 @@ class KernelTest extends TestCase
     public function testKernelBoots(): void
     {
         $kernel = new Kernel('test', true);
-        $this->assertInstanceOf(Kernel::class, $kernel);
+        static::assertInstanceOf(Kernel::class, $kernel);
     }
 }

@@ -26,6 +26,7 @@ class BookingStatusTransitionsTest extends WebTestCase
 
     private Lesson $lesson;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
@@ -51,6 +52,7 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -65,8 +67,8 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertEquals(Booking::STATUS_PENDING, $booking->getStatus());
-        $this->assertTrue($booking->isPending());
+        static::assertEquals(Booking::STATUS_PENDING, $booking->getStatus());
+        static::assertTrue($booking->isPending());
     }
 
     public function testBookingCanBeConfirmedFromPending(): void
@@ -78,12 +80,12 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertTrue($booking->canBeConfirmed());
+        static::assertTrue($booking->canBeConfirmed());
         $booking->confirm();
         $this->entityManager->flush();
 
-        $this->assertEquals(Booking::STATUS_ACTIVE, $booking->getStatus());
-        $this->assertTrue($booking->isConfirmed());
+        static::assertEquals(Booking::STATUS_ACTIVE, $booking->getStatus());
+        static::assertTrue($booking->isConfirmed());
     }
 
     public function testBookingCanBeConfirmedFromWaitingApproval(): void
@@ -96,11 +98,11 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertTrue($booking->canBeConfirmed());
+        static::assertTrue($booking->canBeConfirmed());
         $booking->confirm();
         $this->entityManager->flush();
 
-        $this->assertEquals(Booking::STATUS_ACTIVE, $booking->getStatus());
+        static::assertEquals(Booking::STATUS_ACTIVE, $booking->getStatus());
     }
 
     public function testBookingCanBeCancelled(): void
@@ -112,13 +114,13 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertTrue($booking->canBeCancelled());
+        static::assertTrue($booking->canBeCancelled());
         $booking->cancel($this->user, 'Test reason');
         $this->entityManager->flush();
 
-        $this->assertEquals(Booking::STATUS_CANCELLED, $booking->getStatus());
-        $this->assertTrue($booking->isCancelled());
-        $this->assertEquals('Test reason', $booking->getNotes());
+        static::assertEquals(Booking::STATUS_CANCELLED, $booking->getStatus());
+        static::assertTrue($booking->isCancelled());
+        static::assertSame('Test reason', $booking->getNotes());
     }
 
     public function testBookingCanBeCompleted(): void
@@ -147,12 +149,12 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertTrue($booking->canBeCompleted());
+        static::assertTrue($booking->canBeCompleted());
         $booking->complete();
         $this->entityManager->flush();
 
-        $this->assertEquals(Booking::STATUS_PAST, $booking->getStatus());
-        $this->assertTrue($booking->isPast());
+        static::assertEquals(Booking::STATUS_PAST, $booking->getStatus());
+        static::assertTrue($booking->isPast());
     }
 
     public function testInvalidStatusThrowsException(): void
@@ -178,7 +180,7 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertFalse($booking->canBeConfirmed());
+        static::assertFalse($booking->canBeConfirmed());
     }
 
     public function testBookingCannotBeCancelledWhenPast(): void
@@ -191,6 +193,6 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertFalse($booking->canBeCancelled());
+        static::assertFalse($booking->canBeCancelled());
     }
 }

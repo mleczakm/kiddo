@@ -48,6 +48,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         private CacheItemPoolInterface $cache,
     ) {}
 
+    #[\Override]
     public function definitions(): array
     {
         $confirm = [
@@ -407,11 +408,13 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ];
     }
 
+    #[\Override]
     public function supports(string $name): bool
     {
         return str_starts_with($name, 'user.');
     }
 
+    #[\Override]
     public function call(string $name, ChatActor $actor, array $arguments): ToolResult
     {
         try {
@@ -987,6 +990,6 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
     private function generateVerificationCode(): string
     {
-        return sprintf('%06d', random_int(0, 999999));
+        return sprintf('%06d', random_int(0, 999_999));
     }
 }

@@ -29,6 +29,7 @@ final class ReservationDetailsModalTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -50,8 +51,8 @@ final class ReservationDetailsModalTest extends WebTestCase
         // `this.modalOpened` blows up with a public-property-access error.
         $rendered = (string) $component->render();
 
-        self::assertInstanceOf(ReservationDetailsModal::class, $component->component());
-        self::assertStringNotContainsString('Szczegóły rezerwacji', $rendered);
+        static::assertInstanceOf(ReservationDetailsModal::class, $component->component());
+        static::assertStringNotContainsString('Szczegóły rezerwacji', $rendered);
     }
 
     public function testOpenLoadsTheBookingAndRendersItsDetails(): void
@@ -90,17 +91,17 @@ final class ReservationDetailsModalTest extends WebTestCase
 
         /** @var ReservationDetailsModal $modal */
         $modal = $component->component();
-        self::assertTrue($modal->modalOpened);
-        self::assertSame((string) $booking->getId(), (string) $modal->getBooking()?->getId());
+        static::assertTrue($modal->modalOpened);
+        static::assertSame((string) $booking->getId(), (string) $modal->getBooking()?->getId());
 
         // The lesson belongs to a series, exercising the "· <series type>" caption
         // that previously crashed on `bookedLesson.series.name` (Series has no such
         // property/getter).
         $rendered = (string) $component->render();
-        self::assertStringContainsString('Szczegóły rezerwacji', $rendered);
-        self::assertStringContainsString('Anna Kowalska', $rendered);
-        self::assertStringContainsString('Sensoplastyka', $rendered);
-        self::assertStringContainsString('Cotygodniowa', $rendered);
+        static::assertStringContainsString('Szczegóły rezerwacji', $rendered);
+        static::assertStringContainsString('Anna Kowalska', $rendered);
+        static::assertStringContainsString('Sensoplastyka', $rendered);
+        static::assertStringContainsString('Cotygodniowa', $rendered);
     }
 
     public function testBackButtonAfterSelectingAnActionDoesNotCrash(): void
@@ -138,16 +139,16 @@ final class ReservationDetailsModalTest extends WebTestCase
         ]);
 
         $beforeSelecting = (string) $component->render();
-        self::assertStringContainsString('data-live-value-param="cancel"', $beforeSelecting);
-        self::assertStringNotContainsString('data-live-action-value-param', $beforeSelecting);
+        static::assertStringContainsString('data-live-value-param="cancel"', $beforeSelecting);
+        static::assertStringNotContainsString('data-live-action-value-param', $beforeSelecting);
 
         $component->call('selectAction', [
             'value' => 'cancel',
         ]);
 
         $afterSelecting = (string) $component->render();
-        self::assertStringContainsString('data-live-value-param=""', $afterSelecting);
-        self::assertStringNotContainsString('data-live-action-value-param', $afterSelecting);
+        static::assertStringContainsString('data-live-value-param=""', $afterSelecting);
+        static::assertStringNotContainsString('data-live-action-value-param', $afterSelecting);
 
         // Exercises the exact call the "Wróć" button makes - must not throw.
         $component->call('selectAction', [
@@ -156,7 +157,7 @@ final class ReservationDetailsModalTest extends WebTestCase
 
         /** @var ReservationDetailsModal $modal */
         $modal = $component->component();
-        self::assertSame('', $modal->action);
+        static::assertSame('', $modal->action);
     }
 
     public function testAdminCanMarkRequestedRefundAsRefundedWithNote(): void
@@ -192,9 +193,9 @@ final class ReservationDetailsModalTest extends WebTestCase
 
         $this->em->clear();
         $updatedPayment = $this->em->find(Payment::class, $payment->getId());
-        self::assertInstanceOf(Payment::class, $updatedPayment);
-        self::assertSame(Payment::STATUS_REFUNDED, $updatedPayment->getStatus());
-        self::assertSame('Zwrot bankowy nr 123', $updatedPayment->getStatusNote());
-        self::assertSame($admin->getId(), $updatedPayment->getStatusChangedBy()?->getId());
+        static::assertInstanceOf(Payment::class, $updatedPayment);
+        static::assertSame(Payment::STATUS_REFUNDED, $updatedPayment->getStatus());
+        static::assertSame('Zwrot bankowy nr 123', $updatedPayment->getStatusNote());
+        static::assertSame($admin->getId(), $updatedPayment->getStatusChangedBy()?->getId());
     }
 }

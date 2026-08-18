@@ -37,6 +37,7 @@ class AdminSettingsComponentTest extends WebTestCase
 
     private User $regularUser;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -56,6 +57,7 @@ class AdminSettingsComponentTest extends WebTestCase
         $this->entityManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -65,7 +67,7 @@ class AdminSettingsComponentTest extends WebTestCase
     {
         // Initially no finance contacts
         $contacts = $this->financeContactRepository->findAll();
-        $this->assertCount(0, $contacts);
+        static::assertCount(0, $contacts);
 
         // Add finance contact
         $financeContact = new FinanceContact($this->regularUser);
@@ -74,8 +76,8 @@ class AdminSettingsComponentTest extends WebTestCase
 
         // Verify it was added
         $contacts = $this->financeContactRepository->findAll();
-        $this->assertCount(1, $contacts);
-        $this->assertEquals($this->regularUser->getId(), $contacts[0]->getUser()->getId());
+        static::assertCount(1, $contacts);
+        static::assertEquals($this->regularUser->getId(), $contacts[0]->getUser()->getId());
     }
 
     public function testFinanceContactCanBeRemoved(): void
@@ -87,7 +89,7 @@ class AdminSettingsComponentTest extends WebTestCase
 
         // Verify it was added
         $contacts = $this->financeContactRepository->findAll();
-        $this->assertCount(1, $contacts);
+        static::assertCount(1, $contacts);
 
         // Remove it
         $this->entityManager->remove($financeContact);
@@ -95,13 +97,13 @@ class AdminSettingsComponentTest extends WebTestCase
 
         // Verify it was removed
         $contacts = $this->financeContactRepository->findAll();
-        $this->assertCount(0, $contacts);
+        static::assertCount(0, $contacts);
     }
 
     public function testAdminRoleCanBeAddedToUser(): void
     {
         // Initially user has no admin role
-        $this->assertNotContains('ROLE_ADMIN', $this->regularUser->getRoles());
+        static::assertNotContains('ROLE_ADMIN', $this->regularUser->getRoles());
 
         // Add admin role
         $roles = $this->regularUser->getRoles();
@@ -113,7 +115,7 @@ class AdminSettingsComponentTest extends WebTestCase
         $this->entityManager->refresh($this->regularUser);
 
         // Verify role was added
-        $this->assertContains('ROLE_ADMIN', $this->regularUser->getRoles());
+        static::assertContains('ROLE_ADMIN', $this->regularUser->getRoles());
     }
 
     public function testAdminRoleCanBeRemovedFromUser(): void
@@ -126,10 +128,10 @@ class AdminSettingsComponentTest extends WebTestCase
 
         // Refresh from database
         $this->entityManager->refresh($this->regularUser);
-        $this->assertContains('ROLE_ADMIN', $this->regularUser->getRoles());
+        static::assertContains('ROLE_ADMIN', $this->regularUser->getRoles());
 
         // Remove admin role
-        $roles = array_filter($this->regularUser->getRoles(), fn($role) => $role !== 'ROLE_ADMIN');
+        $roles = array_filter($this->regularUser->getRoles(), static fn($role) => $role !== 'ROLE_ADMIN');
         $this->regularUser->setRoles(array_values($roles));
         $this->entityManager->flush();
 
@@ -137,7 +139,7 @@ class AdminSettingsComponentTest extends WebTestCase
         $this->entityManager->refresh($this->regularUser);
 
         // Verify role was removed
-        $this->assertNotContains('ROLE_ADMIN', $this->regularUser->getRoles());
+        static::assertNotContains('ROLE_ADMIN', $this->regularUser->getRoles());
     }
 
     public function testRobotsTxtCanBeSaved(): void
@@ -164,11 +166,11 @@ class AdminSettingsComponentTest extends WebTestCase
         $robotsSetting = $this->settingRepository->findOneBy([
             'key' => 'robots.txt',
         ]);
-        $this->assertNotNull($robotsSetting);
+        static::assertNotNull($robotsSetting);
         $savedContent = $robotsSetting->getContent();
-        $this->assertIsArray($savedContent);
-        $this->assertArrayHasKey('content', $savedContent);
-        $this->assertEquals($content, $savedContent['content']);
+        static::assertIsArray($savedContent);
+        static::assertArrayHasKey('content', $savedContent);
+        static::assertEquals($content, $savedContent['content']);
     }
 
     public function testFinanceContactUniqueness(): void
@@ -190,28 +192,28 @@ class AdminSettingsComponentTest extends WebTestCase
         $contacts = $this->financeContactRepository->findBy([
             'user' => $this->regularUser,
         ]);
-        $this->assertGreaterThanOrEqual(1, count($contacts));
+        static::assertGreaterThanOrEqual(1, count($contacts));
     }
 
     public function testFinanceContactCanBeAddedAndRemovedThroughTheComponent(): void
     {
         $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
 
-        self::assertCount(0, $this->financeContactRepository->findAll());
+        static::assertCount(0, $this->financeContactRepository->findAll());
 
         $component->call('addFinanceContact', [
             'userId' => (string) $this->regularUser->getId(),
         ]);
 
         $contacts = $this->financeContactRepository->findAll();
-        self::assertCount(1, $contacts);
-        self::assertSame($this->regularUser->getId(), $contacts[0]->getUser()->getId());
+        static::assertCount(1, $contacts);
+        static::assertSame($this->regularUser->getId(), $contacts[0]->getUser()->getId());
 
         $component->call('removeFinanceContact', [
             'userId' => (string) $this->regularUser->getId(),
         ]);
 
-        self::assertCount(0, $this->financeContactRepository->findAll());
+        static::assertCount(0, $this->financeContactRepository->findAll());
     }
 
     public function testFinanceContactSearchFindsUsersByIdNameEmailOrChildName(): void
@@ -227,7 +229,7 @@ class AdminSettingsComponentTest extends WebTestCase
         $results = $adminSettingsComponent->getFilteredUsersForFinanceContact();
 
         $ids = array_map(static fn(User $u) => $u->getId(), $results);
-        self::assertContains($withChild->getId(), $ids);
+        static::assertContains($withChild->getId(), $ids);
     }
 
     public function testFinanceContactSearchExcludesUsersAlreadyFinanceContacts(): void
@@ -243,7 +245,7 @@ class AdminSettingsComponentTest extends WebTestCase
         $results = $adminSettingsComponent->getFilteredUsersForFinanceContact();
 
         $ids = array_map(static fn(User $u) => $u->getId(), $results);
-        self::assertNotContains($this->regularUser->getId(), $ids);
+        static::assertNotContains($this->regularUser->getId(), $ids);
     }
 
     public function testAdminUsersListShowsExistingAdmins(): void
@@ -259,15 +261,15 @@ class AdminSettingsComponentTest extends WebTestCase
         $admins = $adminSettingsComponent->getAdminUsers();
 
         $adminIds = array_map(static fn(User $u) => $u->getId(), $admins);
-        self::assertContains($this->adminUser->getId(), $adminIds);
-        self::assertNotContains($this->regularUser->getId(), $adminIds);
+        static::assertContains($this->adminUser->getId(), $adminIds);
+        static::assertNotContains($this->regularUser->getId(), $adminIds);
     }
 
     public function testHostCanBeAddedAndRemovedThroughTheComponent(): void
     {
         $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
 
-        self::assertNotContains('ROLE_HOST', $this->regularUser->getRoles());
+        static::assertNotContains('ROLE_HOST', $this->regularUser->getRoles());
 
         $component->call('addHostUser', [
             'userId' => (string) $this->regularUser->getId(),
@@ -279,14 +281,14 @@ class AdminSettingsComponentTest extends WebTestCase
         // refresh() the object captured in setUp(), which may now be
         // detached from a stale EntityManager reference.
         $reloaded = $this->userRepository->find($this->regularUser->getId());
-        self::assertNotNull($reloaded);
-        self::assertTrue($reloaded->hasRole('ROLE_HOST'));
+        static::assertNotNull($reloaded);
+        static::assertTrue($reloaded->hasRole('ROLE_HOST'));
 
         /** @var AdminSettingsComponent $adminSettingsComponent */
         $adminSettingsComponent = $component->component();
         $hosts = $adminSettingsComponent->getHostUsers();
         $hostIds = array_map(static fn(User $u) => $u->getId(), $hosts);
-        self::assertContains($this->regularUser->getId(), $hostIds);
+        static::assertContains($this->regularUser->getId(), $hostIds);
 
         $component->call('removeHostUser', [
             'userId' => (string) $this->regularUser->getId(),
@@ -297,8 +299,8 @@ class AdminSettingsComponentTest extends WebTestCase
         // read so this actually observes removeHostUser()'s effect.
         $this->entityManager->clear();
         $reloadedAgain = $this->userRepository->find($this->regularUser->getId());
-        self::assertNotNull($reloadedAgain);
-        self::assertFalse($reloadedAgain->hasRole('ROLE_HOST'));
+        static::assertNotNull($reloadedAgain);
+        static::assertFalse($reloadedAgain->hasRole('ROLE_HOST'));
     }
 
     public function testAdminSearchFindsUsersByIdNameEmailOrChildName(): void
@@ -314,7 +316,7 @@ class AdminSettingsComponentTest extends WebTestCase
         $results = $adminSettingsComponent->getFilteredUsersForAdmin();
 
         $ids = array_map(static fn(User $u) => $u->getId(), $results);
-        self::assertContains($withChild->getId(), $ids);
+        static::assertContains($withChild->getId(), $ids);
     }
 
     public function testAdminSearchExcludesUsersAlreadyAdmins(): void
@@ -326,6 +328,6 @@ class AdminSettingsComponentTest extends WebTestCase
         $results = $adminSettingsComponent->getFilteredUsersForAdmin();
 
         $ids = array_map(static fn(User $u) => $u->getId(), $results);
-        self::assertNotContains($this->adminUser->getId(), $ids);
+        static::assertNotContains($this->adminUser->getId(), $ids);
     }
 }

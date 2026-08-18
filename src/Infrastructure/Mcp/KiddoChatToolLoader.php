@@ -22,6 +22,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         private KiddoMcpToolInvoker $invoker,
     ) {}
 
+    #[\Override]
     public function load(RegistryInterface $registry): void
     {
         $definitions = $this->chatToolRegistry->definitions(null, includeAll: true);

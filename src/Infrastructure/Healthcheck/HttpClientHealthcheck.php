@@ -15,6 +15,7 @@ final readonly class HttpClientHealthcheck implements CheckInterface
         private string $url,
     ) {}
 
+    #[\Override]
     public function check(): Response
     {
         try {

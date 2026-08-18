@@ -267,7 +267,7 @@ class Booking
             return '';
         }
 
-        return $lesson->getMetadata()->title ?? '';
+        return $lesson->getMetadata()->title;
     }
 
     /**
@@ -331,7 +331,7 @@ class Booking
         yield from $this
             ->getLessonsMap()
             ->active()
-            ->map(fn(Ulid $key, BookedLesson $value) => $value->entity($this));
+            ->map(fn(Ulid $_key, BookedLesson $value) => $value->entity($this));
     }
 
     /**
@@ -539,6 +539,11 @@ class Booking
         return $this;
     }
 
+    public function getCancelledBy(): ?User
+    {
+        return $this->cancelledBy;
+    }
+
     /**
      * Get the booked lessons map
      */
@@ -593,7 +598,7 @@ class Booking
 
     public function getTextSummary(): string
     {
-        return $this->getLessons()->reduce(fn(string $carry, Lesson $lesson) => $carry === ''
+        return $this->getLessons()->reduce(static fn(string $carry, Lesson $lesson) => $carry === ''
             ? $lesson->getMetadata()->title . $lesson->schedule->format(' (H:i) d.m')
             : $carry . $lesson->schedule->format(', d.m'), '');
     }

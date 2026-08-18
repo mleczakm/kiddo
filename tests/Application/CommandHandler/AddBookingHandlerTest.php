@@ -36,7 +36,7 @@ final class AddBookingHandlerTest extends KernelTestCase
         $em->flush();
 
         $userId = $user->getId();
-        self::assertNotNull($userId);
+        static::assertNotNull($userId);
         $lessonId = (string) $lesson->getId();
         $paymentCode = 'AB12';
 
@@ -56,19 +56,19 @@ final class AddBookingHandlerTest extends KernelTestCase
             'user' => $userId,
         ]);
 
-        self::assertCount(1, $bookings);
+        static::assertCount(1, $bookings);
 
         $booking = $bookings[0];
-        self::assertInstanceOf(Booking::class, $booking);
-        self::assertSame(Booking::STATUS_PENDING, $booking->getStatus());
-        self::assertCount(1, $booking->getLessons());
+        static::assertInstanceOf(Booking::class, $booking);
+        static::assertSame(Booking::STATUS_PENDING, $booking->getStatus());
+        static::assertCount(1, $booking->getLessons());
         $bookedLesson = $booking->getLessons()->first();
-        self::assertInstanceOf(Lesson::class, $bookedLesson);
-        self::assertSame($lessonId, (string) $bookedLesson->getId());
-        self::assertSame($paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
+        static::assertInstanceOf(Lesson::class, $bookedLesson);
+        static::assertSame($lessonId, (string) $bookedLesson->getId());
+        static::assertSame($paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
 
         $this->mailer()->assertSentEmailCount(1);
         $email = $this->mailer()->sentEmails()->first();
-        self::assertStringContainsString($paymentCode, (string) ($email->getHtmlBody() ?? $email->getTextBody()));
+        static::assertStringContainsString($paymentCode, (string) ($email->getHtmlBody() ?? $email->getTextBody()));
     }
 }

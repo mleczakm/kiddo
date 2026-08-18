@@ -31,6 +31,7 @@ class UpcomingLessonsTest extends TestCase
 
     private UpcomingLessons $component;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lessonRepository = $this->createMock(LessonRepository::class);
@@ -39,6 +40,7 @@ class UpcomingLessonsTest extends TestCase
         $this->component = new UpcomingLessons($this->lessonRepository, $this->bookingRepository, $this->security);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -52,18 +54,18 @@ class UpcomingLessonsTest extends TestCase
 
         $component = new UpcomingLessons($this->lessonRepository, $this->bookingRepository, $this->security);
 
-        $this->assertEquals('2024-02-20', $component->week);
+        static::assertSame('2024-02-20', $component->week);
     }
 
     public function testDefaultViewIsGrid(): void
     {
-        $this->assertEquals('grid', $this->component->view);
+        static::assertSame('grid', $this->component->view);
     }
 
     public function testCanSetViewToCalendar(): void
     {
         $this->component->view = 'calendar';
-        $this->assertEquals('calendar', $this->component->view);
+        static::assertSame('calendar', $this->component->view);
     }
 
     public function testGetUserBookingsByLessonReturnsEmptyWhenGuest(): void
@@ -71,7 +73,7 @@ class UpcomingLessonsTest extends TestCase
         $this->security->method('getUser')->willReturn(null);
         $this->bookingRepository->expects($this->never())->method('findForUserAndLessons');
 
-        $this->assertSame([], $this->component->getUserBookingsByLesson());
+        static::assertSame([], $this->component->getUserBookingsByLesson());
     }
 
     public function testGetWorkshopsByDayReturnsSevenDays(): void
@@ -81,49 +83,49 @@ class UpcomingLessonsTest extends TestCase
 
         $days = $this->component->getWorkshopsByDay();
 
-        $this->assertCount(7, $days);
-        $this->assertEquals('2024-02-19', $days[0]['date']);
-        $this->assertEquals('2024-02-25', $days[6]['date']);
+        static::assertCount(7, $days);
+        static::assertSame('2024-02-19', $days[0]['date']);
+        static::assertSame('2024-02-25', $days[6]['date']);
     }
 
     public function testDefaultShowSearchIsTrue(): void
     {
-        $this->assertTrue($this->component->showSearch);
+        static::assertTrue($this->component->showSearch);
     }
 
     public function testDefaultLimitIsNull(): void
     {
-        $this->assertNull($this->component->limit);
+        static::assertNull($this->component->limit);
     }
 
     public function testCanSetShowSearchToFalse(): void
     {
         $this->component->showSearch = false;
-        $this->assertFalse($this->component->showSearch);
+        static::assertFalse($this->component->showSearch);
     }
 
     public function testCanSetLimit(): void
     {
         $this->component->limit = 5;
-        $this->assertEquals(5, $this->component->limit);
+        static::assertSame(5, $this->component->limit);
     }
 
     public function testCanSetQueryProperty(): void
     {
         $this->component->query = 'test search';
-        $this->assertEquals('test search', $this->component->query);
+        static::assertSame('test search', $this->component->query);
     }
 
     public function testCanSetAgeProperty(): void
     {
         $this->component->age = 7;
-        $this->assertEquals(7, $this->component->age);
+        static::assertSame(7, $this->component->age);
     }
 
     public function testCanSetWeekProperty(): void
     {
         $this->component->week = '2024-05-15';
-        $this->assertEquals('2024-05-15', $this->component->week);
+        static::assertSame('2024-05-15', $this->component->week);
     }
 
     public function testGetWorkshopsCallsRepositoryWithCorrectParameters(): void
@@ -170,8 +172,8 @@ class UpcomingLessonsTest extends TestCase
 
         $result = $this->component->getWorkshops();
 
-        $this->assertSame($expectedLessons, $result);
-        $this->assertCount(3, $result);
+        static::assertSame($expectedLessons, $result);
+        static::assertCount(3, $result);
     }
 
     public function testShouldOpenModalMatchesSlugDateAndHour(): void
@@ -195,10 +197,10 @@ class UpcomingLessonsTest extends TestCase
         $this->component->openDate = '2024-02-21';
         $this->component->openHour = '10:30';
 
-        $this->assertTrue($this->component->shouldOpenModal($lesson));
+        static::assertTrue($this->component->shouldOpenModal($lesson));
 
         $this->component->openHour = '11:00';
-        $this->assertFalse($this->component->shouldOpenModal($lesson));
+        static::assertFalse($this->component->shouldOpenModal($lesson));
     }
 
     public function testGetWorkshopsWithLimit(): void
@@ -215,7 +217,7 @@ class UpcomingLessonsTest extends TestCase
 
         $result = $this->component->getWorkshops();
 
-        $this->assertCount(2, $result);
+        static::assertCount(2, $result);
     }
 
     public function testGetCurrentWeekReturnsCurrentDate(): void
@@ -225,7 +227,7 @@ class UpcomingLessonsTest extends TestCase
 
         $result = $this->component->getCurrentWeek();
 
-        $this->assertEquals('2024-03-15', $result);
+        static::assertSame('2024-03-15', $result);
     }
 
     public function testGetCurrentWeekWithDifferentDates(): void
@@ -235,7 +237,7 @@ class UpcomingLessonsTest extends TestCase
 
         $result = $this->component->getCurrentWeek();
 
-        $this->assertEquals('2024-12-31', $result);
+        static::assertSame('2024-12-31', $result);
     }
 
     public function testGetWeekStartReturnsCorrectDate(): void
@@ -244,8 +246,8 @@ class UpcomingLessonsTest extends TestCase
 
         $weekStart = $this->component->getWeekStart();
 
-        $this->assertEquals('2024-03-10', $weekStart->format('Y-m-d'));
-        $this->assertInstanceOf(\DateTimeImmutable::class, $weekStart);
+        static::assertSame('2024-03-10', $weekStart->format('Y-m-d'));
+        static::assertInstanceOf(\DateTimeImmutable::class, $weekStart);
     }
 
     public function testGetWeekEndReturnsCorrectDate(): void
@@ -254,8 +256,8 @@ class UpcomingLessonsTest extends TestCase
 
         $weekEnd = $this->component->getWeekEnd();
 
-        $this->assertEquals('2024-03-17', $weekEnd->format('Y-m-d'));
-        $this->assertInstanceOf(\DateTimeImmutable::class, $weekEnd);
+        static::assertSame('2024-03-17', $weekEnd->format('Y-m-d'));
+        static::assertInstanceOf(\DateTimeImmutable::class, $weekEnd);
     }
 
     public function testWeekNavigationCalculatesCorrectDates(): void
@@ -264,11 +266,11 @@ class UpcomingLessonsTest extends TestCase
 
         // Test week start
         $weekStart = $this->component->getWeekStart();
-        $this->assertEquals('2024-02-20', $weekStart->format('Y-m-d'));
+        static::assertSame('2024-02-20', $weekStart->format('Y-m-d'));
 
         // Test week end (should be 7 days later)
         $weekEnd = $this->component->getWeekEnd();
-        $this->assertEquals('2024-02-27', $weekEnd->format('Y-m-d'));
+        static::assertSame('2024-02-27', $weekEnd->format('Y-m-d'));
     }
 
     public function testWeekNavigationWithDifferentDates(): void
@@ -276,17 +278,17 @@ class UpcomingLessonsTest extends TestCase
         // Test with end of month
         $this->component->week = '2024-02-28';
         $weekEnd = $this->component->getWeekEnd();
-        $this->assertEquals('2024-03-06', $weekEnd->format('Y-m-d'));
+        static::assertSame('2024-03-06', $weekEnd->format('Y-m-d'));
 
         // Test with year boundary
         $this->component->week = '2024-12-30';
         $weekEnd = $this->component->getWeekEnd();
-        $this->assertEquals('2025-01-06', $weekEnd->format('Y-m-d'));
+        static::assertSame('2025-01-06', $weekEnd->format('Y-m-d'));
 
         // Test with leap year
         $this->component->week = '2024-02-26'; // 2024 is a leap year
         $weekEnd = $this->component->getWeekEnd();
-        $this->assertEquals('2024-03-04', $weekEnd->format('Y-m-d'));
+        static::assertSame('2024-03-04', $weekEnd->format('Y-m-d'));
     }
 
     public function testComponentWithHomepageConfiguration(): void
@@ -309,16 +311,16 @@ class UpcomingLessonsTest extends TestCase
 
         $result = $this->component->getWorkshops();
 
-        $this->assertFalse($this->component->showSearch);
-        $this->assertEquals(3, $this->component->limit);
-        $this->assertCount(3, $result);
+        static::assertFalse($this->component->showSearch);
+        static::assertSame(3, $this->component->limit);
+        static::assertCount(3, $result);
     }
 
     public function testComponentWithWorkshopsPageConfiguration(): void
     {
         // Test configuration as used on workshops page: showSearch=true (default), limit=null (default)
-        $this->assertTrue($this->component->showSearch);
-        $this->assertNull($this->component->limit);
+        static::assertTrue($this->component->showSearch);
+        static::assertNull($this->component->limit);
 
         $mockLessons = [
             $this->createMock(Lesson::class),
@@ -336,7 +338,7 @@ class UpcomingLessonsTest extends TestCase
 
         $result = $this->component->getWorkshops();
 
-        $this->assertCount(5, $result);
+        static::assertCount(5, $result);
     }
 
     public function testLiveComponentAttributes(): void
@@ -345,14 +347,14 @@ class UpcomingLessonsTest extends TestCase
 
         // Test that the class has the correct LiveComponent attribute
         $attributes = $reflectionClass->getAttributes();
-        $this->assertNotEmpty($attributes);
+        static::assertNotEmpty($attributes);
         $liveComponentAttribute = array_find(
             $attributes,
-            fn($attribute) => $attribute->getName() === AsLiveComponent::class,
+            static fn($attribute) => $attribute->getName() === AsLiveComponent::class,
         );
 
-        $this->assertNotNull($liveComponentAttribute);
-        $this->assertEquals(['UpcomingLessons'], $liveComponentAttribute->getArguments());
+        static::assertNotNull($liveComponentAttribute);
+        static::assertEquals(['UpcomingLessons'], $liveComponentAttribute->getArguments());
     }
 
     public function testQueryPropertyIsLiveProp(): void
@@ -361,17 +363,19 @@ class UpcomingLessonsTest extends TestCase
         $queryProperty = $reflectionClass->getProperty('query');
 
         $attributes = $queryProperty->getAttributes();
-        $this->assertNotEmpty($attributes);
+        static::assertNotEmpty($attributes);
 
         $livePropAttribute = null;
         foreach ($attributes as $attribute) {
-            if ($attribute->getName() === LiveProp::class) {
-                $livePropAttribute = $attribute;
-                break;
+            if ($attribute->getName() !== LiveProp::class) {
+                continue;
             }
+
+            $livePropAttribute = $attribute;
+            break;
         }
 
-        $this->assertNotNull($livePropAttribute);
+        static::assertNotNull($livePropAttribute);
     }
 
     public function testAgePropertyIsLiveProp(): void
@@ -380,17 +384,19 @@ class UpcomingLessonsTest extends TestCase
         $ageProperty = $reflectionClass->getProperty('age');
 
         $attributes = $ageProperty->getAttributes();
-        $this->assertNotEmpty($attributes);
+        static::assertNotEmpty($attributes);
 
         $livePropAttribute = null;
         foreach ($attributes as $attribute) {
-            if ($attribute->getName() === LiveProp::class) {
-                $livePropAttribute = $attribute;
-                break;
+            if ($attribute->getName() !== LiveProp::class) {
+                continue;
             }
+
+            $livePropAttribute = $attribute;
+            break;
         }
 
-        $this->assertNotNull($livePropAttribute);
+        static::assertNotNull($livePropAttribute);
     }
 
     public function testWeekPropertyIsLiveProp(): void
@@ -399,17 +405,19 @@ class UpcomingLessonsTest extends TestCase
         $weekProperty = $reflectionClass->getProperty('week');
 
         $attributes = $weekProperty->getAttributes();
-        $this->assertNotEmpty($attributes);
+        static::assertNotEmpty($attributes);
 
         $livePropAttribute = null;
         foreach ($attributes as $attribute) {
-            if ($attribute->getName() === LiveProp::class) {
-                $livePropAttribute = $attribute;
-                break;
+            if ($attribute->getName() !== LiveProp::class) {
+                continue;
             }
+
+            $livePropAttribute = $attribute;
+            break;
         }
 
-        $this->assertNotNull($livePropAttribute);
+        static::assertNotNull($livePropAttribute);
     }
 
     public function testShowSearchAndLimitAreNotWritableLiveProps(): void
@@ -419,12 +427,12 @@ class UpcomingLessonsTest extends TestCase
         // showSearch should be LiveProp but not writable
         $showSearchProperty = $reflectionClass->getProperty('showSearch');
         $attributes = $showSearchProperty->getAttributes();
-        $this->assertNotEmpty($attributes);
+        static::assertNotEmpty($attributes);
 
         // limit should be LiveProp but not writable
         $limitProperty = $reflectionClass->getProperty('limit');
         $attributes = $limitProperty->getAttributes();
-        $this->assertNotEmpty($attributes);
+        static::assertNotEmpty($attributes);
     }
 
     public function testSetViewResetsModalProperties(): void
@@ -439,12 +447,12 @@ class UpcomingLessonsTest extends TestCase
         $this->component->setView('calendar');
 
         // Verify view changed
-        $this->assertEquals('calendar', $this->component->view);
+        static::assertSame('calendar', $this->component->view);
 
         // Verify modal properties reset
-        $this->assertNull($this->component->openSlug);
-        $this->assertNull($this->component->openDate);
-        $this->assertNull($this->component->openHour);
+        static::assertNull($this->component->openSlug);
+        static::assertNull($this->component->openDate);
+        static::assertNull($this->component->openHour);
     }
 
     public function testSetViewDoesNotAffectOtherProperties(): void
@@ -458,10 +466,10 @@ class UpcomingLessonsTest extends TestCase
         $this->component->setView('calendar');
 
         // These should remain unchanged
-        $this->assertEquals('test query', $this->component->query);
-        $this->assertEquals(5, $this->component->age);
-        $this->assertEquals('2024-02-20', $this->component->week);
-        $this->assertEquals(3, $this->component->limit);
-        $this->assertFalse($this->component->showSearch);
+        static::assertSame('test query', $this->component->query);
+        static::assertSame(5, $this->component->age);
+        static::assertSame('2024-02-20', $this->component->week);
+        static::assertSame(3, $this->component->limit);
+        static::assertFalse($this->component->showSearch);
     }
 }

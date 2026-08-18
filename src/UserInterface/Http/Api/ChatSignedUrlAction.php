@@ -23,7 +23,7 @@ final class ChatSignedUrlAction extends AbstractController
     ) {}
 
     #[Route('/api/chat/signed-url', name: 'api_chat_signed_url', methods: ['POST'])]
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $_request): JsonResponse
     {
         if (!$this->featureManager->isEnabled('chat_assistant')) {
             return $this->json([

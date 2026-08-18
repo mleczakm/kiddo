@@ -31,10 +31,11 @@ readonly class ImportTransfersFromMailHandler
         private TransferRepository $transferRepository,
         private LoggerInterface $logger,
         private string $mailboxUsername = '',
+        #[\SensitiveParameter]
         private string $mailboxPassword = '',
     ) {}
 
-    public function __invoke(ImportTransfersFromMail $message): void
+    public function __invoke(ImportTransfersFromMail $_message): void
     {
         if ($this->mailboxUsername === '' || $this->mailboxPassword === '') {
             $this->logger->info(

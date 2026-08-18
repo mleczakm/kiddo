@@ -18,6 +18,7 @@ final class SeedDemoDataCommandTest extends KernelTestCase
 {
     private CommandTester $commandTester;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -29,6 +30,7 @@ final class SeedDemoDataCommandTest extends KernelTestCase
         ]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->commandTester->execute([
@@ -39,10 +41,10 @@ final class SeedDemoDataCommandTest extends KernelTestCase
 
     public function testItCreatesACompleteAndRepeatableDemoDataset(): void
     {
-        self::assertSame(0, $this->commandTester->execute([
+        static::assertSame(0, $this->commandTester->execute([
             '--replace' => true,
         ]));
-        self::assertStringContainsString('9 bookings', $this->commandTester->getDisplay());
+        static::assertStringContainsString('9 bookings', $this->commandTester->getDisplay());
 
         $users = self::getContainer()->get(UserRepository::class);
         $lessons = self::getContainer()->get(LessonRepository::class);
@@ -54,7 +56,7 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             ->setParameter('domain', '%@demo.kiddo.local')
             ->getQuery()
             ->getResult();
-        self::assertCount(6, $demoUsers);
+        static::assertCount(6, $demoUsers);
         /** @var list<object> $demoLessons */
         $demoLessons = $lessons
             ->createQueryBuilder('l')
@@ -63,7 +65,7 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             ->setParameter('prefix', '[DEMO] %')
             ->getQuery()
             ->getResult();
-        self::assertCount(10, $demoLessons);
+        static::assertCount(10, $demoLessons);
 
         /** @var list<Booking> $demoBookings */
         $demoBookings = $bookings
@@ -73,19 +75,19 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             ->setParameter('domain', '%@demo.kiddo.local')
             ->getQuery()
             ->getResult();
-        self::assertCount(9, $demoBookings);
-        self::assertContains(Booking::STATUS_PENDING, array_map(
+        static::assertCount(9, $demoBookings);
+        static::assertContains(Booking::STATUS_PENDING, array_map(
             static fn(Booking $booking): string => $booking->getStatus(),
             $demoBookings,
         ));
-        self::assertContains(Booking::STATUS_WAITING_APPROVAL, array_map(
+        static::assertContains(Booking::STATUS_WAITING_APPROVAL, array_map(
             static fn(Booking $booking): string => $booking->getStatus(),
             $demoBookings,
         ));
-        self::assertTrue(array_any($demoBookings, static fn(Booking $booking): bool => $booking->hasBeenRescheduled()));
+        static::assertTrue(array_any($demoBookings, static fn(Booking $booking): bool => $booking->hasBeenRescheduled()));
 
-        self::assertSame(0, $this->commandTester->execute([]));
-        self::assertStringContainsString('already exists', $this->commandTester->getDisplay());
+        static::assertSame(0, $this->commandTester->execute([]));
+        static::assertStringContainsString('already exists', $this->commandTester->getDisplay());
         /** @var list<Booking> $unchangedBookings */
         $unchangedBookings = $bookings
             ->createQueryBuilder('b')
@@ -94,6 +96,6 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             ->setParameter('domain', '%@demo.kiddo.local')
             ->getQuery()
             ->getResult();
-        self::assertCount(9, $unchangedBookings);
+        static::assertCount(9, $unchangedBookings);
     }
 }

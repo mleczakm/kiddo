@@ -19,6 +19,7 @@ final class NotificationRepositoryTest extends KernelTestCase
 
     private NotificationRepository $repo;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -60,13 +61,13 @@ final class NotificationRepositoryTest extends KernelTestCase
         $nDeleted->softDelete();
         $this->em->flush();
 
-        self::assertSame(2, $this->repo->countUnreadForUser($user)); // n1 + nOld
+        static::assertSame(2, $this->repo->countUnreadForUser($user)); // n1 + nOld
 
         $recent = $this->repo->findRecentForUser($user, 10);
-        self::assertCount(3, $recent); // deleted filtered out
-        self::assertSame('Read', $recent[0]->getTitle());
-        self::assertSame('First', $recent[1]->getTitle());
-        self::assertSame('Old', $recent[2]->getTitle());
+        static::assertCount(3, $recent); // deleted filtered out
+        static::assertSame('Read', $recent[0]->getTitle());
+        static::assertSame('First', $recent[1]->getTitle());
+        static::assertSame('Old', $recent[2]->getTitle());
     }
 
     public function testHardDeleteOlderThanRemovesOnlyAgedRows(): void
@@ -84,10 +85,10 @@ final class NotificationRepositoryTest extends KernelTestCase
         $this->persist($fresh);
 
         $deleted = $this->repo->hardDeleteOlderThan(new \DateTimeImmutable('2025-01-01 00:00:00'));
-        self::assertSame(1, $deleted);
+        static::assertSame(1, $deleted);
 
         $remaining = $this->repo->findRecentForUser($user, 10);
-        self::assertCount(1, $remaining);
-        self::assertSame('Fresh', $remaining[0]->getTitle());
+        static::assertCount(1, $remaining);
+        static::assertSame('Fresh', $remaining[0]->getTitle());
     }
 }

@@ -24,6 +24,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
         private CacheInterface $cache,
     ) {}
 
+    #[\Override]
     public function getSchedule(): Schedule
     {
         return new Schedule()
@@ -31,11 +32,11 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->processOnlyLastMissedRun(true)
             ->add(
                 RecurringMessage::every('5 minutes', new CheckExpiredPayments(expirationMinutes: 24 * 60)),
-                RecurringMessage::every('60 minutes', new CallbackMessageProvider(fn() => [new CheckExpiredBookings()])),
+                RecurringMessage::every('60 minutes', new CallbackMessageProvider(static fn() => [new CheckExpiredBookings()])),
                 RecurringMessage::every(30, new ImportTransfersFromMail()),
                 RecurringMessage::cron(
                     '45 8 * * *',
-                    new CallbackMessageProvider(fn() => [new DailyLessonsReminder()]),
+                    new CallbackMessageProvider(static fn() => [new DailyLessonsReminder()]),
                     new \DateTimeZone('Europe/Warsaw'),
                 ),
                 RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers()),

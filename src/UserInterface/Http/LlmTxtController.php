@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class LlmTxtController extends AbstractController
+final class LlmTxtController extends AbstractController
 {
     #[Route('/llm.txt', name: 'app_llm_txt', methods: ['GET'])]
     public function index(UrlGeneratorInterface $urlGenerator): Response

@@ -14,24 +14,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Chat/AdminChatTools.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Chat\AdminChatTools::call`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/AdminChatTools.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Chat\AdminChatTools::definitions`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/AdminChatTools.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Chat\AdminChatTools::supports`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/AdminChatTools.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 2
@@ -326,24 +308,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Chat/UserChatTools.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Chat\UserChatTools::call`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/UserChatTools.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Chat\UserChatTools::definitions`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/UserChatTools.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Chat\UserChatTools::supports`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/UserChatTools.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -464,18 +428,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Command/SeedDemoDataCommand.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Command\SeedDemoDataCommand::configure`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Command/SeedDemoDataCommand.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Command\SeedDemoDataCommand::execute`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Command/SeedDemoDataCommand.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 1
@@ -572,12 +524,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Command/UpdateBookingLessonMapsCommand.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Command\UpdateBookingLessonMapsCommand::execute`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Command/UpdateBookingLessonMapsCommand.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Console\Exception\LogicException` in `App\Application\Command\UpdateBookingLessonMapsCommand::__construct`.'
 count = 1
@@ -631,12 +577,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/CheckBookingsToMarkPastHandler.php"
-code = "unused-parameter"
-message = "Parameter `$command` is never used."
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/CheckExpiredBookingsHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\CheckExpiredBookingsHandler::__invoke`.'
@@ -673,12 +613,6 @@ message = 'Potentially unhandled exception `DateInvalidTimeZoneException` in `Ap
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/ExtendSeriesScheduleHandler.php"
-code = "unused-parameter"
-message = "Parameter `$command` is never used."
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\ImportTransfersFromMailHandler::__invoke`.'
@@ -697,18 +631,6 @@ message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Ap
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
-code = "unused-parameter"
-message = "Parameter `$message` is never used."
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecorator.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecorator::__invoke`.'
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecorator.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Lock\Exception\LockAcquiringException` in `App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecorator::__invoke`.'
@@ -718,12 +640,6 @@ count = 1
 file = "src/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecorator.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Lock\Exception\LockConflictedException` in `App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecorator::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/IncomingNotificationMailQueryWithLastSuccessfulImportDecorator.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\CommandHandler\IncomingNotificationMailQueryWithLastSuccessfulImportDecorator::__invoke`.'
 count = 1
 
 [[issues]]
@@ -1070,12 +986,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
-code = "redundant-cast"
-message = "Redundant cast to `(string)`: the expression already has this type."
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\TransferNotMatchedHandler::__invoke`.'
 count = 1
@@ -1207,12 +1117,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exceptio
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/TriggerMatchPaymentForTransferForPastTransfersHandler.php"
-code = "unused-parameter"
-message = "Parameter `$command` is never used."
-count = 1
-
-[[issues]]
 file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\Newsletter\NewsletterSubscriptionManager::applyTransition`.'
@@ -1228,12 +1132,6 @@ count = 1
 file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\Newsletter\NewsletterSubscriptionManager::applyTransition`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/AliorMailParser.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Service\AliorMailParser::fromMailSubjectAndContent`.'
 count = 1
 
 [[issues]]
@@ -1358,12 +1256,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Workflow/EventSubscriber/BookingWorkflowSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application\Workflow\EventSubscriber\BookingWorkflowSubscriber::getSubscribedEvents`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Workflow/EventSubscriber/BookingWorkflowSubscriber.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\Workflow\EventSubscriber\BookingWorkflowSubscriber::onPaymentCompleted`.'
 count = 1
@@ -1421,30 +1313,6 @@ file = "src/Component/WorkshopEditorComponent.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 2
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "possibly-false-operand"
-message = "Left operand in `>` comparison might be `false` (type `false|int`)."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "possibly-null-iterator"
-message = 'Expression being iterated (type `Doctrine\Common\Collections\Collection<int, App\Entity\Lesson>|null`) might be `null` at runtime.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 3
 
 [[issues]]
 file = "src/Component/WorkshopEditorComponent.php"
@@ -1658,12 +1526,6 @@ count = 1
 
 [[issues]]
 file = "src/Entity/Booking.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
-count = 1
-
-[[issues]]
-file = "src/Entity/Booking.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\Booking::getAmountPaid`.'
 count = 1
@@ -1678,24 +1540,6 @@ count = 1
 file = "src/Entity/Booking.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\Entity\Booking::approve`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/Booking.php"
-code = "unused-parameter"
-message = "Parameter `$key` is never used."
-count = 1
-
-[[issues]]
-file = "src/Entity/Booking.php"
-code = "write-only-property"
-message = "Property `$cancelledBy` is written to but never read."
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Entity\DTO\LessonMap::count`.'
 count = 1
 
 [[issues]]
@@ -1757,18 +1601,6 @@ file = "src/Entity/DTO/LessonMap.php"
 code = "non-existent-method"
 message = 'Method `clear` does not exist on type `Ds\Map`.'
 count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "redundant-cast"
-message = "Redundant cast to `(array)`: the expression already has this type."
-count = 4
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "redundant-cast"
-message = "Redundant cast to `(string)`: the expression already has this type."
-count = 4
 
 [[issues]]
 file = "src/Entity/DTO/LessonMap.php"
@@ -1870,18 +1702,6 @@ count = 1
 file = "src/Entity/DTO/LessonMap.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Entity\DTO\LessonMap::setLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "unused-parameter"
-message = "Parameter `$booking` is never used."
-count = 1
-
-[[issues]]
-file = "src/Entity/DTO/LessonMap.php"
-code = "unused-parameter"
-message = "Parameter `$reason` is never used."
 count = 1
 
 [[issues]]
@@ -1993,33 +1813,9 @@ message = 'Invalid return type for function `App\Entity\User::getUserIdentifier`
 count = 1
 
 [[issues]]
-file = "src/Entity/User.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Entity\User::getRoles`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/User.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Entity\User::getUserIdentifier`.'
-count = 1
-
-[[issues]]
 file = "src/Form/PlatformBillingPaymentType.php"
 code = "excess-template-parameter"
 message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
-count = 1
-
-[[issues]]
-file = "src/Form/PlatformBillingPaymentType.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Form\PlatformBillingPaymentType::buildForm`.'
-count = 1
-
-[[issues]]
-file = "src/Form/PlatformBillingPaymentType.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Form\PlatformBillingPaymentType::configureOptions`.'
 count = 1
 
 [[issues]]
@@ -2029,21 +1825,9 @@ message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Ex
 count = 1
 
 [[issues]]
-file = "src/Form/PlatformBillingPaymentType.php"
-code = "unused-template-parameter"
-message = 'Template parameter `TData` is never used in class `App\Form\PlatformBillingPaymentType`.'
-count = 1
-
-[[issues]]
 file = "src/Form/UserSelectType.php"
 code = "excess-template-parameter"
 message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserSelectType.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Form\UserSelectType::configureOptions`.'
 count = 1
 
 [[issues]]
@@ -2068,18 +1852,6 @@ count = 1
 file = "src/Form/UserType.php"
 code = "excess-template-parameter"
 message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserType.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Form\UserType::buildForm`.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserType.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Form\UserType::configureOptions`.'
 count = 1
 
 [[issues]]
@@ -2126,38 +1898,14 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Doctrine/CacheConnectionEnsurer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Doctrine\CacheConnectionEnsurer::ensureConnection`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/CacheConnectionEnsurer.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Infrastructure\Doctrine\CacheConnectionEnsurer::ensureConnection`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/CompositeConnectionEnsurer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Doctrine\CompositeConnectionEnsurer::ensureConnection`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/DoctrineConnectionEnsurer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Doctrine\DoctrineConnectionEnsurer::ensureConnection`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Doctrine/DoctrineConnectionEnsurer.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Infrastructure\Doctrine\DoctrineConnectionEnsurer::ensureConnection`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/EntityManagerResetter.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Doctrine\EntityManagerResetter::reset`.'
 count = 1
 
 [[issues]]
@@ -2170,18 +1918,6 @@ count = 4
 file = "src/Infrastructure/Doctrine/LessonMapType.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Doctrine/LessonMapType.php:35:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/MessengerConnectionResetter.php"
-code = "unused-parameter"
-message = "Parameter `$event` is never used."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/Query/DoctrineTodayLessonsQuery.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Doctrine\Query\DoctrineTodayLessonsQuery::forDate`.'
 count = 1
 
 [[issues]]
@@ -2227,21 +1963,9 @@ message = 'Potentially unhandled exception `Symfony\Contracts\HttpClient\Excepti
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/EventSubscriber/ActivityLogSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\ActivityLogSubscriber::getSubscribedEvents`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/EventSubscriber/ActivityLogWorkflowSubscriber.php"
 code = "implicit-to-string-cast"
 message = 'Implicit conversion to `string` for right operand via `Symfony\Component\Uid\Ulid::__toString()`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/EventSubscriber/ActivityLogWorkflowSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\ActivityLogWorkflowSubscriber::getSubscribedEvents`.'
 count = 1
 
 [[issues]]
@@ -2264,38 +1988,14 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/EventSubscriber/BookingWorkflowSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\BookingWorkflowSubscriber::getSubscribedEvents`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/EventSubscriber/BookingWorkflowSubscriber.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Infrastructure\EventSubscriber\BookingWorkflowSubscriber::onBookingCancelled`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/EventSubscriber/PaymentWorkflowSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\PaymentWorkflowSubscriber::getSubscribedEvents`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/EventSubscriber/PaymentWorkflowSubscriber.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Infrastructure\EventSubscriber\PaymentWorkflowSubscriber::onPaymentPaid`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/EventSubscriber/PlatformBillingSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\PlatformBillingSubscriber::getSubscribedEvents`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/EventSubscriber/SentryBookingWorkflowMetricsSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\SentryBookingWorkflowMetricsSubscriber::getSubscribedEvents`.'
 count = 1
 
 [[issues]]
@@ -2317,27 +2017,9 @@ message = 'Potentially unhandled exception `DivisionByZeroError` in `App\Infrast
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/EventSubscriber/SentryPaymentWorkflowMetricsSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\SentryPaymentWorkflowMetricsSubscriber::getSubscribedEvents`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/EventSubscriber/UserLoginSubscriber.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Infrastructure\EventSubscriber\UserLoginSubscriber::onUserLogin`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Healthcheck/DoctrineDbalCacheHealthcheck.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheck::check`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Healthcheck/DoctrineInsideTaskWorkerHealthcheck.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Healthcheck\DoctrineInsideTaskWorkerHealthcheck::check`.'
 count = 1
 
 [[issues]]
@@ -2350,24 +2032,6 @@ count = 1
 file = "src/Infrastructure/Healthcheck/DoctrineInsideTaskWorkerHealthcheck.php"
 code = "possibly-undefined-variable"
 message = "Variable `$result` might not have been defined on all execution paths leading to this point."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Healthcheck/HttpClientHealthcheck.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Healthcheck\HttpClientHealthcheck::check`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Healthcheck/ProcessCountHealthcheck.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Healthcheck\ProcessCountHealthcheck::check`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/ImapEngine/AliorNotificationMailProvider.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\ImapEngine\AliorNotificationMailProvider::__invoke`.'
 count = 1
 
 [[issues]]
@@ -2389,21 +2053,9 @@ message = 'Invalid value type from `yield from`: current generator expects to yi
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/ImapEngine/ConnectionCloserOnResetSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\ImapEngine\ConnectionCloserOnResetSubscriber::reset`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Mcp/KiddoChatToolLoader.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #2 of `App\Infrastructure\Mcp\KiddoMcpToolInvoker::invoke`: expected `array<string, mixed>`, but provided type `array<array-key, mixed>` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Mcp/KiddoChatToolLoader.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Mcp\KiddoChatToolLoader::load`.'
 count = 1
 
 [[issues]]
@@ -2416,18 +2068,6 @@ count = 1
 file = "src/Infrastructure/Mcp/KiddoChatToolLoader.php"
 code = "redundant-docblock-type"
 message = "Redundant docblock type for variable `$required`."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Mcp/KiddoInitializeHandler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Mcp\KiddoInitializeHandler::handle`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Mcp/KiddoInitializeHandler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Mcp\KiddoInitializeHandler::supports`.'
 count = 1
 
 [[issues]]
@@ -2462,20 +2102,8 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Mcp/McpAuthSubscriber.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Mcp\McpAuthSubscriber::getSubscribedEvents`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Mcp/McpAuthSubscriber.php"
 code = "reference-to-undefined-variable"
 message = "Reference created from a previously undefined variable `$matches`."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Messenger/ActivityLogMiddleware.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Messenger\ActivityLogMiddleware::handle`.'
 count = 1
 
 [[issues]]
@@ -2611,12 +2239,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddleware.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Messenger\PreventAsyncDispatchInTaskWorkerMiddleware::handle`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Messenger/SwooleTaskWorkerContext.php"
 code = "invalid-property-access"
 message = 'Attempting to access a property on a non-object type (`unknown-ref(Swoole\Http\Server)`).'
@@ -2629,21 +2251,9 @@ message = 'Invalid return type for function `App\Infrastructure\Messenger\Swoole
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Messenger/SwooleTaskWorkerContext.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Messenger\SwooleTaskWorkerContext::isInTaskWorker`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Search/PostgresGlobalSearchQuery.php"
 code = "invalid-type-cast"
 message = "Non numeric string of type `string` implicitly cast to `float`."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Search/PostgresGlobalSearchQuery.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Search\PostgresGlobalSearchQuery::search`.'
 count = 1
 
 [[issues]]
@@ -2707,27 +2317,9 @@ message = 'Call to deprecated function: `Sentry\trace_metrics`.'
 count = 4
 
 [[issues]]
-file = "src/Infrastructure/Sentry/MetricsRecorder.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Sentry\MetricsRecorder::count`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Sentry/MetricsRecorder.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Sentry\MetricsRecorder::distribution`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
 code = "invalid-method-access"
 message = 'Attempting to access a method on a non-object type (`unknown-ref(Swoole\Http\Server)`).'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Swoole\Configurator\WithScheduler::configure`.'
 count = 1
 
 [[issues]]
@@ -2762,12 +2354,6 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Swoole/ExceptionLoggingTaskHandler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Swoole\ExceptionLoggingTaskHandler::handle`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/ExceptionLoggingTaskHandler.php"
 code = "non-existent-class-like"
 message = 'Cannot find class, interface, enum, or type alias `Swoole\Server\Task`.'
 count = 1
@@ -2780,20 +2366,8 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Swoole/HttpServerSwooleServerProvider.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Swoole\HttpServerSwooleServerProvider::getServer`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/HttpServerSwooleServerProvider.php"
 code = "non-existent-class-like"
 message = 'Cannot find class, interface, enum, or type alias `Swoole\Http\Server`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/TaskWorkerConnectionEnsuringHandler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Swoole\TaskWorkerConnectionEnsuringHandler::handle`.'
 count = 1
 
 [[issues]]
@@ -2822,12 +2396,6 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Scheduler/MainSchedule.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Scheduler\MainSchedule::getSchedule`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Scheduler/MainSchedule.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `DateInvalidTimeZoneException` in `App\Infrastructure\Symfony\Scheduler\MainSchedule::getSchedule`.'
 count = 1
@@ -2836,36 +2404,6 @@ count = 1
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "invalid-iterator"
 message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\LessonMapNormalizer::denormalize`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\LessonMapNormalizer::getSupportedTypes`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\LessonMapNormalizer::normalize`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\LessonMapNormalizer::supportsDenormalization`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\LessonMapNormalizer::supportsNormalization`.'
 count = 1
 
 [[issues]]
@@ -2888,12 +2426,6 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side is always `null`."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Symfony\Serializer\LessonMapNormalizer::normalize`.'
 count = 1
@@ -2901,115 +2433,79 @@ count = 1
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = "Potentially unhandled exception `LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`."
+message = "Potentially unhandled exception `LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`."
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\BadMethodCallException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\BadMethodCallException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\CircularReferenceException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:100:25}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\CircularReferenceException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExceptionInterface` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:100:25}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExceptionInterface` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExceptionInterface` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExceptionInterface` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExtraAttributesException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExtraAttributesException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:100:25}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:100:25}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\RuntimeException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\RuntimeException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\UnexpectedValueException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
+message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\UnexpectedValueException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:22:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/MoneyNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\MoneyNormalizer::denormalize`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/MoneyNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\MoneyNormalizer::getSupportedTypes`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/MoneyNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\MoneyNormalizer::normalize`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/MoneyNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\MoneyNormalizer::supportsDenormalization`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/MoneyNormalizer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\Serializer\MoneyNormalizer::supportsNormalization`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/MoneyNormalizer.php"
-code = "redundant-isset-check"
-message = "Redundant condition: variable `$data['amount']` (type `nonnull`) is always considered set (not null)."
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
@@ -3146,6 +2642,24 @@ count = 1
 
 [[issues]]
 file = "src/Repository/ActivityLogRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\ActivityLogRepository::findByBookingId`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/ActivityLogRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\ActivityLogRepository::findBySubject`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/ActivityLogRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\ActivityLogRepository::findRecent`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/ActivityLogRepository.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Repository\ActivityLogRepository::existsByDedupeKey`.'
 count = 1
@@ -3154,6 +2668,42 @@ count = 1
 file = "src/Repository/ActivityLogRepository.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Repository\ActivityLogRepository::existsByDedupeKey`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findActiveBookings`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findByLesson`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findCreatedBetween`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findExpiredPendingBookings`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findForUserAndLessons`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findVisibleForUser`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -3175,51 +2725,69 @@ message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Re
 count = 1
 
 [[issues]]
+file = "src/Repository/ChildRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\ChildRepository::findByOwner`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
 file = "src/Repository/FinanceContactRepository.php"
-code = "incompatible-return-type"
-message = 'Return type `array<array-key, App\Entity\FinanceContact>` of `App\Repository\FinanceContactRepository::findall()` is incompatible with parent return type `list<App\Entity\FinanceContact>` of `Doctrine\ORM\EntityRepository::findall()`'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\FinanceContactRepository::findAll`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Repository/LessonRepository.php"
-code = "invalid-argument"
-message = 'Invalid argument type for argument #1 of `Ds\Vector::reduce`: expected `(callable(Ds\PriorityQueue<_>|null, App\Entity\Lesson): Ds\PriorityQueue<_>|null)`, but found `(closure(Ds\PriorityQueue<mixed>, App\Entity\Lesson): null)`.'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findActiveByDate`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Repository/LessonRepository.php"
-code = "less-specific-return-statement"
-message = 'Returned type `array<array-key, App\Entity\Lesson>` is less specific than the declared return type `array<int, App\Entity\Lesson>` for function `App\Repository\LessonRepository::findUpcomingInRangeForInstructor`.'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findAvailableLessonsForReschedule`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Repository/LessonRepository.php"
-code = "less-specific-return-statement"
-message = 'Returned type `array<array-key, App\Entity\Lesson>` is less specific than the declared return type `array<int, App\Entity\Lesson>` for function `App\Repository\LessonRepository::findUpcomingInRange`.'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingInRangeForInstructor`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Repository/LessonRepository.php"
-code = "less-specific-return-statement"
-message = 'Returned type `array<array-key, App\Entity\Lesson>` is less specific than the declared return type `array<int, App\Entity\Lesson>` for function `App\Repository\LessonRepository::findUpcomingWithBookingsInRange`.'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingInRange`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Repository/LessonRepository.php"
-code = "less-specific-return-statement"
-message = 'Returned type `array<array-key, App\Entity\Lesson>` is less specific than the declared return type `array<int, App\Entity\Lesson>` for function `App\Repository\LessonRepository::findUpcomingWithBookings`.'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingWithBookingsInRange`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Repository/LessonRepository.php"
-code = "less-specific-return-statement"
-message = 'Returned type `array<array-key, App\Entity\Lesson>` is less specific than the declared return type `array<int, App\Entity\Lesson>` for function `App\Repository\LessonRepository::findUpcoming`.'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingWithBookings`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcoming`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Repository/NotificationRepository.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/Repository/NotificationRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\NotificationRepository::findRecentForUser`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -3236,6 +2804,24 @@ count = 1
 
 [[issues]]
 file = "src/Repository/PaymentRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\PaymentRepository::findExpiredPendingPayments`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/PaymentRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\PaymentRepository::findPaidBetween`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/PaymentRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\PaymentRepository::findPendingWithSearch`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/PaymentRepository.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Repository\PaymentRepository::countPendingPayments`.'
 count = 1
@@ -3244,6 +2830,30 @@ count = 1
 file = "src/Repository/PaymentRepository.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Repository\PaymentRepository::countPendingPayments`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/SeriesRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\SeriesRepository::findActive`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/SeriesRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\SeriesRepository::findInRange`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/TransferRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\TransferRepository::findByTitleStartingWith`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/TransferRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\TransferRepository::findOnlyDeleted`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -3265,9 +2875,27 @@ message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Re
 count = 1
 
 [[issues]]
-file = "src/Security/AccessDeniedHandler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Security\AccessDeniedHandler::getSubscribedEvents`.'
+file = "src/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findAllMatching`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findByRole`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findCreatedBetween`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findForAutocomplete`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -3292,18 +2920,6 @@ count = 1
 file = "src/Security/AccessDeniedHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Security\AccessDeniedHandler::onKernelException`.'
-count = 1
-
-[[issues]]
-file = "src/Security/Voter/LessonVoter.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Security\Voter\LessonVoter::supports`.'
-count = 1
-
-[[issues]]
-file = "src/Security/Voter/LessonVoter.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Security\Voter\LessonVoter::voteOnAttribute`.'
 count = 1
 
 [[issues]]
@@ -3409,12 +3025,6 @@ message = 'Potentially unhandled exception `LogicException` in `App\UserInterfac
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Api/ChatSignedUrlAction.php"
-code = "unused-parameter"
-message = "Parameter `$request` is never used."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/Api/ToolInvokeAction.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
@@ -3458,14 +3068,26 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminBookingModal.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$ids`."
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\AdminBookingModal::getFilteredLessons`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingModal.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\AdminBookingModal::getFilteredUsers`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminBookingModal.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `UnexpectedValueException` in `App\UserInterface\Http\Component\AdminBookingModal::getSelectedLessons`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `list<mixed>` is less specific than the declared return type `list<string>` for function `App\UserInterface\Http\Component\AdminBookingsComponent::getSelectedLessonIdsArray` due to nested 'mixed'.'''
 count = 1
 
 [[issues]]
@@ -3488,6 +3110,18 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\AdminBookingsComponent::getAvailableLessons`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\AdminBookingsComponent::getFilteredLessons`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -3497,12 +3131,6 @@ file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
 code = "possibly-null-operand"
 message = "Possibly null middle operand used in string concatenation (type `null|string`)."
 count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
-code = "redundant-cast"
-message = "Redundant cast to `(string)`: the expression already has this type."
-count = 2
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
@@ -3625,9 +3253,9 @@ message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Us
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
+file = "src/UserInterface/Http/Component/AdminPaymentsListComponent.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\AdminPaymentsListComponent::getPayments`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -3835,12 +3463,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exceptio
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
-code = "unused-parameter"
-message = "Parameter `$index` is never used."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/Component/BookingPreviewComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\BookingPreviewComponent::getBookings`.'
@@ -3856,18 +3478,6 @@ count = 1
 file = "src/UserInterface/Http/Component/CarnetsComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\CarnetsComponent::getCarnets`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/ChildrenManager.php"
-code = "invalid-property-assignment-value"
-message = "Invalid type for property `$children`: expected `array<array-key, array{'age': int|null, 'birthday': null|truthy-string, 'id': non-empty-string, 'name': string}>`, but got `array<array-key, array{'age': int|null, 'birthday': non-empty-string|null, 'id': non-empty-string, 'name': string}>|list<array{'age': int|null, 'birthday': non-empty-string|null, 'id': non-empty-string, 'name': string}>`."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/ChildrenManager.php"
-code = "redundant-cast"
-message = "Redundant cast to `(string)`: the expression already has this type."
 count = 1
 
 [[issues]]
@@ -4010,18 +3620,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LoginUser.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\UserInterface\Http\Component\LoginUser::instantiateForm`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LoginUser.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$form`."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LoginUser.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Form\Exception\LogicException` in `App\UserInterface\Http\Component\LoginUser::save`.'
 count = 1
@@ -4075,15 +3673,15 @@ message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Us
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
-code = "invalid-type-cast"
-message = "Non numeric string of type `non-empty-string` implicitly cast to `float`."
+file = "src/UserInterface/Http/Component/PaymentsListComponent.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\PaymentsListComponent::getPayments`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\UserInterface\Http\Component\PlatformBillingComponent::instantiateForm`.'
+code = "invalid-type-cast"
+message = "Non numeric string of type `non-empty-string` implicitly cast to `float`."
 count = 1
 
 [[issues]]
@@ -4126,18 +3724,6 @@ count = 1
 file = "src/UserInterface/Http/Component/ProfileComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\ProfileComponent::startEditing`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/RegisterUser.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\UserInterface\Http\Component\RegisterUser::instantiateForm`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/RegisterUser.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$form`."
 count = 1
 
 [[issues]]
@@ -4250,15 +3836,15 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 3
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\UpcomingAttendeesComponent::getFilteredUsers`. Saw type `mixed`.'
+count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
-code = "redundant-cast"
-message = "Redundant cast to `(string)`: the expression already has this type."
-count = 1
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 3
 
 [[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
@@ -4345,24 +3931,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exce
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/DashboardAction.php"
-code = "unused-parameter"
-message = "Parameter `$bookingRepository` is never used."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/DashboardAction.php"
-code = "unused-parameter"
-message = "Parameter `$entityManager` is never used."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/DashboardAction.php"
-code = "unused-parameter"
-message = "Parameter `$user` is never used."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/LlmTxtController.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\UserInterface\Http\LlmTxtController::index`.'
@@ -4393,24 +3961,6 @@ message = "Assigning `mixed` type to a variable may lead to unexpected behavior.
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/ProfileAction.php"
-code = "unused-parameter"
-message = "Parameter `$bookingRepository` is never used."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/ProfileAction.php"
-code = "unused-parameter"
-message = "Parameter `$entityManager` is never used."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/ProfileAction.php"
-code = "unused-parameter"
-message = "Parameter `$user` is never used."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/SecurityController.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\SecurityController::check`.'
@@ -4435,12 +3985,6 @@ message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Us
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/StaticEndpointAction.php"
-code = "unused-parameter"
-message = "Parameter `$request` is never used."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/WorkshopImageAction.php"
 code = "reference-to-undefined-variable"
 message = "Reference created from a previously undefined variable `$matches`."
@@ -4462,6 +4006,12 @@ count = 1
 file = "src/UserInterface/Http/WorkshopImageAction.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\HttpKernel\Exception\NotFoundHttpException` in `App\UserInterface\Http\WorkshopImageAction::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/WorkshopsAction.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\UserInterface\Http\WorkshopsAction::findLessonBySlug`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -4504,84 +4054,6 @@ count = 1
 file = "tests/Application/Chat/ChatTokenManagerTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\Application\Chat\ChatTokenManagerTest::testMintAndParseRoundTrip`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:105:21}::call`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:105:21}::definitions`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:105:21}::supports`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:149:21}::call`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:149:21}::definitions`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:149:21}::supports`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:21:21}::call`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:21:21}::definitions`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:21:21}::supports`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:63:21}::call`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:63:21}::definitions`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/Chat/ChatToolRegistryTest.php:63:21}::supports`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/ChatToolRegistryTest.php"
-code = "redundant-cast"
-message = "Redundant cast to `(string)`: the expression already has this type."
 count = 1
 
 [[issues]]
@@ -5174,12 +4646,6 @@ count = 1
 
 [[issues]]
 file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Application\CommandHandler\FakeQuery::__invoke`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Event\NoPreviousThrowableException` in `App\Tests\Application\CommandHandler\ImportTransfersFromMailHandlerTest::testFetchProperlyEmailsFromMailbox`.'
 count = 1
@@ -5300,24 +4766,6 @@ count = 1
 
 [[issues]]
 file = "tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php:24:22}::__invoke`."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php:47:22}::__invoke`."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php:84:22}::__invoke`."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Event\NoPreviousThrowableException` in `App\Tests\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecoratorTest::testInvokeYieldsFromDecorated`.'
 count = 1
@@ -5349,7 +4797,7 @@ count = 1
 [[issues]]
 file = "tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `{anonymous-class:tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php:47:22}::__invoke`.'
+message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `{anonymous-class:tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php:48:22}::__invoke`.'
 count = 1
 
 [[issues]]
@@ -5391,13 +4839,7 @@ count = 1
 [[issues]]
 file = "tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php"
 code = "unhandled-thrown-type"
-message = "Potentially unhandled exception `RuntimeException` in `{anonymous-class:tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php:84:22}::__invoke`."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/MatchPaymentForTransferHandlerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Application\CommandHandler\MatchPaymentForTransferHandlerTest::setUp`.'
+message = "Potentially unhandled exception `RuntimeException` in `{anonymous-class:tests/Application/CommandHandler/IncomingNotificationMailQueryReentrancyGuardDecoratorTest.php:86:22}::__invoke`."
 count = 1
 
 [[issues]]
@@ -6314,12 +5756,6 @@ count = 2
 
 [[issues]]
 file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Application\CommandHandler\Notification\TransferNotMatchedHandlerTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerTest.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 2
@@ -7196,18 +6632,6 @@ count = 1
 
 [[issues]]
 file = "tests/Application/Service/PlatformBillingServiceTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Application\Service\PlatformBillingServiceTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/Service/PlatformBillingServiceTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Application\Service\PlatformBillingServiceTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/Service/PlatformBillingServiceTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -7604,20 +7028,8 @@ count = 1
 
 [[issues]]
 file = "tests/Assembler/BookingAssembler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Assembler\BookingAssembler::assemble`.'
-count = 1
-
-[[issues]]
-file = "tests/Assembler/BookingAssembler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ReflectionException` in `App\Tests\Assembler\BookingAssembler::assemble`.'
-count = 1
-
-[[issues]]
-file = "tests/Assembler/EntityAssembler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Assembler\EntityAssembler::getIterator`.'
 count = 1
 
 [[issues]]
@@ -7636,12 +7048,6 @@ count = 1
 file = "tests/Assembler/EntityAssembler.php"
 code = "unsafe-instantiation"
 message = 'Unsafe `new $class_name`: constructor of `App\Tests\Assembler\EntityAssembler` is not final and its signature might change in child classes, potentially leading to runtime errors.'
-count = 1
-
-[[issues]]
-file = "tests/Assembler/LessonAssembler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Assembler\LessonAssembler::assemble`.'
 count = 1
 
 [[issues]]
@@ -7700,12 +7106,6 @@ count = 1
 
 [[issues]]
 file = "tests/Assembler/PaymentCodeAssembler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Assembler\PaymentCodeAssembler::assemble`.'
-count = 1
-
-[[issues]]
-file = "tests/Assembler/PaymentCodeAssembler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ReflectionException` in `App\Tests\Assembler\PaymentCodeAssembler::assemble`.'
 count = 1
@@ -7718,20 +7118,8 @@ count = 1
 
 [[issues]]
 file = "tests/Assembler/SeriesAssembler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Assembler\SeriesAssembler::assemble`.'
-count = 1
-
-[[issues]]
-file = "tests/Assembler/SeriesAssembler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ReflectionException` in `App\Tests\Assembler\SeriesAssembler::assemble`.'
-count = 1
-
-[[issues]]
-file = "tests/Assembler/SettingAssembler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Assembler\SettingAssembler::assemble`.'
 count = 1
 
 [[issues]]
@@ -7744,12 +7132,6 @@ count = 1
 file = "tests/Assembler/SettingAssembler.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `App\Entity\Setting::setKey`: expected `string`, but found `nonnull`.'
-count = 1
-
-[[issues]]
-file = "tests/Assembler/TransferAssembler.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Assembler\TransferAssembler::assemble`.'
 count = 1
 
 [[issues]]
@@ -8072,12 +7454,6 @@ count = 1
 
 [[issues]]
 file = "tests/Entity/TransferTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Entity\TransferTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Entity/TransferTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -8159,18 +7535,6 @@ file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
 count = 4
-
-[[issues]]
-file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Application\Command\SeedDemoDataCommandTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Application\Command\SeedDemoDataCommandTest::tearDown`.'
-count = 1
 
 [[issues]]
 file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
@@ -8261,12 +7625,6 @@ file = "tests/Functional/Application/CommandHandler/TriggerMatchPaymentForTransf
 code = "invalid-callable"
 message = "Expression of type `object` cannot be called as a function or method."
 count = 2
-
-[[issues]]
-file = "tests/Functional/Application/CommandHandler/TriggerMatchPaymentForTransferForPastTransfersHandlerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Application\CommandHandler\TriggerMatchPaymentForTransferForPastTransfersHandlerTest::setUp`.'
-count = 1
 
 [[issues]]
 file = "tests/Functional/Application/CommandHandler/TriggerMatchPaymentForTransferForPastTransfersHandlerTest.php"
@@ -8396,12 +7754,6 @@ count = 1
 
 [[issues]]
 file = "tests/Functional/BookingPersistenceTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\BookingPersistenceTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/BookingPersistenceTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -8446,12 +7798,6 @@ count = 1
 file = "tests/Functional/BookingPersistenceTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\Functional\BookingPersistenceTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Entity/SeriesFunctionalTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Entity\SeriesFunctionalTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -8516,12 +7862,6 @@ count = 1
 
 [[issues]]
 file = "tests/Functional/ImpersonationSuggestTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\ImpersonationSuggestTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/ImpersonationSuggestTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -8566,12 +7906,6 @@ count = 1
 file = "tests/Functional/ImpersonationSuggestTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\HttpFoundation\Exception\BadRequestException` in `App\Tests\Functional\ImpersonationSuggestTest::setHost`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Healthcheck/DoctrineDbalCacheHealthcheckTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheckTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -8644,12 +7978,6 @@ count = 1
 file = "tests/Functional/Infrastructure/Healthcheck/DoctrineDbalCacheHealthcheckTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\Functional\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheckTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/ImapEngine/AliorNotificationMailProviderFunctionalTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Infrastructure\ImapEngine\AliorNotificationMailProviderFunctionalTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -8852,12 +8180,6 @@ count = 1
 
 [[issues]]
 file = "tests/Functional/Infrastructure/Swoole/HttpServerSwooleServerProviderTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Infrastructure\Swoole\HttpServerSwooleServerProviderTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Swoole/HttpServerSwooleServerProviderTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$provider` (App\Infrastructure\Swoole\SwooleServerProviderInterface).'
 count = 1
@@ -8908,12 +8230,6 @@ count = 1
 file = "tests/Functional/Infrastructure/Swoole/HttpServerSwooleServerProviderTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\Functional\Infrastructure\Swoole\HttpServerSwooleServerProviderTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Symfony/SchedulerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Infrastructure\Symfony\SchedulerTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -8972,12 +8288,6 @@ count = 2
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\Search\AdminGlobalSearchTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `array_find`: expected `array<('K.array_find() extends mixed), ('V.array_find() extends mixed)>`, but found `mixed`."
 count = 2
@@ -9027,7 +8337,7 @@ count = 2
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "mixed-return-statement"
-message = "Could not infer a precise return type for function `{closure:tests/Functional/Search/AdminGlobalSearchTest.php:66:34}`. Saw type `mixed`."
+message = "Could not infer a precise return type for function `{closure:tests/Functional/Search/AdminGlobalSearchTest.php:67:34}`. Saw type `mixed`."
 count = 1
 
 [[issues]]
@@ -9206,14 +8516,8 @@ count = 1
 
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\UserInterface\Http\Api\AuthControllerTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\UserInterface\Http\Api\AuthControllerTest::tearDown`.'
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Tests\Functional\UserInterface\Http\Api\AuthControllerTest::decode`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -9422,12 +8726,6 @@ count = 1
 
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Component/BookingPreviewComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Functional\UserInterface\Http\Component\BookingPreviewComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/UserInterface/Http/Component/BookingPreviewComponentTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$bookingRepository` (App\Repository\BookingRepository).'
 count = 1
@@ -9622,18 +8920,6 @@ count = 1
 file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\Infrastructure\Brevo\BrevoNewsletterServiceTest::testSendDoubleOptInConfirmationPostsExpectedPayload`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "unused-parameter"
-message = "Parameter `$method` is never used."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "unused-parameter"
-message = "Parameter `$url` is never used."
 count = 1
 
 [[issues]]
@@ -10310,12 +9596,6 @@ count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Doctrine/RequestConnectionEnsurerTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Infrastructure/Doctrine/RequestConnectionEnsurerTest.php:20:25}::ensureConnection`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/RequestConnectionEnsurerTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Event\NoPreviousThrowableException` in `App\Tests\Infrastructure\Doctrine\RequestConnectionEnsurerTest::testEnsureConnection`.'
 count = 1
@@ -10342,12 +9622,6 @@ count = 1
 file = "tests/Infrastructure/Doctrine/RequestConnectionEnsurerTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\HttpFoundation\Exception\BadRequestException` in `App\Tests\Infrastructure\Doctrine\RequestConnectionEnsurerTest::testEnsureConnection`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/EventSubscriber/PlatformBillingSubscriberTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\EventSubscriber\PlatformBillingSubscriberTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -10514,12 +9788,6 @@ count = 1
 
 [[issues]]
 file = "tests/Infrastructure/EventSubscriber/SentryActivityMetricsSubscriberTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\EventSubscriber\SentryActivityMetricsSubscriberTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/EventSubscriber/SentryActivityMetricsSubscriberTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Event\NoPreviousThrowableException` in `App\Tests\Infrastructure\EventSubscriber\SentryActivityMetricsSubscriberTest::setUp`.'
 count = 1
@@ -10558,12 +9826,6 @@ count = 1
 file = "tests/Infrastructure/EventSubscriber/SentryActivityMetricsSubscriberTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Framework\MockObject\MethodNameAlreadyConfiguredException` in `App\Tests\Infrastructure\EventSubscriber\SentryActivityMetricsSubscriberTest::testOnActivityOccurredTracksTotalAndTypeCounters`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/EventSubscriber/SentryBookingWorkflowMetricsSubscriberTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\EventSubscriber\SentryBookingWorkflowMetricsSubscriberTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -10742,12 +10004,6 @@ count = 1
 
 [[issues]]
 file = "tests/Infrastructure/EventSubscriber/SentryHttpMetricsSubscriberTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\EventSubscriber\SentryHttpMetricsSubscriberTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/EventSubscriber/SentryHttpMetricsSubscriberTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Tests\Infrastructure\EventSubscriber\SentryHttpMetricsSubscriberTest::testOnKernelResponseIgnoresSubRequest`.'
 count = 1
@@ -10888,12 +10144,6 @@ count = 1
 file = "tests/Infrastructure/EventSubscriber/SentryHttpMetricsSubscriberTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Framework\MockObject\MethodParametersAlreadyConfiguredException` in `App\Tests\Infrastructure\EventSubscriber\SentryHttpMetricsSubscriberTest::testOnKernelResponseTracksCountersAndDurationForMainRequest`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/EventSubscriber/SentryPaymentWorkflowMetricsSubscriberTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\EventSubscriber\SentryPaymentWorkflowMetricsSubscriberTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -11341,12 +10591,6 @@ message = 'Potentially unhandled exception `Symfony\Component\HttpFoundation\Exc
 count = 1
 
 [[issues]]
-file = "tests/Infrastructure/Mcp/McpAuthSubscriberTest.php"
-code = "unused-parameter"
-message = "Parameter `$subscriber` is never used."
-count = 1
-
-[[issues]]
 file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
@@ -11458,24 +10702,6 @@ count = 1
 file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Tests\Infrastructure\Messenger\ActivityLogMiddlewareTest::testCreatingBookingSavesPaymentCodeInActivityContext`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php:103:20}::isInTaskWorker`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php:47:21}::handle`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php"
-code = "missing-override-attribute"
-message = "Missing `#[Override]` attribute on overriding method `{anonymous-class:tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php:62:13}::handle`."
 count = 1
 
 [[issues]]
@@ -11642,12 +10868,6 @@ count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Repository/NotificationRepositoryTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\Repository\NotificationRepositoryTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Repository/NotificationRepositoryTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -11720,21 +10940,15 @@ count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\Swoole\Configurator\WithSchedulerTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Infrastructure\Swoole\Configurator\WithSchedulerTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `iterator_to_array`: expected `Traversable<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>|array<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>`, but found `mixed`."
 count = 3
+
+[[issues]]
+file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Tests\Infrastructure\Swoole\Configurator\WithSchedulerTest::lockRegistryFiles`. Saw type `mixed`.'
+count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
@@ -12021,7 +11235,7 @@ count = 1
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "unhandled-thrown-type"
-message = "Potentially unhandled exception `RuntimeException` in `{closure:tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php:143:34}`."
+message = "Potentially unhandled exception `RuntimeException` in `{closure:tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php:145:34}`."
 count = 1
 
 [[issues]]
@@ -12142,18 +11356,6 @@ count = 1
 file = "tests/Infrastructure/Twig/MoneyExtensionTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\Infrastructure\Twig\MoneyExtensionTest::testFormatMoney`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Component/AdminSettingsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Component\AdminSettingsComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Component/AdminSettingsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Component\AdminSettingsComponentTest::tearDown`.'
 count = 1
 
 [[issues]]
@@ -12410,12 +11612,6 @@ count = 2
 
 [[issues]]
 file = "tests/Integration/Component/SeriesDetailsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Component\SeriesDetailsComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Component/SeriesDetailsComponentTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -12448,12 +11644,6 @@ count = 1
 file = "tests/Integration/Component/SeriesDetailsComponentTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\Integration\Component\SeriesDetailsComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Component/WorkshopEditorComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Component\WorkshopEditorComponentTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -12794,18 +11984,6 @@ count = 1
 
 [[issues]]
 file = "tests/Integration/Entity/BookingStatusTransitionsTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Entity\BookingStatusTransitionsTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/BookingStatusTransitionsTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Entity\BookingStatusTransitionsTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/BookingStatusTransitionsTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -13010,18 +12188,6 @@ count = 1
 
 [[issues]]
 file = "tests/Integration/Entity/MultiInstructorSupportTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Entity\MultiInstructorSupportTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/MultiInstructorSupportTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Entity\MultiInstructorSupportTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/MultiInstructorSupportTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -13144,18 +12310,6 @@ count = 1
 file = "tests/Integration/Entity/MultiInstructorSupportTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\Integration\Entity\MultiInstructorSupportTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/PaymentApprovalWorkflowTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Entity\PaymentApprovalWorkflowTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/PaymentApprovalWorkflowTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Integration\Entity\PaymentApprovalWorkflowTest::tearDown`.'
 count = 1
 
 [[issues]]
@@ -13372,12 +12526,6 @@ count = 1
 file = "tests/MessageHandler/RefundLessonBookingHandlerTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\MessageHandler\RefundLessonBookingHandlerTest::testUserRequestChangesPaymentStatus`.'
-count = 1
-
-[[issues]]
-file = "tests/Repository/BookingRepositoryTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Repository\BookingRepositoryTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -13736,12 +12884,6 @@ count = 1
 
 [[issues]]
 file = "tests/Repository/LessonRepositoryWeekFilteringTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Repository\LessonRepositoryWeekFilteringTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Repository/LessonRepositoryWeekFilteringTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -13844,12 +12986,6 @@ count = 1
 
 [[issues]]
 file = "tests/Repository/PaymentRepositoryTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Repository\PaymentRepositoryTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Repository/PaymentRepositoryTest.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -13940,12 +13076,6 @@ count = 1
 
 [[issues]]
 file = "tests/Repository/UserRepositoryTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Repository\UserRepositoryTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/Repository/UserRepositoryTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$userRepository` (App\Repository\UserRepository).'
 count = 1
@@ -14020,12 +13150,6 @@ count = 1
 file = "tests/Repository/UserRepositoryTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\Repository\UserRepositoryTest::testFindByRole`.'
-count = 1
-
-[[issues]]
-file = "tests/Security/SecurityControllerTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Security\SecurityControllerTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -14242,18 +13366,6 @@ count = 1
 file = "tests/StimulusEmitActionPrefixTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PHPUnit\Framework\ExpectationFailedException` in `App\Tests\StimulusEmitActionPrefixTest::testNoTemplateUsesAnUnprefixedLiveAction`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/AdminBookingsTabTest.php"
-code = "less-specific-return-statement"
-message = 'Returned type `null|object` is less specific than the declared return type `Doctrine\ORM\EntityManagerInterface` for function `App\Tests\UserInterface\AdminBookingsTabTest::getEntityManager`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/AdminBookingsTabTest.php"
-code = "nullable-return-statement"
-message = 'Function `App\Tests\UserInterface\AdminBookingsTabTest::getEntityManager` is declared to return `Doctrine\ORM\EntityManagerInterface` but possibly returns a nullable value (inferred as `null|object`).'
 count = 1
 
 [[issues]]
@@ -14498,12 +13610,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AddUserModalTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\AddUserModalTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AddUserModalTest.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
 count = 1
@@ -14672,12 +13778,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AdminBookingsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\AdminBookingsComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminBookingsComponentTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -14756,12 +13856,6 @@ count = 11
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AdminKpiStatsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\AdminKpiStatsComponentTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminKpiStatsComponentTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 11
@@ -14834,12 +13928,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AdminPaymentsListComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\AdminPaymentsListComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminPaymentsListComponentTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -14866,12 +13954,6 @@ count = 1
 file = "tests/UserInterface/Http/Component/AdminPaymentsListComponentTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\UserInterface\Http\Component\AdminPaymentsListComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminScheduleComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\AdminScheduleComponentTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -14974,12 +14056,6 @@ count = 1
 file = "tests/UserInterface/Http/Component/AdminScheduleComponentTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\UserInterface\Http\Component\AdminScheduleComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\AdminUserDetailComponentTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -15128,12 +14204,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/BookingPreviewComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\BookingPreviewComponentTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/BookingPreviewComponentTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 7
@@ -15197,12 +14267,6 @@ file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
 count = 29
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\BookingsComponentTest::tearDown`.'
-count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
@@ -15424,12 +14488,6 @@ count = 40
 file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
 code = "implicit-to-string-cast"
 message = 'Implicit conversion to `string` for middle operand via `Symfony\Component\Uid\Ulid::__toString()`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\LessonModalPaymentTest::tearDown`.'
 count = 1
 
 [[issues]]
@@ -15740,12 +14798,6 @@ count = 6
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/LessonModalUrlSyncTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\LessonModalUrlSyncTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/LessonModalUrlSyncTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 6
@@ -15838,12 +14890,6 @@ count = 1
 file = "tests/UserInterface/Http/Component/LessonModalUrlSyncTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\UserInterface\Http\Component\LessonModalUrlSyncTest::testOpenModalDispatchesWorkshopUrlChangeEvent`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/PaymentsListComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\PaymentsListComponentTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -16028,12 +15074,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/ProfileComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\ProfileComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/ProfileComponentTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -16148,12 +15188,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/ReservationDetailsModalTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\ReservationDetailsModalTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/ReservationDetailsModalTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -16240,12 +15274,6 @@ count = 1
 file = "tests/UserInterface/Http/Component/ReservationDetailsModalTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\UserInterface\Http\Component\ReservationDetailsModalTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingAttendeesComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\UpcomingAttendeesComponentTest::setUp`.'
 count = 1
 
 [[issues]]
@@ -16372,18 +15400,6 @@ count = 1
 file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
 code = "impossible-type-comparison"
 message = "Impossible type assertion: `$this->component->showCancelled` of type `false` can never be `true`."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\UpcomingLessonsComponentTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\UpcomingLessonsComponentTest::tearDown`.'
 count = 1
 
 [[issues]]
@@ -16636,18 +15652,6 @@ count = 1
 file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
 code = "impossible-type-comparison"
 message = "Impossible type assertion: `$this->component->openSlug` of type `string('balaganki')` can never be `null`."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\UpcomingLessonsTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\Http\Component\UpcomingLessonsTest::tearDown`.'
 count = 1
 
 [[issues]]
@@ -17552,6 +16556,12 @@ count = 4
 
 [[issues]]
 file = "tests/UserInterface/Http/NewsletterControllerTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Tests\UserInterface\Http\NewsletterControllerTest::decode`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/NewsletterControllerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 4
@@ -17752,12 +16762,6 @@ count = 1
 file = "tests/UserInterface/Http/NewsletterControllerTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\UserInterface\Http\NewsletterControllerTest::testExistingUnsubscribedUserStillGoesThroughDoi`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/NewsletterControllerTest.php"
-code = "unused-parameter"
-message = "Parameter `$client` is never used."
 count = 1
 
 [[issues]]
@@ -18008,12 +17012,6 @@ count = 3
 
 [[issues]]
 file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\UpcomingLessonsWorkshopSlugTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 1
@@ -18122,12 +17120,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/WeekFilteringIntegrationTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\WeekFilteringIntegrationTest::setUp`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/WeekFilteringIntegrationTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$attendeesComponent` (App\UserInterface\Http\Component\UpcomingAttendeesComponent).'
 count = 1
@@ -18224,12 +17216,6 @@ count = 3
 
 [[issues]]
 file = "tests/UserInterface/WorkshopsPageResponseSizeTest.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\UserInterface\WorkshopsPageResponseSizeTest::tearDown`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/WorkshopsPageResponseSizeTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 3
@@ -18268,10 +17254,4 @@ count = 1
 file = "tests/UserInterface/WorkshopsPageResponseSizeTest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException` in `App\Tests\UserInterface\WorkshopsPageResponseSizeTest::testWorkshopsPageStaysBelowSwooleDefaultOutputBuffer`.'
-count = 1
-
-[[issues]]
-file = "tests/Util/MessengerFake.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Tests\Util\MessengerFake::dispatch`.'
 count = 1

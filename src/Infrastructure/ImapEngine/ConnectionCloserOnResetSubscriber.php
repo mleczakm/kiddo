@@ -13,6 +13,7 @@ final class ConnectionCloserOnResetSubscriber implements ResetInterface
         private MailboxInterface $mailbox,
     ) {}
 
+    #[\Override]
     public function reset(): void
     {
         $this->mailbox->disconnect();

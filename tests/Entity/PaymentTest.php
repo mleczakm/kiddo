@@ -23,7 +23,7 @@ class PaymentTest extends TestCase
     public function testIsPaidFalseOnMissingTransfers(): void
     {
         $payment = new Payment(UserAssembler::new()->assemble(), Money::of(100, Currency::ofCountry('PL')));
-        $this->assertFalse($payment->isPaid());
+        static::assertFalse($payment->isPaid());
     }
 
     public function testIsPaidTrueOnTransfers(): void
@@ -31,7 +31,7 @@ class PaymentTest extends TestCase
         $payment = new Payment(UserAssembler::new()->assemble(), Money::of(100, Currency::ofCountry('PL')));
         $payment->addTransfer(TransferAssembler::new()->withAmount('100,00')->assemble());
 
-        $this->assertTrue($payment->isPaid());
+        static::assertTrue($payment->isPaid());
     }
 
     public function testAmountMatch(): void
@@ -39,7 +39,7 @@ class PaymentTest extends TestCase
         $payment = new Payment(UserAssembler::new()->assemble(), Money::of(100, Currency::ofCountry('PL')));
         $transfer = TransferAssembler::new()->withAmount('100,00')->assemble();
 
-        $this->assertTrue($payment->amountMatch($transfer));
+        static::assertTrue($payment->amountMatch($transfer));
     }
 
     public function testGetBookingsSummaryWithNoBookings(): void
@@ -48,7 +48,7 @@ class PaymentTest extends TestCase
 
         $result = $payment->getBookingsSummary();
 
-        $this->assertSame('', $result);
+        static::assertSame('', $result);
     }
 
     public function testGetBookingsSummaryWithSingleBooking(): void
@@ -77,7 +77,7 @@ class PaymentTest extends TestCase
 
         $result = $payment->getBookingsSummary();
 
-        $this->assertSame('Yoga Class (15:30) 26.10', $result);
+        static::assertSame('Yoga Class (15:30) 26.10', $result);
     }
 
     public function testGetBookingsSummaryWithMultipleBookings(): void
@@ -123,7 +123,7 @@ class PaymentTest extends TestCase
 
         $result = $payment->getBookingsSummary();
 
-        $this->assertSame('Yoga Class (15:30) 26.10, Pilates (16:00) 28.10', $result);
+        static::assertSame('Yoga Class (15:30) 26.10, Pilates (16:00) 28.10', $result);
     }
 
     public function testGetTextSummaryForSingleLesson(): void
@@ -149,7 +149,7 @@ class PaymentTest extends TestCase
 
         $result = $booking->getTextSummary();
 
-        $this->assertSame('Yoga Class (15:30) 26.10', $result);
+        static::assertSame('Yoga Class (15:30) 26.10', $result);
     }
 
     public function testGetTextSummaryForMultipleLessons(): void
@@ -189,6 +189,6 @@ class PaymentTest extends TestCase
 
         $result = $booking->getTextSummary();
 
-        $this->assertSame('Yoga Class (15:30) 26.10, 28.10', $result);
+        static::assertSame('Yoga Class (15:30) 26.10, 28.10', $result);
     }
 }

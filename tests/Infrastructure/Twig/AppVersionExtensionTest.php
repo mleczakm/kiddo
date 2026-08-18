@@ -43,7 +43,7 @@ class AppVersionExtensionTest extends TestCase
     public function testParseStringWithDatetime(string $datetime): void
     {
         $extension = new AppVersionExtension($datetime);
-        $this->assertEquals(
+        static::assertEquals(
             ($date = \DateTimeImmutable::createFromFormat('YmdHi', $datetime)) ? $date->format('YmdHi') : null,
             $extension->lastRelease()->format('YmdHi'),
         );

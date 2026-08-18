@@ -24,6 +24,7 @@ final class AddUserModalTest extends WebTestCase
 
     private EntityManagerInterface $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -66,23 +67,23 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertSame([], $state->errors);
+        static::assertSame([], $state->errors);
 
         $user = $this->em
             ->getRepository(User::class)
             ->findOneBy([
                 'email' => 'testowy.uzytkownik@example.com',
             ]);
-        self::assertNotNull($user, 'user must be persisted with the lower-cased email');
-        self::assertSame('Testowy Użytkownik', $user->getName());
-        self::assertSame(['ROLE_HOST', 'ROLE_USER'], $user->getRoles());
-        self::assertNotNull($user->getPhone());
-        self::assertSame('Utworzony przez test automatyczny.', $user->getAdminNote());
-        self::assertTrue($user->isNewsletterSubscribed());
-        self::assertNotNull($user->getNewsletterConsentDate());
+        static::assertNotNull($user, 'user must be persisted with the lower-cased email');
+        static::assertSame('Testowy Użytkownik', $user->getName());
+        static::assertSame(['ROLE_HOST', 'ROLE_USER'], $user->getRoles());
+        static::assertNotNull($user->getPhone());
+        static::assertSame('Utworzony przez test automatyczny.', $user->getAdminNote());
+        static::assertTrue($user->isNewsletterSubscribed());
+        static::assertNotNull($user->getNewsletterConsentDate());
 
         $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($user);
-        self::assertCount(1, $logs);
+        static::assertCount(1, $logs);
     }
 
     public function testRoleUserIsAlwaysIncludedEvenWhenNoRoleIsChecked(): void
@@ -103,8 +104,8 @@ final class AddUserModalTest extends WebTestCase
             ->findOneBy([
                 'email' => 'zwykly.klient@example.com',
             ]);
-        self::assertNotNull($user);
-        self::assertSame(['ROLE_USER'], $user->getRoles());
+        static::assertNotNull($user);
+        static::assertSame(['ROLE_USER'], $user->getRoles());
     }
 
     public function testBlankNameAndEmailAreRejectedAndNothingIsPersisted(): void
@@ -124,9 +125,9 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertArrayHasKey('name', $state->errors);
-        self::assertArrayHasKey('email', $state->errors);
-        self::assertSame($countBefore, $this->em->getRepository(User::class)->count([]));
+        static::assertArrayHasKey('name', $state->errors);
+        static::assertArrayHasKey('email', $state->errors);
+        static::assertSame($countBefore, $this->em->getRepository(User::class)->count([]));
     }
 
     public function testInvalidEmailFormatIsRejected(): void
@@ -144,7 +145,7 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertArrayHasKey('email', $state->errors);
+        static::assertArrayHasKey('email', $state->errors);
     }
 
     public function testDuplicateEmailIsRejectedAndNoSecondUserIsCreated(): void
@@ -167,8 +168,8 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertArrayHasKey('email', $state->errors);
-        self::assertSame($countBefore, $this->em->getRepository(User::class)->count([]));
+        static::assertArrayHasKey('email', $state->errors);
+        static::assertSame($countBefore, $this->em->getRepository(User::class)->count([]));
     }
 
     public function testInvalidPhoneNumberIsRejected(): void
@@ -187,14 +188,14 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertArrayHasKey('phone', $state->errors);
+        static::assertArrayHasKey('phone', $state->errors);
 
         $user = $this->em
             ->getRepository(User::class)
             ->findOneBy([
                 'email' => 'ktos@example.com',
             ]);
-        self::assertNull($user, 'must not persist while any field is invalid');
+        static::assertNull($user, 'must not persist while any field is invalid');
     }
 
     public function testToggleRoleAddsThenRemovesTheRole(): void
@@ -212,7 +213,7 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertSame(['ROLE_MANAGE_USERS'], $state->roles);
+        static::assertSame(['ROLE_MANAGE_USERS'], $state->roles);
 
         $component->call('toggleRole', [
             'role' => 'ROLE_MANAGE_USERS',
@@ -220,7 +221,7 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertSame([], $state->roles);
+        static::assertSame([], $state->roles);
     }
 
     public function testToggleRoleIgnoresUnknownRoles(): void
@@ -238,6 +239,6 @@ final class AddUserModalTest extends WebTestCase
 
         /** @var AddUserModal $state */
         $state = $component->component();
-        self::assertSame([], $state->roles);
+        static::assertSame([], $state->roles);
     }
 }

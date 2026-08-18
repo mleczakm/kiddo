@@ -23,6 +23,7 @@ final class AdminPaymentsListComponentTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -53,7 +54,7 @@ final class AdminPaymentsListComponentTest extends WebTestCase
         $component = $this->createLiveComponent(name: AdminPaymentsListComponent::class, client: $this->client);
         $rendered = (string) $component->render();
 
-        self::assertStringContainsString('Online', $rendered);
+        static::assertStringContainsString('Online', $rendered);
     }
 
     public function testFiltersPaymentsByStatus(): void
@@ -78,7 +79,7 @@ final class AdminPaymentsListComponentTest extends WebTestCase
 
         /** @var AdminPaymentsListComponent $liveComponent */
         $liveComponent = $component->component();
-        self::assertSame(
+        static::assertSame(
             [(string) $refundRequested->getId()],
             array_map(static fn(Payment $payment): string => (string) $payment->getId(), $liveComponent->getPayments()),
         );

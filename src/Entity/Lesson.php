@@ -182,8 +182,8 @@ class Lesson
     public function getAttendants(): array
     {
         return $this->bookings
-            ->filter(fn(Booking $booking): bool => $booking->isConfirmed())
-            ->map(fn(Booking $booking): User => $booking->getUser())
+            ->filter(static fn(Booking $booking): bool => $booking->isConfirmed())
+            ->map(static fn(Booking $booking): User => $booking->getUser())
             ->toArray();
     }
 

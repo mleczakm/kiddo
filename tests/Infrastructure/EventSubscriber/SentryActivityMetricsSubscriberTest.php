@@ -19,6 +19,7 @@ class SentryActivityMetricsSubscriberTest extends TestCase
 
     private SentryActivityMetricsSubscriber $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->metrics = $this->createMock(MetricsRecorderInterface::class);
@@ -33,13 +34,13 @@ class SentryActivityMetricsSubscriberTest extends TestCase
         $this->metrics
             ->expects($this->exactly(2))
             ->method('count')
-            ->willReturnCallback(function (string $name, int|float $value) use (&$calls): void {
+            ->willReturnCallback(static function (string $name, int|float $value) use (&$calls): void {
                 $calls[] = [$name, $value];
             });
 
         $this->subscriber->onActivityOccurred($event);
 
-        $this->assertSame(
+        static::assertSame(
             [
                 ['activities.total',             1],
                 ['activities.booking_cancelled', 1],

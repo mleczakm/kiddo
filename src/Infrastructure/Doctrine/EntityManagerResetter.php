@@ -15,6 +15,7 @@ final class EntityManagerResetter implements ServicesResetterInterface
         private EntityManagerInterface $entityManager,
     ) {}
 
+    #[\Override]
     public function reset(): void
     {
         $this->entityManager->close();

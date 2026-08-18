@@ -25,7 +25,7 @@ final class BrevoNewsletterServiceTest extends TestCase
     {
         $service = $this->createService(new MockHttpClient([]));
 
-        self::assertTrue($service->isConfigured());
+        static::assertTrue($service->isConfigured());
     }
 
     public function testIsConfiguredReturnsFalseWhenApiKeyEmpty(): void
@@ -38,7 +38,7 @@ final class BrevoNewsletterServiceTest extends TestCase
             self::REDIRECTION_URL,
         );
 
-        self::assertFalse($service->isConfigured());
+        static::assertFalse($service->isConfigured());
     }
 
     public function testIsConfiguredReturnsFalseWhenListIdZero(): void
@@ -51,13 +51,13 @@ final class BrevoNewsletterServiceTest extends TestCase
             self::REDIRECTION_URL,
         );
 
-        self::assertFalse($service->isConfigured());
+        static::assertFalse($service->isConfigured());
     }
 
     public function testAddOrUpdateContactPostsExpectedPayload(): void
     {
         $captured = [];
-        $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
+        $httpClient = new MockHttpClient(static function (string $method, string $url, array $options) use (
             &$captured,
         ): MockResponse {
             $captured = [
@@ -75,17 +75,17 @@ final class BrevoNewsletterServiceTest extends TestCase
         $service = $this->createService($httpClient);
         $service->addOrUpdateContact('User@Example.com', 'Alice');
 
-        self::assertSame('POST', $captured['method']);
-        self::assertSame('https://api.brevo.com/v3/contacts', $captured['url']);
-        self::assertContains('api-key: ' . self::API_KEY, $captured['headers']);
-        self::assertContains('Content-Type: application/json', $captured['headers']);
+        static::assertSame('POST', $captured['method']);
+        static::assertSame('https://api.brevo.com/v3/contacts', $captured['url']);
+        static::assertContains('api-key: ' . self::API_KEY, $captured['headers']);
+        static::assertContains('Content-Type: application/json', $captured['headers']);
 
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $captured['body'], true, flags: JSON_THROW_ON_ERROR);
-        self::assertSame('User@Example.com', $payload['email']);
-        self::assertSame([self::LIST_ID], $payload['listIds']);
-        self::assertTrue($payload['updateEnabled']);
-        self::assertSame(
+        static::assertSame('User@Example.com', $payload['email']);
+        static::assertSame([self::LIST_ID], $payload['listIds']);
+        static::assertTrue($payload['updateEnabled']);
+        static::assertSame(
             [
                 'FIRSTNAME' => 'Alice',
             ],
@@ -96,7 +96,7 @@ final class BrevoNewsletterServiceTest extends TestCase
     public function testAddOrUpdateContactWithoutName(): void
     {
         $captured = [];
-        $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
+        $httpClient = new MockHttpClient(static function (string $_method, string $_url, array $options) use (
             &$captured,
         ): MockResponse {
             $captured['body'] = $options['body'] ?? null;
@@ -111,7 +111,7 @@ final class BrevoNewsletterServiceTest extends TestCase
 
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $captured['body'], true, flags: JSON_THROW_ON_ERROR);
-        self::assertArrayNotHasKey('attributes', $payload);
+        static::assertArrayNotHasKey('attributes', $payload);
     }
 
     public function testAddOrUpdateContactThrowsWhenUnconfigured(): void
@@ -131,7 +131,7 @@ final class BrevoNewsletterServiceTest extends TestCase
     public function testRemoveContactFromList(): void
     {
         $captured = [];
-        $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
+        $httpClient = new MockHttpClient(static function (string $method, string $url, array $options) use (
             &$captured,
         ): MockResponse {
             $captured['method'] = $method;
@@ -146,12 +146,12 @@ final class BrevoNewsletterServiceTest extends TestCase
         $service = $this->createService($httpClient);
         $service->removeContactFromList('goodbye@example.com');
 
-        self::assertSame('POST', $captured['method']);
-        self::assertSame('https://api.brevo.com/v3/contacts/goodbye@example.com/removeList', $captured['url']);
+        static::assertSame('POST', $captured['method']);
+        static::assertSame('https://api.brevo.com/v3/contacts/goodbye@example.com/removeList', $captured['url']);
 
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $captured['body'], true, flags: JSON_THROW_ON_ERROR);
-        self::assertSame([self::LIST_ID], $payload['listIds']);
+        static::assertSame([self::LIST_ID], $payload['listIds']);
     }
 
     public function testRemoveContactFromListThrowsWhenUnconfigured(): void
@@ -171,7 +171,7 @@ final class BrevoNewsletterServiceTest extends TestCase
     public function testSendDoubleOptInConfirmationPostsExpectedPayload(): void
     {
         $captured = [];
-        $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (
+        $httpClient = new MockHttpClient(static function (string $method, string $url, array $options) use (
             &$captured,
         ): MockResponse {
             $captured['method'] = $method;
@@ -186,15 +186,15 @@ final class BrevoNewsletterServiceTest extends TestCase
         $service = $this->createService($httpClient);
         $service->sendDoubleOptInConfirmation('guest@example.com');
 
-        self::assertSame('POST', $captured['method']);
-        self::assertSame('https://api.brevo.com/v3/doubleOptInConfirmations', $captured['url']);
+        static::assertSame('POST', $captured['method']);
+        static::assertSame('https://api.brevo.com/v3/doubleOptInConfirmations', $captured['url']);
 
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $captured['body'], true, flags: JSON_THROW_ON_ERROR);
-        self::assertSame('guest@example.com', $payload['email']);
-        self::assertSame([self::LIST_ID], $payload['includeListIds']);
-        self::assertSame(self::TEMPLATE_ID, $payload['templateId']);
-        self::assertSame(self::REDIRECTION_URL, $payload['redirectionUrl']);
+        static::assertSame('guest@example.com', $payload['email']);
+        static::assertSame([self::LIST_ID], $payload['includeListIds']);
+        static::assertSame(self::TEMPLATE_ID, $payload['templateId']);
+        static::assertSame(self::REDIRECTION_URL, $payload['redirectionUrl']);
     }
 
     public function testSendDoubleOptInConfirmationThrowsWhenUnconfigured(): void

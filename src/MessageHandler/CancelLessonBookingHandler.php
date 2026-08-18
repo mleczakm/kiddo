@@ -91,11 +91,13 @@ class CancelLessonBookingHandler
         $lessonTitle = '';
         $cancelledLesson = null;
         foreach ($booking->getLessons() as $lesson) {
-            if ($lesson->getId()->equals($command->getLessonId())) {
-                $lessonTitle = $lesson->getMetadata()->title;
-                $cancelledLesson = $lesson;
-                break;
+            if (!$lesson->getId()->equals($command->getLessonId())) {
+                continue;
             }
+
+            $lessonTitle = $lesson->getMetadata()->title;
+            $cancelledLesson = $lesson;
+            break;
         }
 
         if ($cancelledLesson !== null) {

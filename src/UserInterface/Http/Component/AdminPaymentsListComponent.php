@@ -59,8 +59,7 @@ final class AdminPaymentsListComponent extends AbstractController
         }
 
         /** @var list<Payment> $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**

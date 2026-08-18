@@ -49,14 +49,12 @@ class UserRepository extends ServiceEntityRepository
     public function findByRole(string $role): array
     {
         /** @var User[] $users */
-        $users = $this
+        return $this
             ->createQueryBuilder('u')
             ->andWhere('JSONB_CONTAINS(u.roles, :role) = true')
             ->setParameter('role', '"' . $role . '"') // Wrap the role in quotes to make it a valid JSON string
             ->getQuery()
             ->getResult();
-
-        return $users;
     }
 
     /**
@@ -65,7 +63,7 @@ class UserRepository extends ServiceEntityRepository
     public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
         /** @var User[] $users */
-        $users = $this
+        return $this
             ->createQueryBuilder('u')
             ->where('u.createdAt BETWEEN :start AND :end')
             ->setParameter('start', $start)
@@ -73,8 +71,6 @@ class UserRepository extends ServiceEntityRepository
             ->orderBy('u.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
-
-        return $users;
     }
 
     /**
@@ -92,9 +88,7 @@ class UserRepository extends ServiceEntityRepository
         }
 
         /** @var User[] $result */
-        $result = $qb->orderBy('u.id', 'DESC')->getQuery()->getResult();
-
-        return $result;
+        return $qb->orderBy('u.id', 'DESC')->getQuery()->getResult();
     }
 
     /**
@@ -127,8 +121,6 @@ class UserRepository extends ServiceEntityRepository
         }
 
         /** @var User[] $result */
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

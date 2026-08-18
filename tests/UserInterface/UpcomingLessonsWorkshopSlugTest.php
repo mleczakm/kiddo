@@ -19,6 +19,7 @@ use Symfony\Component\Clock\NativeClock;
 #[Group('functional')]
 final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
 {
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -69,8 +70,8 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();
-        $this->assertStringContainsString('/warsztaty?week=2024-02-21', $content);
-        $this->assertStringNotContainsString('/warsztaty/senso-bobasy', $content);
+        static::assertStringContainsString('/warsztaty?week=2024-02-21', $content);
+        static::assertStringNotContainsString('/warsztaty/senso-bobasy', $content);
     }
 
     public function testWorkshopBySlugOpensMatchingModal(): void
@@ -87,7 +88,7 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('[data-modal-state="open"]');
-        $this->assertStringContainsString('Bałaganki', (string) $client->getResponse()->getContent());
+        static::assertStringContainsString('Bałaganki', (string) $client->getResponse()->getContent());
     }
 
     private function persistLessonWithSeries(

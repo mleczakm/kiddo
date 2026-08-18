@@ -25,6 +25,7 @@ final readonly class McpAuthSubscriber implements EventSubscriberInterface
         private RateLimiterFactory $mcpRateLimiter,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

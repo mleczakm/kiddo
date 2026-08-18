@@ -18,6 +18,7 @@ readonly class DoctrineTodayLessonsQuery implements TodayLessonsQuery
     /**
      * @return Lesson[]
      */
+    #[\Override]
     public function forDate(DateTimeImmutable $date): array
     {
         return $this->lessonRepository->findActiveByDate($date);

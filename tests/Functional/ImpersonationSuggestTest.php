@@ -46,7 +46,7 @@ final class ImpersonationSuggestTest extends WebTestCase
         $lc = $this->createLiveComponent(NotificationTrayLiveComponent::class, client: $this->client);
         $lc->set('query', 'al')->call('suggest');
         $html = $lc->render()->toString();
-        self::assertStringContainsString('alice@example.com', $html);
+        static::assertStringContainsString('alice@example.com', $html);
     }
 
     private function setHost(string $host): void
@@ -69,9 +69,10 @@ final class ImpersonationSuggestTest extends WebTestCase
         $lc->set('query', 'us')->call('suggest');
         $html = $lc->render()->toString();
         // For non-admins, component should not expose any suggestion entries
-        self::assertStringNotContainsString('id="impersonate-suggestions"', $html);
+        static::assertStringNotContainsString('id="impersonate-suggestions"', $html);
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         self::ensureKernelShutdown();

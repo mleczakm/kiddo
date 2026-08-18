@@ -36,6 +36,7 @@ final readonly class KiddoInitializeHandler implements RequestHandlerInterface
         private ?string $instructions,
     ) {}
 
+    #[\Override]
     public function supports(Request $request): bool
     {
         return $request instanceof InitializeRequest;
@@ -44,6 +45,7 @@ final readonly class KiddoInitializeHandler implements RequestHandlerInterface
     /**
      * @return Response<InitializeResult>
      */
+    #[\Override]
     public function handle(Request $request, SessionInterface $session): Response
     {
         \assert($request instanceof InitializeRequest);

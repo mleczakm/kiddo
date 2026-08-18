@@ -42,9 +42,9 @@ class DoctrineTodayLessonsQueryTest extends KernelTestCase
         $query = self::getContainer()->get(DoctrineTodayLessonsQuery::class);
         $results = $query->forDate($date);
 
-        $this->assertCount(2, $results);
-        $this->assertContains($lesson1, $results);
-        $this->assertContains($lesson2, $results);
-        $this->assertNotContains($lessonOther, $results);
+        static::assertCount(2, $results);
+        static::assertContains($lesson1, $results);
+        static::assertContains($lesson2, $results);
+        static::assertNotContains($lessonOther, $results);
     }
 }

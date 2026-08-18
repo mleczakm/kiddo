@@ -27,6 +27,7 @@ final readonly class ActivityLogWorkflowSubscriber implements EventSubscriberInt
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

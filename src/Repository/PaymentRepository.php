@@ -26,7 +26,7 @@ class PaymentRepository extends ServiceEntityRepository
         $expirationTime = new \DateTimeImmutable(sprintf('-%d minutes', $expirationMinutes));
 
         /** @var array<Payment> $result */
-        $result = $this
+        return $this
             ->createQueryBuilder('p')
             ->where('p.status = :status')
             ->andWhere('p.createdAt < :expirationTime')
@@ -34,8 +34,6 @@ class PaymentRepository extends ServiceEntityRepository
             ->setParameter('expirationTime', $expirationTime)
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 
     /**
@@ -59,9 +57,7 @@ class PaymentRepository extends ServiceEntityRepository
         }
 
         /** @var Payment[] $result */
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     public function countPendingPayments(): int
@@ -81,7 +77,7 @@ class PaymentRepository extends ServiceEntityRepository
     public function findPaidBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
         /** @var Payment[] $result */
-        $result = $this
+        return $this
             ->createQueryBuilder('p')
             ->andWhere('p.status = :status')
             ->andWhere('COALESCE(p.paidAt, p.createdAt) BETWEEN :start AND :end')
@@ -90,7 +86,5 @@ class PaymentRepository extends ServiceEntityRepository
             ->setParameter('end', $end)
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 }

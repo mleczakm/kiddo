@@ -19,6 +19,7 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
 
     private LessonRepository $lessonRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -62,10 +63,10 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
 
         $result = $this->lessonRepository->findUpcomingWithBookingsInRange($rangeStart, $rangeEnd);
 
-        $this->assertCount(3, $result);
-        $this->assertEquals('Lesson 1', $result[0]->getMetadata()->title);
-        $this->assertEquals('Lesson 2', $result[1]->getMetadata()->title);
-        $this->assertEquals('Lesson 3', $result[2]->getMetadata()->title);
+        static::assertCount(3, $result);
+        static::assertSame('Lesson 1', $result[0]->getMetadata()->title);
+        static::assertSame('Lesson 2', $result[1]->getMetadata()->title);
+        static::assertSame('Lesson 3', $result[2]->getMetadata()->title);
     }
 
     public function testFindUpcomingInRange(): void
@@ -93,10 +94,10 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
 
         $result = $this->lessonRepository->findUpcomingInRange($rangeStart, $rangeEnd);
 
-        $this->assertCount(3, $result);
-        $this->assertEquals('Range Lesson 1', $result[0]->getMetadata()->title);
-        $this->assertEquals('Range Lesson 2', $result[1]->getMetadata()->title);
-        $this->assertEquals('Range Lesson 3', $result[2]->getMetadata()->title);
+        static::assertCount(3, $result);
+        static::assertSame('Range Lesson 1', $result[0]->getMetadata()->title);
+        static::assertSame('Range Lesson 2', $result[1]->getMetadata()->title);
+        static::assertSame('Range Lesson 3', $result[2]->getMetadata()->title);
     }
 
     public function testFindUpcomingWithBookingsInRangeReturnsEmptyWhenNoLessonsInRange(): void
@@ -114,7 +115,7 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
 
         $result = $this->lessonRepository->findUpcomingWithBookingsInRange($rangeStart, $rangeEnd);
 
-        $this->assertCount(0, $result);
+        static::assertCount(0, $result);
     }
 
     public function testFindUpcomingInRangeOrdersByScheduleAsc(): void
@@ -139,10 +140,10 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
 
         $result = $this->lessonRepository->findUpcomingInRange($rangeStart, $rangeEnd);
 
-        $this->assertCount(3, $result);
-        $this->assertEquals('First Lesson', $result[0]->getMetadata()->title);
-        $this->assertEquals('Second Lesson', $result[1]->getMetadata()->title);
-        $this->assertEquals('Third Lesson', $result[2]->getMetadata()->title);
+        static::assertCount(3, $result);
+        static::assertSame('First Lesson', $result[0]->getMetadata()->title);
+        static::assertSame('Second Lesson', $result[1]->getMetadata()->title);
+        static::assertSame('Third Lesson', $result[2]->getMetadata()->title);
     }
 
     private function createLesson(string $title, \DateTimeImmutable $schedule): Lesson

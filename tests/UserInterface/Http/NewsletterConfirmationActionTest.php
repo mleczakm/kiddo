@@ -16,7 +16,7 @@ final class NewsletterConfirmationActionTest extends WebTestCase
         $client->request('GET', '/newsletter-potwierdzony');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('Zapis potwierdzony!', (string) $client->getResponse()->getContent());
+        static::assertStringContainsString('Zapis potwierdzony!', (string) $client->getResponse()->getContent());
     }
 
     public function testEnglishRouteRenders(): void
@@ -25,6 +25,6 @@ final class NewsletterConfirmationActionTest extends WebTestCase
         $client->request('GET', '/newsletter-confirmed');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('Subscription confirmed!', (string) $client->getResponse()->getContent());
+        static::assertStringContainsString('Subscription confirmed!', (string) $client->getResponse()->getContent());
     }
 }

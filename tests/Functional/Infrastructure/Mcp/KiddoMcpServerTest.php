@@ -25,14 +25,14 @@ final class KiddoMcpServerTest extends KernelTestCase
         $registry = static::getContainer()->get('mcp.registry');
         $names = array_map(static fn(object $tool): string => $tool->name, [...$registry->getTools()->references]);
 
-        self::assertContains('user_list_upcoming_lessons', $names);
-        self::assertContains('user_me', $names);
-        self::assertContains('admin_list_unmatched_transfers', $names);
-        self::assertNotContains('create_lesson', $names);
-        self::assertNotContains('admincreate_lesson', $names);
+        static::assertContains('user_list_upcoming_lessons', $names);
+        static::assertContains('user_me', $names);
+        static::assertContains('admin_list_unmatched_transfers', $names);
+        static::assertNotContains('create_lesson', $names);
+        static::assertNotContains('admincreate_lesson', $names);
         // One public name per tool — no alias explosion for ElevenLabs.
-        self::assertSame(count($names), count(array_unique($names)));
-        self::assertLessThan(80, count($names));
+        static::assertSame(count($names), count(array_unique($names)));
+        static::assertLessThan(80, count($names));
     }
 
     public function testHttpInitializeThenToolsList(): void
@@ -40,7 +40,7 @@ final class KiddoMcpServerTest extends KernelTestCase
         self::bootKernel();
         $container = static::getContainer();
         $kernel = static::$kernel;
-        self::assertNotNull($kernel);
+        static::assertNotNull($kernel);
 
         $em = $container->get('doctrine')->getManager();
         $user = UserAssembler::new()->withEmail('chat-mcp-http@example.com')->withRoles('ROLE_ADMIN')->assemble();
@@ -76,12 +76,12 @@ final class KiddoMcpServerTest extends KernelTestCase
         );
 
         $initResponse = $kernel->handle($init);
-        self::assertSame(200, $initResponse->getStatusCode(), (string) $initResponse->getContent());
+        static::assertSame(200, $initResponse->getStatusCode(), (string) $initResponse->getContent());
         $sessionId = $initResponse->headers->get('Mcp-Session-Id');
-        self::assertNotEmpty($sessionId);
+        static::assertNotEmpty($sessionId);
         /** @var array{result: array{protocolVersion: string}} $initPayload */
         $initPayload = json_decode((string) $initResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertSame('2025-03-26', $initPayload['result']['protocolVersion']);
+        static::assertSame('2025-03-26', $initPayload['result']['protocolVersion']);
         if ($kernel instanceof TerminableInterface) {
             $kernel->terminate($init, $initResponse);
         }
@@ -105,18 +105,18 @@ final class KiddoMcpServerTest extends KernelTestCase
         );
 
         $listResponse = $kernel->handle($list);
-        self::assertSame(200, $listResponse->getStatusCode(), (string) $listResponse->getContent());
+        static::assertSame(200, $listResponse->getStatusCode(), (string) $listResponse->getContent());
 
         /** @var array{result: array{tools: list<array{name: string}>, nextCursor?: ?string}} $payload */
         $payload = json_decode((string) $listResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $names = array_column($payload['result']['tools'], 'name');
 
-        self::assertNull($payload['result']['nextCursor'] ?? null, 'tools/list must fit on one page for ElevenLabs');
-        self::assertContains('user_list_upcoming_lessons', $names);
-        self::assertContains('user_get_lesson', $names);
-        self::assertSame('user_list_upcoming_lessons', $names[0]);
-        self::assertContains('user_me', $names);
-        self::assertContains('admin_list_unmatched_transfers', $names);
+        static::assertNull($payload['result']['nextCursor'] ?? null, 'tools/list must fit on one page for ElevenLabs');
+        static::assertContains('user_list_upcoming_lessons', $names);
+        static::assertContains('user_get_lesson', $names);
+        static::assertSame('user_list_upcoming_lessons', $names[0]);
+        static::assertContains('user_me', $names);
+        static::assertContains('admin_list_unmatched_transfers', $names);
         if ($kernel instanceof TerminableInterface) {
             $kernel->terminate($list, $listResponse);
         }

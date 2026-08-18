@@ -15,6 +15,7 @@ final readonly class SentryPaymentWorkflowMetricsSubscriber implements EventSubs
         private MetricsRecorderInterface $metrics,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

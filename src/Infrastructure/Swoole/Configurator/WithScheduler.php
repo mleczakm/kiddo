@@ -38,6 +38,7 @@ final class WithScheduler implements Configurator
         }
     }
 
+    #[\Override]
     public function configure(Server $server): void
     {
         // Symfony Cache's LockRegistry protects cache stampedes with a pool of ~20 flock()

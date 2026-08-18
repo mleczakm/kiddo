@@ -22,6 +22,7 @@ final class BookingPreviewComponentTest extends KernelTestCase
 
     private BookingRepository $bookingRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -52,8 +53,8 @@ final class BookingPreviewComponentTest extends KernelTestCase
 
         $bookings = $this->bookingRepository->findForUserAndLesson($user, $lesson);
 
-        $this->assertCount(1, $bookings);
-        $this->assertSame($booking->getId(), $bookings[0]->getId());
+        static::assertCount(1, $bookings);
+        static::assertSame($booking->getId(), $bookings[0]->getId());
     }
 
     public function testFindForUserAndLessonReturnsOnlyBookingsForSpecificLesson(): void
@@ -88,8 +89,8 @@ final class BookingPreviewComponentTest extends KernelTestCase
 
         $bookings = $this->bookingRepository->findForUserAndLesson($user, $lesson1);
 
-        $this->assertCount(1, $bookings);
-        $this->assertSame($booking1->getId(), $bookings[0]->getId());
+        static::assertCount(1, $bookings);
+        static::assertSame($booking1->getId(), $bookings[0]->getId());
     }
 
     public function testFindForUserAndLessonReturnsEmptyArrayForDifferentUser(): void
@@ -118,7 +119,7 @@ final class BookingPreviewComponentTest extends KernelTestCase
 
         $bookings = $this->bookingRepository->findForUserAndLesson($user2, $lesson);
 
-        $this->assertEmpty($bookings);
+        static::assertEmpty($bookings);
     }
 
     public function testFindForUserAndLessonReturnsMultipleBookingsForSameLesson(): void
@@ -150,10 +151,10 @@ final class BookingPreviewComponentTest extends KernelTestCase
 
         $bookings = $this->bookingRepository->findForUserAndLesson($user, $lesson);
 
-        $this->assertCount(2, $bookings);
+        static::assertCount(2, $bookings);
 
-        $bookingIds = array_map(fn($b) => (string) $b->getId(), $bookings);
-        $this->assertContains((string) $booking1->getId(), $bookingIds);
-        $this->assertContains((string) $booking2->getId(), $bookingIds);
+        $bookingIds = array_map(static fn($b) => (string) $b->getId(), $bookings);
+        static::assertContains((string) $booking1->getId(), $bookingIds);
+        static::assertContains((string) $booking2->getId(), $bookingIds);
     }
 }

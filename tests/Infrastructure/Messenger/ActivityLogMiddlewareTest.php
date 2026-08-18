@@ -41,7 +41,7 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
         $em->flush();
 
         $userId = $user->getId();
-        self::assertNotNull($userId);
+        static::assertNotNull($userId);
 
         $this->bus()->dispatch(new AddBooking(
             userId: $userId,
@@ -56,7 +56,7 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
             'subject' => $user,
         ]);
 
-        self::assertContains('AB12', array_map(
+        static::assertContains('AB12', array_map(
             static fn(ActivityLog $log): mixed => $log->getContext()['paymentCode'] ?? null,
             $activityLogs,
         ));
@@ -94,10 +94,10 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
             'type' => ActivityType::BOOKING_CANCELLED,
         ]);
 
-        self::assertCount(1, $activityLogs);
-        self::assertSame($user->getId(), $activityLogs[0]->getSubject()?->getId());
-        self::assertStringContainsString('Ewa Zielińska', $activityLogs[0]->getTitle());
-        self::assertSame('Sensoplastyka', $activityLogs[0]->getSummary());
-        self::assertNotNull($activityLogs[0]->getUrl());
+        static::assertCount(1, $activityLogs);
+        static::assertSame($user->getId(), $activityLogs[0]->getSubject()?->getId());
+        static::assertStringContainsString('Ewa Zielińska', $activityLogs[0]->getTitle());
+        static::assertSame('Sensoplastyka', $activityLogs[0]->getSummary());
+        static::assertNotNull($activityLogs[0]->getUrl());
     }
 }

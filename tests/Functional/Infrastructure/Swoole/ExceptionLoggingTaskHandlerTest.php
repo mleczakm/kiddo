@@ -24,6 +24,6 @@ final class ExceptionLoggingTaskHandlerTest extends KernelTestCase
 
         $handler = self::getContainer()->get(ExceptionLoggingTaskHandler::class);
 
-        self::assertInstanceOf(ExceptionLoggingTaskHandler::class, $handler);
+        static::assertInstanceOf(ExceptionLoggingTaskHandler::class, $handler);
     }
 }

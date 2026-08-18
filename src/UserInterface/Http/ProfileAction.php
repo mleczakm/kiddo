@@ -21,10 +21,10 @@ class ProfileAction extends AbstractController
     ], name: 'profile')]
     #[IsGranted('ROLE_USER')]
     public function __invoke(
-        BookingRepository $bookingRepository,
-        EntityManagerInterface $entityManager,
+        BookingRepository $_bookingRepository,
+        EntityManagerInterface $_entityManager,
         #[CurrentUser]
-        User $user,
+        User $_user,
     ): Response {
         return $this->render('profile.html.twig', [
             'page' => [

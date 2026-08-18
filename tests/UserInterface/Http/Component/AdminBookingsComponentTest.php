@@ -29,6 +29,7 @@ final class AdminBookingsComponentTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -105,7 +106,7 @@ final class AdminBookingsComponentTest extends WebTestCase
 
         /** @var AdminBookingsComponent $adminBookingsComponent */
         $adminBookingsComponent = $component->component();
-        self::assertTrue($adminBookingsComponent->isReschedulingLesson(
+        static::assertTrue($adminBookingsComponent->isReschedulingLesson(
             (string) $booking->getId(),
             (string) $oldLesson->getId(),
         ));
@@ -118,7 +119,7 @@ final class AdminBookingsComponentTest extends WebTestCase
         // Picker state is cleared after a successful dispatch
         /** @var AdminBookingsComponent $adminBookingsComponent */
         $adminBookingsComponent = $component->component();
-        self::assertFalse($adminBookingsComponent->isReschedulingLesson(
+        static::assertFalse($adminBookingsComponent->isReschedulingLesson(
             (string) $booking->getId(),
             (string) $oldLesson->getId(),
         ));
@@ -161,7 +162,7 @@ final class AdminBookingsComponentTest extends WebTestCase
         $bookings = $adminBookingsComponent->getAllBookings();
         $bookingIds = array_map(static fn(array $row) => (string) $row['booking']->getId(), $bookings);
 
-        self::assertContains((string) $ownBooking->getId(), $bookingIds);
-        self::assertNotContains((string) $otherBooking->getId(), $bookingIds);
+        static::assertContains((string) $ownBooking->getId(), $bookingIds);
+        static::assertNotContains((string) $otherBooking->getId(), $bookingIds);
     }
 }

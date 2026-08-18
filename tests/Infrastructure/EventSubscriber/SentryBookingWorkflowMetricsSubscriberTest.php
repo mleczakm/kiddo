@@ -20,6 +20,7 @@ class SentryBookingWorkflowMetricsSubscriberTest extends TestCase
 
     private SentryBookingWorkflowMetricsSubscriber $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->metrics = $this->createMock(MetricsRecorderInterface::class);
@@ -30,8 +31,8 @@ class SentryBookingWorkflowMetricsSubscriberTest extends TestCase
     {
         $events = SentryBookingWorkflowMetricsSubscriber::getSubscribedEvents();
 
-        $this->assertArrayHasKey('workflow.booking.transition', $events);
-        $this->assertEquals('onBookingTransition', $events['workflow.booking.transition']);
+        static::assertArrayHasKey('workflow.booking.transition', $events);
+        static::assertSame('onBookingTransition', $events['workflow.booking.transition']);
     }
 
     public function testOnBookingTransitionTracksMetrics(): void
@@ -46,7 +47,7 @@ class SentryBookingWorkflowMetricsSubscriberTest extends TestCase
         $this->metrics
             ->expects($this->exactly(2))
             ->method('count')
-            ->with($this->logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.cancel'), 1);
+            ->with(static::logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.cancel'), 1);
 
         $this->subscriber->onBookingTransition($event);
     }
@@ -75,7 +76,7 @@ class SentryBookingWorkflowMetricsSubscriberTest extends TestCase
         $this->metrics
             ->expects($this->exactly(2))
             ->method('count')
-            ->with($this->logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.confirm'), 1);
+            ->with(static::logicalOr('workflow.booking.transitions.total', 'workflow.booking.transitions.confirm'), 1);
 
         $this->subscriber->onBookingTransition($event);
     }

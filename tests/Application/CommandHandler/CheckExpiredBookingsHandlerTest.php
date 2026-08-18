@@ -86,23 +86,23 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
         $savedA = $bookingRepository->find($bookingA->getId());
         $savedB = $bookingRepository->find($bookingB->getId());
 
-        self::assertNotNull($savedA);
-        self::assertNotNull($savedB);
+        static::assertNotNull($savedA);
+        static::assertNotNull($savedB);
 
-        self::assertSame(Booking::STATUS_CANCELLED, $savedA->getStatus());
-        self::assertNull(
+        static::assertSame(Booking::STATUS_CANCELLED, $savedA->getStatus());
+        static::assertNull(
             $savedA->getLessonsMap()->getCancelledByUserId((string) $lessonA->getId()),
             'Automatic cancellation should not attribute the lesson to any user',
         );
-        self::assertNotNull($savedA->getLessonsMap()->getCancellationReason((string) $lessonA->getId()));
+        static::assertNotNull($savedA->getLessonsMap()->getCancellationReason((string) $lessonA->getId()));
 
-        self::assertSame(Booking::STATUS_PENDING, $savedB->getStatus(), 'Paid booking must not be auto-cancelled');
+        static::assertSame(Booking::STATUS_PENDING, $savedB->getStatus(), 'Paid booking must not be auto-cancelled');
 
         $eventsForA = $activityLogRepository->findByBookingId((string) $bookingA->getId());
-        self::assertCount(1, $eventsForA);
-        self::assertSame(ActivityType::BOOKING_AUTO_CANCELLED, $eventsForA[0]->getType());
+        static::assertCount(1, $eventsForA);
+        static::assertSame(ActivityType::BOOKING_AUTO_CANCELLED, $eventsForA[0]->getType());
 
         $eventsForB = $activityLogRepository->findByBookingId((string) $bookingB->getId());
-        self::assertCount(0, $eventsForB);
+        static::assertCount(0, $eventsForB);
     }
 }

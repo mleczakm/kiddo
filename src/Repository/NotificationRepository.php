@@ -25,7 +25,7 @@ class NotificationRepository extends ServiceEntityRepository
     public function findRecentForUser(User $user, int $limit = 20): array
     {
         /** @var list<Notification> $notifications */
-        $notifications = $this
+        return $this
             ->createQueryBuilder('n')
             ->andWhere('n.user = :user')
             ->andWhere('n.deletedAt IS NULL')
@@ -34,8 +34,6 @@ class NotificationRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
-
-        return $notifications;
     }
 
     public function countUnreadForUser(User $user): int

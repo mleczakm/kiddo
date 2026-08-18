@@ -18,9 +18,9 @@ final class ProcessCountHealthcheckTest extends TestCase
         // "within" regardless of where the test runs.
         $response = new ProcessCountHealthcheck(PHP_INT_MAX)->check();
 
-        self::assertTrue($response->getResult());
-        self::assertSame('process_count', $response->getName());
-        self::assertGreaterThanOrEqual(1, $response->getParams()['count']);
+        static::assertTrue($response->getResult());
+        static::assertSame('process_count', $response->getName());
+        static::assertGreaterThanOrEqual(1, $response->getParams()['count']);
     }
 
     public function testFailsWhenProcessCountExceedsThreshold(): void
@@ -29,7 +29,7 @@ final class ProcessCountHealthcheckTest extends TestCase
         // PHP process is running.
         $response = new ProcessCountHealthcheck(0)->check();
 
-        self::assertFalse($response->getResult());
-        self::assertStringContainsString('exceeds threshold 0', $response->getMessage());
+        static::assertFalse($response->getResult());
+        static::assertStringContainsString('exceeds threshold 0', $response->getMessage());
     }
 }

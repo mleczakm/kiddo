@@ -16,7 +16,7 @@ class LessonMap implements \Countable
     private function ensureMapsInitialized(): void
     {
         // If Doctrine or serializer hydrated raw arrays, normalize them to Ds\Map<Ulid, BookedLesson>
-        $init = function (&$prop): Map {
+        $init = static function (&$prop): Map {
             if ($prop instanceof Map) {
                 return $prop;
             }
@@ -126,35 +126,43 @@ class LessonMap implements \Countable
             }
 
             if (isset($payload['lessons'])) {
-                foreach ((array) $payload['lessons'] as $lessonId) {
-                    if (is_string($lessonId)) {
-                        $id = Ulid::fromString($lessonId);
-                        $this->lessons->put($id, new BookedLesson($id));
+                foreach ($payload['lessons'] as $lessonId) {
+                    if (!is_string($lessonId)) {
+                        continue;
                     }
+
+                    $id = Ulid::fromString($lessonId);
+                    $this->lessons->put($id, new BookedLesson($id));
                 }
             }
             if (isset($payload['past'])) {
-                foreach ((array) $payload['past'] as $lessonId) {
-                    if (is_string($lessonId)) {
-                        $id = Ulid::fromString($lessonId);
-                        $this->past->put($id, new BookedLesson($id));
+                foreach ($payload['past'] as $lessonId) {
+                    if (!is_string($lessonId)) {
+                        continue;
                     }
+
+                    $id = Ulid::fromString($lessonId);
+                    $this->past->put($id, new BookedLesson($id));
                 }
             }
             if (isset($payload['cancelled'])) {
-                foreach ((array) $payload['cancelled'] as $lessonId) {
-                    if (is_string($lessonId)) {
-                        $id = Ulid::fromString($lessonId);
-                        $this->cancelled->put($id, new BookedLesson($id));
+                foreach ($payload['cancelled'] as $lessonId) {
+                    if (!is_string($lessonId)) {
+                        continue;
                     }
+
+                    $id = Ulid::fromString($lessonId);
+                    $this->cancelled->put($id, new BookedLesson($id));
                 }
             }
             if (isset($payload['active'])) {
-                foreach ((array) $payload['active'] as $lessonId) {
-                    if (is_string($lessonId)) {
-                        $id = Ulid::fromString($lessonId);
-                        $this->active->put($id, new BookedLesson($id));
+                foreach ($payload['active'] as $lessonId) {
+                    if (!is_string($lessonId)) {
+                        continue;
                     }
+
+                    $id = Ulid::fromString($lessonId);
+                    $this->active->put($id, new BookedLesson($id));
                 }
             }
         }
@@ -189,6 +197,7 @@ class LessonMap implements \Countable
         return $lessonMap;
     }
 
+    #[\Override]
     public function count(): int
     {
         $this->ensureMapsInitialized();
@@ -297,7 +306,7 @@ class LessonMap implements \Countable
         return false;
     }
 
-    public function refundLesson(string $lessonId, ?string $reason = null): bool
+    public function refundLesson(string $lessonId, ?string $_reason = null): bool
     {
         $this->ensureMapsInitialized();
         $ulid = Ulid::fromString($lessonId);
@@ -407,9 +416,11 @@ class LessonMap implements \Countable
         $this->ensureMapsInitialized();
         $result = [];
         foreach ($this->cancelled as $booked) {
-            if ($booked instanceof RescheduledLesson) {
-                $result[] = $booked;
+            if (!$booked instanceof RescheduledLesson) {
+                continue;
             }
+
+            $result[] = $booked;
         }
         return $result;
     }
@@ -451,7 +462,7 @@ class LessonMap implements \Countable
     /**
      * @return BookedLesson[]
      */
-    public function getPastActiveLessons(Booking $booking): array
+    public function getPastActiveLessons(Booking $_booking): array
     {
         $this->ensureMapsInitialized();
         $result = [];
@@ -517,7 +528,7 @@ class LessonMap implements \Countable
     public function isCancelledLesson(Ulid|string $lessonId): bool
     {
         $this->ensureMapsInitialized();
-        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString((string) $lessonId);
+        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString($lessonId);
 
         return $this->cancelled->hasKey($ulid);
     }
@@ -525,7 +536,7 @@ class LessonMap implements \Countable
     public function isRescheduledLesson(Ulid|string $lessonId): bool
     {
         $this->ensureMapsInitialized();
-        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString((string) $lessonId);
+        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString($lessonId);
         if (!$this->cancelled->hasKey($ulid)) {
             return false;
         }
@@ -536,7 +547,7 @@ class LessonMap implements \Countable
     public function isActiveLesson(Ulid|string $lessonId): bool
     {
         $this->ensureMapsInitialized();
-        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString((string) $lessonId);
+        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString($lessonId);
 
         return $this->active->hasKey($ulid);
     }
@@ -549,7 +560,7 @@ class LessonMap implements \Countable
     public function getCancelledEntry(Ulid|string $lessonId): ?BookedLesson
     {
         $this->ensureMapsInitialized();
-        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString((string) $lessonId);
+        $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString($lessonId);
 
         return $this->cancelled->get($ulid, null);
     }

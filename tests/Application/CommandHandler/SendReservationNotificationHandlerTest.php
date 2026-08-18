@@ -53,24 +53,24 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
         $this->mailer()->assertSentEmailCount(1);
 
         $firstEmail = $this->mailer()->sentEmails()->first();
-        $this->assertSame($firstEmail->getTo()[0]->getAddress(), $email);
-        $this->assertSame(
+        static::assertSame($firstEmail->getTo()[0]->getAddress(), $email);
+        static::assertSame(
             'Twoja rezerwacja w Warsztatowni Sensorycznej – oczekujemy na płatność',
             $firstEmail->getSubject(),
         );
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             'TEST123',
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             $paymentAmount->getAmount()->toScale(0) . ' zł',
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             '571 531 213',
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             '46 2490 0005 0000 4000 1897 5420',
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
@@ -78,9 +78,9 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
         $inApp = $em->getRepository(Notification::class)->findBy([
             'user' => $user,
         ]);
-        self::assertCount(1, $inApp);
-        self::assertSame('Rezerwacja utworzona', $inApp[0]->getTitle());
-        self::assertStringContainsString('<strong>TEST123</strong>', (string) $inApp[0]->getBody());
-        self::assertNotNull($inApp[0]->getUrl());
+        static::assertCount(1, $inApp);
+        static::assertSame('Rezerwacja utworzona', $inApp[0]->getTitle());
+        static::assertStringContainsString('<strong>TEST123</strong>', (string) $inApp[0]->getBody());
+        static::assertNotNull($inApp[0]->getUrl());
     }
 }

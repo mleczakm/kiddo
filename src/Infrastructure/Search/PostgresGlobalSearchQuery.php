@@ -90,6 +90,7 @@ final readonly class PostgresGlobalSearchQuery implements GlobalSearchQuery
         private Connection $connection,
     ) {}
 
+    #[\Override]
     public function search(string $query, int $limit = 15): PriorityQueue
     {
         /** @var PriorityQueue<SearchReference> $queue */

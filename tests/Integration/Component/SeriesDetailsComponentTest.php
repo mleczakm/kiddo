@@ -27,6 +27,7 @@ final class SeriesDetailsComponentTest extends WebTestCase
 
     private EntityManagerInterface $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -60,8 +61,8 @@ final class SeriesDetailsComponentTest extends WebTestCase
 
         /** @var SeriesDetailsComponent $state */
         $state = $component->component();
-        self::assertTrue($state->expandedLessonId?->equals($lesson->getId()));
-        self::assertStringContainsString('Lista obecności', (string) $component->render());
+        static::assertTrue($state->expandedLessonId?->equals($lesson->getId()));
+        static::assertStringContainsString('Lista obecności', (string) $component->render());
 
         $component->call('expandLesson', [
             'lessonId' => (string) $lesson->getId(),
@@ -69,7 +70,7 @@ final class SeriesDetailsComponentTest extends WebTestCase
 
         /** @var SeriesDetailsComponent $collapsedState */
         $collapsedState = $component->component();
-        self::assertNull($collapsedState->expandedLessonId);
+        static::assertNull($collapsedState->expandedLessonId);
     }
 
     public function testRenderedActionUsesLiveArgumentParameterName(): void
@@ -86,11 +87,11 @@ final class SeriesDetailsComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('data-live-action-param="expandLesson"', $html);
-        self::assertStringContainsString('data-live-lesson-id-param="' . $lesson->getId() . '"', $html);
-        self::assertStringContainsString('href="/admin/zajecia/' . $lesson->getId() . '"', $html);
-        self::assertStringContainsString('aria-label="Otwórz szczegóły zajęć"', $html);
-        self::assertStringNotContainsString('data-live-action-param-lessonId', $html);
+        static::assertStringContainsString('data-live-action-param="expandLesson"', $html);
+        static::assertStringContainsString('data-live-lesson-id-param="' . $lesson->getId() . '"', $html);
+        static::assertStringContainsString('href="/admin/zajecia/' . $lesson->getId() . '"', $html);
+        static::assertStringContainsString('aria-label="Otwórz szczegóły zajęć"', $html);
+        static::assertStringNotContainsString('data-live-action-param-lessonId', $html);
     }
 
     public function testExpandedLessonRendersReservationWithChildBirthday(): void
@@ -121,10 +122,10 @@ final class SeriesDetailsComponentTest extends WebTestCase
         ]);
 
         $html = (string) $component->render();
-        self::assertStringContainsString('Zosia', $html);
-        self::assertStringContainsString('(2020)', $html);
-        self::assertStringContainsString($parent->getName(), $html);
-        self::assertStringContainsString('501 111 111', $html);
-        self::assertStringNotContainsString('Country Code:', $html);
+        static::assertStringContainsString('Zosia', $html);
+        static::assertStringContainsString('(2020)', $html);
+        static::assertStringContainsString($parent->getName(), $html);
+        static::assertStringContainsString('501 111 111', $html);
+        static::assertStringNotContainsString('Country Code:', $html);
     }
 }

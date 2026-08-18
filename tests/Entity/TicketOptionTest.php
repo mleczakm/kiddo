@@ -23,9 +23,9 @@ class TicketOptionTest extends TestCase
             TicketReschedulePolicy::UNLIMITED_24H_BEFORE,
         );
 
-        $this->assertSame(TicketType::CARNET_4, $option->type);
-        $this->assertEquals(Money::of(180, 'PLN'), $option->price);
-        $this->assertSame('Testowy opis', $option->description);
-        $this->assertSame(TicketReschedulePolicy::UNLIMITED_24H_BEFORE, $option->reschedulePolicy);
+        static::assertSame(TicketType::CARNET_4, $option->type);
+        static::assertEquals(Money::of(180, 'PLN'), $option->price);
+        static::assertSame('Testowy opis', $option->description);
+        static::assertSame(TicketReschedulePolicy::UNLIMITED_24H_BEFORE, $option->reschedulePolicy);
     }
 }

@@ -109,6 +109,7 @@ class User implements UserInterface
      *
      * @see UserInterface
      */
+    #[\Override]
     public function getUserIdentifier(): string
     {
         return $this->email;
@@ -119,6 +120,7 @@ class User implements UserInterface
      *
      * @return list<string>
      */
+    #[\Override]
     public function getRoles(): array
     {
         return $this->roles;

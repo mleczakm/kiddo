@@ -340,8 +340,8 @@ class Payment
 
     public function getAmountPaid(): Money
     {
-        return $this->transfers->map(fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount))->reduce(
-            fn(Money $carry, Money $transfer) => $carry->plus($transfer),
+        return $this->transfers->map(static fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount))->reduce(
+            static fn(Money $carry, Money $transfer) => $carry->plus($transfer),
             Money::zero('PLN'),
         );
     }
@@ -360,7 +360,10 @@ class Payment
 
     public function getBookingsSummary(): string
     {
-        return implode(', ', $this->bookings->map(fn(Booking $booking) => $booking->getTextSummary())->toArray());
+        return implode(
+            ', ',
+            $this->bookings->map(static fn(Booking $booking) => $booking->getTextSummary())->toArray(),
+        );
     }
 
     public function getMethod(): ?PaymentMethod

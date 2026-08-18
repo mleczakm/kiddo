@@ -63,25 +63,25 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         $adminEmail1 = $emails->whereTo($admin1->getEmail())->first();
         $adminEmail2 = $emails->whereTo($admin2->getEmail())->first();
 
-        self::assertStringContainsString('user@example.com', $userEmail->getTo()[0]->getAddress());
-        self::assertStringContainsString('admin1@example.com', $adminEmail1->getTo()[0]->getAddress());
-        self::assertStringContainsString('admin2@example.com', $adminEmail2->getTo()[0]->getAddress());
-        self::assertStringContainsString('user@example.com', (string) $adminEmail2->getHtmlBody());
-        self::assertStringContainsString('user@example.com', (string) $adminEmail1->getHtmlBody());
-        self::assertStringContainsString('<user@example.com>', (string) $adminEmail2->getSubject());
-        self::assertStringContainsString('<user@example.com>', (string) $adminEmail1->getSubject());
+        static::assertStringContainsString('user@example.com', $userEmail->getTo()[0]->getAddress());
+        static::assertStringContainsString('admin1@example.com', $adminEmail1->getTo()[0]->getAddress());
+        static::assertStringContainsString('admin2@example.com', $adminEmail2->getTo()[0]->getAddress());
+        static::assertStringContainsString('user@example.com', (string) $adminEmail2->getHtmlBody());
+        static::assertStringContainsString('user@example.com', (string) $adminEmail1->getHtmlBody());
+        static::assertStringContainsString('<user@example.com>', (string) $adminEmail2->getSubject());
+        static::assertStringContainsString('<user@example.com>', (string) $adminEmail1->getSubject());
 
-        self::assertStringContainsString('123,45', (string) $userEmail->getHtmlBody());
-        self::assertStringContainsString('Joga', (string) $userEmail->getHtmlBody());
-        self::assertStringContainsString('Joga', (string) $userEmail->getSubject());
-        self::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
-        self::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
-        self::assertStringContainsString('niedziela 24 sie', (string) $userEmail->getHtmlBody());
+        static::assertStringContainsString('123,45', (string) $userEmail->getHtmlBody());
+        static::assertStringContainsString('Joga', (string) $userEmail->getHtmlBody());
+        static::assertStringContainsString('Joga', (string) $userEmail->getSubject());
+        static::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
+        static::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
+        static::assertStringContainsString('niedziela 24 sie', (string) $userEmail->getHtmlBody());
 
         $notifications = $em->getRepository(Notification::class)->findAll();
-        self::assertCount(3, $notifications); // user + 2 admins
+        static::assertCount(3, $notifications); // user + 2 admins
         $titles = array_map(static fn(Notification $n) => $n->getTitle(), $notifications);
-        self::assertContains('Płatność potwierdzona', $titles);
-        self::assertContains('Nowa płatność', $titles);
+        static::assertContains('Płatność potwierdzona', $titles);
+        static::assertContains('Nowa płatność', $titles);
     }
 }

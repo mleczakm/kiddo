@@ -15,6 +15,7 @@ class BookingWorkflowSubscriber implements EventSubscriberInterface
         private readonly WorkflowInterface $bookingStateMachine,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -40,9 +41,11 @@ class BookingWorkflowSubscriber implements EventSubscriberInterface
         $bookings = $payment->getBookings();
 
         foreach ($bookings as $booking) {
-            if ($this->bookingStateMachine->can($booking, 'confirm')) {
-                $this->bookingStateMachine->apply($booking, 'confirm');
+            if (!$this->bookingStateMachine->can($booking, 'confirm')) {
+                continue;
             }
+
+            $this->bookingStateMachine->apply($booking, 'confirm');
         }
     }
 
@@ -63,9 +66,11 @@ class BookingWorkflowSubscriber implements EventSubscriberInterface
         $bookings = $payment->getBookings();
 
         foreach ($bookings as $booking) {
-            if ($this->bookingStateMachine->can($booking, 'cancel')) {
-                $this->bookingStateMachine->apply($booking, 'cancel');
+            if (!$this->bookingStateMachine->can($booking, 'cancel')) {
+                continue;
             }
+
+            $this->bookingStateMachine->apply($booking, 'cancel');
         }
     }
 }

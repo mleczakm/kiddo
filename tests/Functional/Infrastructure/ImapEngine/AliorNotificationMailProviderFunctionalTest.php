@@ -19,6 +19,7 @@ final class AliorNotificationMailProviderFunctionalTest extends KernelTestCase
 
     private LoggerInterface $logger;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -29,13 +30,13 @@ final class AliorNotificationMailProviderFunctionalTest extends KernelTestCase
 
     public function testProviderCanBeInstantiated(): void
     {
-        $this->assertInstanceOf(IncomingNotificationMailQuery::class, $this->provider);
+        static::assertInstanceOf(IncomingNotificationMailQuery::class, $this->provider);
     }
 
     public function testProviderHasRequiredDependencies(): void
     {
-        $this->assertInstanceOf(MailboxInterface::class, $this->mailbox);
-        $this->assertInstanceOf(LoggerInterface::class, $this->logger);
+        static::assertInstanceOf(MailboxInterface::class, $this->mailbox);
+        static::assertInstanceOf(LoggerInterface::class, $this->logger);
     }
 
     public function testProviderCanBeInvokedWithoutThrowing(): void

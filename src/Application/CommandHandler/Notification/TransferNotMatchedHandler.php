@@ -83,7 +83,7 @@ final readonly class TransferNotMatchedHandler
                 $this->translator->trans(
                     'notifications.in_app.transfer_not_matched.body',
                     [
-                        'amount' => (string) $transfer->amount,
+                        'amount' => $transfer->amount,
                         'sender' => $transfer->getSender(),
                         'title' => $transfer->title,
                     ],

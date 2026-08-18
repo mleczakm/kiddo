@@ -29,7 +29,7 @@ final class SentryHubServiceWiringTest extends TestCase
 {
     public function testTopLevelServicesDoNotOverrideTheSentryHub(): void
     {
-        self::assertArrayNotHasKey(
+        static::assertArrayNotHasKey(
             HubInterface::class,
             $this->block(null),
             'config/services.yaml must not define Sentry\State\HubInterface at the top level: '
@@ -42,7 +42,7 @@ final class SentryHubServiceWiringTest extends TestCase
     public function testDevAndTestEnvironmentsStillProvideAFallbackHub(): void
     {
         foreach (['when@dev', 'when@test'] as $block) {
-            self::assertArrayHasKey(
+            static::assertArrayHasKey(
                 HubInterface::class,
                 $this->block($block),
                 "config/services.yaml's \"{$block}\" block must provide a fallback Sentry\State\HubInterface "

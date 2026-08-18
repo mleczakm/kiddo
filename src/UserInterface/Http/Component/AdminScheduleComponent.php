@@ -93,7 +93,7 @@ final class AdminScheduleComponent extends AbstractController
             // series' occurrences stay hidden by default, same as before.
             $lessons = array_values(array_filter(
                 $lessons,
-                static fn(Lesson $l) => $l->getSeries() === null || $l->getSeries()->status === 'active',
+                static fn(Lesson $l) => $l->getSeries() === null || $l->getSeries()?->status === 'active',
             ));
         }
 

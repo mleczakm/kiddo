@@ -36,7 +36,7 @@ final class NewsletterControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(JsonResponse::HTTP_OK);
         $payload = $this->decode($client);
-        self::assertSame('newsletter.confirmation_sent', $payload['message'] ?? null);
+        static::assertSame('newsletter.confirmation_sent', $payload['message'] ?? null);
     }
 
     public function testExistingSubscribedUserSkipsDoi(): void
@@ -64,7 +64,7 @@ final class NewsletterControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(JsonResponse::HTTP_OK);
         $payload = $this->decode($client);
-        self::assertSame('newsletter.already_subscribed', $payload['message'] ?? null);
+        static::assertSame('newsletter.already_subscribed', $payload['message'] ?? null);
     }
 
     public function testExistingUnsubscribedUserStillGoesThroughDoi(): void
@@ -115,7 +115,7 @@ final class NewsletterControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(JsonResponse::HTTP_BAD_REQUEST);
         $payload = $this->decode($client);
-        self::assertSame('newsletter.email_invalid', $payload['error'] ?? null);
+        static::assertSame('newsletter.email_invalid', $payload['error'] ?? null);
     }
 
     public function testMissingEmailReturnsBadRequest(): void
@@ -165,7 +165,7 @@ final class NewsletterControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(JsonResponse::HTTP_OK);
         $payload = $this->decode($client);
-        self::assertTrue($payload['success'] ?? false);
+        static::assertTrue($payload['success'] ?? false);
     }
 
     public function testBrevoFailureReturnsServerError(): void
@@ -187,10 +187,10 @@ final class NewsletterControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         $payload = $this->decode($client);
-        self::assertSame('newsletter.service_error', $payload['error'] ?? null);
+        static::assertSame('newsletter.service_error', $payload['error'] ?? null);
     }
 
-    private function replaceBrevoService(KernelBrowser $client): BrevoNewsletterService&MockObject
+    private function replaceBrevoService(KernelBrowser $_client): BrevoNewsletterService&MockObject
     {
         $mock = $this->createMock(BrevoNewsletterService::class);
         self::getContainer()->set(BrevoNewsletterService::class, $mock);
@@ -204,8 +204,6 @@ final class NewsletterControllerTest extends WebTestCase
     private function decode(KernelBrowser $client): array
     {
         /** @var array<string, mixed> $data */
-        $data = json_decode((string) $client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
-
-        return $data;
+        return json_decode((string) $client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
     }
 }

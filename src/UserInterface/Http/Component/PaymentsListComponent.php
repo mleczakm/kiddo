@@ -52,8 +52,7 @@ final class PaymentsListComponent extends AbstractController
             ->addOrderBy('p.createdAt', 'DESC');
 
         /** @var list<Payment> $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     public function getWeekStart(): \DateTimeImmutable

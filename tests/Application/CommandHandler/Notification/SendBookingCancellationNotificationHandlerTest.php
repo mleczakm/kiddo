@@ -49,7 +49,7 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
         $handler = self::getContainer()->get(SendBookingCancellationNotificationHandler::class);
         $handler(new SendBookingCancellationNotificationCommand($booking));
 
-        $this->assertCount(2, $this->mailer()->sentEmails());
+        static::assertCount(2, $this->mailer()->sentEmails());
 
         // Verify user email
         $userEmail = null;
@@ -65,25 +65,25 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
             }
         }
 
-        $this->assertNotNull($userEmail);
-        $this->assertStringContainsString(
+        static::assertNotNull($userEmail);
+        static::assertStringContainsString(
             'Anulowanie rezerwacji - Joga ze środy 16.07, o 10:00',
             (string) $userEmail->getSubject(),
         );
 
         $body = (string) ($userEmail->getHtmlBody() ?? $userEmail->getTextBody());
-        $this->assertStringContainsString('Cześć Jan', $body);
-        $this->assertStringContainsString('Twoja rezerwacja na zajęcia Joga ze środy 16.07, o 10:00', $body);
+        static::assertStringContainsString('Cześć Jan', $body);
+        static::assertStringContainsString('Twoja rezerwacja na zajęcia Joga ze środy 16.07, o 10:00', $body);
 
         // Verify admin email
-        $this->assertNotNull($adminEmail);
-        $this->assertStringContainsString(
+        static::assertNotNull($adminEmail);
+        static::assertStringContainsString(
             'Rezerwacja anulowana (brak wpłaty) - Jan Kowalski - ze środy 16.07, o 10:00',
             (string) $adminEmail->getSubject(),
         );
 
         $adminBody = (string) ($adminEmail->getHtmlBody() ?? $adminEmail->getTextBody());
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             'Rezerwacja użytkownika Jan Kowalski (user@example.com) na zajęcia Joga w dniu ze środy 16.07, o 10:00 została automatycznie anulowana',
             $adminBody,
         );
@@ -92,18 +92,18 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
         $userNotifications = $em->getRepository(Notification::class)->findBy([
             'user' => $user,
         ]);
-        self::assertCount(1, $userNotifications);
-        self::assertSame('Rezerwacja anulowana', $userNotifications[0]->getTitle());
-        self::assertSame(NotificationSeverity::Warning, $userNotifications[0]->getSeverity());
+        static::assertCount(1, $userNotifications);
+        static::assertSame('Rezerwacja anulowana', $userNotifications[0]->getTitle());
+        static::assertSame(NotificationSeverity::Warning, $userNotifications[0]->getSeverity());
 
         // Verify admin in-app notification
         $adminNotifications = $em->getRepository(Notification::class)->findBy([
             'user' => $admin,
         ]);
-        self::assertCount(1, $adminNotifications);
-        self::assertSame('Rezerwacja anulowana (brak wpłaty)', $adminNotifications[0]->getTitle());
-        self::assertSame(NotificationSeverity::Warning, $adminNotifications[0]->getSeverity());
-        self::assertNotNull($adminNotifications[0]->getBody());
-        self::assertStringContainsString('user@example.com', $adminNotifications[0]->getBody());
+        static::assertCount(1, $adminNotifications);
+        static::assertSame('Rezerwacja anulowana (brak wpłaty)', $adminNotifications[0]->getTitle());
+        static::assertSame(NotificationSeverity::Warning, $adminNotifications[0]->getSeverity());
+        static::assertNotNull($adminNotifications[0]->getBody());
+        static::assertStringContainsString('user@example.com', $adminNotifications[0]->getBody());
     }
 }

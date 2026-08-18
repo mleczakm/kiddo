@@ -15,6 +15,7 @@ readonly class PlatformBillingSubscriber implements EventSubscriberInterface
         private PlatformBillingService $platformBillingService,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

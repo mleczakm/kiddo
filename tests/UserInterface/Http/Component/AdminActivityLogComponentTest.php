@@ -26,8 +26,8 @@ final class AdminActivityLogComponentTest extends WebTestCase
 
         /** @var AdminActivityLogComponent $activityLogComponent */
         $activityLogComponent = $component->component();
-        self::assertSame([], $activityLogComponent->getActivityLog());
-        self::assertStringContainsString('Brak ostatniej aktywności', (string) $component->render());
+        static::assertSame([], $activityLogComponent->getActivityLog());
+        static::assertStringContainsString('Brak ostatniej aktywności', (string) $component->render());
     }
 
     public function testShowsRecentActivityNewestFirst(): void
@@ -62,20 +62,20 @@ final class AdminActivityLogComponentTest extends WebTestCase
         $activityLogComponent = $component->component();
         $log = $activityLogComponent->getActivityLog();
 
-        self::assertCount(2, $log);
-        self::assertSame('transfer_unmatched', $log[0]['type']);
-        self::assertSame('Nierozpoznany przelew', $log[0]['title']);
-        self::assertNull($log[0]['name']);
+        static::assertCount(2, $log);
+        static::assertSame('transfer_unmatched', $log[0]['type']);
+        static::assertSame('Nierozpoznany przelew', $log[0]['title']);
+        static::assertNull($log[0]['name']);
 
-        self::assertSame('booking_created', $log[1]['type']);
-        self::assertSame('Jan Kowalski', $log[1]['name']);
-        self::assertSame('Sensoplastyka', $log[1]['summary']);
+        static::assertSame('booking_created', $log[1]['type']);
+        static::assertSame('Jan Kowalski', $log[1]['name']);
+        static::assertSame('Sensoplastyka', $log[1]['summary']);
 
         $html = (string) $component->render();
-        self::assertStringContainsString('Jan Kowalski zarezerwował/a zajęcia', $html);
-        self::assertStringContainsString('Nierozpoznany przelew', $html);
-        self::assertStringContainsString('/admin/uzytkownicy/1', $html);
+        static::assertStringContainsString('Jan Kowalski zarezerwował/a zajęcia', $html);
+        static::assertStringContainsString('Nierozpoznany przelew', $html);
+        static::assertStringContainsString('/admin/uzytkownicy/1', $html);
         // Polls for new events instead of sitting static
-        self::assertStringContainsString('data-poll', $html);
+        static::assertStringContainsString('data-poll', $html);
     }
 }

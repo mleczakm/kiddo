@@ -42,12 +42,13 @@ class RegisterUser extends AbstractController
     /**
      * @return FormInterface<User>
      */
+    #[\Override]
     protected function instantiateForm(): FormInterface
     {
         $this->user = new User();
 
         /** @var FormInterface<User> $form */
-        $form = $this
+        return $this
             ->createFormBuilder($this->user)
             ->add('name', TextType::class, [
                 'label' => 'form.register.name',
@@ -65,8 +66,6 @@ class RegisterUser extends AbstractController
                 'label' => 'form.register.submit',
             ])
             ->getForm();
-
-        return $form;
     }
 
     #[LiveAction]

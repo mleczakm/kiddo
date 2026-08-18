@@ -28,6 +28,7 @@ class PaymentApprovalWorkflowTest extends WebTestCase
 
     private Lesson $lesson;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
@@ -57,6 +58,7 @@ class PaymentApprovalWorkflowTest extends WebTestCase
         $this->entityManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -71,8 +73,8 @@ class PaymentApprovalWorkflowTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertFalse($payment->requiresApproval());
-        $this->assertFalse($booking->requiresApproval());
+        static::assertFalse($payment->requiresApproval());
+        static::assertFalse($booking->requiresApproval());
     }
 
     public function testPayOnPlacePaymentRequiresApproval(): void
@@ -84,8 +86,8 @@ class PaymentApprovalWorkflowTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertTrue($payment->requiresApproval());
-        $this->assertTrue($booking->requiresApproval());
+        static::assertTrue($payment->requiresApproval());
+        static::assertTrue($booking->requiresApproval());
     }
 
     public function testBookingCanTransitionToWaitingApproval(): void
@@ -98,8 +100,8 @@ class PaymentApprovalWorkflowTest extends WebTestCase
         $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->assertTrue($booking->isWaitingApproval());
-        $this->assertEquals(Booking::STATUS_WAITING_APPROVAL, $booking->getStatus());
+        static::assertTrue($booking->isWaitingApproval());
+        static::assertEquals(Booking::STATUS_WAITING_APPROVAL, $booking->getStatus());
     }
 
     public function testBookingCanBeApproved(): void
@@ -116,12 +118,12 @@ class PaymentApprovalWorkflowTest extends WebTestCase
         $booking->approve($this->adminUser);
         $this->entityManager->flush();
 
-        $this->assertFalse($booking->isWaitingApproval());
-        $this->assertTrue($booking->isConfirmed());
+        static::assertFalse($booking->isWaitingApproval());
+        static::assertTrue($booking->isConfirmed());
         $approvedBy = $booking->getApprovedBy();
-        $this->assertNotNull($approvedBy);
-        $this->assertEquals($this->adminUser->getId(), $approvedBy->getId());
-        $this->assertNotNull($booking->getApprovedAt());
+        static::assertNotNull($approvedBy);
+        static::assertEquals($this->adminUser->getId(), $approvedBy->getId());
+        static::assertNotNull($booking->getApprovedAt());
     }
 
     public function testCannotApproveBookingNotWaitingApproval(): void
@@ -144,11 +146,11 @@ class PaymentApprovalWorkflowTest extends WebTestCase
         $this->entityManager->persist($payment);
         $this->entityManager->flush();
 
-        $this->assertFalse($payment->requiresApproval());
+        static::assertFalse($payment->requiresApproval());
 
         $payment->setMethod(PaymentMethod::PAY_ON_PLACE);
         $this->entityManager->flush();
 
-        $this->assertTrue($payment->requiresApproval());
+        static::assertTrue($payment->requiresApproval());
     }
 }

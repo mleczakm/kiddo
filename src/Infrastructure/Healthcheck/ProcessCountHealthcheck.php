@@ -25,6 +25,7 @@ final readonly class ProcessCountHealthcheck implements CheckInterface
      * namespace, not the host's) catches that pattern directly instead of waiting for it to
      * eventually produce a symptom another check would notice.
      */
+    #[\Override]
     public function check(): Response
     {
         $count = count(glob('/proc/[0-9]*', GLOB_ONLYDIR) ?: []);

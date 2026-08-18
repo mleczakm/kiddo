@@ -50,11 +50,11 @@ final class UsersComponentTest extends WebTestCase
         $test = $this->createLiveComponent(UsersComponent::class, client: $client);
 
         $rendered = $test->render()->toString();
-        $this->assertStringContainsString('John Doe', $rendered);
-        $this->assertStringContainsString('Jane Doe', $rendered);
-        $this->assertStringContainsString('admin@test.com', $rendered);
-        $this->assertStringContainsString('john.doe@test.com', $rendered);
-        $this->assertStringContainsString('jane.doe@test.com', $rendered);
+        static::assertStringContainsString('John Doe', $rendered);
+        static::assertStringContainsString('Jane Doe', $rendered);
+        static::assertStringContainsString('admin@test.com', $rendered);
+        static::assertStringContainsString('john.doe@test.com', $rendered);
+        static::assertStringContainsString('jane.doe@test.com', $rendered);
     }
 
     public function testAdminCanSendAnInAppNotificationToAClient(): void
@@ -86,7 +86,7 @@ final class UsersComponentTest extends WebTestCase
 
         /** @var UsersComponent $usersComponent */
         $usersComponent = $component->component();
-        self::assertSame($customer->getId(), $usersComponent->getComposingForUser()?->getId());
+        static::assertSame($customer->getId(), $usersComponent->getComposingForUser()?->getId());
 
         $component->set('notifyTitle', 'Przypomnienie o zajęciach');
         $component->set('notifyBody', 'Do zobaczenia jutro o 10:00!');
@@ -97,14 +97,14 @@ final class UsersComponentTest extends WebTestCase
             ->findBy([
                 'user' => $customer,
             ]);
-        self::assertCount(1, $notifications);
-        self::assertSame('Przypomnienie o zajęciach', $notifications[0]->getTitle());
-        self::assertSame('Do zobaczenia jutro o 10:00!', $notifications[0]->getBody());
+        static::assertCount(1, $notifications);
+        static::assertSame('Przypomnienie o zajęciach', $notifications[0]->getTitle());
+        static::assertSame('Do zobaczenia jutro o 10:00!', $notifications[0]->getBody());
 
         // Composer state resets after sending
         /** @var UsersComponent $usersComponent */
         $usersComponent = $component->component();
-        self::assertNull($usersComponent->getComposingForUser());
+        static::assertNull($usersComponent->getComposingForUser());
     }
 
     public function testOpenAddModalRequiresManageUsersRole(): void
@@ -149,10 +149,10 @@ final class UsersComponentTest extends WebTestCase
 
         /** @var UsersComponent $usersComponent */
         $usersComponent = $component->component();
-        self::assertTrue($usersComponent->showAddModal);
+        static::assertTrue($usersComponent->showAddModal);
 
         $rendered = $component->render()->toString();
-        self::assertStringContainsString(
+        static::assertStringContainsString(
             'Nowy użytkownik',
             $rendered,
             'the embedded AddUserModal must render while open',
@@ -163,6 +163,6 @@ final class UsersComponentTest extends WebTestCase
 
         /** @var UsersComponent $usersComponent */
         $usersComponent = $component->component();
-        self::assertFalse($usersComponent->showAddModal);
+        static::assertFalse($usersComponent->showAddModal);
     }
 }

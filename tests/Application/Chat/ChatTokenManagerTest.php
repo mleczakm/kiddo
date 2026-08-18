@@ -24,10 +24,10 @@ final class ChatTokenManagerTest extends TestCase
         $token = $manager->mint($user, 600);
         $parsed = $manager->parse($token);
 
-        self::assertSame(42, $parsed->userId);
-        self::assertContains('ROLE_USER', $parsed->roles);
-        self::assertFalse($parsed->isExpired());
-        self::assertFalse($parsed->isGuest());
+        static::assertSame(42, $parsed->userId);
+        static::assertContains('ROLE_USER', $parsed->roles);
+        static::assertFalse($parsed->isExpired());
+        static::assertFalse($parsed->isGuest());
     }
 
     public function testMintAndParseGuestToken(): void
@@ -36,10 +36,10 @@ final class ChatTokenManagerTest extends TestCase
         $token = $manager->mintGuest(600);
         $parsed = $manager->parse($token);
 
-        self::assertNull($parsed->userId);
-        self::assertTrue($parsed->isGuest());
-        self::assertSame([], $parsed->roles);
-        self::assertFalse($parsed->isExpired());
+        static::assertNull($parsed->userId);
+        static::assertTrue($parsed->isGuest());
+        static::assertSame([], $parsed->roles);
+        static::assertFalse($parsed->isExpired());
     }
 
     public function testRejectsTamperedToken(): void

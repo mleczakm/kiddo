@@ -109,9 +109,11 @@ class Series
         /** @var ?Lesson $first */
         $first = null;
         foreach ($this->lessons as $lesson) {
-            if ($first === null || $lesson->schedule < $first->schedule) {
-                $first = $lesson;
+            if (!($first === null || $lesson->schedule < $first->schedule)) {
+                continue;
             }
+
+            $first = $lesson;
         }
 
         if ($first === null) {
@@ -130,9 +132,11 @@ class Series
         /** @var ?Lesson $last */
         $last = null;
         foreach ($this->lessons as $lesson) {
-            if ($last === null || $lesson->schedule > $last->schedule) {
-                $last = $lesson;
+            if (!($last === null || $lesson->schedule > $last->schedule)) {
+                continue;
             }
+
+            $last = $lesson;
         }
 
         if ($last === null) {

@@ -44,42 +44,42 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
             'ticket_type' => TicketType::ONE_TIME->value,
         ]);
 
-        self::assertTrue($result->ok, $result->error ?? $result->summary);
+        static::assertTrue($result->ok, $result->error ?? $result->summary);
         $paymentCode = $result->data['payment_code'] ?? null;
         $bookingId = $result->data['booking_id'] ?? null;
-        self::assertIsString($paymentCode);
-        self::assertNotSame('', $paymentCode);
-        self::assertIsString($bookingId);
-        self::assertNotSame('', $bookingId);
+        static::assertIsString($paymentCode);
+        static::assertNotSame('', $paymentCode);
+        static::assertIsString($bookingId);
+        static::assertNotSame('', $bookingId);
 
         $payment = $result->data['payment'] ?? [];
-        self::assertIsArray($payment);
-        self::assertSame($paymentCode, $payment['code'] ?? null);
-        self::assertSame('blik_phone_transfer', $payment['method'] ?? null);
-        self::assertArrayHasKey('blik_phone', $payment);
-        self::assertIsString($payment['blik_phone']);
-        self::assertArrayHasKey('bank_account', $payment);
-        self::assertSame(24, $payment['valid_hours'] ?? null);
-        self::assertStringContainsString($paymentCode, $result->summary);
-        self::assertStringContainsString('BLIK', $result->summary);
-        self::assertStringContainsString($payment['blik_phone'], $result->summary);
+        static::assertIsArray($payment);
+        static::assertSame($paymentCode, $payment['code'] ?? null);
+        static::assertSame('blik_phone_transfer', $payment['method'] ?? null);
+        static::assertArrayHasKey('blik_phone', $payment);
+        static::assertIsString($payment['blik_phone']);
+        static::assertArrayHasKey('bank_account', $payment);
+        static::assertSame(24, $payment['valid_hours'] ?? null);
+        static::assertStringContainsString($paymentCode, $result->summary);
+        static::assertStringContainsString('BLIK', $result->summary);
+        static::assertStringContainsString($payment['blik_phone'], $result->summary);
 
         $byCode = $registry->call('user.get_payment_instructions', $actor, [
             'payment_code' => $paymentCode,
         ]);
-        self::assertTrue($byCode->ok, $byCode->error ?? $byCode->summary);
-        self::assertSame($paymentCode, $byCode->data['code'] ?? null);
-        self::assertStringContainsString('BLIK', $byCode->summary);
+        static::assertTrue($byCode->ok, $byCode->error ?? $byCode->summary);
+        static::assertSame($paymentCode, $byCode->data['code'] ?? null);
+        static::assertStringContainsString('BLIK', $byCode->summary);
 
         $byBooking = $registry->call('user.get_payment_instructions', $actor, [
             'booking_id' => $bookingId,
         ]);
-        self::assertTrue($byBooking->ok, $byBooking->error ?? $byBooking->summary);
-        self::assertSame($paymentCode, $byBooking->data['code'] ?? null);
+        static::assertTrue($byBooking->ok, $byBooking->error ?? $byBooking->summary);
+        static::assertSame($paymentCode, $byBooking->data['code'] ?? null);
 
         $this->mailer()->assertSentEmailCount(1);
         $email = $this->mailer()->sentEmails()->first();
-        self::assertStringContainsString($paymentCode, (string) ($email->getHtmlBody() ?? $email->getTextBody()));
+        static::assertStringContainsString($paymentCode, (string) ($email->getHtmlBody() ?? $email->getTextBody()));
     }
 
     public function testGuestCannotCreateBooking(): void
@@ -94,7 +94,7 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
             'ticket_type' => TicketType::ONE_TIME->value,
         ]);
 
-        self::assertFalse($result->ok);
-        self::assertStringContainsString('zalogować', $result->summary);
+        static::assertFalse($result->ok);
+        static::assertStringContainsString('zalogować', $result->summary);
     }
 }

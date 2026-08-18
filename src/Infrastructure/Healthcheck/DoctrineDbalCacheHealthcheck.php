@@ -14,6 +14,7 @@ class DoctrineDbalCacheHealthcheck implements CheckInterface
         private readonly Connection $cacheConnection,
     ) {}
 
+    #[\Override]
     public function check(): Response
     {
         try {

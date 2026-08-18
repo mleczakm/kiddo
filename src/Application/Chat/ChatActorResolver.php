@@ -14,7 +14,7 @@ final readonly class ChatActorResolver
         private UserRepository $userRepository,
     ) {}
 
-    public function fromTokenString(string $token): ChatActor
+    public function fromTokenString(#[\SensitiveParameter] string $token): ChatActor
     {
         $chatToken = $this->tokenManager->parse($token);
         if ($chatToken->isGuest()) {

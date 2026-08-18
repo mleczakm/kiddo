@@ -107,8 +107,7 @@ class AdminBookingModal extends AbstractController
         );
 
         /** @var Lesson[] $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -129,8 +128,7 @@ class AdminBookingModal extends AbstractController
             ->setMaxResults(10);
 
         /** @var User[] $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -145,8 +143,7 @@ class AdminBookingModal extends AbstractController
                 return [];
             }
             /** @var list<string> $ids */
-            $ids = array_values(array_filter($decoded, is_string(...)));
-            return $ids;
+            return array_values(array_filter($decoded, is_string(...)));
         } catch (\Exception) {
             return [];
         }
@@ -206,7 +203,7 @@ class AdminBookingModal extends AbstractController
     public function removeLesson(#[LiveArg] string $lessonId): void
     {
         $selectedIds = $this->getSelectedLessonIdsArray();
-        $selectedIds = array_values(array_filter($selectedIds, fn($id) => $id !== $lessonId));
+        $selectedIds = array_values(array_filter($selectedIds, static fn($id) => $id !== $lessonId));
         $this->selectedLessonIds = (string) json_encode($selectedIds);
     }
 

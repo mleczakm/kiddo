@@ -116,6 +116,7 @@ class PlatformBillingComponent extends AbstractController
         }
     }
 
+    #[\Override]
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(PlatformBillingPaymentType::class);

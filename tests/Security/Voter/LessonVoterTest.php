@@ -30,7 +30,7 @@ final class LessonVoterTest extends TestCase
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
-        self::assertSame(VoterInterface::ACCESS_GRANTED, $result);
+        static::assertSame(VoterInterface::ACCESS_GRANTED, $result);
     }
 
     public function testHostAssignedAsInstructorIsGranted(): void
@@ -49,7 +49,7 @@ final class LessonVoterTest extends TestCase
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
-        self::assertSame(VoterInterface::ACCESS_GRANTED, $result);
+        static::assertSame(VoterInterface::ACCESS_GRANTED, $result);
     }
 
     public function testHostNotAssignedIsDenied(): void
@@ -69,7 +69,7 @@ final class LessonVoterTest extends TestCase
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
-        self::assertSame(VoterInterface::ACCESS_DENIED, $result);
+        static::assertSame(VoterInterface::ACCESS_DENIED, $result);
     }
 
     public function testHostAssignedViaSeriesIsGranted(): void
@@ -90,7 +90,7 @@ final class LessonVoterTest extends TestCase
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
-        self::assertSame(VoterInterface::ACCESS_GRANTED, $result);
+        static::assertSame(VoterInterface::ACCESS_GRANTED, $result);
     }
 
     public function testPlainUserIsDenied(): void
@@ -108,6 +108,6 @@ final class LessonVoterTest extends TestCase
 
         $result = $voter->vote($token, $lesson, [LessonVoter::VIEW]);
 
-        self::assertSame(VoterInterface::ACCESS_DENIED, $result);
+        static::assertSame(VoterInterface::ACCESS_DENIED, $result);
     }
 }

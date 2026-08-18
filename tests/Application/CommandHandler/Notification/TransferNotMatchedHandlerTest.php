@@ -26,6 +26,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
 
     private CacheItemPoolInterface $cache;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();
@@ -84,10 +85,10 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
 
         $emails = $this->mailer()->sentEmails();
 
-        $recipients = array_map(fn($email) => $email->getTo()[0]->toString(), $emails->all());
+        $recipients = array_map(static fn($email) => $email->getTo()[0]->toString(), $emails->all());
 
-        $this->assertContains('"Admin One" <admin1@example.com>', $recipients);
-        $this->assertContains('"Admin Two" <admin2@example.com>', $recipients);
+        static::assertContains('"Admin One" <admin1@example.com>', $recipients);
+        static::assertContains('"Admin Two" <admin2@example.com>', $recipients);
 
         // Assert email content
         $email = $emails->first();
@@ -102,7 +103,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         // Test caching - should not send another notification
         $this->mailer()->reset();
         ($this->handler)($command);
-        $this->assertCount(0, $this->mailer()->sentEmails()->all());
+        static::assertCount(0, $this->mailer()->sentEmails()->all());
     }
 
     public function testDoesNotSendNotificationWhenNoAdminsExist(): void

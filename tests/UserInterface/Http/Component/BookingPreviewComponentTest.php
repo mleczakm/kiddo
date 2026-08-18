@@ -28,6 +28,7 @@ final class BookingPreviewComponentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -77,12 +78,12 @@ final class BookingPreviewComponentTest extends WebTestCase
 
         $html = (string) $component->render();
 
-        $this->assertStringContainsString('data-action="live#emitUp"', $html);
-        $this->assertStringContainsString('data-live-event-param="resumePayment"', $html);
+        static::assertStringContainsString('data-action="live#emitUp"', $html);
+        static::assertStringContainsString('data-live-event-param="resumePayment"', $html);
         // kebab-case is required: Stimulus maps booking-id → bookingId for #[LiveArg]
-        $this->assertStringContainsString('data-live-booking-id-param="' . $booking->getId() . '"', $html);
-        $this->assertStringNotContainsString('data-live-bookingId-param=', $html);
-        $this->assertStringNotContainsString('data-live-action-param="resumePayment"', $html);
-        $this->assertStringContainsString('Zapłać', $html);
+        static::assertStringContainsString('data-live-booking-id-param="' . $booking->getId() . '"', $html);
+        static::assertStringNotContainsString('data-live-bookingId-param=', $html);
+        static::assertStringNotContainsString('data-live-action-param="resumePayment"', $html);
+        static::assertStringContainsString('Zapłać', $html);
     }
 }

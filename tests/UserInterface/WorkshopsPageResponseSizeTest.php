@@ -20,6 +20,7 @@ final class WorkshopsPageResponseSizeTest extends WebTestCase
 {
     private const int SWOOLE_DEFAULT_OUTPUT_BUFFER = 2_097_152;
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -58,12 +59,12 @@ final class WorkshopsPageResponseSizeTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();
 
-        $this->assertLessThan(
+        static::assertLessThan(
             self::SWOOLE_DEFAULT_OUTPUT_BUFFER,
             strlen($content),
             'Closed LessonModal markup must stay deferred so /warsztaty fits Swoole output buffer',
         );
-        $this->assertStringContainsString('data-modal-state="closed"', $content);
-        $this->assertStringNotContainsString('data-modal-target="dialog"', $content);
+        static::assertStringContainsString('data-modal-state="closed"', $content);
+        static::assertStringNotContainsString('data-modal-target="dialog"', $content);
     }
 }

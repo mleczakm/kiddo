@@ -25,7 +25,7 @@ final class McpAuthSubscriberTest extends TestCase
 
         $subscriber->onKernelRequest($event);
 
-        self::assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     public function testRejectsRequestWithoutKeyWhenServiceKeyConfigured(): void
@@ -35,8 +35,8 @@ final class McpAuthSubscriberTest extends TestCase
 
         $subscriber->onKernelRequest($event);
 
-        self::assertNotNull($event->getResponse());
-        self::assertSame(401, $event->getResponse()->getStatusCode());
+        static::assertNotNull($event->getResponse());
+        static::assertSame(401, $event->getResponse()->getStatusCode());
     }
 
     public function testAllowsRequestWithMatchingXKiddoMcpKeyHeader(): void
@@ -48,7 +48,7 @@ final class McpAuthSubscriberTest extends TestCase
 
         $subscriber->onKernelRequest($event);
 
-        self::assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     public function testAllowsRequestWithMatchingBearerAuthorizationHeader(): void
@@ -60,7 +60,7 @@ final class McpAuthSubscriberTest extends TestCase
 
         $subscriber->onKernelRequest($event);
 
-        self::assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     public function testRejectsRequestWithWrongKey(): void
@@ -72,8 +72,8 @@ final class McpAuthSubscriberTest extends TestCase
 
         $subscriber->onKernelRequest($event);
 
-        self::assertNotNull($event->getResponse());
-        self::assertSame(401, $event->getResponse()->getStatusCode());
+        static::assertNotNull($event->getResponse());
+        static::assertSame(401, $event->getResponse()->getStatusCode());
     }
 
     public function testEnforcesIpRateLimit(): void
@@ -89,16 +89,16 @@ final class McpAuthSubscriberTest extends TestCase
 
         $event1 = $this->createRequestEvent($subscriber, headers: []);
         $subscriber->onKernelRequest($event1);
-        self::assertNull($event1->getResponse());
+        static::assertNull($event1->getResponse());
 
         $event2 = $this->createRequestEvent($subscriber, headers: []);
         $subscriber->onKernelRequest($event2);
-        self::assertNull($event2->getResponse());
+        static::assertNull($event2->getResponse());
 
         $event3 = $this->createRequestEvent($subscriber, headers: []);
         $subscriber->onKernelRequest($event3);
-        self::assertNotNull($event3->getResponse());
-        self::assertSame(429, $event3->getResponse()->getStatusCode());
+        static::assertNotNull($event3->getResponse());
+        static::assertSame(429, $event3->getResponse()->getStatusCode());
     }
 
     private function createSubscriber(string $serviceKey): McpAuthSubscriber
@@ -124,7 +124,7 @@ final class McpAuthSubscriberTest extends TestCase
     /**
      * @param array<string, string> $headers
      */
-    private function createRequestEvent(McpAuthSubscriber $subscriber, array $headers): RequestEvent
+    private function createRequestEvent(McpAuthSubscriber $_subscriber, array $headers): RequestEvent
     {
         $request = Request::create('/api/mcp', 'POST');
         $request->attributes->set('_route', '_mcp_endpoint');

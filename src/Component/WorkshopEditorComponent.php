@@ -256,7 +256,7 @@ class WorkshopEditorComponent extends AbstractController
         $this->occurrenceDate = $lesson->schedule->format('Y-m-d');
         $this->occurrenceTime = $lesson->schedule->format('H:i');
 
-        $this->instructorIds = array_map(fn(User $u) => (string) $u->getId(), $lesson->getAllInstructors());
+        $this->instructorIds = array_map(static fn(User $u) => (string) $u->getId(), $lesson->getAllInstructors());
 
         foreach ($lesson->getTicketOptions() as $option) {
             if ($option->type === TicketType::ONE_TIME) {
@@ -422,7 +422,10 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveAction]
     public function removeInstructor(#[LiveArg] string $userId): void
     {
-        $this->instructorIds = array_values(array_filter($this->instructorIds, fn(string $id) => $id !== $userId));
+        $this->instructorIds = array_values(array_filter(
+            $this->instructorIds,
+            static fn(string $id) => $id !== $userId,
+        ));
     }
 
     private const int MAX_IMAGE_BYTES = 3 * 1024 * 1024;
@@ -479,7 +482,8 @@ class WorkshopEditorComponent extends AbstractController
             }
 
             $maxBytes = $isVideo ? self::MAX_VIDEO_BYTES : self::MAX_IMAGE_BYTES;
-            if ($this->uploadedImage->getSize() > $maxBytes) {
+            $uploadedSize = $this->uploadedImage->getSize();
+            if ($uploadedSize !== false && $uploadedSize > $maxBytes) {
                 $this->addFlash(
                     'error',
                     $isVideo ? 'Plik wideo jest za duży (maks. 20 MB).' : 'Zdjęcie jest za duże (maks. 3 MB).',
@@ -541,6 +545,10 @@ class WorkshopEditorComponent extends AbstractController
         }
 
         if ($scope === 'series') {
+            if ($series === null) {
+                throw new \LogicException('A series edit requires the lesson to belong to a series.');
+            }
+
             // One shared metadata row for the whole series, rather than each
             // occurrence duplicating its own copy — every affected lesson
             // (this one and its active upcoming siblings) points at the same
@@ -565,6 +573,7 @@ class WorkshopEditorComponent extends AbstractController
         $instructors = $this->resolveSelectedInstructors();
 
         if ($scope === 'series') {
+            \assert($series !== null, 'A series edit requires the lesson to belong to a series.');
             $series->ticketOptions = $ticketOptions;
             $lesson->setTicketOptions();
             $series->instructors->clear();
@@ -783,10 +792,11 @@ class WorkshopEditorComponent extends AbstractController
             NotificationSeverity::Info,
         );
 
-        $instructorIds = array_map(fn(User $u) => $u->getId(), $instructors);
+        $instructorIds = array_map(static fn(User $u) => $u->getId(), $instructors);
         $admins = array_values(array_filter(
             $this->userRepository->findByRole('ROLE_ADMIN'),
-            fn(User $admin) => $admin->getId() !== $editor->getId() && !in_array($admin->getId(), $instructorIds, true),
+            static fn(User $admin) => $admin->getId() !== $editor->getId()
+            && !in_array($admin->getId(), $instructorIds, true),
         ));
         $this->inAppNotifications->notifyUsers(
             $admins,

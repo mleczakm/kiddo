@@ -25,6 +25,7 @@ final class AdminUserDetailComponentTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -60,16 +61,16 @@ final class AdminUserDetailComponentTest extends WebTestCase
 
         /** @var AdminUserDetailComponent $state */
         $state = $component->component();
-        self::assertNull($state->editingField, 'saving must return to display mode');
+        static::assertNull($state->editingField, 'saving must return to display mode');
 
         $reloaded = $this->em->getRepository(User::class)->find($customer->getId()) ?? throw new \LogicException(
             'User not found',
         );
-        self::assertSame('Preferuje kontakt telefoniczny po 16:00.', $reloaded->getAdminNote());
+        static::assertSame('Preferuje kontakt telefoniczny po 16:00.', $reloaded->getAdminNote());
 
         $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($reloaded);
-        self::assertCount(1, $logs);
-        self::assertStringContainsString('Notatkę administracyjną', (string) $logs[0]->getSummary());
+        static::assertCount(1, $logs);
+        static::assertStringContainsString('Notatkę administracyjną', (string) $logs[0]->getSummary());
     }
 
     public function testEditingNameValidatesAndRejectsBlank(): void
@@ -99,8 +100,8 @@ final class AdminUserDetailComponentTest extends WebTestCase
 
         /** @var AdminUserDetailComponent $state */
         $state = $component->component();
-        self::assertNotNull($state->fieldError);
-        self::assertSame('Bartosz Nowak', $customer->getName(), 'blank name must not be persisted');
+        static::assertNotNull($state->fieldError);
+        static::assertSame('Bartosz Nowak', $customer->getName(), 'blank name must not be persisted');
     }
 
     public function testSendNotificationFromTheUserPage(): void
@@ -132,12 +133,12 @@ final class AdminUserDetailComponentTest extends WebTestCase
             ->findBy([
                 'user' => $customer,
             ]);
-        self::assertCount(1, $notifications);
-        self::assertSame('Witamy!', $notifications[0]->getTitle());
+        static::assertCount(1, $notifications);
+        static::assertSame('Witamy!', $notifications[0]->getTitle());
 
         /** @var AdminUserDetailComponent $state */
         $state = $component->component();
-        self::assertFalse($state->composingNotification);
+        static::assertFalse($state->composingNotification);
     }
 
     public function testAddingAChildPersistsItAndRecordsHistory(): void
@@ -165,11 +166,11 @@ final class AdminUserDetailComponentTest extends WebTestCase
         $component->call('saveNewChild');
 
         $children = $this->em->getRepository(Child::class)->findByOwner($customer);
-        self::assertCount(1, $children);
-        self::assertSame('Maja Nowak', $children[0]->getName());
+        static::assertCount(1, $children);
+        static::assertSame('Maja Nowak', $children[0]->getName());
 
         $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($customer);
-        self::assertCount(1, $logs);
-        self::assertStringContainsString('Maja Nowak', $logs[0]->getTitle());
+        static::assertCount(1, $logs);
+        static::assertStringContainsString('Maja Nowak', $logs[0]->getTitle());
     }
 }

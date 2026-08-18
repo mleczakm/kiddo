@@ -50,7 +50,7 @@ final readonly class KiddoMcpController
                     'jsonrpc' => '2.0',
                     'id' => null,
                     'error' => [
-                        'code' => -32600,
+                        'code' => -32_600,
                         'message' => 'MCP POST requires a JSON-RPC body (e.g. initialize / tools/list). Empty body is not valid.',
                     ],
                 ], JSON_THROW_ON_ERROR),

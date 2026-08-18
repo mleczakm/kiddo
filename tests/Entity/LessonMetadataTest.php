@@ -16,48 +16,48 @@ final class LessonMetadataTest extends TestCase
     {
         $metadata = $this->createMetadata('Senso Bobasy');
 
-        $this->assertSame('senso-bobasy', $metadata->slug);
+        static::assertSame('senso-bobasy', $metadata->slug);
     }
 
     public function testConstructorTransliteratesPolishCharactersInSlug(): void
     {
         $metadata = $this->createMetadata('Bałaganki');
 
-        $this->assertSame('balaganki', $metadata->slug);
+        static::assertSame('balaganki', $metadata->slug);
     }
 
     public function testConstructorKeepsExplicitSlug(): void
     {
         $metadata = $this->createMetadata('Senso Bobasy', 'custom-slug');
 
-        $this->assertSame('custom-slug', $metadata->slug);
+        static::assertSame('custom-slug', $metadata->slug);
     }
 
     public function testConstructorReplacesEmptySlug(): void
     {
         $metadata = $this->createMetadata('Senso Bobasy', '');
 
-        $this->assertSame('senso-bobasy', $metadata->slug);
+        static::assertSame('senso-bobasy', $metadata->slug);
     }
 
     public function testWithTitleRegeneratesSlug(): void
     {
         $metadata = $this->createMetadata('Senso Bobasy')->withTitle('Bałaganki');
 
-        $this->assertSame('Bałaganki', $metadata->title);
-        $this->assertSame('balaganki', $metadata->slug);
+        static::assertSame('Bałaganki', $metadata->title);
+        static::assertSame('balaganki', $metadata->slug);
     }
 
     public function testSlugifyIsDeterministicForSharedSeriesTitles(): void
     {
-        $this->assertSame(LessonMetadata::slugify('Senso Bobasy'), LessonMetadata::slugify('Senso Bobasy'));
+        static::assertSame(LessonMetadata::slugify('Senso Bobasy'), LessonMetadata::slugify('Senso Bobasy'));
     }
 
     public function testGetSafeVisualThemeKeepsValidHexColor(): void
     {
         $metadata = $this->createMetadata('Senso Bobasy', visualTheme: '#a1b2c3');
 
-        $this->assertSame('#a1b2c3', $metadata->getSafeVisualTheme());
+        static::assertSame('#a1b2c3', $metadata->getSafeVisualTheme());
     }
 
     public function testGetSafeVisualThemeFallsBackForLegacyFreeTextValue(): void
@@ -66,7 +66,7 @@ final class LessonMetadataTest extends TestCase
         // which is not valid CSS for background-color.
         $metadata = $this->createMetadata('Senso Bobasy', visualTheme: 'orange-100');
 
-        $this->assertSame(LessonMetadata::DEFAULT_VISUAL_THEME, $metadata->getSafeVisualTheme());
+        static::assertSame(LessonMetadata::DEFAULT_VISUAL_THEME, $metadata->getSafeVisualTheme());
     }
 
     private function createMetadata(string $title, ?string $slug = null, string $visualTheme = '#fff'): LessonMetadata

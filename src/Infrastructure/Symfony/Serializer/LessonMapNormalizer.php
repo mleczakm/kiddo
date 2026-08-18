@@ -17,6 +17,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
 {
     use NormalizerAwareTrait;
 
+    #[\Override]
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
         $denormalizeMap = function ($mapData) use ($format, $context): Map {
@@ -35,7 +36,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
                     if (is_array($lessonData)) {
                         // Common shapes produced by nested normalizers
                         $candidate =
-                            $lessonData['lessonId'] ?? $lessonData['id'] ?? null
+                            $lessonData['lessonId'] ?? $lessonData['id']
                                 ?? (
                                     is_array($lessonData['lesson'] ?? null) ? $lessonData['lesson']['id'] ?? null : null
                                 );
@@ -80,6 +81,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
         return $lessonMap;
     }
 
+    #[\Override]
     public function supportsDenormalization(
         mixed $data,
         string $type,
@@ -92,6 +94,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
     /**
      * @return array{lessons: array<mixed>, active: array<mixed>, past: array<mixed>, cancelled: array<mixed>}
      */
+    #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
         if (!$data instanceof LessonMap) {
@@ -117,11 +120,13 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
         ];
     }
 
+    #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof LessonMap;
     }
 
+    #[\Override]
     public function getSupportedTypes(?string $format): array
     {
         return [

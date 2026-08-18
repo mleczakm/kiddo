@@ -21,8 +21,7 @@ abstract class EntityAssembler implements \IteratorAggregate
     {
         $class = static::class;
         /** @var static $instance */
-        $instance = new $class();
-        return $instance;
+        return new $class();
     }
 
     /**
@@ -54,6 +53,7 @@ abstract class EntityAssembler implements \IteratorAggregate
     /**
      * @return \ArrayIterator<string, mixed>
      */
+    #[\Override]
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->properties);

@@ -67,16 +67,16 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $adminEmail2 = $emails->whereTo($admin2->getEmail())->first();
 
         // Subject contains user email and lesson title
-        self::assertStringContainsString('user@example.com', (string) $adminEmail1->getSubject());
-        self::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
-        self::assertStringContainsString('Joga', (string) $adminEmail2->getSubject());
+        static::assertStringContainsString('user@example.com', (string) $adminEmail1->getSubject());
+        static::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
+        static::assertStringContainsString('Joga', (string) $adminEmail2->getSubject());
 
         // Body contains key information
         $body1 = (string) ($adminEmail1->getHtmlBody() ?? $adminEmail1->getTextBody());
-        self::assertStringContainsString('user@example.com', $body1);
-        self::assertStringContainsString('Joga', $body1);
-        self::assertStringContainsString('Powód', $body1);
-        self::assertStringContainsString('Urlop', $body1);
+        static::assertStringContainsString('user@example.com', $body1);
+        static::assertStringContainsString('Joga', $body1);
+        static::assertStringContainsString('Powód', $body1);
+        static::assertStringContainsString('Urlop', $body1);
     }
 
     public function testDoesNotSendWhenNoAdmins(): void

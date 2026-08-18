@@ -27,7 +27,7 @@ class BookingRepository extends ServiceEntityRepository
     public function findExpiredPendingBookings(\DateTimeImmutable $expirationTime): array
     {
         /** @var array<Booking> $bookings */
-        $bookings = $this
+        return $this
             ->createQueryBuilder('b')
             ->leftJoin('b.payment', 'p')
             ->where('b.status = :status')
@@ -38,8 +38,6 @@ class BookingRepository extends ServiceEntityRepository
             ->setParameter('paidStatus', Payment::STATUS_PAID)
             ->getQuery()
             ->getResult();
-
-        return $bookings;
     }
 
     /**
@@ -48,14 +46,12 @@ class BookingRepository extends ServiceEntityRepository
     public function findActiveBookings(): array
     {
         /** @var array<Booking> $bookings */
-        $bookings = $this
+        return $this
             ->createQueryBuilder('b')
             ->where('b.status = :status')
             ->setParameter('status', Booking::STATUS_ACTIVE)
             ->getQuery()
             ->getResult();
-
-        return $bookings;
     }
 
     /**
@@ -76,7 +72,7 @@ class BookingRepository extends ServiceEntityRepository
     public function findVisibleForUser(User $user): array
     {
         /** @var list<Booking> $result */
-        $result = $this
+        return $this
             ->createQueryBuilder('b')
             ->select('b', 'l', 's', 'p')
             ->leftJoin('b.lessons', 'l')
@@ -94,8 +90,6 @@ class BookingRepository extends ServiceEntityRepository
             ->orderBy('l.schedule', 'ASC')
             ->getQuery()
             ->getResult();
-
-        return $result;
     }
 
     /**
@@ -133,9 +127,7 @@ class BookingRepository extends ServiceEntityRepository
         $qb->andWhere($orX);
 
         /** @var array<Booking> $bookings */
-        $bookings = $qb->getQuery()->getResult();
-
-        return $bookings;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -154,15 +146,13 @@ class BookingRepository extends ServiceEntityRepository
     public function findByLesson(Lesson $lesson): array
     {
         /** @var array<Booking> $bookings */
-        $bookings = $this
+        return $this
             ->createQueryBuilder('b')
             ->innerJoin('b.lessons', 'l')
             ->where('l.id = :lessonId')
             ->setParameter('lessonId', $lesson->getId(), 'ulid')
             ->getQuery()
             ->getResult();
-
-        return $bookings;
     }
 
     public function countCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): int
@@ -185,7 +175,7 @@ class BookingRepository extends ServiceEntityRepository
     public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
         /** @var array<Booking> $bookings */
-        $bookings = $this
+        return $this
             ->createQueryBuilder('b')
             ->leftJoin('b.lessons', 'l')
             ->leftJoin('b.user', 'u')
@@ -199,7 +189,5 @@ class BookingRepository extends ServiceEntityRepository
             ->orderBy('b.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
-
-        return $bookings;
     }
 }

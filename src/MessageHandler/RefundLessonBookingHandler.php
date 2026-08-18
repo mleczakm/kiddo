@@ -49,10 +49,12 @@ class RefundLessonBookingHandler
 
         $lesson = null;
         foreach ($booking->getLessons() as $booked) {
-            if ($booked->getId()->equals($command->getLessonId())) {
-                $lesson = $booked;
-                break;
+            if (!$booked->getId()->equals($command->getLessonId())) {
+                continue;
             }
+
+            $lesson = $booked;
+            break;
         }
 
         $isAdmin = in_array('ROLE_ADMIN', $command->getRefundedBy()->getRoles(), true);

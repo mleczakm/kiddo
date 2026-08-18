@@ -32,6 +32,7 @@ final class LessonModalPaymentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -75,19 +76,19 @@ final class LessonModalPaymentTest extends WebTestCase
 
         /** @var LessonModal $lessonModal */
         $lessonModal = $component->component();
-        self::assertSame('awaiting_payment', $lessonModal->paymentStatus);
-        self::assertNotNull($lessonModal->paymentCode);
+        static::assertSame('awaiting_payment', $lessonModal->paymentStatus);
+        static::assertNotNull($lessonModal->paymentCode);
 
         /** @var BookingRepository $bookings */
         $bookings = static::getContainer()->get(BookingRepository::class);
         $booking = $bookings->findOneBy([
             'user' => $user,
         ]);
-        self::assertInstanceOf(Booking::class, $booking);
+        static::assertInstanceOf(Booking::class, $booking);
         $bookedLesson = $booking->getLessons()->first();
-        self::assertNotFalse($bookedLesson);
-        self::assertSame((string) $lesson->getId(), (string) $bookedLesson->getId());
-        self::assertSame($lessonModal->paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
+        static::assertNotFalse($bookedLesson);
+        static::assertSame((string) $lesson->getId(), (string) $bookedLesson->getId());
+        static::assertSame($lessonModal->paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
     }
 
     public function testResumePaymentShowsExistingPaymentCode(): void
@@ -139,10 +140,10 @@ final class LessonModalPaymentTest extends WebTestCase
 
         /** @var LessonModal $lessonModal */
         $lessonModal = $component->component();
-        $this->assertSame('AB12', $lessonModal->paymentCode);
-        $this->assertSame('awaiting_payment', $lessonModal->paymentStatus);
-        $this->assertNotNull($lessonModal->getPaymentAmount());
-        $this->assertSame((string) $booking->getId(), $lessonModal->resumedBookingId);
+        static::assertSame('AB12', $lessonModal->paymentCode);
+        static::assertSame('awaiting_payment', $lessonModal->paymentStatus);
+        static::assertNotNull($lessonModal->getPaymentAmount());
+        static::assertSame((string) $booking->getId(), $lessonModal->resumedBookingId);
     }
 
     public function testResumePaymentViaEventFromBookingPreview(): void
@@ -189,12 +190,12 @@ final class LessonModalPaymentTest extends WebTestCase
         );
 
         $html = (string) $component->render();
-        $this->assertStringContainsString('data-action="live#emitUp"', $html);
-        $this->assertStringContainsString('data-live-event-param="resumePayment"', $html);
+        static::assertStringContainsString('data-action="live#emitUp"', $html);
+        static::assertStringContainsString('data-live-event-param="resumePayment"', $html);
         // Stimulus maps data-live-booking-id-param → bookingId (HTML attrs are case-insensitive,
         // so data-live-bookingId-param becomes bookingid and fails LiveArg resolution).
-        $this->assertStringContainsString('data-live-booking-id-param="' . $booking->getId() . '"', $html);
-        $this->assertStringNotContainsString('data-live-bookingId-param=', $html);
+        static::assertStringContainsString('data-live-booking-id-param="' . $booking->getId() . '"', $html);
+        static::assertStringNotContainsString('data-live-bookingId-param=', $html);
 
         $component->emit('resumePayment', [
             'bookingId' => (string) $booking->getId(),
@@ -202,9 +203,9 @@ final class LessonModalPaymentTest extends WebTestCase
 
         /** @var LessonModal $lessonModal */
         $lessonModal = $component->component();
-        $this->assertSame('XY99', $lessonModal->paymentCode);
-        $this->assertSame('awaiting_payment', $lessonModal->paymentStatus);
-        $this->assertSame((string) $booking->getId(), $lessonModal->resumedBookingId);
+        static::assertSame('XY99', $lessonModal->paymentCode);
+        static::assertSame('awaiting_payment', $lessonModal->paymentStatus);
+        static::assertSame((string) $booking->getId(), $lessonModal->resumedBookingId);
     }
 
     public function testResumePaymentRejectsMissingBookingIdArgument(): void
@@ -298,13 +299,13 @@ final class LessonModalPaymentTest extends WebTestCase
 
         /** @var LessonModal $awaiting */
         $awaiting = $component->component();
-        $this->assertSame('awaiting_payment', $awaiting->paymentStatus);
-        $this->assertNotNull($awaiting->watchedPaymentId);
+        static::assertSame('awaiting_payment', $awaiting->paymentStatus);
+        static::assertNotNull($awaiting->watchedPaymentId);
 
         $paymentId = $awaiting->watchedPaymentId;
         $em->clear();
         $reloaded = $em->find(Payment::class, Ulid::fromString($paymentId));
-        $this->assertNotNull($reloaded);
+        static::assertNotNull($reloaded);
         $reloaded->setStatus(Payment::STATUS_PAID);
         $em->flush();
         $em->clear();
@@ -312,8 +313,8 @@ final class LessonModalPaymentTest extends WebTestCase
         $component->call('refreshPaymentStatus');
         /** @var LessonModal $paid */
         $paid = $component->component();
-        $this->assertSame('paid', $paid->paymentStatus);
-        $this->assertNull($paid->paymentCode);
+        static::assertSame('paid', $paid->paymentStatus);
+        static::assertNull($paid->paymentCode);
     }
 
     public function testExistingBookingsAreVisibleForOwner(): void
@@ -358,9 +359,9 @@ final class LessonModalPaymentTest extends WebTestCase
         /** @var LessonModal $lessonModal */
         $lessonModal = $component->component();
         $existing = $lessonModal->getExistingBookings();
-        $this->assertCount(1, $existing);
-        $this->assertTrue($existing[0]->getId()->equals($booking->getId()));
-        $this->assertStringContainsString('Istniejące rezerwacje', (string) $component->render());
-        $this->assertStringContainsString('Zapłać', (string) $component->render());
+        static::assertCount(1, $existing);
+        static::assertTrue($existing[0]->getId()->equals($booking->getId()));
+        static::assertStringContainsString('Istniejące rezerwacje', (string) $component->render());
+        static::assertStringContainsString('Zapłać', (string) $component->render());
     }
 }

@@ -19,6 +19,7 @@ class ProfileComponentTest extends WebTestCase
 
     private EntityManagerInterface $entityManager;
 
+    #[\Override]
     protected function setUp(): void {}
 
     private function createUser(string ...$roles): User
@@ -54,8 +55,8 @@ class ProfileComponentTest extends WebTestCase
         $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
 
         $rendered = (string) $testComponent->render();
-        $this->assertStringContainsString('Informacje o użytkowniku', $rendered);
-        $this->assertStringContainsString($user->getEmail(), $rendered);
+        static::assertStringContainsString('Informacje o użytkowniku', $rendered);
+        static::assertStringContainsString($user->getEmail(), $rendered);
     }
 
     public function testAccountTypeDisplay(): void
@@ -66,7 +67,7 @@ class ProfileComponentTest extends WebTestCase
         $testComponent = $this->createLiveComponent(name: ProfileComponent::class, client: $client);
 
         $output = (string) $testComponent->render();
-        $this->assertStringContainsString('Administrator', $output);
+        static::assertStringContainsString('Administrator', $output);
     }
 
     public function testCanEditProfile(): void
@@ -81,8 +82,8 @@ class ProfileComponentTest extends WebTestCase
         $testComponent->call('startEditing');
         /** @var ProfileComponent $profileComponent */
         $profileComponent = $testComponent->component();
-        $this->assertTrue($profileComponent->isEditing);
-        $this->assertStringContainsString(
+        static::assertTrue($profileComponent->isEditing);
+        static::assertStringContainsString(
             '<form data-action="live#action" data-live-action-param="save">',
             (string) $testComponent->render(),
         );
@@ -95,21 +96,21 @@ class ProfileComponentTest extends WebTestCase
 
         /** @var ProfileComponent $profileComponent */
         $profileComponent = $testComponent->component();
-        $this->assertFalse($profileComponent->isEditing);
+        static::assertFalse($profileComponent->isEditing);
 
         // Check if user is updated in the database
         /** @var User $updatedUser */
         $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
 
-        $this->assertSame('New Name', $updatedUser->getName());
-        $this->assertSame('new.email@example.com', $updatedUser->getEmail());
-        $this->assertNotNull($updatedUser->getPhone());
+        static::assertSame('New Name', $updatedUser->getName());
+        static::assertSame('new.email@example.com', $updatedUser->getEmail());
+        static::assertNotNull($updatedUser->getPhone());
 
         // Check if the view is updated
         $rendered = (string) $testComponent->render();
-        $this->assertStringContainsString('New Name', $rendered);
-        $this->assertStringContainsString('new.email@example.com', $rendered);
-        $this->assertStringContainsString('500 600 700', $rendered);
+        static::assertStringContainsString('New Name', $rendered);
+        static::assertStringContainsString('new.email@example.com', $rendered);
+        static::assertStringContainsString('500 600 700', $rendered);
     }
 
     public function testEnablingNewsletterPersistsSubscription(): void
@@ -130,8 +131,8 @@ class ProfileComponentTest extends WebTestCase
 
         /** @var User $updatedUser */
         $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
-        self::assertTrue($updatedUser->isNewsletterSubscribed());
-        self::assertNotNull($updatedUser->getNewsletterConsentDate());
+        static::assertTrue($updatedUser->isNewsletterSubscribed());
+        static::assertNotNull($updatedUser->getNewsletterConsentDate());
     }
 
     public function testDisablingNewsletterClearsSubscription(): void
@@ -152,8 +153,8 @@ class ProfileComponentTest extends WebTestCase
 
         /** @var User $updatedUser */
         $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
-        self::assertFalse($updatedUser->isNewsletterSubscribed());
-        self::assertNull($updatedUser->getNewsletterConsentDate());
+        static::assertFalse($updatedUser->isNewsletterSubscribed());
+        static::assertNull($updatedUser->getNewsletterConsentDate());
     }
 
     public function testUnchangedNewsletterStateIsPreserved(): void
@@ -175,12 +176,12 @@ class ProfileComponentTest extends WebTestCase
 
         /** @var User $updatedUser */
         $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
-        self::assertSame('Renamed User', $updatedUser->getName());
-        self::assertTrue($updatedUser->isNewsletterSubscribed());
+        static::assertSame('Renamed User', $updatedUser->getName());
+        static::assertTrue($updatedUser->isNewsletterSubscribed());
         // Consent date was not overwritten: still within 1s of the original.
-        self::assertNotNull($updatedUser->getNewsletterConsentDate());
-        self::assertNotNull($originalConsent);
-        self::assertEqualsWithDelta(
+        static::assertNotNull($updatedUser->getNewsletterConsentDate());
+        static::assertNotNull($originalConsent);
+        static::assertEqualsWithDelta(
             $originalConsent->getTimestamp(),
             $updatedUser->getNewsletterConsentDate()->getTimestamp(),
             1.0,

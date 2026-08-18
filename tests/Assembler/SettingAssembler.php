@@ -34,6 +34,7 @@ final class SettingAssembler extends EntityAssembler
         ]);
     }
 
+    #[\Override]
     public function assemble(): Setting
     {
         $setting = new Setting();

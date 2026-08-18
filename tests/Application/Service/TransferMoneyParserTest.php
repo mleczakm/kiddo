@@ -19,11 +19,11 @@ class TransferMoneyParserTest extends TestCase
         $parser = new TransferMoneyParser();
         $result = $parser->transferMoneyStringToMoneyObject($amount);
 
-        $this->assertTrue(
+        static::assertTrue(
             $result->isEqualTo($expected),
             sprintf('Failed asserting that %s equals %s', $result->getAmount(), $expected->getAmount()),
         );
-        $this->assertSame('PLN', (string) $result->getCurrency());
+        static::assertSame('PLN', (string) $result->getCurrency());
     }
 
     /**

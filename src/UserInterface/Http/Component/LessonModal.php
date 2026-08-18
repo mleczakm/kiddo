@@ -464,10 +464,12 @@ class LessonModal extends AbstractController
         $lessonId = $this->lesson->getId();
         $belongsToLesson = false;
         foreach ($booking->getLessons() as $bookedLesson) {
-            if ($bookedLesson->getId()->equals($lessonId)) {
-                $belongsToLesson = true;
-                break;
+            if (!$bookedLesson->getId()->equals($lessonId)) {
+                continue;
             }
+
+            $belongsToLesson = true;
+            break;
         }
         if (!$belongsToLesson) {
             return;

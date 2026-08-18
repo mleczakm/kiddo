@@ -152,8 +152,6 @@ class WorkshopsAction extends AbstractController
             ->setParameter('now', $now);
 
         /** @var Lesson|null $lesson */
-        $lesson = $query->getOneOrNullResult();
-
-        return $lesson;
+        return $query->getOneOrNullResult();
     }
 }

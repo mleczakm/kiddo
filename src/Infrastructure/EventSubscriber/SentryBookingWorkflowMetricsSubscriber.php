@@ -15,6 +15,7 @@ final readonly class SentryBookingWorkflowMetricsSubscriber implements EventSubs
         private MetricsRecorderInterface $metrics,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

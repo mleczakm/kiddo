@@ -24,6 +24,7 @@ class SentryHttpMetricsSubscriberTest extends TestCase
 
     private HttpKernelInterface&MockObject $kernel;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->metrics = $this->createMock(MetricsRecorderInterface::class);
@@ -58,19 +59,19 @@ class SentryHttpMetricsSubscriberTest extends TestCase
         $this->metrics
             ->expects($this->exactly(2))
             ->method('count')
-            ->willReturnCallback(function (string $name, int|float $value) use (&$calls): void {
+            ->willReturnCallback(static function (string $name, int|float $value) use (&$calls): void {
                 $calls[] = [$name, $value];
             });
         $this->metrics
             ->expects($this->once())
             ->method('distribution')
-            ->with('requests.duration_ms', $this->greaterThan(0));
+            ->with('requests.duration_ms', static::greaterThan(0));
 
         $this->subscriber->onKernelResponse(
             new ResponseEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, new Response('', 404)),
         );
 
-        $this->assertSame(
+        static::assertSame(
             [
                 ['responses.total', 1],
                 ['responses.4xx',   1],

@@ -47,6 +47,7 @@ class TransferAssembler extends EntityAssembler
         return $this->with('payment', $payment);
     }
 
+    #[\Override]
     public function assemble(): Transfer
     {
         /** @var string $accountNumber */

@@ -15,12 +15,14 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
         private MailboxInterface $mailbox,
         private LoggerInterface $logger,
         private string $mailboxUsername,
+        #[\SensitiveParameter]
         private string $mailboxPassword,
     ) {}
 
     /**
      * @return iterable<MessageQueryInterface>
      */
+    #[\Override]
     public function __invoke(): iterable
     {
         if ($this->mailboxUsername === '' || $this->mailboxPassword === '') {

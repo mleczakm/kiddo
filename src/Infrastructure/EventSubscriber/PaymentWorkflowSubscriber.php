@@ -16,6 +16,7 @@ readonly class PaymentWorkflowSubscriber implements EventSubscriberInterface
         private MessageBusInterface $messageBus,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

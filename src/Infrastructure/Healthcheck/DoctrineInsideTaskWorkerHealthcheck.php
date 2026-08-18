@@ -17,6 +17,7 @@ class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
         private readonly CacheInterface $cache,
     ) {}
 
+    #[\Override]
     public function check(): Response
     {
         $retry = 0;
@@ -29,7 +30,7 @@ class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
                 $retry++;
 
                 if ($retry <= 5) {
-                    usleep(100000); // 100ms
+                    usleep(100_000); // 100ms
                     continue;
                 }
 

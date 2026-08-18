@@ -23,6 +23,7 @@ class UpcomingLessonsComponentTest extends TestCase
 
     private UpcomingLessonsComponent $component;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lessonRepository = $this->createMock(LessonRepository::class);
@@ -30,6 +31,7 @@ class UpcomingLessonsComponentTest extends TestCase
         $this->component = new UpcomingLessonsComponent($this->lessonRepository);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         Clock::set(new NativeClock());
@@ -44,7 +46,7 @@ class UpcomingLessonsComponentTest extends TestCase
 
         $component = new UpcomingLessonsComponent($this->lessonRepository);
 
-        $this->assertEquals('2024-02-20', $component->week);
+        static::assertSame('2024-02-20', $component->week);
     }
 
     public function testGetLessonsCallsRepositoryWithCorrectDateRange(): void
@@ -58,8 +60,12 @@ class UpcomingLessonsComponentTest extends TestCase
             ->expects($this->once())
             ->method('findUpcomingInRange')
             ->with(
-                $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
-                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d')),
+                static::callback(
+                    static fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d'),
+                ),
+                static::callback(
+                    static fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'),
+                ),
             )
             ->willReturn([]);
 
@@ -72,7 +78,7 @@ class UpcomingLessonsComponentTest extends TestCase
 
         $weekStart = $this->component->getWeekStart();
 
-        $this->assertEquals('2024-03-10', $weekStart->format('Y-m-d'));
+        static::assertSame('2024-03-10', $weekStart->format('Y-m-d'));
     }
 
     public function testGetWeekEndReturnsCorrectDate(): void
@@ -81,7 +87,7 @@ class UpcomingLessonsComponentTest extends TestCase
 
         $weekEnd = $this->component->getWeekEnd();
 
-        $this->assertEquals('2024-03-17', $weekEnd->format('Y-m-d'));
+        static::assertSame('2024-03-17', $weekEnd->format('Y-m-d'));
     }
 
     public function testGetLessonsReturnsRepositoryResults(): void
@@ -96,8 +102,8 @@ class UpcomingLessonsComponentTest extends TestCase
 
         $result = $this->component->getLessons();
 
-        $this->assertSame($expectedLessons, $result);
-        $this->assertCount(3, $result);
+        static::assertSame($expectedLessons, $result);
+        static::assertCount(3, $result);
     }
 
     public function testWeekNavigationCalculatesCorrectDates(): void
@@ -115,8 +121,12 @@ class UpcomingLessonsComponentTest extends TestCase
             $weekStart = $this->component->getWeekStart();
             $weekEnd = $this->component->getWeekEnd();
 
-            $this->assertEquals($expectedStart, $weekStart->format('Y-m-d'), "Week start failed for date: {$weekDate}");
-            $this->assertEquals($expectedEnd, $weekEnd->format('Y-m-d'), "Week end failed for date: {$weekDate}");
+            static::assertEquals(
+                $expectedStart,
+                $weekStart->format('Y-m-d'),
+                "Week start failed for date: {$weekDate}",
+            );
+            static::assertEquals($expectedEnd, $weekEnd->format('Y-m-d'), "Week end failed for date: {$weekDate}");
         }
     }
 
@@ -126,16 +136,16 @@ class UpcomingLessonsComponentTest extends TestCase
 
         $result = $this->component->getLessons();
 
-        $this->assertCount(0, $result);
+        static::assertCount(0, $result);
     }
 
     public function testToggleCancelledChangesShowCancelledState(): void
     {
-        $this->assertFalse($this->component->showCancelled);
+        static::assertFalse($this->component->showCancelled);
 
         $this->component->toggleCancelled();
 
-        $this->assertTrue($this->component->showCancelled);
+        static::assertTrue($this->component->showCancelled);
     }
 
     public function testGetLessonsCallsRepositoryWithShowCancelledParameter(): void
@@ -150,8 +160,12 @@ class UpcomingLessonsComponentTest extends TestCase
             ->expects($this->once())
             ->method('findUpcomingInRange')
             ->with(
-                $this->callback(fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')),
-                $this->callback(fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d')),
+                static::callback(
+                    static fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d'),
+                ),
+                static::callback(
+                    static fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'),
+                ),
                 true, // showCancelled = true
             )
             ->willReturn([]);
@@ -161,7 +175,7 @@ class UpcomingLessonsComponentTest extends TestCase
 
     public function testDefaultShowCancelledIsFalse(): void
     {
-        $this->assertFalse($this->component->showCancelled);
+        static::assertFalse($this->component->showCancelled);
     }
 
     private function createMockLesson(string $title): Lesson

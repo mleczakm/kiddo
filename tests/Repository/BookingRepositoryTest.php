@@ -23,6 +23,7 @@ class BookingRepositoryTest extends KernelTestCase
 
     private EntityManagerInterface $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
@@ -57,12 +58,12 @@ class BookingRepositoryTest extends KernelTestCase
         // Assert: Verify the booking was saved correctly
         $savedBooking = $this->bookingRepository->find($booking->getId());
 
-        $this->assertNotNull($savedBooking);
-        $this->assertEquals($booking->getId(), $savedBooking->getId());
-        $this->assertEquals(Booking::STATUS_PENDING, $savedBooking->getStatus());
-        $this->assertEquals('Test booking notes', $savedBooking->getNotes());
-        $this->assertEquals($user->getId(), $savedBooking->getUser()->getId());
-        $this->assertInstanceOf(\DateTimeImmutable::class, $savedBooking->getCreatedAt());
+        static::assertNotNull($savedBooking);
+        static::assertEquals($booking->getId(), $savedBooking->getId());
+        static::assertEquals(Booking::STATUS_PENDING, $savedBooking->getStatus());
+        static::assertSame('Test booking notes', $savedBooking->getNotes());
+        static::assertEquals($user->getId(), $savedBooking->getUser()->getId());
+        static::assertInstanceOf(\DateTimeImmutable::class, $savedBooking->getCreatedAt());
     }
 
     public function testSaveBookingWithPayment(): void
@@ -95,11 +96,11 @@ class BookingRepositoryTest extends KernelTestCase
         // Assert: Verify the booking and payment were saved correctly
         $savedBooking = $this->bookingRepository->find($booking->getId());
 
-        $this->assertNotNull($savedBooking);
-        $this->assertNotNull($savedBooking->getPayment());
-        $this->assertEquals($payment->getId(), $savedBooking->getPayment()->getId());
-        $this->assertEquals(Booking::STATUS_ACTIVE, $savedBooking->getStatus());
-        $this->assertEquals('150.00', $savedBooking->getPayment()->getAmount()->getAmount()->__toString());
+        static::assertNotNull($savedBooking);
+        static::assertNotNull($savedBooking->getPayment());
+        static::assertEquals($payment->getId(), $savedBooking->getPayment()->getId());
+        static::assertEquals(Booking::STATUS_ACTIVE, $savedBooking->getStatus());
+        static::assertSame('150.00', $savedBooking->getPayment()->getAmount()->getAmount()->__toString());
     }
 
     public function testSaveBookingWithLessons(): void
@@ -131,16 +132,16 @@ class BookingRepositoryTest extends KernelTestCase
         // Assert: Verify the booking and lessons were saved correctly
         $savedBooking = $this->bookingRepository->find($booking->getId());
 
-        $this->assertNotNull($savedBooking);
-        $this->assertCount(2, $savedBooking->getLessons());
+        static::assertNotNull($savedBooking);
+        static::assertCount(2, $savedBooking->getLessons());
 
         $lessonTitles = [];
         foreach ($savedBooking->getLessons() as $lesson) {
             $lessonTitles[] = $lesson->getMetadata()->title;
         }
 
-        $this->assertContains('Art Workshop', $lessonTitles);
-        $this->assertContains('Music Class', $lessonTitles);
+        static::assertContains('Art Workshop', $lessonTitles);
+        static::assertContains('Music Class', $lessonTitles);
     }
 
     public function testSaveCompleteBookingWithAllData(): void
@@ -181,20 +182,20 @@ class BookingRepositoryTest extends KernelTestCase
         // Assert: Verify all data was saved correctly
         $savedBooking = $this->bookingRepository->find($booking->getId());
 
-        $this->assertNotNull($savedBooking);
-        $this->assertEquals(Booking::STATUS_CONFIRMED, $savedBooking->getStatus());
-        $this->assertEquals('Complete booking with all data', $savedBooking->getNotes());
-        $this->assertEquals($createdAt->format('Y-m-d H:i:s'), $savedBooking->getCreatedAt()->format('Y-m-d H:i:s'));
-        $this->assertEquals($user->getId(), $savedBooking->getUser()->getId());
+        static::assertNotNull($savedBooking);
+        static::assertEquals(Booking::STATUS_CONFIRMED, $savedBooking->getStatus());
+        static::assertSame('Complete booking with all data', $savedBooking->getNotes());
+        static::assertEquals($createdAt->format('Y-m-d H:i:s'), $savedBooking->getCreatedAt()->format('Y-m-d H:i:s'));
+        static::assertEquals($user->getId(), $savedBooking->getUser()->getId());
 
         $savedPayment = $savedBooking->getPayment();
-        $this->assertNotNull($savedPayment);
-        $this->assertEquals($payment->getId(), $savedPayment->getId());
-        $this->assertCount(1, $savedBooking->getLessons());
+        static::assertNotNull($savedPayment);
+        static::assertEquals($payment->getId(), $savedPayment->getId());
+        static::assertCount(1, $savedBooking->getLessons());
         /** @var Lesson $firstLesson */
         $firstLesson = $savedBooking->getLessons()->first();
-        $this->assertNotFalse($firstLesson);
-        $this->assertEquals('Complete Workshop', $firstLesson->getMetadata()->title);
+        static::assertNotFalse($firstLesson);
+        static::assertSame('Complete Workshop', $firstLesson->getMetadata()->title);
     }
 
     public function testSaveBookingWithDifferentStatuses(): void
@@ -230,16 +231,16 @@ class BookingRepositoryTest extends KernelTestCase
         // Assert: Verify all bookings were saved with correct statuses
         foreach ($bookings as $originalBooking) {
             $savedBooking = $this->bookingRepository->find($originalBooking->getId());
-            $this->assertNotNull($savedBooking);
-            $this->assertEquals($originalBooking->getStatus(), $savedBooking->getStatus());
+            static::assertNotNull($savedBooking);
+            static::assertEquals($originalBooking->getStatus(), $savedBooking->getStatus());
         }
 
         // Verify we can find bookings by status
         $activeBookings = $this->bookingRepository->findBy([
             'status' => Booking::STATUS_ACTIVE,
         ]);
-        $this->assertCount(1, $activeBookings);
-        $this->assertEquals(Booking::STATUS_ACTIVE, $activeBookings[0]->getStatus());
+        static::assertCount(1, $activeBookings);
+        static::assertEquals(Booking::STATUS_ACTIVE, $activeBookings[0]->getStatus());
     }
 
     public function testSaveBookingAndRetrieveByUser(): void
@@ -272,15 +273,15 @@ class BookingRepositoryTest extends KernelTestCase
             'user' => $user2->getId(),
         ]);
 
-        $this->assertCount(2, $user1Bookings);
-        $this->assertCount(1, $user2Bookings);
+        static::assertCount(2, $user1Bookings);
+        static::assertCount(1, $user2Bookings);
 
         // Verify the bookings belong to the correct users
         foreach ($user1Bookings as $booking) {
-            $this->assertEquals($user1->getId(), $booking->getUser()->getId());
+            static::assertEquals($user1->getId(), $booking->getUser()->getId());
         }
 
-        $this->assertEquals($user2->getId(), $user2Bookings[0]->getUser()->getId());
+        static::assertEquals($user2->getId(), $user2Bookings[0]->getUser()->getId());
     }
 
     public function testUpdateBookingStatus(): void
@@ -301,9 +302,9 @@ class BookingRepositoryTest extends KernelTestCase
 
         // Assert: Verify the status was updated
         $updatedBooking = $this->bookingRepository->find($booking->getId());
-        $this->assertNotNull($updatedBooking);
-        $this->assertEquals(Booking::STATUS_ACTIVE, $updatedBooking->getStatus());
-        $this->assertInstanceOf(\DateTimeImmutable::class, $updatedBooking->getUpdatedAt());
+        static::assertNotNull($updatedBooking);
+        static::assertEquals(Booking::STATUS_ACTIVE, $updatedBooking->getStatus());
+        static::assertInstanceOf(\DateTimeImmutable::class, $updatedBooking->getUpdatedAt());
     }
 
     public function testFindForUserAndLessonReturnsMatchingBookings(): void
@@ -338,8 +339,8 @@ class BookingRepositoryTest extends KernelTestCase
 
         $result = $this->bookingRepository->findForUserAndLesson($user, $lesson);
 
-        $this->assertCount(1, $result);
-        $this->assertTrue($result[0]->getId()->equals($matching->getId()));
+        static::assertCount(1, $result);
+        static::assertTrue($result[0]->getId()->equals($matching->getId()));
     }
 
     public function testFindForUserAndLessonsReturnsMatchingBookings(): void
@@ -364,11 +365,11 @@ class BookingRepositoryTest extends KernelTestCase
 
         $result = $this->bookingRepository->findForUserAndLessons($user, [$lessonA, $lessonB]);
 
-        $this->assertCount(2, $result);
+        static::assertCount(2, $result);
         $ids = array_map(static fn(Booking $b) => (string) $b->getId(), $result);
-        $this->assertContains((string) $bookingA->getId(), $ids);
-        $this->assertContains((string) $bookingB->getId(), $ids);
-        $this->assertNotContains((string) $bookingC->getId(), $ids);
+        static::assertContains((string) $bookingA->getId(), $ids);
+        static::assertContains((string) $bookingB->getId(), $ids);
+        static::assertNotContains((string) $bookingC->getId(), $ids);
     }
 
     public function testFindForUserAndLessonsReturnsEmptyForEmptyIds(): void
@@ -377,6 +378,6 @@ class BookingRepositoryTest extends KernelTestCase
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->assertSame([], $this->bookingRepository->findForUserAndLessons($user, []));
+        static::assertSame([], $this->bookingRepository->findForUserAndLessons($user, []));
     }
 }

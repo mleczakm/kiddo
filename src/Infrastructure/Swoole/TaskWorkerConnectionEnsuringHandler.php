@@ -16,6 +16,7 @@ final readonly class TaskWorkerConnectionEnsuringHandler implements TaskHandler
         private TaskHandler $innerHandler,
     ) {}
 
+    #[\Override]
     public function handle(Server $server, Task $task): void
     {
         $this->connectionEnsurer->ensureConnection();

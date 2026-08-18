@@ -35,8 +35,8 @@ final class ChatToolsApiTest extends WebTestCase
         /** @var array{tools: list<array{name: string}>} $payload */
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $names = array_column($payload['tools'], 'name');
-        self::assertContains('user.list_upcoming_lessons', $names);
-        self::assertNotContains('admin.today_schedule', $names);
+        static::assertContains('user.list_upcoming_lessons', $names);
+        static::assertNotContains('admin.today_schedule', $names);
     }
 
     public function testMcpInitializeHandshake(): void
@@ -77,10 +77,10 @@ final class ChatToolsApiTest extends WebTestCase
         );
 
         self::assertResponseIsSuccessful();
-        self::assertNotEmpty($client->getResponse()->headers->get('Mcp-Session-Id'));
+        static::assertNotEmpty($client->getResponse()->headers->get('Mcp-Session-Id'));
         /** @var array{result: array{serverInfo: array{name: string}}} $payload */
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertSame('kiddo', $payload['result']['serverInfo']['name']);
+        static::assertSame('kiddo', $payload['result']['serverInfo']['name']);
     }
 
     public function testSignedUrlWorksForGuests(): void
@@ -108,10 +108,10 @@ final class ChatToolsApiTest extends WebTestCase
         self::assertResponseIsSuccessful();
         /** @var array{signed_url: string, guest: bool, chat_token: string, dynamic_variables: array{kiddo_is_guest: string}} $payload */
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertSame('wss://example.test/conversation', $payload['signed_url']);
-        self::assertTrue($payload['guest']);
-        self::assertSame('true', $payload['dynamic_variables']['kiddo_is_guest']);
-        self::assertNotEmpty($payload['chat_token']);
+        static::assertSame('wss://example.test/conversation', $payload['signed_url']);
+        static::assertTrue($payload['guest']);
+        static::assertSame('true', $payload['dynamic_variables']['kiddo_is_guest']);
+        static::assertNotEmpty($payload['chat_token']);
     }
 
     public function testGuestTokenCanListPublicToolsButNotUserProfile(): void
@@ -139,7 +139,7 @@ final class ChatToolsApiTest extends WebTestCase
         self::assertResponseStatusCodeSame(422);
         /** @var array{ok: bool, summary: string} $payload */
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertFalse($payload['ok']);
-        self::assertStringContainsString('zalogować', $payload['summary']);
+        static::assertFalse($payload['ok']);
+        static::assertStringContainsString('zalogować', $payload['summary']);
     }
 }

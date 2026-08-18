@@ -127,9 +127,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         $startDate = new \DateTimeImmutable($this->week);
         $endDate = $startDate->modify('+7 days');
 
-        $lessons = $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, $this->showCancelled);
-
-        return $lessons;
+        return $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, $this->showCancelled);
     }
 
     /**
@@ -220,7 +218,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         // Preload existing note if any
         $booking = $this->bookingRepository->find(Ulid::fromString($bookingId));
         if ($booking instanceof Booking) {
-            $this->adminNote = (string) ($booking->getNotes() ?? '');
+            $this->adminNote = $booking->getNotes() ?? '';
         } else {
             $this->adminNote = null;
         }
@@ -379,8 +377,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             ->orderBy('u.name', 'ASC')
             ->setMaxResults(10);
         /** @var list<User> $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**

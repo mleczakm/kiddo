@@ -22,7 +22,7 @@ final class InAppNotificationServiceTest extends KernelTestCase
         $em->flush();
 
         $service = self::getContainer()->get(InAppNotificationService::class);
-        self::assertInstanceOf(InAppNotificationService::class, $service);
+        static::assertInstanceOf(InAppNotificationService::class, $service);
         $notification = $service->notify(
             $user,
             'Hello',
@@ -31,15 +31,15 @@ final class InAppNotificationServiceTest extends KernelTestCase
             NotificationSeverity::Success,
         );
 
-        self::assertSame('Hello', $notification->getTitle());
-        self::assertSame('Body with <strong>HTML</strong>', $notification->getBody());
-        self::assertSame('/panel', $notification->getUrl());
-        self::assertSame(NotificationSeverity::Success, $notification->getSeverity());
-        self::assertTrue($notification->isUnread());
+        static::assertSame('Hello', $notification->getTitle());
+        static::assertSame('Body with <strong>HTML</strong>', $notification->getBody());
+        static::assertSame('/panel', $notification->getUrl());
+        static::assertSame(NotificationSeverity::Success, $notification->getSeverity());
+        static::assertTrue($notification->isUnread());
 
         /** @var NotificationRepository $repo */
         $repo = self::getContainer()->get(NotificationRepository::class);
-        self::assertSame(1, $repo->countUnreadForUser($user));
+        static::assertSame(1, $repo->countUnreadForUser($user));
     }
 
     public function testNotifyAdminsCreatesOnePerAdmin(): void
@@ -54,15 +54,15 @@ final class InAppNotificationServiceTest extends KernelTestCase
         $em->flush();
 
         $service = self::getContainer()->get(InAppNotificationService::class);
-        self::assertInstanceOf(InAppNotificationService::class, $service);
+        static::assertInstanceOf(InAppNotificationService::class, $service);
         $created = $service->notifyAdmins('Admin news', 'Details', '/admin', NotificationSeverity::Warning);
 
-        self::assertCount(2, $created);
+        static::assertCount(2, $created);
 
         /** @var NotificationRepository $repo */
         $repo = self::getContainer()->get(NotificationRepository::class);
-        self::assertSame(1, $repo->countUnreadForUser($admin1));
-        self::assertSame(1, $repo->countUnreadForUser($admin2));
-        self::assertSame(0, $repo->countUnreadForUser($user));
+        static::assertSame(1, $repo->countUnreadForUser($admin1));
+        static::assertSame(1, $repo->countUnreadForUser($admin2));
+        static::assertSame(0, $repo->countUnreadForUser($user));
     }
 }

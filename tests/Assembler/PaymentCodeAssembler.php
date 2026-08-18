@@ -32,6 +32,7 @@ class PaymentCodeAssembler extends EntityAssembler
         return $this->with('createdAt', $createdAt);
     }
 
+    #[\Override]
     public function assemble(): PaymentCode
     {
         /** @var Payment $payment */

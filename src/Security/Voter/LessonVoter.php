@@ -31,14 +31,17 @@ final class LessonVoter extends Voter
         private readonly Security $security,
     ) {}
 
+    #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [self::VIEW, self::MANAGE], true) && $subject instanceof Lesson;
     }
 
+    #[\Override]
     protected function voteOnAttribute(
         string $attribute,
         mixed $subject,
+        #[\SensitiveParameter]
         TokenInterface $token,
         ?Vote $vote = null,
     ): bool {

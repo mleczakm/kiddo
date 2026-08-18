@@ -19,14 +19,12 @@ class FinanceContactRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return FinanceContact[]
+     * @return list<FinanceContact>
      */
     #[\Override]
     public function findAll(): array
     {
-        /** @var FinanceContact[] $contacts */
-        $contacts = $this->createQueryBuilder('fc')->orderBy('fc.createdAt', 'ASC')->getQuery()->getResult();
-
-        return $contacts;
+        /** @var list<FinanceContact> $contacts */
+        return $this->createQueryBuilder('fc')->orderBy('fc.createdAt', 'ASC')->getQuery()->getResult();
     }
 }

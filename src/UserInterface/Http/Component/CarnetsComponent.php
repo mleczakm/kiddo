@@ -48,9 +48,11 @@ class CarnetsComponent extends AbstractController
         $carnets = [];
 
         foreach ($bookings as $booking) {
-            if ($booking->getLessonsMap()->lessons->count() > 1) {
-                $carnets[] = $booking;
+            if ($booking->getLessonsMap()->lessons->count() <= 1) {
+                continue;
             }
+
+            $carnets[] = $booking;
         }
 
         return array_reverse($carnets);

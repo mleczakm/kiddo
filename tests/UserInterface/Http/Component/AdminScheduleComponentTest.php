@@ -39,6 +39,7 @@ final class AdminScheduleComponentTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -55,8 +56,8 @@ final class AdminScheduleComponentTest extends WebTestCase
         $component = $this->createLiveComponent(name: AdminScheduleComponent::class, client: $this->client);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Harmonogram', $html);
-        self::assertStringContainsString('Brak zajęć w wybranym tygodniu', $html);
+        static::assertStringContainsString('Harmonogram', $html);
+        static::assertStringContainsString('Brak zajęć w wybranym tygodniu', $html);
     }
 
     public function testDisplaysSeriesWithTicketsPeriodTypeAndStatus(): void
@@ -94,17 +95,17 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Harmonogram', $html);
+        static::assertStringContainsString('Harmonogram', $html);
         // Type label (weekly)
-        self::assertStringContainsString('Cotygodniowa', $html);
+        static::assertStringContainsString('Cotygodniowa', $html);
         // Both occurrences render nested under the series
-        self::assertStringContainsString($weekStart->modify('+1 day')->format('d.m.Y'), $html);
-        self::assertStringContainsString($weekStart->modify('+3 days')->format('d.m.Y'), $html);
+        static::assertStringContainsString($weekStart->modify('+1 day')->format('d.m.Y'), $html);
+        static::assertStringContainsString($weekStart->modify('+3 days')->format('d.m.Y'), $html);
         // Status badge Active
-        self::assertStringContainsString('Aktywne', $html);
+        static::assertStringContainsString('Aktywne', $html);
         // Ticket type tokens (by enum value)
-        self::assertStringContainsString('jednorazowy', $html);
-        self::assertStringContainsString('karnet 4 wejścia', $html);
+        static::assertStringContainsString('jednorazowy', $html);
+        static::assertStringContainsString('karnet 4 wejścia', $html);
     }
 
     public function testLessonWithoutSeriesRendersAsOwnRow(): void
@@ -120,7 +121,7 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Standalone Lesson', $html);
+        static::assertStringContainsString('Standalone Lesson', $html);
     }
 
     public function testCancelledSeriesHiddenByDefault(): void
@@ -139,7 +140,7 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringNotContainsString('Hidden Series Lesson', $html);
+        static::assertStringNotContainsString('Hidden Series Lesson', $html);
     }
 
     public function testOpenAddModalRendersWorkshopEditor(): void
@@ -149,7 +150,7 @@ final class AdminScheduleComponentTest extends WebTestCase
         $component->call('openAddModal');
 
         $html = (string) $component->render();
-        self::assertStringContainsString('Kreator Warsztatów', $html);
+        static::assertStringContainsString('Kreator Warsztatów', $html);
     }
 
     public function testStartEditRendersWorkshopEditorPrefilledWithSeriesData(): void
@@ -172,9 +173,9 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
 
         $html = (string) $component->render();
-        self::assertStringContainsString('Edytuj warsztat', $html);
+        static::assertStringContainsString('Edytuj warsztat', $html);
         // Confirms the series id was correctly resolved to a Ulid and its data loaded
-        self::assertStringContainsString('Editable Series Title', $html);
+        static::assertStringContainsString('Editable Series Title', $html);
     }
 
     public function testClickingSeriesCanOpenPreviewWithLessonsAndEditAction(): void
@@ -196,11 +197,11 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
 
         $html = (string) $component->render();
-        self::assertStringContainsString('Podgląd warsztatu', $html);
-        self::assertStringContainsString('Preview Series Title', $html);
-        self::assertStringContainsString('Harmonogram i Rezerwacje', $html);
-        self::assertStringContainsString('Edytuj', $html);
-        self::assertStringContainsString('Zakończ cykl', $html);
+        static::assertStringContainsString('Podgląd warsztatu', $html);
+        static::assertStringContainsString('Preview Series Title', $html);
+        static::assertStringContainsString('Harmonogram i Rezerwacje', $html);
+        static::assertStringContainsString('Edytuj', $html);
+        static::assertStringContainsString('Zakończ cykl', $html);
     }
 
     public function testEndSeriesOpensEditorWithTodayAsLastOccurrence(): void
@@ -222,8 +223,8 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
 
         $html = (string) $component->render();
-        self::assertStringContainsString('Kończysz cykl dzisiaj', $html);
-        self::assertStringContainsString(new \DateTimeImmutable('today')->format('Y-m-d'), $html);
+        static::assertStringContainsString('Kończysz cykl dzisiaj', $html);
+        static::assertStringContainsString(new \DateTimeImmutable('today')->format('Y-m-d'), $html);
     }
 
     public function testToggleLessonStatusDisablesAndEnables(): void
@@ -251,8 +252,8 @@ final class AdminScheduleComponentTest extends WebTestCase
         $this->em->clear();
 
         $reloaded = $this->em->getRepository($lesson::class)->find($lesson->getId());
-        self::assertNotNull($reloaded);
-        self::assertSame('cancelled', $reloaded->status);
+        static::assertNotNull($reloaded);
+        static::assertSame('cancelled', $reloaded->status);
 
         // Reactivate
         $component->call('toggleLessonStatus', [
@@ -260,8 +261,8 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
         $this->em->clear();
         $reloaded2 = $this->em->getRepository($lesson::class)->find($lesson->getId());
-        self::assertNotNull($reloaded2);
-        self::assertSame('active', $reloaded2->status);
+        static::assertNotNull($reloaded2);
+        static::assertSame('active', $reloaded2->status);
     }
 
     public function testWeekFilteringOnlyShowsSelectedWeek(): void
@@ -291,8 +292,8 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('In Week Lesson', $html);
-        self::assertStringNotContainsString('Out Lesson', $html);
+        static::assertStringContainsString('In Week Lesson', $html);
+        static::assertStringNotContainsString('Out Lesson', $html);
     }
 
     public function testHostOnlySeesLessonsTheyInstruct(): void
@@ -328,8 +329,8 @@ final class AdminScheduleComponentTest extends WebTestCase
         ]);
         $html = (string) $component->render();
 
-        self::assertStringContainsString('Own Lesson', $html);
-        self::assertStringNotContainsString('Other Lesson', $html);
+        static::assertStringContainsString('Own Lesson', $html);
+        static::assertStringNotContainsString('Other Lesson', $html);
     }
 
     private function createLesson(string $title, \DateTimeImmutable $schedule): Lesson
