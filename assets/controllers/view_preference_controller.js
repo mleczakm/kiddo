@@ -5,7 +5,7 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     static values = {
-        storageKey: { type: String, default: 'kiddo.workshops.view' },
+        storageKey: { type: String, default: 'kiddo.workshops.view.v2' },
     };
 
     connect() {
@@ -14,7 +14,7 @@ export default class extends Controller {
 
     toggle(event) {
         const button = event.currentTarget;
-        const newView = button.dataset.view;
+        const newView = button.dataset.viewPreference;
 
         if (newView && (newView === 'grid' || newView === 'calendar')) {
             this.#saveToStorage(newView);
