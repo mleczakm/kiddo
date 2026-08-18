@@ -50,7 +50,7 @@
                                 <input type="checkbox"
                                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                        {{ role in this.roles ? 'checked' : '' }}
-                                       data-action="live#action"
+                                       data-action="change->live#action"
                                        data-live-action-param="toggleRole"
                                        data-live-role-param="{{ role }}" />
                                 <span class="text-slate-700 font-medium">{{ label }}</span>
