@@ -69,7 +69,8 @@ class ChildrenManager extends AbstractController
 
         $birthday = null;
         if ($this->childBirthday) {
-            $birthday = \DateTimeImmutable::createFromFormat('Y-m-d', $this->childBirthday) ?: null;
+            $parsedBirthday = \DateTimeImmutable::createFromFormat('Y-m-d', $this->childBirthday);
+            $birthday = $parsedBirthday === false ? null : $parsedBirthday;
             if ($birthday === null) {
                 $this->addFlash('error', 'Invalid birthday format.');
                 return;

@@ -79,7 +79,8 @@ final class ToolInvokeAction extends AbstractController
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $decoded = json_decode($request->getContent() ?: '{}', true);
+        $content = $request->getContent();
+        $decoded = json_decode($content === '' ? '{}' : $content, true);
         if (!is_array($decoded)) {
             return $this->json([
                 'error' => 'Invalid JSON body',

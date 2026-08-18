@@ -86,7 +86,9 @@ class Series
                 'id' => Order::Ascending,
             ]);
 
-        return $this->lessons->matching($criteria)->first() ?: null;
+        $lesson = $this->lessons->matching($criteria)->first();
+
+        return $lesson === false ? null : $lesson;
     }
 
     public function getLessonsLt(Lesson $lesson): ?Lesson
@@ -98,7 +100,9 @@ class Series
                 'id' => Order::Descending,
             ]);
 
-        return $this->lessons->matching($criteria)->first() ?: null;
+        $lesson = $this->lessons->matching($criteria)->first();
+
+        return $lesson === false ? null : $lesson;
     }
 
     public function getFirstLesson(): Lesson

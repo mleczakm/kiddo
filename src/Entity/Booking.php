@@ -510,7 +510,9 @@ class Booking
 
     public function getLesson(): ?Lesson
     {
-        return $this->lessons->first() ?: null;
+        $lesson = $this->lessons->first();
+
+        return $lesson === false ? null : $lesson;
     }
 
     public function getCancellationReason(): ?string

@@ -28,7 +28,8 @@ final readonly class ProcessCountHealthcheck implements CheckInterface
     #[\Override]
     public function check(): Response
     {
-        $count = count(glob('/proc/[0-9]*', GLOB_ONLYDIR) ?: []);
+        $processDirectories = glob('/proc/[0-9]*', GLOB_ONLYDIR);
+        $count = count($processDirectories === false ? [] : $processDirectories);
 
         if ($count > $this->maxProcesses) {
             return new Response(

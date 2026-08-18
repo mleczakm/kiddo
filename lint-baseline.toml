@@ -193,12 +193,6 @@ message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
-code = "no-insecure-comparison"
-message = "Insecure comparison of sensitive data."
-count = 3
-
-[[issues]]
 file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -392,12 +386,6 @@ count = 1
 
 [[issues]]
 file = "src/Entity/Booking.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 1
-
-[[issues]]
-file = "src/Entity/Booking.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -505,12 +493,6 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Entity/Series.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 2
-
-[[issues]]
 file = "src/Entity/Transfer.php"
 code = "halstead"
 message = "Method has a high halstead difficulty"
@@ -598,12 +580,6 @@ count = 1
 file = "src/Infrastructure/ElevenLabs/ElevenLabsClient.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Healthcheck/ProcessCountHealthcheck.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
 count = 1
 
 [[issues]]
@@ -742,12 +718,6 @@ count = 1
 file = "src/UserInterface/Http/Api/ChatSignedUrlAction.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Api/ToolInvokeAction.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
 count = 1
 
 [[issues]]
@@ -901,12 +871,6 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Component/ChildrenManager.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -982,12 +946,6 @@ count = 1
 file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
 count = 1
 
 [[issues]]

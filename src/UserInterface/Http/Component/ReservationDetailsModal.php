@@ -160,7 +160,8 @@ final class ReservationDetailsModal extends AbstractController
             return;
         }
 
-        $booking->setNotes(trim($this->note) ?: null);
+        $note = trim($this->note);
+        $booking->setNotes($note === '' ? null : $note);
         $this->entityManager->flush();
         $this->successMessage = 'Notatka została zapisana.';
         $this->errorMessage = null;

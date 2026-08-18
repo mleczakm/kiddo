@@ -71,13 +71,13 @@ final readonly class MatchPaymentForTransferHandler
         foreach ($emitted as $token) {
             $substituted = str_replace('0', 'O', $token);
 
-            if ($substituted !== $token) {
+            if (!hash_equals($substituted, $token)) {
                 yield $substituted;
             }
 
             $substituted = str_replace('O', '0', $token);
 
-            if ($substituted !== $token) {
+            if (!hash_equals($substituted, $token)) {
                 yield $substituted;
             }
 
@@ -86,7 +86,7 @@ final readonly class MatchPaymentForTransferHandler
                 'O' => '0',
             ]);
 
-            if ($substituted !== $token) {
+            if (!hash_equals($substituted, $token)) {
                 yield $substituted;
             }
         }
