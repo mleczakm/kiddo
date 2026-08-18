@@ -613,12 +613,6 @@ message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Mcp/KiddoInitializeHandler.php"
-code = "assert-description"
-message = "Missing description in assert function."
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Mcp/KiddoMcpController.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -767,12 +761,6 @@ file = "src/UserInterface/Http/Component/AddUserModal.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
 count = 2
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminActivityLogComponent.php"
-code = "no-duplicate-match-arm"
-message = "This `match` arm has the same result as an earlier arm."
-count = 4
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminBookingModal.php"
@@ -934,7 +922,7 @@ count = 1
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "halstead"
 message = "Method has a high halstead difficulty"
-count = 2
+count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
@@ -1232,12 +1220,6 @@ count = 1
 
 [[issues]]
 file = "tests/Integration/Component/AdminSettingsComponentTest.php"
-code = "no-redundant-method-override"
-message = "Redundant method override."
-count = 1
-
-[[issues]]
-file = "tests/Integration/Component/AdminSettingsComponentTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -1246,24 +1228,6 @@ count = 1
 file = "tests/Integration/Component/WorkshopEditorComponentTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/BookingStatusTransitionsTest.php"
-code = "no-redundant-method-override"
-message = "Redundant method override."
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/MultiInstructorSupportTest.php"
-code = "no-redundant-method-override"
-message = "Redundant method override."
-count = 1
-
-[[issues]]
-file = "tests/Integration/Entity/PaymentApprovalWorkflowTest.php"
-code = "no-redundant-method-override"
-message = "Redundant method override."
 count = 1
 
 [[issues]]

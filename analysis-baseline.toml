@@ -980,38 +980,8 @@ count = 1
 
 [[issues]]
 file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
-code = "possibly-null-operand"
-message = "Possibly null right operand used in string concatenation (type `int|null`)."
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\TransferNotMatchedHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Psr\Cache\InvalidArgumentException` in `App\Application\CommandHandler\Notification\TransferNotMatchedHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\Notification\TransferNotMatchedHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\CommandHandler\Notification\TransferNotMatchedHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/TransferNotMatchedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\Notification\TransferNotMatchedHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -2039,12 +2009,6 @@ file = "src/Infrastructure/Mcp/KiddoMcpToolInvoker.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\Infrastructure\Mcp\KiddoMcpToolInvoker::invoke`.'
 count = 1
-
-[[issues]]
-file = "src/Infrastructure/Messenger/ActivityLogMiddleware.php"
-code = "possibly-null-operand"
-message = "Possibly null right operand used in string concatenation (type `int|null`)."
-count = 2
 
 [[issues]]
 file = "src/Infrastructure/Messenger/ActivityLogMiddleware.php"
@@ -3332,12 +3296,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 1
@@ -3346,13 +3304,7 @@ count = 1
 file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 5
-
-[[issues]]
-file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `App\Entity\Booking::canRescheduleLesson` is possibly `null`, but parameter type `App\Entity\Lesson` does not accept it.'
-count = 1
+count = 2
 
 [[issues]]
 file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
@@ -3443,18 +3395,6 @@ file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `App\Entity\Lesson::getMatchingTicketOption` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "possibly-null-argument"
-message = 'Argument #3 of method `App\Application\Command\AddBooking::__construct` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
@@ -3604,12 +3544,6 @@ count = 1
 file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Form\Exception\RuntimeException` in `App\UserInterface\Http\Component\PlatformBillingComponent::processPayment`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/ProfileComponent.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `libphonenumber\PhoneNumberUtil::format` is possibly `null`, but parameter type `libphonenumber\PhoneNumber` does not accept it.'
 count = 1
 
 [[issues]]

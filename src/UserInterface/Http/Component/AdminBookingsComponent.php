@@ -150,7 +150,7 @@ class AdminBookingsComponent extends AbstractController
         }
 
         // Apply search filter
-        if ($this->search) {
+        if ($this->search !== null && $this->search !== '') {
             $qb->andWhere('u.name LIKE :search OR u.email LIKE :search OR m.title LIKE :search')->setParameter(
                 'search',
                 '%' . $this->search . '%',

@@ -102,15 +102,18 @@ final readonly class AdminActivityLogComponent
     {
         return match ($type) {
             ActivityType::USER_REGISTERED, ActivityType::NEWSLETTER_SUBSCRIBED => 'indigo',
-            ActivityType::BOOKING_CREATED => 'emerald',
+            ActivityType::BOOKING_CREATED,
+            ActivityType::BOOKING_REACTIVATED,
+            ActivityType::PAYMENT_RECEIVED,
+            ActivityType::PAYMENT_MARKED_PAID,
+                => 'emerald',
             ActivityType::BOOKING_CANCELLED, ActivityType::REFUND_REQUESTED => 'amber',
-            ActivityType::BOOKING_AUTO_CANCELLED => 'slate',
+            ActivityType::BOOKING_AUTO_CANCELLED,
+            ActivityType::CUSTOMER_MESSAGE,
+            ActivityType::USER_PROFILE_UPDATED,
+                => 'slate',
             ActivityType::BOOKING_RESCHEDULED => 'blue',
-            ActivityType::BOOKING_REACTIVATED => 'emerald',
-            ActivityType::PAYMENT_RECEIVED, ActivityType::PAYMENT_MARKED_PAID => 'emerald',
             ActivityType::TRANSFER_UNMATCHED => 'red',
-            ActivityType::CUSTOMER_MESSAGE => 'slate',
-            ActivityType::USER_PROFILE_UPDATED => 'slate',
         };
     }
 }

@@ -34,10 +34,18 @@ final readonly class TransferNotMatchedHandler
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 
+    /**
+     * @throws \LogicException When the transfer has not been persisted yet.
+     */
     public function __invoke(TransferNotMatchedCommand $command): void
     {
         $transfer = $command->transfer;
-        $cacheKey = self::CACHE_PREFIX . $transfer->getId();
+        $transferId = $transfer->getId();
+        if ($transferId === null) {
+            throw new \LogicException('Cannot notify about a transfer that has not been persisted.');
+        }
+
+        $cacheKey = self::CACHE_PREFIX . $transferId;
 
         try {
             // Check if we've already sent a notification for this transfer today

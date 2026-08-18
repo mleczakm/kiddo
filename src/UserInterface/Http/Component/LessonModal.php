@@ -211,7 +211,8 @@ class LessonModal extends AbstractController
     #[LiveAction]
     public function proceedToPayment(#[LiveArg] string $paymentMethod): void
     {
-        if (!$this->termsAccepted || !$this->selectedTicketType) {
+        $selectedTicketType = $this->selectedTicketType;
+        if (!$this->termsAccepted || $selectedTicketType === null || $selectedTicketType === '') {
             $this->paymentStatus = 'error';
             return;
         }
@@ -294,7 +295,8 @@ class LessonModal extends AbstractController
     {
         $this->selectDefaultTicketType();
 
-        if (!$this->termsAccepted || !$this->selectedTicketType) {
+        $selectedTicketType = $this->selectedTicketType;
+        if (!$this->termsAccepted || $selectedTicketType === null || $selectedTicketType === '') {
             $this->paymentStatus = 'error';
             return;
         }
@@ -313,14 +315,14 @@ class LessonModal extends AbstractController
                 return;
             }
 
-            $selected = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
+            $selected = $this->lesson->getMatchingTicketOption($selectedTicketType);
 
             $paymentCode = new PaymentFactory()->generateCode();
 
             $this->bus->dispatch(new AddBooking(
                 userId: $userId,
                 lessonId: (string) $this->lesson->getId(),
-                ticketType: $this->selectedTicketType,
+                ticketType: $selectedTicketType,
                 childId: $this->selectedChildId,
                 paymentCode: $paymentCode,
             ));

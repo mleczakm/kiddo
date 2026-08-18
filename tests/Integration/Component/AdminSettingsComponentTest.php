@@ -57,12 +57,6 @@ class AdminSettingsComponentTest extends WebTestCase
         $this->entityManager->flush();
     }
 
-    #[\Override]
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     public function testFinanceContactCanBeAdded(): void
     {
         // Initially no finance contacts

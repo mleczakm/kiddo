@@ -52,12 +52,6 @@ class BookingStatusTransitionsTest extends WebTestCase
         $this->entityManager->flush();
     }
 
-    #[\Override]
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     public function testBookingStartsInPendingStatus(): void
     {
         $payment = new Payment($this->user, Money::of(55, 'PLN'));

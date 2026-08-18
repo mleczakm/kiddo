@@ -58,12 +58,6 @@ class PaymentApprovalWorkflowTest extends WebTestCase
         $this->entityManager->flush();
     }
 
-    #[\Override]
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     public function testOnlinePaymentDoesNotRequireApproval(): void
     {
         $payment = new Payment($this->user, Money::of(55, 'PLN'), PaymentMethod::ONLINE);

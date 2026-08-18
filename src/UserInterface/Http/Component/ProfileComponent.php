@@ -61,8 +61,9 @@ class ProfileComponent extends AbstractController
         $user = $this->getUser();
         $this->name = $user->getName();
         $this->email = $user->getEmail();
-        $this->phone = $user->getPhone() !== null
-            ? PhoneNumberUtil::getInstance()->format($user->getPhone(), PhoneNumberFormat::NATIONAL)
+        $phone = $user->getPhone();
+        $this->phone = $phone !== null
+            ? PhoneNumberUtil::getInstance()->format($phone, PhoneNumberFormat::NATIONAL)
             : '';
         $this->newsletterSubscribed = $user->isNewsletterSubscribed();
         $this->phoneError = null;

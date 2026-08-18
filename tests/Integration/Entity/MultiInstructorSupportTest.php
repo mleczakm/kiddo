@@ -48,12 +48,6 @@ class MultiInstructorSupportTest extends WebTestCase
         $this->entityManager->flush();
     }
 
-    #[\Override]
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     public function testSeriesCanHaveMultipleInstructors(): void
     {
         $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY);

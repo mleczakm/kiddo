@@ -48,7 +48,7 @@ final readonly class KiddoInitializeHandler implements RequestHandlerInterface
     #[\Override]
     public function handle(Request $request, SessionInterface $session): Response
     {
-        \assert($request instanceof InitializeRequest);
+        \assert($request instanceof InitializeRequest, 'Initialize handler requires an initialize request.');
 
         $session->set('client_info', $request->clientInfo->jsonSerialize());
         $session->set('client_capabilities', $request->capabilities->jsonSerialize());

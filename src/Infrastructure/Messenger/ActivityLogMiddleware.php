@@ -84,16 +84,18 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         }
 
         $userId = $user->getId();
+        if ($userId === null) {
+            return;
+        }
 
         $this->activityLogger->log(
             type: ActivityType::BOOKING_CREATED,
             title: sprintf('%s zarezerwował/a zajęcia', $user->getName()),
             subject: $user,
             summary: $lesson->getMetadata()->title,
-            url: $userId !== null
-                ? $this->urlGenerator->generate('app_admin_user_view', [
-                    'id' => $userId,
-                ]) : null,
+            url: $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]),
             context: [
                 'lessonId' => $command->lessonId,
                 ...(
@@ -222,16 +224,18 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         }
 
         $userId = $user->getId();
+        if ($userId === null) {
+            return;
+        }
 
         $this->activityLogger->log(
             type: ActivityType::USER_REGISTERED,
             title: sprintf('Nowy użytkownik: %s', $user->getName()),
             subject: $user,
             summary: $user->getEmail(),
-            url: $userId !== null
-                ? $this->urlGenerator->generate('app_admin_user_view', [
-                    'id' => $userId,
-                ]) : null,
+            url: $this->urlGenerator->generate('app_admin_user_view', [
+                'id' => $userId,
+            ]),
             dedupeKey: 'user_registered:' . $userId,
         );
     }
@@ -239,6 +243,10 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
     private function logTransferUnmatched(TransferNotMatchedCommand $command): void
     {
         $transfer = $command->transfer;
+        $transferId = $transfer->getId();
+        if ($transferId === null) {
+            return;
+        }
 
         $this->activityLogger->log(
             type: ActivityType::TRANSFER_UNMATCHED,
@@ -247,9 +255,9 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
             summary: sprintf('%s — %s (%s)', $transfer->amount, $transfer->getSender(), $transfer->title),
             url: $this->urlGenerator->generate('app_admin_transfers'),
             context: [
-                'transferId' => $transfer->getId(),
+                'transferId' => $transferId,
             ],
-            dedupeKey: 'transfer_unmatched:' . $transfer->getId(),
+            dedupeKey: 'transfer_unmatched:' . $transferId,
         );
     }
 }

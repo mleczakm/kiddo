@@ -129,6 +129,16 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         $this->assertEmailCount(0);
     }
 
+    public function testRejectsTransferThatHasNotBeenPersisted(): void
+    {
+        $transfer = TransferAssembler::new()->assemble();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Cannot notify about a transfer that has not been persisted.');
+
+        ($this->handler)(new TransferNotMatchedCommand($transfer));
+    }
+
     #[\Override]
     protected function tearDown(): void
     {
