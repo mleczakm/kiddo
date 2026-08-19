@@ -178,6 +178,8 @@ final class PostsController extends AbstractController
                 $contentJson,
                 $request->request->getString('contentHtml'),
             );
+
+            $this->editor->reconcileInlineAttachments($post, $contentJson);
             $this->seoEditor->updateSeo(
                 $post,
                 new PostSeoInput(
