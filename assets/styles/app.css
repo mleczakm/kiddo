@@ -62,8 +62,24 @@ html {
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: #333;
+}
+
+/* Frontend typography, from the article-page mockup. Scoped to .site-shell
+   (the frontend base layout's own wrapper, absent from admin/base.html.twig)
+   so it never leaks into the admin panel, which keeps Tailwind's default
+   font-sans stack. */
+.site-shell {
+    font-family: Quicksand, sans-serif;
+}
+
+.site-shell h1,
+.site-shell h2,
+.site-shell h3,
+.site-shell h4,
+.site-shell h5,
+.site-shell h6 {
+    font-family: 'Comic Neue', cursive;
 }
 
 /* Public frontend atmosphere, based on the latest class-corner mockup. */
@@ -168,15 +184,6 @@ body {
 
 .bg-dot-pattern {
     background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%23738f3e' fill-opacity='0.2'/%3E%3C/svg%3E");
-}
-
-/* Typography */
-.font-display {
-    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
 }
 
 .text-muted-foreground {
@@ -646,7 +653,6 @@ img, video {
 
 body {
     background-color: hsl(var(--background));
-    font-family: Quicksand, sans-serif;
     color: hsl(var(--foreground))
 }
 
