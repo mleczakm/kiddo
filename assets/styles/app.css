@@ -79,6 +79,7 @@ body {
    named typeface. */
 .site-shell {
     font-family: Quicksand, sans-serif;
+    font-weight: 500;
 }
 
 .site-shell h1,
