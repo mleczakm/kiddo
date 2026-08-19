@@ -1,4 +1,5 @@
 @import 'tailwindcss' source('../../');
+@plugin "@tailwindcss/typography";
 
 @source "assets/";
 @source "templates/";
@@ -89,10 +90,15 @@ body {
     font-family: cursive;
 }
 
-/* Article body content (post.html.twig): headings, callout block,
-   responsive tables, blockquotes, captions, and inline media. Sits on top
-   of @tailwindcss/typography's .prose defaults rather than replacing them. */
-.article-content img {
+/* Article body content: headings, callout block, responsive tables,
+   blockquotes, captions, and inline media. Sits on top of
+   @tailwindcss/typography's .prose defaults rather than replacing them.
+   Shared between the public template (.article-content, post.html.twig)
+   and the admin Tiptap editor (.tiptap, the ProseMirror root) so editors
+   see a live approximation of the published look instead of flat,
+   undifferentiated text while writing. */
+.article-content img,
+.tiptap img {
     border-radius: 1rem;
 }
 
@@ -100,7 +106,9 @@ body {
    gradient stripe sized to the text itself (width: fit-content + a bottom
    background band), not a full-width underline. */
 .article-content h2,
-.article-content h3 {
+.article-content h3,
+.tiptap h2,
+.tiptap h3 {
     width: fit-content;
     max-width: 100%;
     margin: 2.75rem auto 1.25rem;
@@ -115,25 +123,29 @@ body {
     background-position: 0 100%;
 }
 
-.article-content h2 {
+.article-content h2,
+.tiptap h2 {
     font-size: 1.5rem;
     background-image: linear-gradient(to right, rgb(227 70 70 / 0.7), rgb(247 195 67 / 0.7));
     background-size: 100% 0.35em;
 }
 
-.article-content h3 {
+.article-content h3,
+.tiptap h3 {
     font-size: 1.2rem;
     background-image: linear-gradient(to right, rgb(227 70 70 / 0.5), rgb(247 195 67 / 0.5));
     background-size: 100% 0.3em;
 }
 
 @media (min-width: 768px) {
-    .article-content h2 {
+    .article-content h2,
+    .tiptap h2 {
         font-size: 1.875rem;
     }
 }
 
-.article-content table {
+.article-content table,
+.tiptap table {
     display: block;
     overflow-x: auto;
     margin: 2rem 0;
@@ -142,7 +154,8 @@ body {
     background-color: hsl(var(--card));
 }
 
-.article-content thead th {
+.article-content thead th,
+.tiptap thead th {
     padding: 0.85rem 1.25rem;
     font-family: cursive;
     font-weight: 700;
@@ -155,23 +168,27 @@ body {
     background-color: hsl(var(--primary) / 0.06);
 }
 
-.article-content tbody td {
+.article-content tbody td,
+.tiptap tbody td {
     padding: 0.85rem 1.25rem;
     color: hsl(var(--foreground) / 0.85);
 }
 
-.article-content tbody tr:nth-child(even) td {
+.article-content tbody tr:nth-child(even) td,
+.tiptap tbody tr:nth-child(even) td {
     background-color: hsl(var(--background) / 0.5);
 }
 
-.article-content blockquote {
+.article-content blockquote,
+.tiptap blockquote {
     margin: 2rem 0;
     padding: 0 0 0 1.25rem;
     border-left: 3px solid rgb(227 70 70 / 0.6);
     font-style: normal;
 }
 
-.article-content blockquote p:first-of-type {
+.article-content blockquote p:first-of-type,
+.tiptap blockquote p:first-of-type {
     margin-top: 0;
     font-family: cursive;
     font-weight: 700;
@@ -179,7 +196,18 @@ body {
     color: hsl(var(--foreground));
 }
 
-.article-content blockquote p + p {
+/* Our blockquote content already types its own „…" quote marks, so
+   disable the typography plugin's generated open/close quotes — otherwise
+   the attribution line ends up with a stray trailing quote mark. */
+.article-content blockquote p:first-of-type::before,
+.article-content blockquote p:last-of-type::after,
+.tiptap blockquote p:first-of-type::before,
+.tiptap blockquote p:last-of-type::after {
+    content: none;
+}
+
+.article-content blockquote p + p,
+.tiptap blockquote p + p {
     margin-top: 0.35rem;
     font-size: 0.8rem;
     font-weight: 700;
@@ -191,7 +219,8 @@ body {
 /* Caption convention: a paragraph whose entire content is italicized reads
    as a small centered caption under a table, image, or other block — no
    dedicated editor node needed. */
-.article-content p:has(> em:only-child) {
+.article-content p:has(> em:only-child),
+.tiptap p:has(> em:only-child) {
     margin-top: 0.5rem;
     text-align: center;
     font-size: 0.85rem;
@@ -199,11 +228,13 @@ body {
     color: hsl(var(--muted-foreground));
 }
 
-.article-content p:has(> em:only-child) em {
+.article-content p:has(> em:only-child) em,
+.tiptap p:has(> em:only-child) em {
     font-style: normal;
 }
 
-.article-content .callout {
+.article-content .callout,
+.tiptap .callout {
     display: flex;
     gap: 1rem;
     align-items: flex-start;
@@ -214,7 +245,8 @@ body {
     background-color: rgb(113 195 219 / 0.1);
 }
 
-.article-content .callout::before {
+.article-content .callout::before,
+.tiptap .callout::before {
     content: '';
     flex-shrink: 0;
     width: 1.25rem;
@@ -229,24 +261,40 @@ body {
     mask-size: contain;
 }
 
-.article-content .callout p:first-child {
+.article-content .callout p:first-child,
+.tiptap .callout p:first-child {
     margin-top: 0;
 }
 
-.article-content .callout p:last-child {
+.article-content .callout p:last-child,
+.tiptap .callout p:last-child {
     margin-bottom: 0;
 }
 
-.article-content .callout p {
+.article-content .callout p,
+.tiptap .callout p {
     color: hsl(var(--foreground) / 0.8);
 }
 
-.article-content .callout-title {
+.article-content .callout-title,
+.tiptap .callout-title {
     display: block;
     margin-bottom: 0.35rem;
     font-family: cursive;
     font-weight: 700;
     color: hsl(var(--foreground));
+}
+
+/* Editor-only: the callout node is a fixed-position block once inserted
+   (see assets/tiptap/callout.js), so a hover/selection outline makes it
+   discoverable as a distinct, clickable unit while editing. */
+.tiptap .callout {
+    cursor: text;
+}
+
+.tiptap .ProseMirror-selectednode.callout {
+    outline: 2px solid hsl(var(--primary) / 0.5);
+    outline-offset: 2px;
 }
 
 /* CTA banner: gradient border card, centered content, pill button. */
