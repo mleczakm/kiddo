@@ -99,6 +99,14 @@ body {
    and the admin Tiptap editor (.tiptap, the ProseMirror root) so editors
    see a live approximation of the published look instead of flat,
    undifferentiated text while writing. */
+/* The wrapper's outline-none utility doesn't reach here: ProseMirror's
+   actual focus target is this inner .tiptap div (it gets its own
+   .ProseMirror-focused class), so the browser's native focus ring has to
+   be suppressed on it directly. */
+.tiptap {
+    outline: none;
+}
+
 .article-content img,
 .tiptap img {
     border-radius: 1rem;
