@@ -89,7 +89,7 @@
                 <button type="button" data-action="post-tiptap-editor#redo" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Ponów (Ctrl+Shift+Z)">↷</button>
             </div>
 
-            <div data-post-tiptap-editor-target="editor" class="prose prose-sm min-h-96 w-full rounded-b-xl border border-slate-300 px-4 py-3 shadow-sm focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200"></div>
+            <div data-post-tiptap-editor-target="editor" class="prose prose-sm min-h-96 w-full max-w-none rounded-b-xl px-4 py-3 shadow-sm outline-none"></div>
 
             <input type="hidden" name="contentJson" data-post-tiptap-editor-target="contentJson" value="{{ post.body.contentJson|json_encode }}">
             <input type="hidden" name="contentHtml" data-post-tiptap-editor-target="contentHtml" value="{{ post.body.contentHtml }}">
