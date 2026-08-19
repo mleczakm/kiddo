@@ -78,4 +78,3 @@ when@prod:
             sentry_handler:
                 type: service
                 id: BGalati\MonologSentryHandler\SentryHandler
-                level: error

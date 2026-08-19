@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Symfony;
 
+use BGalati\MonologSentryHandler\SentryHandler;
+use Monolog\Logger;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Sentry\State\HubInterface;
@@ -52,6 +54,13 @@ final class SentryHubServiceWiringTest extends TestCase
         }
     }
 
+    public function testSentryHandlerRejectsRecordsBelowErrorLevel(): void
+    {
+        $definition = $this->block(null)[SentryHandler::class] ?? null;
+        static::assertIsArray($definition);
+        static::assertSame(Logger::ERROR, $definition['arguments']['$level'] ?? null);
+    }
+
     /**
      * Returns the `services:` map either at the document root (when $envBlock is null) or
      * nested under a `when@<env>:` block.
@@ -60,7 +69,8 @@ final class SentryHubServiceWiringTest extends TestCase
      */
     private function block(?string $envBlock): array
     {
-        $config = Yaml::parseFile(dirname(__DIR__, 3) . '/config/services.yaml');
+        /** @var array<string, mixed> $config */
+        $config = Yaml::parseFile(dirname(__DIR__, 3) . '/config/services.yaml', Yaml::PARSE_CONSTANT);
         self::assertIsArray($config);
 
         $scope = $config;

@@ -110,6 +110,9 @@ services:
   BGalati\MonologSentryHandler\SentryHandler:
     arguments:
       $hub: '@Sentry\State\HubInterface'
+      # Service handlers are constructed by the container, so Monolog's handler-level
+      # `level` option does not configure this constructor argument.
+      $level: !php/const Monolog\Logger::ERROR
   Sentry\Integration\RequestIntegration:
   Sentry\Integration\EnvironmentIntegration:
   Sentry\Integration\FrameContextifierIntegration:
