@@ -19,6 +19,15 @@ final class MenuHookLinkTest extends TestCase
         static::assertSame('footer_links', $link->getSlotKey());
         static::assertSame(2, $link->getPosition());
         static::assertSame(MenuHookLinkTarget::POST, $link->getTargetType());
+        static::assertSame('fluo-party', $link->getTarget());
+        static::assertSame('Fluo Party', $link->getLabel());
         static::assertTrue($link->isActive());
+    }
+
+    public function testRejectsNegativePosition(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new MenuHookLink('footer_links', -1, MenuHookLinkTarget::URL, '/about', 'About');
     }
 }

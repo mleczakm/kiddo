@@ -8,6 +8,7 @@ use App\Entity\File;
 use App\Entity\Post;
 use App\Entity\PostFile;
 use App\Entity\PostFileRole;
+use App\Entity\PostStatus;
 use App\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -31,6 +32,16 @@ final class PostTest extends TestCase
         static::assertSame('jak-dziala-swiatlo', $post->slug);
         static::assertFalse($post->isPublished());
         static::assertSame(['type' => 'doc', 'content' => []], $post->body->getContentJson());
+        static::assertSame('Jak działa światło?', $post->body->getTitle());
+        static::assertSame(PostStatus::DRAFT, $post->status);
+        static::assertSame($post->createdAt, $post->updatedAt);
+    }
+
+    public function testConstructorKeepsSlugifiedExplicitSlug(): void
+    {
+        $post = new Post('Title', new User('author@example.com', 'Author'), 'Własny Slug');
+
+        static::assertSame('wlasny-slug', $post->slug);
     }
 
     public function testScheduledPublicationBecomesVisibleAtRequestedTime(): void
@@ -67,6 +78,35 @@ final class PostTest extends TestCase
         sort($positions);
 
         static::assertSame([1, 2], $positions);
+    }
+
+    public function testRemovingAttachmentUpdatesCollection(): void
+    {
+        $post = new Post('Article', new User('author@example.com', 'Author'));
+        $attachment = new PostFile($post, $this->file('guide.pdf'));
+
+        $post->removeFile($attachment);
+
+        static::assertCount(0, $post->files);
+    }
+
+    public function testRejectsAttachmentOwnedByAnotherPost(): void
+    {
+        $author = new User('author@example.com', 'Author');
+        $owner = new Post('Owner', $author);
+        $other = new Post('Other', $author);
+        $attachment = new PostFile($owner, $this->file('guide.pdf'));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $other->addFile($attachment);
+    }
+
+    public function testRejectsNegativeAttachmentPosition(): void
+    {
+        $post = new Post('Article', new User('author@example.com', 'Author'));
+        $this->expectException(\InvalidArgumentException::class);
+
+        new PostFile($post, $this->file('guide.pdf'), position: -1);
     }
 
     private function file(string $name): File
