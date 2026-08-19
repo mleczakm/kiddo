@@ -19,6 +19,24 @@
     <meta property="og:title" content="{{ post.seo.socialTitle|default(post.seo.seoTitle)|default(post.body.title) }}">
     {% if post.seo.socialDescription|default(metaDescription) %}<meta property="og:description" content="{{ post.seo.socialDescription|default(metaDescription) }}">{% endif %}
     <meta name="twitter:card" content="summary_large_image">
+
+    {% if not preview|default(false) and post.seo.shouldRobotsIndex %}
+        {% set cover = post.coverAttachment %}
+        {% set jsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: post.body.title,
+            description: metaDescription,
+            datePublished: post.publishedAt|date('c'),
+            dateModified: post.updatedAt|date('c'),
+            author: { '@type': 'Person', name: post.author.name },
+            mainEntityOfPage: { '@type': 'WebPage', '@id': post.seo.canonicalUrl|default(url('post_by_slug', {slug: post.slug})) },
+        } %}
+        {% if cover %}
+            {% set jsonLd = jsonLd|merge({ image: [url('stored_file', {id: cover.file.id, safeName: cover.file.originalName})] }) %}
+        {% endif %}
+        <script type="application/ld+json">{{ jsonLd|json_encode|raw }}</script>
+    {% endif %}
 {% endblock %}
 
 {% block body %}

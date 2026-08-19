@@ -64,6 +64,14 @@ final class PostsActionTest extends WebTestCase
         $originalEtag = $client->getResponse()->headers->get('ETag');
         static::assertNotNull($originalEtag);
 
+        // updated_at is timestamp(0) — genuinely second-precision, matching
+        // HTTP's own Last-Modified granularity — so an edit landing in the
+        // same wall-clock second as creation would otherwise produce an
+        // identical ETag. No mock clock exists in this suite yet, so this
+        // sleep reflects the real precision boundary rather than working
+        // around it.
+        sleep(1);
+
         $client->loginUser($admin);
         $crawler = $client->request('GET', "/admin/tresci/{$postId}/edycja");
         $form = $crawler
