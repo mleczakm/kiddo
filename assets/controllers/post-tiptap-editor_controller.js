@@ -7,6 +7,7 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { Typography } from '@tiptap/extension-typography';
+import { optimizeImageToWebp } from '../utils/image_optimizer.js';
 
 /**
  * Tiptap editor for article content: prose, headings (H2/H3), lists, tables,
@@ -172,11 +173,20 @@ export default class extends Controller {
     }
 
     async handleImageUpload(event) {
-        const file = event.target.files?.[0];
-        if (!file) return;
+        const source = event.target.files?.[0];
+        if (!source) return;
+
+        let uploadFile = source;
+        try {
+            const { file } = await optimizeImageToWebp(source);
+            uploadFile = file;
+        } catch (error) {
+            // Fall back to the original file — server-side MIME sniffing
+            // and the upload policy remain the real validation boundary.
+        }
 
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', uploadFile);
 
         try {
             const response = await fetch(this.uploadUrlValue, { method: 'POST', body: formData });

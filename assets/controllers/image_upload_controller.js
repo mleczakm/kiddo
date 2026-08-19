@@ -1,7 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
+import { optimizeImageToWebp, formatBytes } from '../utils/image_optimizer.js';
 
-const MAX_DIMENSION = 1920;
-const WEBP_QUALITY = 0.85;
 const MAX_VIDEO_BYTES = 20 * 1024 * 1024;
 // video/quicktime (MOV) is deliberately not accepted — most non-Safari
 // browsers won't play a <video> reporting that mime type even when the
@@ -38,50 +37,23 @@ export default class extends Controller {
 
         this.showStatus('Optymalizowanie zdjęcia…');
 
-        let decodable = source;
         try {
-            const { isHeic, heicTo } = await import('heic-to');
-            if (await isHeic(source)) {
-                this.showStatus('Konwertowanie zdjęcia HEIC…');
-                decodable = await heicTo({ blob: source, type: 'image/jpeg', quality: 0.92 });
-            }
-        } catch (error) {
-            this.rejectFile('Nie udało się odczytać zdjęcia HEIC. Zapisz je jako JPG lub PNG i spróbuj ponownie.');
-            return;
-        }
+            const { file: optimized, width, height } = await optimizeImageToWebp(source);
 
-        try {
-            const bitmap = await createImageBitmap(decodable, { imageOrientation: 'from-image' });
-            const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
-            const width = Math.max(1, Math.round(bitmap.width * scale));
-            const height = Math.max(1, Math.round(bitmap.height * scale));
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-
-            const context = canvas.getContext('2d');
-            context.drawImage(bitmap, 0, 0, width, height);
-            bitmap.close();
-
-            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', WEBP_QUALITY));
-            if (!blob) {
-                throw new Error('WebP encoding is unavailable');
-            }
-
-            const optimized = new File([blob], this.webpFilename(source.name), {
-                type: 'image/webp',
-                lastModified: Date.now(),
-            });
             const transfer = new DataTransfer();
             transfer.items.add(optimized);
             this.inputTarget.files = transfer.files;
 
             this.showPreview(optimized, width, height);
             this.showStatus(
-                `Gotowe: ${width} × ${height} px, ${this.formatBytes(source.size)} → ${this.formatBytes(optimized.size)} (WebP).`,
+                `Gotowe: ${width} × ${height} px, ${formatBytes(source.size)} → ${formatBytes(optimized.size)} (WebP).`,
             );
         } catch (error) {
-            this.rejectFile('Nie udało się przetworzyć zdjęcia. Wybierz plik JPG, PNG lub WebP.');
+            if (error.message === 'HEIC_DECODE_FAILED') {
+                this.rejectFile('Nie udało się odczytać zdjęcia HEIC. Zapisz je jako JPG lub PNG i spróbuj ponownie.');
+            } else {
+                this.rejectFile('Nie udało się przetworzyć zdjęcia. Wybierz plik JPG, PNG lub WebP.');
+            }
         }
     }
 
@@ -97,7 +69,7 @@ export default class extends Controller {
         }
 
         this.showVideoPreview(source);
-        this.showStatus(`Gotowe: ${this.formatBytes(source.size)} (wideo, bez zmian).`);
+        this.showStatus(`Gotowe: ${formatBytes(source.size)} (wideo, bez zmian).`);
     }
 
     rejectFile(message) {
@@ -149,15 +121,4 @@ export default class extends Controller {
         }
     }
 
-    webpFilename(filename) {
-        return `${filename.replace(/\.[^.]+$/, '') || 'workshop'}.webp`;
-    }
-
-    formatBytes(bytes) {
-        if (bytes < 1024 * 1024) {
-            return `${Math.max(1, Math.round(bytes / 1024))} KB`;
-        }
-
-        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    }
 }
