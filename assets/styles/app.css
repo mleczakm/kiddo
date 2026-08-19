@@ -88,6 +88,7 @@ body {
 .site-shell h5,
 .site-shell h6 {
     font-family: cursive;
+    font-weight: 800;
 }
 
 /* Article body content: headings, callout block, responsive tables,
@@ -114,7 +115,7 @@ body {
     margin: 2.75rem auto 1.25rem;
     padding-bottom: 0.3em;
     font-family: cursive;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: -0.01em;
     line-height: 1.25;
     color: hsl(var(--foreground));
@@ -158,7 +159,7 @@ body {
 .tiptap thead th {
     padding: 0.85rem 1.25rem;
     font-family: cursive;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -191,7 +192,7 @@ body {
 .tiptap blockquote p:first-of-type {
     margin-top: 0;
     font-family: cursive;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.125rem;
     color: hsl(var(--foreground));
 }
@@ -281,7 +282,7 @@ body {
     display: block;
     margin-bottom: 0.35rem;
     font-family: cursive;
-    font-weight: 700;
+    font-weight: 800;
     color: hsl(var(--foreground));
 }
 
@@ -316,7 +317,7 @@ body {
 
 .article-cta__title {
     font-family: cursive;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.5rem;
     color: hsl(var(--foreground));
 }
@@ -358,7 +359,7 @@ body {
 .article-downloads__title {
     margin-bottom: 1rem;
     font-family: cursive;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.125rem;
     color: hsl(var(--foreground));
 }
