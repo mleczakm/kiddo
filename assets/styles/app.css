@@ -68,7 +68,14 @@ body {
 /* Frontend typography, from the article-page mockup. Scoped to .site-shell
    (the frontend base layout's own wrapper, absent from admin/base.html.twig)
    so it never leaks into the admin panel, which keeps Tailwind's default
-   font-sans stack. */
+   font-sans stack.
+
+   Headings deliberately use the bare `cursive` generic family, not a named
+   font — this matches the mockup itself, which declares `"Comic Neue",
+   cursive` but never actually loads Comic Neue (no @font-face, no Google
+   Fonts link), so every browser silently falls through to its own native
+   cursive/script face. That's the actual look being matched here, not a
+   named typeface. */
 .site-shell {
     font-family: Quicksand, sans-serif;
 }
@@ -79,7 +86,7 @@ body {
 .site-shell h4,
 .site-shell h5,
 .site-shell h6 {
-    font-family: 'Comic Neue', cursive;
+    font-family: cursive;
 }
 
 /* Article body content (post.html.twig): callout block, responsive
@@ -114,7 +121,7 @@ body {
 .article-content .callout-title {
     display: block;
     margin-bottom: 0.35rem;
-    font-family: 'Comic Neue', cursive;
+    font-family: cursive;
     font-weight: 700;
     color: hsl(30 76% 18%);
 }
@@ -921,7 +928,7 @@ body {
 
 .section-title {
     margin-bottom: 2rem;
-    font-family: Comic Neue, cursive;
+    font-family: cursive;
     font-size: 1.875rem;
     line-height: 2.25rem;
     font-weight: 700;
@@ -1692,7 +1699,7 @@ body {
 }
 
 .font-display {
-    font-family: Comic Neue, cursive
+    font-family: cursive
 }
 
 .text-\[0\.8rem\] {

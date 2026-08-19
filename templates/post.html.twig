@@ -22,25 +22,25 @@
 {% endblock %}
 
 {% block body %}
-    <header class="border-b border-stone-200/60 bg-white/60">
-        <div class="mx-auto max-w-5xl px-5 py-4">
-            <a href="{{ path('homepage') }}" class="inline-flex items-center">
-                <span class="font-display text-lg font-bold text-workshop-brown tracking-tight">Kiddo</span>&nbsp;<span class="font-display text-lg font-bold tracking-tight text-workshop-red">Warsztaty</span>
-            </a>
-        </div>
-    </header>
-
     <main class="px-5 py-14 md:py-20">
         <article class="mx-auto max-w-5xl">
+            <a href="{{ path('homepage') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-500 transition-colors hover:text-workshop-red">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Kiddo Warsztaty
+            </a>
+
             {% if preview|default(false) %}
-                <div class="mb-8 rounded-xl bg-amber-100 px-4 py-3 text-sm font-bold text-amber-900">Podgląd ostatnio zapisanej wersji roboczej</div>
+                <div class="mb-8 mt-8 rounded-xl bg-amber-100 px-4 py-3 text-sm font-bold text-amber-900">Podgląd ostatnio zapisanej wersji roboczej</div>
             {% endif %}
 
             {% if post.body.eyebrow %}
-                <p class="text-xs font-black uppercase tracking-[0.2em] text-workshop-red">{{ post.body.eyebrow }}</p>
+                <p class="mt-8 text-xs font-black uppercase tracking-[0.2em] text-workshop-red">{{ post.body.eyebrow }}</p>
             {% endif %}
 
-            <h1 class="mt-4 max-w-4xl text-4xl leading-tight text-workshop-brown md:text-6xl">{{ post.body.title }}</h1>
+            <h1 class="{{ post.body.eyebrow ? 'mt-4' : 'mt-8' }} max-w-4xl text-4xl leading-tight text-workshop-brown md:text-6xl">{{ post.body.title }}</h1>
 
             {% if post.body.excerpt %}
                 <p class="mt-6 max-w-3xl text-xl leading-relaxed text-stone-700">{{ post.body.excerpt }}</p>
