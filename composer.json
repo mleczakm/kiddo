@@ -73,6 +73,7 @@
     "symfony/flex": "^2.11.0",
     "symfony/form": "8.0.*",
     "symfony/framework-bundle": "8.0.*",
+    "symfony/html-sanitizer": "8.0.*",
     "symfony/http-client": "8.0.*",
     "symfony/http-kernel": "8.1.*",
     "symfony/intl": "8.0.*",
