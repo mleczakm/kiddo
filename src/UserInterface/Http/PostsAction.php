@@ -7,14 +7,44 @@ namespace App\UserInterface\Http;
 use App\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class PostsAction extends AbstractController
 {
+    private const int PER_PAGE = 9;
+
     public function __construct(
         private readonly PostRepository $postRepository,
     ) {}
+
+    #[Route(path: [
+        'pl' => 'blog',
+        'en' => 'blog',
+    ], name: 'posts')]
+    public function posts(Request $request): Response
+    {
+        $now = Clock::get()->now();
+        $page = max(1, $request->query->getInt('page', 1));
+        $total = $this->postRepository->countPublished($now);
+        $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
+        $page = min($page, $lastPage);
+
+        $items = $this->postRepository->findPublished($now, self::PER_PAGE, ($page - 1) * self::PER_PAGE);
+
+        $response = $this->render('posts.html.twig', [
+            'featured' => $page === 1 ? ($items[0] ?? null) : null,
+            'posts' => $page === 1 ? \array_slice($items, 1) : $items,
+            'page' => $page,
+            'lastPage' => $lastPage,
+        ]);
+        $response->setPublic();
+        $response->setMaxAge(60);
+        $response->headers->set('Vary', 'Accept-Encoding');
+
+        return $response;
+    }
 
     /**
      * Unpublished posts 404 for anonymous/regular visitors. A manager with

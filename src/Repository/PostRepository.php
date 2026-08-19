@@ -38,6 +38,42 @@ final class PostRepository extends ServiceEntityRepository
     }
 
     /**
+     * Published posts newest-first, for the public article index.
+     *
+     * @return list<Post>
+     */
+    public function findPublished(\DateTimeImmutable $now, int $limit, int $offset = 0): array
+    {
+        /** @var list<Post> */
+        return $this
+            ->createQueryBuilder('post')
+            ->andWhere('post.status = :status')
+            ->andWhere('post.publishedAt IS NOT NULL')
+            ->andWhere('post.publishedAt <= :now')
+            ->setParameter('status', \App\Entity\PostStatus::PUBLISHED)
+            ->setParameter('now', $now)
+            ->orderBy('post.publishedAt', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countPublished(\DateTimeImmutable $now): int
+    {
+        return (int) $this
+            ->createQueryBuilder('post')
+            ->select('COUNT(post.id)')
+            ->andWhere('post.status = :status')
+            ->andWhere('post.publishedAt IS NOT NULL')
+            ->andWhere('post.publishedAt <= :now')
+            ->setParameter('status', \App\Entity\PostStatus::PUBLISHED)
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * Distinct, non-empty eyebrow values across all posts, for use as category
      * suggestions in the admin editor's datalist.
      *
