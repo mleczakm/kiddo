@@ -30,9 +30,10 @@ framework:
                     th: ['colspan', 'rowspan']
                     td: ['colspan', 'rowspan']
                     # class-only div/span: back the Callout ("Warto wiedzieć")
-                    # block until a dedicated Tiptap node exists. Only known
-                    # class names are given CSS treatment, so an arbitrary
-                    # value is inert, not a styling/attribute-injection risk.
+                    # node's rendered markup (div.callout > div.callout-body,
+                    # span.callout-title). Only known class names are given
+                    # CSS treatment, so an arbitrary value is inert, not a
+                    # styling/attribute-injection risk.
                     div: ['class']
                     span: ['class']
                 allowed_link_schemes: ['http', 'https', 'mailto']

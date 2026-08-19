@@ -8,6 +8,7 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { Typography } from '@tiptap/extension-typography';
 import { optimizeImageToWebp } from '../utils/image_optimizer.js';
+import { Callout } from '../tiptap/callout.js';
 
 /**
  * Tiptap editor for article content: prose, headings (H2/H3), lists, tables,
@@ -45,6 +46,7 @@ export default class extends Controller {
                 TableHeader,
                 TableCell,
                 Typography,
+                Callout,
             ],
             content: this.getInitialContent(),
             onUpdate: () => this.syncContent(),
@@ -162,6 +164,13 @@ export default class extends Controller {
 
     insertTable() {
         this.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    }
+
+    insertCallout() {
+        this.editor.chain().focus().insertContent({
+            type: 'callout',
+            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wpisz treść…' }] }],
+        }).run();
     }
 
     undo() {

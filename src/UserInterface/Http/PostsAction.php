@@ -34,7 +34,7 @@ final class PostsAction extends AbstractController
         $items = $this->postRepository->findPublished($now, self::PER_PAGE, ($page - 1) * self::PER_PAGE);
 
         $response = $this->render('posts.html.twig', [
-            'featured' => $page === 1 ? ($items[0] ?? null) : null,
+            'featured' => $page === 1 ? $items[0] ?? null : null,
             'posts' => $page === 1 ? \array_slice($items, 1) : $items,
             'page' => $page,
             'lastPage' => $lastPage,

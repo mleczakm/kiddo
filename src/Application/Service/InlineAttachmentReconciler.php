@@ -14,7 +14,9 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 final readonly class InlineAttachmentReconciler
 {
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+    ) {}
 
     /** @param array<string, mixed> $contentJson */
     public function reconcile(Post $post, array $contentJson): void

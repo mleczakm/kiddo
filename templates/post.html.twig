@@ -70,35 +70,20 @@
 
             <div class="article-content prose prose-lg mx-auto mt-14 max-w-3xl">{{ post.body.contentHtml|raw }}</div>
 
-            {% set downloads = post.files|filter(f => f.role.value == 'attachment') %}
-            {% if downloads|length > 0 %}
-                <div class="mx-auto mt-14 max-w-3xl">
-                    <h2 class="text-2xl text-workshop-brown">Do pobrania</h2>
-                    <ul class="mt-4 space-y-3">
-                        {% for attachment in downloads %}
-                            <li>
-                                <a href="{{ path('stored_file', {id: attachment.file.id, safeName: attachment.downloadName|default(attachment.file.originalName)}) }}"
-                                   class="flex items-center gap-4 rounded-xl border border-stone-200 bg-white px-5 py-4 transition hover:border-workshop-red/40 hover:shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-workshop-red">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                        <polyline points="14 2 14 8 20 8"></polyline>
-                                    </svg>
-                                    <span class="min-w-0 flex-1">
-                                        <span class="block truncate font-bold text-workshop-brown">{{ attachment.downloadName|default(attachment.file.originalName) }}</span>
-                                        {% if attachment.caption %}<span class="block text-sm text-stone-500">{{ attachment.caption }}</span>{% endif %}
-                                    </span>
-                                    <span class="shrink-0 text-xs font-semibold text-stone-400">{{ attachment.file.size|format_bytes }}</span>
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
+            {% set downloads = post.files|filter(f => f.role.value == 'attachment')|map(a => {
+                name: a.downloadName|default(a.file.originalName),
+                description: a.caption,
+                url: path('stored_file', {id: a.file.id, safeName: a.downloadName|default(a.file.originalName)}),
+                meta: (a.file.originalName|split('.')|last|upper) ~ ' · ' ~ (a.file.size|format_bytes),
+            }) %}
+            {% include 'partials/attachment-downloads.html.twig' with { title: 'Do pobrania', downloads: downloads } only %}
 
-            <div class="mx-auto mt-16 max-w-3xl rounded-2xl bg-workshop-brown px-8 py-10 text-center text-white">
-                <h2 class="text-2xl md:text-3xl">Chcesz dołączyć do najbliższych zajęć?</h2>
-                <p class="mt-2 text-white/80">Przeglądaj nasze warsztaty i zarezerwuj miejsce dla swojego dziecka.</p>
-                <a href="{{ path('workshops') }}" class="mt-6 inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 font-bold text-workshop-brown transition hover:bg-white/90">Zobacz warsztaty</a>
+            <div class="article-cta">
+                <div class="article-cta__inner">
+                    <h2 class="article-cta__title">Chcesz dołączyć do najbliższych zajęć?</h2>
+                    <p class="article-cta__desc">Przeglądaj nasze warsztaty i zarezerwuj miejsce dla swojego dziecka.</p>
+                    <a href="{{ path('workshops') }}" class="article-cta__button">Zobacz warsztaty</a>
+                </div>
             </div>
         </article>
     </main>

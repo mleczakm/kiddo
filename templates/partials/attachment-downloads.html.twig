@@ -1,0 +1,34 @@
+{#
+    Reusable downloads list. `downloads` is a list of {name, description, url, meta}
+    — callers resolve their own model (Post attachments today, workshop
+    materials later) into this shape before including the partial.
+#}
+{% if downloads|length > 0 %}
+    <div class="article-downloads">
+        <h2 class="article-downloads__title">{{ title|default('Do pobrania') }}</h2>
+        <ul class="article-downloads__list">
+            {% for download in downloads %}
+                <li>
+                    <a href="{{ download.url }}" class="article-downloads__item">
+                        <span class="article-downloads__icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span class="article-downloads__body">
+                            <span class="article-downloads__name">{{ download.name }}</span>
+                            {% if download.description %}<span class="article-downloads__desc">{{ download.description }}</span>{% endif %}
+                        </span>
+                        <span class="article-downloads__meta">{{ download.meta }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="article-downloads__download-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" x2="12" y1="15" y2="3"></line>
+                        </svg>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

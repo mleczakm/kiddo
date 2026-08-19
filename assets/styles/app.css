@@ -89,25 +89,144 @@ body {
     font-family: cursive;
 }
 
-/* Article body content (post.html.twig): callout block, responsive
-   tables, and inline media. Sits on top of @tailwindcss/typography's
-   .prose defaults rather than replacing them. */
+/* Article body content (post.html.twig): headings, callout block,
+   responsive tables, blockquotes, captions, and inline media. Sits on top
+   of @tailwindcss/typography's .prose defaults rather than replacing them. */
 .article-content img {
     border-radius: 1rem;
+}
+
+/* Section headings get the mockup's "highlighter" treatment: a short
+   gradient stripe sized to the text itself (width: fit-content + a bottom
+   background band), not a full-width underline. */
+.article-content h2,
+.article-content h3 {
+    width: fit-content;
+    max-width: 100%;
+    margin: 2.75rem auto 1.25rem;
+    padding-bottom: 0.3em;
+    font-family: cursive;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: hsl(var(--foreground));
+    text-align: center;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+}
+
+.article-content h2 {
+    font-size: 1.5rem;
+    background-image: linear-gradient(to right, rgb(227 70 70 / 0.7), rgb(247 195 67 / 0.7));
+    background-size: 100% 0.35em;
+}
+
+.article-content h3 {
+    font-size: 1.2rem;
+    background-image: linear-gradient(to right, rgb(227 70 70 / 0.5), rgb(247 195 67 / 0.5));
+    background-size: 100% 0.3em;
+}
+
+@media (min-width: 768px) {
+    .article-content h2 {
+        font-size: 1.875rem;
+    }
 }
 
 .article-content table {
     display: block;
     overflow-x: auto;
+    margin: 2rem 0;
+    border-radius: 1rem;
+    border: 1px solid hsl(var(--border) / 0.6);
+    background-color: hsl(var(--card));
+}
+
+.article-content thead th {
+    padding: 0.85rem 1.25rem;
+    font-family: cursive;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: left;
     white-space: nowrap;
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--primary) / 0.06);
+}
+
+.article-content tbody td {
+    padding: 0.85rem 1.25rem;
+    color: hsl(var(--foreground) / 0.85);
+}
+
+.article-content tbody tr:nth-child(even) td {
+    background-color: hsl(var(--background) / 0.5);
+}
+
+.article-content blockquote {
+    margin: 2rem 0;
+    padding: 0 0 0 1.25rem;
+    border-left: 3px solid rgb(227 70 70 / 0.6);
+    font-style: normal;
+}
+
+.article-content blockquote p:first-of-type {
+    margin-top: 0;
+    font-family: cursive;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: hsl(var(--foreground));
+}
+
+.article-content blockquote p + p {
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: hsl(var(--muted-foreground));
+}
+
+/* Caption convention: a paragraph whose entire content is italicized reads
+   as a small centered caption under a table, image, or other block — no
+   dedicated editor node needed. */
+.article-content p:has(> em:only-child) {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-style: normal;
+    color: hsl(var(--muted-foreground));
+}
+
+.article-content p:has(> em:only-child) em {
+    font-style: normal;
 }
 
 .article-content .callout {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
     margin: 2rem 0;
     padding: 1.25rem 1.5rem;
     border-radius: 1rem;
-    border: 1px solid hsl(43 90% 65% / 0.4);
-    background-color: hsl(43 90% 65% / 0.12);
+    border-left: 4px solid rgb(113 195 219);
+    background-color: rgb(113 195 219 / 0.1);
+}
+
+.article-content .callout::before {
+    content: '';
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    background-color: rgb(113 195 219);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
 }
 
 .article-content .callout p:first-child {
@@ -118,12 +237,158 @@ body {
     margin-bottom: 0;
 }
 
+.article-content .callout p {
+    color: hsl(var(--foreground) / 0.8);
+}
+
 .article-content .callout-title {
     display: block;
     margin-bottom: 0.35rem;
     font-family: cursive;
     font-weight: 700;
-    color: hsl(30 76% 18%);
+    color: hsl(var(--foreground));
+}
+
+/* CTA banner: gradient border card, centered content, pill button. */
+.article-cta {
+    margin: 3.5rem auto 0;
+    max-width: 42rem;
+    border-radius: 1.5rem;
+    padding: 2px;
+    background-image: linear-gradient(to right, rgb(227 70 70), rgb(247 195 67));
+    box-shadow: 0 10px 25px -8px rgb(76 46 17 / 0.25);
+}
+
+.article-cta__inner {
+    border-radius: calc(1.5rem - 2px);
+    background-color: hsl(var(--card));
+    padding: 2.5rem 2rem;
+    text-align: center;
+}
+
+.article-cta__title {
+    font-family: cursive;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: hsl(var(--foreground));
+}
+
+.article-cta__desc {
+    margin-top: 0.5rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.article-cta__button {
+    margin-top: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 0.75rem 2rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px -2px rgb(227 70 70 / 0.4);
+    transition: filter 0.2s ease;
+}
+
+.article-cta__button:hover {
+    filter: brightness(1.1);
+}
+
+/* Downloads list, shared between article and (future) workshop pages. */
+.article-downloads {
+    margin: 3.5rem auto 0;
+    max-width: 48rem;
+    border-radius: 1.5rem;
+    border: 1px solid hsl(var(--border) / 0.7);
+    background-color: hsl(var(--card) / 0.8);
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgb(76 46 17 / 0.08);
+}
+
+.article-downloads__title {
+    margin-bottom: 1rem;
+    font-family: cursive;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: hsl(var(--foreground));
+}
+
+.article-downloads__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.article-downloads__item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 1rem;
+    border: 1px solid hsl(var(--border) / 0.6);
+    background-color: hsl(var(--background) / 0.6);
+    padding: 1rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.article-downloads__item:hover {
+    border-color: hsl(var(--primary) / 0.6);
+    background-color: hsl(var(--primary) / 0.05);
+}
+
+.article-downloads__icon {
+    display: flex;
+    height: 2.75rem;
+    width: 2.75rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    background-color: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+}
+
+.article-downloads__body {
+    min-width: 0;
+    flex: 1;
+}
+
+.article-downloads__name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+}
+
+.article-downloads__desc {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.article-downloads__meta {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: hsl(var(--muted-foreground));
+}
+
+.article-downloads__download-icon {
+    flex-shrink: 0;
+    color: hsl(var(--muted-foreground));
+    transition: color 0.2s ease;
+}
+
+.article-downloads__item:hover .article-downloads__download-icon {
+    color: hsl(var(--primary));
 }
 
 /* Public frontend atmosphere, based on the latest class-corner mockup. */
@@ -1355,6 +1620,10 @@ body {
 .border-workshop-red {
     --tw-border-opacity: 1;
     border-color: rgb(227 70 70 / var(--tw-border-opacity))
+}
+
+.hover\:border-workshop-red\/40:hover {
+    border-color: rgb(227 70 70 / 0.4);
 }
 
 .hover\:border-workshop-red\/50:hover {
