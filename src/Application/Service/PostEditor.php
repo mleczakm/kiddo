@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
+use App\Application\File\FileStorageInterface;
+use App\Application\File\FileUploadPolicy;
 use App\Entity\Post;
+use App\Entity\PostFileRole;
+use App\Entity\User;
 use App\Repository\LessonMetadataRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 final readonly class PostEditor
@@ -16,6 +22,9 @@ final readonly class PostEditor
         #[Autowire(service: 'html_sanitizer.sanitizer.app.article_sanitizer')]
         private HtmlSanitizerInterface $sanitizer,
         private LessonMetadataRepository $lessonMetadataRepository,
+        private FileStorageInterface $fileStorage,
+        private PostFileManager $fileManager,
+        private EntityManagerInterface $em,
     ) {}
 
     /** @throws \InvalidArgumentException */
@@ -63,6 +72,49 @@ final readonly class PostEditor
 
         $post->body->updateContent($contentJson, $this->sanitizer->sanitize($unsafeHtml));
         $post->markUpdated();
+    }
+
+    /**
+     * Handle file uploads: store each file, attach to post with metadata.
+     *
+     * @param Post $post
+     * @param list<UploadedFile> $uploads
+     * @param ?User $uploadedBy
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     */
+    public function attachFiles(Post $post, array $uploads, ?User $uploadedBy = null): void
+    {
+        $policy = new FileUploadPolicy('article_image');
+
+        $totalSize = 0;
+        foreach ($post->files as $existing) {
+            $totalSize += $existing->getFile()->getSize();
+        }
+
+        foreach ($uploads as $upload) {
+            $file = $this->fileStorage->store($upload, $policy, $uploadedBy);
+            $this->fileManager->attachFile(
+                $post,
+                $file,
+                PostFileRole::ATTACHMENT,
+                $post->files->count(),
+            );
+
+            $totalSize += $file->getSize();
+        }
+    }
+
+    /**
+     * Reconcile attachment state after submission.
+     *
+     * @param Post $post
+     * @param list<array{id: string, role: string, position: int, altText: ?string, caption: ?string, downloadName: ?string}> $submitted
+     * @throws \InvalidArgumentException
+     */
+    public function reconcileAttachments(Post $post, array $submitted): void
+    {
+        $this->fileManager->reconcileAttachments($post, $submitted);
     }
 
     private function nullableTrim(?string $value): ?string

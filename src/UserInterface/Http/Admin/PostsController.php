@@ -186,12 +186,45 @@ final class PostsController extends AbstractController
                     $this->nullableField($request, 'socialDescription'),
                 ),
             );
+
+            $uploads = $request->files->all()['files'] ?? [];
+            if (\count($uploads) > 0) {
+                $this->editor->attachFiles($post, $uploads, $this->getUser());
+            }
+
+            $this->handleFileReconciliation($request, $post);
         } catch (\InvalidArgumentException $exception) {
             $this->addFlash('error', $exception->getMessage());
             return false;
         }
 
         return true;
+    }
+
+    private function handleFileReconciliation(Request $request, Post $post): void
+    {
+        $fileIds = $request->request->all()['files_id'] ?? [];
+        $fileRoles = $request->request->all()['files_role'] ?? [];
+        $removeChecks = $request->request->all()['files_remove'] ?? [];
+
+        $submitted = [];
+        foreach ($fileIds as $i => $fileId) {
+            if (isset($removeChecks[$fileId])) {
+                continue;
+            }
+            $submitted[] = [
+                'id' => (string) $fileId,
+                'role' => $fileRoles[$fileId] ?? 'attachment',
+                'position' => $i,
+                'altText' => null,
+                'caption' => null,
+                'downloadName' => null,
+            ];
+        }
+
+        if (\count($submitted) > 0 || \count($post->files) > 0) {
+            $this->editor->reconcileAttachments($post, $submitted);
+        }
     }
 
     private function renderForm(Post $post, bool $isNew): Response

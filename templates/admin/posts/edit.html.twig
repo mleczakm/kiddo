@@ -44,6 +44,34 @@
         <label class="block"><span class="mb-1 block text-sm font-bold">Treść HTML (tymczasowy edytor Stage 2)</span><textarea name="contentHtml" rows="18" class="w-full rounded-xl border border-slate-300 px-4 py-3 font-mono text-sm">{{ post.body.contentHtml }}</textarea></label>
 
         <fieldset class="space-y-4 rounded-xl border border-slate-200 p-4">
+            <legend class="px-1 text-sm font-bold text-slate-700">Pliki i załączniki</legend>
+            <div>
+                <label class="block"><span class="mb-1 block text-sm font-bold">Dodaj pliki</span><input type="file" name="files[]" multiple accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/webm,video/ogg,application/pdf" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+                <p class="mt-1 text-xs text-slate-500">Obsługiwane: obrazy (JPEG, PNG, WebP, AVIF), wideo (MP4, WebM, Ogg), dokumenty (PDF)</p>
+            </div>
+            {% if post.files|length > 0 %}
+                <div class="space-y-2">
+                    <p class="text-sm font-bold">Obecne pliki</p>
+                    {% for file in post.files %}
+                        <div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold">{{ file.file.originalName }}</p>
+                                <p class="text-xs text-slate-500">{{ (file.file.size / 1024)|round(1) }} KB · {{ file.role.value }}</p>
+                            </div>
+                            <select name="files_role[{{ file.id }}]" class="rounded border border-slate-300 px-2 py-1 text-xs">
+                                <option value="cover" {{ file.role.value == 'cover' ? 'selected' : '' }}>Okładka</option>
+                                <option value="inline" {{ file.role.value == 'inline' ? 'selected' : '' }}>Wstawić w treść</option>
+                                <option value="attachment" {{ file.role.value == 'attachment' ? 'selected' : '' }}>Załącznik</option>
+                            </select>
+                            <input type="hidden" name="files_id[]" value="{{ file.id }}">
+                            <label class="text-xs"><input type="checkbox" name="files_remove[{{ file.id }}]"> Usuń</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </fieldset>
+
+        <fieldset class="space-y-4 rounded-xl border border-slate-200 p-4">
             <legend class="px-1 text-sm font-bold text-slate-700">SEO i social media</legend>
             <label class="block"><span class="mb-1 block text-sm font-bold">Tytuł SEO (do 70 znaków)</span><input name="seoTitle" maxlength="70" value="{{ post.seo.seoTitle }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
             <label class="block"><span class="mb-1 block text-sm font-bold">Opis SEO (do 170 znaków)</span><textarea name="seoDescription" maxlength="170" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.seo.seoDescription }}</textarea></label>
