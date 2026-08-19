@@ -26,6 +26,10 @@
                         <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
                                href="{{ path('user_register') }}">{{ 'page.register'|trans }}</a></li>
                     {% endif %}
+                    {% for link in menu_hook_links('footer_links') %}
+                        <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
+                               href="{{ link.url }}">{{ link.label }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
             <div><h4 class="font-bold mb-4 text-workshop-brown">{{ 'page.contact_us'|trans }}</h4>
