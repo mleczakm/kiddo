@@ -43,13 +43,42 @@
         </label>
         <div data-controller="post-tiptap-editor" data-post-tiptap-editor-upload-url="{{ path('app_admin_post_inline_image_upload', {id: post.id}) }}">
             <label class="mb-1 block text-sm font-bold">Treść artykułu</label>
-            <div data-post-tiptap-editor-target="editor" class="prose prose-sm min-h-96 w-full rounded-xl border border-slate-300 px-4 py-3 shadow-sm focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200"></div>
+
+            <div data-post-tiptap-editor-target="toolbar" class="flex flex-wrap items-center gap-1 rounded-t-xl border border-b-0 border-slate-300 bg-slate-50 p-2">
+                <button type="button" data-action="post-tiptap-editor#toggleBold" data-format="bold" class="rounded-lg px-2.5 py-1.5 text-sm font-bold hover:bg-slate-200" title="Pogrubienie (Ctrl+B)">B</button>
+                <button type="button" data-action="post-tiptap-editor#toggleItalic" data-format="italic" class="rounded-lg px-2.5 py-1.5 text-sm italic hover:bg-slate-200" title="Kursywa (Ctrl+I)">I</button>
+                <button type="button" data-action="post-tiptap-editor#toggleUnderline" data-format="underline" class="rounded-lg px-2.5 py-1.5 text-sm underline hover:bg-slate-200" title="Podkreślenie (Ctrl+U)">U</button>
+                <button type="button" data-action="post-tiptap-editor#toggleStrike" data-format="strike" class="rounded-lg px-2.5 py-1.5 text-sm line-through hover:bg-slate-200" title="Przekreślenie">S</button>
+
+                <span class="mx-1 h-5 w-px bg-slate-300"></span>
+
+                <button type="button" data-action="post-tiptap-editor#toggleHeading2" data-format="heading2" class="rounded-lg px-2.5 py-1.5 text-sm font-bold hover:bg-slate-200" title="Nagłówek H2">H2</button>
+                <button type="button" data-action="post-tiptap-editor#toggleHeading3" data-format="heading3" class="rounded-lg px-2.5 py-1.5 text-sm font-bold hover:bg-slate-200" title="Nagłówek H3">H3</button>
+
+                <span class="mx-1 h-5 w-px bg-slate-300"></span>
+
+                <button type="button" data-action="post-tiptap-editor#toggleBulletList" data-format="bulletList" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Lista punktowana">• Lista</button>
+                <button type="button" data-action="post-tiptap-editor#toggleOrderedList" data-format="orderedList" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Lista numerowana">1. Lista</button>
+                <button type="button" data-action="post-tiptap-editor#toggleBlockquote" data-format="blockquote" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Cytat">❝ Cytat</button>
+
+                <span class="mx-1 h-5 w-px bg-slate-300"></span>
+
+                <button type="button" data-action="post-tiptap-editor#setLink" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Wstaw link">🔗 Link</button>
+                <button type="button" data-action="post-tiptap-editor#insertTable" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Wstaw tabelę">⊞ Tabela</button>
+                <button type="button" data-post-tiptap-editor-target="uploadButton" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Wstaw obraz">🖼 Obraz</button>
+
+                <span class="mx-1 h-5 w-px bg-slate-300"></span>
+
+                <button type="button" data-action="post-tiptap-editor#undo" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Cofnij (Ctrl+Z)">↶</button>
+                <button type="button" data-action="post-tiptap-editor#redo" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Ponów (Ctrl+Shift+Z)">↷</button>
+            </div>
+
+            <div data-post-tiptap-editor-target="editor" class="prose prose-sm min-h-96 w-full rounded-b-xl border border-slate-300 px-4 py-3 shadow-sm focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200"></div>
+
             <input type="hidden" name="contentJson" data-post-tiptap-editor-target="contentJson" value="{{ post.body.contentJson|json_encode }}">
             <input type="hidden" name="contentHtml" data-post-tiptap-editor-target="contentHtml" value="{{ post.body.contentHtml }}">
-            <div class="mt-2 flex gap-2">
-                <button type="button" data-post-tiptap-editor-target="uploadButton" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Dodaj obraz</button>
-                <input type="file" data-post-tiptap-editor-target="uploadInput" accept="image/jpeg,image/png,image/webp,image/avif" hidden>
-            </div>
+            <input type="file" data-post-tiptap-editor-target="uploadInput" accept="image/jpeg,image/png,image/webp,image/avif" hidden>
+
             <p class="mt-1 text-xs text-slate-500">H2/H3 nagłówki, listy, tabele, linki, bold/italic/underline/strikethrough, cytaty</p>
         </div>
 

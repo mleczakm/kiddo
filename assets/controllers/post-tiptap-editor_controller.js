@@ -11,10 +11,11 @@ import { Typography } from '@tiptap/extension-typography';
 /**
  * Tiptap editor for article content: prose, headings (H2/H3), lists, tables,
  * images, links, undo/redo. Syncs JSON and sanitized HTML to hidden inputs.
- * Supports inline image uploads that create PostFile attachments.
+ * Supports inline image uploads that create PostFile attachments, and a
+ * toolbar that mirrors formatting state (active/disabled) as selection moves.
  */
 export default class extends Controller {
-    static targets = ['editor', 'contentJson', 'contentHtml', 'uploadInput', 'uploadButton'];
+    static targets = ['editor', 'toolbar', 'contentJson', 'contentHtml', 'uploadInput', 'uploadButton'];
     static values = { uploadUrl: String };
 
     connect() {
@@ -46,17 +47,20 @@ export default class extends Controller {
             ],
             content: this.getInitialContent(),
             onUpdate: () => this.syncContent(),
-            onSelectionUpdate: () => {},
+            onSelectionUpdate: () => this.updateToolbarState(),
+            onTransaction: () => this.updateToolbarState(),
         });
 
         if (this.hasUploadButtonTarget) {
             this.uploadButtonTarget.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.uploadImageTarget.click();
+                this.uploadInputTarget.click();
             });
 
             this.uploadInputTarget.addEventListener('change', (e) => this.handleImageUpload(e));
         }
+
+        this.updateToolbarState();
     }
 
     disconnect() {
@@ -82,6 +86,91 @@ export default class extends Controller {
         this.contentHtmlTarget.value = html;
     }
 
+    updateToolbarState() {
+        if (!this.hasToolbarTarget || !this.editor) return;
+
+        const checks = {
+            bold: this.editor.isActive('bold'),
+            italic: this.editor.isActive('italic'),
+            underline: this.editor.isActive('underline'),
+            strike: this.editor.isActive('strike'),
+            heading2: this.editor.isActive('heading', { level: 2 }),
+            heading3: this.editor.isActive('heading', { level: 3 }),
+            bulletList: this.editor.isActive('bulletList'),
+            orderedList: this.editor.isActive('orderedList'),
+            blockquote: this.editor.isActive('blockquote'),
+        };
+
+        this.toolbarTarget.querySelectorAll('[data-format]').forEach((button) => {
+            const format = button.dataset.format;
+            const isActive = checks[format] ?? false;
+            button.classList.toggle('bg-indigo-100', isActive);
+            button.classList.toggle('text-indigo-700', isActive);
+        });
+    }
+
+    toggleBold() {
+        this.editor.chain().focus().toggleBold().run();
+    }
+
+    toggleItalic() {
+        this.editor.chain().focus().toggleItalic().run();
+    }
+
+    toggleUnderline() {
+        this.editor.chain().focus().toggleUnderline().run();
+    }
+
+    toggleStrike() {
+        this.editor.chain().focus().toggleStrike().run();
+    }
+
+    toggleHeading2() {
+        this.editor.chain().focus().toggleHeading({ level: 2 }).run();
+    }
+
+    toggleHeading3() {
+        this.editor.chain().focus().toggleHeading({ level: 3 }).run();
+    }
+
+    toggleBulletList() {
+        this.editor.chain().focus().toggleBulletList().run();
+    }
+
+    toggleOrderedList() {
+        this.editor.chain().focus().toggleOrderedList().run();
+    }
+
+    toggleBlockquote() {
+        this.editor.chain().focus().toggleBlockquote().run();
+    }
+
+    setLink() {
+        const previousUrl = this.editor.getAttributes('link').href;
+        const url = window.prompt('Adres URL linku:', previousUrl || 'https://');
+
+        if (url === null) return;
+
+        if (url === '') {
+            this.editor.chain().focus().extendMarkRange('link').unsetLink().run();
+            return;
+        }
+
+        this.editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    }
+
+    insertTable() {
+        this.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    }
+
+    undo() {
+        this.editor.chain().focus().undo().run();
+    }
+
+    redo() {
+        this.editor.chain().focus().redo().run();
+    }
+
     async handleImageUpload(event) {
         const file = event.target.files?.[0];
         if (!file) return;
@@ -94,10 +183,10 @@ export default class extends Controller {
             if (!response.ok) throw new Error('Upload failed');
 
             const data = await response.json();
-            if (data.url && data.alt) {
+            if (data.url) {
                 this.editor.chain()
                     .focus()
-                    .setImage({ src: data.url, alt: data.alt })
+                    .setImage({ src: data.url, alt: data.alt || '' })
                     .run();
                 this.syncContent();
             }
