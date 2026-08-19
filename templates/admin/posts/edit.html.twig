@@ -26,20 +26,12 @@
         <input type="hidden" name="_token" value="{{ csrf_token('edit_post') }}">
 
         <div data-controller="post-title-slug">
-            <input list="eyebrow-options" name="eyebrow" value="{{ post.body.eyebrow }}"
-                   placeholder="Kategoria / etykieta nad tytułem"
-                   class="w-full border-0 border-b-2 border-transparent bg-transparent px-0 py-1 text-xs font-bold uppercase tracking-wide text-indigo-600 placeholder:text-slate-300 placeholder:normal-case placeholder:tracking-normal hover:border-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-0">
-            <datalist id="eyebrow-options">
-                {% for eyebrow in eyebrowOptions %}
-                    <option value="{{ eyebrow }}">
-                {% endfor %}
-            </datalist>
-
+            <label class="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-400">Tytuł artykułu</label>
             <div class="flex items-start justify-between gap-3">
                 <input name="title" required value="{{ post.body.title }}" data-post-title-slug-target="title"
                        data-action="input->post-title-slug#updateSlugPreview"
-                       placeholder="Tytuł artykułu"
-                       class="w-full border-0 border-b-2 border-transparent bg-transparent px-0 py-1 text-3xl font-black text-slate-900 placeholder:text-slate-300 hover:border-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-0">
+                       placeholder="Wpisz tytuł artykułu"
+                       class="w-full border-0 border-b-2 border-transparent bg-transparent px-3 py-2 text-3xl font-black text-slate-900 placeholder:text-slate-300 hover:border-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-0">
                 {% if not isNew %}
                     <a href="{{ path('app_admin_post_preview', {id: post.id}) }}" target="_blank" rel="noopener"
                        title="Podgląd w nowej karcie" aria-label="Podgląd w nowej karcie"
@@ -51,10 +43,32 @@
                     </a>
                 {% endif %}
             </div>
-            <p data-post-title-slug-target="slugPreview" class="mt-1 text-xs font-mono text-slate-400"></p>
+            <div class="mt-1 flex items-center gap-1 px-3">
+                <p data-post-title-slug-target="slugPreview" class="text-xs font-mono text-slate-400"></p>
+                <button type="button" data-action="post-title-slug#copySlug"
+                        class="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-indigo-600" title="Kopiuj adres artykułu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <label class="block"><span class="mb-1 block text-sm font-bold">Lead</span><textarea name="excerpt" rows="3" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.body.excerpt }}</textarea></label>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label class="block">
+                <span class="mb-1 block text-sm font-bold">Kategoria</span>
+                <input list="eyebrow-options" name="eyebrow" value="{{ post.body.eyebrow }}"
+                       placeholder="np. Historie z warsztatów"
+                       class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm font-bold uppercase tracking-wide text-indigo-600 placeholder:text-slate-300 placeholder:font-normal placeholder:normal-case placeholder:tracking-normal">
+                <datalist id="eyebrow-options">
+                    {% for eyebrow in eyebrowOptions %}
+                        <option value="{{ eyebrow }}">
+                    {% endfor %}
+                </datalist>
+            </label>
+            <label class="block"><span class="mb-1 block text-sm font-bold">Lead</span><textarea name="excerpt" rows="3" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.body.excerpt }}</textarea></label>
+        </div>
 
         <div data-controller="post-tiptap-editor" data-post-tiptap-editor-upload-url="{{ path('app_admin_post_inline_image_upload', {id: post.id}) }}">
             <label class="mb-1 block text-sm font-bold">Treść artykułu</label>
@@ -89,7 +103,7 @@
                 <button type="button" data-action="post-tiptap-editor#redo" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Ponów (Ctrl+Shift+Z)">↷</button>
             </div>
 
-            <div data-post-tiptap-editor-target="editor" class="prose prose-sm min-h-96 w-full max-w-none rounded-b-xl px-4 py-3 shadow-sm outline-none"></div>
+            <div data-post-tiptap-editor-target="editor" class="prose prose-sm min-h-96 w-full max-w-none rounded-b-xl px-4 py-3 shadow-sm rounded-b-xl border border-slate-300"></div>
 
             <input type="hidden" name="contentJson" data-post-tiptap-editor-target="contentJson" value="{{ post.body.contentJson|json_encode }}">
             <input type="hidden" name="contentHtml" data-post-tiptap-editor-target="contentHtml" value="{{ post.body.contentHtml }}">
@@ -98,44 +112,45 @@
             <p class="mt-1 text-xs text-slate-500">H2/H3 nagłówki, listy, tabele, linki, bold/italic/underline/strikethrough, cytaty</p>
         </div>
 
-        <fieldset class="space-y-4 rounded-xl border border-slate-200 p-4">
-            <legend class="px-1 text-sm font-bold text-slate-700">Pliki i załączniki</legend>
-
-            <div data-controller="dropzone">
-                <div data-dropzone-target="zone" class="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-slate-400">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <p class="mt-2 text-sm font-semibold text-slate-600">Przeciągnij pliki tutaj lub kliknij, aby wybrać</p>
-                    <p class="mt-1 text-xs text-slate-500">Obrazy (JPEG, PNG, WebP, AVIF), wideo (MP4, WebM, Ogg), dokumenty (PDF)</p>
+        <div class="rounded-xl border border-slate-200">
+            <p class="rounded-t-xl px-4 py-3 text-sm font-bold text-slate-700">Pliki i załączniki</p>
+            <div class="space-y-4 p-4 pt-0">
+                <div data-controller="dropzone">
+                    <div data-dropzone-target="zone" class="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-slate-400">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p class="mt-2 text-sm font-semibold text-slate-600">Przeciągnij pliki tutaj lub kliknij, aby wybrać</p>
+                        <p class="mt-1 text-xs text-slate-500">Obrazy (JPEG, PNG, WebP, AVIF), wideo (MP4, WebM, Ogg), dokumenty (PDF)</p>
+                    </div>
+                    <input type="file" name="files[]" multiple accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/webm,video/ogg,application/pdf" data-dropzone-target="input" hidden>
+                    <ul data-dropzone-target="fileList" class="mt-2 space-y-1"></ul>
                 </div>
-                <input type="file" name="files[]" multiple accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/webm,video/ogg,application/pdf" data-dropzone-target="input" hidden>
-                <ul data-dropzone-target="fileList" class="mt-2 space-y-1"></ul>
-            </div>
 
-            {% if post.files|length > 0 %}
-                <div class="space-y-2">
-                    <p class="text-sm font-bold">Obecne pliki</p>
-                    {% for file in post.files %}
-                        <div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
-                            <div class="flex-1">
-                                <p class="text-sm font-semibold">{{ file.file.originalName }}</p>
-                                <p class="text-xs text-slate-500">{{ (file.file.size / 1024)|round(1) }} KB · {{ file.role.value }}</p>
+                {% if post.files|length > 0 %}
+                    <div class="space-y-2">
+                        <p class="text-sm font-bold">Obecne pliki</p>
+                        {% for file in post.files %}
+                            <div class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold">{{ file.file.originalName }}</p>
+                                    <p class="text-xs text-slate-500">{{ (file.file.size / 1024)|round(1) }} KB · {{ file.role.value }}</p>
+                                </div>
+                                <select name="files_role[{{ file.id }}]" class="rounded border border-slate-300 px-2 py-1 text-xs">
+                                    <option value="cover" {{ file.role.value == 'cover' ? 'selected' : '' }}>Okładka</option>
+                                    <option value="inline" {{ file.role.value == 'inline' ? 'selected' : '' }}>Wstawić w treść</option>
+                                    <option value="attachment" {{ file.role.value == 'attachment' ? 'selected' : '' }}>Załącznik</option>
+                                </select>
+                                <input type="hidden" name="files_id[]" value="{{ file.id }}">
+                                <label class="text-xs"><input type="checkbox" name="files_remove[{{ file.id }}]"> Usuń</label>
                             </div>
-                            <select name="files_role[{{ file.id }}]" class="rounded border border-slate-300 px-2 py-1 text-xs">
-                                <option value="cover" {{ file.role.value == 'cover' ? 'selected' : '' }}>Okładka</option>
-                                <option value="inline" {{ file.role.value == 'inline' ? 'selected' : '' }}>Wstawić w treść</option>
-                                <option value="attachment" {{ file.role.value == 'attachment' ? 'selected' : '' }}>Załącznik</option>
-                            </select>
-                            <input type="hidden" name="files_id[]" value="{{ file.id }}">
-                            <label class="text-xs"><input type="checkbox" name="files_remove[{{ file.id }}]"> Usuń</label>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </fieldset>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
         <details class="rounded-xl border border-slate-200">
             <summary class="cursor-pointer select-none rounded-xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50">SEO i social media</summary>
@@ -152,15 +167,23 @@
             </div>
         </details>
 
-        <div class="flex items-center justify-end"><button class="rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700">Zapisz szkic</button></div>
+        <div data-controller="post-publish-actions" class="space-y-3 border-t border-slate-200 pt-5">
+            <div class="flex flex-wrap items-end justify-between gap-4">
+                <label class="block">
+                    <span class="mb-1 block text-sm font-bold">Planowana publikacja</span>
+                    <input type="datetime-local" name="publishedAt"
+                           data-post-publish-actions-target="scheduleInput"
+                           data-action="input->post-publish-actions#checkFutureDate"
+                           value="{{ post.isScheduled ? post.publishedAt|date('Y-m-d\\TH:i') : '' }}"
+                           class="rounded-xl border border-slate-300 px-4 py-3">
+                </label>
+                <div class="flex items-center gap-3">
+                    <button type="submit" name="intent" value="draft" class="rounded-xl border border-slate-300 px-6 py-3 font-bold text-slate-700 hover:bg-slate-50">Zapisz szkic</button>
+                    <button type="submit" name="intent" value="publish" class="rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700">Zapisz i opublikuj</button>
+                </div>
+            </div>
+            <p data-post-publish-actions-target="warning" class="hidden rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800"></p>
+        </div>
     </form>
-
-    {% if not isNew %}
-        <form method="post" action="{{ path('app_admin_post_schedule', {id: post.id}) }}" class="flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <input type="hidden" name="_token" value="{{ csrf_token('schedule_post_' ~ post.id) }}">
-            <label class="block"><span class="mb-1 block text-sm font-bold">Zaplanuj publikację na</span><input type="datetime-local" name="publishedAt" value="{{ post.publishedAt ? post.publishedAt|date('Y-m-d\\TH:i') : '' }}" class="rounded-xl border border-slate-300 px-4 py-3"></label>
-            <button class="rounded-xl border border-slate-300 px-6 py-3 font-bold text-slate-700 hover:bg-slate-50">Zaplanuj publikację</button>
-        </form>
-    {% endif %}
 </div>
 {% endblock %}

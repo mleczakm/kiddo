@@ -131,29 +131,49 @@ final class PostsControllerTest extends WebTestCase
         $entityManager->flush();
         $client->loginUser($admin);
 
+        $future = Clock::get()->now()->modify('+1 day');
         $crawler = $client->request('GET', '/admin/tresci/nowa');
         $form = $crawler
-            ->selectButton('Zapisz szkic')
-            ->form(['title' => 'Scheduled Article', 'contentHtml' => '<p>Treść</p>']);
+            ->selectButton('Zapisz i opublikuj')
+            ->form([
+                'title' => 'Scheduled Article',
+                'contentHtml' => '<p>Treść</p>',
+                'publishedAt' => $future->format('Y-m-d\TH:i'),
+            ]);
         $client->submit($form);
-        $repository = static::getContainer()->get(PostRepository::class);
-        static::assertInstanceOf(PostRepository::class, $repository);
-        $post = $repository->findOneBy(['slug' => 'scheduled-article']);
-        static::assertInstanceOf(Post::class, $post);
-
-        $future = Clock::get()->now()->modify('+1 day');
-        $crawler = $client->request('GET', '/admin/tresci/' . (string) $post->getId() . '/edycja');
-        $scheduleForm = $crawler
-            ->selectButton('Zaplanuj publikację')
-            ->form(['publishedAt' => $future->format('Y-m-d\TH:i')]);
-        $client->submit($scheduleForm);
 
         static::assertResponseRedirects();
+        $repository = static::getContainer()->get(PostRepository::class);
+        static::assertInstanceOf(PostRepository::class, $repository);
         $scheduledPost = $repository->findOneBy(['slug' => 'scheduled-article']);
         static::assertInstanceOf(Post::class, $scheduledPost);
         static::assertTrue($scheduledPost->isScheduled());
         static::assertFalse($scheduledPost->isPublished());
         static::assertNull($repository->findOnePublishedBySlug('scheduled-article', Clock::get()->now()));
+    }
+
+    public function testAdminSaveAndPublishWithoutDateGoesLiveImmediately(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $entityManager->persist($admin);
+        $entityManager->flush();
+        $client->loginUser($admin);
+
+        $crawler = $client->request('GET', '/admin/tresci/nowa');
+        $form = $crawler
+            ->selectButton('Zapisz i opublikuj')
+            ->form(['title' => 'Immediately Live Article', 'contentHtml' => '<p>Treść</p>']);
+        $client->submit($form);
+
+        static::assertResponseRedirects();
+        $repository = static::getContainer()->get(PostRepository::class);
+        static::assertInstanceOf(PostRepository::class, $repository);
+        $post = $repository->findOnePublishedBySlug('immediately-live-article', Clock::get()->now());
+        static::assertInstanceOf(Post::class, $post);
+        static::assertTrue($post->isPublished());
     }
 
     public function testScheduleActionRejectsInvalidCsrfToken(): void

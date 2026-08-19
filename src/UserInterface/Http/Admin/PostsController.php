@@ -158,7 +158,25 @@ final class PostsController extends AbstractController
             return false;
         }
 
+        if ($request->request->get('intent') === 'publish') {
+            $this->applyPublishIntent($request, $post);
+        }
+
         return true;
+    }
+
+    /** @throws \Throwable */
+    private function applyPublishIntent(Request $request, Post $post): void
+    {
+        $publishedAt = $request->request->getString('publishedAt');
+        $when = $publishedAt === '' ? Clock::get()->now() : \DateTimeImmutable::createFromFormat('Y-m-d\TH:i', $publishedAt);
+
+        if ($when === false) {
+            $this->addFlash('error', 'Podaj poprawną datę i godzinę publikacji. Artykuł został zapisany jako szkic.');
+            return;
+        }
+
+        $post->publishAt($when);
     }
 
     private function renderForm(Post $post, bool $isNew): Response

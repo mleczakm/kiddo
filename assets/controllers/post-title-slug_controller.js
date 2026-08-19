@@ -39,4 +39,21 @@ export default class extends Controller {
         const slug = slugify(this.titleTarget.value);
         this.slugPreviewTarget.textContent = slug === '' ? '/blog/…' : `/blog/${slug}`;
     }
+
+    async copySlug(event) {
+        if (!this.hasSlugPreviewTarget) return;
+
+        try {
+            await navigator.clipboard.writeText(this.slugPreviewTarget.textContent);
+        } catch {
+            return;
+        }
+
+        const button = event.currentTarget;
+        const original = button.innerHTML;
+        button.innerHTML = '✓';
+        setTimeout(() => {
+            button.innerHTML = original;
+        }, 1200);
+    }
 }
