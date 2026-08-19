@@ -10,9 +10,13 @@ use App\Entity\Post;
 use App\Entity\PostFile;
 use App\Entity\PostFileRole;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 final class PostFileManagerTest extends TestCase
 {
     public function testReconciliationRemovesUnsubmittedAttachments(): void
@@ -29,7 +33,7 @@ final class PostFileManagerTest extends TestCase
         $manager = new PostFileManager($this->createMockEntityManager());
         $manager->reconcileAttachments($post, [
             [
-                'id' => (string) $file1->getId(),
+                'id' => (string) $pf1->getId(),
                 'role' => 'cover',
                 'position' => 0,
                 'altText' => 'Alt 1',
@@ -59,32 +63,22 @@ final class PostFileManagerTest extends TestCase
         ]);
     }
 
-    public function testAttachFileCreatesPostFileWithMetadata(): void
+    public function testAttachFileCreatesPostFileWithRole(): void
     {
         $post = new Post('Article', new User('author@example.com', 'Author'));
         $file = new File('image.jpg', 'image/jpeg', 5000, str_repeat('a', 64), base64_encode('content'));
         $manager = new PostFileManager($this->createMockEntityManager());
 
-        $postFile = $manager->attachFile(
-            $post,
-            $file,
-            PostFileRole::INLINE,
-            0,
-            'Alt text',
-            'A caption',
-            'download.jpg',
-        );
+        $postFile = $manager->attachFile($post, $file, PostFileRole::INLINE, 2);
 
         static::assertSame($post, $postFile->getPost());
         static::assertSame($file, $postFile->getFile());
         static::assertSame(PostFileRole::INLINE, $postFile->getRole());
-        static::assertSame('Alt text', $postFile->getAltText());
-        static::assertSame('A caption', $postFile->getCaption());
-        static::assertSame('download.jpg', $postFile->getDownloadName());
+        static::assertSame(2, $postFile->getPosition());
     }
 
-    private function createMockEntityManager()
+    private function createMockEntityManager(): EntityManagerInterface&MockObject
     {
-        return $this->createMock('Doctrine\ORM\EntityManagerInterface');
+        return $this->createMock(EntityManagerInterface::class);
     }
 }

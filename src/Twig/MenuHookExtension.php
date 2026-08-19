@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Twig;
 
 use App\Entity\MenuHookLinkTarget;
-use App\Entity\PostStatus;
+use App\Repository\LessonMetadataRepository;
 use App\Repository\MenuHookLinkRepository;
 use App\Repository\PostRepository;
-use App\Repository\LessonMetadataRepository;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
@@ -73,7 +72,11 @@ final class MenuHookExtension extends AbstractExtension
         }
 
         try {
-            return $this->urlGenerator->generate('post_by_slug', ['slug' => $postSlug], UrlGeneratorInterface::ABSOLUTE_URL);
+            return $this->urlGenerator->generate(
+                'post_by_slug',
+                ['slug' => $postSlug],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            );
         } catch (\Exception) {
             return null;
         }
@@ -86,7 +89,11 @@ final class MenuHookExtension extends AbstractExtension
         }
 
         try {
-            return $this->urlGenerator->generate('workshop_by_slug', ['slug' => $workshopSlug], UrlGeneratorInterface::ABSOLUTE_URL);
+            return $this->urlGenerator->generate(
+                'workshop_by_slug',
+                ['slug' => $workshopSlug],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            );
         } catch (\Exception) {
             return null;
         }

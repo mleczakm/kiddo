@@ -82,6 +82,43 @@ body {
     font-family: 'Comic Neue', cursive;
 }
 
+/* Article body content (post.html.twig): callout block, responsive
+   tables, and inline media. Sits on top of @tailwindcss/typography's
+   .prose defaults rather than replacing them. */
+.article-content img {
+    border-radius: 1rem;
+}
+
+.article-content table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.article-content .callout {
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid hsl(43 90% 65% / 0.4);
+    background-color: hsl(43 90% 65% / 0.12);
+}
+
+.article-content .callout p:first-child {
+    margin-top: 0;
+}
+
+.article-content .callout p:last-child {
+    margin-bottom: 0;
+}
+
+.article-content .callout-title {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-family: 'Comic Neue', cursive;
+    font-weight: 700;
+    color: hsl(30 76% 18%);
+}
+
 /* Public frontend atmosphere, based on the latest class-corner mockup. */
 .frontend-animated-bg {
     background-color: hsl(var(--background));

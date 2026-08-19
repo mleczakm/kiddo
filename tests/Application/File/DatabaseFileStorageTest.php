@@ -8,6 +8,7 @@ use App\Application\File\DatabaseFileStorage;
 use App\Application\File\FileUploadPolicy;
 use App\Entity\File;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -106,19 +107,14 @@ final class DatabaseFileStorageTest extends KernelTestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test_') . '.jpg';
         file_put_contents($tempFile, $bytes);
 
-        $uploadedFile = new UploadedFile(
-            $tempFile,
-            $filename,
-            'image/jpeg',
-            filesize($tempFile) ?: null,
-            true,
-        );
+        $uploadedFile = new UploadedFile($tempFile, $filename, 'image/jpeg', filesize($tempFile) ?: null, true);
 
         return [$uploadedFile, $bytes];
     }
 
-    private function getEntityManager()
+    private function getEntityManager(): EntityManagerInterface
     {
-        return static::getContainer()->get('doctrine.orm.entity_manager');
+        /** @var EntityManagerInterface */
+        return static::getContainer()->get(EntityManagerInterface::class);
     }
 }

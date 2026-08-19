@@ -26,7 +26,7 @@ final class PostsControllerFileUploadTest extends WebTestCase
     public function testAdminCanUploadFilesToNewArticle(): void
     {
         $client = static::createClient();
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = $this->getEntityManager();
         $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $entityManager->persist($admin);
         $entityManager->flush();
@@ -34,17 +34,18 @@ final class PostsControllerFileUploadTest extends WebTestCase
 
         $file = $this->createUploadedJpeg('test.jpg');
         $crawler = $client->request('GET', '/admin/tresci/nowa');
-        $form = $crawler->selectButton('Zapisz szkic')->form([
-            'title' => 'Article with File',
-            'contentHtml' => '<p>Content</p>',
-        ]);
+        $form = $crawler
+            ->selectButton('Zapisz szkic')
+            ->form([
+                'title' => 'Article with File',
+                'contentHtml' => '<p>Content</p>',
+            ]);
 
         $form['files'] = [$file];
         $client->submit($form);
 
         static::assertResponseRedirects();
-        $repository = static::getContainer()->get(PostRepository::class);
-        $post = $repository->findOneBy(['slug' => 'article-with-file']);
+        $post = $this->getPostRepository()->findOneBy(['slug' => 'article-with-file']);
         static::assertInstanceOf(Post::class, $post);
         static::assertCount(1, $post->files);
         static::assertSame(PostFileRole::ATTACHMENT, $post->files[0]->getRole());
@@ -53,7 +54,7 @@ final class PostsControllerFileUploadTest extends WebTestCase
     public function testAdminCanRemoveFilesAfterUpload(): void
     {
         $client = static::createClient();
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = $this->getEntityManager();
         $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $entityManager->persist($admin);
         $entityManager->flush();
@@ -61,18 +62,24 @@ final class PostsControllerFileUploadTest extends WebTestCase
 
         $file = $this->createUploadedJpeg('test.jpg');
         $crawler = $client->request('GET', '/admin/tresci/nowa');
-        $form = $crawler->selectButton('Zapisz szkic')->form([
-            'title' => 'Article',
-            'contentHtml' => '<p>Content</p>',
-        ]);
+        $form = $crawler
+            ->selectButton('Zapisz szkic')
+            ->form([
+                'title' => 'Article',
+                'contentHtml' => '<p>Content</p>',
+            ]);
         $form['files'] = [$file];
         $client->submit($form);
 
         static::assertResponseRedirects();
-        $postRepository = static::getContainer()->get(PostRepository::class);
+        $postRepository = $this->getPostRepository();
         $post = $postRepository->findOneBy(['slug' => 'article']);
+        static::assertInstanceOf(Post::class, $post);
         static::assertCount(1, $post->files);
 
+        // The template's files_id[]/files_remove[...] key by PostFile's own
+        // id (the join row), not the underlying File's id.
+        $postFileId = (string) $post->files[0]->getId();
         $fileId = (string) $post->files[0]->getFile()->getId();
 
         $crawler = $client->request('GET', '/admin/tresci/' . (string) $post->getId() . '/edycja');
@@ -86,15 +93,15 @@ final class PostsControllerFileUploadTest extends WebTestCase
             '_token' => $csrfToken,
             'title' => 'Article',
             'contentHtml' => '<p>Updated</p>',
-            'files_id' => [$fileId],
-            'files_remove' => [$fileId => '1'],
+            'files_id' => [$postFileId],
+            'files_remove' => [$postFileId => '1'],
         ]);
 
         $post = $postRepository->findOneBy(['slug' => 'article']);
+        static::assertInstanceOf(Post::class, $post);
         static::assertCount(0, $post->files);
 
-        $fileRepository = static::getContainer()->get(FileRepository::class);
-        $file = $fileRepository->find($fileId);
+        $file = $this->getFileRepository()->find($fileId);
         static::assertNotNull($file, 'File should still exist (not orphaned yet)');
     }
 
@@ -107,12 +114,24 @@ final class PostsControllerFileUploadTest extends WebTestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test_') . '.jpg';
         file_put_contents($tempFile, base64_decode(self::MINIMAL_JPEG_BASE64, true));
 
-        return new UploadedFile(
-            $tempFile,
-            $filename,
-            'image/jpeg',
-            filesize($tempFile) ?: null,
-            true,
-        );
+        return new UploadedFile($tempFile, $filename, 'image/jpeg', filesize($tempFile) ?: null, true);
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        /** @var EntityManagerInterface */
+        return static::getContainer()->get(EntityManagerInterface::class);
+    }
+
+    private function getPostRepository(): PostRepository
+    {
+        /** @var PostRepository */
+        return static::getContainer()->get(PostRepository::class);
+    }
+
+    private function getFileRepository(): FileRepository
+    {
+        /** @var FileRepository */
+        return static::getContainer()->get(FileRepository::class);
     }
 }

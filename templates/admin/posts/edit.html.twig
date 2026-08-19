@@ -22,7 +22,7 @@
         {% endif %}
     </div>
 
-    <form method="post" data-post-editor-form-target="form" class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form method="post" enctype="multipart/form-data" data-post-editor-form-target="form" class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <input type="hidden" name="_token" value="{{ csrf_token('edit_post') }}">
 
         <div data-controller="post-title-slug">

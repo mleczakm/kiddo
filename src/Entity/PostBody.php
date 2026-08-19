@@ -53,11 +53,8 @@ class PostBody
         return $this->excerpt;
     }
 
-    public function updateEditorial(
-        string $title,
-        ?string $eyebrow,
-        ?string $excerpt,
-    ): void {
+    public function updateEditorial(string $title, ?string $eyebrow, ?string $excerpt): void
+    {
         $this->title = $title;
         $this->eyebrow = $eyebrow;
         $this->excerpt = $excerpt;

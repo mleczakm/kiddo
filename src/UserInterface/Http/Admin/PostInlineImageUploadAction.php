@@ -8,7 +8,6 @@ use App\Application\File\FileStorageInterface;
 use App\Application\File\FileUploadPolicy;
 use App\Entity\Post;
 use App\Entity\PostFileRole;
-use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

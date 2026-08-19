@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http;
 
-use App\Application\File\FileUploadPolicy;
 use App\Entity\File;
 use App\Entity\Post;
 use App\Entity\PostFile;
 use App\Entity\PostFileRole;
-use App\Entity\PostStatus;
 use App\Entity\User;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,14 +24,14 @@ final class FileActionTest extends WebTestCase
         $em = $this->getEntityManager();
 
         $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createPublishedPost($em);
+        $post = $this->createPost($em, published: true);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
         $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/image.jpg");
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSame('image/jpeg', $client->getResponse()->headers->get('Content-Type'));
+        static::assertResponseIsSuccessful();
+        static::assertSame('image/jpeg', $client->getResponse()->headers->get('Content-Type'));
     }
 
     public function testAnonymousCannotAccessFilesAttachedToDrafts(): void
@@ -42,7 +40,7 @@ final class FileActionTest extends WebTestCase
         $em = $this->getEntityManager();
 
         $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createDraftPost($em);
+        $post = $this->createPost($em, published: false);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
         $em->flush();
 
@@ -51,7 +49,7 @@ final class FileActionTest extends WebTestCase
         // 401, not 403: Symfony's security exception listener treats "denied
         // while fully unauthenticated" as "please authenticate" rather than
         // "forbidden" — 403 is reserved for an authenticated-but-lacking-role user.
-        $this->assertResponseStatusCodeSame(401);
+        static::assertResponseStatusCodeSame(401);
     }
 
     public function testAdminCanAccessFilesAttachedToDrafts(): void
@@ -64,13 +62,13 @@ final class FileActionTest extends WebTestCase
         $client->loginUser($admin);
 
         $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createDraftPost($em);
+        $post = $this->createPost($em, published: false);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
         $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/image.jpg");
 
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
     }
 
     public function testFileDeliverySetProperHeaders(): void
@@ -79,16 +77,19 @@ final class FileActionTest extends WebTestCase
         $em = $this->getEntityManager();
 
         $file = $this->createFile($em, 'document.pdf', 'application/pdf', 'pdf content');
-        $post = $this->createPublishedPost($em);
+        $post = $this->createPost($em, published: true);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
         $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/document.pdf");
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSame('application/pdf', $client->getResponse()->headers->get('Content-Type'));
-        $this->assertTrue($client->getResponse()->headers->has('X-Content-Type-Options'));
-        $this->assertStringContainsString('attachment', $client->getResponse()->headers->get('Content-Disposition') ?? '');
+        static::assertResponseIsSuccessful();
+        static::assertSame('application/pdf', $client->getResponse()->headers->get('Content-Type'));
+        static::assertTrue($client->getResponse()->headers->has('X-Content-Type-Options'));
+        static::assertStringContainsString(
+            'attachment',
+            $client->getResponse()->headers->get('Content-Disposition') ?? '',
+        );
     }
 
     public function testInlineImageDoesNotForceDownload(): void
@@ -97,15 +98,15 @@ final class FileActionTest extends WebTestCase
         $em = $this->getEntityManager();
 
         $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createPublishedPost($em);
+        $post = $this->createPost($em, published: true);
         new PostFile($post, $file, PostFileRole::INLINE, 0);
         $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/image.jpg");
 
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $dispositionHeader = $client->getResponse()->headers->get('Content-Disposition') ?? '';
-        $this->assertStringNotContainsString('attachment', $dispositionHeader);
+        static::assertStringNotContainsString('attachment', $dispositionHeader);
     }
 
     public function testHeadRequestDoesNotReturnBody(): void
@@ -114,21 +115,21 @@ final class FileActionTest extends WebTestCase
         $em = $this->getEntityManager();
 
         $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createPublishedPost($em);
+        $post = $this->createPost($em, published: true);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
         $em->flush();
 
         $client->request('HEAD', "/pliki/{$file->getId()}/image.jpg");
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSame('', $client->getResponse()->getContent());
+        static::assertResponseIsSuccessful();
+        static::assertSame('', $client->getResponse()->getContent());
     }
 
     public function test404ForNonexistentFile(): void
     {
         $client = static::createClient();
         $client->request('GET', '/pliki/0000000000000000000000000000/missing.jpg');
-        $this->assertResponseStatusCodeSame(404);
+        static::assertResponseStatusCodeSame(404);
     }
 
     private function getEntityManager(): EntityManagerInterface
@@ -139,31 +140,18 @@ final class FileActionTest extends WebTestCase
 
     private function createFile(EntityManagerInterface $em, string $filename, string $mimeType, string $content): File
     {
-        $file = new File(
-            $filename,
-            $mimeType,
-            \strlen($content),
-            hash('sha256', $content),
-            base64_encode($content),
-        );
+        $file = new File($filename, $mimeType, \strlen($content), hash('sha256', $content), base64_encode($content));
         $em->persist($file);
         return $file;
     }
 
-    private function createPublishedPost(EntityManagerInterface $em): Post
+    private function createPost(EntityManagerInterface $em, bool $published): Post
     {
         $author = new User('author@example.com', 'Author');
-        $post = new Post('Article', $author);
-        $post->publishAt(Clock::get()->now());
-        $em->persist($author);
-        $em->persist($post);
-        return $post;
-    }
-
-    private function createDraftPost(EntityManagerInterface $em): Post
-    {
-        $author = new User('author@example.com', 'Author');
-        $post = new Post('Draft Article', $author);
+        $post = new Post($published ? 'Article' : 'Draft Article', $author);
+        if ($published) {
+            $post->publishAt(Clock::get()->now());
+        }
         $em->persist($author);
         $em->persist($post);
         return $post;

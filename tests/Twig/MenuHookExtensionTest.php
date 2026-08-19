@@ -6,15 +6,11 @@ namespace App\Tests\Twig;
 
 use App\Entity\MenuHookLink;
 use App\Entity\MenuHookLinkTarget;
-use App\Entity\Post;
-use App\Entity\PostStatus;
-use App\Entity\User;
 use App\Repository\LessonMetadataRepository;
 use App\Repository\MenuHookLinkRepository;
 use App\Repository\PostRepository;
 use App\Twig\MenuHookExtension;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Clock\Clock;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class MenuHookExtensionTest extends TestCase
@@ -54,7 +50,8 @@ final class MenuHookExtensionTest extends TestCase
     {
         $mockLink = new MenuHookLink('main_nav_extra', 0, MenuHookLinkTarget::POST, 'unpublished-article', 'Article');
         $postRepository = $this->createMock(PostRepository::class);
-        $postRepository->expects(static::once())
+        $postRepository
+            ->expects(static::once())
             ->method('findOnePublishedBySlug')
             ->with('unpublished-article', static::anything())
             ->willReturn(null);
@@ -73,9 +70,16 @@ final class MenuHookExtensionTest extends TestCase
 
     public function testLinksForFiltersOutNonexistentWorkshops(): void
     {
-        $mockLink = new MenuHookLink('main_nav_extra', 0, MenuHookLinkTarget::WORKSHOP, 'nonexistent-workshop', 'Workshop');
+        $mockLink = new MenuHookLink(
+            'main_nav_extra',
+            0,
+            MenuHookLinkTarget::WORKSHOP,
+            'nonexistent-workshop',
+            'Workshop',
+        );
         $workshopRepository = $this->createMock(LessonMetadataRepository::class);
-        $workshopRepository->expects(static::once())
+        $workshopRepository
+            ->expects(static::once())
             ->method('slugExists')
             ->with('nonexistent-workshop')
             ->willReturn(false);
@@ -95,9 +99,7 @@ final class MenuHookExtensionTest extends TestCase
     private function createMockRepository(array $links): MenuHookLinkRepository
     {
         $repository = $this->createMock(MenuHookLinkRepository::class);
-        $repository->expects(static::any())
-            ->method('findActiveForSlot')
-            ->willReturn($links);
+        $repository->expects(static::any())->method('findActiveForSlot')->willReturn($links);
 
         return $repository;
     }

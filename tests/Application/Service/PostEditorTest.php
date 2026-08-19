@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\Service;
 
 use App\Application\File\FileStorageInterface;
+use App\Application\Service\InlineAttachmentReconciler;
 use App\Application\Service\PostEditor;
 use App\Application\Service\PostFileManager;
 use App\Entity\Post;
@@ -43,7 +44,7 @@ final class PostEditorTest extends TestCase
             $sanitizer,
             $this->createStub(FileStorageInterface::class),
             new PostFileManager($this->createStub(EntityManagerInterface::class)),
-            $this->createStub(EntityManagerInterface::class),
+            new InlineAttachmentReconciler($this->createStub(EntityManagerInterface::class)),
         );
         $json = ['type' => 'doc', 'content' => [['type' => 'paragraph']]];
 
@@ -77,7 +78,7 @@ final class PostEditorTest extends TestCase
             $this->createStub(HtmlSanitizerInterface::class),
             $this->createStub(FileStorageInterface::class),
             new PostFileManager($this->createStub(EntityManagerInterface::class)),
-            $this->createStub(EntityManagerInterface::class),
+            new InlineAttachmentReconciler($this->createStub(EntityManagerInterface::class)),
         );
     }
 }

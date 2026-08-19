@@ -24,6 +24,8 @@ trait RangeResponseTrait
      * Slicing the range ourselves into a plain Response sidesteps that
      * bridge entirely, since non-binary responses are sent via
      * `$swooleResponse->end($content)`.
+     *
+     * @throws \InvalidArgumentException
      */
     protected function rangeResponse(Request $request, string $data, string $mimeType): Response
     {

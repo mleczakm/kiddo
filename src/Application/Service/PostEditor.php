@@ -9,7 +9,6 @@ use App\Application\File\FileUploadPolicy;
 use App\Entity\Post;
 use App\Entity\PostFileRole;
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -22,16 +21,12 @@ final readonly class PostEditor
         private HtmlSanitizerInterface $sanitizer,
         private FileStorageInterface $fileStorage,
         private PostFileManager $fileManager,
-        private EntityManagerInterface $em,
+        private InlineAttachmentReconciler $inlineAttachmentReconciler,
     ) {}
 
     /** @throws \InvalidArgumentException */
-    public function updateEditorial(
-        Post $post,
-        string $title,
-        ?string $eyebrow,
-        ?string $excerpt,
-    ): void {
+    public function updateEditorial(Post $post, string $title, ?string $eyebrow, ?string $excerpt): void
+    {
         $title = trim($title);
         if ($title === '') {
             throw new \InvalidArgumentException('Article title cannot be empty.');
@@ -43,11 +38,7 @@ final readonly class PostEditor
             $post->slug = $slugger->slug($title)->lower()->toString();
         }
 
-        $post->body->updateEditorial(
-            $title,
-            $this->nullableTrim($eyebrow),
-            $this->nullableTrim($excerpt),
-        );
+        $post->body->updateEditorial($title, $this->nullableTrim($eyebrow), $this->nullableTrim($excerpt));
         $post->markUpdated();
     }
 
@@ -76,24 +67,31 @@ final readonly class PostEditor
      */
     public function attachFiles(Post $post, array $uploads, ?User $uploadedBy = null): void
     {
-        $policy = new FileUploadPolicy('article_image');
-
-        $totalSize = 0;
-        foreach ($post->files as $existing) {
-            $totalSize += $existing->getFile()->getSize();
-        }
-
         foreach ($uploads as $upload) {
+            $policy = new FileUploadPolicy($this->policyUsageFor($upload));
             $file = $this->fileStorage->store($upload, $policy, $uploadedBy);
-            $this->fileManager->attachFile(
-                $post,
-                $file,
-                PostFileRole::ATTACHMENT,
-                $post->files->count(),
-            );
-
-            $totalSize += $file->getSize();
+            $this->fileManager->attachFile($post, $file, PostFileRole::ATTACHMENT, $post->files->count());
         }
+    }
+
+    /**
+     * Picks which FileUploadPolicy usage bucket an upload belongs to, by
+     * sniffing its real content rather than trusting the client-supplied
+     * type (which is unreliable even for picking the right allow-list, not
+     * just as a security boundary — browsers/clients routinely mislabel or
+     * omit it). DatabaseFileStorage sniffs again independently when it
+     * actually stores the file; this is only a routing decision.
+     */
+    private function policyUsageFor(UploadedFile $upload): string
+    {
+        $mimeType = mime_content_type($upload->getRealPath());
+        $mimeType = $mimeType !== false && $mimeType !== '' ? $mimeType : (string) $upload->getClientMimeType();
+
+        return match (true) {
+            str_starts_with($mimeType, 'video/') => 'article_video',
+            str_starts_with($mimeType, 'image/') => 'article_image',
+            default => 'article_document',
+        };
     }
 
     /**
@@ -117,65 +115,7 @@ final readonly class PostEditor
      */
     public function reconcileInlineAttachments(Post $post, array $contentJson): void
     {
-        $inlineFileIds = $this->extractInlineFileIds($contentJson);
-
-        foreach ($post->files as $postFile) {
-            if ($postFile->getRole()->value !== 'inline') {
-                continue;
-            }
-
-            if (!\in_array((string) $postFile->getFile()->getId(), $inlineFileIds, true)) {
-                $post->removeFile($postFile);
-            }
-        }
-
-        $this->em->flush();
-    }
-
-    /**
-     * Extract all file IDs referenced in image nodes within contentJson.
-     * Pattern: nodes with type='image' and attrs.src containing stored_file URLs.
-     *
-     * @param array<string, mixed> $contentJson
-     * @return list<string>
-     */
-    private function extractInlineFileIds(array $contentJson): array
-    {
-        $fileIds = [];
-
-        if (!isset($contentJson['content']) || !\is_array($contentJson['content'])) {
-            return $fileIds;
-        }
-
-        $this->walkContentNodes($contentJson['content'], static function (array $node) use (&$fileIds): void {
-            if (($node['type'] ?? null) !== 'image') {
-                return;
-            }
-
-            $src = $node['attrs']['src'] ?? null;
-            if ($src && \is_string($src) && preg_match('~/pliki/([A-Za-z0-9]{26})/~', $src, $matches)) {
-                $fileIds[] = $matches[1];
-            }
-        });
-
-        return $fileIds;
-    }
-
-    /**
-     * Recursively walk content nodes to find images.
-     *
-     * @param list<array<string, mixed>> $nodes
-     * @param callable(array<string, mixed>): void $callback
-     */
-    private function walkContentNodes(array $nodes, callable $callback): void
-    {
-        foreach ($nodes as $node) {
-            $callback($node);
-
-            if (isset($node['content']) && \is_array($node['content'])) {
-                $this->walkContentNodes($node['content'], $callback);
-            }
-        }
+        $this->inlineAttachmentReconciler->reconcile($post, $contentJson);
     }
 
     private function nullableTrim(?string $value): ?string

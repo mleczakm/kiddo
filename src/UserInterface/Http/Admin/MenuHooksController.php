@@ -48,7 +48,10 @@ final class MenuHooksController extends AbstractController
     #[Route('/admin/menu-hooks/{id}/delete', name: 'app_admin_menu_hook_delete', methods: ['POST'])]
     public function delete(MenuHookLink $link, Request $request): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('delete_menu_hook_' . (string) $link->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid(
+            'delete_menu_hook_' . (string) $link->getId(),
+            (string) $request->request->get('_token'),
+        )) {
             throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
@@ -82,7 +85,8 @@ final class MenuHooksController extends AbstractController
                 throw new \InvalidArgumentException('Label is required.');
             }
 
-            $maxPosition = $this->repository->createQueryBuilder('m')
+            $maxPosition = $this->repository
+                ->createQueryBuilder('m')
                 ->select('MAX(m.position)')
                 ->where('m.slotKey = :slot')
                 ->setParameter('slot', $slotKey)

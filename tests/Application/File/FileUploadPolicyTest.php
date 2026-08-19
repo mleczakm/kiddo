@@ -61,22 +61,16 @@ final class FileUploadPolicyTest extends TestCase
         $policy->assertValidFile('video/mp4', 60 * 1024 * 1024, 0);
     }
 
-    public function testArticleDocumentPolicyAcceptsPdf(): void
+    public function testArticleDocumentPolicyAcceptsPdfAndWordDocuments(): void
     {
         $policy = new FileUploadPolicy('article_document');
         $policy->assertValidFile('application/pdf', 10 * 1024 * 1024, 0);
-        $this->addToAssertionCount(1);
-    }
-
-    public function testArticleDocumentPolicyAcceptsWordDocuments(): void
-    {
-        $policy = new FileUploadPolicy('article_document');
         $policy->assertValidFile(
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             5 * 1024 * 1024,
             0,
         );
-        $this->addToAssertionCount(1);
+        $this->addToAssertionCount(2);
     }
 
     public function testUnknownUsageThrowsException(): void

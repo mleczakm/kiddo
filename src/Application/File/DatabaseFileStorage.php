@@ -12,12 +12,18 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final readonly class DatabaseFileStorage implements FileStorageInterface
 {
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+    ) {}
 
+    /** @throws InvalidArgumentException */
     public function store(UploadedFile $upload, FileUploadPolicy $policy, ?User $uploadedBy = null): File
     {
-        $originalName = \basename((string) $upload->getClientOriginalName());
-        $content = (string) file_get_contents($upload->getRealPath());
+        $originalName = \basename($upload->getClientOriginalName());
+        $content = file_get_contents($upload->getRealPath());
+        if ($content === false) {
+            throw new InvalidArgumentException('Unable to read the uploaded file.');
+        }
         $decodedSize = \strlen($content);
 
         $mimeType = $this->determineMimeType($content, (string) $upload->getMimeType());
@@ -37,6 +43,7 @@ final readonly class DatabaseFileStorage implements FileStorageInterface
         return $file;
     }
 
+    /** @throws InvalidArgumentException */
     public function read(File $file): string
     {
         $data = $file->getData();

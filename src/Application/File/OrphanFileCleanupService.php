@@ -32,10 +32,11 @@ final readonly class OrphanFileCleanupService
     {
         $cutoff = Clock::get()->now()->modify("-{$this->minAgeHours} hours");
 
-        $result = $this->em->createQueryBuilder()
+        $result = $this->em
+            ->createQueryBuilder()
             ->delete('App\Entity\File', 'f')
             ->where('f.id NOT IN (
-                SELECT DISTINCT pf.file
+                SELECT DISTINCT IDENTITY(pf.file)
                 FROM App\Entity\PostFile pf
             )')
             ->andWhere('f.createdAt < :cutoff')
@@ -51,11 +52,12 @@ final readonly class OrphanFileCleanupService
      */
     public function countOrphans(): int
     {
-        return (int) $this->em->createQueryBuilder()
+        return (int) $this->em
+            ->createQueryBuilder()
             ->select('COUNT(f.id)')
             ->from('App\Entity\File', 'f')
             ->where('f.id NOT IN (
-                SELECT DISTINCT pf.file
+                SELECT DISTINCT IDENTITY(pf.file)
                 FROM App\Entity\PostFile pf
             )')
             ->getQuery()
@@ -69,11 +71,12 @@ final readonly class OrphanFileCleanupService
     {
         $cutoff = Clock::get()->now()->modify("-{$this->minAgeHours} hours");
 
-        return (int) $this->em->createQueryBuilder()
+        return (int) $this->em
+            ->createQueryBuilder()
             ->select('COUNT(f.id)')
             ->from('App\Entity\File', 'f')
             ->where('f.id NOT IN (
-                SELECT DISTINCT pf.file
+                SELECT DISTINCT IDENTITY(pf.file)
                 FROM App\Entity\PostFile pf
             )')
             ->andWhere('f.createdAt < :cutoff')

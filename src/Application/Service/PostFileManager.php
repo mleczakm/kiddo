@@ -16,7 +16,9 @@ use InvalidArgumentException;
  */
 final readonly class PostFileManager
 {
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+    ) {}
 
     /**
      * Reconcile submitted file state against the post's current attachments.
@@ -29,21 +31,26 @@ final readonly class PostFileManager
      */
     public function reconcileAttachments(Post $post, array $submitted): void
     {
+        // Keyed by PostFile's own id, matching what the edit form actually
+        // renders into files_id[]/files_role[...] (the join row identity,
+        // not the underlying File's id — the two only happen to coincide
+        // for a post's first attachment of each file, which masked this
+        // mismatch until a role change on an existing file surfaced it).
         $existingMap = [];
         foreach ($post->files as $existing) {
-            $existingMap[(string) $existing->getFile()->getId()] = $existing;
+            $existingMap[(string) $existing->getId()] = $existing;
         }
 
         $submittedIds = [];
         foreach ($submitted as $item) {
-            $fileId = $item['id'];
-            $submittedIds[] = $fileId;
+            $postFileId = $item['id'];
+            $submittedIds[] = $postFileId;
 
-            if (! isset($existingMap[$fileId])) {
-                throw new InvalidArgumentException("File {$fileId} is not attached to this post.");
+            if (!isset($existingMap[$postFileId])) {
+                throw new InvalidArgumentException("PostFile {$postFileId} is not attached to this post.");
             }
 
-            $postFile = $existingMap[$fileId];
+            $postFile = $existingMap[$postFileId];
             $postFile->setRole(PostFileRole::from($item['role']));
             $postFile->setPosition($item['position']);
             $postFile->setAltText($item['altText'] ?? null);
@@ -51,34 +58,28 @@ final readonly class PostFileManager
             $postFile->setDownloadName($item['downloadName'] ?? null);
         }
 
-        foreach ($existingMap as $fileId => $postFile) {
-            if (! \in_array($fileId, $submittedIds, true)) {
-                $post->removeFile($postFile);
+        foreach ($existingMap as $postFileId => $postFile) {
+            if (\in_array($postFileId, $submittedIds, true)) {
+                continue;
             }
+
+            $post->removeFile($postFile);
         }
 
         $this->em->flush();
     }
 
     /**
-     * Attach a file to a post with the given role and metadata.
+     * Attach a file to a post with the given role. Callers needing alt
+     * text/caption/download name can set them on the returned PostFile
+     * before the next flush.
      *
      * @throws \DomainException
      * @throws \InvalidArgumentException
      */
-    public function attachFile(
-        Post $post,
-        File $file,
-        PostFileRole $role,
-        int $position = 0,
-        ?string $altText = null,
-        ?string $caption = null,
-        ?string $downloadName = null,
-    ): PostFile {
+    public function attachFile(Post $post, File $file, PostFileRole $role, int $position = 0): PostFile
+    {
         $postFile = new PostFile($post, $file, $role, $position);
-        $postFile->setAltText($altText);
-        $postFile->setCaption($caption);
-        $postFile->setDownloadName($downloadName);
 
         $this->em->persist($postFile);
         $this->em->flush();

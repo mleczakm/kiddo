@@ -12,24 +12,18 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'files:cleanup-orphans',
-    description: 'Remove unreferenced files older than the safety window',
-)]
+#[AsCommand(name: 'files:cleanup-orphans', description: 'Remove unreferenced files older than the safety window')]
 final class CleanupOrphanFilesCommand extends Command
 {
-    public function __construct(private readonly OrphanFileCleanupService $cleanupService) {
+    public function __construct(
+        private readonly OrphanFileCleanupService $cleanupService,
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->addOption(
-            'dry-run',
-            null,
-            InputOption::VALUE_NONE,
-            'Count orphans without deleting',
-        );
+        $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Count orphans without deleting');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

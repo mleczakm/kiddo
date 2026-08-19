@@ -21,33 +21,38 @@ final class FileAction extends AbstractController
 {
     use RangeResponseTrait;
 
-    #[Route('/pliki/{id}/{safeName}', name: 'stored_file', requirements: [
-        'id' => '[A-Za-z0-9]{26}',
-        'safeName' => '.+',
-    ], methods: ['GET', 'HEAD'])]
-    public function __invoke(
-        Request $request,
-        Ulid $id,
-        string $safeName,
-        FileRepository $fileRepository,
-        FileStorageInterface $storage,
-        EntityManagerInterface $em,
-    ): Response {
-        $file = $fileRepository->find($id);
+    public function __construct(
+        private readonly FileRepository $fileRepository,
+        private readonly FileStorageInterface $storage,
+        private readonly EntityManagerInterface $em,
+    ) {}
+
+    #[Route(
+        '/pliki/{id}/{safeName}',
+        name: 'stored_file',
+        requirements: [
+            'id' => '[A-Za-z0-9]{26}',
+            'safeName' => '.+',
+        ],
+        methods: ['GET', 'HEAD'],
+    )]
+    public function __invoke(Request $request, Ulid $id, string $safeName): Response
+    {
+        $file = $this->fileRepository->find($id);
         if ($file === null) {
             throw $this->createNotFoundException();
         }
 
         $now = Clock::get()->now();
 
-        $isPublic = $this->isFilePublic($file, $now, $em);
-        if (! $isPublic && (! $this->getUser() || ! $this->isGranted('ROLE_MANAGE_CONTENT'))) {
+        $isPublic = $this->isFilePublic($file, $now);
+        if (!$isPublic && (!$this->getUser() || !$this->isGranted('ROLE_MANAGE_CONTENT'))) {
             throw $this->createAccessDeniedException();
         }
 
-        $data = $storage->read($file);
+        $data = $this->storage->read($file);
 
-        $isInline = $this->isInlineFile($file, $em);
+        $isInline = $this->isInlineFile($file);
         $isVideo = str_starts_with($file->getMimeType(), 'video/');
 
         if ($isVideo && $this->requestsRange($request)) {
@@ -60,7 +65,7 @@ final class FileAction extends AbstractController
             'X-Content-Type-Options' => 'nosniff',
         ]);
 
-        if (! $isInline) {
+        if (!$isInline) {
             $safeFilename = $this->sanitizeFilename($file->getOriginalName());
             $response->headers->set('Content-Disposition', "attachment; filename=\"{$safeFilename}\"");
         }
@@ -81,12 +86,16 @@ final class FileAction extends AbstractController
         return $response;
     }
 
-    private function isFilePublic(File $file, \DateTimeImmutable $now, EntityManagerInterface $em): bool
+    private function isFilePublic(File $file, \DateTimeImmutable $now): bool
     {
-        $posts = $this->getPostsForFile($file, $em);
+        $posts = $this->getPostsForFile($file);
 
         foreach ($posts as $post) {
-            if ($post['status'] === PostStatus::PUBLISHED && $post['publishedAt'] !== null && $post['publishedAt'] <= $now) {
+            if (
+                $post['status'] === PostStatus::PUBLISHED
+                && $post['publishedAt'] !== null
+                && $post['publishedAt'] <= $now
+            ) {
                 return true;
             }
         }
@@ -94,11 +103,11 @@ final class FileAction extends AbstractController
         return false;
     }
 
-    private function isInlineFile(File $file, EntityManagerInterface $em): bool
+    private function isInlineFile(File $file): bool
     {
-        $query = $em
+        $query = $this->em
             ->createQueryBuilder()
-            ->select("1")
+            ->select('1')
             ->from('App\Entity\PostFile', 'pf')
             ->where('pf.file = :file')
             ->andWhere('pf.role = :role')
@@ -111,9 +120,9 @@ final class FileAction extends AbstractController
     }
 
     /** @return list<array{status: string, publishedAt: ?\DateTimeImmutable}> */
-    private function getPostsForFile(File $file, EntityManagerInterface $em): array
+    private function getPostsForFile(File $file): array
     {
-        $query = $em
+        $query = $this->em
             ->createQueryBuilder()
             ->select('p.status, p.publishedAt')
             ->from('App\Entity\PostFile', 'pf')
@@ -134,8 +143,6 @@ final class FileAction extends AbstractController
     {
         $filename = trim(basename($filename));
         $filename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
-        $filename = preg_replace('/_+/', '_', $filename);
-
-        return $filename;
+        return preg_replace('/_+/', '_', $filename);
     }
 }

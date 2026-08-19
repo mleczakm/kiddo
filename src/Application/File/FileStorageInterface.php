@@ -19,6 +19,8 @@ interface FileStorageInterface
 
     /**
      * Read (decode) the stored file's binary data.
+     *
+     * @throws \InvalidArgumentException if the stored data is not valid base64
      */
     public function read(File $file): string;
 

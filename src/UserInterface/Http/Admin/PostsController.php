@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Admin;
 
-use App\Application\Service\PostEditor;
-use App\Application\Service\PostSeoEditor;
-use App\Application\Service\PostSeoInput;
-use App\Application\Service\PostSocialInput;
+use App\Application\Service\PostFormHandler;
 use App\Entity\Post;
 use App\Entity\PostStatus;
 use App\Entity\User;
@@ -25,8 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class PostsController extends AbstractController
 {
     public function __construct(
-        private readonly PostEditor $editor,
-        private readonly PostSeoEditor $seoEditor,
+        private readonly PostFormHandler $formHandler,
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $postRepository,
     ) {}
@@ -156,84 +152,13 @@ final class PostsController extends AbstractController
         }
 
         try {
-            $eyebrow = $request->request->getString('eyebrow');
-            $excerpt = $request->request->getString('excerpt');
-            $this->editor->updateEditorial(
-                $post,
-                (string) $request->request->get('title'),
-                $eyebrow === '' ? null : $eyebrow,
-                $excerpt === '' ? null : $excerpt,
-            );
-            $contentJsonStr = $request->request->getString('contentJson');
-            try {
-                $contentJson = $contentJsonStr ? json_decode($contentJsonStr, true) : ['type' => 'doc', 'content' => []];
-            } catch (\Exception) {
-                $contentJson = ['type' => 'doc', 'content' => []];
-            }
-            $this->editor->updateContent(
-                $post,
-                $contentJson,
-                $request->request->getString('contentHtml'),
-            );
-
-            // Validation-only steps run first so a bad field never leaves
-            // partial writes behind — PostFileManager and
-            // reconcileInlineAttachments each flush internally, so anything
-            // that can still fail must happen before the first of them runs.
-            $this->seoEditor->updateSeo(
-                $post,
-                new PostSeoInput(
-                    $this->nullableField($request, 'seoTitle'),
-                    $this->nullableField($request, 'seoDescription'),
-                    $this->nullableField($request, 'canonicalUrl'),
-                    $request->request->getBoolean('robotsIndex'),
-                    $request->request->getBoolean('robotsFollow'),
-                ),
-                new PostSocialInput(
-                    $this->nullableField($request, 'socialTitle'),
-                    $this->nullableField($request, 'socialDescription'),
-                ),
-            );
-
-            $this->editor->reconcileInlineAttachments($post, $contentJson);
-            $this->handleFileReconciliation($request, $post);
-
-            $uploads = $request->files->all()['files'] ?? [];
-            if (\count($uploads) > 0) {
-                $this->editor->attachFiles($post, $uploads, $this->getUser());
-            }
+            $this->formHandler->save($request, $post, $this->getUser());
         } catch (\InvalidArgumentException $exception) {
             $this->addFlash('error', $exception->getMessage());
             return false;
         }
 
         return true;
-    }
-
-    private function handleFileReconciliation(Request $request, Post $post): void
-    {
-        $fileIds = $request->request->all()['files_id'] ?? [];
-        $fileRoles = $request->request->all()['files_role'] ?? [];
-        $removeChecks = $request->request->all()['files_remove'] ?? [];
-
-        $submitted = [];
-        foreach ($fileIds as $i => $fileId) {
-            if (isset($removeChecks[$fileId])) {
-                continue;
-            }
-            $submitted[] = [
-                'id' => (string) $fileId,
-                'role' => $fileRoles[$fileId] ?? 'attachment',
-                'position' => $i,
-                'altText' => null,
-                'caption' => null,
-                'downloadName' => null,
-            ];
-        }
-
-        if (\count($submitted) > 0 || \count($post->files) > 0) {
-            $this->editor->reconcileAttachments($post, $submitted);
-        }
     }
 
     private function renderForm(Post $post, bool $isNew): Response
@@ -243,12 +168,5 @@ final class PostsController extends AbstractController
             'isNew' => $isNew,
             'eyebrowOptions' => $this->postRepository->findDistinctEyebrows(),
         ]);
-    }
-
-    /** @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException */
-    private function nullableField(Request $request, string $name): ?string
-    {
-        $value = $request->request->getString($name);
-        return $value === '' ? null : $value;
     }
 }

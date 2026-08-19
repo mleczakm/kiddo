@@ -32,24 +32,24 @@ final readonly class FileUploadPolicy
         ?int $aggregateSizeLimit = null,
     ) {
         $this->fileSizeLimit = $fileSizeLimit ?? match ($usage) {
-            'article_image' => 8 * 1024 * 1024,     // 8 MB per image
-            'article_video' => 50 * 1024 * 1024,    // 50 MB per video
+            'article_image' => 8 * 1024 * 1024, // 8 MB per image
+            'article_video' => 50 * 1024 * 1024, // 50 MB per video
             'article_document' => 20 * 1024 * 1024, // 20 MB per document
-            default => throw new InvalidArgumentException("Unknown usage: $usage"),
+            default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
 
         $this->maxFileCount = $maxFileCount ?? match ($usage) {
             'article_image' => 10,
             'article_video' => 5,
             'article_document' => 10,
-            default => throw new InvalidArgumentException("Unknown usage: $usage"),
+            default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
 
         $this->aggregateSizeLimit = $aggregateSizeLimit ?? match ($usage) {
-            'article_image' => 50 * 1024 * 1024,    // 50 MB total images
-            'article_video' => 100 * 1024 * 1024,   // 100 MB total videos
+            'article_image' => 50 * 1024 * 1024, // 50 MB total images
+            'article_video' => 100 * 1024 * 1024, // 100 MB total videos
             'article_document' => 100 * 1024 * 1024, // 100 MB total documents
-            default => throw new InvalidArgumentException("Unknown usage: $usage"),
+            default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
 
         $this->allowedMimeTypes = match ($usage) {
@@ -61,36 +61,30 @@ final readonly class FileUploadPolicy
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             ],
-            default => throw new InvalidArgumentException("Unknown usage: $usage"),
+            default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
     }
 
     /** @throws InvalidArgumentException */
     public function assertValidFile(string $mimeType, int $decodedSize, int $totalUploadedSize): void
     {
-        if (! \in_array($mimeType, $this->allowedMimeTypes, true)) {
-            throw new InvalidArgumentException(
-                \sprintf('MIME type "%s" is not allowed for this upload.', $mimeType),
-            );
+        if (!\in_array($mimeType, $this->allowedMimeTypes, true)) {
+            throw new InvalidArgumentException(\sprintf('MIME type "%s" is not allowed for this upload.', $mimeType));
         }
 
         if ($decodedSize > $this->fileSizeLimit) {
-            throw new InvalidArgumentException(
-                \sprintf(
-                    'File size %d bytes exceeds limit of %d bytes.',
-                    $decodedSize,
-                    $this->fileSizeLimit,
-                ),
-            );
+            throw new InvalidArgumentException(\sprintf(
+                'File size %d bytes exceeds limit of %d bytes.',
+                $decodedSize,
+                $this->fileSizeLimit,
+            ));
         }
 
-        if ($totalUploadedSize + $decodedSize > $this->aggregateSizeLimit) {
-            throw new InvalidArgumentException(
-                \sprintf(
-                    'Total upload size would exceed limit of %d bytes.',
-                    $this->aggregateSizeLimit,
-                ),
-            );
+        if (($totalUploadedSize + $decodedSize) > $this->aggregateSizeLimit) {
+            throw new InvalidArgumentException(\sprintf(
+                'Total upload size would exceed limit of %d bytes.',
+                $this->aggregateSizeLimit,
+            ));
         }
     }
 

@@ -9,9 +9,12 @@ use App\Entity\File;
 use App\Entity\Post;
 use App\Entity\PostFile;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\Clock;
 
+#[Group('functional')]
 final class OrphanFileCleanupServiceTest extends KernelTestCase
 {
     private OrphanFileCleanupService $service;
@@ -24,7 +27,7 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
 
     public function testCountOrphansIncludesUnreferencedFiles(): void
     {
-        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $em = $this->getEntityManager();
 
         $orphan = new File('orphan.jpg', 'image/jpeg', 1000, str_repeat('a', 64), base64_encode('test'));
         $em->persist($orphan);
@@ -36,7 +39,7 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
 
     public function testCountOrphansExcludesReferencedFiles(): void
     {
-        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $em = $this->getEntityManager();
 
         $author = new User('author@example.com', 'Author');
         $post = new Post('Article', $author);
@@ -57,7 +60,7 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
 
     public function testCleanupDeletesOldOrphanedFiles(): void
     {
-        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $em = $this->getEntityManager();
 
         $oldOrphan = new File('old.jpg', 'image/jpeg', 1000, str_repeat('c', 64), base64_encode('test'));
         $this->setFileCreatedAt($oldOrphan, Clock::get()->now()->modify('-48 hours'));
@@ -69,13 +72,18 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
         $deleted = $this->service->cleanup();
         static::assertGreaterThan(0, $deleted);
 
+        // The DQL bulk DELETE in cleanup() operates at the SQL level and
+        // doesn't update the EntityManager's identity map, so find() would
+        // otherwise return the stale in-memory object instead of re-querying.
+        $em->clear();
+
         $found = $em->find(File::class, $oldId);
         static::assertNull($found, 'Old orphaned file should be deleted');
     }
 
     public function testCleanupKeepsRecentOrphanedFiles(): void
     {
-        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $em = $this->getEntityManager();
 
         $recent = new File('recent.jpg', 'image/jpeg', 1000, str_repeat('d', 64), base64_encode('test'));
         $em->persist($recent);
@@ -87,6 +95,12 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
 
         $found = $em->find(File::class, $recentId);
         static::assertNotNull($found, 'Recent orphaned file should be kept');
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        /** @var EntityManagerInterface */
+        return static::getContainer()->get(EntityManagerInterface::class);
     }
 
     private function setFileCreatedAt(File $file, \DateTimeImmutable $createdAt): void
