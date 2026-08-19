@@ -34,21 +34,4 @@ class LessonMetadataRepository extends ServiceEntityRepository
 
         return (int) $count > 0;
     }
-
-    /** @return list<array{slug: string, title: string}> */
-    public function findDistinctSlugsForOptions(int $limit = 300): array
-    {
-        $rows = $this
-            ->createQueryBuilder('m')
-            ->select('DISTINCT m.slug AS slug', 'm.title AS title')
-            ->orderBy('m.title', 'ASC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getArrayResult();
-
-        return array_values(array_map(static fn(array $row): array => [
-            'slug' => (string) $row['slug'],
-            'title' => (string) $row['title'],
-        ], $rows));
-    }
 }

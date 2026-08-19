@@ -9,6 +9,7 @@ use App\Entity\File;
 use App\Entity\PostFileRole;
 use App\Entity\PostStatus;
 use App\Repository\FileRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ final class FileAction extends AbstractController
         string $safeName,
         FileRepository $fileRepository,
         FileStorageInterface $storage,
+        EntityManagerInterface $em,
     ): Response {
         $file = $fileRepository->find($id);
         if ($file === null) {
@@ -38,14 +40,14 @@ final class FileAction extends AbstractController
 
         $now = Clock::get()->now();
 
-        $isPublic = $this->isFilePublic($file, $now, $fileRepository);
-        if (! $isPublic && ! $this->isGranted('ROLE_MANAGE_CONTENT')) {
+        $isPublic = $this->isFilePublic($file, $now, $em);
+        if (! $isPublic && (! $this->getUser() || ! $this->isGranted('ROLE_MANAGE_CONTENT'))) {
             throw $this->createAccessDeniedException();
         }
 
         $data = $storage->read($file);
 
-        $isInline = $this->isInlineFile($file, $fileRepository);
+        $isInline = $this->isInlineFile($file, $em);
         $isVideo = str_starts_with($file->getMimeType(), 'video/');
 
         if ($isVideo && $this->requestsRange($request)) {
@@ -69,8 +71,7 @@ final class FileAction extends AbstractController
             $response->setEtag($file->getChecksum());
             $response->setLastModified($file->getCreatedAt());
         } else {
-            $response->setPrivate();
-            $response->setNoCache();
+            $response->headers->set('Cache-Control', 'private, no-store');
         }
 
         if ($request->getMethod() === 'HEAD') {
@@ -80,12 +81,12 @@ final class FileAction extends AbstractController
         return $response;
     }
 
-    private function isFilePublic(File $file, \DateTimeImmutable $now, FileRepository $fileRepository): bool
+    private function isFilePublic(File $file, \DateTimeImmutable $now, EntityManagerInterface $em): bool
     {
-        $posts = $this->getPostsForFile($file, $fileRepository);
+        $posts = $this->getPostsForFile($file, $em);
 
         foreach ($posts as $post) {
-            if ($post['status'] === PostStatus::PUBLISHED->value && $post['publishedAt'] !== null && $post['publishedAt'] <= $now) {
+            if ($post['status'] === PostStatus::PUBLISHED && $post['publishedAt'] !== null && $post['publishedAt'] <= $now) {
                 return true;
             }
         }
@@ -93,15 +94,15 @@ final class FileAction extends AbstractController
         return false;
     }
 
-    private function isInlineFile(File $file, FileRepository $fileRepository): bool
+    private function isInlineFile(File $file, EntityManagerInterface $em): bool
     {
-        $query = $this->getEntityManager()
+        $query = $em
             ->createQueryBuilder()
             ->select("1")
             ->from('App\Entity\PostFile', 'pf')
             ->where('pf.file = :file')
             ->andWhere('pf.role = :role')
-            ->setParameter('file', $file)
+            ->setParameter('file', $file->getId(), 'ulid')
             ->setParameter('role', PostFileRole::INLINE->value)
             ->setMaxResults(1)
             ->getQuery();
@@ -110,15 +111,15 @@ final class FileAction extends AbstractController
     }
 
     /** @return list<array{status: string, publishedAt: ?\DateTimeImmutable}> */
-    private function getPostsForFile(File $file, FileRepository $fileRepository): array
+    private function getPostsForFile(File $file, EntityManagerInterface $em): array
     {
-        $query = $this->getEntityManager()
+        $query = $em
             ->createQueryBuilder()
             ->select('p.status, p.publishedAt')
             ->from('App\Entity\PostFile', 'pf')
             ->join('pf.post', 'p')
             ->where('pf.file = :file')
-            ->setParameter('file', $file)
+            ->setParameter('file', $file->getId(), 'ulid')
             ->getQuery();
 
         return $query->getResult();

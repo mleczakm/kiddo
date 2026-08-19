@@ -9,11 +9,19 @@ use App\Application\File\FileUploadPolicy;
 use App\Entity\File;
 use App\Entity\User;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+#[Group('functional')]
 final class DatabaseFileStorageTest extends KernelTestCase
 {
+    /**
+     * A real, minimal valid 1x1 JPEG (base64), so the storage layer's finfo-based
+     * MIME sniffing (which never trusts a client-declared type) accepts it.
+     */
+    private const string MINIMAL_JPEG_BASE64 = '/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD/AD8//9k=';
+
     private DatabaseFileStorage $storage;
 
     protected function setUp(): void
@@ -24,7 +32,7 @@ final class DatabaseFileStorageTest extends KernelTestCase
 
     public function testStoresUploadedFileWithComputedChecksum(): void
     {
-        $uploadedFile = $this->createUploadedFile('test content', 'text.jpg', 'image/jpeg');
+        [$uploadedFile, $bytes] = $this->createUploadedJpeg('text.jpg');
         $policy = new FileUploadPolicy('article_image');
 
         $file = $this->storage->store($uploadedFile, $policy);
@@ -32,25 +40,24 @@ final class DatabaseFileStorageTest extends KernelTestCase
         static::assertInstanceOf(File::class, $file);
         static::assertSame('text.jpg', $file->getOriginalName());
         static::assertSame('image/jpeg', $file->getMimeType());
-        static::assertSame(12, $file->getSize());
-        static::assertSame(hash('sha256', 'test content'), $file->getChecksum());
+        static::assertSame(\strlen($bytes), $file->getSize());
+        static::assertSame(hash('sha256', $bytes), $file->getChecksum());
     }
 
     public function testDecodesFileCorrectly(): void
     {
-        $originalContent = 'file content for testing';
-        $uploadedFile = $this->createUploadedFile($originalContent, 'test.jpg', 'image/jpeg');
+        [$uploadedFile, $bytes] = $this->createUploadedJpeg('test.jpg');
         $policy = new FileUploadPolicy('article_image');
 
         $file = $this->storage->store($uploadedFile, $policy);
         $decodedContent = $this->storage->read($file);
 
-        static::assertSame($originalContent, $decodedContent);
+        static::assertSame($bytes, $decodedContent);
     }
 
     public function testRejectsInvalidBase64Data(): void
     {
-        $file = new File('broken.jpg', 'image/jpeg', 10, 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', 'not valid base64 !!!');
+        $file = new File('broken.jpg', 'image/jpeg', 10, str_repeat('a', 64), 'not valid base64 !!!');
 
         $this->expectException(InvalidArgumentException::class);
         $this->storage->read($file);
@@ -58,7 +65,7 @@ final class DatabaseFileStorageTest extends KernelTestCase
 
     public function testAssociatesUploadedByUser(): void
     {
-        $uploadedFile = $this->createUploadedFile('test', 'test.jpg', 'image/jpeg');
+        [$uploadedFile] = $this->createUploadedJpeg('test.jpg');
         $policy = new FileUploadPolicy('article_image');
 
         $user = new User('test@example.com', 'Test User');
@@ -70,31 +77,44 @@ final class DatabaseFileStorageTest extends KernelTestCase
         static::assertSame($user->getId(), $file->getUploadedBy()?->getId());
     }
 
-    public function testRejectsFileWithPolicyViolation(): void
+    public function testRejectsFileExceedingSizeLimit(): void
     {
-        $uploadedFile = $this->createUploadedFile(
-            str_repeat('x', 10 * 1024 * 1024),
-            'large.jpg',
-            'image/jpeg',
-        );
+        [$uploadedFile] = $this->createUploadedJpeg('large.jpg');
+        $policy = new FileUploadPolicy('article_image', fileSizeLimit: 10);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->storage->store($uploadedFile, $policy);
+    }
+
+    public function testRejectsMismatchedContentType(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_');
+        file_put_contents($tempFile, 'this is plain text, not an image');
+        $uploadedFile = new UploadedFile($tempFile, 'fake.jpg', 'image/jpeg', filesize($tempFile) ?: null, true);
         $policy = new FileUploadPolicy('article_image');
 
         $this->expectException(InvalidArgumentException::class);
         $this->storage->store($uploadedFile, $policy);
     }
 
-    private function createUploadedFile(string $content, string $filename, string $mimeType): UploadedFile
+    /**
+     * @return array{0: UploadedFile, 1: string}
+     */
+    private function createUploadedJpeg(string $filename): array
     {
-        $tempFile = tempnam(sys_get_temp_dir(), 'test_');
-        file_put_contents($tempFile, $content);
+        $bytes = (string) base64_decode(self::MINIMAL_JPEG_BASE64, true);
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_') . '.jpg';
+        file_put_contents($tempFile, $bytes);
 
-        return new UploadedFile(
+        $uploadedFile = new UploadedFile(
             $tempFile,
             $filename,
-            $mimeType,
+            'image/jpeg',
             filesize($tempFile) ?: null,
             true,
         );
+
+        return [$uploadedFile, $bytes];
     }
 
     private function getEntityManager()

@@ -6,7 +6,6 @@ namespace App\Tests\UserInterface\Http\Admin;
 
 use App\Entity\Post;
 use App\Repository\PostRepository;
-use App\Tests\Assembler\LessonMetadataAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -120,62 +119,6 @@ final class PostsControllerTest extends WebTestCase
         $repository = static::getContainer()->get(PostRepository::class);
         static::assertInstanceOf(PostRepository::class, $repository);
         static::assertNull($repository->findOneBy(['slug' => 'bad-canonical']));
-    }
-
-    public function testAdminLinksExistingWorkshopByValidatedSlug(): void
-    {
-        $client = static::createClient();
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
-        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
-        $workshop = LessonMetadataAssembler::new()->withTitle('Fluo Party')->assemble();
-        $entityManager->persist($admin);
-        $entityManager->persist($workshop);
-        $entityManager->flush();
-        $client->loginUser($admin);
-
-        $crawler = $client->request('GET', '/admin/tresci/nowa');
-        $form = $crawler
-            ->selectButton('Zapisz szkic')
-            ->form([
-                'title' => 'Linked Article',
-                'contentHtml' => '<p>Treść</p>',
-                'linkedWorkshopSlug' => $workshop->slug,
-            ]);
-        $client->submit($form);
-
-        static::assertResponseRedirects();
-        $repository = static::getContainer()->get(PostRepository::class);
-        static::assertInstanceOf(PostRepository::class, $repository);
-        $post = $repository->findOneBy(['slug' => 'linked-article']);
-        static::assertInstanceOf(Post::class, $post);
-        static::assertSame($workshop->slug, $post->body->getLinkedWorkshopSlug());
-    }
-
-    public function testAdminCannotLinkUnknownWorkshopSlug(): void
-    {
-        $client = static::createClient();
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
-        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
-        $entityManager->persist($admin);
-        $entityManager->flush();
-        $client->loginUser($admin);
-
-        $crawler = $client->request('GET', '/admin/tresci/nowa');
-        $form = $crawler
-            ->selectButton('Zapisz szkic')
-            ->form([
-                'title' => 'Dangling Link',
-                'contentHtml' => '<p>Treść</p>',
-                'linkedWorkshopSlug' => 'no-such-workshop',
-            ]);
-        $client->submit($form);
-
-        static::assertResponseIsSuccessful();
-        $repository = static::getContainer()->get(PostRepository::class);
-        static::assertInstanceOf(PostRepository::class, $repository);
-        static::assertNull($repository->findOneBy(['slug' => 'dangling-link']));
     }
 
     public function testAdminSchedulesFuturePublicationInvisibleUntilDue(): void

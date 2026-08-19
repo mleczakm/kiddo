@@ -20,22 +20,15 @@ use Symfony\Component\Clock\Clock;
 #[Group('functional')]
 final class FileActionTest extends WebTestCase
 {
-    private EntityManagerInterface $em;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->em = self::getContainer()->get(EntityManagerInterface::class);
-    }
-
     public function testAnonymousCanAccessFilesAttachedToPublishedPosts(): void
     {
         $client = static::createClient();
+        $em = $this->getEntityManager();
 
-        $file = $this->createFile('image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createPublishedPost();
+        $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
+        $post = $this->createPublishedPost($em);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
-        $this->em->flush();
+        $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/image.jpg");
 
@@ -46,29 +39,34 @@ final class FileActionTest extends WebTestCase
     public function testAnonymousCannotAccessFilesAttachedToDrafts(): void
     {
         $client = static::createClient();
+        $em = $this->getEntityManager();
 
-        $file = $this->createFile('image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createDraftPost();
+        $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
+        $post = $this->createDraftPost($em);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
-        $this->em->flush();
+        $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/image.jpg");
 
-        $this->assertResponseStatusCodeSame(403);
+        // 401, not 403: Symfony's security exception listener treats "denied
+        // while fully unauthenticated" as "please authenticate" rather than
+        // "forbidden" — 403 is reserved for an authenticated-but-lacking-role user.
+        $this->assertResponseStatusCodeSame(401);
     }
 
     public function testAdminCanAccessFilesAttachedToDrafts(): void
     {
         $client = static::createClient();
+        $em = $this->getEntityManager();
         $admin = UserAssembler::new()->withRoles('ROLE_MANAGE_CONTENT')->assemble();
-        $this->em->persist($admin);
-        $this->em->flush();
+        $em->persist($admin);
+        $em->flush();
         $client->loginUser($admin);
 
-        $file = $this->createFile('image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createDraftPost();
+        $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
+        $post = $this->createDraftPost($em);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
-        $this->em->flush();
+        $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/image.jpg");
 
@@ -78,11 +76,12 @@ final class FileActionTest extends WebTestCase
     public function testFileDeliverySetProperHeaders(): void
     {
         $client = static::createClient();
+        $em = $this->getEntityManager();
 
-        $file = $this->createFile('document.pdf', 'application/pdf', 'pdf content');
-        $post = $this->createPublishedPost();
+        $file = $this->createFile($em, 'document.pdf', 'application/pdf', 'pdf content');
+        $post = $this->createPublishedPost($em);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
-        $this->em->flush();
+        $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/document.pdf");
 
@@ -95,11 +94,12 @@ final class FileActionTest extends WebTestCase
     public function testInlineImageDoesNotForceDownload(): void
     {
         $client = static::createClient();
+        $em = $this->getEntityManager();
 
-        $file = $this->createFile('image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createPublishedPost();
+        $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
+        $post = $this->createPublishedPost($em);
         new PostFile($post, $file, PostFileRole::INLINE, 0);
-        $this->em->flush();
+        $em->flush();
 
         $client->request('GET', "/pliki/{$file->getId()}/image.jpg");
 
@@ -111,11 +111,12 @@ final class FileActionTest extends WebTestCase
     public function testHeadRequestDoesNotReturnBody(): void
     {
         $client = static::createClient();
+        $em = $this->getEntityManager();
 
-        $file = $this->createFile('image.jpg', 'image/jpeg', 'test content');
-        $post = $this->createPublishedPost();
+        $file = $this->createFile($em, 'image.jpg', 'image/jpeg', 'test content');
+        $post = $this->createPublishedPost($em);
         new PostFile($post, $file, PostFileRole::ATTACHMENT, 0);
-        $this->em->flush();
+        $em->flush();
 
         $client->request('HEAD', "/pliki/{$file->getId()}/image.jpg");
 
@@ -130,7 +131,13 @@ final class FileActionTest extends WebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-    private function createFile(string $filename, string $mimeType, string $content): File
+    private function getEntityManager(): EntityManagerInterface
+    {
+        /** @var EntityManagerInterface */
+        return self::getContainer()->get(EntityManagerInterface::class);
+    }
+
+    private function createFile(EntityManagerInterface $em, string $filename, string $mimeType, string $content): File
     {
         $file = new File(
             $filename,
@@ -139,26 +146,26 @@ final class FileActionTest extends WebTestCase
             hash('sha256', $content),
             base64_encode($content),
         );
-        $this->em->persist($file);
+        $em->persist($file);
         return $file;
     }
 
-    private function createPublishedPost(): Post
+    private function createPublishedPost(EntityManagerInterface $em): Post
     {
         $author = new User('author@example.com', 'Author');
         $post = new Post('Article', $author);
         $post->publishAt(Clock::get()->now());
-        $this->em->persist($author);
-        $this->em->persist($post);
+        $em->persist($author);
+        $em->persist($post);
         return $post;
     }
 
-    private function createDraftPost(): Post
+    private function createDraftPost(EntityManagerInterface $em): Post
     {
         $author = new User('author@example.com', 'Author');
         $post = new Post('Draft Article', $author);
-        $this->em->persist($author);
-        $this->em->persist($post);
+        $em->persist($author);
+        $em->persist($post);
         return $post;
     }
 }

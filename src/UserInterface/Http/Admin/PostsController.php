@@ -11,7 +11,6 @@ use App\Application\Service\PostSocialInput;
 use App\Entity\Post;
 use App\Entity\PostStatus;
 use App\Entity\User;
-use App\Repository\LessonMetadataRepository;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,7 +28,6 @@ final class PostsController extends AbstractController
         private readonly PostEditor $editor,
         private readonly PostSeoEditor $seoEditor,
         private readonly EntityManagerInterface $entityManager,
-        private readonly LessonMetadataRepository $lessonMetadataRepository,
         private readonly PostRepository $postRepository,
     ) {}
 
@@ -49,9 +47,9 @@ final class PostsController extends AbstractController
         $user = $this->getUser();
         \assert($user instanceof User, 'A content manager must be authenticated.');
         $post = new Post('Nowy artykuł', $user);
+        $this->entityManager->persist($post);
 
         if ($request->isMethod('POST') && $this->trySave($request, $post)) {
-            $this->entityManager->persist($post);
             $this->entityManager->flush();
             $this->addFlash('success', 'Artykuł został zapisany.');
 
@@ -160,13 +158,11 @@ final class PostsController extends AbstractController
         try {
             $eyebrow = $request->request->getString('eyebrow');
             $excerpt = $request->request->getString('excerpt');
-            $linkedWorkshopSlug = $request->request->getString('linkedWorkshopSlug');
             $this->editor->updateEditorial(
                 $post,
                 (string) $request->request->get('title'),
                 $eyebrow === '' ? null : $eyebrow,
                 $excerpt === '' ? null : $excerpt,
-                $linkedWorkshopSlug === '' ? null : $linkedWorkshopSlug,
             );
             $contentJsonStr = $request->request->getString('contentJson');
             try {
@@ -180,7 +176,10 @@ final class PostsController extends AbstractController
                 $request->request->getString('contentHtml'),
             );
 
-            $this->editor->reconcileInlineAttachments($post, $contentJson);
+            // Validation-only steps run first so a bad field never leaves
+            // partial writes behind — PostFileManager and
+            // reconcileInlineAttachments each flush internally, so anything
+            // that can still fail must happen before the first of them runs.
             $this->seoEditor->updateSeo(
                 $post,
                 new PostSeoInput(
@@ -196,12 +195,13 @@ final class PostsController extends AbstractController
                 ),
             );
 
+            $this->editor->reconcileInlineAttachments($post, $contentJson);
+            $this->handleFileReconciliation($request, $post);
+
             $uploads = $request->files->all()['files'] ?? [];
             if (\count($uploads) > 0) {
                 $this->editor->attachFiles($post, $uploads, $this->getUser());
             }
-
-            $this->handleFileReconciliation($request, $post);
         } catch (\InvalidArgumentException $exception) {
             $this->addFlash('error', $exception->getMessage());
             return false;
@@ -241,7 +241,6 @@ final class PostsController extends AbstractController
         return $this->render('admin/posts/edit.html.twig', [
             'post' => $post,
             'isNew' => $isNew,
-            'workshopOptions' => $this->lessonMetadataRepository->findDistinctSlugsForOptions(),
             'eyebrowOptions' => $this->postRepository->findDistinctEyebrows(),
         ]);
     }

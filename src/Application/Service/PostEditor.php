@@ -9,7 +9,6 @@ use App\Application\File\FileUploadPolicy;
 use App\Entity\Post;
 use App\Entity\PostFileRole;
 use App\Entity\User;
-use App\Repository\LessonMetadataRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -21,7 +20,6 @@ final readonly class PostEditor
     public function __construct(
         #[Autowire(service: 'html_sanitizer.sanitizer.app.article_sanitizer')]
         private HtmlSanitizerInterface $sanitizer,
-        private LessonMetadataRepository $lessonMetadataRepository,
         private FileStorageInterface $fileStorage,
         private PostFileManager $fileManager,
         private EntityManagerInterface $em,
@@ -33,7 +31,6 @@ final readonly class PostEditor
         string $title,
         ?string $eyebrow,
         ?string $excerpt,
-        ?string $linkedWorkshopSlug,
     ): void {
         $title = trim($title);
         if ($title === '') {
@@ -46,16 +43,10 @@ final readonly class PostEditor
             $post->slug = $slugger->slug($title)->lower()->toString();
         }
 
-        $linkedWorkshopSlug = $this->nullableTrim($linkedWorkshopSlug);
-        if ($linkedWorkshopSlug !== null && !$this->lessonMetadataRepository->slugExists($linkedWorkshopSlug)) {
-            throw new \InvalidArgumentException('Linked workshop slug does not match any workshop.');
-        }
-
         $post->body->updateEditorial(
             $title,
             $this->nullableTrim($eyebrow),
             $this->nullableTrim($excerpt),
-            $linkedWorkshopSlug,
         );
         $post->markUpdated();
     }

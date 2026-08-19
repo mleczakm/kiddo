@@ -18,7 +18,6 @@ final class PostBodyTest extends TestCase
         static::assertSame('Article title', $body->getTitle());
         static::assertSame(['type' => 'doc', 'content' => []], $body->getContentJson());
         static::assertNull($body->getContentHtml());
-        static::assertNull($body->getLinkedWorkshopSlug());
         static::assertNull($body->getEyebrow());
         static::assertNull($body->getExcerpt());
     }

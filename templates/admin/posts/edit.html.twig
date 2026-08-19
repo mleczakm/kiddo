@@ -56,31 +56,6 @@
 
         <label class="block"><span class="mb-1 block text-sm font-bold">Lead</span><textarea name="excerpt" rows="3" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.body.excerpt }}</textarea></label>
 
-        <div data-controller="click-to-reveal">
-            <button type="button" data-click-to-reveal-target="display" data-action="click->click-to-reveal#reveal"
-                    class="flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:underline">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-                {% if post.body.linkedWorkshopSlug %}
-                    Powiązano z warsztatem: <span class="font-mono">{{ post.body.linkedWorkshopSlug }}</span>
-                {% else %}
-                    Powiąż z warsztatem
-                {% endif %}
-            </button>
-            <div class="mt-2 hidden" data-click-to-reveal-target="field">
-                <label class="block"><span class="mb-1 block text-sm font-bold">Slug warsztatu</span>
-                    <input name="linkedWorkshopSlug" list="workshop-slug-options" value="{{ post.body.linkedWorkshopSlug }}" data-click-to-reveal-target="input" class="w-full rounded-xl border border-slate-300 px-4 py-3">
-                </label>
-                <datalist id="workshop-slug-options">
-                    {% for workshop in workshopOptions %}
-                        <option value="{{ workshop.slug }}">{{ workshop.title }}</option>
-                    {% endfor %}
-                </datalist>
-            </div>
-        </div>
-
         <div data-controller="post-tiptap-editor" data-post-tiptap-editor-upload-url="{{ path('app_admin_post_inline_image_upload', {id: post.id}) }}">
             <label class="mb-1 block text-sm font-bold">Treść artykułu</label>
 

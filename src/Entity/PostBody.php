@@ -16,9 +16,6 @@ class PostBody
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $contentHtml = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $linkedWorkshopSlug = null;
-
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $eyebrow = null;
 
@@ -46,11 +43,6 @@ class PostBody
         return $this->contentHtml;
     }
 
-    public function getLinkedWorkshopSlug(): ?string
-    {
-        return $this->linkedWorkshopSlug;
-    }
-
     public function getEyebrow(): ?string
     {
         return $this->eyebrow;
@@ -65,12 +57,10 @@ class PostBody
         string $title,
         ?string $eyebrow,
         ?string $excerpt,
-        ?string $linkedWorkshopSlug,
     ): void {
         $this->title = $title;
         $this->eyebrow = $eyebrow;
         $this->excerpt = $excerpt;
-        $this->linkedWorkshopSlug = $linkedWorkshopSlug;
     }
 
     /** @param array<string, mixed> $contentJson */
