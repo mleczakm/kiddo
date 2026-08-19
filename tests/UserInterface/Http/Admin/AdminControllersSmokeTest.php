@@ -160,6 +160,7 @@ class AdminControllersSmokeTest extends WebTestCase
         $this->assertSelectorExists('a[href="/admin/rezerwacje"]');
         $this->assertSelectorExists('a[href="/admin/uzytkownicy"]');
         $this->assertSelectorExists('a[href="/admin/ustawienia"]');
+        $this->assertSelectorExists('a[href="/admin/tresci"]');
     }
 
     public function testAllAdminEndpointsRequireAdminRole(): void
@@ -175,6 +176,7 @@ class AdminControllersSmokeTest extends WebTestCase
             '/admin/rezerwacje',
             '/admin/uzytkownicy',
             '/admin/ustawienia',
+            '/admin/tresci',
         ];
 
         foreach ($adminRoutes as $route) {
@@ -199,6 +201,7 @@ class AdminControllersSmokeTest extends WebTestCase
             '/admin/rezerwacje',
             '/admin/uzytkownicy',
             '/admin/ustawienia',
+            '/admin/tresci',
         ];
 
         foreach ($adminRoutes as $route) {
@@ -225,7 +228,7 @@ class AdminControllersSmokeTest extends WebTestCase
         $host = $this->createHostUser($client);
         $client->loginUser($host);
 
-        $adminOnlyRoutes = ['/admin', '/admin/platnosci', '/admin/uzytkownicy', '/admin/ustawienia'];
+        $adminOnlyRoutes = ['/admin', '/admin/platnosci', '/admin/uzytkownicy', '/admin/ustawienia', '/admin/tresci'];
 
         foreach ($adminOnlyRoutes as $route) {
             $client->request('GET', $route);

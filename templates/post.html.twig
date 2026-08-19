@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.body.title }} | Kiddo{% endblock %}
+{% block meta %}{% if preview|default(false) %}<meta name="robots" content="noindex,nofollow">{% endif %}{% endblock %}
+
+{% block body %}
+<main class="bg-[#fff8e7] px-5 py-14 md:py-20">
+    <article class="mx-auto max-w-5xl">
+        {% if preview|default(false) %}<div class="mb-8 rounded-xl bg-amber-100 px-4 py-3 text-sm font-bold text-amber-900">Podgląd ostatnio zapisanej wersji roboczej</div>{% endif %}
+        {% if post.body.eyebrow %}<p class="text-xs font-black uppercase tracking-[0.2em] text-workshop-red">{{ post.body.eyebrow }}</p>{% endif %}
+        <h1 class="mt-4 max-w-4xl text-4xl font-black leading-tight text-workshop-brown md:text-6xl">{{ post.body.title }}</h1>
+        {% if post.body.excerpt %}<p class="mt-6 max-w-3xl text-xl leading-relaxed text-stone-700">{{ post.body.excerpt }}</p>{% endif %}
+        <div class="mt-8 text-sm font-semibold text-stone-600">{{ post.author.name }} · {{ post.updatedAt|format_datetime('medium', 'short') }}</div>
+        <div class="prose prose-lg mx-auto mt-14 max-w-3xl">{{ post.body.contentHtml|raw }}</div>
+    </article>
+</main>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ isNew ? 'Nowy artykuł' : 'Edycja artykułu' }} | Kiddo Admin{% endblock %}
+
+{% block body %}
+<div class="mx-auto max-w-4xl space-y-6">
+    <div class="flex items-center justify-between gap-4">
+        <div>
+            <a href="{{ path('app_admin_posts') }}" class="text-sm font-semibold text-indigo-600">← Artykuły</a>
+            <h1 class="mt-2 text-3xl font-black text-slate-900">{{ isNew ? 'Nowy artykuł' : 'Edytuj artykuł' }}</h1>
+        </div>
+        {% if not isNew %}
+            <a href="{{ path('app_admin_post_preview', {id: post.id}) }}" target="_blank" rel="noopener" class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold">Podgląd w nowej karcie</a>
+        {% endif %}
+    </div>
+
+    <form method="post" class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <input type="hidden" name="_token" value="{{ csrf_token('edit_post') }}">
+        <label class="block"><span class="mb-1 block text-sm font-bold">Tytuł</span><input name="title" required value="{{ post.body.title }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+        <label class="block"><span class="mb-1 block text-sm font-bold">Etykieta nad tytułem</span><input name="eyebrow" value="{{ post.body.eyebrow }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+        <label class="block"><span class="mb-1 block text-sm font-bold">Lead</span><textarea name="excerpt" rows="3" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.body.excerpt }}</textarea></label>
+        <label class="block"><span class="mb-1 block text-sm font-bold">Slug warsztatu</span><input name="linkedWorkshopSlug" value="{{ post.body.linkedWorkshopSlug }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+        <label class="block"><span class="mb-1 block text-sm font-bold">Treść HTML (tymczasowy edytor Stage 2)</span><textarea name="contentHtml" rows="18" class="w-full rounded-xl border border-slate-300 px-4 py-3 font-mono text-sm">{{ post.body.contentHtml }}</textarea></label>
+        <div class="flex items-center justify-end"><button class="rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700">Zapisz szkic</button></div>
+    </form>
+</div>
+{% endblock %}

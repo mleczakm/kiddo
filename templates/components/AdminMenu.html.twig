@@ -49,6 +49,19 @@
                 </a>
             </li>
             {% endif %}
+            {% if is_granted('ROLE_MANAGE_CONTENT') %}
+            <li>
+                <a href="{{ path('app_admin_posts') }}"
+                   class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm font-medium {{ current_route starts with 'app_admin_post' ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 hover:text-white' }}"
+                   aria-current="{{ current_route starts with 'app_admin_post' ? 'page' : 'false' }}"
+                   data-testid="admin-menu-posts-link">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+                        <span>Treści</span>
+                    </div>
+                </a>
+            </li>
+            {% endif %}
             {% if is_granted('ROLE_MANAGE_BOOKINGS') %}
             <li>
                 <a href="{{ path('app_admin_bookings') }}"

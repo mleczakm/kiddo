@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{{ 'page.default.header'|trans }}{% endblock %}</title>
+    {% block meta %}{% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     {% block stylesheets %}

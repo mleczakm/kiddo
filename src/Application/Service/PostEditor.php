@@ -7,6 +7,7 @@ namespace App\Application\Service;
 use App\Entity\Post;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 final readonly class PostEditor
 {
@@ -26,6 +27,12 @@ final readonly class PostEditor
         $title = trim($title);
         if ($title === '') {
             throw new \InvalidArgumentException('Article title cannot be empty.');
+        }
+
+        $slugger = new AsciiSlugger();
+        $previousGeneratedSlug = $slugger->slug($post->body->getTitle())->lower()->toString();
+        if ($post->slug === $previousGeneratedSlug) {
+            $post->slug = $slugger->slug($title)->lower()->toString();
         }
 
         $post->body->updateEditorial(

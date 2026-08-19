@@ -22,6 +22,7 @@ final class PostEditorTest extends TestCase
         $editor->updateEditorial($post, ' New title ', ' Stories ', ' ', ' workshop-slug ');
 
         static::assertSame('New title', $post->body->getTitle());
+        static::assertSame('new-title', $post->slug);
         static::assertSame('Stories', $post->body->getEyebrow());
         static::assertNull($post->body->getExcerpt());
         static::assertSame('workshop-slug', $post->body->getLinkedWorkshopSlug());
