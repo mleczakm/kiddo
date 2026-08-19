@@ -83,6 +83,12 @@ class Post
         return $this->status === PostStatus::PUBLISHED && $this->publishedAt !== null && $this->publishedAt <= $now;
     }
 
+    public function isScheduled(?\DateTimeImmutable $now = null): bool
+    {
+        $now ??= Clock::get()->now();
+        return $this->status === PostStatus::PUBLISHED && $this->publishedAt !== null && $this->publishedAt > $now;
+    }
+
     public function getCoverAttachment(): ?PostFile
     {
         foreach ($this->files as $file) {

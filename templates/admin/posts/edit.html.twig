@@ -3,25 +3,68 @@
 {% block title %}{{ isNew ? 'Nowy artykuł' : 'Edycja artykułu' }} | Kiddo Admin{% endblock %}
 
 {% block body %}
-<div class="mx-auto max-w-4xl space-y-6">
+<div class="mx-auto max-w-4xl space-y-6" data-controller="post-editor-form">
     <div class="flex items-center justify-between gap-4">
         <div>
             <a href="{{ path('app_admin_posts') }}" class="text-sm font-semibold text-indigo-600">← Artykuły</a>
             <h1 class="mt-2 text-3xl font-black text-slate-900">{{ isNew ? 'Nowy artykuł' : 'Edytuj artykuł' }}</h1>
+            {% if not isNew %}
+                <p class="mt-1 text-sm text-slate-500">
+                    Status:
+                    {% if post.isScheduled %}Zaplanowano na {{ post.publishedAt|date('Y-m-d H:i') }}
+                    {% elseif post.isPublished %}Opublikowany
+                    {% else %}Szkic
+                    {% endif %}
+                </p>
+            {% endif %}
         </div>
         {% if not isNew %}
-            <a href="{{ path('app_admin_post_preview', {id: post.id}) }}" target="_blank" rel="noopener" class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold">Podgląd w nowej karcie</a>
+            <div class="text-right">
+                <a href="{{ path('app_admin_post_preview', {id: post.id}) }}" target="_blank" rel="noopener" class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold">Podgląd w nowej karcie</a>
+                <p data-post-editor-form-target="warning" class="mt-2 hidden text-xs font-semibold text-amber-600">Podgląd pokazuje ostatnio zapisaną wersję — masz niezapisane zmiany.</p>
+                <p class="mt-2 text-xs text-slate-400">Podgląd zawsze pokazuje ostatnio zapisaną wersję.</p>
+            </div>
         {% endif %}
     </div>
 
-    <form method="post" class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form method="post" data-post-editor-form-target="form" class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <input type="hidden" name="_token" value="{{ csrf_token('edit_post') }}">
         <label class="block"><span class="mb-1 block text-sm font-bold">Tytuł</span><input name="title" required value="{{ post.body.title }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
         <label class="block"><span class="mb-1 block text-sm font-bold">Etykieta nad tytułem</span><input name="eyebrow" value="{{ post.body.eyebrow }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
         <label class="block"><span class="mb-1 block text-sm font-bold">Lead</span><textarea name="excerpt" rows="3" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.body.excerpt }}</textarea></label>
-        <label class="block"><span class="mb-1 block text-sm font-bold">Slug warsztatu</span><input name="linkedWorkshopSlug" value="{{ post.body.linkedWorkshopSlug }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+        <label class="block">
+            <span class="mb-1 block text-sm font-bold">Slug warsztatu</span>
+            <input name="linkedWorkshopSlug" list="workshop-slug-options" value="{{ post.body.linkedWorkshopSlug }}" class="w-full rounded-xl border border-slate-300 px-4 py-3">
+            <datalist id="workshop-slug-options">
+                {% for workshop in workshopOptions %}
+                    <option value="{{ workshop.slug }}">{{ workshop.title }}</option>
+                {% endfor %}
+            </datalist>
+        </label>
         <label class="block"><span class="mb-1 block text-sm font-bold">Treść HTML (tymczasowy edytor Stage 2)</span><textarea name="contentHtml" rows="18" class="w-full rounded-xl border border-slate-300 px-4 py-3 font-mono text-sm">{{ post.body.contentHtml }}</textarea></label>
+
+        <fieldset class="space-y-4 rounded-xl border border-slate-200 p-4">
+            <legend class="px-1 text-sm font-bold text-slate-700">SEO i social media</legend>
+            <label class="block"><span class="mb-1 block text-sm font-bold">Tytuł SEO (do 70 znaków)</span><input name="seoTitle" maxlength="70" value="{{ post.seo.seoTitle }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+            <label class="block"><span class="mb-1 block text-sm font-bold">Opis SEO (do 170 znaków)</span><textarea name="seoDescription" maxlength="170" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.seo.seoDescription }}</textarea></label>
+            <label class="block"><span class="mb-1 block text-sm font-bold">Adres kanoniczny (https://…)</span><input type="url" name="canonicalUrl" value="{{ post.seo.canonicalUrl }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+            <div class="flex items-center gap-6">
+                <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="robotsIndex" value="1" {{ post.seo.shouldRobotsIndex ? 'checked' : '' }}> Indeksuj (robots: index)</label>
+                <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="robotsFollow" value="1" {{ post.seo.shouldRobotsFollow ? 'checked' : '' }}> Podążaj za linkami (robots: follow)</label>
+            </div>
+            <label class="block"><span class="mb-1 block text-sm font-bold">Tytuł social (do 70 znaków)</span><input name="socialTitle" maxlength="70" value="{{ post.seo.socialTitle }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+            <label class="block"><span class="mb-1 block text-sm font-bold">Opis social (do 200 znaków)</span><textarea name="socialDescription" maxlength="200" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.seo.socialDescription }}</textarea></label>
+        </fieldset>
+
         <div class="flex items-center justify-end"><button class="rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700">Zapisz szkic</button></div>
     </form>
+
+    {% if not isNew %}
+        <form method="post" action="{{ path('app_admin_post_schedule', {id: post.id}) }}" class="flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <input type="hidden" name="_token" value="{{ csrf_token('schedule_post_' ~ post.id) }}">
+            <label class="block"><span class="mb-1 block text-sm font-bold">Zaplanuj publikację na</span><input type="datetime-local" name="publishedAt" value="{{ post.publishedAt ? post.publishedAt|date('Y-m-d\\TH:i') : '' }}" class="rounded-xl border border-slate-300 px-4 py-3"></label>
+            <button class="rounded-xl border border-slate-300 px-6 py-3 font-bold text-slate-700 hover:bg-slate-50">Zaplanuj publikację</button>
+        </form>
+    {% endif %}
 </div>
 {% endblock %}
