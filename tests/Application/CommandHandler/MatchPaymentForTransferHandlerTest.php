@@ -388,6 +388,49 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
     }
 
     #[Test]
+    public function doesNotMatchCodeLikeSubstringInsideBlikPhoneToPhoneBoilerplate(): void
+    {
+        // Arrange: reproduces the 2026-08-19 incident where a BLIK phone-to-phone
+        // transfer's bank-generated "Od: <phone> Do: <phone>" suffix happened to
+        // contain a completely unrelated, live payment code ("ZW4D").
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('60.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $paymentCode = new PaymentCode($payment);
+        $reflection = new \ReflectionClass($paymentCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($paymentCode, 'ZW4D');
+        $this->entityManager->persist($paymentCode);
+
+        $transfer = TransferAssembler::new()
+            ->withTitle('ZW4D                                Od: 48512112450 Do: 485*****213')
+            ->withAmount('60,00')
+            ->withSender('ANNA ROSIŃSKA')
+            ->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        // Act
+        $command = new MatchPaymentForTransfer($transfer);
+        $this->messageBus->dispatch($command);
+
+        // Assert
+        $this->entityManager->refresh($payment);
+        $this->entityManager->refresh($transfer);
+
+        $this->assertNull($transfer->getPayment());
+        $this->assertEquals(Payment::STATUS_PENDING, $payment->getStatus());
+        $this->bus()->dispatched()->assertContains(TransferNotMatchedCommand::class);
+    }
+
+    #[Test]
     #[DataProvider('noMatchingCodeProvider')]
     public function dispatchesTransferNotMatchedWhenNoMatchingCodeFound(string $title): void
     {

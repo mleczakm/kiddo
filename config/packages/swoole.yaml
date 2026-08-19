@@ -53,7 +53,20 @@ swoole:
       # native curl multi-handle. Left shared, two coroutines touching it at once hit
       # "This cURL handle is currently executing in coroutine#N, cannot be operated" -
       # Swoole correctly refusing concurrent use of one native resource.
+      #
+      # security.token_storage is bound to UsageTrackingTokenStorage, which does not
+      # implement ResetInterface - so it never gets auto-detected by the bundle's
+      # kernel.reset-tag scan the way the inner security.untracked_token_storage
+      # (plain TokenStorage, which does implement it) does. SecurityBundle's own
+      # coroutine handling (Bridge/Symfony/Security/SecurityProcessor) pools the
+      # firewall's ContextListener and AccessDecisionManager, but never touches this
+      # service either. Pinning both explicitly removes any dependence on that
+      # auto-detection actually reaching the object every getUser() call resolves
+      # through - see the 2026-08-19 incident where one customer's booking/payment
+      # was created under a different, concurrently-active user's account.
       stateful_services:
+        - security.token_storage
+        - security.untracked_token_storage
         - form.registry
         - Sentry\SentryBundle\Tracing\HttpClient\TraceableHttpClient.inner
         # DirectoryTree's Mailbox owns a mutable IMAP stream. Giving each coroutine its
