@@ -1024,9 +1024,9 @@ img, video {
     border-color: hsl(var(--border))
 }
 
-body {
+.site-shell {
     background-color: hsl(var(--background));
-    color: hsl(var(--foreground))
+    color: hsl(var(--foreground));
 }
 
 *, :before, :after {
