@@ -1,6 +1,6 @@
 # Kiddo
 
-![Unit and functional test coverage](docs/coverage.svg)
+![Unit and functional test coverage](https://raw.githubusercontent.com/mleczakm/kiddo/coverage-master/docs/coverage.svg)
 
 Kiddo is a bilingual workshop-booking platform for families and a day-to-day operations system for workshop teams. It combines a public catalog, customer self-service, an administration CRM, payment reconciliation, notifications, and an optional conversational assistant.
 

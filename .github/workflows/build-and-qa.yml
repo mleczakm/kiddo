@@ -151,11 +151,26 @@ jobs:
       - name: Update coverage badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
-          if git diff --quiet -- docs/coverage.svg; then
-            exit 0
-          fi
+          badge_file="$(mktemp)"
+          cp docs/coverage.svg "$badge_file"
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git fetch origin coverage-master:refs/remotes/origin/coverage-master; then
+            git switch --force-create coverage-master origin/coverage-master
+            git rebase origin/master
+          else
+            git switch --force-create coverage-master origin/master
+          fi
+
+          cp "$badge_file" docs/coverage.svg
           git add docs/coverage.svg
-          git commit -m "docs: update test coverage badge [skip ci]"
-          git push
+
+          if [ "$(git rev-list --count origin/master..HEAD)" -gt 0 ]; then
+            git commit --amend --no-edit
+          else
+            git commit --allow-empty -m "docs: update test coverage badge [skip ci]"
+          fi
+
+          git push --force-with-lease origin coverage-master
