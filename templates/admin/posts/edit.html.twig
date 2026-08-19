@@ -41,7 +41,17 @@
                 {% endfor %}
             </datalist>
         </label>
-        <label class="block"><span class="mb-1 block text-sm font-bold">Treść HTML (tymczasowy edytor Stage 2)</span><textarea name="contentHtml" rows="18" class="w-full rounded-xl border border-slate-300 px-4 py-3 font-mono text-sm">{{ post.body.contentHtml }}</textarea></label>
+        <div data-controller="post-tiptap-editor" data-post-tiptap-editor-upload-url="{{ path('app_admin_post_inline_image_upload', {id: post.id}) }}">
+            <label class="mb-1 block text-sm font-bold">Treść artykułu</label>
+            <div data-post-tiptap-editor-target="editor" class="prose prose-sm min-h-96 w-full rounded-xl border border-slate-300 px-4 py-3 shadow-sm focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-200"></div>
+            <input type="hidden" name="contentJson" data-post-tiptap-editor-target="contentJson" value="{{ post.body.contentJson|json_encode }}">
+            <input type="hidden" name="contentHtml" data-post-tiptap-editor-target="contentHtml" value="{{ post.body.contentHtml }}">
+            <div class="mt-2 flex gap-2">
+                <button type="button" data-post-tiptap-editor-target="uploadButton" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Dodaj obraz</button>
+                <input type="file" data-post-tiptap-editor-target="uploadInput" accept="image/jpeg,image/png,image/webp,image/avif" hidden>
+            </div>
+            <p class="mt-1 text-xs text-slate-500">H2/H3 nagłówki, listy, tabele, linki, bold/italic/underline/strikethrough, cytaty</p>
+        </div>
 
         <fieldset class="space-y-4 rounded-xl border border-slate-200 p-4">
             <legend class="px-1 text-sm font-bold text-slate-700">Pliki i załączniki</legend>

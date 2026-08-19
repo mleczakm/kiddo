@@ -167,9 +167,15 @@ final class PostsController extends AbstractController
                 $excerpt === '' ? null : $excerpt,
                 $linkedWorkshopSlug === '' ? null : $linkedWorkshopSlug,
             );
+            $contentJsonStr = $request->request->getString('contentJson');
+            try {
+                $contentJson = $contentJsonStr ? json_decode($contentJsonStr, true) : ['type' => 'doc', 'content' => []];
+            } catch (\Exception) {
+                $contentJson = ['type' => 'doc', 'content' => []];
+            }
             $this->editor->updateContent(
                 $post,
-                ['type' => 'doc', 'content' => []],
+                $contentJson,
                 $request->request->getString('contentHtml'),
             );
             $this->seoEditor->updateSeo(
