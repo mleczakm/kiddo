@@ -63,7 +63,10 @@ class Post
         $this->author = $author;
         $this->body = new PostBody($title);
         $this->seo = new PostSeo();
-        $this->slug = self::slugify($slug === null || $slug === '' ? $title : $slug);
+        $this->slug = new AsciiSlugger()
+            ->slug($slug === null || $slug === '' ? $title : $slug)
+            ->lower()
+            ->toString();
         $this->files = new ArrayCollection();
         $this->createdAt = Clock::get()->now();
         $this->updatedAt = $this->createdAt;
@@ -72,14 +75,6 @@ class Post
     public function getId(): Ulid
     {
         return $this->id;
-    }
-
-    public static function slugify(string $value): string
-    {
-        return new AsciiSlugger()
-            ->slug($value)
-            ->lower()
-            ->toString();
     }
 
     public function isPublished(?\DateTimeImmutable $now = null): bool
@@ -134,6 +129,11 @@ class Post
     public function unpublish(): void
     {
         $this->status = PostStatus::DRAFT;
+        $this->touch();
+    }
+
+    public function markUpdated(): void
+    {
         $this->touch();
     }
 

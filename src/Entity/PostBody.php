@@ -60,4 +60,23 @@ class PostBody
     {
         return $this->excerpt;
     }
+
+    public function updateEditorial(
+        string $title,
+        ?string $eyebrow,
+        ?string $excerpt,
+        ?string $linkedWorkshopSlug,
+    ): void {
+        $this->title = $title;
+        $this->eyebrow = $eyebrow;
+        $this->excerpt = $excerpt;
+        $this->linkedWorkshopSlug = $linkedWorkshopSlug;
+    }
+
+    /** @param array<string, mixed> $contentJson */
+    public function updateContent(array $contentJson, string $contentHtml): void
+    {
+        $this->contentJson = $contentJson;
+        $this->contentHtml = $contentHtml;
+    }
 }

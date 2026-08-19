@@ -64,4 +64,24 @@ class PostSeo
     {
         return $this->socialDescription;
     }
+
+    public function updateSearch(
+        ?string $seoTitle,
+        ?string $seoDescription,
+        ?string $canonicalUrl,
+        bool $robotsIndex,
+        bool $robotsFollow,
+    ): void {
+        $this->seoTitle = $seoTitle;
+        $this->seoDescription = $seoDescription;
+        $this->canonicalUrl = $canonicalUrl;
+        $this->robotsIndex = $robotsIndex;
+        $this->robotsFollow = $robotsFollow;
+    }
+
+    public function updateSocial(?string $socialTitle, ?string $socialDescription): void
+    {
+        $this->socialTitle = $socialTitle;
+        $this->socialDescription = $socialDescription;
+    }
 }

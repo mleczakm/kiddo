@@ -1,0 +1,28 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            app.article_sanitizer:
+                allow_elements:
+                    p: '*'
+                    h2: '*'
+                    h3: '*'
+                    h4: '*'
+                    strong: '*'
+                    em: '*'
+                    u: '*'
+                    s: '*'
+                    code: '*'
+                    pre: '*'
+                    blockquote: '*'
+                    ul: '*'
+                    ol: '*'
+                    li: '*'
+                    br: '*'
+                    hr: '*'
+                    a: ['href', 'title', 'target', 'rel']
+                allowed_link_schemes: ['http', 'https', 'mailto']
+                allow_relative_links: true
+                force_attributes:
+                    a:
+                        rel: 'noopener noreferrer'
+                max_input_length: 1000000
