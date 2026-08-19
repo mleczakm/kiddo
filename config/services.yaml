@@ -35,6 +35,9 @@ services:
   App\Application\Search\GlobalSearchQuery:
     alias: App\Infrastructure\Search\PostgresGlobalSearchQuery
 
+  App\Application\File\FileStorageInterface:
+    alias: App\Application\File\DatabaseFileStorage
+
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 

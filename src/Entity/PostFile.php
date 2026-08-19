@@ -89,4 +89,37 @@ class PostFile
     {
         return $this->downloadName;
     }
+
+    public function setAltText(?string $altText): void
+    {
+        $this->altText = $altText ? trim($altText) : null;
+    }
+
+    public function setCaption(?string $caption): void
+    {
+        $this->caption = $caption ? trim($caption) : null;
+    }
+
+    public function setDownloadName(?string $downloadName): void
+    {
+        $this->downloadName = $downloadName ? trim($downloadName) : null;
+    }
+
+    public function setPosition(int $position): void
+    {
+        if ($position < 0) {
+            throw new \InvalidArgumentException('Attachment position cannot be negative.');
+        }
+        $this->position = $position;
+    }
+
+    public function setRole(PostFileRole $role): void
+    {
+        if ($role === PostFileRole::COVER) {
+            if ($this->post->getCoverAttachment() !== null && $this->post->getCoverAttachment() !== $this) {
+                throw new \DomainException('A post can have only one cover attachment.');
+            }
+        }
+        $this->role = $role;
+    }
 }
