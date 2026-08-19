@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\UserInterface\Http;
 
 use App\Application\File\FileStorageInterface;
+use App\Application\File\FileVisibilityChecker;
 use App\Entity\File;
-use App\Entity\PostFileRole;
-use App\Entity\PostStatus;
 use App\Repository\FileRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +22,7 @@ final class FileAction extends AbstractController
     public function __construct(
         private readonly FileRepository $fileRepository,
         private readonly FileStorageInterface $storage,
-        private readonly EntityManagerInterface $em,
+        private readonly FileVisibilityChecker $visibility,
     ) {}
 
     #[Route(
@@ -45,21 +43,22 @@ final class FileAction extends AbstractController
 
         $now = Clock::get()->now();
 
-        $isPublic = $this->isFilePublic($file, $now);
+        $isPublic = $this->visibility->isPublic($file, $now);
         if (!$isPublic && (!$this->getUser() || !$this->isGranted('ROLE_MANAGE_CONTENT'))) {
             throw $this->createAccessDeniedException();
         }
 
-        $data = $this->storage->read($file);
-
-        $isInline = $this->isInlineFile($file);
+        $isInline = $this->visibility->isInline($file);
         $isVideo = str_starts_with($file->getMimeType(), 'video/');
+        $etag = $isPublic ? $file->getChecksum() : null;
 
         if ($isVideo && $this->requestsRange($request)) {
-            return $this->rangeResponse($request, $data, $file->getMimeType());
+            $data = $this->storage->read($file);
+
+            return $this->rangeResponse($request, $data, $file->getMimeType(), $etag, $isPublic ? $file->getCreatedAt() : null);
         }
 
-        $response = new Response($data, 200, [
+        $response = new Response('', 200, [
             'Content-Type' => $file->getMimeType(),
             'Content-Length' => (string) $file->getSize(),
             'X-Content-Type-Options' => 'nosniff',
@@ -70,68 +69,30 @@ final class FileAction extends AbstractController
             $response->headers->set('Content-Disposition', "attachment; filename=\"{$safeFilename}\"");
         }
 
-        if ($isPublic) {
-            $response->setPublic();
-            $response->setMaxAge(300);
-            $response->setEtag($file->getChecksum());
-            $response->setLastModified($file->getCreatedAt());
-        } else {
-            $response->headers->set('Cache-Control', 'private, no-store');
+        if ($this->applyCachePolicy($response, $request, $file, $isPublic, $etag)) {
+            return $response;
         }
 
-        if ($request->getMethod() === 'HEAD') {
-            $response->setContent('');
+        if ($request->getMethod() !== 'HEAD') {
+            $response->setContent($this->storage->read($file));
         }
 
         return $response;
     }
 
-    private function isFilePublic(File $file, \DateTimeImmutable $now): bool
+    /** Returns true when the response is already complete (304) and delivery should stop there. */
+    private function applyCachePolicy(Response $response, Request $request, File $file, bool $isPublic, ?string $etag): bool
     {
-        $posts = $this->getPostsForFile($file);
-
-        foreach ($posts as $post) {
-            if (
-                $post['status'] === PostStatus::PUBLISHED
-                && $post['publishedAt'] !== null
-                && $post['publishedAt'] <= $now
-            ) {
-                return true;
-            }
+        if (!$isPublic) {
+            $response->headers->set('Cache-Control', 'private, no-store');
+            return false;
         }
 
-        return false;
-    }
+        $response->headers->set('X-Cache-Public-Max-Age', '300');
+        $response->setEtag($etag);
+        $response->setLastModified($file->getCreatedAt());
 
-    private function isInlineFile(File $file): bool
-    {
-        $query = $this->em
-            ->createQueryBuilder()
-            ->select('1')
-            ->from('App\Entity\PostFile', 'pf')
-            ->where('pf.file = :file')
-            ->andWhere('pf.role = :role')
-            ->setParameter('file', $file->getId(), 'ulid')
-            ->setParameter('role', PostFileRole::INLINE->value)
-            ->setMaxResults(1)
-            ->getQuery();
-
-        return \count($query->getResult()) > 0;
-    }
-
-    /** @return list<array{status: string, publishedAt: ?\DateTimeImmutable}> */
-    private function getPostsForFile(File $file): array
-    {
-        $query = $this->em
-            ->createQueryBuilder()
-            ->select('p.status, p.publishedAt')
-            ->from('App\Entity\PostFile', 'pf')
-            ->join('pf.post', 'p')
-            ->where('pf.file = :file')
-            ->setParameter('file', $file->getId(), 'ulid')
-            ->getQuery();
-
-        return $query->getResult();
+        return $response->isNotModified($request);
     }
 
     private function requestsRange(Request $request): bool

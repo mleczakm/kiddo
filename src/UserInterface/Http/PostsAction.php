@@ -33,15 +33,30 @@ final class PostsAction extends AbstractController
 
         $items = $this->postRepository->findPublished($now, self::PER_PAGE, ($page - 1) * self::PER_PAGE);
 
-        $response = $this->render('posts.html.twig', [
+        $lastModified = null;
+        foreach ($items as $item) {
+            if ($lastModified === null || $item->updatedAt > $lastModified) {
+                $lastModified = $item->updatedAt;
+            }
+        }
+        $lastModified ??= $now;
+
+        $response = new Response();
+        $response->headers->set('X-Cache-Public-Max-Age', '60');
+        $response->setLastModified($lastModified);
+        $response->setEtag(md5(\sprintf('posts:%d:%d:%d:%s', $page, $lastPage, $total, $lastModified->format(\DATE_ATOM))));
+        $response->headers->set('Vary', 'Accept-Encoding');
+
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
+        $response->setContent($this->renderView('posts.html.twig', [
             'featured' => $page === 1 ? $items[0] ?? null : null,
             'posts' => $page === 1 ? \array_slice($items, 1) : $items,
             'page' => $page,
             'lastPage' => $lastPage,
-        ]);
-        $response->setPublic();
-        $response->setMaxAge(60);
-        $response->headers->set('Vary', 'Accept-Encoding');
+        ]));
 
         return $response;
     }
@@ -56,7 +71,7 @@ final class PostsAction extends AbstractController
         'pl' => 'blog/{slug}',
         'en' => 'blog/{slug}',
     ], name: 'post_by_slug')]
-    public function postBySlug(string $slug): Response
+    public function postBySlug(string $slug, Request $request): Response
     {
         $now = Clock::get()->now();
         $post = $this->postRepository->findOnePublishedBySlug($slug, $now);
@@ -78,10 +93,17 @@ final class PostsAction extends AbstractController
             return $response;
         }
 
-        $response = $this->render('post.html.twig', ['post' => $post, 'preview' => false]);
-        $response->setPublic();
-        $response->setMaxAge(60);
+        $response = new Response();
+        $response->headers->set('X-Cache-Public-Max-Age', '60');
+        $response->setLastModified($post->updatedAt);
+        $response->setEtag(md5(\sprintf('post:%s:%s', (string) $post->getId(), $post->updatedAt->format(\DATE_ATOM))));
         $response->headers->set('Vary', 'Accept-Encoding');
+
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
+        $response->setContent($this->renderView('post.html.twig', ['post' => $post, 'preview' => false]));
 
         return $response;
     }
