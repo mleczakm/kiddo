@@ -51,17 +51,6 @@ final readonly class MatchPaymentForTransferHandler
      */
     private function tokenizeTitle(string $title): \Generator
     {
-        // BLIK phone-to-phone transfers carry a bank-generated title of the form
-        // "<ref> Od: <phone> Do: <phone>" that the payer never typed and cannot
-        // influence - the payer had no title field to put a real payment code in, so
-        // any code-looking substring found in it is pure coincidence, not payer intent.
-        // See the 2026-08-19 incident where such a title happened to contain an
-        // unrelated payment's live code ("ZW4D"), misattributing a real customer's
-        // transfer to someone else's booking.
-        if (preg_match('/\bOd:\s*\d+\s*Do:\s*[\d*]+\s*$/u', $title) === 1) {
-            return;
-        }
-
         $tokens = array_values(array_filter(
             explode(' ', preg_replace('/[^A-Za-z0-9]/', ' ', mb_strtoupper($title)) ?? ''),
             static fn(string $word): bool => $word !== '',

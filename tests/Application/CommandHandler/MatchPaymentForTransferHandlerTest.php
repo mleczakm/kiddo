@@ -388,11 +388,11 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
     }
 
     #[Test]
-    public function doesNotMatchCodeLikeSubstringInsideBlikPhoneToPhoneBoilerplate(): void
+    public function matchesRealCodePrecedingBlikPhoneToPhoneBoilerplate(): void
     {
-        // Arrange: reproduces the 2026-08-19 incident where a BLIK phone-to-phone
-        // transfer's bank-generated "Od: <phone> Do: <phone>" suffix happened to
-        // contain a completely unrelated, live payment code ("ZW4D").
+        // Arrange: BLIK phone-to-phone transfers carry a bank-generated
+        // "Od: <phone> Do: <phone>" suffix, but the customer-entered payment
+        // code preceding it is still real and must still be matched.
         $user = UserAssembler::new()->assemble();
         $this->entityManager->persist($user);
 
@@ -425,9 +425,9 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->entityManager->refresh($payment);
         $this->entityManager->refresh($transfer);
 
-        $this->assertNull($transfer->getPayment());
-        $this->assertEquals(Payment::STATUS_PENDING, $payment->getStatus());
-        $this->bus()->dispatched()->assertContains(TransferNotMatchedCommand::class);
+        $this->assertTrue($payment->getTransfers()->contains($transfer));
+        $this->assertSame($payment, $transfer->getPayment());
+        $this->assertEquals(Payment::STATUS_PAID, $payment->getStatus());
     }
 
     #[Test]
