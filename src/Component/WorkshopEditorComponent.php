@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Component;
 
+use App\Application\File\WorkshopImageUploadPolicy;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Service\MoneyInputParser;
@@ -470,7 +471,9 @@ class WorkshopEditorComponent extends AbstractController
                 return;
             }
 
-            $allowedTypes = $isVideo ? self::SUPPORTED_VIDEO_MIME_TYPES : self::SUPPORTED_IMAGE_MIME_TYPES;
+            $allowedImageMimes = WorkshopImageUploadPolicy::supportedImageMimes();
+            $allowedVideoMimes = WorkshopImageUploadPolicy::supportedVideoMimes();
+            $allowedTypes = $isVideo ? $allowedVideoMimes : $allowedImageMimes;
             if (!in_array($mimeType, $allowedTypes, true)) {
                 $this->addFlash(
                     'error',
@@ -481,13 +484,17 @@ class WorkshopEditorComponent extends AbstractController
                 return;
             }
 
-            $maxBytes = $isVideo ? self::MAX_VIDEO_BYTES : self::MAX_IMAGE_BYTES;
             $uploadedSize = $this->uploadedImage->getSize();
-            if ($uploadedSize !== false && $uploadedSize > $maxBytes) {
-                $this->addFlash(
-                    'error',
-                    $isVideo ? 'Plik wideo jest za duży (maks. 20 MB).' : 'Zdjęcie jest za duże (maks. 3 MB).',
-                );
+            if ($uploadedSize === false) {
+                $this->addFlash('error', 'Nie można odczytać rozmiaru pliku.');
+                return;
+            }
+
+            $policy = new WorkshopImageUploadPolicy();
+            try {
+                $policy->assertValidUpload($mimeType, $uploadedSize);
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('error', $e->getMessage());
                 return;
             }
         }
