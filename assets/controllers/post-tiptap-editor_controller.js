@@ -7,7 +7,6 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { Typography } from '@tiptap/extension-typography';
-import { Link } from '@tiptap/extension-link';
 
 /**
  * Tiptap editor for article content: prose, headings (H2/H3), lists, tables,
@@ -44,7 +43,6 @@ export default class extends Controller {
                 TableHeader,
                 TableCell,
                 Typography,
-                Link.configure({ openOnClick: false }),
             ],
             content: this.getInitialContent(),
             onUpdate: () => this.syncContent(),
