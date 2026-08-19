@@ -30,6 +30,7 @@ final class PostsController extends AbstractController
         private readonly PostSeoEditor $seoEditor,
         private readonly EntityManagerInterface $entityManager,
         private readonly LessonMetadataRepository $lessonMetadataRepository,
+        private readonly PostRepository $postRepository,
     ) {}
 
     /** @throws \UnexpectedValueException */
@@ -241,6 +242,7 @@ final class PostsController extends AbstractController
             'post' => $post,
             'isNew' => $isNew,
             'workshopOptions' => $this->lessonMetadataRepository->findDistinctSlugsForOptions(),
+            'eyebrowOptions' => $this->postRepository->findDistinctEyebrows(),
         ]);
     }
 

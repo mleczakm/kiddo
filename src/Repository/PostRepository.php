@@ -36,4 +36,25 @@ final class PostRepository extends ServiceEntityRepository
 
         return $posts[0] ?? null;
     }
+
+    /**
+     * Distinct, non-empty eyebrow values across all posts, for use as category
+     * suggestions in the admin editor's datalist.
+     *
+     * @return list<string>
+     * @throws \UnexpectedValueException
+     */
+    public function findDistinctEyebrows(int $limit = 50): array
+    {
+        $rows = $this
+            ->createQueryBuilder('post')
+            ->select('DISTINCT post.body.eyebrow AS eyebrow')
+            ->andWhere('post.body.eyebrow IS NOT NULL')
+            ->orderBy('post.body.eyebrow', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        return array_values(array_unique(array_map('strval', $rows)));
+    }
 }
