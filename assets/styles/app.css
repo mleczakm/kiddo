@@ -103,7 +103,8 @@ body {
    actual focus target is this inner .tiptap div (it gets its own
    .ProseMirror-focused class), so the browser's native focus ring has to
    be suppressed on it directly. */
-.tiptap {
+.tiptap,
+.tiptap * {
     outline: none;
 }
 
