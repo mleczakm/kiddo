@@ -91,6 +91,66 @@ final class LessonModalPaymentTest extends WebTestCase
         static::assertSame($lessonModal->paymentCode, $booking->getPayment()?->getPaymentCode()?->getCode());
     }
 
+    public function testDuplicateSubmissionCreatesTwoSeparateBookingsAndPaymentCodes(): void
+    {
+        // Characterizes a known gap: processPayment() has no idempotency
+        // guard, so two rapid calls (e.g. a double click, or a retried HTTP
+        // request) each dispatch their own AddBooking with a freshly
+        // generated code. This documents today's result - it is not the
+        // desired end state - so a future idempotency fix has a test to
+        // change deliberately.
+        Clock::set(new MockClock('2024-02-20 08:00:00'));
+
+        $client = static::createClient();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()->withPhone('501111111')->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->assemble())
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+            ->assemble();
+        $lesson->setSeries($series);
+
+        $em->persist($user);
+        $em->persist($series);
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($user);
+
+        $component = $this->createLiveComponent(
+            name: LessonModal::class,
+            data: [
+                'lesson' => $lesson,
+                'modalOpened' => true,
+                'termsAccepted' => true,
+                'closeUrl' => '/warsztaty',
+            ],
+            client: $client,
+        );
+
+        $component->call('processPayment');
+        /** @var LessonModal $first */
+        $first = $component->component();
+
+        $component->call('processPayment');
+        /** @var LessonModal $second */
+        $second = $component->component();
+
+        static::assertSame('awaiting_payment', $first->paymentStatus);
+        static::assertSame('awaiting_payment', $second->paymentStatus);
+        static::assertNotSame($first->paymentCode, $second->paymentCode);
+
+        /** @var BookingRepository $bookings */
+        $bookings = static::getContainer()->get(BookingRepository::class);
+        $allBookings = $bookings->findBy([
+            'user' => $user,
+        ]);
+        static::assertCount(2, $allBookings, 'Each call creates its own booking - nothing deduplicates them yet');
+    }
+
     public function testResumePaymentShowsExistingPaymentCode(): void
     {
         Clock::set(new MockClock('2024-02-20 08:00:00'));

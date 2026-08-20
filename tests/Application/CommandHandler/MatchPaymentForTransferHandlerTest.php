@@ -487,6 +487,121 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         $this->bus()->dispatched()->assertContains(TransferNotMatchedCommand::class);
     }
 
+    #[Test]
+    public function underpaymentLeavesPaymentPending(): void
+    {
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $paymentCode = new PaymentCode($payment);
+        $reflection = new \ReflectionClass($paymentCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($paymentCode, 'UNDR');
+        $this->entityManager->persist($paymentCode);
+
+        $transfer = TransferAssembler::new()->withTitle('Payment UNDR partial')->withAmount('40.00')->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        $this->messageBus->dispatch(new MatchPaymentForTransfer($transfer));
+
+        $this->entityManager->refresh($payment);
+        $this->entityManager->refresh($transfer);
+
+        // The transfer is still attached to the payment (it counts toward the
+        // cumulative total), but a single 40/100 transfer isn't enough to pay.
+        static::assertTrue($payment->getTransfers()->contains($transfer));
+        static::assertSame($payment, $transfer->getPayment());
+        static::assertSame(Payment::STATUS_PENDING, $payment->getStatus());
+        static::assertNull($payment->getPaidAt());
+    }
+
+    #[Test]
+    public function cumulativeTransfersEventuallyPayInFull(): void
+    {
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $paymentCode = new PaymentCode($payment);
+        $reflection = new \ReflectionClass($paymentCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($paymentCode, 'CUML');
+        $this->entityManager->persist($paymentCode);
+
+        $firstTransfer = TransferAssembler::new()->withTitle('CUML part one')->withAmount('40.00')->assemble();
+        $this->entityManager->persist($firstTransfer);
+        $this->entityManager->flush();
+
+        $this->messageBus->dispatch(new MatchPaymentForTransfer($firstTransfer));
+        $this->entityManager->refresh($payment);
+        static::assertSame(Payment::STATUS_PENDING, $payment->getStatus(), 'First partial transfer alone must not pay');
+
+        $secondTransfer = TransferAssembler::new()->withTitle('CUML part two')->withAmount('60.00')->assemble();
+        $this->entityManager->persist($secondTransfer);
+        $this->entityManager->flush();
+
+        $this->messageBus->dispatch(new MatchPaymentForTransfer($secondTransfer));
+        $this->entityManager->refresh($payment);
+        $this->entityManager->refresh($firstTransfer);
+        $this->entityManager->refresh($secondTransfer);
+
+        static::assertSame(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertNotNull($payment->getPaidAt());
+        static::assertTrue($payment->getTransfers()->contains($firstTransfer));
+        static::assertTrue($payment->getTransfers()->contains($secondTransfer));
+    }
+
+    #[Test]
+    public function overpaymentIsAcceptedAsPaidWithNoDistinctMarker(): void
+    {
+        // Characterizes current behavior ahead of Stage 6 hardening: an
+        // overpaid transfer is matched and the payment simply becomes
+        // "paid" like an exact-amount transfer would - there is no
+        // admin-review flag or distinct status for the overpaid case yet.
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $paymentCode = new PaymentCode($payment);
+        $reflection = new \ReflectionClass($paymentCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($paymentCode, 'OVER');
+        $this->entityManager->persist($paymentCode);
+
+        $transfer = TransferAssembler::new()->withTitle('OVER paid too much')->withAmount('150.00')->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        $this->messageBus->dispatch(new MatchPaymentForTransfer($transfer));
+
+        $this->entityManager->refresh($payment);
+        $this->entityManager->refresh($transfer);
+
+        static::assertSame(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertNotNull($payment->getPaidAt());
+        static::assertTrue($payment->getTransfers()->contains($transfer));
+    }
+
     #[\Override]
     protected function setUp(): void
     {

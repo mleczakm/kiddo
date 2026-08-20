@@ -52,4 +52,109 @@ final class RefundLessonBookingHandlerTest extends KernelTestCase
         static::assertSame('Proszę o zwrot.', $payment->getRefundRequestMessage());
         static::assertTrue($payment->isRefundRequestedViaUserPanel());
     }
+
+    public function testRegularUserRequestWithin24HoursOfLessonIsDenied(): void
+    {
+        self::bootKernel();
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+
+        $customer = UserAssembler::new()->withName('Anna Kowalska')->assemble();
+        $lesson = LessonAssembler::new()
+            ->withTitle('Sensoplastyka')
+            ->withSchedule(Clock::get()->now()->modify('+12 hours'))
+            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($customer)->withStatus(Payment::STATUS_PAID)->assemble();
+        $booking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withPayment($payment)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+
+        foreach ([$customer, $lesson, $payment, $booking] as $entity) {
+            $em->persist($entity);
+        }
+        $em->flush();
+
+        /** @var RefundLessonBookingHandler $handler */
+        $handler = $container->get(RefundLessonBookingHandler::class);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Refund is not available within 24h of the lesson');
+
+        $handler(new RefundLessonBooking($booking->getId(), $lesson->getId(), $customer, 'Proszę o zwrot.'));
+    }
+
+    public function testAdminRequestWithin24HoursOfLessonIsAllowed(): void
+    {
+        self::bootKernel();
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+
+        $customer = UserAssembler::new()->withName('Anna Kowalska')->assemble();
+        $admin = UserAssembler::new()->withName('Admin User')->withRoles('ROLE_ADMIN')->assemble();
+        $lesson = LessonAssembler::new()
+            ->withTitle('Sensoplastyka')
+            ->withSchedule(Clock::get()->now()->modify('+12 hours'))
+            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($customer)->withStatus(Payment::STATUS_PAID)->assemble();
+        $booking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withPayment($payment)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+
+        foreach ([$customer, $admin, $lesson, $payment, $booking] as $entity) {
+            $em->persist($entity);
+        }
+        $em->flush();
+
+        /** @var RefundLessonBookingHandler $handler */
+        $handler = $container->get(RefundLessonBookingHandler::class);
+        $handler(new RefundLessonBooking($booking->getId(), $lesson->getId(), $admin, 'Zwrot admin.'));
+        $em->flush();
+
+        static::assertSame(Payment::STATUS_REFUND_REQUESTED, $payment->getStatus());
+        static::assertFalse(
+            $payment->isRefundRequestedViaUserPanel(),
+            'Admin-initiated requests must not be flagged as coming from the user panel',
+        );
+    }
+
+    public function testRegularUserRequestOutsideTheBoundaryIsAllowed(): void
+    {
+        self::bootKernel();
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+
+        $customer = UserAssembler::new()->withName('Anna Kowalska')->assemble();
+        $lesson = LessonAssembler::new()
+            ->withTitle('Sensoplastyka')
+            ->withSchedule(Clock::get()->now()->modify('+25 hours'))
+            ->assemble();
+        $payment = PaymentAssembler::new()->withUser($customer)->withStatus(Payment::STATUS_PAID)->assemble();
+        $booking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withPayment($payment)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+
+        foreach ([$customer, $lesson, $payment, $booking] as $entity) {
+            $em->persist($entity);
+        }
+        $em->flush();
+
+        /** @var RefundLessonBookingHandler $handler */
+        $handler = $container->get(RefundLessonBookingHandler::class);
+        $handler(new RefundLessonBooking($booking->getId(), $lesson->getId(), $customer, 'Proszę o zwrot.'));
+        $em->flush();
+
+        static::assertSame(Payment::STATUS_REFUND_REQUESTED, $payment->getStatus());
+    }
 }
