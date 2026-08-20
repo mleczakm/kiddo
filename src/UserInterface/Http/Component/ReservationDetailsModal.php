@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Repository\RefundRequestRepositoryInterface;
 use App\Application\UseCase\ApproveRefund;
+use App\Application\UseCase\DeclineRefund;
 use App\Entity\ActivityLog;
 use App\Entity\Booking;
 use App\Entity\DTO\RescheduledLesson;
@@ -74,6 +76,8 @@ final class ReservationDetailsModal extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
         private readonly ApproveRefund $approveRefund,
+        private readonly DeclineRefund $declineRefund,
+        private readonly RefundRequestRepositoryInterface $refundRequestRepository,
         #[Autowire(service: 'state_machine.payment')]
         private readonly WorkflowInterface $paymentStateMachine,
     ) {}
@@ -181,8 +185,13 @@ final class ReservationDetailsModal extends AbstractController
         }
 
         $actorId = $actor->getId();
+        $allowedTransitions = [
+            Payment::TRANSITION_REFUND,
+            Payment::TRANSITION_DECLINE_REFUND,
+            Payment::TRANSITION_CANCEL,
+        ];
         if (
-            !in_array($transition, [Payment::TRANSITION_REFUND, Payment::TRANSITION_CANCEL], true)
+            !in_array($transition, $allowedTransitions, true)
             || !$this->paymentStateMachine->can($payment, $transition)
             || $actorId === null
         ) {
@@ -191,12 +200,26 @@ final class ReservationDetailsModal extends AbstractController
         }
 
         try {
-            if ($transition === Payment::TRANSITION_REFUND) {
-                ($this->approveRefund)($payment->getId(), $actorId, $this->paymentNote);
-            } else {
+            if ($transition === Payment::TRANSITION_CANCEL) {
                 $this->paymentStateMachine->apply($payment, $transition);
                 $payment->recordStatusDecision($actor, $this->paymentNote);
                 $this->entityManager->flush();
+
+                $this->successMessage = 'Płatność została oznaczona jako anulowana.';
+                $this->errorMessage = null;
+                $this->paymentNote = '';
+                return;
+            }
+
+            $refundRequest = $this->refundRequestRepository->findPendingForPayment($payment);
+            if ($refundRequest === null) {
+                throw new \RuntimeException('Nie znaleziono oczekującego wniosku o zwrot dla tej płatności.');
+            }
+
+            if ($transition === Payment::TRANSITION_REFUND) {
+                ($this->approveRefund)($refundRequest->getId(), $actorId, $this->paymentNote);
+            } else {
+                ($this->declineRefund)($refundRequest->getId(), $actorId, $this->paymentNote);
             }
         } catch (\Throwable $exception) {
             $this->errorMessage = $exception->getMessage();
@@ -206,7 +229,7 @@ final class ReservationDetailsModal extends AbstractController
 
         $this->successMessage = $transition === Payment::TRANSITION_REFUND
             ? 'Płatność została oznaczona jako zwrócona.'
-            : 'Płatność została oznaczona jako anulowana.';
+            : 'Wniosek o zwrot został odrzucony.';
         $this->errorMessage = null;
         $this->paymentNote = '';
     }

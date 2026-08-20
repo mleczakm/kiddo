@@ -96,6 +96,13 @@ notifications:
     cancellation_admin:
       title: Rezerwacja anulowana (brak wpłaty)
       body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) użytkownika <strong>{email}</strong> została automatycznie anulowana z powodu braku płatności.'
+    refund_decision:
+      approved:
+        title: Zwrot zatwierdzony
+        body: 'Twój zwrot w wysokości <strong>{amount} zł</strong> za <em>{lesson}</em> został zatwierdzony.'
+      declined:
+        title: Zwrot odrzucony
+        body: 'Twoja prośba o zwrot za <em>{lesson}</em> została odrzucona.'
     new_user:
       user:
         title: Witamy!
@@ -839,6 +846,15 @@ admin:
       all_statuses: "Wszystkie statusy"
     empty: "Brak płatności w wybranym tygodniu"
     carnet: "Karnet"
+  refund_queue:
+    title: "Wnioski o zwrot"
+    headers:
+      requested_at: "Zgłoszono"
+      customer: "Klient"
+      workshop: "Zajęcia"
+      amount: "Kwota"
+      message: "Wiadomość"
+    empty: "Brak oczekujących wniosków o zwrot"
   lessons:
     title: "Zajęcia"
     headers:

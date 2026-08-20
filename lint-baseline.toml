@@ -343,13 +343,31 @@ message = "Avoid `elseif` clauses."
 count = 2
 
 [[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Application/UseCase/CancelBookingOccurrence.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
 count = 1
 
 [[issues]]
+file = "src/Application/UseCase/DeclineRefund.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/RequestRefund.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
 count = 1
@@ -460,6 +478,12 @@ count = 1
 file = "src/Entity/Post.php"
 code = "too-many-properties"
 message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
 count = 1
 
 [[issues]]

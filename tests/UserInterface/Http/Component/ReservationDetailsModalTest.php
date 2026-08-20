@@ -6,6 +6,7 @@ namespace App\Tests\UserInterface\Http\Component;
 
 use App\Entity\Booking;
 use App\Entity\Payment;
+use App\Entity\RefundRequest;
 use App\Entity\WorkshopType;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
@@ -175,8 +176,16 @@ final class ReservationDetailsModalTest extends WebTestCase
             ->withLessons($lesson)
             ->withStatus(Booking::STATUS_ACTIVE)
             ->assemble();
+        $refundRequest = new RefundRequest(
+            payment: $payment,
+            booking: $booking,
+            lesson: $lesson,
+            requestedAmount: $payment->getAmount(),
+            requestedBy: $customer,
+            requestMessage: null,
+        );
 
-        foreach ([$admin, $customer, $lesson, $payment, $booking] as $entity) {
+        foreach ([$admin, $customer, $lesson, $payment, $booking, $refundRequest] as $entity) {
             $this->em->persist($entity);
         }
         $this->em->flush();

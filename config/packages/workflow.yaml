@@ -76,6 +76,9 @@ framework:
                 refund:
                     from: [paid, refund_requested]
                     to: refunded
+                decline_refund:
+                    from: refund_requested
+                    to: paid
                 cancel:
                     from: [pending, paid, refund_requested]
                     to: cancelled

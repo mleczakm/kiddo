@@ -148,6 +148,13 @@ notifications:
     cancellation_admin:
       title: Booking cancelled (no payment)
       body: 'Booking for <strong>{lesson}</strong> ({date}) by <strong>{email}</strong> was automatically cancelled due to no payment.'
+    refund_decision:
+      approved:
+        title: Refund approved
+        body: 'Your refund of <strong>{amount} PLN</strong> for <em>{lesson}</em> was approved.'
+      declined:
+        title: Refund declined
+        body: 'Your refund request for <em>{lesson}</em> was declined.'
     new_user:
       user:
         title: Welcome!

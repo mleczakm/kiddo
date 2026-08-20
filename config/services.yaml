@@ -74,6 +74,9 @@ services:
   App\Application\Repository\PostFileRepositoryInterface:
     alias: App\Infrastructure\Doctrine\Repository\PostFileRepository
 
+  App\Application\Repository\RefundRequestRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\RefundRequestRepository
+
   App\Application\Repository\PostRepositoryInterface:
     alias: App\Infrastructure\Doctrine\Repository\PostRepository
 

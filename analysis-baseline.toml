@@ -757,6 +757,30 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
+file = "src/Application/CommandHandler/Notification/SendRefundDecisionNotificationHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\SendRefundDecisionNotificationHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendRefundDecisionNotificationHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\Notification\SendRefundDecisionNotificationHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendRefundDecisionNotificationHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\CommandHandler\Notification\SendRefundDecisionNotificationHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendRefundDecisionNotificationHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\Notification\SendRefundDecisionNotificationHandler::__invoke`.'
+count = 1
+
+[[issues]]
 file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\SendRescheduleAdminNotificationHandler::__invoke`.'
@@ -1111,6 +1135,30 @@ message = 'Potentially unhandled exception `RuntimeException` in `App\Applicatio
 count = 1
 
 [[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
 file = "src/Application/UseCase/CancelBookingOccurrence.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
@@ -1138,6 +1186,42 @@ count = 1
 file = "src/Application/UseCase/CancelBookingOccurrence.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/DeclineRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\DeclineRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/DeclineRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\Application\UseCase\DeclineRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/DeclineRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\UseCase\DeclineRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/DeclineRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\UseCase\DeclineRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/DeclineRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\UseCase\DeclineRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/DeclineRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\DeclineRefund::__invoke`.'
 count = 1
 
 [[issues]]
@@ -1347,7 +1431,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:344:13}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:347:13}`.'
 count = 1
 
 [[issues]]
@@ -1365,7 +1449,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:344:13}`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:347:13}`.'
 count = 1
 
 [[issues]]
@@ -1384,6 +1468,24 @@ count = 1
 file = "src/Entity/PaymentFactory.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Random\RandomException` in `App\Entity\PaymentFactory::generateCode`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\Entity\RefundRequest::approve`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\Entity\RefundRequest::decline`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "unused-property"
+message = "Property `$version` is never used."
 count = 1
 
 [[issues]]
@@ -1660,6 +1762,24 @@ count = 1
 file = "src/Infrastructure/Doctrine/Repository/PaymentRepository.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Infrastructure\Doctrine\Repository\PaymentRepository::countPendingPayments`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/RefundRequestRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\RefundRequestRepository::findPendingQueue`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/RefundRequestRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Infrastructure\Doctrine\Repository\RefundRequestRepository::countPending`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/RefundRequestRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Infrastructure\Doctrine\Repository\RefundRequestRepository::countPending`.'
 count = 1
 
 [[issues]]

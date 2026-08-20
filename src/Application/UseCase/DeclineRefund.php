@@ -20,13 +20,14 @@ use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * Canonical use case for an admin approving a requested refund. Extracted
- * from ReservationDetailsModal, which previously applied the payment
- * workflow transition inline - this makes the authorization and transition
- * logic reachable from any future entry point (chat tools, console, a
- * future admin API), not only that one Live Component.
+ * Canonical use case for an admin declining a requested refund. Moves the
+ * payment back to "paid" - a declined request is not the same as never
+ * having been requested, so the request itself is left in place (status
+ * "declined") rather than deleted, and nothing here touches the booking or
+ * its lesson cancellation state: declining a refund must not reactivate a
+ * booking that was cancelled as part of the same original request.
  */
-final readonly class ApproveRefund
+final readonly class DeclineRefund
 {
     public function __construct(
         private RefundRequestRepositoryInterface $refundRequestRepository,
@@ -39,16 +40,16 @@ final readonly class ApproveRefund
         private EntityManagerInterface $em,
     ) {}
 
-    public function __invoke(Ulid $refundRequestId, int $approvedByUserId, ?string $note): void
+    public function __invoke(Ulid $refundRequestId, int $declinedByUserId, ?string $note): void
     {
-        $approvedBy = $this->userRepository->find($approvedByUserId);
-        if ($approvedBy === null) {
-            throw new \InvalidArgumentException(sprintf('User %d not found', $approvedByUserId));
+        $declinedBy = $this->userRepository->find($declinedByUserId);
+        if ($declinedBy === null) {
+            throw new \InvalidArgumentException(sprintf('User %d not found', $declinedByUserId));
         }
 
-        $reachableRoles = $this->roleHierarchy->getReachableRoleNames($approvedBy->getRoles());
+        $reachableRoles = $this->roleHierarchy->getReachableRoleNames($declinedBy->getRoles());
         if (!in_array('ROLE_MANAGE_BOOKINGS', $reachableRoles, true)) {
-            throw new \RuntimeException('User is not authorized to approve refunds');
+            throw new \RuntimeException('User is not authorized to decline refunds');
         }
 
         $refundRequest = $this->refundRequestRepository->find($refundRequestId);
@@ -61,19 +62,19 @@ final readonly class ApproveRefund
         }
 
         $payment = $refundRequest->getPayment();
-        if (!$this->paymentStateMachine->can($payment, Payment::TRANSITION_REFUND)) {
-            throw new \RuntimeException('This payment cannot be refunded in its current state');
+        if (!$this->paymentStateMachine->can($payment, Payment::TRANSITION_DECLINE_REFUND)) {
+            throw new \RuntimeException('This payment cannot have its refund declined in its current state');
         }
 
-        $this->paymentStateMachine->apply($payment, Payment::TRANSITION_REFUND);
-        $payment->recordStatusDecision($approvedBy, $note);
-        $refundRequest->approve($approvedBy, $note);
+        $this->paymentStateMachine->apply($payment, Payment::TRANSITION_DECLINE_REFUND);
+        $payment->recordStatusDecision($declinedBy, $note);
+        $refundRequest->decline($declinedBy, $note);
 
         $user = $refundRequest->getBooking()->getUser();
         $userId = $user->getId();
         $this->activityLogger->log(
-            type: ActivityType::REFUND_APPROVED,
-            title: sprintf('Zwrot dla %s został zatwierdzony', $user->getName()),
+            type: ActivityType::REFUND_DECLINED,
+            title: sprintf('Zwrot dla %s został odrzucony', $user->getName()),
             subject: $user,
             summary: $refundRequest->getLesson()?->getMetadata()->title,
             url: $userId !== null
@@ -89,7 +90,7 @@ final readonly class ApproveRefund
         $this->em->flush();
 
         $this->bus->dispatch(new Envelope(
-            new SendRefundDecisionNotificationCommand($refundRequest->getId(), approved: true),
+            new SendRefundDecisionNotificationCommand($refundRequest->getId(), approved: false),
         )->with(new DispatchAfterCurrentBusStamp()));
     }
 }

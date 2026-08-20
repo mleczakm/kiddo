@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Functional\WholeProcess;
 
 use App\Application\Command\MatchPaymentForTransfer;
+use App\Application\Repository\RefundRequestRepositoryInterface;
 use App\Entity\Booking;
 use App\Entity\Payment;
+use App\Entity\RefundRequest;
 use App\Entity\User;
 use App\Entity\WorkshopType;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
@@ -144,12 +146,13 @@ final class FastReservationJourneyTest extends WebTestCase
         static::assertSame(Payment::STATUS_PAID, $paidPayment->getStatus());
         static::assertSame(Booking::STATUS_ACTIVE, $confirmedBooking->getStatus());
 
-        // Step 3: the customer cancels and requests a refund. Today this is a
-        // single operation (RefundLessonBooking) rather than the two
-        // separate steps ("cancel" + "request refund") the target model
-        // describes - it marks the specific lesson refunded within the
-        // booking and moves the payment to refund_requested, but the
-        // booking's overall status stays "active".
+        // Step 3: the customer cancels and requests a refund. As of Stage 3
+        // this really is two operations (CancelBookingOccurrence +
+        // RequestRefund) committed atomically via CancelAndRequestRefund:
+        // the seat is released (booking/lesson cancelled, with the reason
+        // properly recorded) and a RefundRequest is created separately from
+        // the payment moving to refund_requested - no money is marked
+        // returned yet, that only happens once an admin approves it.
         $bookedLesson = $confirmedBooking->getLessons()->first();
         static::assertNotFalse($bookedLesson);
         // $customer was loaded through the entity manager instance that
@@ -178,20 +181,27 @@ final class FastReservationJourneyTest extends WebTestCase
         static::assertSame(Payment::STATUS_REFUND_REQUESTED, $refundRequestedPayment->getStatus());
         static::assertTrue($refundRequestedPayment->isRefundRequestedViaUserPanel());
         static::assertSame(
-            Booking::STATUS_ACTIVE,
+            Booking::STATUS_CANCELLED,
             $bookingAfterRefundRequest->getStatus(),
-            'A refund request alone does not change the booking\'s overall status today',
+            'Cancelling the only lesson in a single-lesson booking cancels the booking as a whole',
         );
         static::assertNotNull(
             $bookingAfterRefundRequest->getLessonsMap()->getCancelledEntry((string) $bookedLesson->getId()),
-            'The specific lesson is moved into the lesson map\'s cancelled bucket immediately on request, '
-            . 'before any money has actually moved',
+            'The specific lesson is moved into the lesson map\'s cancelled bucket',
         );
-        static::assertNull(
+        static::assertSame(
+            'Proszę o zwrot, plany się zmieniły.',
             $bookingAfterRefundRequest->getLessonsMap()->getCancellationReason((string) $bookedLesson->getId()),
-            'refundLesson() moves the entry as a plain BookedLesson rather than a CancelledLesson, so the '
-            . 'reason passed to RefundLessonBooking is silently dropped and not retrievable here',
+            'CancelBookingOccurrence uses cancelLesson(), which - unlike the old refundLesson() shortcut - '
+            . 'properly records the reason as a CancelledLesson entry',
         );
+
+        /** @var RefundRequestRepositoryInterface $refundRequestRepository */
+        $refundRequestRepository = static::getContainer()->get(RefundRequestRepositoryInterface::class);
+        $refundRequest = $refundRequestRepository->findPendingForPayment($refundRequestedPayment);
+        static::assertInstanceOf(RefundRequest::class, $refundRequest);
+        static::assertTrue($refundRequest->isPending());
+        static::assertEquals($refundRequestedPayment->getAmount(), $refundRequest->getRequestedAmount());
 
         // Step 4: an admin approves the refund -> payment moves to refunded.
         $client->loginUser($admin);

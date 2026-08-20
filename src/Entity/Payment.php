@@ -39,6 +39,8 @@ class Payment
 
     public const TRANSITION_REFUND = 'refund';
 
+    public const TRANSITION_DECLINE_REFUND = 'decline_refund';
+
     public const TRANSITION_CANCEL = 'cancel';
 
     public const TRANSITION_EXPIRE = 'expire';
@@ -60,6 +62,7 @@ class Payment
         self::TRANSITION_FAIL,
         self::TRANSITION_REQUEST_REFUND,
         self::TRANSITION_REFUND,
+        self::TRANSITION_DECLINE_REFUND,
         self::TRANSITION_CANCEL,
         self::TRANSITION_EXPIRE,
     ];

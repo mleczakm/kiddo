@@ -9,12 +9,16 @@ use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Workflow\BookingStateMachineInterface;
 use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\Payment;
+use App\Entity\RefundRequest;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Ulid;
 
 /**
  * Canonical use case for requesting a refund on one lesson within a booking.
- * RefundLessonBookingHandler is a thin Messenger adapter over this class.
+ * RefundLessonBookingHandler is a thin Messenger adapter over CancelAndRequestRefund,
+ * which composes this with CancelBookingOccurrence - releasing the seat is a
+ * separate concern from requesting money back, tracked by RefundRequest.
  */
 final readonly class RequestRefund
 {
@@ -24,6 +28,7 @@ final readonly class RequestRefund
         private LoggerInterface $logger,
         private BookingStateMachineInterface $bookingStateMachine,
         private PaymentStateMachineInterface $paymentStateMachine,
+        private EntityManagerInterface $em,
     ) {}
 
     public function __invoke(Ulid $bookingId, Ulid $lessonId, int $refundedByUserId, ?string $reason): void
@@ -90,13 +95,20 @@ final readonly class RequestRefund
             'by' => $refundedBy->getId(),
         ]);
 
-        // Perform domain operation: mark the specific lesson refunded
-        $booking->refundLesson($lessonId->toRfc4122(), $reason);
-
         $payment = $booking->getPayment();
         if ($payment instanceof Payment && $payment->getStatus() === Payment::STATUS_PAID) {
             $this->paymentStateMachine->apply($payment, Payment::TRANSITION_REQUEST_REFUND);
             $payment->recordRefundRequest($refundedBy, $reason, !$isAdmin);
+
+            $refundRequest = new RefundRequest(
+                payment: $payment,
+                booking: $booking,
+                lesson: $lesson,
+                requestedAmount: $payment->getAmount(),
+                requestedBy: $refundedBy,
+                requestMessage: $reason,
+            );
+            $this->em->persist($refundRequest);
         }
 
         // Log outcome
