@@ -20,6 +20,7 @@ form:
     register: Register
     
 booking:
+  price_changed: 'The price for this option has changed. Check the updated amount below and confirm again.'
   cancel:
   cancel_booking: Cancel Booking
   child:

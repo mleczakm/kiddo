@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http\Component;
 
 use App\Entity\Booking;
+use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
+use App\Entity\TicketOption;
+use App\Entity\TicketType;
 use App\Entity\WorkshopType;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Tests\Assembler\BookingAssembler;
@@ -375,6 +378,89 @@ final class LessonModalPaymentTest extends WebTestCase
         $paid = $component->component();
         static::assertSame('paid', $paid->paymentStatus);
         static::assertNull($paid->paymentCode);
+    }
+
+    public function testProcessPaymentRejectsAStaleQuoteAndAsksToReconfirm(): void
+    {
+        Clock::set(new MockClock('2024-02-20 08:00:00'));
+
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()->withPhone('501111111')->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->assemble())
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+            ->assemble();
+        $lesson->setSeries($series);
+
+        $em->persist($user);
+        $em->persist($series);
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($user);
+
+        $component = $this->createLiveComponent(
+            name: LessonModal::class,
+            data: [
+                'lesson' => $lesson,
+                'termsAccepted' => true,
+                'closeUrl' => '/warsztaty',
+            ],
+            client: $client,
+        );
+
+        // openModal() is what actually computes and stores a quote (mount() alone doesn't
+        // reliably do so for every entry path - see LessonModal::processPayment()'s
+        // self-heal comment) - call it explicitly so a quote for the *original* price
+        // exists before that price changes below.
+        $component->call('openModal');
+
+        // The sync bus's doctrine_close_connection middleware closes the EntityManager
+        // after every message processed during a request, including this render - the
+        // old $em is now closed and must be reset before it can be used again.
+        /** @var \Doctrine\Persistence\ManagerRegistry $registry */
+        $registry = static::getContainer()->get('doctrine');
+        $registry->resetManager();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        // Simulate the price moving on between when it was displayed to this user
+        // (mount() computed a quote hash for the original price) and when they
+        // confirm - e.g. an admin edits the ticket price in between.
+        $lesson = $em->find(Lesson::class, $lesson->getId());
+        static::assertInstanceOf(Lesson::class, $lesson);
+        $original = $lesson->getMatchingTicketOption(TicketType::ONE_TIME->value);
+        $lesson->setTicketOptions(
+            new TicketOption(
+                TicketType::ONE_TIME,
+                $original->price->plus(Money::of('50', 'PLN')),
+                $original->description,
+                $original->reschedulePolicy,
+            ),
+        );
+        $em->flush();
+
+        $component->call('processPayment');
+
+        $registry->resetManager();
+
+        /** @var LessonModal $result */
+        $result = $component->component();
+        static::assertSame('price_changed', $result->paymentStatus);
+        static::assertNull($result->paymentCode, 'No booking/payment code should be issued when the quote was stale');
+        // The component should have refreshed to the real, current hash so a second
+        // confirm click (without further tampering) succeeds.
+        static::assertNotSame('a-stale-hash-that-will-never-match', $result->expectedQuoteHash);
+
+        /** @var BookingRepository $bookings */
+        $bookings = static::getContainer()->get(BookingRepository::class);
+        static::assertNull(
+            $bookings->findOneBy(['user' => $user->getId()]),
+            'No booking should be created when the quote is stale',
+        );
     }
 
     public function testExistingBookingsAreVisibleForOwner(): void

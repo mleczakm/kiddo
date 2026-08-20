@@ -6,6 +6,7 @@ namespace App\Application\Service\Commerce;
 
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Domain\Commerce\Order\OrderLine;
+use App\Domain\Commerce\Pricing\PriceQuote;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Payment;
@@ -30,12 +31,14 @@ final readonly class FastTrackOrderFactory
         Lesson $lesson,
         TicketOption $ticketOption,
         User $user,
+        ?PriceQuote $quote = null,
     ): array {
         $orderId = new Ulid();
         // The payment (not the ticket option) is the source of truth for what was actually
         // charged - they hold the same value today, but only one of them is meant to.
         $priceMinor = $payment->getAmount()->getMinorAmount()->toInt();
         $currency = $payment->getAmount()->getCurrency()->getCurrencyCode();
+        $basePriceMinor = $quote?->basePriceMinor ?? $priceMinor;
         $now = new \DateTimeImmutable();
 
         $order = new CustomerOrder(
@@ -46,8 +49,8 @@ final readonly class FastTrackOrderFactory
             ),
             status: CustomerOrder::STATUS_PLACED,
             currency: $currency,
-            subtotalMinor: $priceMinor,
-            discountTotalMinor: 0,
+            subtotalMinor: $basePriceMinor,
+            discountTotalMinor: $basePriceMinor - $priceMinor,
             totalMinor: $priceMinor,
             placedAt: $now,
             expiresAt: null,
@@ -66,11 +69,22 @@ final readonly class FastTrackOrderFactory
             title: $lesson->getMetadata()->title,
             scheduleDescription: $lesson->schedule->format('Y-m-d H:i'),
             participantId: $booking->getChild()?->getId(),
-            basePriceMinor: $priceMinor,
+            basePriceMinor: $basePriceMinor,
             finalPriceMinor: $priceMinor,
             currency: $currency,
-            pricingQuoteHash: null,
+            pricingQuoteHash: $quote?->quoteHash,
             bookingId: $booking->getId(),
+            pricingSnapshotJson: $quote === null
+                ? null
+                : [
+                    'adjustments' => array_map(static fn($a): array => [
+                        'ruleId' => $a->ruleId,
+                        'type' => $a->type->value,
+                        'deltaMinor' => $a->deltaMinor,
+                        'label' => $a->label,
+                    ], $quote->adjustments),
+                    'rejectedRuleReasons' => $quote->rejectedRuleReasons,
+                ],
         );
 
         return [$order, $line];

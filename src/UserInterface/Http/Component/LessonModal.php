@@ -6,6 +6,8 @@ namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\AddBooking;
 use App\Application\Service\Payment\PaymentCodeGenerator;
+use App\Application\Service\Pricing\PriceQuoter;
+use App\Application\UseCase\PriceQuoteMismatchException;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Payment;
@@ -19,6 +21,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
@@ -56,6 +59,23 @@ class LessonModal extends AbstractController
 
     #[LiveProp(writable: true)]
     public ?string $selectedTicketType = null;
+
+    /**
+     * The PriceQuote last displayed for $selectedTicketType (see
+     * PriceQuoter). Sent back to the server on confirm so PlaceSingleReservation
+     * can detect a stale price (Stage 8 of the commerce rollout plan).
+     */
+    #[LiveProp]
+    public ?string $expectedQuoteHash = null;
+
+    /**
+     * @var numeric-string|null
+     */
+    #[LiveProp]
+    public ?string $quotedPriceMinor = null;
+
+    #[LiveProp]
+    public ?string $quotedPriceCurrency = null;
 
     #[LiveProp(writable: true)]
     public int $activeTabIndex = 0;
@@ -114,11 +134,54 @@ class LessonModal extends AbstractController
         private readonly PaymentRepository $paymentRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly PaymentCodeGenerator $paymentCodeGenerator,
+        private readonly PriceQuoter $priceQuoter,
     ) {}
 
     public function mount(): void
     {
         $this->selectDefaultTicketType();
+        $this->refreshQuote();
+    }
+
+    /**
+     * Recomputes the quote for the currently selected ticket type and stores
+     * it (price + hash) so it survives to the next request unchanged, even
+     * though everything else on this component is recalculated per-render -
+     * $expectedQuoteHash must reflect what was actually shown to the user,
+     * not whatever the price happens to be *right now* when confirming.
+     */
+    private function refreshQuote(): void
+    {
+        if ($this->lesson === null || $this->selectedTicketType === null) {
+            $this->expectedQuoteHash = null;
+            $this->quotedPriceMinor = null;
+            $this->quotedPriceCurrency = null;
+            return;
+        }
+
+        $ticketOption = $this->lesson->getMatchingTicketOption($this->selectedTicketType);
+        /** @var ?User $user */
+        $user = $this->getUser();
+
+        $quote = $this->priceQuoter->quote(
+            $user?->getId(),
+            $this->lesson,
+            $this->selectedTicketType,
+            $ticketOption->price,
+        );
+
+        $this->expectedQuoteHash = $quote->quoteHash;
+        $this->quotedPriceMinor = (string) $quote->finalPriceMinor;
+        $this->quotedPriceCurrency = $quote->currency;
+    }
+
+    public function getQuotedPrice(): ?Money
+    {
+        if ($this->quotedPriceMinor === null || $this->quotedPriceCurrency === null) {
+            return null;
+        }
+
+        return Money::ofMinor((int) $this->quotedPriceMinor, $this->quotedPriceCurrency);
     }
 
     #[LiveAction]
@@ -128,6 +191,7 @@ class LessonModal extends AbstractController
         $this->phoneError = null;
 
         $this->selectDefaultTicketType();
+        $this->refreshQuote();
 
         $this->syncBrowserUrl();
     }
@@ -227,6 +291,7 @@ class LessonModal extends AbstractController
     {
         $this->activeTabIndex = $index;
         $this->selectedTicketType = $ticketType;
+        $this->refreshQuote();
     }
 
     #[LiveAction]
@@ -315,6 +380,13 @@ class LessonModal extends AbstractController
     public function processPayment(): void
     {
         $this->selectDefaultTicketType();
+        if ($this->expectedQuoteHash === null) {
+            // Self-heals an entry path where mount()/openModal()/selectTab() never got a
+            // chance to compute one (e.g. the modal opened pre-expanded via a direct URL) -
+            // better to charge the current price without staleness protection for this one
+            // request than to silently skip the check for every booking that takes this path.
+            $this->refreshQuote();
+        }
 
         $selectedTicketType = $this->selectedTicketType;
         if (!$this->termsAccepted || $selectedTicketType === null || $selectedTicketType === '') {
@@ -336,20 +408,33 @@ class LessonModal extends AbstractController
                 return;
             }
 
-            $selected = $this->lesson->getMatchingTicketOption($selectedTicketType);
-
             $paymentCode = $this->paymentCodeGenerator->generateAvailable();
 
-            $this->bus->dispatch(new AddBooking(
-                userId: $userId,
-                lessonId: (string) $this->lesson->getId(),
-                ticketType: $selectedTicketType,
-                childId: $this->selectedChildId,
-                paymentCode: $paymentCode,
-            ));
+            try {
+                $this->bus->dispatch(new AddBooking(
+                    userId: $userId,
+                    lessonId: (string) $this->lesson->getId(),
+                    ticketType: $selectedTicketType,
+                    childId: $this->selectedChildId,
+                    paymentCode: $paymentCode,
+                    expectedQuoteHash: $this->expectedQuoteHash,
+                ));
+            } catch (HandlerFailedException|PriceQuoteMismatchException $e) {
+                if (!$this->handlePriceQuoteMismatch($e)) {
+                    throw $e;
+                }
+
+                return;
+            }
 
             $this->paymentCode = $paymentCode;
-            $this->setPaymentAmount($selected->price);
+            // The price actually charged is exactly $this->getQuotedPrice() - the
+            // dispatch above only succeeds when the server confirms that quote is
+            // still current (or dynamic_pricing is off, in which case it's unchanged
+            // from the ticket price anyway).
+            $this->setPaymentAmount(
+                $this->getQuotedPrice() ?? $this->lesson->getMatchingTicketOption($selectedTicketType)->price,
+            );
             $this->paymentStatus = 'awaiting_payment';
             $this->paymentModal = false;
             $this->watchedPaymentId = $this->resolvePaymentIdByCode($paymentCode);
@@ -357,6 +442,32 @@ class LessonModal extends AbstractController
             return;
         }
         $this->paymentStatus = 'error';
+    }
+
+    /**
+     * @return bool True if $e was a stale-quote failure and has been handled
+     *   (the caller should stop processing); false if it must be rethrown.
+     */
+    private function handlePriceQuoteMismatch(\Throwable $e): bool
+    {
+        $mismatch = $e instanceof PriceQuoteMismatchException ? $e : null;
+        if ($mismatch === null && $e instanceof HandlerFailedException) {
+            // getWrappedExceptions() is keyed by handler name, not a sequential index.
+            $firstWrapped = current($e->getWrappedExceptions());
+            $mismatch = $firstWrapped instanceof PriceQuoteMismatchException ? $firstWrapped : null;
+        }
+
+        if ($mismatch === null) {
+            return false;
+        }
+
+        $quote = $mismatch->currentQuote;
+        $this->expectedQuoteHash = $quote->quoteHash;
+        $this->quotedPriceMinor = (string) $quote->finalPriceMinor;
+        $this->quotedPriceCurrency = $quote->currency;
+        $this->paymentStatus = 'price_changed';
+
+        return true;
     }
 
     private function selectDefaultTicketType(): void

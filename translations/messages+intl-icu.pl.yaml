@@ -448,6 +448,7 @@ newsletter:
     back_home: "Powrót na stronę główną"
 
 booking:
+  price_changed: 'Cena tej opcji uległa zmianie. Sprawdź aktualną kwotę poniżej i potwierdź ponownie.'
   cancel: Anuluj rezerwację
   cancel_booking: Anuluj rezerwację
   cancel_confirmation: 'Czy na pewno chcesz anulować tę rezerwację?'

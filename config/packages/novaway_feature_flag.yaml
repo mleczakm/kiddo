@@ -9,13 +9,21 @@ novaway_feature_flag:
           platform_billing_widget: false
           chat_assistant: true
           commerce_order_write: false
+          dynamic_pricing: true
 
 when@test:
   novaway_feature_flag:
     managers:
       default:
         options:
+          # This whole "features" map replaces the base one above rather than merging with
+          # it (the underlying config node is a raw array, not a Symfony config tree), so it
+          # must restate every flag it wants to keep at its base-config value, not just the
+          # ones it overrides.
           features:
-            manual_bookings: true
-            chat_assistant: true
+            cart: false
             platform_billing_widget: true
+            chat_assistant: true
+            commerce_order_write: false
+            dynamic_pricing: true
+            manual_bookings: true

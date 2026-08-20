@@ -267,7 +267,7 @@
                                                 {% endif %}
                                             </div>
                                         </div>
-                                        <span class="text-lg font-bold">{{ activeTicketOption.price|money }}</span>
+                                        <span class="text-lg font-bold">{{ (this.quotedPrice ?? activeTicketOption.price)|money }}</span>
                                     </div>
                                     <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>
                                 </div>
@@ -453,9 +453,15 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <span class="text-lg font-bold">{{ activeTicketOption.price }}</span>
+                                <span class="text-lg font-bold">{{ this.quotedPrice ?? activeTicketOption.price }}</span>
                             </div>
                             <p class="text-sm text-muted-foreground mb-4">{{ ('lesson.' ~ activeTicketOption.type.value ~ '.description')|trans|raw|nl2br }}</p>
+
+                            {% if paymentStatus == 'price_changed' %}
+                                <div class="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800 mb-4">
+                                    {{ 'booking.price_changed'|trans }}
+                                </div>
+                            {% endif %}
 
                             <div class="mt-4 space-y-4">
                                 {% if this.needsPhone %}

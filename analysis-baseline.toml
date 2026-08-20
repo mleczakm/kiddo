@@ -1111,9 +1111,9 @@ message = "Redundant condition: variable `$post->files` is already known to be `
 count = 1
 
 [[issues]]
-file = "src/Application/Service/Pricing/ShadowPricingEvaluator.php"
+file = "src/Application/Service/Pricing/PriceQuoter.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Pricing\ShadowPricingEvaluator::evaluate`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Pricing\PriceQuoter::quote`.'
 count = 1
 
 [[issues]]
@@ -1270,6 +1270,30 @@ count = 1
 file = "src/Application/UseCase/DeclineRefund.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\DeclineRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `App\Application\UseCase\PriceQuoteMismatchException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
 count = 1
 
 [[issues]]
@@ -3206,27 +3230,15 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `App\UserInterface\Http\Component\LessonModal::setPaymentAmount`: expected `Brick\Money\Money`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "mixed-property-access"
-message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `App\Application\UseCase\PriceQuoteMismatchException` in `App\UserInterface\Http\Component\LessonModal::processPayment`.'
+count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
@@ -3243,13 +3255,31 @@ count = 1
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\UserInterface\Http\Component\LessonModal::getQuotedPrice`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\UserInterface\Http\Component\LessonModal::getPaymentAmount`.'
 count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\UserInterface\Http\Component\LessonModal::getQuotedPrice`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\UserInterface\Http\Component\LessonModal::getPaymentAmount`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\UserInterface\Http\Component\LessonModal::getQuotedPrice`.'
 count = 1
 
 [[issues]]
@@ -3279,6 +3309,12 @@ count = 1
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\LessonModal::refreshQuote`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\LessonModal::resumePayment`.'
 count = 1
 
@@ -3286,6 +3322,12 @@ count = 1
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\UserInterface\Http\Component\LessonModal::processPayment`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\HandlerFailedException` in `App\UserInterface\Http\Component\LessonModal::processPayment`.'
 count = 1
 
 [[issues]]
@@ -5638,7 +5680,7 @@ count = 29
 file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
-count = 40
+count = 44
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
@@ -5662,7 +5704,7 @@ count = 1
 file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 40
+count = 44
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/LessonModalUrlSyncTest.php"

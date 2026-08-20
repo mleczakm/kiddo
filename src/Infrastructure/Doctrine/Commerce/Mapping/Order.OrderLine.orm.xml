@@ -21,6 +21,11 @@
         <field name="currency" type="string" column="currency" length="3" />
         <field name="pricingQuoteHash" type="string" column="pricing_quote_hash" length="64" nullable="true" />
         <field name="bookingId" type="ulid" column="booking_id" nullable="true" unique="true" />
+        <field name="pricingSnapshotJson" type="json_document" column="pricing_snapshot_json" nullable="true">
+            <options>
+                <option name="jsonb">true</option>
+            </options>
+        </field>
 
         <indexes>
             <index name="idx_order_line_order_id" columns="order_id" />

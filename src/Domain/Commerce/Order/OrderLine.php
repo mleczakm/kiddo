@@ -30,6 +30,15 @@ final class OrderLine
         private readonly string $currency,
         private readonly ?string $pricingQuoteHash,
         private ?Ulid $bookingId,
+        /**
+         * The full PriceQuote at the moment this line was placed - every
+         * adjustment applied/rejected, for audit purposes (Stage 8 of the
+         * commerce rollout plan). $pricingQuoteHash alone identifies the
+         * quote; this is what it actually contained.
+         *
+         * @var array{adjustments: list<array{ruleId: string, type: string, deltaMinor: int, label: string}>, rejectedRuleReasons: list<string>}|null
+         */
+        private readonly ?array $pricingSnapshotJson = null,
     ) {}
 
     public function getId(): Ulid
@@ -95,5 +104,13 @@ final class OrderLine
     public function getBookingId(): ?Ulid
     {
         return $this->bookingId;
+    }
+
+    /**
+     * @return array{adjustments: list<array{ruleId: string, type: string, deltaMinor: int, label: string}>, rejectedRuleReasons: list<string>}|null
+     */
+    public function getPricingSnapshotJson(): ?array
+    {
+        return $this->pricingSnapshotJson;
     }
 }

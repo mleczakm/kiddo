@@ -13,10 +13,11 @@ use App\Application\Service\BookingFactory;
 use App\Application\Service\Commerce\FastTrackOrderFactory;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\Service\Pricing\ShadowPricingEvaluator;
-use App\Domain\Commerce\Pricing\PricingContext;
 use App\Entity\NotificationSeverity;
 use App\Entity\PaymentCode;
+use App\Entity\TicketOption;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,6 +49,7 @@ final readonly class PlaceSingleReservation
         private FeatureManager $featureManager,
         private FastTrackOrderFactory $orderFactory,
         private ShadowPricingEvaluator $shadowPricing,
+        private PriceQuoter $priceQuoter,
     ) {}
 
     public function __invoke(AddBooking $command): void
@@ -64,16 +66,26 @@ final readonly class PlaceSingleReservation
 
         $ticketOption = $lesson->getMatchingTicketOption($command->ticketType);
 
-        $this->shadowPricing->evaluate(
-            new PricingContext(
-                userId: $user->getId(),
-                lessonId: $lesson->getId(),
-                seriesId: $lesson->getSeries()?->getId(),
-                ticketType: $ticketOption->type->value,
-                evaluationTime: new \DateTimeImmutable(),
-            ),
-            $ticketOption->price,
-        );
+        $quote = $this->priceQuoter->quote($user->getId(), $lesson, $ticketOption->type->value, $ticketOption->price);
+
+        $appliedQuote = null;
+        if ($this->featureManager->isEnabled('dynamic_pricing')) {
+            // $command->expectedQuoteHash is null for callers that don't participate in the
+            // quote/reconfirm flow (e.g. the chat booking tool) - they just get the current price.
+            if ($command->expectedQuoteHash !== null && $command->expectedQuoteHash !== $quote->quoteHash) {
+                throw new PriceQuoteMismatchException($quote);
+            }
+
+            $appliedQuote = $quote;
+            $ticketOption = new TicketOption(
+                $ticketOption->type,
+                Money::ofMinor($quote->finalPriceMinor, $quote->currency),
+                $ticketOption->description,
+                $ticketOption->reschedulePolicy,
+            );
+        } else {
+            $this->shadowPricing->evaluate($quote, $ticketOption->price->getMinorAmount()->toInt());
+        }
 
         $booking = $this->bookingFactory->createFrom($lesson, $ticketOption, $user);
 
@@ -94,7 +106,14 @@ final readonly class PlaceSingleReservation
             // will schedule $payment for insert: Doctrine has no mapped association between
             // Payment/Booking and CustomerOrder/OrderLine (deliberately, to stay decoupled -
             // see FastTrackOrderFactory), so it cannot infer the FK insert order on its own.
-            [$order, $orderLine] = $this->orderFactory->create($booking, $payment, $lesson, $ticketOption, $user);
+            [$order, $orderLine] = $this->orderFactory->create(
+                $booking,
+                $payment,
+                $lesson,
+                $ticketOption,
+                $user,
+                $appliedQuote,
+            );
             $booking->setOrderLineId($orderLine->getId());
             $payment->setOrderId($order->getId());
             $this->em->persist($order);

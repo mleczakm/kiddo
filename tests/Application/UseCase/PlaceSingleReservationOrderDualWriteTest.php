@@ -12,6 +12,7 @@ use App\Application\Service\BookingFactory;
 use App\Application\Service\Commerce\FastTrackOrderFactory;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\Service\Pricing\ShadowPricingEvaluator;
 use App\Application\UseCase\PlaceSingleReservation;
 use App\Domain\Commerce\Order\CustomerOrder;
@@ -92,7 +93,15 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
         $em->flush();
 
         $alwaysEnabled = $this->createMock(FeatureManager::class);
-        $alwaysEnabled->method('isEnabled')->with('commerce_order_write')->willReturn(true);
+        // dynamic_pricing is left off here so this test's assertions stay focused on the
+        // order dual-write, not pricing (see PriceQuoterTest/PlaceSingleReservation*PricingTest
+        // for that).
+        $alwaysEnabled
+            ->method('isEnabled')
+            ->willReturnMap([
+                ['commerce_order_write', true],
+                ['dynamic_pricing',      false],
+            ]);
 
         /** @var MessageBusInterface $bus */
         $bus = self::getContainer()->get(MessageBusInterface::class);
@@ -114,6 +123,8 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
         $translator = self::getContainer()->get(TranslatorInterface::class);
         /** @var ShadowPricingEvaluator $shadowPricing */
         $shadowPricing = self::getContainer()->get(ShadowPricingEvaluator::class);
+        /** @var PriceQuoter $priceQuoter */
+        $priceQuoter = self::getContainer()->get(PriceQuoter::class);
 
         $placeSingleReservation = new PlaceSingleReservation(
             $em,
@@ -129,6 +140,7 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
             $alwaysEnabled,
             new FastTrackOrderFactory(),
             $shadowPricing,
+            $priceQuoter,
         );
 
         $userId = $user->getId();
