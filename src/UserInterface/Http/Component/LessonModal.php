@@ -172,6 +172,27 @@ class LessonModal extends AbstractController
         ]);
     }
 
+    /**
+     * The workshop's own terms-of-use attachment, when the admin has set
+     * one; otherwise the shared default that used to be the only option.
+     *
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
+    public function getTermsUrl(): string
+    {
+        $termsAttachment = $this->lesson?->getMetadata()->getTermsAttachment();
+        if ($termsAttachment === null) {
+            return '/docs/Regulamin.pdf';
+        }
+
+        return $this->urlGenerator->generate('stored_file', [
+            'id' => (string) $termsAttachment->getFile()->getId(),
+            'safeName' => $termsAttachment->getFile()->getOriginalName(),
+        ]);
+    }
+
     private function workshopUrl(): string
     {
         $lesson = $this->lesson;

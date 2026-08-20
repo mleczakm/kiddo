@@ -151,14 +151,31 @@
                             </div>
                         </div>
 
-                        <div class="space-y-1.5">
+                        <div class="space-y-1.5" data-controller="workshop-tiptap-editor">
                             <label class="text-sm font-bold text-slate-700">Opis (widoczny dla klientów) *</label>
-                            <textarea
-                                data-model="description"
-                                rows="4"
-                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
-                                placeholder="Opisz co będzie się dziać..."
-                            >{{ description|default('') }}</textarea>
+
+                            <div data-workshop-tiptap-editor-target="toolbar" class="flex flex-wrap items-center gap-1 rounded-t-xl border border-b-0 border-slate-200 bg-slate-50 p-2">
+                                <button type="button" data-action="workshop-tiptap-editor#toggleBold" data-format="bold" class="rounded-lg px-2.5 py-1.5 text-sm font-bold hover:bg-slate-200" title="Pogrubienie (Ctrl+B)">B</button>
+                                <button type="button" data-action="workshop-tiptap-editor#toggleItalic" data-format="italic" class="rounded-lg px-2.5 py-1.5 text-sm italic hover:bg-slate-200" title="Kursywa (Ctrl+I)">I</button>
+                                <button type="button" data-action="workshop-tiptap-editor#toggleUnderline" data-format="underline" class="rounded-lg px-2.5 py-1.5 text-sm underline hover:bg-slate-200" title="Podkreślenie (Ctrl+U)">U</button>
+
+                                <span class="mx-1 h-5 w-px bg-slate-300"></span>
+
+                                <button type="button" data-action="workshop-tiptap-editor#toggleBulletList" data-format="bulletList" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Lista punktowana">• Lista</button>
+                                <button type="button" data-action="workshop-tiptap-editor#toggleOrderedList" data-format="orderedList" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Lista numerowana">1. Lista</button>
+
+                                <span class="mx-1 h-5 w-px bg-slate-300"></span>
+
+                                <button type="button" data-action="workshop-tiptap-editor#setLink" data-format="link" class="rounded-lg px-2.5 py-1.5 text-sm hover:bg-slate-200" title="Wstaw link">🔗 Link</button>
+                            </div>
+
+                            <div
+                                data-workshop-tiptap-editor-target="editor"
+                                data-live-ignore
+                                class="prose prose-sm min-h-32 w-full max-w-none rounded-b-xl px-4 py-3 bg-slate-50 border border-slate-200 text-sm focus:outline-none"
+                            ></div>
+
+                            <textarea data-model="description" data-workshop-tiptap-editor-target="output" hidden>{{ description|default('') }}</textarea>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -232,6 +249,116 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-bold text-slate-700">Pliki i załączniki</label>
+                            <p class="text-xs text-slate-500">Załącznik z typem "Regulamin świadczenia usług" zastępuje domyślny plik pokazywany klientom przed rezerwacją tego warsztatu.</p>
+
+                            {% if this.getAttachments() is not empty %}
+                                <div class="space-y-2">
+                                    {% for attachment in this.getAttachments() %}
+                                        <div class="space-y-2 rounded-xl border p-3 {{ attachment.isRemoved ? 'border-red-200 bg-red-50/50 opacity-60' : 'border-slate-200 bg-slate-50' }}">
+                                            <div class="flex items-center gap-2">
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="truncate text-sm font-semibold text-slate-800">{{ attachment.name }}</p>
+                                                    <p class="text-xs text-slate-500">{{ (attachment.size / 1024)|round(1) }} KB</p>
+                                                </div>
+                                                <select data-model="attachmentRoles[{{ attachment.fileId }}]"
+                                                        class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs"
+                                                        {{ attachment.isRemoved ? 'disabled' : '' }}>
+                                                    {% for role in this.getAttachmentRoleOptions() %}
+                                                        <option value="{{ role.value }}" {{ attachment.role == role.value ? 'selected' : '' }}>
+                                                            {{ role.value == 'terms_of_use' ? 'Regulamin świadczenia usług' : 'Załącznik' }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button
+                                                    type="button"
+                                                    data-action="live#action" data-live-action-param="toggleRemoveAttachment"
+                                                    data-live-file-id-param="{{ attachment.fileId }}"
+                                                    class="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-bold transition {{ attachment.isRemoved ? 'text-indigo-600 hover:bg-indigo-50' : 'text-red-600 hover:bg-red-50' }}"
+                                                >
+                                                    {{ attachment.isRemoved ? 'Cofnij' : 'Usuń' }}
+                                                </button>
+                                            </div>
+                                            {% if not attachment.isRemoved %}
+                                                <input
+                                                    type="text"
+                                                    data-model="attachmentCaptions[{{ attachment.fileId }}]"
+                                                    value="{{ attachment.caption }}"
+                                                    placeholder="Opcjonalny podpis widoczny dla klientów"
+                                                    class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs"
+                                                />
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if this.getStagedLibraryFiles() is not empty %}
+                                <div class="space-y-2">
+                                    {% for file in this.getStagedLibraryFiles() %}
+                                        <div class="flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50/50 p-3">
+                                            <div class="min-w-0 flex-1">
+                                                <p class="truncate text-sm font-semibold text-slate-800">{{ file.name }}</p>
+                                                <p class="text-xs text-slate-500">Z biblioteki plików — zostanie dołączony po zapisaniu.</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                data-action="live#action" data-live-action-param="removeLibraryFile"
+                                                data-live-file-id-param="{{ file.id }}"
+                                                class="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition"
+                                            >
+                                                Usuń
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    data-model="on(input)|mediaLibrarySearch"
+                                    value="{{ mediaLibrarySearch|default('') }}"
+                                    placeholder="Szukaj w bibliotece plików (np. regulamin)..."
+                                    autocomplete="off"
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                />
+                                {% if mediaLibrarySearch and mediaLibrarySearch|length >= 2 %}
+                                    <div class="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg max-h-56 overflow-y-auto">
+                                        {% for file in this.getMediaLibraryResults() %}
+                                            <button
+                                                type="button"
+                                                data-action="live#action" data-live-action-param="addLibraryFile"
+                                                data-live-file-id-param="{{ file.id }}"
+                                                class="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition border-b border-slate-100 last:border-0"
+                                            >
+                                                <div class="truncate text-sm font-bold text-slate-800">{{ file.name }}</div>
+                                                <div class="text-xs text-slate-500">{{ (file.size / 1024)|round(1) }} KB · {{ file.mimeType }}</div>
+                                            </button>
+                                        {% else %}
+                                            <div class="px-4 py-3 text-sm text-slate-400">Brak wyników</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <p class="text-xs text-slate-400">Znajdź plik wgrany wcześniej dla innego warsztatu (np. regulamin), zamiast wgrywać go ponownie.</p>
+
+                            <div class="flex items-center gap-2">
+                                <input type="file" name="attachmentFiles[]" multiple
+                                       accept="application/pdf,image/jpeg,image/png,image/webp,video/mp4,video/webm"
+                                       class="flex-1 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-xs text-slate-600" />
+                                <select data-model="newAttachmentRole" class="shrink-0 rounded-lg border border-slate-300 px-2 py-2 text-xs">
+                                    {% for role in this.getAttachmentRoleOptions() %}
+                                        <option value="{{ role.value }}" {{ newAttachmentRole == role.value ? 'selected' : '' }}>
+                                            {{ role.value == 'terms_of_use' ? 'Regulamin świadczenia usług' : 'Załącznik' }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <p class="text-xs text-slate-400">Rola powyżej dotyczy zarówno nowo wgrywanych, jak i wybranych z biblioteki plików. Nowe pliki zostaną dodane po zapisaniu. Dokumenty (PDF), zdjęcia lub wideo.</p>
                         </div>
                     </div>
                 {% endif %}

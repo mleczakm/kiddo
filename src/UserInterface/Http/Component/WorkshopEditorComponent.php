@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\File\WorkshopImageUploadPolicy;
+use App\Application\Repository\FileRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Service\MoneyInputParser;
+use App\Application\Service\WorkshopFileManager;
 use App\Entity\AgeRange;
+use App\Entity\File;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Entity\NotificationSeverity;
@@ -17,6 +20,7 @@ use App\Entity\TicketOption;
 use App\Entity\TicketReschedulePolicy;
 use App\Entity\TicketType;
 use App\Entity\User;
+use App\Entity\WorkshopFileRole;
 use App\Entity\WorkshopType;
 use App\Infrastructure\Doctrine\Repository\UserRepository;
 use App\Infrastructure\Symfony\Security\Voter\LessonVoter;
@@ -25,6 +29,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -94,7 +100,39 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $visualTheme = null;
 
+    #[LiveProp(writable: true)]
+    public string $newAttachmentRole = 'attachment';
+
+    /** @var array<string, string> */
+    #[LiveProp(writable: true)]
+    public array $attachmentRoles = [];
+
+    /** @var array<string, string> */
+    #[LiveProp(writable: true)]
+    public array $attachmentCaptions = [];
+
+    /** @var list<string> */
+    #[LiveProp(writable: true)]
+    public array $removedAttachmentIds = [];
+
+    #[LiveProp(writable: true)]
+    public ?string $mediaLibrarySearch = null;
+
+    /**
+     * File ids picked from the media library, staged to be attached (with
+     * $newAttachmentRole) on save — same deferred-until-save pattern as a
+     * freshly uploaded file, since a brand-new lesson has no persisted
+     * LessonMetadata to attach to yet.
+     *
+     * @var list<string>
+     */
+    #[LiveProp(writable: true)]
+    public array $libraryAttachmentIds = [];
+
     private ?UploadedFile $uploadedImage = null;
+
+    /** @var list<UploadedFile> */
+    private array $uploadedAttachments = [];
 
     #[LiveProp(writable: true)]
     public bool $removeImage = false;
@@ -168,8 +206,12 @@ class WorkshopEditorComponent extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly InAppNotificationService $inAppNotifications,
         private readonly LessonInstructorResolver $instructorResolver,
+        private readonly WorkshopFileManager $workshopFileManager,
+        private readonly FileRepositoryInterface $fileRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly TranslatorInterface $translator,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.article_sanitizer')]
+        private readonly HtmlSanitizerInterface $descriptionSanitizer,
     ) {}
 
     public function mount(
@@ -254,6 +296,11 @@ class WorkshopEditorComponent extends AbstractController
         $this->ageMax = $metadata->ageRange->max;
         $this->capacity = $metadata->capacity;
         $this->duration = $metadata->duration;
+        foreach ($metadata->files as $workshopFile) {
+            $fileId = (string) $workshopFile->getFile()->getId();
+            $this->attachmentRoles[$fileId] = $workshopFile->getRole()->value;
+            $this->attachmentCaptions[$fileId] = $workshopFile->getCaption() ?? '';
+        }
         $this->occurrenceDate = $lesson->schedule->format('Y-m-d');
         $this->occurrenceTime = $lesson->schedule->format('H:i');
 
@@ -332,6 +379,107 @@ class WorkshopEditorComponent extends AbstractController
         }
 
         return $count;
+    }
+
+    /**
+     * @return list<WorkshopFileRole>
+     */
+    public function getAttachmentRoleOptions(): array
+    {
+        return WorkshopFileRole::cases();
+    }
+
+    /**
+     * @return list<array{fileId: string, name: string, size: int, mimeType: string, role: string, caption: string, isRemoved: bool}>
+     */
+    public function getAttachments(): array
+    {
+        $lesson = $this->getEditingLesson();
+        if ($lesson === null) {
+            return [];
+        }
+
+        $attachments = [];
+        foreach ($lesson->getMetadata()->files as $workshopFile) {
+            $file = $workshopFile->getFile();
+            $fileId = (string) $file->getId();
+            $attachments[] = [
+                'fileId' => $fileId,
+                'name' => $file->getOriginalName(),
+                'size' => $file->getSize(),
+                'mimeType' => $file->getMimeType(),
+                'role' => $this->attachmentRoles[$fileId] ?? $workshopFile->getRole()->value,
+                'caption' => $this->attachmentCaptions[$fileId] ?? $workshopFile->getCaption() ?? '',
+                'isRemoved' => \in_array($fileId, $this->removedAttachmentIds, true),
+            ];
+        }
+
+        return $attachments;
+    }
+
+    /**
+     * Media-library search results: any previously uploaded file (from any
+     * workshop, or a post), so an admin can reuse it instead of re-uploading
+     * the same document (e.g. a shared terms-of-use PDF) to every workshop.
+     * Excludes files already attached or already staged for attachment.
+     *
+     * @return list<array{id: string, name: string, size: int, mimeType: string}>
+     */
+    public function getMediaLibraryResults(): array
+    {
+        $search = $this->mediaLibrarySearch;
+        if ($search === null || mb_strlen(trim($search)) < 2) {
+            return [];
+        }
+
+        $excludedIds = $this->libraryAttachmentIds;
+        $lesson = $this->getEditingLesson();
+        if ($lesson !== null) {
+            foreach ($lesson->getMetadata()->files as $workshopFile) {
+                $excludedIds[] = (string) $workshopFile->getFile()->getId();
+            }
+        }
+
+        $matches = array_filter(
+            $this->fileRepository->search($search),
+            static fn(File $file) => !\in_array((string) $file->getId(), $excludedIds, true),
+        );
+
+        return array_values(array_map($this->describeFile(...), $matches));
+    }
+
+    /**
+     * @return list<array{id: string, name: string, size: int, mimeType: string}>
+     */
+    public function getStagedLibraryFiles(): array
+    {
+        $files = array_filter(array_map($this->findFile(...), $this->libraryAttachmentIds));
+
+        return array_values(array_map($this->describeFile(...), $files));
+    }
+
+    /**
+     * @return array{id: string, name: string, size: int, mimeType: string}
+     */
+    private function describeFile(File $file): array
+    {
+        return [
+            'id' => (string) $file->getId(),
+            'name' => $file->getOriginalName(),
+            'size' => $file->getSize(),
+            'mimeType' => $file->getMimeType(),
+        ];
+    }
+
+    private function findFile(string $fileId): ?File
+    {
+        try {
+            $id = Ulid::fromString($fileId);
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
+
+        return $this->fileRepository->find($id);
     }
 
     /**
@@ -429,6 +577,39 @@ class WorkshopEditorComponent extends AbstractController
         ));
     }
 
+    #[LiveAction]
+    public function toggleRemoveAttachment(#[LiveArg] string $fileId): void
+    {
+        if (\in_array($fileId, $this->removedAttachmentIds, true)) {
+            $this->removedAttachmentIds = array_values(array_filter(
+                $this->removedAttachmentIds,
+                static fn(string $id) => $id !== $fileId,
+            ));
+        } else {
+            $this->removedAttachmentIds[] = $fileId;
+        }
+    }
+
+    #[LiveAction]
+    public function addLibraryFile(#[LiveArg] string $fileId): void
+    {
+        if (\in_array($fileId, $this->libraryAttachmentIds, true) || $this->findFile($fileId) === null) {
+            return;
+        }
+
+        $this->libraryAttachmentIds[] = $fileId;
+        $this->mediaLibrarySearch = null;
+    }
+
+    #[LiveAction]
+    public function removeLibraryFile(#[LiveArg] string $fileId): void
+    {
+        $this->libraryAttachmentIds = array_values(array_filter(
+            $this->libraryAttachmentIds,
+            static fn(string $id) => $id !== $fileId,
+        ));
+    }
+
     private const int MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 
     // Larger than the image cap since video files are inherently heavier,
@@ -456,8 +637,15 @@ class WorkshopEditorComponent extends AbstractController
     {
         $imageFile = $request->files->get('imageFile');
         $this->uploadedImage = $imageFile instanceof UploadedFile ? $imageFile : null;
+        $attachmentFiles = $request->files->all('attachmentFiles');
+        $this->uploadedAttachments = array_values(array_filter(
+            $attachmentFiles,
+            static fn(mixed $file): bool => $file instanceof UploadedFile,
+        ));
 
-        if ($this->title === null || $this->category === null || $this->description === null) {
+        $this->description = $this->descriptionSanitizer->sanitize($this->description ?? '');
+
+        if ($this->title === null || $this->category === null || trim(strip_tags($this->description)) === '') {
             $this->addFlash('error', 'Wypełnij wszystkie wymagane pola.');
             return;
         }
@@ -506,15 +694,22 @@ class WorkshopEditorComponent extends AbstractController
             return;
         }
 
-        if ($this->editingLessonId !== null) {
-            $this->saveExistingLesson($ticketOptions);
-        } else {
-            $this->saveNewSeries($ticketOptions);
+        try {
+            if ($this->editingLessonId !== null) {
+                $this->saveExistingLesson($ticketOptions);
+            } else {
+                $this->saveNewSeries($ticketOptions);
+            }
+        } catch (\DomainException|\InvalidArgumentException|\ValueError $e) {
+            $this->addFlash('error', $e->getMessage());
         }
     }
 
     /**
      * @param list<TicketOption> $ticketOptions
+     *
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
      */
     private function saveExistingLesson(array $ticketOptions): void
     {
@@ -577,6 +772,8 @@ class WorkshopEditorComponent extends AbstractController
             $lesson->setMetadata($this->buildMetadataFor($lesson));
         }
 
+        $this->reconcileWorkshopFiles($lesson->getMetadata());
+
         $instructors = $this->resolveSelectedInstructors();
 
         if ($scope === 'series') {
@@ -607,6 +804,9 @@ class WorkshopEditorComponent extends AbstractController
 
     /**
      * @param list<TicketOption> $ticketOptions
+     *
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
      */
     private function saveNewSeries(array $ticketOptions): void
     {
@@ -649,6 +849,7 @@ class WorkshopEditorComponent extends AbstractController
         }
 
         $this->entityManager->persist($lesson);
+        $this->reconcileWorkshopFiles($metadata);
         $this->entityManager->flush();
 
         $this->addFlash('success', 'Warsztat został zapisany pomyślnie.');
@@ -670,15 +871,50 @@ class WorkshopEditorComponent extends AbstractController
             ->withCategory((string) $this->category);
 
         if ($this->removeImage) {
-            $metadata = $metadata->withImage(null, null);
-        } else {
-            $upload = $this->readUploadedImage();
-            if ($upload !== null) {
-                $metadata = $metadata->withImage($upload['data'], $upload['mime']);
-            }
+            return $metadata->withImage(null, null);
+        }
+
+        $upload = $this->readUploadedImage();
+        if ($upload !== null) {
+            return $metadata->withImage($upload['data'], $upload['mime']);
         }
 
         return $metadata;
+    }
+
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
+    private function reconcileWorkshopFiles(LessonMetadata $metadata): void
+    {
+        $this->workshopFileManager->reconcile(
+            $metadata,
+            $this->attachmentRoles,
+            $this->attachmentCaptions,
+            $this->removedAttachmentIds,
+        );
+
+        $role = WorkshopFileRole::from($this->newAttachmentRole);
+
+        if ($this->uploadedAttachments !== []) {
+            $user = $this->getUser();
+            $this->workshopFileManager->attachUploads(
+                $metadata,
+                $this->uploadedAttachments,
+                $role,
+                $user instanceof User ? $user : null,
+            );
+        }
+
+        foreach ($this->libraryAttachmentIds as $fileId) {
+            $file = $this->findFile($fileId);
+            if ($file === null) {
+                continue;
+            }
+
+            $this->workshopFileManager->attachExisting($metadata, $file, $role, $metadata->files->count());
+        }
     }
 
     private function parseDate(?string $value): ?\DateTimeImmutable

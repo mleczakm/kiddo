@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Infrastructure\Doctrine\Repository\LessonMetadataRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Ulid;
@@ -26,6 +28,16 @@ class LessonMetadata
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
+
+    /** @var Collection<int, WorkshopFile> */
+    #[ORM\OneToMany(
+        targetEntity: WorkshopFile::class,
+        mappedBy: 'metadata',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    public Collection $files;
 
     public function __construct(
         #[ORM\Column(type: 'string', length: 255)]
@@ -57,6 +69,7 @@ class LessonMetadata
         public ?string $imageMimeType = null,
     ) {
         $this->id = new Ulid();
+        $this->files = new ArrayCollection();
         if ($this->slug === null || $this->slug === '') {
             $this->slug = self::slugify($this->title);
         }
@@ -91,8 +104,7 @@ class LessonMetadata
 
     public function withTitle(string $title): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->title = $title;
         $new->slug = self::slugify($title);
 
@@ -101,64 +113,56 @@ class LessonMetadata
 
     public function withLead(string $lead): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->lead = $lead;
         return $new;
     }
 
     public function withVisualTheme(string $visualTheme): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->visualTheme = $visualTheme;
         return $new;
     }
 
     public function withDescription(string $description): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->description = $description;
         return $new;
     }
 
     public function withCapacity(int $capacity): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->capacity = $capacity;
         return $new;
     }
 
     public function withDuration(int $duration): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->duration = $duration;
         return $new;
     }
 
     public function withAgeRange(AgeRange $ageRange): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->ageRange = $ageRange;
         return $new;
     }
 
     public function withCategory(string $category): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->category = $category;
         return $new;
     }
 
     public function withImage(?string $imageData, ?string $imageMimeType): self
     {
-        $new = clone $this;
-        $new->id = new Ulid();
+        $new = $this->duplicate();
         $new->imageData = $imageData;
         $new->imageMimeType = $imageMimeType;
         return $new;
@@ -172,5 +176,61 @@ class LessonMetadata
     public function isVideo(): bool
     {
         return $this->imageMimeType !== null && str_starts_with($this->imageMimeType, 'video/');
+    }
+
+    /** @throws \DomainException */
+    public function addFile(WorkshopFile $file): void
+    {
+        if ($file->getMetadata() !== $this) {
+            throw new \InvalidArgumentException('The attachment belongs to different workshop metadata.');
+        }
+        if ($this->files->contains($file)) {
+            return;
+        }
+        if ($file->getRole() === WorkshopFileRole::TERMS_OF_USE && $this->getTermsAttachment() !== null) {
+            throw new \DomainException('A workshop can have only one terms-of-use attachment.');
+        }
+
+        $this->files->add($file);
+    }
+
+    public function removeFile(WorkshopFile $file): void
+    {
+        $this->files->removeElement($file);
+    }
+
+    public function getTermsAttachment(): ?WorkshopFile
+    {
+        foreach ($this->files as $file) {
+            if ($file->getRole() === WorkshopFileRole::TERMS_OF_USE) {
+                return $file;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The metadata value object receives a fresh database identity on every
+     * with*() edit. Copy the attachment join rows as part of that operation
+     * while continuing to reuse the underlying stored File records.
+     */
+    private function duplicate(): self
+    {
+        $new = clone $this;
+        $new->id = new Ulid();
+        $new->files = new ArrayCollection();
+
+        foreach ($this->files as $workshopFile) {
+            new WorkshopFile(
+                $new,
+                $workshopFile->getFile(),
+                $workshopFile->getRole(),
+                $workshopFile->getPosition(),
+                $workshopFile->getCaption(),
+            );
+        }
+
+        return $new;
     }
 }

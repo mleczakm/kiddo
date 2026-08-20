@@ -42,7 +42,7 @@
             {% if termsOpened %}
                 <div class="flex flex-col space-y-2 text-center sm:text-left mb-6 h-[80vh]">
                     <object
-                            data="/docs/Regulamin.pdf"
+                            data="{{ this.getTermsUrl() }}"
                             type="application/pdf"
                             width="100%"
                             height="100%"
@@ -50,7 +50,7 @@
                     >
                         <p>
                             Your browser does not support PDFs. [Download the
-                            PDF](/docs/Regulamin.pdf) .
+                            PDF]({{ this.getTermsUrl() }}) .
                         </p>
                     </object>
                 </div>

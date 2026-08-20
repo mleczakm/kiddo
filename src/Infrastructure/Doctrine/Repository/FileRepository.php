@@ -18,4 +18,24 @@ final class FileRepository extends ServiceEntityRepository implements FileReposi
     {
         parent::__construct($registry, File::class);
     }
+
+    /** @return list<File> */
+    #[\Override]
+    public function search(string $query, int $limit = 20): array
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return [];
+        }
+
+        /** @var list<File> */
+        return $this
+            ->createQueryBuilder('f')
+            ->andWhere('LOWER(f.originalName) LIKE :query')
+            ->setParameter('query', '%' . strtolower($query) . '%')
+            ->orderBy('f.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
