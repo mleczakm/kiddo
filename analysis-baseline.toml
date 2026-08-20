@@ -949,6 +949,18 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
+file = "src/Application/Service/Commerce/FastTrackOrderFactory.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Commerce\FastTrackOrderFactory::create`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/FastTrackOrderFactory.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\Application\Service\Commerce\FastTrackOrderFactory::create`.'
+count = 1
+
+[[issues]]
 file = "src/Application/Service/InlineAttachmentReconciler.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."

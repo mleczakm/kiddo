@@ -10,6 +10,7 @@ use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\BookingFactory;
+use App\Application\Service\Commerce\FastTrackOrderFactory;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Entity\NotificationSeverity;
@@ -17,6 +18,7 @@ use App\Entity\PaymentCode;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
+use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
@@ -41,6 +43,8 @@ final readonly class PlaceSingleReservation
         private LessonInstructorResolver $instructorResolver,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
+        private FeatureManager $featureManager,
+        private FastTrackOrderFactory $orderFactory,
     ) {}
 
     public function __invoke(AddBooking $command): void
@@ -69,6 +73,18 @@ final readonly class PlaceSingleReservation
         $payment = $booking->getPayment();
         if ($payment !== null && $payment->getPaymentCode() === null) {
             new PaymentCode($payment, $command->paymentCode);
+        }
+
+        if ($payment !== null && $this->featureManager->isEnabled('commerce_order_write')) {
+            // Persisted (and thus scheduled for insert) before $booking below, whose cascade
+            // will schedule $payment for insert: Doctrine has no mapped association between
+            // Payment/Booking and CustomerOrder/OrderLine (deliberately, to stay decoupled -
+            // see FastTrackOrderFactory), so it cannot infer the FK insert order on its own.
+            [$order, $orderLine] = $this->orderFactory->create($booking, $payment, $lesson, $ticketOption, $user);
+            $booking->setOrderLineId($orderLine->getId());
+            $payment->setOrderId($order->getId());
+            $this->em->persist($order);
+            $this->em->persist($orderLine);
         }
 
         $this->em->persist($booking);
