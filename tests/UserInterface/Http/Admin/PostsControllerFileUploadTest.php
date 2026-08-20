@@ -105,6 +105,56 @@ final class PostsControllerFileUploadTest extends WebTestCase
         static::assertNotNull($file, 'File should still exist (not orphaned yet)');
     }
 
+    public function testAdminCanSetAltTextAndCaptionOnImageFile(): void
+    {
+        $client = static::createClient();
+        $entityManager = $this->getEntityManager();
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $entityManager->persist($admin);
+        $entityManager->flush();
+        $client->loginUser($admin);
+
+        $file = $this->createUploadedJpeg('test.jpg');
+        $crawler = $client->request('GET', '/admin/tresci/nowa');
+        $form = $crawler
+            ->selectButton('Zapisz szkic')
+            ->form([
+                'title' => 'Article With Alt Text',
+                'contentHtml' => '<p>Content</p>',
+            ]);
+        $form['files'] = [$file];
+        $client->submit($form);
+
+        static::assertResponseRedirects();
+        $postRepository = $this->getPostRepository();
+        $post = $postRepository->findOneBy(['slug' => 'article-with-alt-text']);
+        static::assertInstanceOf(Post::class, $post);
+        $postFileId = (string) $post->files[0]->getId();
+
+        $crawler = $client->request('GET', '/admin/tresci/' . (string) $post->getId() . '/edycja');
+        $csrfToken = $crawler->filter('input[name="_token"]')->attr('value');
+
+        // Built as a raw request instead of via the DomCrawler Form API:
+        // Symfony's FormFieldRegistry cannot address a dynamically-keyed
+        // input like files_alt_text[{ulid}] that wasn't present in the
+        // form's initial field list it builds from the DOM.
+        $client->request('POST', '/admin/tresci/' . (string) $post->getId() . '/edycja', [
+            '_token' => $csrfToken,
+            'title' => 'Article With Alt Text',
+            'contentHtml' => '<p>Content</p>',
+            'files_id' => [$postFileId],
+            'files_role' => [$postFileId => 'cover'],
+            'files_alt_text' => [$postFileId => 'Dzieci bawiące się w świetle UV'],
+            'files_caption' => [$postFileId => 'Zajęcia Fluo Party'],
+        ]);
+
+        static::assertResponseRedirects();
+        $post = $postRepository->findOneBy(['slug' => 'article-with-alt-text']);
+        static::assertInstanceOf(Post::class, $post);
+        static::assertSame('Dzieci bawiące się w świetle UV', $post->files[0]->getAltText());
+        static::assertSame('Zajęcia Fluo Party', $post->files[0]->getCaption());
+    }
+
     /**
      * Generates a real, minimal valid JPEG so the storage layer's finfo-based
      * MIME sniffing (which never trusts a client-declared type) accepts it.

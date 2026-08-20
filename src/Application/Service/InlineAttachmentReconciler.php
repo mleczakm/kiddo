@@ -37,8 +37,10 @@ final readonly class InlineAttachmentReconciler
     }
 
     /**
-     * Extract all file IDs referenced in image nodes within contentJson.
-     * Pattern: nodes with type='image' and attrs.src containing stored_file URLs.
+     * Extract all file IDs referenced in image-carrying nodes within
+     * contentJson. Pattern: nodes with type='image' (plain inline image) or
+     * 'articleFigure' (image + caption, assets/tiptap/article-figure.js) and
+     * attrs.src containing a stored_file URL.
      *
      * @param array<string, mixed> $contentJson
      * @return list<string>
@@ -52,7 +54,7 @@ final readonly class InlineAttachmentReconciler
         }
 
         $this->walkContentNodes($contentJson['content'], static function (array $node) use (&$fileIds): void {
-            if (($node['type'] ?? null) !== 'image') {
+            if (!\in_array($node['type'] ?? null, ['image', 'articleFigure'], true)) {
                 return;
             }
 

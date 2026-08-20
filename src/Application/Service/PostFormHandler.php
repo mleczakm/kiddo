@@ -115,6 +115,8 @@ final readonly class PostFormHandler
     {
         $fileIds = RequestArrayField::list($request, 'files_id');
         $fileRoles = RequestArrayField::map($request, 'files_role');
+        $fileAltTexts = RequestArrayField::map($request, 'files_alt_text');
+        $fileCaptions = RequestArrayField::map($request, 'files_caption');
         $removeChecks = RequestArrayField::map($request, 'files_remove');
 
         $submitted = [];
@@ -126,8 +128,8 @@ final readonly class PostFormHandler
                 'id' => $fileId,
                 'role' => $fileRoles[$fileId] ?? 'attachment',
                 'position' => $i,
-                'altText' => null,
-                'caption' => null,
+                'altText' => $fileAltTexts[$fileId] ?? null,
+                'caption' => $fileCaptions[$fileId] ?? null,
                 'downloadName' => null,
             ];
         }

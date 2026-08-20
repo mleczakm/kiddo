@@ -313,6 +313,41 @@ body {
     outline-offset: 2px;
 }
 
+/* Inline image + caption unit (assets/tiptap/article-figure.js). Caption
+   styling mirrors the cover image's figcaption in post.html.twig so an
+   inline figure and the cover look consistent. */
+.article-content .article-figure,
+.tiptap .article-figure {
+    margin: 2rem 0;
+}
+
+.article-content .article-figure figcaption,
+.tiptap .article-figure figcaption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: hsl(var(--foreground) / 0.55);
+}
+
+/* Editor-only: an empty caption shows a hint instead of collapsing to
+   nothing, so the figure doesn't look broken before the author types one.
+   ProseMirror renders an empty inline-content node with a trailing <br>
+   for cursor placement, so it's never truly :empty. */
+.tiptap .article-figure figcaption:empty::before,
+.tiptap .article-figure figcaption:has(> br:only-child)::before {
+    content: 'Dodaj podpis (opcjonalnie)';
+    color: hsl(var(--foreground) / 0.35);
+}
+
+.tiptap .article-figure {
+    cursor: text;
+}
+
+.tiptap .ProseMirror-selectednode.article-figure {
+    outline: 2px solid hsl(var(--primary) / 0.5);
+    outline-offset: 2px;
+}
+
 /* CTA banner: gradient border card, centered content, pill button. */
 .article-cta {
     margin: 3.5rem auto 0;

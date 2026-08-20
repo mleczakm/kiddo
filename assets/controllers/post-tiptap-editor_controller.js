@@ -9,6 +9,7 @@ import { TableCell } from '@tiptap/extension-table-cell';
 import { Typography } from '@tiptap/extension-typography';
 import { optimizeImageToWebp } from '../utils/image_optimizer.js';
 import { Callout } from '../tiptap/callout.js';
+import { ArticleFigure } from '../tiptap/article-figure.js';
 
 /**
  * Tiptap editor for article content: prose, headings (H2/H3), lists, tables,
@@ -47,6 +48,7 @@ export default class extends Controller {
                 TableCell,
                 Typography,
                 Callout,
+                ArticleFigure,
             ],
             content: this.getInitialContent(),
             onUpdate: () => this.syncContent(),
@@ -205,7 +207,7 @@ export default class extends Controller {
             if (data.url) {
                 this.editor.chain()
                     .focus()
-                    .setImage({ src: data.url, alt: data.alt || '' })
+                    .setArticleFigure({ src: data.url, alt: data.alt || '' })
                     .run();
                 this.syncContent();
             }
