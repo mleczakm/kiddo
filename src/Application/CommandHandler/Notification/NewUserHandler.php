@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\NewUser;
+use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
 use App\Entity\User;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 readonly class NewUserHandler
 {
     public function __construct(
-        private NotifierInterface $notifier,
+        private NotificationSenderInterface $notificationSender,
         private UserRepositoryInterface $userRepository,
         private TranslatorInterface $translator,
         private InAppNotificationService $inAppNotifications,
@@ -53,12 +51,7 @@ readonly class NewUserHandler
         $subject = $this->translator->trans('user.notification.confirmation.subject', [], 'emails');
         $content = $this->translator->trans('user.notification.confirmation.message', [], 'emails');
 
-        $notification = new Notification()
-            ->importance('')
-            ->subject($subject)
-            ->content($content);
-
-        $this->notifier->send($notification, new Recipient($user->getEmail()));
+        $this->notificationSender->send($user->getEmail(), $subject, $content);
 
         $this->inAppNotifications->notify(
             $user,
@@ -89,13 +82,8 @@ readonly class NewUserHandler
             'emails',
         );
 
-        $notification = new Notification()
-            ->importance('')
-            ->subject($subject)
-            ->content($content);
-
         foreach ($admins as $admin) {
-            $this->notifier->send($notification, new Recipient($admin->getEmail()));
+            $this->notificationSender->send($admin->getEmail(), $subject, $content);
         }
 
         $userId = $user->getId();

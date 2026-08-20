@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\SendReservationNotification;
+use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\SettingRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -23,7 +21,7 @@ readonly class SendReservationNotificationHandler
     private const string DEFAULT_BANK_ACCOUNT = '46 2490 0005 0000 4000 1897 5420';
 
     public function __construct(
-        private NotifierInterface $notifier,
+        private NotificationSenderInterface $notificationSender,
         private TranslatorInterface $translator,
         private Environment $twig,
         private InAppNotificationService $inAppNotifications,
@@ -48,12 +46,7 @@ readonly class SendReservationNotificationHandler
         $subject = $this->translator->trans('reservation.subject', [], 'emails');
         $content = $this->twig->render('email/reservation.html.twig', $translatorContext);
 
-        $notification = new Notification($subject, ['email'])
-            ->importance('')
-            ->content($content);
-
-        $recipient = new Recipient($command->email);
-        $this->notifier->send($notification, $recipient);
+        $this->notificationSender->send($command->email, $subject, $content);
 
         $user = $this->userRepository->findOneBy([
             'email' => $command->email,

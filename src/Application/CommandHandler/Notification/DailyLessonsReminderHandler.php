@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\DailyLessonsReminder;
+use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\PaymentRepositoryInterface;
@@ -20,9 +21,6 @@ use Brick\Money\Money;
 use Ds\Map;
 use Ds\Set;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -31,7 +29,7 @@ use Twig\Environment;
 readonly class DailyLessonsReminderHandler
 {
     public function __construct(
-        private NotifierInterface $notifier,
+        private NotificationSenderInterface $notificationSender,
         private UserRepositoryInterface $userRepository,
         private BookingRepositoryInterface $bookingRepository,
         private PaymentRepositoryInterface $paymentRepository,
@@ -67,13 +65,8 @@ readonly class DailyLessonsReminderHandler
             'date' => $date,
         ]);
 
-        $notification = new Notification()
-            ->importance('')
-            ->subject($subject)
-            ->content($content);
-
         foreach ($admins as $admin) {
-            $this->notifier->send($notification, new Recipient($admin->getEmail()));
+            $this->notificationSender->send($admin->getEmail(), $subject, $content);
         }
 
         $this->inAppNotifications->notifyAdmins(
@@ -116,11 +109,7 @@ readonly class DailyLessonsReminderHandler
             $instructorSubject = $this->twig->render('email/notification/daily-instructor-schedule-subject.html.twig', [
                 'date' => $date,
             ]);
-            $instructorNotification = new Notification()
-                ->importance('')
-                ->subject($instructorSubject)
-                ->content($instructorContent);
-            $this->notifier->send($instructorNotification, new Recipient($instructor->getEmail()));
+            $this->notificationSender->send($instructor->getEmail(), $instructorSubject, $instructorContent);
         }
 
         /** @var Map<User, Set<Lesson>> $usersWithLessons */
@@ -142,11 +131,7 @@ readonly class DailyLessonsReminderHandler
             $userSubject = $this->twig->render('email/notification/daily-user-reminder-subject.html.twig', [
                 'date' => $date,
             ]);
-            $userNotification = new Notification()
-                ->importance('')
-                ->subject($userSubject)
-                ->content($userContent);
-            $this->notifier->send($userNotification, new Recipient($user->getEmail()));
+            $this->notificationSender->send($user->getEmail(), $userSubject, $userContent);
 
             $titles = [];
             foreach ($userLessons as $lesson) {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\SendLoginNotification;
+use App\Application\Notification\NotificationSenderInterface;
 use App\Entity\User;
-use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -19,6 +19,7 @@ readonly class SendLoginNotificationHandler
 {
     public function __construct(
         private NotifierInterface $notifier,
+        private NotificationSenderInterface $notificationSender,
         private UserProviderInterface $userProvider,
         private LoginLinkHandlerInterface $loginLinkHandler,
         private TranslatorInterface $translator,
@@ -30,14 +31,11 @@ readonly class SendLoginNotificationHandler
             /** @var User $user */
             $user = $this->userProvider->loadUserByIdentifier($command->email);
         } catch (UserNotFoundException) {
-            $recipient = new Recipient($command->email);
-
-            $notification = new Notification()
-                ->importance('')
-                ->subject($this->translator->trans('login_email_missingnotification.subject', [], 'emails'))
-                ->content($this->translator->trans('login_email_missingnotification.content', [], 'emails'));
-
-            $this->notifier->send($notification, $recipient);
+            $this->notificationSender->send(
+                $command->email,
+                $this->translator->trans('login_email_missingnotification.subject', [], 'emails'),
+                $this->translator->trans('login_email_missingnotification.content', [], 'emails'),
+            );
 
             return;
         }

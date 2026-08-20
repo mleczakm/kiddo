@@ -95,6 +95,9 @@ services:
   App\Application\Workflow\PaymentStateMachineInterface:
     alias: App\Infrastructure\Symfony\Workflow\SymfonyPaymentStateMachine
 
+  App\Application\Notification\NotificationSenderInterface:
+    alias: App\Infrastructure\Symfony\Notifier\SymfonyNotificationSender
+
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 

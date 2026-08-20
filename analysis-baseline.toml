@@ -597,13 +597,13 @@ count = 1
 [[issues]]
 file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php:60:13}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php:58:13}`.'
 count = 1
 
 [[issues]]
 file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php:60:13}`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php:58:13}`.'
 count = 1
 
 [[issues]]

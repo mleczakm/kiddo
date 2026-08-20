@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
+use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
 use App\Entity\User;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -22,7 +20,7 @@ use Twig\Environment;
 readonly class SendPaymentNotificationHandler
 {
     public function __construct(
-        private NotifierInterface $notifier,
+        private NotificationSenderInterface $notificationSender,
         private UserRepositoryInterface $userRepository,
         private Environment $twig,
         private InAppNotificationService $inAppNotifications,
@@ -71,11 +69,7 @@ readonly class SendPaymentNotificationHandler
             'lessons' => $lessons,
             'bookings' => $bookings,
         ]);
-        $notification = new Notification()
-            ->importance('')
-            ->subject($subject)
-            ->content($content);
-        $this->notifier->send($notification, new Recipient($user->getEmailString()));
+        $this->notificationSender->send($user->getEmailString(), $subject, $content);
 
         $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()->title;
         $this->inAppNotifications->notify(
@@ -117,11 +111,7 @@ readonly class SendPaymentNotificationHandler
                 'lessons' => $lessons,
                 'bookings' => $bookings,
             ]);
-            $notification = new Notification()
-                ->importance('')
-                ->subject($subject)
-                ->content($content);
-            $this->notifier->send($notification, new Recipient($admin->getEmailString()));
+            $this->notificationSender->send($admin->getEmailString(), $subject, $content);
         }
 
         $payer = $firstBooking->getUser();

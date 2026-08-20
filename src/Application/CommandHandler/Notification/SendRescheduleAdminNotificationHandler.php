@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
+use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -20,7 +18,7 @@ use Twig\Environment;
 final readonly class SendRescheduleAdminNotificationHandler
 {
     public function __construct(
-        private NotifierInterface $notifier,
+        private NotificationSenderInterface $notificationSender,
         private UserRepositoryInterface $userRepository,
         private Environment $twig,
         private InAppNotificationService $inAppNotifications,
@@ -57,12 +55,7 @@ final readonly class SendRescheduleAdminNotificationHandler
         ]);
 
         foreach ($admins as $admin) {
-            $notification = new Notification()
-                ->importance('')
-                ->subject($subject)
-                ->content($content);
-
-            $this->notifier->send($notification, new Recipient($admin->getEmailString()));
+            $this->notificationSender->send($admin->getEmailString(), $subject, $content);
         }
 
         $this->inAppNotifications->notifyAdmins(
