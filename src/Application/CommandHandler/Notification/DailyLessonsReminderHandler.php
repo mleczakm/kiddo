@@ -12,6 +12,7 @@ use App\Application\Repository\PaymentRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Templating\TemplateRendererInterface;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
@@ -23,7 +24,6 @@ use Ds\Set;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
 
 #[AsMessageHandler]
 readonly class DailyLessonsReminderHandler
@@ -35,7 +35,7 @@ readonly class DailyLessonsReminderHandler
         private PaymentRepositoryInterface $paymentRepository,
         private LessonInstructorResolver $instructorResolver,
         private TodayLessonsQuery $todayLessonsQuery,
-        private Environment $twig,
+        private TemplateRendererInterface $templateRenderer,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
@@ -60,7 +60,7 @@ readonly class DailyLessonsReminderHandler
         );
 
         $content = $this->buildReport($lessons, $date, $yesterday, $newUsers, $newBookings, $revenue);
-        $subject = $this->twig->render('email/notification/daily-schedule-subject.html.twig', [
+        $subject = $this->templateRenderer->render('email/notification/daily-schedule-subject.html.twig', [
             'lessons' => $lessons,
             'date' => $date,
         ]);
@@ -101,12 +101,12 @@ readonly class DailyLessonsReminderHandler
             }
         }
         foreach ($lessonsByInstructor as $instructor => $instructorLessons) {
-            $instructorContent = $this->twig->render('email/notification/daily-instructor-schedule.html.twig', [
+            $instructorContent = $this->templateRenderer->render('email/notification/daily-instructor-schedule.html.twig', [
                 'lessons' => $instructorLessons,
                 'date' => $date,
                 'instructor' => $instructor,
             ]);
-            $instructorSubject = $this->twig->render('email/notification/daily-instructor-schedule-subject.html.twig', [
+            $instructorSubject = $this->templateRenderer->render('email/notification/daily-instructor-schedule-subject.html.twig', [
                 'date' => $date,
             ]);
             $this->notificationSender->send($instructor->getEmail(), $instructorSubject, $instructorContent);
@@ -123,12 +123,12 @@ readonly class DailyLessonsReminderHandler
             }
         }
         foreach ($usersWithLessons as $user => $userLessons) {
-            $userContent = $this->twig->render('email/notification/daily-user-reminder.html.twig', [
+            $userContent = $this->templateRenderer->render('email/notification/daily-user-reminder.html.twig', [
                 'lessons' => $userLessons,
                 'date' => $date,
                 'user' => $user,
             ]);
-            $userSubject = $this->twig->render('email/notification/daily-user-reminder-subject.html.twig', [
+            $userSubject = $this->templateRenderer->render('email/notification/daily-user-reminder-subject.html.twig', [
                 'date' => $date,
             ]);
             $this->notificationSender->send($user->getEmail(), $userSubject, $userContent);
@@ -167,7 +167,7 @@ readonly class DailyLessonsReminderHandler
         array $newBookings,
         Money $revenue,
     ): string {
-        return $this->twig->render('email/notification/daily-schedule.html.twig', [
+        return $this->templateRenderer->render('email/notification/daily-schedule.html.twig', [
             'lessons' => $lessons,
             'date' => $date,
             'yesterday' => $yesterday,

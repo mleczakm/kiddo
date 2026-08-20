@@ -9,10 +9,10 @@ use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\SettingRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
+use App\Application\Templating\TemplateRendererInterface;
 use App\Entity\NotificationSeverity;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
 
 readonly class SendReservationNotificationHandler
 {
@@ -23,7 +23,7 @@ readonly class SendReservationNotificationHandler
     public function __construct(
         private NotificationSenderInterface $notificationSender,
         private TranslatorInterface $translator,
-        private Environment $twig,
+        private TemplateRendererInterface $templateRenderer,
         private InAppNotificationService $inAppNotifications,
         private UserRepositoryInterface $userRepository,
         private UrlGeneratorInterface $urlGenerator,
@@ -44,7 +44,7 @@ readonly class SendReservationNotificationHandler
         ];
 
         $subject = $this->translator->trans('reservation.subject', [], 'emails');
-        $content = $this->twig->render('email/reservation.html.twig', $translatorContext);
+        $content = $this->templateRenderer->render('email/reservation.html.twig', $translatorContext);
 
         $this->notificationSender->send($command->email, $subject, $content);
 

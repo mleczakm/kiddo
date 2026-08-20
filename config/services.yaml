@@ -98,6 +98,9 @@ services:
   App\Application\Notification\NotificationSenderInterface:
     alias: App\Infrastructure\Symfony\Notifier\SymfonyNotificationSender
 
+  App\Application\Templating\TemplateRendererInterface:
+    alias: App\Infrastructure\Symfony\Twig\SymfonyTemplateRenderer
+
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 

@@ -8,13 +8,13 @@ use App\Application\Command\Notification\SendPaymentNotificationCommand;
 use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
+use App\Application\Templating\TemplateRendererInterface;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
 use App\Entity\User;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
 
 #[AsMessageHandler]
 readonly class SendPaymentNotificationHandler
@@ -22,7 +22,7 @@ readonly class SendPaymentNotificationHandler
     public function __construct(
         private NotificationSenderInterface $notificationSender,
         private UserRepositoryInterface $userRepository,
-        private Environment $twig,
+        private TemplateRendererInterface $templateRenderer,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
@@ -56,13 +56,13 @@ readonly class SendPaymentNotificationHandler
             }
         }
 
-        $subject = $this->twig->render('email/notification/payment-notification-user-subject.html.twig', [
+        $subject = $this->templateRenderer->render('email/notification/payment-notification-user-subject.html.twig', [
             'user' => $user,
             'payment' => $payment,
             'reference' => $firstBooking->getId(),
             'lessons' => $lessons,
         ]);
-        $content = $this->twig->render('email/notification/payment-notification-user.html.twig', [
+        $content = $this->templateRenderer->render('email/notification/payment-notification-user.html.twig', [
             'user' => $user,
             'payment' => $payment,
             'reference' => $firstBooking->getId(),
@@ -100,12 +100,12 @@ readonly class SendPaymentNotificationHandler
             }
         }
         foreach ($admins as $admin) {
-            $subject = $this->twig->render('email/notification/payment-notification-admin-subject.html.twig', [
+            $subject = $this->templateRenderer->render('email/notification/payment-notification-admin-subject.html.twig', [
                 'user' => $firstBooking->getUser(),
                 'payment' => $payment,
                 'lessons' => $lessons,
             ]);
-            $content = $this->twig->render('email/notification/payment-notification-admin.html.twig', [
+            $content = $this->templateRenderer->render('email/notification/payment-notification-admin.html.twig', [
                 'user' => $firstBooking->getUser(),
                 'payment' => $payment,
                 'lessons' => $lessons,

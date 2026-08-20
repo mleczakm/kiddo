@@ -8,11 +8,11 @@ use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
+use App\Application\Templating\TemplateRendererInterface;
 use App\Entity\NotificationSeverity;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
 
 #[AsMessageHandler]
 final readonly class SendRescheduleAdminNotificationHandler
@@ -20,7 +20,7 @@ final readonly class SendRescheduleAdminNotificationHandler
     public function __construct(
         private NotificationSenderInterface $notificationSender,
         private UserRepositoryInterface $userRepository,
-        private Environment $twig,
+        private TemplateRendererInterface $templateRenderer,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
@@ -38,7 +38,7 @@ final readonly class SendRescheduleAdminNotificationHandler
             return;
         }
 
-        $subject = $this->twig->render('email/notification/reschedule-notification-admin-subject.html.twig', [
+        $subject = $this->templateRenderer->render('email/notification/reschedule-notification-admin-subject.html.twig', [
             'user' => $user,
             'booking' => $booking,
             'oldLesson' => $oldLesson,
@@ -46,7 +46,7 @@ final readonly class SendRescheduleAdminNotificationHandler
             'reason' => $command->reason,
         ]);
 
-        $content = $this->twig->render('email/notification/reschedule-notification-admin.html.twig', [
+        $content = $this->templateRenderer->render('email/notification/reschedule-notification-admin.html.twig', [
             'user' => $user,
             'booking' => $booking,
             'oldLesson' => $oldLesson,

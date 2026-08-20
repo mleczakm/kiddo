@@ -637,42 +637,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\LoaderError` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\LoaderError` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::buildReport`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\RuntimeError` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\RuntimeError` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::buildReport`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\SyntaxError` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\SyntaxError` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::buildReport`.'
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendAdminInformation`.'
@@ -835,42 +799,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\LoaderError` in `App\Application\CommandHandler\Notification\SendPaymentNotificationHandler::sendAdminNotifications`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\LoaderError` in `App\Application\CommandHandler\Notification\SendPaymentNotificationHandler::sendUserNotification`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\RuntimeError` in `App\Application\CommandHandler\Notification\SendPaymentNotificationHandler::sendAdminNotifications`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\RuntimeError` in `App\Application\CommandHandler\Notification\SendPaymentNotificationHandler::sendUserNotification`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\SyntaxError` in `App\Application\CommandHandler\Notification\SendPaymentNotificationHandler::sendAdminNotifications`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\SyntaxError` in `App\Application\CommandHandler\Notification\SendPaymentNotificationHandler::sendUserNotification`.'
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\SendRescheduleAdminNotificationHandler::__invoke`.'
@@ -892,24 +820,6 @@ count = 1
 file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\Notification\SendRescheduleAdminNotificationHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\LoaderError` in `App\Application\CommandHandler\Notification\SendRescheduleAdminNotificationHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\RuntimeError` in `App\Application\CommandHandler\Notification\SendRescheduleAdminNotificationHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\SyntaxError` in `App\Application\CommandHandler\Notification\SendRescheduleAdminNotificationHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -994,24 +904,6 @@ count = 1
 file = "src/Application/CommandHandler/SendReservationNotificationHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\SendReservationNotificationHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/SendReservationNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\LoaderError` in `App\Application\CommandHandler\SendReservationNotificationHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/SendReservationNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\RuntimeError` in `App\Application\CommandHandler\SendReservationNotificationHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/SendReservationNotificationHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Twig\Error\SyntaxError` in `App\Application\CommandHandler\SendReservationNotificationHandler::__invoke`.'
 count = 1
 
 [[issues]]
