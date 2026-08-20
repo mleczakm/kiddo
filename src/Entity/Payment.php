@@ -108,6 +108,13 @@ class Payment
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $statusNote = null;
 
+    // Bridge to the commerce order schema (see Domain\Commerce\Order\CustomerOrder).
+    // Unused until Stage 5's dual-write - a plain scalar reference rather than
+    // a Doctrine relation, so this entity does not need to know about the
+    // commerce domain classes.
+    #[ORM\Column(type: 'ulid', nullable: true)]
+    private ?Ulid $orderId = null;
+
     /**
      * @var Collection<int, Booking>
      */
@@ -252,6 +259,18 @@ class Payment
     public function getStatusNote(): ?string
     {
         return $this->statusNote;
+    }
+
+    public function getOrderId(): ?Ulid
+    {
+        return $this->orderId;
+    }
+
+    public function setOrderId(?Ulid $orderId): self
+    {
+        $this->orderId = $orderId;
+
+        return $this;
     }
 
     /**

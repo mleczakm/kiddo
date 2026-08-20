@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Domain\Commerce\Order\OrderLineAdjustment" table="order_line_adjustment">
+        <id name="id" type="ulid" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="orderLineId" type="ulid" column="order_line_id" />
+        <field name="type" type="string" column="type" length="20" />
+        <field name="amountMinor" type="integer" column="amount_minor" />
+        <field name="label" type="string" column="label" length="255" nullable="true" />
+
+        <indexes>
+            <index name="idx_order_line_adjustment_order_line_id" columns="order_line_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

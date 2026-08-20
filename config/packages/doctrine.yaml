@@ -44,6 +44,12 @@ doctrine:
         dir: '%kernel.project_dir%/src/Entity'
         prefix: 'App\Entity'
         alias: App
+      AppCommerce:
+        type: xml
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/Infrastructure/Doctrine/Commerce/Mapping'
+        prefix: 'App\Domain\Commerce'
+        alias: AppCommerce
     controller_resolver:
       auto_mapping: false
     dql:

@@ -1431,7 +1431,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:347:13}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:366:13}`.'
 count = 1
 
 [[issues]]
@@ -1449,7 +1449,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:347:13}`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:366:13}`.'
 count = 1
 
 [[issues]]

@@ -70,6 +70,13 @@ class Booking
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $approvedAt = null;
 
+    // Bridge to the commerce order schema (see Domain\Commerce\Order\OrderLine).
+    // Unused until Stage 5's dual-write - a plain scalar reference rather than
+    // a Doctrine relation, so this entity does not need to know about the
+    // commerce domain classes.
+    #[ORM\Column(type: 'ulid', nullable: true)]
+    private ?Ulid $orderLineId = null;
+
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
         #[ORM\JoinColumn(nullable: false)]
@@ -94,6 +101,18 @@ class Booking
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function getOrderLineId(): ?Ulid
+    {
+        return $this->orderLineId;
+    }
+
+    public function setOrderLineId(?Ulid $orderLineId): self
+    {
+        $this->orderLineId = $orderLineId;
+
+        return $this;
     }
 
     /**

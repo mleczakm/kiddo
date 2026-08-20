@@ -373,6 +373,18 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
+file = "src/Domain/Commerce/Order/CustomerOrder.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Order/OrderLine.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Entity/ActivityLog.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
