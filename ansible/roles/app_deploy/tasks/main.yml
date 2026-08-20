@@ -1,0 +1,194 @@
+---
+- name: Log in to GHCR
+  ansible.builtin.command: "docker login ghcr.io -u {{ github_actor }} --password-stdin"
+  args:
+    stdin: "{{ github_token }}"
+  changed_when: false
+  no_log: true
+
+- name: Pull application image
+  ansible.builtin.command: "docker pull {{ app.image }}"
+  changed_when: true
+
+- name: Validate cache volume name
+  ansible.builtin.assert:
+    that:
+      - app.cache_volume is string
+      - app.cache_volume | length > 0
+      - app.cache_volume is match('^[a-zA-Z0-9][a-zA-Z0-9_.-]+$')
+    fail_msg: A safe explicit Docker volume name is required.
+
+- name: Inspect cache volume
+  ansible.builtin.command: "docker volume inspect {{ app.cache_volume }}"
+  register: initial_volume_inspect
+  failed_when: false
+  changed_when: false
+
+- name: Create cache volume
+  ansible.builtin.command: >-
+    docker volume create
+    --label pl.mleczki.kiddo.persistent=true
+    --label pl.mleczki.kiddo.purpose=opcache
+    {{ app.cache_volume }}
+  when: initial_volume_inspect.rc != 0
+  changed_when: true
+
+- name: Stop existing container
+  ansible.builtin.command: "docker stop {{ app.name }}"
+  register: stop_result
+  failed_when: stop_result.rc not in [0, 1]
+  changed_when: stop_result.rc == 0
+
+- name: Remove existing container
+  ansible.builtin.command: "docker rm {{ app.name }}"
+  register: remove_result
+  failed_when: remove_result.rc not in [0, 1]
+  changed_when: remove_result.rc == 0
+
+- name: Read production environment
+  ansible.builtin.slurp:
+    src: "{{ env_file_path }}"
+  register: env_file_content
+  delegate_to: localhost
+  no_log: true
+
+- name: Parse production environment
+  ansible.builtin.set_fact:
+    app_env_vars: >-
+      {{
+        (env_file_content.content | b64decode | regex_replace('\r', '')).split('\n')
+        | select('match', '^[A-Z]')
+        | map('regex_replace', '([^=]+)=(.*)', '\1=\2')
+        | map('split', '=', 1)
+        | items2dict(key_name=0, value_name=1)
+      }}
+  no_log: true
+
+- name: Create temporary environment file
+  ansible.builtin.copy:
+    content: |
+      {% for key, value in (app_env_vars | default({})).items() %}
+      {{ key }}={{ value }}
+      {% endfor %}
+      {% for key, value in (app.env | default({})).items() %}
+      {{ key }}={{ value }}
+      {% endfor %}
+    dest: "/tmp/{{ app.name }}.env"
+    mode: '0600'
+  no_log: true
+
+- name: Run application container
+  ansible.builtin.command: >-
+    docker run -d
+    --name {{ app.name }}
+    --restart always
+    -p [{{ app.ipv6 }}]:{{ app.port }}:9501
+    --env-file /tmp/{{ app.name }}.env
+    --mount type=volume,src={{ app.cache_volume }},dst=/var/cache/prod/pools/app
+    {{ app.image }}
+  changed_when: true
+
+- name: Remove temporary environment file
+  ansible.builtin.file:
+    path: "/tmp/{{ app.name }}.env"
+    state: absent
+
+- name: Wait for the container to accept connections
+  ansible.builtin.wait_for:
+    host: "{{ app.ipv6 }}"
+    port: "{{ app.port }}"
+    timeout: 30
+
+- name: Run database migrations
+  ansible.builtin.command: "docker exec {{ app.name }} bin/console doctrine:migrations:migrate --no-interaction"
+  register: migration_result
+  changed_when: true
+
+- name: Display migration result
+  ansible.builtin.debug:
+    var: migration_result.stdout_lines
+
+- name: Wait for HTTP health endpoint
+  ansible.builtin.uri:
+    url: "http://[{{ app.ipv6 }}]:{{ app.port }}/health"
+    status_code: 200
+  register: health_result
+  retries: 10
+  delay: 3
+  until: health_result.status == 200
+
+- name: Get Cloudflare DNS records
+  ansible.builtin.uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_id }}/dns_records"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ cloudflare_api_token }}"
+      Content-Type: application/json
+  register: cf_records
+  delegate_to: localhost
+  when: cloudflare_api_token is defined and cloudflare_zone_id is defined
+
+- name: Find existing Cloudflare A record
+  ansible.builtin.set_fact:
+    existing_a_record: "{{ cf_records.json.result | selectattr('name', 'equalto', app.domain) | selectattr('type', 'equalto', 'A') | first | default(None) }}"
+    existing_cname_record: "{{ cf_records.json.result | selectattr('name', 'equalto', app.domain) | selectattr('type', 'equalto', 'CNAME') | first | default(None) }}"
+  when: cloudflare_api_token is defined and cf_records.json.result is defined
+
+- name: Select Cloudflare record to upsert
+  ansible.builtin.set_fact:
+    existing_record: "{{ existing_a_record if existing_a_record is not none else existing_cname_record }}"
+  when: cloudflare_api_token is defined and cf_records.json.result is defined
+
+- name: Create Cloudflare A record
+  ansible.builtin.uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_id }}/dns_records"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ cloudflare_api_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      type: A
+      name: "{{ app.domain }}"
+      content: "{{ app.cytrus_host }}"
+      ttl: 1
+      proxied: true
+  delegate_to: localhost
+  when: cloudflare_api_token is defined and existing_record is none
+
+- name: Update Cloudflare A record
+  ansible.builtin.uri:
+    url: "https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_id }}/dns_records/{{ existing_record.id }}"
+    method: PUT
+    headers:
+      Authorization: "Bearer {{ cloudflare_api_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      type: A
+      name: "{{ app.domain }}"
+      content: "{{ app.cytrus_host }}"
+      ttl: 1
+      proxied: true
+  delegate_to: localhost
+  when: cloudflare_api_token is defined and existing_record is not none
+
+- name: Verify Cytrus domain
+  ansible.builtin.uri:
+    url: https://api.mikr.us/domain
+    method: POST
+    body_format: form-urlencoded
+    body:
+      srv: "{{ ansible_host | regex_replace('\\..*', '') }}"
+      key: "{{ cytrus_api_token }}"
+    status_code: 200
+  register: cytrus_domains
+  delegate_to: localhost
+  when: app.proxied | default(false)
+
+- name: Check that the domain is configured in Cytrus
+  ansible.builtin.assert:
+    that:
+      - app.domain in (cytrus_domains.json | map(attribute='name') | list)
+    fail_msg: "Domain {{ app.domain }} is not configured in Cytrus."
+  when: app.proxied | default(false)

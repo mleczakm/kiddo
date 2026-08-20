@@ -1,0 +1,13 @@
+---
+# Kiddo Deployment Configuration
+apps:
+  - name: kiddo
+    domain: "{{ domain | default('warsztatowniasensoryczna.pl') }}"
+    port: 9501
+    image: "ghcr.io/mleczakm/kiddo:{{ app_version | default('latest') }}"
+    cache_volume: kiddo_cache
+    env:
+      APP_ENV: prod
+    ipv6: "{{ mikrus_ipv6 }}"
+    cytrus_host: "{{ cytrus_host }}"
+    proxied: true

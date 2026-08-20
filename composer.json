@@ -186,7 +186,8 @@
     },
     "tests:functional:setup": {
       "Functional tests setup": "bin/console doctrine:database:create --if-not-exists --env=test",
-      "Functional tests schema": "bin/console doctrine:migrations:migrate --no-interaction --env=test"
+      "Functional tests schema": "bin/console doctrine:migrations:migrate --no-interaction --env=test",
+      "Functional tests schema validation": "bin/console doctrine:schema:validate --env=test"
     },
     "qa:fix": [
       "@sa:fix"

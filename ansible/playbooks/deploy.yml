@@ -1,0 +1,13 @@
+---
+- name: Deploy Kiddo Application
+  hosts: mikrus
+  become: yes
+  vars_files:
+    - config.yml
+  tasks:
+    - name: Deploy kiddo app
+      include_role:
+        name: app_deploy
+      loop: "{{ apps }}"
+      loop_control:
+        loop_var: app
