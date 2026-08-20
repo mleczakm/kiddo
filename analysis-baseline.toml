@@ -1111,6 +1111,12 @@ message = "Redundant condition: variable `$post->files` is already known to be `
 count = 1
 
 [[issues]]
+file = "src/Application/Service/Pricing/ShadowPricingEvaluator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Pricing\ShadowPricingEvaluator::evaluate`.'
+count = 1
+
+[[issues]]
 file = "src/Application/Service/RequestArrayField.php"
 code = "mixed-assignment"
 message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."

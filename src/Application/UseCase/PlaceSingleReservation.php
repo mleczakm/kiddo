@@ -13,6 +13,8 @@ use App\Application\Service\BookingFactory;
 use App\Application\Service\Commerce\FastTrackOrderFactory;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\Pricing\ShadowPricingEvaluator;
+use App\Domain\Commerce\Pricing\PricingContext;
 use App\Entity\NotificationSeverity;
 use App\Entity\PaymentCode;
 use Brick\Money\Currency;
@@ -45,6 +47,7 @@ final readonly class PlaceSingleReservation
         private TranslatorInterface $translator,
         private FeatureManager $featureManager,
         private FastTrackOrderFactory $orderFactory,
+        private ShadowPricingEvaluator $shadowPricing,
     ) {}
 
     public function __invoke(AddBooking $command): void
@@ -60,6 +63,17 @@ final readonly class PlaceSingleReservation
         }
 
         $ticketOption = $lesson->getMatchingTicketOption($command->ticketType);
+
+        $this->shadowPricing->evaluate(
+            new PricingContext(
+                userId: $user->getId(),
+                lessonId: $lesson->getId(),
+                seriesId: $lesson->getSeries()?->getId(),
+                ticketType: $ticketOption->type->value,
+                evaluationTime: new \DateTimeImmutable(),
+            ),
+            $ticketOption->price,
+        );
 
         $booking = $this->bookingFactory->createFrom($lesson, $ticketOption, $user);
 

@@ -343,6 +343,24 @@ message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
+file = "src/Application/Service/Pricing/PricingEngine.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Pricing/PricingEngine.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Pricing/PricingEngine.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
 file = "src/Application/Service/TransferMoneyParser.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
@@ -386,6 +404,36 @@ count = 1
 
 [[issues]]
 file = "src/Domain/Commerce/Order/OrderLine.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Pricing/PriceQuote.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Pricing/PricingContext.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Pricing/PricingRule.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Pricing/PricingRule.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Pricing/PromotionCode.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
 count = 1
@@ -1148,6 +1196,18 @@ count = 2
 
 [[issues]]
 file = "tests/Application/Service/PlatformBillingServiceTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Application/Service/Pricing/PricingEngineTest.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "tests/Application/Service/Pricing/PricingEngineTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1

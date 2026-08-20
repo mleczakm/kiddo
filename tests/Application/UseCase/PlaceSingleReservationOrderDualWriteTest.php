@@ -12,6 +12,7 @@ use App\Application\Service\BookingFactory;
 use App\Application\Service\Commerce\FastTrackOrderFactory;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\Pricing\ShadowPricingEvaluator;
 use App\Application\UseCase\PlaceSingleReservation;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Domain\Commerce\Order\OrderLine;
@@ -111,6 +112,8 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
         $urlGenerator = self::getContainer()->get(UrlGeneratorInterface::class);
         /** @var TranslatorInterface $translator */
         $translator = self::getContainer()->get(TranslatorInterface::class);
+        /** @var ShadowPricingEvaluator $shadowPricing */
+        $shadowPricing = self::getContainer()->get(ShadowPricingEvaluator::class);
 
         $placeSingleReservation = new PlaceSingleReservation(
             $em,
@@ -125,6 +128,7 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
             $translator,
             $alwaysEnabled,
             new FastTrackOrderFactory(),
+            $shadowPricing,
         );
 
         $userId = $user->getId();
