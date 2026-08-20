@@ -12,8 +12,8 @@ use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\NotificationRepositoryInterface;
 use App\Application\Repository\PaymentCodeRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Entity\Child;
-use App\Entity\PaymentFactory;
 use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
@@ -46,6 +46,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         #[Autowire(service: 'limiter.auth_email_limiter')]
         private RateLimiterFactory $authEmailRateLimiter,
         private CacheItemPoolInterface $cache,
+        private PaymentCodeGenerator $paymentCodeGenerator,
     ) {}
 
     #[\Override]
@@ -578,7 +579,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             return ToolResult::failure('No available spots on this lesson');
         }
 
-        $paymentCode = new PaymentFactory()->generateCode();
+        $paymentCode = $this->paymentCodeGenerator->generateAvailable();
         $this->bus->dispatch(new AddBooking(
             userId: $actor->userId(),
             lessonId: $lessonId,

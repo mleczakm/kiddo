@@ -566,12 +566,11 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
     }
 
     #[Test]
-    public function overpaymentIsAcceptedAsPaidWithNoDistinctMarker(): void
+    public function overpaymentIsAcceptedAsPaid(): void
     {
-        // Characterizes current behavior ahead of Stage 6 hardening: an
-        // overpaid transfer is matched and the payment simply becomes
-        // "paid" like an exact-amount transfer would - there is no
-        // admin-review flag or distinct status for the overpaid case yet.
+        // Superseded by overpaymentFlagsThePaymentForReview() below (Stage 6
+        // hardening added the admin-review marker); kept for the status/paidAt
+        // coverage.
         $user = UserAssembler::new()->assemble();
         $this->entityManager->persist($user);
 
@@ -600,6 +599,117 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         static::assertSame(Payment::STATUS_PAID, $payment->getStatus());
         static::assertNotNull($payment->getPaidAt());
         static::assertTrue($payment->getTransfers()->contains($transfer));
+    }
+
+    #[Test]
+    public function overpaymentFlagsThePaymentForReview(): void
+    {
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $paymentCode = new PaymentCode($payment);
+        $reflection = new \ReflectionClass($paymentCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($paymentCode, 'REVW');
+        $this->entityManager->persist($paymentCode);
+
+        $transfer = TransferAssembler::new()->withTitle('REVW paid too much')->withAmount('150.00')->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        $this->messageBus->dispatch(new MatchPaymentForTransfer($transfer));
+
+        $this->entityManager->refresh($payment);
+
+        static::assertSame(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertTrue($payment->isFlaggedForReview());
+    }
+
+    #[Test]
+    public function exactPaymentDoesNotFlagForReview(): void
+    {
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $paymentCode = new PaymentCode($payment);
+        $reflection = new \ReflectionClass($paymentCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($paymentCode, 'EXCT');
+        $this->entityManager->persist($paymentCode);
+
+        $transfer = TransferAssembler::new()->withTitle('EXCT exact amount')->withAmount('100.00')->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        $this->messageBus->dispatch(new MatchPaymentForTransfer($transfer));
+
+        $this->entityManager->refresh($payment);
+
+        static::assertSame(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertFalse($payment->isFlaggedForReview());
+    }
+
+    #[Test]
+    public function aTransferAlreadyAttachedToAPaymentIsNotReprocessed(): void
+    {
+        // Idempotency guard (Stage 6): re-running the matching handler
+        // against an already-resolved transfer (e.g. the past-transfers
+        // rematch sweep) must not re-run title matching at all.
+        $user = UserAssembler::new()->assemble();
+        $this->entityManager->persist($user);
+
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PAID)
+            ->assemble();
+        $this->entityManager->persist($payment);
+
+        $otherPayment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of('100.00', 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->assemble();
+        $this->entityManager->persist($otherPayment);
+
+        $otherCode = new PaymentCode($otherPayment);
+        $reflection = new \ReflectionClass($otherCode);
+        $codeProperty = $reflection->getProperty('code');
+        $codeProperty->setValue($otherCode, 'IDEM');
+        $this->entityManager->persist($otherCode);
+
+        // The transfer's title contains a real code for $otherPayment, but
+        // it's already attached to $payment - matching must not touch it.
+        $transfer = TransferAssembler::new()
+            ->withTitle('IDEM already resolved')
+            ->withAmount('100.00')
+            ->withPayment($payment)
+            ->assemble();
+        $this->entityManager->persist($transfer);
+        $this->entityManager->flush();
+
+        $this->messageBus->dispatch(new MatchPaymentForTransfer($transfer));
+
+        $this->entityManager->refresh($otherPayment);
+        $this->entityManager->refresh($transfer);
+
+        static::assertSame($payment, $transfer->getPayment());
+        static::assertSame(Payment::STATUS_PENDING, $otherPayment->getStatus());
+        static::assertFalse($otherPayment->getTransfers()->contains($transfer));
     }
 
     #[\Override]

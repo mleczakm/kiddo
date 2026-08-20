@@ -21,6 +21,14 @@ final readonly class MatchPaymentForTransferHandler
     public function __invoke(MatchPaymentForTransfer $command): void
     {
         $transfer = $command->transfer;
+
+        if ($transfer->getPayment() !== null) {
+            // Already resolved (e.g. reprocessed via the past-transfers rematch
+            // sweep) - do not re-run matching against a transfer that's already
+            // attached to a payment.
+            return;
+        }
+
         $title = $command->transfer->title;
 
         foreach ($this->tokenizeTitle($title) as $word) {
@@ -31,6 +39,10 @@ final readonly class MatchPaymentForTransferHandler
                 $payment->addTransfer($transfer);
 
                 if ($this->paymentStateMachine->can($payment, 'pay')) {
+                    if ($payment->getAmountPaid()->isGreaterThan($payment->getAmount())) {
+                        $payment->flagForReview();
+                    }
+
                     $this->paymentStateMachine->apply($payment, 'pay');
                 }
 

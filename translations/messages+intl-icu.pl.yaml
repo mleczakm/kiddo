@@ -133,6 +133,9 @@ notifications:
     transfer_not_matched:
       title: Nieprzypisany przelew
       body: 'Przelew <strong>{amount}</strong> od <em>{sender}</em> ({title}) nie został dopasowany.'
+    transfer_requires_review:
+      title: Przelew wymaga przeglądu
+      body: 'Przelew <strong>{amount}</strong> od <em>{sender}</em> ({title}) przekracza próg automatycznego dopasowania.'
     daily_reminder:
       user:
         title: Przypomnienie o zajęciach

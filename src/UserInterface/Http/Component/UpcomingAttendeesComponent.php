@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Service\ActivityLogger;
+use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Entity\ActivityType;
 use App\Entity\Booking;
 use App\Entity\Child;
 use App\Entity\Lesson;
 use App\Entity\Payment;
-use App\Entity\PaymentCode;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Infrastructure\Doctrine\Repository\ChildRepository;
@@ -114,6 +114,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly ActivityLogger $activityLogger,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly PaymentCodeGenerator $paymentCodeGenerator,
     ) {
         $this->week = Clock::get()->now()->format('Y-m-d');
         $this->adminAction = '';
@@ -599,8 +600,7 @@ final class UpcomingAttendeesComponent extends AbstractController
 
         // Ensure PaymentCode exists
         if (!$payment->getPaymentCode()) {
-            $code = new PaymentCode($payment);
-            $this->entityManager->persist($code);
+            $this->paymentCodeGenerator->createFor($payment);
         }
 
         $this->entityManager->flush();

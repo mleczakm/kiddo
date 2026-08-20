@@ -115,6 +115,15 @@ class Payment
     #[ORM\Column(type: 'ulid', nullable: true)]
     private ?Ulid $orderId = null;
 
+    // Stage 6 hardening: set when a payment is marked paid by a transfer (or
+    // cumulative transfers) exceeding the amount owed, so an admin can review
+    // it (e.g. issue a refund of the difference) rather than the overpayment
+    // going unnoticed.
+    #[ORM\Column(options: [
+        'default' => false,
+    ])]
+    private bool $flaggedForReview = false;
+
     /**
      * @var Collection<int, Booking>
      */
@@ -269,6 +278,18 @@ class Payment
     public function setOrderId(?Ulid $orderId): self
     {
         $this->orderId = $orderId;
+
+        return $this;
+    }
+
+    public function isFlaggedForReview(): bool
+    {
+        return $this->flaggedForReview;
+    }
+
+    public function flagForReview(): self
+    {
+        $this->flaggedForReview = true;
 
         return $this;
     }

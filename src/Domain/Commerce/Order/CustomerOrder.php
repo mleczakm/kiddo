@@ -115,4 +115,9 @@ final class CustomerOrder
     {
         return $this->version;
     }
+
+    public function markPaid(): void
+    {
+        $this->status = self::STATUS_PAID;
+    }
 }

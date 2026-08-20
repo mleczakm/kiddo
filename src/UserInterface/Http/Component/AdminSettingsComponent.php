@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Service\Payment\TransferReviewThresholdProvider;
 use App\Entity\FinanceContact;
 use App\Entity\Setting;
 use App\Entity\User;
@@ -32,6 +33,9 @@ class AdminSettingsComponent extends AbstractController
     public ?string $robotsTxtContent = null;
 
     #[LiveProp(writable: true)]
+    public ?int $transferReviewThresholdPln = null;
+
+    #[LiveProp(writable: true)]
     public ?string $adminSearch = null;
 
     #[LiveProp(writable: true)]
@@ -45,6 +49,7 @@ class AdminSettingsComponent extends AbstractController
         private readonly FinanceContactRepository $financeContactRepository,
         private readonly SettingRepository $settingRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly TransferReviewThresholdProvider $transferReviewThreshold,
     ) {}
 
     public function mount(): void
@@ -64,6 +69,8 @@ class AdminSettingsComponent extends AbstractController
         $this->robotsTxtContent = is_array($content) && is_string($content['content'] ?? null)
             ? $content['content']
             : "User-agent: *\nAllow: /\nDisallow: /admin/";
+
+        $this->transferReviewThresholdPln = $this->transferReviewThreshold->get()->getAmount()->toInt();
     }
 
     /**
@@ -255,5 +262,30 @@ class AdminSettingsComponent extends AbstractController
         $this->entityManager->flush();
 
         $this->addFlash('success', 'robots.txt has been saved successfully.');
+    }
+
+    #[LiveAction]
+    public function saveTransferReviewThreshold(): void
+    {
+        if ($this->transferReviewThresholdPln === null || $this->transferReviewThresholdPln < 1) {
+            return;
+        }
+
+        $setting = $this->settingRepository->findOneBy([
+            'key' => TransferReviewThresholdProvider::SETTING_KEY,
+        ]);
+
+        if ($setting === null) {
+            $setting = new Setting();
+            $setting->setKey(TransferReviewThresholdProvider::SETTING_KEY);
+            $this->entityManager->persist($setting);
+        }
+
+        $setting->setContent([
+            'amount_pln' => $this->transferReviewThresholdPln,
+        ]);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Próg ręcznego przeglądu przelewów został zapisany.');
     }
 }

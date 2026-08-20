@@ -549,6 +549,18 @@ count = 1
 [[issues]]
 file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\CommandHandler\MatchPaymentForTransferHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `App\Application\CommandHandler\MatchPaymentForTransferHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\MatchPaymentForTransferHandler::__invoke`.'
 count = 1
 
@@ -817,6 +829,12 @@ message = 'Potentially unhandled exception `Psr\Cache\InvalidArgumentException` 
 count = 1
 
 [[issues]]
+file = "src/Application/CommandHandler/Notification/TransferRequiresReviewHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Psr\Cache\InvalidArgumentException` in `App\Application\CommandHandler\Notification\TransferRequiresReviewHandler::__invoke`.'
+count = 1
+
+[[issues]]
 file = "src/Application/CommandHandler/SaveTransferHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
@@ -825,25 +843,7 @@ count = 1
 [[issues]]
 file = "src/Application/CommandHandler/SaveTransferHandler.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/SaveTransferHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/SaveTransferHandler.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/SaveTransferHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -988,6 +988,36 @@ count = 1
 file = "src/Application/Service/MoneyInputParser.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\MoneyInputParser::parse`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Payment/PaymentCodeGenerator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Random\RandomException` in `App\Application\Service\Payment\PaymentCodeGenerator::generate`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Payment/PaymentCodeGenerator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\Application\Service\Payment\PaymentCodeGenerator::generateAvailable`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Payment/TransferReviewThresholdProvider.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\Service\Payment\TransferReviewThresholdProvider::get`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Payment/TransferReviewThresholdProvider.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\Service\Payment\TransferReviewThresholdProvider::get`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Payment/TransferReviewThresholdProvider.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\Service\Payment\TransferReviewThresholdProvider::get`.'
 count = 1
 
 [[issues]]
@@ -1443,7 +1473,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:366:13}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:387:13}`.'
 count = 1
 
 [[issues]]
@@ -1461,7 +1491,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:366:13}`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:387:13}`.'
 count = 1
 
 [[issues]]
@@ -1474,12 +1504,6 @@ count = 1
 file = "src/Entity/PaymentCode.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Random\RandomException` in `App\Entity\PaymentCode::generateCode`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/PaymentFactory.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Random\RandomException` in `App\Entity\PaymentFactory::generateCode`.'
 count = 1
 
 [[issues]]
@@ -1936,6 +1960,30 @@ count = 1
 file = "src/Infrastructure/EventSubscriber/BookingWorkflowSubscriber.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Infrastructure\EventSubscriber\BookingWorkflowSubscriber::onBookingCancelled`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentPropagationSubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Infrastructure\EventSubscriber\OrderPaymentPropagationSubscriber::onPaymentCompleted`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentPropagationSubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Infrastructure\EventSubscriber\OrderPaymentPropagationSubscriber::onPaymentCompleted`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentPropagationSubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Infrastructure\EventSubscriber\OrderPaymentPropagationSubscriber::onPaymentCompleted`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentPropagationSubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Infrastructure\EventSubscriber\OrderPaymentPropagationSubscriber::onPaymentCompleted`.'
 count = 1
 
 [[issues]]
@@ -2973,7 +3021,19 @@ count = 1
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\UserInterface\Http\Component\AdminSettingsComponent::mount`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminSettingsComponent::saveRobotsTxt`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminSettingsComponent::saveTransferReviewThreshold`.'
 count = 1
 
 [[issues]]
@@ -4355,18 +4415,6 @@ file = "tests/Application/CommandHandler/RescheduleLessonBookingHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/SaveTransferHandlerTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/SaveTransferHandlerTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 2
 
 [[issues]]
 file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.php"

@@ -18,6 +18,20 @@ transfer:
         - Date: {date}
 
         Please check and match this transfer manually in the admin panel.
+    requires_review:
+      subject: 'Large Transfer Requires Review'
+      content: |
+        Hello,
+
+        We have received a transfer above the automatic matching threshold that requires manual review.
+
+        Transfer details:
+        - Amount: {amount}
+        - Sender: {sender}
+        - Title: {title}
+        - Date: {date}
+
+        Please check and match this transfer manually in the admin panel.
 
 # Payment Notifications
 payment:

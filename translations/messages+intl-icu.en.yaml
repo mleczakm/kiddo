@@ -179,6 +179,9 @@ notifications:
     transfer_not_matched:
       title: Unmatched transfer
       body: 'Transfer <strong>{amount}</strong> from <em>{sender}</em> ({title}) was not matched.'
+    transfer_requires_review:
+      title: Transfer requires review
+      body: 'Transfer <strong>{amount}</strong> from <em>{sender}</em> ({title}) exceeds the automatic matching threshold.'
     daily_reminder:
       user:
         title: Workshop reminder

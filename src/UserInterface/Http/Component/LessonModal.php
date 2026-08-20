@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\AddBooking;
+use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Payment;
-use App\Entity\PaymentCode;
-use App\Entity\PaymentFactory;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Infrastructure\Doctrine\Repository\ChildRepository;
@@ -114,6 +113,7 @@ class LessonModal extends AbstractController
         private readonly PaymentCodeRepository $paymentCodeRepository,
         private readonly PaymentRepository $paymentRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly PaymentCodeGenerator $paymentCodeGenerator,
     ) {}
 
     public function mount(): void
@@ -338,7 +338,7 @@ class LessonModal extends AbstractController
 
             $selected = $this->lesson->getMatchingTicketOption($selectedTicketType);
 
-            $paymentCode = new PaymentFactory()->generateCode();
+            $paymentCode = $this->paymentCodeGenerator->generateAvailable();
 
             $this->bus->dispatch(new AddBooking(
                 userId: $userId,
@@ -509,9 +509,7 @@ class LessonModal extends AbstractController
 
         $paymentCode = $payment->getPaymentCode();
         if ($paymentCode === null) {
-            $paymentCode = new PaymentCode($payment);
-            $this->entityManager->persist($paymentCode);
-            $this->entityManager->flush();
+            $paymentCode = $this->paymentCodeGenerator->createFor($payment);
         }
 
         $this->resumedBookingId = $bookingId;

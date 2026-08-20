@@ -54,6 +54,20 @@ transfer:
         - Data: {date}
 
         Prosimy o ręczne sprawdzenie i dopasowanie przelewu w panelu administracyjnym.
+    requires_review:
+      subject: 'Duży przelew wymaga przeglądu'
+      content: |
+        Dzień dobry,
+
+        Otrzymaliśmy przelew przekraczający próg automatycznego dopasowania i wymaga on ręcznego przeglądu.
+
+        Szczegóły przelewu:
+        - Kwota: {amount}
+        - Nadawca: {sender}
+        - Tytuł: {title}
+        - Data: {date}
+
+        Prosimy o ręczne sprawdzenie i dopasowanie przelewu w panelu administracyjnym.
 
 payment:
   notification:

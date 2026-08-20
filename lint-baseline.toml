@@ -247,6 +247,12 @@ message = "Use of the `empty` construct."
 count = 1
 
 [[issues]]
+file = "src/Application/CommandHandler/Notification/TransferRequiresReviewHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Application/CommandHandler/SendReservationNotificationHandler.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
