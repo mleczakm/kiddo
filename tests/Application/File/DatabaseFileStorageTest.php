@@ -25,6 +25,7 @@ final class DatabaseFileStorageTest extends KernelTestCase
 
     private DatabaseFileStorage $storage;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

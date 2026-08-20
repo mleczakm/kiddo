@@ -8,6 +8,7 @@ use App\Entity\MenuHookLinkTarget;
 use App\Repository\LessonMetadataRepository;
 use App\Repository\MenuHookLinkRepository;
 use App\Repository\PostRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
@@ -20,11 +21,13 @@ final class MenuHookExtension extends AbstractExtension
         private readonly PostRepository $postRepository,
         private readonly LessonMetadataRepository $lessonMetadataRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Security $security,
     ) {}
 
     /**
      * @return list<TwigFunction>
      */
+    #[\Override]
     public function getFunctions(): array
     {
         return [
@@ -37,6 +40,9 @@ final class MenuHookExtension extends AbstractExtension
      * Filters out unresolvable targets (unpublished posts, missing workshops, invalid URLs).
      *
      * @return list<array{label: string, url: string}>
+     * @throws \UnexpectedValueException
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function linksFor(string $slotKey): array
     {
@@ -50,7 +56,6 @@ final class MenuHookExtension extends AbstractExtension
                 MenuHookLinkTarget::URL => $link->getTarget(),
                 MenuHookLinkTarget::POST => $this->resolvePostUrl($link->getTarget(), $now),
                 MenuHookLinkTarget::WORKSHOP => $this->resolveWorkshopUrl($link->getTarget()),
-                default => null,
             };
 
             if ($url !== null) {
@@ -71,6 +76,11 @@ final class MenuHookExtension extends AbstractExtension
             return null;
         }
 
+        $isStaff = $this->security->isGranted('ROLE_HOST');
+        if (!$post->isVisibleTo($this->security->getUser() !== null, $isStaff)) {
+            return null;
+        }
+
         try {
             return $this->urlGenerator->generate(
                 'post_by_slug',
@@ -82,6 +92,10 @@ final class MenuHookExtension extends AbstractExtension
         }
     }
 
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     private function resolveWorkshopUrl(string $workshopSlug): ?string
     {
         if (!$this->lessonMetadataRepository->slugExists($workshopSlug)) {

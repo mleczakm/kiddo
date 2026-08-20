@@ -30,6 +30,10 @@ final class PostInlineImageUploadAction extends AbstractController
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
+    /**
+     * @throws \DomainException
+     * @throws \LogicException
+     */
     #[Route(
         '/admin/tresci/{id}/inline-image',
         name: 'app_admin_post_inline_image_upload',

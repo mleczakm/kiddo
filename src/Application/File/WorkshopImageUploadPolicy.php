@@ -14,6 +14,7 @@ final readonly class WorkshopImageUploadPolicy
     private FileUploadPolicy $imagePolicy;
     private FileUploadPolicy $videoPolicy;
 
+    /** @throws \InvalidArgumentException */
     public function __construct()
     {
         $this->imagePolicy = new FileUploadPolicy(

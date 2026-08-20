@@ -1081,6 +1081,36 @@ message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exceptio
 count = 1
 
 [[issues]]
+file = "src/Application/File/DatabaseFileStorage.php"
+code = "deprecated-function"
+message = "Call to deprecated function: `finfo_close`."
+count = 1
+
+[[issues]]
+file = "src/Application/File/DatabaseFileStorage.php"
+code = "possibly-false-argument"
+message = "Argument #1 of function `file_get_contents` is possibly `false`, but parameter type `string` does not accept it."
+count = 1
+
+[[issues]]
+file = "src/Application/File/FileUploadPolicy.php"
+code = "match-arm-always-true"
+message = "This match arm is always true, making subsequent arms unreachable."
+count = 3
+
+[[issues]]
+file = "src/Application/File/FileUploadPolicy.php"
+code = "unreachable-match-default-arm"
+message = "This default arm is unreachable."
+count = 3
+
+[[issues]]
+file = "src/Application/File/OrphanFileCleanupService.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
 file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\Newsletter\NewsletterSubscriptionManager::applyTransition`.'
@@ -1096,6 +1126,30 @@ count = 1
 file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\Newsletter\NewsletterSubscriptionManager::applyTransition`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/InlineAttachmentReconciler.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/InlineAttachmentReconciler.php"
+code = "mixed-operand"
+message = "Left operand in `&&` operation has `mixed` type."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/InlineAttachmentReconciler.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `App\Application\Service\InlineAttachmentReconciler::walkContentNodes`: expected `list<array<string, mixed>>`, but possibly received `array<array-key, mixed>`.'
+count = 2
+
+[[issues]]
+file = "src/Application/Service/InlineAttachmentReconciler.php"
+code = "reference-to-undefined-variable"
+message = "Reference created from a previously undefined variable `$matches`."
 count = 1
 
 [[issues]]
@@ -1181,6 +1235,24 @@ file = "src/Application/Service/PlatformBillingService.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\Service\PlatformBillingService::getPastDue`.'
 count = 1
+
+[[issues]]
+file = "src/Application/Service/PostFormHandler.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/PostFormHandler.php"
+code = "redundant-type-comparison"
+message = "Redundant condition: variable `$post->files` is already known to be `=non-empty-countable`."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/RequestArrayField.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 2
 
 [[issues]]
 file = "src/Application/Service/TransferMoneyParser.php"
@@ -2773,6 +2845,24 @@ message = 'Potentially unhandled exception `Symfony\Component\HttpKernel\Excepti
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Admin/PostInlineImageUploadAction.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #3 of `App\Application\File\FileStorageInterface::store`: expected `App\Entity\User|null`, but provided type `Symfony\Component\Security\Core\User\UserInterface|null` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Admin/PostInlineImageUploadAction.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Application\File\FileStorageInterface::store`: expected `Symfony\Component\HttpFoundation\File\UploadedFile`, but found `truthy-mixed`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Admin/PostInlineImageUploadAction.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Admin/ScheduleController.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Admin\ScheduleController::index`.'
@@ -3667,6 +3757,30 @@ message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exce
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/FileAction.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `App\UserInterface\Http\FileAction::sanitizeFilename`: expected `string`, but found `array<array-key, string>|null|string`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/FileAction.php"
+code = "nullable-return-statement"
+message = 'Function `App\UserInterface\Http\FileAction::sanitizeFilename` is declared to return `string` but possibly returns a nullable value (inferred as `array<array-key, string>|null|string`).'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/FileAction.php"
+code = "possibly-null-argument"
+message = "Argument #3 of function `preg_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/FileAction.php"
+code = "unused-parameter"
+message = "Parameter `$safeName` is never used."
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/LlmTxtController.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\UserInterface\Http\LlmTxtController::index`.'
@@ -3724,12 +3838,6 @@ count = 1
 file = "src/UserInterface/Http/WorkshopImageAction.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\UserInterface\Http\WorkshopImageAction::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/WorkshopImageAction.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\UserInterface\Http\WorkshopImageAction::rangeResponse`.'
 count = 1
 
 [[issues]]
@@ -4255,6 +4363,48 @@ message = "Attempting to call a method on `null`."
 count = 1
 
 [[issues]]
+file = "tests/Application/File/DatabaseFileStorageTest.php"
+code = "possibly-false-argument"
+message = "Argument #1 of function `file_put_contents` is possibly `false`, but parameter type `string` does not accept it."
+count = 1
+
+[[issues]]
+file = "tests/Application/File/DatabaseFileStorageTest.php"
+code = "possibly-false-argument"
+message = "Argument #1 of function `filesize` is possibly `false`, but parameter type `string` does not accept it."
+count = 1
+
+[[issues]]
+file = "tests/Application/File/DatabaseFileStorageTest.php"
+code = "possibly-false-argument"
+message = 'Argument #1 of method `Symfony\Component\HttpFoundation\File\UploadedFile::__construct` is possibly `false`, but parameter type `string` does not accept it.'
+count = 1
+
+[[issues]]
+file = "tests/Application/File/DatabaseFileStorageTest.php"
+code = "possibly-false-operand"
+message = "Possibly false left operand used in string concatenation (type `false|string`)."
+count = 1
+
+[[issues]]
+file = "tests/Application/File/DatabaseFileStorageTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$storage` (App\Application\File\DatabaseFileStorage).'
+count = 1
+
+[[issues]]
+file = "tests/Application/File/OrphanFileCleanupServiceTest.php"
+code = "deprecated-method"
+message = "Call to deprecated method: `ReflectionProperty::setAccessible`."
+count = 1
+
+[[issues]]
+file = "tests/Application/File/OrphanFileCleanupServiceTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$service` (App\Application\File\OrphanFileCleanupService).'
+count = 1
+
+[[issues]]
 file = "tests/Application/Service/ActivityLoggerTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
@@ -4510,7 +4660,7 @@ count = 1
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
-count = 5
+count = 6
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
@@ -4534,7 +4684,7 @@ count = 2
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `iterator_to_array`: expected `Traversable<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>|array<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>`, but found `mixed`."
-count = 3
+count = 4
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
@@ -4575,14 +4725,14 @@ count = 2
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "mixed-return-statement"
-message = "Could not infer a precise return type for function `{closure:tests/Functional/Search/AdminGlobalSearchTest.php:67:34}`. Saw type `mixed`."
+message = "Could not infer a precise return type for function `{closure:tests/Functional/Search/AdminGlobalSearchTest.php:68:34}`. Saw type `mixed`."
 count = 1
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 5
+count = 6
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
@@ -5201,6 +5351,12 @@ file = "tests/UserInterface/Http/Admin/LessonsControllerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 10
+
+[[issues]]
+file = "tests/UserInterface/Http/Admin/PostsControllerFileUploadTest.php"
+code = "possibly-false-operand"
+message = "Possibly false left operand used in string concatenation (type `false|string`)."
+count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AddUserModalTest.php"

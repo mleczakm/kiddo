@@ -463,6 +463,18 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
+file = "src/Entity/Post.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Entity/Post.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
 file = "src/Entity/Series.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."

@@ -17,6 +17,7 @@ final readonly class DatabaseFileStorage implements FileStorageInterface
     ) {}
 
     /** @throws InvalidArgumentException */
+    #[\Override]
     public function store(UploadedFile $upload, FileUploadPolicy $policy, ?User $uploadedBy = null): File
     {
         $originalName = \basename($upload->getClientOriginalName());
@@ -44,6 +45,7 @@ final readonly class DatabaseFileStorage implements FileStorageInterface
     }
 
     /** @throws InvalidArgumentException */
+    #[\Override]
     public function read(File $file): string
     {
         $data = $file->getData();
@@ -55,6 +57,7 @@ final readonly class DatabaseFileStorage implements FileStorageInterface
         return $decoded;
     }
 
+    #[\Override]
     public function delete(File $file): void
     {
         $this->em->remove($file);

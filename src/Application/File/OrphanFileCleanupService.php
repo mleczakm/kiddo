@@ -49,6 +49,9 @@ final readonly class OrphanFileCleanupService
 
     /**
      * Count orphaned files (for diagnostics/monitoring).
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function countOrphans(): int
     {
@@ -66,6 +69,9 @@ final readonly class OrphanFileCleanupService
 
     /**
      * Count files eligible for cleanup (orphaned + old enough).
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function countEligibleForCleanup(): int
     {

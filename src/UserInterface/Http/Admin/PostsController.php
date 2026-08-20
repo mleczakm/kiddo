@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Admin;
 
 use App\Application\Service\PostFormHandler;
+use App\Entity\MenuHookLink;
+use App\Entity\MenuHookSlot;
 use App\Entity\Post;
 use App\Entity\PostStatus;
+use App\Entity\PostVisibility;
 use App\Entity\User;
+use App\Repository\MenuHookLinkRepository;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +29,7 @@ final class PostsController extends AbstractController
         private readonly PostFormHandler $formHandler,
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $postRepository,
+        private readonly MenuHookLinkRepository $menuHookLinkRepository,
     ) {}
 
     /** @throws \UnexpectedValueException */
@@ -151,8 +156,11 @@ final class PostsController extends AbstractController
             throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
+        $user = $this->getUser();
+        \assert($user instanceof User, 'A content manager must be authenticated.');
+
         try {
-            $this->formHandler->save($request, $post, $this->getUser());
+            $this->formHandler->save($request, $post, $user);
         } catch (\InvalidArgumentException $exception) {
             $this->addFlash('error', $exception->getMessage());
             return false;
@@ -169,7 +177,9 @@ final class PostsController extends AbstractController
     private function applyPublishIntent(Request $request, Post $post): void
     {
         $publishedAt = $request->request->getString('publishedAt');
-        $when = $publishedAt === '' ? Clock::get()->now() : \DateTimeImmutable::createFromFormat('Y-m-d\TH:i', $publishedAt);
+        $when = $publishedAt === ''
+            ? Clock::get()->now()
+            : \DateTimeImmutable::createFromFormat('Y-m-d\TH:i', $publishedAt);
 
         if ($when === false) {
             $this->addFlash('error', 'Podaj poprawną datę i godzinę publikacji. Artykuł został zapisany jako szkic.');
@@ -179,12 +189,28 @@ final class PostsController extends AbstractController
         $post->publishAt($when);
     }
 
+    /** @throws \UnexpectedValueException */
     private function renderForm(Post $post, bool $isNew): Response
     {
+        $hookSlots = [];
+        foreach (MenuHookSlot::cases() as $slot) {
+            $hookSlots[] = ['key' => $slot->value, 'label' => $slot->label()];
+        }
+
+        $selectedHookSlots = $isNew
+            ? []
+            : array_map(
+                static fn(MenuHookLink $link): string => $link->getSlotKey(),
+                $this->menuHookLinkRepository->findForPostSlug($post->slug),
+            );
+
         return $this->render('admin/posts/edit.html.twig', [
             'post' => $post,
             'isNew' => $isNew,
             'eyebrowOptions' => $this->postRepository->findDistinctEyebrows(),
+            'visibilityOptions' => PostVisibility::cases(),
+            'hookSlots' => $hookSlots,
+            'selectedHookSlots' => $selectedHookSlots,
         ]);
     }
 }

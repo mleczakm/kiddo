@@ -74,9 +74,7 @@ final class PostsActionTest extends WebTestCase
 
         $client->loginUser($admin);
         $crawler = $client->request('GET', "/admin/tresci/{$postId}/edycja");
-        $form = $crawler
-            ->selectButton('Zapisz szkic')
-            ->form(['contentHtml' => '<p>Updated content</p>']);
+        $form = $crawler->selectButton('Zapisz zmiany')->form(['contentHtml' => '<p>Updated content</p>']);
         $client->submit($form);
         static::assertResponseRedirects();
 

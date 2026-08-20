@@ -13,6 +13,7 @@ use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
+use App\Entity\Post;
 use App\Entity\User;
 use App\Infrastructure\Search\SearchResultHydrator;
 use App\UserInterface\Http\Component\AdminGlobalSearchComponent;
@@ -125,6 +126,32 @@ final class AdminGlobalSearchTest extends WebTestCase
         static::assertStringContainsString('/admin/zajecia/' . $lesson->getId(), $lessonHtml);
         static::assertStringContainsString('data-search-result-icon="lesson"', $lessonHtml);
         static::assertStringContainsString('bg-indigo-100 text-indigo-700', $lessonHtml);
+    }
+
+    public function testSearchFindsArticleByTitleAndLinksToItsEditPage(): void
+    {
+        $needle = 'Ocarina' . bin2hex(random_bytes(4));
+        $author = new User(mb_strtolower($needle) . '-author@example.test', $needle . ' Author');
+        $post = new Post($needle . ' Guide', $author);
+        $this->entityManager->persist($author);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        $search = self::getContainer()->get(GlobalSearchQuery::class);
+        /** @var list<SearchReference> $references */
+        $references = array_values(iterator_to_array($search->search($needle)));
+
+        static::assertNotEmpty($references);
+        static::assertTrue(static::contains($references, SearchType::Post, $post->getId()->toRfc4122()));
+
+        $this->browser->loginUser($this->admin);
+        $component = $this->createLiveComponent(AdminGlobalSearchComponent::class, client: $this->browser);
+        $component->set('query', $needle);
+        $html = $component->render()->toString();
+
+        static::assertStringContainsString('data-search-result-icon="post"', $html);
+        static::assertStringContainsString('/admin/tresci/' . (string) $post->getId() . '/edycja', $html);
+        static::assertStringContainsString('Szkic', $html);
     }
 
     public function testAdminTourIncludesGlobalSearchStep(): void

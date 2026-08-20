@@ -3,7 +3,7 @@
     <span class="absolute inset-y-0 left-3 flex items-center text-slate-400 pointer-events-none">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
     </span>
-    <input id="admin-global-search" type="search" placeholder="Szukaj klientów, rezerwacji lub zajęć... (Ctrl+K)"
+    <input id="admin-global-search" type="search" placeholder="Szukaj klientów, rezerwacji, zajęć lub artykułów... (Ctrl+K)"
            aria-label="Szukaj"
            value="{{ query }}" data-model="debounce(250)|query" data-admin-search-target="input"
            data-action="focus->admin-search#open keydown->admin-search#keydown"
@@ -27,6 +27,8 @@
                         {% set icon_class = 'bg-amber-100 text-amber-700' %}
                     {% elseif result.reference.type.value == 'payment' %}
                         {% set icon_class = 'bg-emerald-100 text-emerald-700' %}
+                    {% elseif result.reference.type.value == 'post' %}
+                        {% set icon_class = 'bg-rose-100 text-rose-700' %}
                     {% else %}
                         {% set icon_class = 'bg-violet-100 text-violet-700' %}
                     {% endif %}
@@ -41,6 +43,8 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg>
                         {% elseif result.reference.type.value == 'payment' %}
                             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+                        {% elseif result.reference.type.value == 'post' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
                         {% else %}
                             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
                         {% endif %}

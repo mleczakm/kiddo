@@ -28,6 +28,7 @@ final readonly class PostFileManager
      * @param list<array{id: string, role: string, position: int, altText: ?string, caption: ?string, downloadName: ?string}> $submitted
      * @throws InvalidArgumentException
      * @throws \DomainException
+     * @throws \ValueError
      */
     public function reconcileAttachments(Post $post, array $submitted): void
     {
@@ -89,6 +90,8 @@ final readonly class PostFileManager
 
     /**
      * Remove an attachment from a post without deleting the underlying file.
+     *
+     * @throws InvalidArgumentException
      */
     public function detachFile(Post $post, PostFile $postFile): void
     {

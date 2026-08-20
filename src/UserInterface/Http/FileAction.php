@@ -25,6 +25,12 @@ final class FileAction extends AbstractController
         private readonly FileVisibilityChecker $visibility,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[Route(
         '/pliki/{id}/{safeName}',
         name: 'stored_file',
@@ -55,7 +61,13 @@ final class FileAction extends AbstractController
         if ($isVideo && $this->requestsRange($request)) {
             $data = $this->storage->read($file);
 
-            return $this->rangeResponse($request, $data, $file->getMimeType(), $etag, $isPublic ? $file->getCreatedAt() : null);
+            return $this->rangeResponse(
+                $request,
+                $data,
+                $file->getMimeType(),
+                $etag,
+                $isPublic ? $file->getCreatedAt() : null,
+            );
         }
 
         $response = new Response('', 200, [
@@ -81,8 +93,13 @@ final class FileAction extends AbstractController
     }
 
     /** Returns true when the response is already complete (304) and delivery should stop there. */
-    private function applyCachePolicy(Response $response, Request $request, File $file, bool $isPublic, ?string $etag): bool
-    {
+    private function applyCachePolicy(
+        Response $response,
+        Request $request,
+        File $file,
+        bool $isPublic,
+        ?string $etag,
+    ): bool {
         if (!$isPublic) {
             $response->headers->set('Cache-Control', 'private, no-store');
             return false;

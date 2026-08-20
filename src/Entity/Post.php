@@ -57,6 +57,9 @@ class Post
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     public ?\DateTimeImmutable $publishedAt = null;
 
+    #[ORM\Column(type: 'string', length: 20, enumType: PostVisibility::class)]
+    public PostVisibility $visibility = PostVisibility::PUBLIC;
+
     public function __construct(string $title, User $author, ?string $slug = null)
     {
         $this->id = new Ulid();
@@ -136,6 +139,26 @@ class Post
     {
         $this->status = PostStatus::DRAFT;
         $this->touch();
+    }
+
+    public function setVisibility(PostVisibility $visibility): void
+    {
+        $this->visibility = $visibility;
+        $this->touch();
+    }
+
+    /**
+     * Whether a viewer in this auth state may see the post — used both to
+     * gate the public article page and to decide whether a menu hook link
+     * pointing at it should render at all.
+     */
+    public function isVisibleTo(bool $isAuthenticated, bool $isStaff): bool
+    {
+        return match ($this->visibility) {
+            PostVisibility::PUBLIC => true,
+            PostVisibility::LOGGED_IN => $isAuthenticated,
+            PostVisibility::STAFF_ONLY => $isStaff,
+        };
     }
 
     public function markUpdated(): void

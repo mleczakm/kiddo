@@ -6,6 +6,7 @@
     { target: 'global-search', key: 'global_search' },
     { target: 'nav-workshops', key: 'nav_workshops' },
     { target: 'add-workshop', key: 'add_workshop' },
+    { target: 'nav-posts', key: 'nav_posts' },
     { target: 'nav-bookings', key: 'nav_bookings' },
     { target: 'booking-actions', key: 'booking_actions' },
     { target: 'nav-users', key: 'nav_users' },
@@ -225,6 +226,14 @@
                             {% elseif current_route == 'app_admin_transfers' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Przelewy / Finanse</span>
+                                </li>
+                            {% elseif current_route in ['app_admin_posts', 'app_admin_post_edit', 'app_admin_post_new'] %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Treści</span>
+                                </li>
+                            {% elseif current_route == 'app_admin_menu_hooks' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    <span class="font-bold text-slate-700">Menu — linki</span>
                                 </li>
                             {% elseif current_route == 'app_admin_settings' %}
                                 <li class="inline-flex items-center gap-1.5">

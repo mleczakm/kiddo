@@ -84,8 +84,9 @@ final readonly class PostEditor
      */
     private function policyUsageFor(UploadedFile $upload): string
     {
-        $mimeType = mime_content_type($upload->getRealPath());
-        $mimeType = $mimeType !== false && $mimeType !== '' ? $mimeType : (string) $upload->getClientMimeType();
+        $realPath = $upload->getRealPath();
+        $mimeType = $realPath !== false ? mime_content_type($realPath) : false;
+        $mimeType = $mimeType !== false && $mimeType !== '' ? $mimeType : $upload->getClientMimeType();
 
         return match (true) {
             str_starts_with($mimeType, 'video/') => 'article_video',
@@ -100,6 +101,8 @@ final readonly class PostEditor
      * @param Post $post
      * @param list<array{id: string, role: string, position: int, altText: ?string, caption: ?string, downloadName: ?string}> $submitted
      * @throws \InvalidArgumentException
+     * @throws \DomainException
+     * @throws \ValueError
      */
     public function reconcileAttachments(Post $post, array $submitted): void
     {

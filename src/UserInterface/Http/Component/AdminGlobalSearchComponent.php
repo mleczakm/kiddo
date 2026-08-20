@@ -61,6 +61,9 @@ final class AdminGlobalSearchComponent extends AbstractController
             SearchType::Payment, SearchType::Transfer => $this->urlGenerator->generate('app_admin_transfers', [
                 'search' => $reference->id,
             ]),
+            SearchType::Post => $this->urlGenerator->generate('app_admin_post_edit', [
+                'id' => Ulid::fromString($reference->id)->toBase32(),
+            ]),
         };
     }
 

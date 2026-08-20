@@ -15,17 +15,26 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'files:cleanup-orphans', description: 'Remove unreferenced files older than the safety window')]
 final class CleanupOrphanFilesCommand extends Command
 {
+    /** @throws \Symfony\Component\Console\Exception\LogicException */
     public function __construct(
         private readonly OrphanFileCleanupService $cleanupService,
     ) {
         parent::__construct();
     }
 
+    /** @throws \Symfony\Component\Console\Exception\InvalidArgumentException */
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Count orphans without deleting');
     }
 
+    /**
+     * @throws \Symfony\Component\Console\Exception\InvalidArgumentException
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

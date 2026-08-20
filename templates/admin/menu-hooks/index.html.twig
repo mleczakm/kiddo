@@ -5,8 +5,7 @@
 {% block body %}
 <div class="mx-auto max-w-4xl space-y-6">
     <div>
-        <a href="{{ path('app_admin_posts') }}" class="text-sm font-semibold text-indigo-600">← Artykuły</a>
-        <h1 class="mt-2 text-3xl font-black text-slate-900">Menu — linki</h1>
+        <h1 class="text-3xl font-black text-slate-900">Menu — linki</h1>
         <p class="mt-1 text-sm text-slate-500">Dodaj linki do artykułów, warsztatów lub stron zewnętrznych.</p>
     </div>
 
@@ -23,15 +22,15 @@
 
             <label class="block"><span class="mb-1 block text-sm font-bold">Typ linku</span><select name="targetType" required class="w-full rounded-xl border border-slate-300 px-4 py-3">
                 <option value="">— Wybierz —</option>
-                <option value="post">Artykuł</option>
-                <option value="workshop">Warsztat</option>
-                <option value="url">Adres URL</option>
+                <option value="post" {{ app.request.query.get('prefillType') == 'post' ? 'selected' : '' }}>Artykuł</option>
+                <option value="workshop" {{ app.request.query.get('prefillType') == 'workshop' ? 'selected' : '' }}>Warsztat</option>
+                <option value="url" {{ app.request.query.get('prefillType') == 'url' ? 'selected' : '' }}>Adres URL</option>
             </select></label>
         </div>
 
-        <label class="block"><span class="mb-1 block text-sm font-bold">Cel (slug artykułu/warsztatu lub pełny URL)</span><input type="text" name="target" required class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+        <label class="block"><span class="mb-1 block text-sm font-bold">Cel (slug artykułu/warsztatu lub pełny URL)</span><input type="text" name="target" required value="{{ app.request.query.get('prefillTarget') }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
 
-        <label class="block"><span class="mb-1 block text-sm font-bold">Tekst linku</span><input type="text" name="label" required class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
+        <label class="block"><span class="mb-1 block text-sm font-bold">Tekst linku</span><input type="text" name="label" required value="{{ app.request.query.get('prefillLabel') }}" class="w-full rounded-xl border border-slate-300 px-4 py-3"></label>
 
         <div class="flex justify-end"><button type="submit" class="rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700">Dodaj link</button></div>
     </form>

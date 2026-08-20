@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Post;
+use App\Entity\PostVisibility;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -42,16 +44,16 @@ final class PostRepository extends ServiceEntityRepository
      *
      * @return list<Post>
      */
-    public function findPublished(\DateTimeImmutable $now, int $limit, int $offset = 0): array
-    {
+    public function findPublished(
+        \DateTimeImmutable $now,
+        int $limit,
+        int $offset,
+        bool $isAuthenticated,
+        bool $isStaff,
+    ): array {
         /** @var list<Post> */
         return $this
-            ->createQueryBuilder('post')
-            ->andWhere('post.status = :status')
-            ->andWhere('post.publishedAt IS NOT NULL')
-            ->andWhere('post.publishedAt <= :now')
-            ->setParameter('status', \App\Entity\PostStatus::PUBLISHED)
-            ->setParameter('now', $now)
+            ->visibleForViewer($this->publishedQueryBuilder($now), $isAuthenticated, $isStaff)
             ->orderBy('post.publishedAt', 'DESC')
             ->setMaxResults($limit)
             ->setFirstResult($offset)
@@ -59,18 +61,44 @@ final class PostRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countPublished(\DateTimeImmutable $now): int
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function countPublished(\DateTimeImmutable $now, bool $isAuthenticated, bool $isStaff): int
     {
         return (int) $this
+            ->visibleForViewer($this->publishedQueryBuilder($now)->select('COUNT(post.id)'), $isAuthenticated, $isStaff)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    private function publishedQueryBuilder(\DateTimeImmutable $now): QueryBuilder
+    {
+        return $this
             ->createQueryBuilder('post')
-            ->select('COUNT(post.id)')
             ->andWhere('post.status = :status')
             ->andWhere('post.publishedAt IS NOT NULL')
             ->andWhere('post.publishedAt <= :now')
             ->setParameter('status', \App\Entity\PostStatus::PUBLISHED)
-            ->setParameter('now', $now)
-            ->getQuery()
-            ->getSingleScalarResult();
+            ->setParameter('now', $now);
+    }
+
+    /**
+     * Restricts a published-posts query to what a viewer in this auth state
+     * may see — kept in lockstep with Post::isVisibleTo().
+     */
+    private function visibleForViewer(QueryBuilder $qb, bool $isAuthenticated, bool $isStaff): QueryBuilder
+    {
+        $visible = [PostVisibility::PUBLIC];
+        if ($isAuthenticated) {
+            $visible[] = PostVisibility::LOGGED_IN;
+        }
+        if ($isStaff) {
+            $visible[] = PostVisibility::STAFF_ONLY;
+        }
+
+        return $qb->andWhere('post.visibility IN (:visible)')->setParameter('visible', $visible);
     }
 
     /**

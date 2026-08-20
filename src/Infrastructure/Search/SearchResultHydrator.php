@@ -72,6 +72,11 @@ final readonly class SearchResultHydrator
                        t.title, NULL, NULL, NULL, NULL, t.amount,
                        to_char(t.transferred_at, 'DD.MM.YYYY HH24:MI')
                 FROM transfer t WHERE t.deleted_at IS NULL
+                UNION ALL
+                SELECT 'post', p2.id::text, p2.title,
+                       p2.eyebrow, u2.name, p2.status, NULL, NULL, NULL,
+                       to_char(p2.updated_at, 'DD.MM.YYYY HH24:MI')
+                FROM post p2 JOIN "user" u2 ON u2.id = p2.author_id
             )
             SELECT d.entity_type AS "type", d.id, d.title, d.part1, d.part2, d.status,
                    d.amount_value, d.amount_currency, d.amount_text, d.timestamp_str
@@ -140,6 +145,12 @@ final readonly class SearchResultHydrator
                         $row['amount_text'],
                     ))
                     : null,
+                $row['timestamp_str'],
+            ],
+            SearchType::Post => [
+                $row['status'] === 'published' ? 'Opublikowany' : 'Szkic',
+                $row['part1'],
+                $row['part2'],
                 $row['timestamp_str'],
             ],
         };

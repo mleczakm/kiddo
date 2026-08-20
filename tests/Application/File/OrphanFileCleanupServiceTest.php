@@ -19,6 +19,7 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
 {
     private OrphanFileCleanupService $service;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

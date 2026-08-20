@@ -490,8 +490,8 @@ class WorkshopEditorComponent extends AbstractController
                 return;
             }
 
-            $policy = new WorkshopImageUploadPolicy();
             try {
+                $policy = new WorkshopImageUploadPolicy();
                 $policy->assertValidUpload($mimeType, $uploadedSize);
             } catch (\InvalidArgumentException $e) {
                 $this->addFlash('error', $e->getMessage());

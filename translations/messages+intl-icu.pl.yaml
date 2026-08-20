@@ -762,6 +762,9 @@ admin:
       add_workshop:
         title: 'Dodawanie zajęć'
         body: 'Ten przycisk otwiera kreator warsztatów — ustawisz informacje, kolor i zdjęcie, harmonogram, ostatni termin cyklu, bilety oraz prowadzących.'
+      nav_posts:
+        title: 'Treści'
+        body: 'Tu piszesz i publikujesz artykuły na bloga — z edytorem, zdjęciami, plikami do pobrania oraz planowaniem publikacji. Gotowy artykuł możesz dodać jako link w menu głównym lub w stopce strony.'
       nav_bookings:
         title: 'Rezerwacje'
         body: 'Wszystkie rezerwacje klientów w jednym miejscu — tu je anulujesz, zmieniasz termin lub dodajesz rezerwację ręcznie w imieniu klienta.'

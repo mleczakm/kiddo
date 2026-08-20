@@ -6,7 +6,7 @@ import { Controller } from '@hotwired/stimulus';
  * immediately — easy to miss otherwise.
  */
 export default class extends Controller {
-    static targets = ['scheduleInput', 'warning'];
+    static targets = ['scheduleInput', 'warning', 'publishButton'];
 
     connect() {
         this.checkFutureDate();
@@ -14,18 +14,19 @@ export default class extends Controller {
 
     checkFutureDate() {
         const value = this.scheduleInputTarget.value;
-        if (!value) {
+        const isFuture = value !== '' && !Number.isNaN(new Date(value).getTime()) && new Date(value).getTime() > Date.now();
+
+        if (this.hasPublishButtonTarget) {
+            const { labelPublish, labelSchedule } = this.publishButtonTarget.dataset;
+            this.publishButtonTarget.textContent = isFuture ? labelSchedule : labelPublish;
+        }
+
+        if (!isFuture) {
             this.warningTarget.classList.add('hidden');
             return;
         }
 
-        const chosen = new Date(value);
-        if (Number.isNaN(chosen.getTime()) || chosen.getTime() <= Date.now()) {
-            this.warningTarget.classList.add('hidden');
-            return;
-        }
-
-        const formatted = chosen.toLocaleString('pl-PL', { dateStyle: 'medium', timeStyle: 'short' });
+        const formatted = new Date(value).toLocaleString('pl-PL', { dateStyle: 'medium', timeStyle: 'short' });
         this.warningTarget.textContent = `Artykuł będzie publicznie dostępny dopiero od ${formatted}.`;
         this.warningTarget.classList.remove('hidden');
     }

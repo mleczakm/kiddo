@@ -14,7 +14,10 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final readonly class RequestArrayField
 {
-    /** @return list<string> */
+    /**
+     * @return list<string>
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     */
     public static function list(Request $request, string $key): array
     {
         $value = $request->request->all()[$key] ?? [];
@@ -22,10 +25,13 @@ final readonly class RequestArrayField
             return [];
         }
 
-        return array_map(static fn(mixed $v): string => (string) $v, $value);
+        return array_values(array_map(static fn(mixed $v): string => (string) $v, $value));
     }
 
-    /** @return array<string, string> */
+    /**
+     * @return array<string, string>
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     */
     public static function map(Request $request, string $key): array
     {
         $value = $request->request->all()[$key] ?? [];

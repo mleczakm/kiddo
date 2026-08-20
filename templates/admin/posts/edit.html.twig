@@ -1,30 +1,21 @@
 {% extends 'admin/base.html.twig' %}
 
+{% set sub_breadcrumbs = [
+    { label: isNew ? 'Nowy artykuł' : post.body.title }
+] %}
+
 {% block title %}{{ isNew ? 'Nowy artykuł' : 'Edycja artykułu' }} | Kiddo Admin{% endblock %}
 
 {% block body %}
-<div class="mx-auto max-w-4xl space-y-6" data-controller="post-editor-form">
-    <div class="flex items-center justify-between gap-4">
-        <div>
-            <a href="{{ path('app_admin_posts') }}" class="text-sm font-semibold text-indigo-600">← Artykuły</a>
-            {% if not isNew %}
-                <p class="mt-2 text-sm text-slate-500">
-                    Status:
-                    {% if post.isScheduled %}Zaplanowano na {{ post.publishedAt|date('Y-m-d H:i') }}
-                    {% elseif post.isPublished %}Opublikowany
-                    {% else %}Szkic
-                    {% endif %}
-                </p>
-            {% endif %}
-        </div>
-        {% if not isNew %}
-            <p data-post-editor-form-target="warning" class="hidden text-xs font-semibold text-amber-600">Podgląd pokazuje ostatnio zapisaną wersję — masz niezapisane zmiany.</p>
-        {% endif %}
-    </div>
+<div class="mx-auto max-w-6xl space-y-4" data-controller="post-editor-form">
+    {% if not isNew %}
+        <p data-post-editor-form-target="warning" class="hidden text-xs font-semibold text-amber-600">Podgląd pokazuje ostatnio zapisaną wersję — masz niezapisane zmiany.</p>
+    {% endif %}
 
-    <form method="post" enctype="multipart/form-data" data-post-editor-form-target="form" class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form method="post" enctype="multipart/form-data" data-post-editor-form-target="form" class="lg:grid lg:grid-cols-3 lg:items-start lg:gap-6">
         <input type="hidden" name="_token" value="{{ csrf_token('edit_post') }}">
 
+        <div class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
         <div data-controller="post-title-slug">
             <label class="mb-1 block text-sm font-bold">Tytuł artykułu</label>
             <div class="flex items-start justify-between gap-3">
@@ -166,24 +157,72 @@
                 <label class="block"><span class="mb-1 block text-sm font-bold">Opis social (do 200 znaków)</span><textarea name="socialDescription" maxlength="200" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3">{{ post.seo.socialDescription }}</textarea></label>
             </div>
         </details>
+        </div>
 
-        <div data-controller="post-publish-actions" class="space-y-3 border-t border-slate-200 pt-5">
-            <div class="flex flex-wrap items-end justify-between gap-4">
+        <aside class="mt-6 space-y-4 lg:col-span-1 lg:mt-0">
+            <div data-controller="post-publish-actions" class="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div>
+                    <span class="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500">Status</span>
+                    {% if not isNew %}
+                        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold {{ post.isPublished ? 'bg-emerald-100 text-emerald-700' : (post.isScheduled ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-600') }}">
+                            <span class="h-1.5 w-1.5 rounded-full {{ post.isPublished ? 'bg-emerald-500' : (post.isScheduled ? 'bg-sky-500' : 'bg-slate-400') }}"></span>
+                            {% if post.isScheduled %}Zaplanowano na {{ post.publishedAt|date('d.m.Y H:i') }}
+                            {% elseif post.isPublished %}Opublikowany
+                            {% else %}Szkic
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+                            <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                            Nowy szkic
+                        </span>
+                    {% endif %}
+                </div>
+
                 <label class="block">
-                    <span class="mb-1 block text-sm font-bold">Planowana publikacja</span>
+                    <span class="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500">Widoczność</span>
+                    <select name="visibility" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+                        {% for option in visibilityOptions %}
+                            <option value="{{ option.value }}" {{ post.visibility == option ? 'selected' : '' }}>{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="block">
+                    <span class="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500">Planowana publikacja</span>
                     <input type="datetime-local" name="publishedAt"
                            data-post-publish-actions-target="scheduleInput"
                            data-action="input->post-publish-actions#checkFutureDate"
                            value="{{ post.isScheduled ? post.publishedAt|date('Y-m-d\\TH:i') : '' }}"
-                           class="rounded-xl border border-slate-300 px-4 py-3">
+                           class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
                 </label>
-                <div class="flex items-center gap-3">
-                    <button type="submit" name="intent" value="draft" class="rounded-xl border border-slate-300 px-6 py-3 font-bold text-slate-700 hover:bg-slate-50">Zapisz szkic</button>
-                    <button type="submit" name="intent" value="publish" class="rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700">Zapisz i opublikuj</button>
+
+                <p data-post-publish-actions-target="warning" class="hidden rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800"></p>
+
+                <div class="flex flex-col gap-2 border-t border-slate-200 pt-4">
+                    <button type="submit" name="intent" value="publish" data-post-publish-actions-target="publishButton"
+                            data-label-publish="{{ (not isNew and post.isPublished) ? 'Aktualizuj' : 'Opublikuj' }}"
+                            data-label-schedule="Zaplanuj publikację"
+                            class="w-full rounded-xl bg-indigo-600 px-4 py-3 font-bold text-white hover:bg-indigo-700">{{ (not isNew and post.isPublished) ? 'Aktualizuj' : 'Opublikuj' }}</button>
+                    <button type="submit" name="intent" value="draft" class="w-full rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-700 hover:bg-slate-50">{{ (not isNew and (post.isPublished or post.isScheduled)) ? 'Zapisz zmiany' : 'Zapisz szkic' }}</button>
                 </div>
             </div>
-            <p data-post-publish-actions-target="warning" class="hidden rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800"></p>
-        </div>
+
+            {% if not isNew %}
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div>
+                        <span class="block text-xs font-bold uppercase tracking-wide text-slate-500">Widoczny w menu</span>
+                        <p class="mt-1 text-xs text-slate-500">Wybierz miejsca, w których ma pojawić się link do tego artykułu.</p>
+                    </div>
+                    <select name="hookSlots[]" multiple size="3" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+                        {% for slot in hookSlots %}
+                            <option value="{{ slot.key }}" {{ slot.key in selectedHookSlots ? 'selected' : '' }}>{{ slot.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="text-xs text-slate-400">Przytrzymaj Ctrl/Cmd, aby zaznaczyć kilka.</p>
+                </div>
+            {% endif %}
+        </aside>
     </form>
 </div>
 {% endblock %}

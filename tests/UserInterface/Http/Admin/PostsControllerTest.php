@@ -134,7 +134,7 @@ final class PostsControllerTest extends WebTestCase
         $future = Clock::get()->now()->modify('+1 day');
         $crawler = $client->request('GET', '/admin/tresci/nowa');
         $form = $crawler
-            ->selectButton('Zapisz i opublikuj')
+            ->selectButton('Opublikuj')
             ->form([
                 'title' => 'Scheduled Article',
                 'contentHtml' => '<p>Treść</p>',
@@ -164,7 +164,7 @@ final class PostsControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/admin/tresci/nowa');
         $form = $crawler
-            ->selectButton('Zapisz i opublikuj')
+            ->selectButton('Opublikuj')
             ->form(['title' => 'Immediately Live Article', 'contentHtml' => '<p>Treść</p>']);
         $client->submit($form);
 

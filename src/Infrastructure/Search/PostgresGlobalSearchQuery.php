@@ -72,6 +72,14 @@ final readonly class PostgresGlobalSearchQuery implements GlobalSearchQuery
                         to_char(p.paid_at, 'DD.MM.YYYY'), to_char(p.paid_at, 'DD.MM'))) LIKE :contains
 
             UNION ALL
+            SELECT 'post', p2.id::text,
+                   CASE WHEN lower(p2.title) = :query THEN 6 WHEN lower(p2.slug) = :query THEN 6
+                        WHEN lower(p2.title) LIKE :prefix THEN 4
+                        WHEN lower(COALESCE(p2.eyebrow, '')) LIKE :prefix THEN 3 ELSE 1 END
+            FROM post p2
+            WHERE lower(concat_ws(' ', p2.title, p2.slug, COALESCE(p2.eyebrow, ''), COALESCE(p2.excerpt, ''))) LIKE :contains
+
+            UNION ALL
             SELECT 'transfer', t.id::text,
                    CASE WHEN to_char(t.transferred_at, 'DD.MM') = :query THEN 6
                         WHEN lower(t.sender) = :query OR lower(t.title) = :query THEN 5

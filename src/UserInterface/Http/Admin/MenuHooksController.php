@@ -6,6 +6,7 @@ namespace App\UserInterface\Http\Admin;
 
 use App\Entity\MenuHookLink;
 use App\Entity\MenuHookLinkTarget;
+use App\Entity\MenuHookSlot;
 use App\Repository\MenuHookLinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,13 +24,7 @@ final class MenuHooksController extends AbstractController
         private readonly EntityManagerInterface $em,
     ) {}
 
-    /** Slot keys and their display labels */
-    private const array SLOT_KEYS = [
-        'main_nav_extra' => 'Nav główna — po logowaniu',
-        'main_nav_before_auth' => 'Nav główna — przed zalogowaniem',
-        'footer_links' => 'Stopka strony',
-    ];
-
+    /** @throws \Throwable */
     #[Route('/admin/menu-hooks', name: 'app_admin_menu_hooks', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
@@ -39,12 +34,18 @@ final class MenuHooksController extends AbstractController
 
         $links = $this->repository->findBy([], ['slotKey' => 'ASC', 'position' => 'ASC']);
 
+        $slots = [];
+        foreach (MenuHookSlot::cases() as $slot) {
+            $slots[$slot->value] = $slot->label();
+        }
+
         return $this->render('admin/menu-hooks/index.html.twig', [
-            'slots' => self::SLOT_KEYS,
+            'slots' => $slots,
             'links' => $links,
         ]);
     }
 
+    /** @throws \Throwable */
     #[Route('/admin/menu-hooks/{id}/delete', name: 'app_admin_menu_hook_delete', methods: ['POST'])]
     public function delete(MenuHookLink $link, Request $request): RedirectResponse
     {
@@ -62,6 +63,7 @@ final class MenuHooksController extends AbstractController
         return $this->redirectToRoute('app_admin_menu_hooks');
     }
 
+    /** @throws \Throwable */
     private function handleCreate(Request $request): Response
     {
         if (!$this->isCsrfTokenValid('create_menu_hook', (string) $request->request->get('_token'))) {
@@ -70,11 +72,15 @@ final class MenuHooksController extends AbstractController
 
         try {
             $slotKey = (string) $request->request->get('slotKey');
-            if (!isset(self::SLOT_KEYS[$slotKey])) {
+            if (MenuHookSlot::tryFrom($slotKey) === null) {
                 throw new \InvalidArgumentException('Invalid slot key.');
             }
 
-            $targetType = MenuHookLinkTarget::from((string) $request->request->get('targetType'));
+            $targetType = MenuHookLinkTarget::tryFrom((string) $request->request->get('targetType'));
+            if ($targetType === null) {
+                throw new \InvalidArgumentException('Invalid target type.');
+            }
+
             $target = trim((string) $request->request->get('target'));
             $label = trim((string) $request->request->get('label'));
 
@@ -85,15 +91,13 @@ final class MenuHooksController extends AbstractController
                 throw new \InvalidArgumentException('Label is required.');
             }
 
-            $maxPosition = $this->repository
-                ->createQueryBuilder('m')
-                ->select('MAX(m.position)')
-                ->where('m.slotKey = :slot')
-                ->setParameter('slot', $slotKey)
-                ->getQuery()
-                ->getSingleScalarResult() ?? -1;
-
-            $link = new MenuHookLink($slotKey, (int) $maxPosition + 1, $targetType, $target, $label);
+            $link = new MenuHookLink(
+                $slotKey,
+                $this->repository->nextPositionForSlot($slotKey),
+                $targetType,
+                $target,
+                $label,
+            );
             $this->em->persist($link);
             $this->em->flush();
 

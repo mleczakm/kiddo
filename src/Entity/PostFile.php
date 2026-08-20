@@ -105,6 +105,7 @@ class PostFile
         $this->downloadName = $downloadName ? trim($downloadName) : null;
     }
 
+    /** @throws \InvalidArgumentException */
     public function setPosition(int $position): void
     {
         if ($position < 0) {
@@ -113,6 +114,7 @@ class PostFile
         $this->position = $position;
     }
 
+    /** @throws \DomainException */
     public function setRole(PostFileRole $role): void
     {
         if ($role === PostFileRole::COVER) {

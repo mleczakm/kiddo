@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service;
 
 use App\Entity\Post;
+use App\Entity\PostVisibility;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,14 +21,29 @@ final readonly class PostFormHandler
     public function __construct(
         private PostEditor $editor,
         private PostSeoEditor $seoEditor,
+        private MenuHookLinkReconciler $menuHookLinkReconciler,
     ) {}
 
-    /** @throws \InvalidArgumentException */
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     * @throws \UnexpectedValueException
+     * @throws \ValueError
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     * @throws \Symfony\Component\HttpFoundation\Exception\UnexpectedValueException
+     */
     public function save(Request $request, Post $post, ?User $uploadedBy): void
     {
         $eyebrow = $this->nullableField($request, 'eyebrow');
         $excerpt = $this->nullableField($request, 'excerpt');
         $this->editor->updateEditorial($post, (string) $request->request->get('title'), $eyebrow, $excerpt);
+
+        $visibility = PostVisibility::tryFrom($request->request->getString('visibility'));
+        if ($visibility !== null) {
+            $post->setVisibility($visibility);
+        }
 
         $contentJson = $this->decodeContentJson($request->request->getString('contentJson'));
         $this->editor->updateContent($post, $contentJson, $request->request->getString('contentHtml'));
@@ -58,17 +74,19 @@ final readonly class PostFormHandler
         if (\count($uploads) > 0) {
             $this->editor->attachFiles($post, $uploads, $uploadedBy);
         }
+
+        $this->menuHookLinkReconciler->reconcile($post, RequestArrayField::list($request, 'hookSlots'));
     }
 
-    /** @return list<UploadedFile> */
+    /**
+     * @return list<UploadedFile>
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     */
     private function uploadedFiles(Request $request): array
     {
         $files = $request->files->all('files');
 
-        return array_values(array_filter(
-            \is_array($files) ? $files : [$files],
-            static fn(mixed $file): bool => $file instanceof UploadedFile,
-        ));
+        return array_values(array_filter($files, static fn(mixed $file): bool => $file instanceof UploadedFile));
     }
 
     /** @return array<string, mixed> */
@@ -79,10 +97,20 @@ final readonly class PostFormHandler
         }
 
         $decoded = json_decode($raw, true);
+        if (!\is_array($decoded) || array_is_list($decoded)) {
+            return ['type' => 'doc', 'content' => []];
+        }
 
-        return \is_array($decoded) && !array_is_list($decoded) ? $decoded : ['type' => 'doc', 'content' => []];
+        /** @var array<string, mixed> $decoded */
+        return $decoded;
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     * @throws \ValueError
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     */
     private function reconcileSubmittedFiles(Request $request, Post $post): void
     {
         $fileIds = RequestArrayField::list($request, 'files_id');
@@ -109,6 +137,7 @@ final readonly class PostFormHandler
         }
     }
 
+    /** @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException */
     private function nullableField(Request $request, string $name): ?string
     {
         $value = $request->request->getString($name);
