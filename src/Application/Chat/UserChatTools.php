@@ -6,18 +6,18 @@ namespace App\Application\Chat;
 
 use App\Application\Command\AddBooking;
 use App\Application\Command\Notification\SendVerificationCode;
+use App\Application\Repository\BookingRepositoryInterface;
+use App\Application\Repository\ChildRepositoryInterface;
+use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\NotificationRepositoryInterface;
+use App\Application\Repository\PaymentCodeRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\Child;
 use App\Entity\PaymentFactory;
 use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
-use App\Repository\BookingRepository;
-use App\Repository\ChildRepository;
-use App\Repository\LessonRepository;
-use App\Repository\NotificationRepository;
-use App\Repository\PaymentCodeRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
@@ -35,13 +35,13 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $bus,
-        private LessonRepository $lessonRepository,
-        private BookingRepository $bookingRepository,
-        private ChildRepository $childRepository,
-        private NotificationRepository $notificationRepository,
-        private PaymentCodeRepository $paymentCodeRepository,
+        private LessonRepositoryInterface $lessonRepository,
+        private BookingRepositoryInterface $bookingRepository,
+        private ChildRepositoryInterface $childRepository,
+        private NotificationRepositoryInterface $notificationRepository,
+        private PaymentCodeRepositoryInterface $paymentCodeRepository,
         private LessonPresenter $presenter,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
         private ChatTokenManager $tokenManager,
         #[Autowire(service: 'limiter.auth_email_limiter')]
         private RateLimiterFactory $authEmailRateLimiter,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http\Admin;
 
 use App\Entity\Post;
-use App\Repository\PostRepository;
+use App\Infrastructure\Doctrine\Repository\PostRepository;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;

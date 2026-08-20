@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
+use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\Notification;
 use App\Entity\NotificationSeverity;
 use App\Entity\User;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class InAppNotificationService
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
     ) {}
 
     public function notify(

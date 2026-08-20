@@ -7,7 +7,7 @@ namespace App\Infrastructure\EventSubscriber;
 use App\Application\Event\ActivityOccurred;
 use App\Entity\ActivityLog;
 use App\Entity\User;
-use App\Repository\ActivityLogRepository;
+use App\Infrastructure\Doctrine\Repository\ActivityLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

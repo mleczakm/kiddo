@@ -6,15 +6,14 @@ namespace App\Application\CommandHandler;
 
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
-use App\Entity\PaymentCode;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Application\Repository\PaymentCodeRepositoryInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 final readonly class MatchPaymentForTransferHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private PaymentCodeRepositoryInterface $paymentCodeRepository,
         private WorkflowInterface $paymentStateMachine,
         private MessageBusInterface $messageBus,
     ) {}
@@ -25,11 +24,7 @@ final readonly class MatchPaymentForTransferHandler
         $title = $command->transfer->title;
 
         foreach ($this->tokenizeTitle($title) as $word) {
-            $paymentCode = $this->entityManager
-                ->getRepository(PaymentCode::class)
-                ->findOneBy([
-                    'code' => $word,
-                ]);
+            $paymentCode = $this->paymentCodeRepository->findOneByCode($word);
 
             if ($paymentCode) {
                 $payment = $paymentCode->getPayment();

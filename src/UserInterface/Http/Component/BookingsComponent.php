@@ -6,8 +6,8 @@ namespace App\UserInterface\Http\Component;
 
 use App\Entity\Booking;
 use App\Entity\User;
-use App\Repository\BookingRepository;
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http\Component;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use App\UserInterface\Http\Component\RegisterUser;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

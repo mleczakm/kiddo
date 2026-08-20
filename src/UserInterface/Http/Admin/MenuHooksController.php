@@ -7,7 +7,7 @@ namespace App\UserInterface\Http\Admin;
 use App\Entity\MenuHookLink;
 use App\Entity\MenuHookLinkTarget;
 use App\Entity\MenuHookSlot;
-use App\Repository\MenuHookLinkRepository;
+use App\Infrastructure\Doctrine\Repository\MenuHookLinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

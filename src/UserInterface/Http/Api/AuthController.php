@@ -7,7 +7,7 @@ namespace App\UserInterface\Http\Api;
 use App\Application\Chat\ChatTokenManager;
 use App\Application\Service\AuthVerificationService;
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;

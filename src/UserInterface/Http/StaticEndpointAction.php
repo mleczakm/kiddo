@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http;
 
-use App\Repository\SettingRepository;
+use App\Infrastructure\Doctrine\Repository\SettingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

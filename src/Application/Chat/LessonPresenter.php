@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Chat;
 
+use App\Application\Repository\SettingRepositoryInterface;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\TicketOption;
 use App\Entity\User;
-use App\Repository\SettingRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class LessonPresenter
@@ -20,7 +20,7 @@ final readonly class LessonPresenter
     public const int PAYMENT_CODE_VALID_HOURS = 24;
 
     public function __construct(
-        private SettingRepository $settingRepository,
+        private SettingRepositoryInterface $settingRepository,
         private TranslatorInterface $translator,
     ) {}
 

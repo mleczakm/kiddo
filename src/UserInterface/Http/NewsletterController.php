@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http;
 
 use App\Infrastructure\Brevo\BrevoNewsletterService;
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

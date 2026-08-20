@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\NewUser;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
 use App\Entity\User;
-use App\Repository\UserRepository;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
@@ -22,7 +22,7 @@ readonly class NewUserHandler
 {
     public function __construct(
         private NotifierInterface $notifier,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
         private TranslatorInterface $translator,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,

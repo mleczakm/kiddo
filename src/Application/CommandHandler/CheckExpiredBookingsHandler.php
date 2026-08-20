@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\CheckExpiredBookings;
+use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Service\ActivityLogger;
 use App\Entity\ActivityType;
-use App\Repository\BookingRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -16,7 +16,7 @@ class CheckExpiredBookingsHandler
     private const string CANCELLATION_REASON = 'Rezerwacja anulowana automatycznie — brak płatności w wymaganym terminie';
 
     public function __construct(
-        private readonly BookingRepository $bookingRepository,
+        private readonly BookingRepositoryInterface $bookingRepository,
         private readonly WorkflowInterface $bookingStateMachine,
         private readonly ActivityLogger $activityLogger,
         private readonly UrlGeneratorInterface $urlGenerator,

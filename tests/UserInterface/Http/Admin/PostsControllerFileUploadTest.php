@@ -6,8 +6,8 @@ namespace App\Tests\UserInterface\Http\Admin;
 
 use App\Entity\Post;
 use App\Entity\PostFileRole;
-use App\Repository\FileRepository;
-use App\Repository\PostRepository;
+use App\Infrastructure\Doctrine\Repository\FileRepository;
+use App\Infrastructure\Doctrine\Repository\PostRepository;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;

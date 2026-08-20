@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\UserInterface\Http\Component;
 
-use App\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;

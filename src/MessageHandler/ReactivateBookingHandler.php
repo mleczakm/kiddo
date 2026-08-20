@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Message\ReactivateBooking;
-use App\Repository\BookingRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

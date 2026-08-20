@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
+use App\Application\Repository\SettingRepositoryInterface;
 use App\Entity\Setting;
-use App\Repository\SettingRepository;
 use Brick\Math\RoundingMode;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +15,7 @@ class PlatformBillingService
     private const string PLATFORM_BILLING_KEY = 'platform_billing';
 
     public function __construct(
-        private readonly SettingRepository $settingRepository,
+        private readonly SettingRepositoryInterface $settingRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {}
 

@@ -7,7 +7,7 @@ namespace App\UserInterface\Http\Component;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\User;
-use App\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Entity\Payment;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Message\RefundLessonBooking;
-use App\Repository\BookingRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

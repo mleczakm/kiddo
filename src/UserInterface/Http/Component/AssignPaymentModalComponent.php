@@ -6,7 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Entity\Payment;
 use App\Entity\Transfer;
-use App\Repository\PaymentRepository;
+use App\Infrastructure\Doctrine\Repository\PaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Uid\Ulid;

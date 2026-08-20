@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Command;
 
+use App\Application\Repository\BookingRepositoryInterface;
 use App\Entity\DTO\LessonMap;
-use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UpdateBookingLessonMapsCommand extends Command
 {
     public function __construct(
-        private readonly BookingRepository $bookingRepository,
+        private readonly BookingRepositoryInterface $bookingRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();

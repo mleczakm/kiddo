@@ -7,11 +7,11 @@ namespace App\Application\CommandHandler;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\SaveTransfer;
+use App\Application\Repository\SettingRepositoryInterface;
+use App\Application\Repository\TransferRepositoryInterface;
 use App\Application\Service\TransferNotificationMailParserInterface;
 use App\Entity\Setting;
 use App\Entity\Transfer;
-use App\Repository\SettingRepository;
-use App\Repository\TransferRepository;
 use DirectoryTree\ImapEngine\Message;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -26,9 +26,9 @@ readonly class ImportTransfersFromMailHandler
         private TransferNotificationMailParserInterface $mailParser,
         private MessageBusInterface $messageBus,
         private IncomingNotificationMailQuery $incomingNotificationMailQuery,
-        private SettingRepository $settingRepository,
+        private SettingRepositoryInterface $settingRepository,
         private EntityManagerInterface $entityManager,
-        private TransferRepository $transferRepository,
+        private TransferRepositoryInterface $transferRepository,
         private LoggerInterface $logger,
         private string $mailboxUsername = '',
         #[\SensitiveParameter]

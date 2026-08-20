@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Entity;
 
 use App\Entity\Series;
-use App\Repository\SeriesRepository;
+use App\Infrastructure\Doctrine\Repository\SeriesRepository;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use Doctrine\Common\Collections\ArrayCollection;

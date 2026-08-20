@@ -7,7 +7,7 @@ namespace App\Tests\UserInterface\Http\Component;
 use App\Entity\ActivityLog;
 use App\Entity\ActivityType;
 use App\Entity\Booking;
-use App\Repository\LessonRepository;
+use App\Infrastructure\Doctrine\Repository\LessonRepository;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;

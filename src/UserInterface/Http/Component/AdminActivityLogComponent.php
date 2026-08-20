@@ -6,7 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Entity\ActivityLog;
 use App\Entity\ActivityType;
-use App\Repository\ActivityLogRepository;
+use App\Infrastructure\Doctrine\Repository\ActivityLogRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;

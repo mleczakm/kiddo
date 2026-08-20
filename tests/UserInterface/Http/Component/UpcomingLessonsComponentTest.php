@@ -7,7 +7,7 @@ namespace App\Tests\UserInterface\Http\Component;
 use App\Entity\AgeRange;
 use App\Entity\Lesson;
 use App\Entity\LessonMetadata;
-use App\Repository\LessonRepository;
+use App\Infrastructure\Doctrine\Repository\LessonRepository;
 use App\UserInterface\Http\Component\UpcomingLessonsComponent;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;

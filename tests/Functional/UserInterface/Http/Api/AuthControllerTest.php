@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\UserInterface\Http\Api;
 
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use App\UserInterface\Http\Api\AuthController;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Cache\CacheItemPoolInterface;

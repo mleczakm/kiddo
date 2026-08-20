@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\CheckExpiredPayments;
+use App\Application\Repository\PaymentRepositoryInterface;
 use App\Entity\Payment;
-use App\Repository\PaymentRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\Registry as WorkflowRegistry;
 
@@ -14,7 +14,7 @@ use Symfony\Component\Workflow\Registry as WorkflowRegistry;
 final readonly class CheckExpiredPaymentsHandler
 {
     public function __construct(
-        private PaymentRepository $paymentRepository,
+        private PaymentRepositoryInterface $paymentRepository,
         private WorkflowRegistry $workflowRegistry,
     ) {}
 

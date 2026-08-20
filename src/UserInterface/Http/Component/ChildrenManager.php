@@ -6,7 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Entity\Child;
 use App\Entity\User;
-use App\Repository\ChildRepository;
+use App\Infrastructure\Doctrine\Repository\ChildRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Constraints as Assert;

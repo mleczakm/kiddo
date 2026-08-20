@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\CheckBookingsToMarkPast;
-use App\Repository\BookingRepository;
+use App\Application\Repository\BookingRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\Registry as WorkflowRegistry;
 
@@ -13,7 +13,7 @@ use Symfony\Component\Workflow\Registry as WorkflowRegistry;
 final readonly class CheckBookingsToMarkPastHandler
 {
     public function __construct(
-        private BookingRepository $bookingRepository,
+        private BookingRepositoryInterface $bookingRepository,
         private WorkflowRegistry $workflowRegistry,
     ) {}
 

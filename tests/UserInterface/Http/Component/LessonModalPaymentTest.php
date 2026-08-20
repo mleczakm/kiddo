@@ -8,7 +8,7 @@ use App\Entity\Booking;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
 use App\Entity\WorkshopType;
-use App\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;

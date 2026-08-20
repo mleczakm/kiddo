@@ -9,7 +9,7 @@ use App\Application\CommandHandler\AddBookingHandler;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\TicketType;
-use App\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendBookingCancellationNotificationCommand;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\Booking;
 use App\Entity\NotificationSeverity;
-use App\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -24,7 +24,7 @@ final readonly class SendBookingCancellationNotificationHandler
         private TranslatorInterface $translator,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
     ) {}
 
     public function __invoke(SendBookingCancellationNotificationCommand $command): void

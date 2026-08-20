@@ -165,12 +165,6 @@ count = 1
 [[issues]]
 file = "src/Application/Chat/AdminChatTools.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Application\Chat\AdminChatTools::listUnmatchedTransfers`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/AdminChatTools.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ValueError` in `App\Application\Chat\AdminChatTools::notifyUser`.'
 count = 1
 
@@ -507,12 +501,6 @@ count = 1
 [[issues]]
 file = "src/Application/Command/SeedDemoDataCommand.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Application\Command\SeedDemoDataCommand::removePreviousDemoData`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Command/SeedDemoDataCommand.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `libphonenumber\NumberParseException` in `App\Application\Command\SeedDemoDataCommand::newUser`.'
 count = 1
 
@@ -616,12 +604,6 @@ count = 1
 file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\ImportTransfersFromMailHandler::rematchUnmatchedTransfers`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Application\CommandHandler\ImportTransfersFromMailHandler::rematchUnmatchedTransfers`.'
 count = 1
 
 [[issues]]
@@ -1285,264 +1267,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception
 count = 1
 
 [[issues]]
-file = "src/Component/AdminSettingsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Component\AdminSettingsComponent::saveRobotsTxt`.'
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Component\SeriesDetailsComponent::loadSeries`.'
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Component\SeriesDetailsComponent::loadSeries`.'
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Component\SeriesDetailsComponent::loadSeries`.'
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Component\SeriesDetailsComponent::loadSeries`.'
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Component\SeriesDetailsComponent::approveBooking`.'
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Component\SeriesDetailsComponent::expandLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "property-type-coercion"
-message = "A value of a less specific type `array<array-key, string>|list<string>` is being assigned to property `$instructorIds` (array<int, string>)."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "redundant-comparison"
-message = "Redundant `===` comparison: left-hand side is always identical to right-hand side."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "redundant-condition"
-message = "This condition (type `true`) will always evaluate to true."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Component\WorkshopEditorComponent::buildTicketOptions`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Component\WorkshopEditorComponent::buildTicketOptions`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Component\WorkshopEditorComponent::buildTicketOptions`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Component\WorkshopEditorComponent::getEditingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Component\WorkshopEditorComponent::loadLessonData`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Component\WorkshopEditorComponent::saveExistingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Component\WorkshopEditorComponent::getEditingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Component\WorkshopEditorComponent::loadLessonData`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Component\WorkshopEditorComponent::saveExistingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Component\WorkshopEditorComponent::getEditingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Component\WorkshopEditorComponent::loadLessonData`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Component\WorkshopEditorComponent::saveExistingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Component\WorkshopEditorComponent::getEditingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Component\WorkshopEditorComponent::loadLessonData`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Component\WorkshopEditorComponent::saveExistingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Component\WorkshopEditorComponent::notifyAboutEdit`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Component\WorkshopEditorComponent::notifyAboutEdit`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Component\WorkshopEditorComponent::saveExistingLesson`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Component\WorkshopEditorComponent::saveNewSeries`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Component\WorkshopEditorComponent::save`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\Component\WorkshopEditorComponent::save`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Component\WorkshopEditorComponent::getEditingLessonImageUrl`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Component\WorkshopEditorComponent::notifyAboutEdit`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Component\WorkshopEditorComponent::getEditingLessonImageUrl`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Component\WorkshopEditorComponent::notifyAboutEdit`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Component\WorkshopEditorComponent::getEditingLessonImageUrl`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Component\WorkshopEditorComponent::notifyAboutEdit`.'
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Component\WorkshopEditorComponent::getInstructors`.'
-count = 1
-
-[[issues]]
 file = "src/Entity/Booking.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\Booking::getAmountPaid`.'
@@ -1729,54 +1453,6 @@ message = 'Potentially unhandled exception `LogicException` in `App\Entity\Serie
 count = 1
 
 [[issues]]
-file = "src/Form/PlatformBillingPaymentType.php"
-code = "excess-template-parameter"
-message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
-count = 1
-
-[[issues]]
-file = "src/Form/PlatformBillingPaymentType.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\AccessException` in `App\Form\PlatformBillingPaymentType::configureOptions`.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserSelectType.php"
-code = "excess-template-parameter"
-message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserSelectType.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Form/UserSelectType.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\AccessException` in `App\Form\UserSelectType::configureOptions`.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserSelectType.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException` in `App\Form\UserSelectType::configureOptions`.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserType.php"
-code = "excess-template-parameter"
-message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
-count = 1
-
-[[issues]]
-file = "src/Form/UserType.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\AccessException` in `App\Form\UserType::configureOptions`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Brevo/BrevoNewsletterService.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\Infrastructure\Brevo\BrevoNewsletterService::addOrUpdateContact`.'
@@ -1829,6 +1505,288 @@ file = "src/Infrastructure/Doctrine/LessonMapType.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 3
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/ActivityLogRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\ActivityLogRepository::findByBookingId`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/ActivityLogRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\ActivityLogRepository::findBySubject`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/ActivityLogRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\ActivityLogRepository::findRecent`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/ActivityLogRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Infrastructure\Doctrine\Repository\ActivityLogRepository::existsByDedupeKey`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/ActivityLogRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Infrastructure\Doctrine\Repository\ActivityLogRepository::existsByDedupeKey`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\BookingRepository::findActiveBookings`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\BookingRepository::findByLesson`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\BookingRepository::findCreatedBetween`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\BookingRepository::findExpiredPendingBookings`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\BookingRepository::findFiltered`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\BookingRepository::findForUserAndLessons`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\BookingRepository::findVisibleForUser`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Infrastructure\Doctrine\Repository\BookingRepository::countCreatedBetween`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Infrastructure\Doctrine\Repository\BookingRepository::countCreatedBetween`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Doctrine\Repository\BookingRepository::findForUserAndLessons`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/ChildRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\ChildRepository::findByOwner`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/FinanceContactRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\FinanceContactRepository::findAll`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findActiveByDate`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findAvailableLessonsForReschedule`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findByMetadataTitlePrefix`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findCancelledInRange`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findUpcomingInRangeForInstructor`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findUpcomingInRange`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findUpcomingWithBookingsInRange`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findUpcomingWithBookings`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findUpcoming`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/NotificationRepository.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/NotificationRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\NotificationRepository::findRecentForUser`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/NotificationRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Infrastructure\Doctrine\Repository\NotificationRepository::countUnreadForUser`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/NotificationRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Infrastructure\Doctrine\Repository\NotificationRepository::countUnreadForUser`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PaymentRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\PaymentRepository::findExpiredPendingPayments`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PaymentRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\PaymentRepository::findPaidBetween`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PaymentRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\PaymentRepository::findPendingWithSearch`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PaymentRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Infrastructure\Doctrine\Repository\PaymentRepository::countPendingPayments`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PaymentRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Infrastructure\Doctrine\Repository\PaymentRepository::countPendingPayments`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/SeriesRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\SeriesRepository::findActive`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/SeriesRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\SeriesRepository::findInRange`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/TransferRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\TransferRepository::findByTitleStartingWith`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/TransferRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\TransferRepository::findOnlyDeleted`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/TransferRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Doctrine\Repository\TransferRepository::findAllWithDeleted`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/TransferRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Doctrine\Repository\TransferRepository::findOnlyDeleted`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/TransferRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Doctrine\Repository\TransferRepository::restore`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\UserRepository::findAllMatching`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\UserRepository::findByEmailDomain`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\UserRepository::findByRole`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\UserRepository::findCreatedBetween`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/UserRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\UserRepository::findForAutocomplete`. Saw type `mixed`.'
+count = 1
 
 [[issues]]
 file = "src/Infrastructure/ElevenLabs/ElevenLabsClient.php"
@@ -2281,6 +2239,36 @@ message = 'Potentially unhandled exception `DateInvalidTimeZoneException` in `Ap
 count = 1
 
 [[issues]]
+file = "src/Infrastructure/Symfony/Security/AccessDeniedHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Symfony\Security\AccessDeniedHandler::onKernelException`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Security/AccessDeniedHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Infrastructure\Symfony\Security\AccessDeniedHandler::onKernelException`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Security/AccessDeniedHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Infrastructure\Symfony\Security\AccessDeniedHandler::onKernelException`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Security/AccessDeniedHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Infrastructure\Symfony\Security\AccessDeniedHandler::onKernelException`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Symfony/Security/Voter/LessonVoter.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$lesson`."
+count = 1
+
+[[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "invalid-iterator"
 message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
@@ -2521,291 +2509,51 @@ message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception
 count = 1
 
 [[issues]]
-file = "src/Repository/ActivityLogRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\ActivityLogRepository::findByBookingId`. Saw type `mixed`.'
+file = "src/UserInterface/Form/PlatformBillingPaymentType.php"
+code = "excess-template-parameter"
+message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
 count = 1
 
 [[issues]]
-file = "src/Repository/ActivityLogRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\ActivityLogRepository::findBySubject`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/ActivityLogRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\ActivityLogRepository::findRecent`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/ActivityLogRepository.php"
+file = "src/UserInterface/Form/PlatformBillingPaymentType.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Repository\ActivityLogRepository::existsByDedupeKey`.'
+message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\AccessException` in `App\UserInterface\Form\PlatformBillingPaymentType::configureOptions`.'
 count = 1
 
 [[issues]]
-file = "src/Repository/ActivityLogRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Repository\ActivityLogRepository::existsByDedupeKey`.'
+file = "src/UserInterface/Form/UserSelectType.php"
+code = "excess-template-parameter"
+message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
 count = 1
 
 [[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findActiveBookings`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findByLesson`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findCreatedBetween`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findExpiredPendingBookings`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findForUserAndLessons`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\BookingRepository::findVisibleForUser`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Repository\BookingRepository::countCreatedBetween`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Repository\BookingRepository::countCreatedBetween`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/BookingRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Repository\BookingRepository::findForUserAndLessons`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/ChildRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\ChildRepository::findByOwner`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/FinanceContactRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\FinanceContactRepository::findAll`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findActiveByDate`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findAvailableLessonsForReschedule`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingInRangeForInstructor`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingInRange`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingWithBookingsInRange`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcomingWithBookings`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\LessonRepository::findUpcoming`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/NotificationRepository.php"
+file = "src/UserInterface/Form/UserSelectType.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
 
 [[issues]]
-file = "src/Repository/NotificationRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\NotificationRepository::findRecentForUser`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/NotificationRepository.php"
+file = "src/UserInterface/Form/UserSelectType.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Repository\NotificationRepository::countUnreadForUser`.'
+message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\AccessException` in `App\UserInterface\Form\UserSelectType::configureOptions`.'
 count = 1
 
 [[issues]]
-file = "src/Repository/NotificationRepository.php"
+file = "src/UserInterface/Form/UserSelectType.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Repository\NotificationRepository::countUnreadForUser`.'
+message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException` in `App\UserInterface\Form\UserSelectType::configureOptions`.'
 count = 1
 
 [[issues]]
-file = "src/Repository/PaymentRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\PaymentRepository::findExpiredPendingPayments`. Saw type `mixed`.'
+file = "src/UserInterface/Form/UserType.php"
+code = "excess-template-parameter"
+message = 'Too many template arguments for `Symfony\Component\Form\AbstractType`: expected 0, but found 1.'
 count = 1
 
 [[issues]]
-file = "src/Repository/PaymentRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\PaymentRepository::findPaidBetween`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/PaymentRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\PaymentRepository::findPendingWithSearch`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/PaymentRepository.php"
+file = "src/UserInterface/Form/UserType.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Repository\PaymentRepository::countPendingPayments`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/PaymentRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Repository\PaymentRepository::countPendingPayments`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/SeriesRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\SeriesRepository::findActive`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/SeriesRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\SeriesRepository::findInRange`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/TransferRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\TransferRepository::findByTitleStartingWith`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/TransferRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\TransferRepository::findOnlyDeleted`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/TransferRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Repository\TransferRepository::findAllWithDeleted`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/TransferRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Repository\TransferRepository::findOnlyDeleted`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/TransferRepository.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Repository\TransferRepository::restore`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/UserRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findAllMatching`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/UserRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findByRole`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/UserRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findCreatedBetween`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Repository/UserRepository.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Repository\UserRepository::findForAutocomplete`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Security/AccessDeniedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Security\AccessDeniedHandler::onKernelException`.'
-count = 1
-
-[[issues]]
-file = "src/Security/AccessDeniedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Security\AccessDeniedHandler::onKernelException`.'
-count = 1
-
-[[issues]]
-file = "src/Security/AccessDeniedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Security\AccessDeniedHandler::onKernelException`.'
-count = 1
-
-[[issues]]
-file = "src/Security/AccessDeniedHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Security\AccessDeniedHandler::onKernelException`.'
-count = 1
-
-[[issues]]
-file = "src/Security/Voter/LessonVoter.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$lesson`."
+message = 'Potentially unhandled exception `Symfony\Component\OptionsResolver\Exception\AccessException` in `App\UserInterface\Form\UserType::configureOptions`.'
 count = 1
 
 [[issues]]
@@ -3190,6 +2938,12 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\AdminScheduleComponent::toggleLessonStatus`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminSettingsComponent::saveRobotsTxt`.'
 count = 1
 
 [[issues]]
@@ -3643,6 +3397,42 @@ message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\UserInterface\Http\Component\SeriesDetailsComponent::loadSeries`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\UserInterface\Http\Component\SeriesDetailsComponent::loadSeries`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\UserInterface\Http\Component\SeriesDetailsComponent::loadSeries`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\UserInterface\Http\Component\SeriesDetailsComponent::loadSeries`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\SeriesDetailsComponent::approveBooking`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\SeriesDetailsComponent::expandLesson`.'
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
@@ -3754,6 +3544,222 @@ count = 1
 file = "src/UserInterface/Http/Component/UsersComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\UsersComponent::openAddModal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "property-type-coercion"
+message = "A value of a less specific type `array<array-key, string>|list<string>` is being assigned to property `$instructorIds` (array<int, string>)."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "redundant-comparison"
+message = "Redundant `===` comparison: left-hand side is always identical to right-hand side."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "redundant-condition"
+message = "This condition (type `true`) will always evaluate to true."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::buildTicketOptions`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::buildTicketOptions`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::buildTicketOptions`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadLessonData`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveExistingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadLessonData`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveExistingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadLessonData`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveExistingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadLessonData`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveExistingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::notifyAboutEdit`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::notifyAboutEdit`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveExistingLesson`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveNewSeries`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::save`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::save`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLessonImageUrl`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::notifyAboutEdit`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLessonImageUrl`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::notifyAboutEdit`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLessonImageUrl`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::notifyAboutEdit`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `UnexpectedValueException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getInstructors`.'
 count = 1
 
 [[issues]]
@@ -4803,7 +4809,7 @@ count = 2
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Component/BookingPreviewComponentTest.php"
 code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$bookingRepository` (App\Repository\BookingRepository).'
+message = 'A value of a less specific type `null|object` is being assigned to property `$bookingRepository` (App\Infrastructure\Doctrine\Repository\BookingRepository).'
 count = 1
 
 [[issues]]
@@ -4945,6 +4951,114 @@ message = "Attempting to call a method on `null`."
 count = 2
 
 [[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/BookingRepositoryTest.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 2
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/BookingRepositoryTest.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 2
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/BookingRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$bookingRepository` (App\Infrastructure\Doctrine\Repository\BookingRepository).'
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/BookingRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryTest.php"
+code = "ambiguous-object-method-access"
+message = "Cannot statically verify method call on a generic `object` type."
+count = 3
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryTest.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 13
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryTest.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 3
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryWeekFilteringTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryWeekFilteringTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$lessonRepository` (App\Infrastructure\Doctrine\Repository\LessonRepository).'
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/NotificationRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/NotificationRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$repo` (App\Infrastructure\Doctrine\Repository\NotificationRepository).'
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
+code = "ambiguous-object-method-access"
+message = "Cannot statically verify method call on a generic `object` type."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 4
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$paymentRepository` (App\Infrastructure\Doctrine\Repository\PaymentRepository).'
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/UserRepositoryTest.php"
+code = "property-type-coercion"
+message = 'A value of a less specific type `null|object` is being assigned to property `$userRepository` (App\Infrastructure\Doctrine\Repository\UserRepository).'
+count = 1
+
+[[issues]]
 file = "tests/Infrastructure/EventSubscriber/PlatformBillingSubscriberTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
@@ -5041,18 +5155,6 @@ message = 'Property `$taskworker` does not exist on interface `PHPUnit\Framework
 count = 1
 
 [[issues]]
-file = "tests/Infrastructure/Repository/NotificationRepositoryTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Repository/NotificationRepositoryTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$repo` (App\Repository\NotificationRepository).'
-count = 1
-
-[[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `iterator_to_array`: expected `Traversable<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>|array<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>`, but found `mixed`."
@@ -5115,19 +5217,19 @@ count = 1
 [[issues]]
 file = "tests/Integration/Component/AdminSettingsComponentTest.php"
 code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$financeContactRepository` (App\Repository\FinanceContactRepository).'
+message = 'A value of a less specific type `null|object` is being assigned to property `$financeContactRepository` (App\Infrastructure\Doctrine\Repository\FinanceContactRepository).'
 count = 1
 
 [[issues]]
 file = "tests/Integration/Component/AdminSettingsComponentTest.php"
 code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$settingRepository` (App\Repository\SettingRepository).'
+message = 'A value of a less specific type `null|object` is being assigned to property `$settingRepository` (App\Infrastructure\Doctrine\Repository\SettingRepository).'
 count = 1
 
 [[issues]]
 file = "tests/Integration/Component/AdminSettingsComponentTest.php"
 code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$userRepository` (App\Repository\UserRepository).'
+message = 'A value of a less specific type `null|object` is being assigned to property `$userRepository` (App\Infrastructure\Doctrine\Repository\UserRepository).'
 count = 1
 
 [[issues]]
@@ -5151,7 +5253,7 @@ count = 1
 [[issues]]
 file = "tests/Integration/Component/WorkshopEditorComponentTest.php"
 code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$notificationRepository` (App\Repository\NotificationRepository).'
+message = 'A value of a less specific type `null|object` is being assigned to property `$notificationRepository` (App\Infrastructure\Doctrine\Repository\NotificationRepository).'
 count = 1
 
 [[issues]]
@@ -5195,102 +5297,6 @@ file = "tests/MessageHandler/RefundLessonBookingHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 3
-
-[[issues]]
-file = "tests/Repository/BookingRepositoryTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 2
-
-[[issues]]
-file = "tests/Repository/BookingRepositoryTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 2
-
-[[issues]]
-file = "tests/Repository/BookingRepositoryTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$bookingRepository` (App\Repository\BookingRepository).'
-count = 1
-
-[[issues]]
-file = "tests/Repository/BookingRepositoryTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
-count = 1
-
-[[issues]]
-file = "tests/Repository/LessonRepositoryTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 3
-
-[[issues]]
-file = "tests/Repository/LessonRepositoryTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/Repository/LessonRepositoryTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 13
-
-[[issues]]
-file = "tests/Repository/LessonRepositoryTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 3
-
-[[issues]]
-file = "tests/Repository/LessonRepositoryWeekFilteringTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
-count = 1
-
-[[issues]]
-file = "tests/Repository/LessonRepositoryWeekFilteringTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$lessonRepository` (App\Repository\LessonRepository).'
-count = 1
-
-[[issues]]
-file = "tests/Repository/PaymentRepositoryTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 1
-
-[[issues]]
-file = "tests/Repository/PaymentRepositoryTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/Repository/PaymentRepositoryTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 4
-
-[[issues]]
-file = "tests/Repository/PaymentRepositoryTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "tests/Repository/PaymentRepositoryTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$paymentRepository` (App\Repository\PaymentRepository).'
-count = 1
-
-[[issues]]
-file = "tests/Repository/UserRepositoryTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$userRepository` (App\Repository\UserRepository).'
-count = 1
 
 [[issues]]
 file = "tests/StimulusEmitActionPrefixTest.php"
@@ -5637,7 +5643,7 @@ count = 1
 [[issues]]
 file = "tests/UserInterface/Http/Component/UpcomingAttendeesComponentTest.php"
 code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$lessonRepository` (App\Repository\LessonRepository).'
+message = 'A value of a less specific type `null|object` is being assigned to property `$lessonRepository` (App\Infrastructure\Doctrine\Repository\LessonRepository).'
 count = 1
 
 [[issues]]

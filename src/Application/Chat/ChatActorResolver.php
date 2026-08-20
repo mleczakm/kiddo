@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Chat;
 
+use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\User;
-use App\Repository\UserRepository;
 
 final readonly class ChatActorResolver
 {
     public function __construct(
         private ChatTokenManager $tokenManager,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
     ) {}
 
     public function fromTokenString(#[\SensitiveParameter] string $token): ChatActor

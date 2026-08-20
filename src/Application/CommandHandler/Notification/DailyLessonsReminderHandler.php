@@ -6,6 +6,9 @@ namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Query\Lesson\TodayLessonsQuery;
+use App\Application\Repository\BookingRepositoryInterface;
+use App\Application\Repository\PaymentRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Entity\Booking;
@@ -13,9 +16,6 @@ use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
 use App\Entity\User;
-use App\Repository\BookingRepository;
-use App\Repository\PaymentRepository;
-use App\Repository\UserRepository;
 use Brick\Money\Money;
 use Ds\Map;
 use Ds\Set;
@@ -32,9 +32,9 @@ readonly class DailyLessonsReminderHandler
 {
     public function __construct(
         private NotifierInterface $notifier,
-        private UserRepository $userRepository,
-        private BookingRepository $bookingRepository,
-        private PaymentRepository $paymentRepository,
+        private UserRepositoryInterface $userRepository,
+        private BookingRepositoryInterface $bookingRepository,
+        private PaymentRepositoryInterface $paymentRepository,
         private LessonInstructorResolver $instructorResolver,
         private TodayLessonsQuery $todayLessonsQuery,
         private Environment $twig,

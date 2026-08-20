@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\ExtendSeriesSchedule;
+use App\Application\Repository\SeriesRepositoryInterface;
 use App\Entity\Lesson;
 use App\Entity\WorkshopType;
-use App\Repository\SeriesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class ExtendSeriesScheduleHandler
 {
     public function __construct(
-        private SeriesRepository $seriesRepository,
+        private SeriesRepositoryInterface $seriesRepository,
         private EntityManagerInterface $em,
         private LoggerInterface $logger,
     ) {}

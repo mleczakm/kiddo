@@ -6,7 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Application\Service\MoneyInputParser;
 use App\Application\Service\PlatformBillingService;
-use App\Form\PlatformBillingPaymentType;
+use App\UserInterface\Form\PlatformBillingPaymentType;
 use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;

@@ -9,7 +9,7 @@ use App\Application\CommandHandler\PurgeOldNotificationsHandler;
 use App\Entity\Notification;
 use App\Entity\NotificationSeverity;
 use App\Entity\User;
-use App\Repository\NotificationRepository;
+use App\Infrastructure\Doctrine\Repository\NotificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

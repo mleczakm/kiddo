@@ -253,15 +253,63 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
+file = "src/Application/File/FileUploadPolicy.php"
+code = "no-duplicate-match-arm"
+message = "This `match` arm has the same result as an earlier arm."
+count = 2
+
+[[issues]]
+file = "src/Application/File/WorkshopImageUploadPolicy.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
 file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 2
 
 [[issues]]
+file = "src/Application/Repository/LessonRepositoryInterface.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 4
+
+[[issues]]
+file = "src/Application/Repository/PostRepositoryInterface.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 4
+
+[[issues]]
+file = "src/Application/Repository/SeriesRepositoryInterface.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
 file = "src/Application/Service/ActivityLogger.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/InlineAttachmentReconciler.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "src/Application/Service/MenuHookLinkReconciler.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/MenuHookLinkReconciler.php"
+code = "prefer-first-class-callable"
+message = "Use first-class callable syntax `...` instead of a arrow function."
 count = 1
 
 [[issues]]
@@ -277,94 +325,16 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
+file = "src/Application/Service/PostFileManager.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
 file = "src/Application/Service/TransferMoneyParser.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
 count = 2
-
-[[issues]]
-file = "src/Component/AdminSettingsComponent.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Component/AdminSettingsComponent.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "no-empty-catch-clause"
-message = "Do not use empty `catch` blocks."
-count = 1
-
-[[issues]]
-file = "src/Component/SeriesDetailsComponent.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "no-boolean-flag-parameter"
-message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 4
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 2
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Component/WorkshopEditorComponent.php"
-code = "too-many-properties"
-message = "Class has too many properties."
-count = 1
 
 [[issues]]
 file = "src/Entity/ActivityLog.php"
@@ -523,6 +493,42 @@ message = "Avoid `elseif` clauses."
 count = 1
 
 [[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 4
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PostRepository.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 2
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/SeriesRepository.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/UserRepository.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
 file = "src/Infrastructure/ElevenLabs/ElevenLabsClient.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
@@ -607,27 +613,9 @@ message = "Method has a high halstead effort"
 count = 1
 
 [[issues]]
-file = "src/Repository/LessonRepository.php"
+file = "src/UserInterface/Http/Admin/PostsController.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 4
-
-[[issues]]
-file = "src/Repository/LessonRepository.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Repository/SeriesRepository.php"
-code = "no-boolean-flag-parameter"
-message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Repository/UserRepository.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
 count = 1
 
 [[issues]]
@@ -752,6 +740,18 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -889,6 +889,18 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -949,13 +961,85 @@ message = "Use of the `isset` construct."
 count = 2
 
 [[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 4
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "too-many-properties"
+message = "Class has too many properties."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/FileAction.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/NewsletterController.php"
 code = "no-empty"
 message = "Use of the `empty` construct."
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/WorkshopImageAction.php"
+file = "src/UserInterface/Http/PostsAction.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/RangeResponseTrait.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
 count = 1
@@ -971,6 +1055,12 @@ file = "src/UserInterface/Http/WorkshopsAction.php"
 code = "no-empty-catch-clause"
 message = "Do not use empty `catch` blocks."
 count = 2
+
+[[issues]]
+file = "src/UserInterface/Twig/ReadingTimeExtension.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
 
 [[issues]]
 file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
@@ -989,6 +1079,12 @@ file = "tests/Application/CommandHandler/MatchPaymentForTransferHandlerTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
+
+[[issues]]
+file = "tests/Application/File/DatabaseFileStorageTest.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 2
 
 [[issues]]
 file = "tests/Application/Service/PlatformBillingServiceTest.php"
@@ -1093,6 +1189,12 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
+file = "tests/Infrastructure/Doctrine/Repository/BookingRepositoryTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
 file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
 code = "no-literal-password"
 message = "Literal passwords or sensitive data should not be stored in code."
@@ -1123,12 +1225,6 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
-file = "tests/Repository/BookingRepositoryTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
 file = "tests/StimulusEmitActionPrefixTest.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -1147,6 +1243,12 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
+file = "tests/UserInterface/Http/Admin/PostsControllerFileUploadTest.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
 file = "tests/UserInterface/Http/Component/AdminScheduleComponentTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
@@ -1162,4 +1264,16 @@ count = 1
 file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/FileActionCachingTest.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/FileActionTest.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
 count = 1

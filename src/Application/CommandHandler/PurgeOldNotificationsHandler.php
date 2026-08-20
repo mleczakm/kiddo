@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\PurgeOldNotifications;
-use App\Repository\NotificationRepository;
+use App\Application\Repository\NotificationRepositoryInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class PurgeOldNotificationsHandler
 {
     public function __construct(
-        private NotificationRepository $notifications,
+        private NotificationRepositoryInterface $notifications,
     ) {}
 
     public function __invoke(PurgeOldNotifications $command): void

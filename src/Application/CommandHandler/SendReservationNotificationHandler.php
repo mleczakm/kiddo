@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\SendReservationNotification;
+use App\Application\Repository\SettingRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
-use App\Repository\SettingRepository;
-use App\Repository\UserRepository;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
@@ -27,9 +27,9 @@ readonly class SendReservationNotificationHandler
         private TranslatorInterface $translator,
         private Environment $twig,
         private InAppNotificationService $inAppNotifications,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
         private UrlGeneratorInterface $urlGenerator,
-        private SettingRepository $settingRepository,
+        private SettingRepositoryInterface $settingRepository,
     ) {}
 
     public function __invoke(SendReservationNotification $command): void

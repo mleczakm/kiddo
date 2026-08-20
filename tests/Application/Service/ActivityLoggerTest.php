@@ -7,7 +7,7 @@ namespace App\Tests\Application\Service;
 use App\Application\Service\ActivityLogger;
 use App\Entity\ActivityLog;
 use App\Entity\ActivityType;
-use App\Repository\ActivityLogRepository;
+use App\Infrastructure\Doctrine\Repository\ActivityLogRepository;
 use App\Tests\Assembler\UserAssembler;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

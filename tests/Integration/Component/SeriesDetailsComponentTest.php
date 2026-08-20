@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
-use App\Component\SeriesDetailsComponent;
 use App\Entity\Child;
 use App\Entity\Series;
 use App\Entity\WorkshopType;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\UserAssembler;
+use App\UserInterface\Http\Component\SeriesDetailsComponent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;

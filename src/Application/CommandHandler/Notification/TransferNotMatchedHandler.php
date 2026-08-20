@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\TransferNotMatchedCommand;
+use App\Application\Repository\PaymentRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
-use App\Repository\PaymentRepository;
-use App\Repository\UserRepository;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Notifier\Notification\Notification;
@@ -26,10 +26,10 @@ final readonly class TransferNotMatchedHandler
 
     public function __construct(
         private NotifierInterface $notifier,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
         private TranslatorInterface $translator,
         private CacheItemPoolInterface $cache,
-        private PaymentRepository $paymentRepository,
+        private PaymentRepositoryInterface $paymentRepository,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
     ) {}

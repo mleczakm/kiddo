@@ -6,8 +6,8 @@ namespace App\UserInterface\Http\Component;
 
 use App\Entity\Notification;
 use App\Entity\User;
-use App\Repository\NotificationRepository;
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\NotificationRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

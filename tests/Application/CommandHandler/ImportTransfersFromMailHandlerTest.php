@@ -9,10 +9,10 @@ use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\SaveTransfer;
 use App\Application\CommandHandler\ImportTransfersFromMailHandler;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
+use App\Application\Repository\SettingRepositoryInterface;
+use App\Application\Repository\TransferRepositoryInterface;
 use App\Application\Service\AliorMailParser;
 use App\Entity\Transfer;
-use App\Repository\SettingRepository;
-use App\Repository\TransferRepository;
 use App\Tests\Util\MessengerFake;
 use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
@@ -27,9 +27,9 @@ class ImportTransfersFromMailHandlerTest extends TestCase
 {
     public function testFetchProperlyEmailsFromMailbox(): void
     {
-        $settingRepository = $this->createMock(SettingRepository::class);
+        $settingRepository = $this->createMock(SettingRepositoryInterface::class);
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $transferRepository = $this->createMock(TransferRepository::class);
+        $transferRepository = $this->createMock(TransferRepositoryInterface::class);
         $logger = $this->createMock(LoggerInterface::class);
 
         (new ImportTransfersFromMailHandler(
@@ -52,7 +52,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
     {
         $transfer = new Transfer('123', 'Sender', 'WW5J', '60.00', new \DateTimeImmutable());
 
-        $transferRepository = $this->createMock(TransferRepository::class);
+        $transferRepository = $this->createMock(TransferRepositoryInterface::class);
         $transferRepository
             ->expects($this->once())
             ->method('findBy')
@@ -74,7 +74,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             new AliorMailParser(),
             $messengerFake = new MessengerFake(),
             $incomingQuery,
-            $this->createMock(SettingRepository::class),
+            $this->createMock(SettingRepositoryInterface::class),
             $this->createMock(EntityManagerInterface::class),
             $transferRepository,
             $logger,

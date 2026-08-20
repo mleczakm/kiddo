@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http;
 
 use App\Entity\Setting;
-use App\Repository\SettingRepository;
+use App\Infrastructure\Doctrine\Repository\SettingRepository;
 use App\UserInterface\Http\StaticEndpointAction;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;

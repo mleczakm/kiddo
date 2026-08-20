@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Entity\Transfer;
-use App\Repository\SettingRepository;
-use App\Repository\TransferRepository;
+use App\Infrastructure\Doctrine\Repository\SettingRepository;
+use App\Infrastructure\Doctrine\Repository\TransferRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

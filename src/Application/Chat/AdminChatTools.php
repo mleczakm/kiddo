@@ -6,6 +6,12 @@ namespace App\Application\Chat;
 
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Query\Lesson\TodayLessonsQuery;
+use App\Application\Repository\BookingRepositoryInterface;
+use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\PaymentRepositoryInterface;
+use App\Application\Repository\SeriesRepositoryInterface;
+use App\Application\Repository\TransferRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\Booking;
 use App\Entity\Lesson;
@@ -19,12 +25,6 @@ use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
-use App\Repository\BookingRepository;
-use App\Repository\LessonRepository;
-use App\Repository\PaymentRepository;
-use App\Repository\SeriesRepository;
-use App\Repository\TransferRepository;
-use App\Repository\UserRepository;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -38,12 +38,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $bus,
-        private LessonRepository $lessonRepository,
-        private BookingRepository $bookingRepository,
-        private PaymentRepository $paymentRepository,
-        private TransferRepository $transferRepository,
-        private UserRepository $userRepository,
-        private SeriesRepository $seriesRepository,
+        private LessonRepositoryInterface $lessonRepository,
+        private BookingRepositoryInterface $bookingRepository,
+        private PaymentRepositoryInterface $paymentRepository,
+        private TransferRepositoryInterface $transferRepository,
+        private UserRepositoryInterface $userRepository,
+        private SeriesRepositoryInterface $seriesRepository,
         private TodayLessonsQuery $todayLessonsQuery,
         private WorkflowInterface $paymentStateMachine,
         private LessonPresenter $presenter,
@@ -569,17 +569,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             // findByFilters only returns active; load cancelled in the same week window separately
             $weekStart = new \DateTimeImmutable($week);
             $weekEnd = $weekStart->modify('+7 days 23:59:59');
-            /** @var list<Lesson> $cancelled */
-            $cancelled = $this->lessonRepository
-                ->createQueryBuilder('l')
-                ->andWhere('l.status = :status')
-                ->andWhere('l.schedule BETWEEN :weekStart AND :weekEnd')
-                ->setParameter('status', 'cancelled')
-                ->setParameter('weekStart', $weekStart)
-                ->setParameter('weekEnd', $weekEnd)
-                ->orderBy('l.schedule', 'ASC')
-                ->getQuery()
-                ->getResult();
+            $cancelled = $this->lessonRepository->findCancelledInRange($weekStart, $weekEnd);
             $lessons = array_merge($lessons, $cancelled);
         }
 
@@ -654,27 +644,11 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
     private function listBookings(ToolArguments $args): ToolResult
     {
-        $qb = $this->bookingRepository
-            ->createQueryBuilder('b')
-            ->leftJoin('b.user', 'u')
-            ->addSelect('u')
-            ->orderBy('b.createdAt', 'DESC')
-            ->setMaxResults($args->int('limit', 30) ?? 30);
-
-        $status = $args->string('status');
-        if ($status !== null) {
-            $qb->andWhere('b.status = :status')->setParameter('status', $status);
-        }
-        $query = $args->string('query');
-        if ($query !== null) {
-            $qb->andWhere('LOWER(u.email) LIKE :q OR LOWER(u.name) LIKE :q')->setParameter(
-                'q',
-                '%' . strtolower($query) . '%',
-            );
-        }
-
-        /** @var list<Booking> $bookings */
-        $bookings = $qb->getQuery()->getResult();
+        $bookings = $this->bookingRepository->findFiltered(
+            $args->string('status'),
+            $args->string('query'),
+            $args->int('limit', 30) ?? 30,
+        );
         $items = array_map($this->presenter->booking(...), $bookings);
 
         return ToolResult::success(sprintf('Rezerwacje: %d.', count($items)), [

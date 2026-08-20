@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http;
 
 use App\Entity\PostVisibility;
-use App\Repository\PostRepository;
+use App\Infrastructure\Doctrine\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\HttpFoundation\Request;

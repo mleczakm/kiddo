@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Command;
 
+use App\Application\Repository\BookingRepositoryInterface;
+use App\Application\Repository\ChildRepositoryInterface;
+use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\PaymentRepositoryInterface;
+use App\Application\Repository\TransferRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\AgeRange;
 use App\Entity\Booking;
 use App\Entity\Child;
@@ -18,12 +24,6 @@ use App\Entity\TicketType;
 use App\Entity\Transfer;
 use App\Entity\User;
 use App\Entity\WorkshopType;
-use App\Repository\BookingRepository;
-use App\Repository\ChildRepository;
-use App\Repository\LessonRepository;
-use App\Repository\PaymentRepository;
-use App\Repository\TransferRepository;
-use App\Repository\UserRepository;
 use Brick\Money\Money;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,12 +48,12 @@ final class SeedDemoDataCommand extends Command
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository $userRepository,
-        private readonly ChildRepository $childRepository,
-        private readonly BookingRepository $bookingRepository,
-        private readonly PaymentRepository $paymentRepository,
-        private readonly LessonRepository $lessonRepository,
-        private readonly TransferRepository $transferRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly ChildRepositoryInterface $childRepository,
+        private readonly BookingRepositoryInterface $bookingRepository,
+        private readonly PaymentRepositoryInterface $paymentRepository,
+        private readonly LessonRepositoryInterface $lessonRepository,
+        private readonly TransferRepositoryInterface $transferRepository,
         #[Autowire('%kernel.environment%')]
         private readonly string $environment,
     ) {
@@ -510,13 +510,7 @@ final class SeedDemoDataCommand extends Command
         }
         $this->entityManager->flush();
 
-        /** @var list<User> $users */
-        $users = $this->userRepository
-            ->createQueryBuilder('u')
-            ->where('u.email LIKE :domain')
-            ->setParameter('domain', '%@' . self::DEMO_DOMAIN)
-            ->getQuery()
-            ->getResult();
+        $users = $this->userRepository->findByEmailDomain(self::DEMO_DOMAIN);
         if ($users !== []) {
             foreach ($this->bookingRepository->findBy([
                 'user' => $users,
@@ -542,14 +536,7 @@ final class SeedDemoDataCommand extends Command
             $this->entityManager->flush();
         }
 
-        /** @var list<Lesson> $lessons */
-        $lessons = $this->lessonRepository
-            ->createQueryBuilder('l')
-            ->join('l.metadata', 'm')
-            ->where('m.title LIKE :prefix')
-            ->setParameter('prefix', self::DEMO_TITLE_PREFIX . '%')
-            ->getQuery()
-            ->getResult();
+        $lessons = $this->lessonRepository->findByMetadataTitlePrefix(self::DEMO_TITLE_PREFIX);
         /** @var array<string, Series> $series */
         $series = [];
         foreach ($lessons as $lesson) {

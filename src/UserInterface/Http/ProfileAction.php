@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http;
 
 use App\Entity\User;
-use App\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

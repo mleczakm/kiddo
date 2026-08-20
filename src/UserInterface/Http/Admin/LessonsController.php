@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Admin;
 
 use App\Entity\Lesson;
-use App\Security\Voter\LessonVoter;
+use App\Infrastructure\Symfony\Security\Voter\LessonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

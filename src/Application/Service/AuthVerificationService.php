@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Service;
 
 use App\Application\Command\Notification\SendVerificationCode;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\User;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -20,7 +20,7 @@ final readonly class AuthVerificationService
     public function __construct(
         private CacheItemPoolInterface $cache,
         private MessageBusInterface $messageBus,
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
         private EntityManagerInterface $entityManager,
     ) {}
 

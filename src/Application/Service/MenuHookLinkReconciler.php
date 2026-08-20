@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
+use App\Application\Repository\MenuHookLinkRepositoryInterface;
 use App\Entity\MenuHookLink;
 use App\Entity\MenuHookLinkTarget;
 use App\Entity\MenuHookSlot;
 use App\Entity\Post;
-use App\Repository\MenuHookLinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -19,7 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class MenuHookLinkReconciler
 {
     public function __construct(
-        private MenuHookLinkRepository $repository,
+        private MenuHookLinkRepositoryInterface $repository,
         private EntityManagerInterface $entityManager,
     ) {}
 

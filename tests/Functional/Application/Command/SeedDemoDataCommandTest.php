@@ -6,9 +6,9 @@ namespace App\Tests\Functional\Application\Command;
 
 use App\Application\Command\SeedDemoDataCommand;
 use App\Entity\Booking;
-use App\Repository\BookingRepository;
-use App\Repository\LessonRepository;
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\LessonRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
-use App\Component\AdminSettingsComponent;
 use App\Entity\FinanceContact;
 use App\Entity\Setting;
 use App\Entity\User;
-use App\Repository\FinanceContactRepository;
-use App\Repository\SettingRepository;
-use App\Repository\UserRepository;
+use App\Infrastructure\Doctrine\Repository\FinanceContactRepository;
+use App\Infrastructure\Doctrine\Repository\SettingRepository;
+use App\Infrastructure\Doctrine\Repository\UserRepository;
 use App\Tests\Assembler\UserAssembler;
+use App\UserInterface\Http\Component\AdminSettingsComponent;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

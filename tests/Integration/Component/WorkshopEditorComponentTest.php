@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
-use App\Component\WorkshopEditorComponent;
 use App\Entity\Lesson;
 use App\Entity\Series;
 use App\Entity\User;
 use App\Entity\WorkshopType;
-use App\Repository\NotificationRepository;
+use App\Infrastructure\Doctrine\Repository\NotificationRepository;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\SeriesAssembler;
 use App\Tests\Assembler\UserAssembler;
+use App\UserInterface\Http\Component\WorkshopEditorComponent;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;

@@ -6,7 +6,7 @@ namespace App\Infrastructure\Doctrine\Query;
 
 use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Entity\Lesson;
-use App\Repository\LessonRepository;
+use App\Infrastructure\Doctrine\Repository\LessonRepository;
 use DateTimeImmutable;
 
 readonly class DoctrineTodayLessonsQuery implements TodayLessonsQuery

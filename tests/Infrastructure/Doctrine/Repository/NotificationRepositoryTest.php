@@ -1,0 +1,94 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Infrastructure\Doctrine\Repository;
+
+use App\Entity\Notification;
+use App\Entity\NotificationSeverity;
+use App\Entity\User;
+use App\Infrastructure\Doctrine\Repository\NotificationRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+#[Group('functional')]
+final class NotificationRepositoryTest extends KernelTestCase
+{
+    private EntityManagerInterface $em;
+
+    private NotificationRepository $repo;
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        self::bootKernel();
+        $this->em = self::getContainer()->get(EntityManagerInterface::class);
+        $this->repo = self::getContainer()->get(NotificationRepository::class);
+    }
+
+    private function persist(object $entity): void
+    {
+        $this->em->persist($entity);
+        $this->em->flush();
+    }
+
+    public function testCountUnreadAndFindRecentFiltersAndOrders(): void
+    {
+        $user = new User('repo@example.com', 'Repo User');
+        $this->persist($user);
+
+        $createdAt = new \ReflectionProperty(Notification::class, 'createdAt');
+        $base = new \DateTimeImmutable('2025-06-15 12:00:00');
+
+        $n1 = new Notification($user, 'First', null, null, NotificationSeverity::Info); // unread
+        $createdAt->setValue($n1, $base);
+        $this->persist($n1);
+
+        $nOld = new Notification($user, 'Old', null, null, NotificationSeverity::Warning);
+        $createdAt->setValue($nOld, $base->modify('-2 days'));
+        $this->persist($nOld);
+
+        $nRead = new Notification($user, 'Read', null, null, NotificationSeverity::Success);
+        $createdAt->setValue($nRead, $base->modify('+1 hour'));
+        $this->persist($nRead);
+        $nRead->markRead();
+        $this->em->flush();
+
+        $nDeleted = new Notification($user, 'Deleted', null, null, NotificationSeverity::Error);
+        $createdAt->setValue($nDeleted, $base->modify('+2 hours'));
+        $this->persist($nDeleted);
+        $nDeleted->softDelete();
+        $this->em->flush();
+
+        static::assertSame(2, $this->repo->countUnreadForUser($user)); // n1 + nOld
+
+        $recent = $this->repo->findRecentForUser($user, 10);
+        static::assertCount(3, $recent); // deleted filtered out
+        static::assertSame('Read', $recent[0]->getTitle());
+        static::assertSame('First', $recent[1]->getTitle());
+        static::assertSame('Old', $recent[2]->getTitle());
+    }
+
+    public function testHardDeleteOlderThanRemovesOnlyAgedRows(): void
+    {
+        $user = new User('purge@example.com', 'Purge User');
+        $this->persist($user);
+
+        $createdAt = new \ReflectionProperty(Notification::class, 'createdAt');
+        $old = new Notification($user, 'Old', '<strong>html</strong>', '/dashboard', NotificationSeverity::Info);
+        $createdAt->setValue($old, new \DateTimeImmutable('2024-01-01 00:00:00'));
+        $this->persist($old);
+
+        $fresh = new Notification($user, 'Fresh', null, null, NotificationSeverity::Success);
+        $createdAt->setValue($fresh, new \DateTimeImmutable('2025-06-01 00:00:00'));
+        $this->persist($fresh);
+
+        $deleted = $this->repo->hardDeleteOlderThan(new \DateTimeImmutable('2025-01-01 00:00:00'));
+        static::assertSame(1, $deleted);
+
+        $remaining = $this->repo->findRecentForUser($user, 10);
+        static::assertCount(1, $remaining);
+        static::assertSame('Fresh', $remaining[0]->getTitle());
+    }
+}

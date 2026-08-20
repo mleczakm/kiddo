@@ -7,7 +7,7 @@ namespace App\UserInterface\Http;
 use App\Application\File\FileStorageInterface;
 use App\Application\File\FileVisibilityChecker;
 use App\Entity\File;
-use App\Repository\FileRepository;
+use App\Infrastructure\Doctrine\Repository\FileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\HttpFoundation\Request;

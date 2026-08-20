@@ -6,14 +6,14 @@ namespace App\Application\CommandHandler;
 
 use App\Application\Command\AddBooking;
 use App\Application\Command\SendReservationNotification;
+use App\Application\Repository\ChildRepositoryInterface;
+use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\BookingFactory;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Entity\NotificationSeverity;
 use App\Entity\PaymentCode;
-use App\Repository\ChildRepository;
-use App\Repository\LessonRepository;
-use App\Repository\UserRepository;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,9 +29,9 @@ final readonly class AddBookingHandler
     public function __construct(
         private EntityManagerInterface $em,
         private MessageBusInterface $bus,
-        private UserRepository $userRepository,
-        private LessonRepository $lessonRepository,
-        private ChildRepository $childRepository,
+        private UserRepositoryInterface $userRepository,
+        private LessonRepositoryInterface $lessonRepository,
+        private ChildRepositoryInterface $childRepository,
         private BookingFactory $bookingFactory,
         private InAppNotificationService $inAppNotifications,
         private LessonInstructorResolver $instructorResolver,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Entity\Lesson;
-use App\Repository\LessonRepository;
+use App\Infrastructure\Doctrine\Repository\LessonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

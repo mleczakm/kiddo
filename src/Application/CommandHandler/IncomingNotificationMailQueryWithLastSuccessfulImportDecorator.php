@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\CommandHandler;
 
-use App\Repository\SettingRepository;
+use App\Application\Repository\SettingRepositoryInterface;
 use DirectoryTree\ImapEngine\MessageQueryInterface;
 
 final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecorator implements
@@ -12,7 +12,7 @@ final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecora
 {
     public function __construct(
         private IncomingNotificationMailQuery $decorated,
-        private SettingRepository $settingRepository,
+        private SettingRepositoryInterface $settingRepository,
     ) {}
 
     /**

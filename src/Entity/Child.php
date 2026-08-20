@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ChildRepository;
+use App\Infrastructure\Doctrine\Repository\ChildRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;

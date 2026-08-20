@@ -38,6 +38,57 @@ services:
   App\Application\File\FileStorageInterface:
     alias: App\Application\File\DatabaseFileStorage
 
+  App\Application\Repository\ActivityLogRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\ActivityLogRepository
+
+  App\Application\Repository\BookingRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\BookingRepository
+
+  App\Application\Repository\ChildRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\ChildRepository
+
+  App\Application\Repository\FileRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\FileRepository
+
+  App\Application\Repository\FinanceContactRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\FinanceContactRepository
+
+  App\Application\Repository\LessonMetadataRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\LessonMetadataRepository
+
+  App\Application\Repository\LessonRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\LessonRepository
+
+  App\Application\Repository\MenuHookLinkRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\MenuHookLinkRepository
+
+  App\Application\Repository\NotificationRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\NotificationRepository
+
+  App\Application\Repository\PaymentCodeRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\PaymentCodeRepository
+
+  App\Application\Repository\PaymentRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\PaymentRepository
+
+  App\Application\Repository\PostFileRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\PostFileRepository
+
+  App\Application\Repository\PostRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\PostRepository
+
+  App\Application\Repository\SeriesRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\SeriesRepository
+
+  App\Application\Repository\SettingRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\SettingRepository
+
+  App\Application\Repository\TransferRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\TransferRepository
+
+  App\Application\Repository\UserRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\UserRepository
+
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 
