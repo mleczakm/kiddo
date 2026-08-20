@@ -89,6 +89,12 @@ services:
   App\Application\Repository\UserRepositoryInterface:
     alias: App\Infrastructure\Doctrine\Repository\UserRepository
 
+  App\Application\Workflow\BookingStateMachineInterface:
+    alias: App\Infrastructure\Symfony\Workflow\SymfonyBookingStateMachine
+
+  App\Application\Workflow\PaymentStateMachineInterface:
+    alias: App\Infrastructure\Symfony\Workflow\SymfonyPaymentStateMachine
+
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 

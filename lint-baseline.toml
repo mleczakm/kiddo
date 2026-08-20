@@ -169,6 +169,12 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
+file = "src/Application/CommandHandler/CheckExpiredPaymentsHandler.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
 file = "src/Application/CommandHandler/DoctrineInsideTaskWorkerCheckHandler.php"
 code = "no-empty-catch-clause"
 message = "Do not use empty `catch` blocks."

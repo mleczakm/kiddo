@@ -7,16 +7,15 @@ namespace App\MessageHandler;
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\NotificationSeverity;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Infrastructure\Doctrine\Repository\LessonRepository;
 use App\Message\RescheduleLessonBooking;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
@@ -26,8 +25,7 @@ readonly class RescheduleLessonBookingHandler
         private BookingRepository $bookingRepository,
         private LessonRepository $lessonRepository,
         private LoggerInterface $logger,
-        #[Autowire(service: 'state_machine.booking')]
-        private WorkflowInterface $bookingStateMachine,
+        private BookingStateMachineInterface $bookingStateMachine,
         private MessageBusInterface $bus,
         private InAppNotificationService $inAppNotifications,
         private LessonInstructorResolver $instructorResolver,

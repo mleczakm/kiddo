@@ -13,6 +13,7 @@ use App\Application\Repository\SeriesRepositoryInterface;
 use App\Application\Repository\TransferRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
+use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
@@ -30,7 +31,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AutoconfigureTag('app.chat_tool_provider')]
 final readonly class AdminChatTools implements ChatToolProviderInterface
@@ -45,7 +45,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         private UserRepositoryInterface $userRepository,
         private SeriesRepositoryInterface $seriesRepository,
         private TodayLessonsQuery $todayLessonsQuery,
-        private WorkflowInterface $paymentStateMachine,
+        private PaymentStateMachineInterface $paymentStateMachine,
         private LessonPresenter $presenter,
         private InAppNotificationService $inAppNotificationService,
     ) {}

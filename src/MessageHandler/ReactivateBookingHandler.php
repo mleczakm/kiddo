@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Application\Workflow\BookingStateMachineInterface;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Message\ReactivateBooking;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
 class ReactivateBookingHandler
 {
     public function __construct(
         private readonly BookingRepository $bookingRepository,
-        #[Autowire(service: 'state_machine.booking')]
-        private readonly WorkflowInterface $bookingStateMachine,
+        private readonly BookingStateMachineInterface $bookingStateMachine,
         private readonly LoggerInterface $logger,
     ) {}
 

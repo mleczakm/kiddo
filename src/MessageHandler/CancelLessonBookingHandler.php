@@ -6,14 +6,13 @@ namespace App\MessageHandler;
 
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
+use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\NotificationSeverity;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Message\CancelLessonBooking;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
@@ -21,8 +20,7 @@ class CancelLessonBookingHandler
 {
     public function __construct(
         private readonly BookingRepository $bookingRepository,
-        #[Autowire(service: 'state_machine.booking')]
-        private readonly WorkflowInterface $bookingStateMachine,
+        private readonly BookingStateMachineInterface $bookingStateMachine,
         private readonly LoggerInterface $logger,
         private readonly InAppNotificationService $inAppNotifications,
         private readonly LessonInstructorResolver $instructorResolver,

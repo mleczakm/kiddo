@@ -6,16 +6,16 @@ namespace App\Application\CommandHandler;
 
 use App\Application\Command\CheckExpiredPayments;
 use App\Application\Repository\PaymentRepositoryInterface;
+use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\Payment;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\Registry as WorkflowRegistry;
 
 #[AsMessageHandler]
 final readonly class CheckExpiredPaymentsHandler
 {
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
-        private WorkflowRegistry $workflowRegistry,
+        private PaymentStateMachineInterface $paymentStateMachine,
     ) {}
 
     public function __invoke(CheckExpiredPayments $command): void
@@ -23,9 +23,8 @@ final readonly class CheckExpiredPaymentsHandler
         $expiredPayments = $this->paymentRepository->findExpiredPendingPayments($command->expirationMinutes);
 
         foreach ($expiredPayments as $payment) {
-            $workflow = $this->workflowRegistry->get($payment);
-            if ($workflow->can($payment, Payment::TRANSITION_EXPIRE)) {
-                $workflow->apply($payment, Payment::TRANSITION_EXPIRE);
+            if ($this->paymentStateMachine->can($payment, Payment::TRANSITION_EXPIRE)) {
+                $this->paymentStateMachine->apply($payment, Payment::TRANSITION_EXPIRE);
             }
         }
     }

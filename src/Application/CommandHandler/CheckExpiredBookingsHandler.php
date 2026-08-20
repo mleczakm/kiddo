@@ -7,9 +7,9 @@ namespace App\Application\CommandHandler;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Service\ActivityLogger;
+use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\ActivityType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 class CheckExpiredBookingsHandler
 {
@@ -17,7 +17,7 @@ class CheckExpiredBookingsHandler
 
     public function __construct(
         private readonly BookingRepositoryInterface $bookingRepository,
-        private readonly WorkflowInterface $bookingStateMachine,
+        private readonly BookingStateMachineInterface $bookingStateMachine,
         private readonly ActivityLogger $activityLogger,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {}

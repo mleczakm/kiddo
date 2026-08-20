@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Workflow\EventSubscriber;
+namespace App\Infrastructure\EventSubscriber;
 
+use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\Payment;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
-use Symfony\Component\Workflow\WorkflowInterface;
 
-class BookingWorkflowSubscriber implements EventSubscriberInterface
+class BookingConfirmationSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly WorkflowInterface $bookingStateMachine,
+        private readonly BookingStateMachineInterface $bookingStateMachine,
     ) {}
 
     #[\Override]

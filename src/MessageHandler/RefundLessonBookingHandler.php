@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Application\Workflow\BookingStateMachineInterface;
+use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\Payment;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Message\RefundLessonBooking;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler]
 class RefundLessonBookingHandler
@@ -18,10 +18,8 @@ class RefundLessonBookingHandler
     public function __construct(
         private readonly BookingRepository $bookingRepository,
         private readonly LoggerInterface $logger,
-        #[Autowire(service: 'state_machine.booking')]
-        private readonly WorkflowInterface $bookingStateMachine,
-        #[Autowire(service: 'state_machine.payment')]
-        private readonly WorkflowInterface $paymentStateMachine,
+        private readonly BookingStateMachineInterface $bookingStateMachine,
+        private readonly PaymentStateMachineInterface $paymentStateMachine,
     ) {}
 
     public function __invoke(RefundLessonBooking $command): void

@@ -7,14 +7,14 @@ namespace App\Application\CommandHandler;
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Application\Repository\PaymentCodeRepositoryInterface;
+use App\Application\Workflow\PaymentStateMachineInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 final readonly class MatchPaymentForTransferHandler
 {
     public function __construct(
         private PaymentCodeRepositoryInterface $paymentCodeRepository,
-        private WorkflowInterface $paymentStateMachine,
+        private PaymentStateMachineInterface $paymentStateMachine,
         private MessageBusInterface $messageBus,
     ) {}
 

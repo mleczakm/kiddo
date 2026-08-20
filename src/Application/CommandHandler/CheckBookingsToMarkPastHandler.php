@@ -6,15 +6,15 @@ namespace App\Application\CommandHandler;
 
 use App\Application\Command\CheckBookingsToMarkPast;
 use App\Application\Repository\BookingRepositoryInterface;
+use App\Application\Workflow\BookingStateMachineInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Workflow\Registry as WorkflowRegistry;
 
 #[AsMessageHandler]
 final readonly class CheckBookingsToMarkPastHandler
 {
     public function __construct(
         private BookingRepositoryInterface $bookingRepository,
-        private WorkflowRegistry $workflowRegistry,
+        private BookingStateMachineInterface $bookingStateMachine,
     ) {}
 
     public function __invoke(CheckBookingsToMarkPast $_command): void
@@ -26,9 +26,8 @@ final readonly class CheckBookingsToMarkPastHandler
                 continue;
             }
 
-            $workflow = $this->workflowRegistry->get($booking);
-            if ($workflow->can($booking, 'complete')) {
-                $workflow->apply($booking, 'complete');
+            if ($this->bookingStateMachine->can($booking, 'complete')) {
+                $this->bookingStateMachine->apply($booking, 'complete');
             }
         }
     }

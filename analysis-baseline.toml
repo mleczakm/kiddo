@@ -153,18 +153,6 @@ count = 1
 [[issues]]
 file = "src/Application/Chat/AdminChatTools.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\Chat\AdminChatTools::assignTransfer`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/AdminChatTools.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\Chat\AdminChatTools::markBookingPaid`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/AdminChatTools.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ValueError` in `App\Application\Chat\AdminChatTools::notifyUser`.'
 count = 1
 
@@ -553,12 +541,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\Inva
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/CheckBookingsToMarkPastHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\CommandHandler\CheckBookingsToMarkPastHandler::__invoke`.'
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/CheckExpiredBookingsHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\CheckExpiredBookingsHandler::__invoke`.'
@@ -574,18 +556,6 @@ count = 1
 file = "src/Application/CommandHandler/CheckExpiredBookingsHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\CheckExpiredBookingsHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/CheckExpiredBookingsHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\CommandHandler\CheckExpiredBookingsHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/CheckExpiredPaymentsHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\CommandHandler\CheckExpiredPaymentsHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -622,12 +592,6 @@ count = 1
 file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\MatchPaymentForTransferHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/MatchPaymentForTransferHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\CommandHandler\MatchPaymentForTransferHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -1255,15 +1219,33 @@ message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrenc
 count = 1
 
 [[issues]]
-file = "src/Application/Workflow/EventSubscriber/BookingWorkflowSubscriber.php"
+file = "src/Application/Service/WorkshopFileManager.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\Workflow\EventSubscriber\BookingWorkflowSubscriber::onPaymentCompleted`.'
+message = 'Potentially unhandled exception `DomainException` in `App\Application\Service\WorkshopFileManager::attachUploads`.'
 count = 1
 
 [[issues]]
-file = "src/Application/Workflow/EventSubscriber/BookingWorkflowSubscriber.php"
+file = "src/Application/Service/WorkshopFileManager.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\Application\Workflow\EventSubscriber\BookingWorkflowSubscriber::onPaymentExpired`.'
+message = 'Potentially unhandled exception `DomainException` in `App\Application\Service\WorkshopFileManager::reconcile`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/WorkshopFileManager.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\WorkshopFileManager::attachUploads`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/WorkshopFileManager.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\WorkshopFileManager::reconcile`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/WorkshopFileManager.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `ValueError` in `App\Application\Service\WorkshopFileManager::reconcile`.'
 count = 1
 
 [[issues]]
@@ -1384,6 +1366,24 @@ count = 1
 file = "src/Entity/Lesson.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Entity\Lesson::getMatchingTicketOption`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/LessonMetadata.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `DomainException` in `App\Entity\LessonMetadata::duplicate`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/LessonMetadata.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Entity\LessonMetadata::addFile`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/LessonMetadata.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Entity\LessonMetadata::duplicate`.'
 count = 1
 
 [[issues]]
@@ -2437,33 +2437,15 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/MessageHandler/CancelLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
 file = "src/MessageHandler/ReactivateBookingHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\MessageHandler\ReactivateBookingHandler::__invoke`.'
 count = 1
 
 [[issues]]
-file = "src/MessageHandler/ReactivateBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\MessageHandler\ReactivateBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
 file = "src/MessageHandler/RefundLessonBookingHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\MessageHandler\RefundLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/RefundLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\MessageHandler\RefundLessonBookingHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -2500,12 +2482,6 @@ count = 1
 file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\MessageHandler\RescheduleLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\MessageHandler\RescheduleLessonBookingHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -3548,6 +3524,12 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "avoid-catching-error"
+message = "Avoid catching 'Error' class instances."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -3699,6 +3681,12 @@ count = 1
 [[issues]]
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::reconcileWorkshopFiles`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveExistingLesson`.'
 count = 1
 
@@ -3718,6 +3706,12 @@ count = 1
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::save`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\HttpFoundation\Exception\BadRequestException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::save`.'
 count = 1
 
 [[issues]]
@@ -3760,6 +3754,12 @@ count = 1
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `UnexpectedValueException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getInstructors`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `ValueError` in `App\UserInterface\Http\Component\WorkshopEditorComponent::reconcileWorkshopFiles`.'
 count = 1
 
 [[issues]]
