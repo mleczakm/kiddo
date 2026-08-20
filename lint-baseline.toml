@@ -163,12 +163,6 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/CheckExpiredPaymentsHandler.php"
 code = "prefer-early-continue"
 message = "Consider using early continue pattern to reduce nesting."
@@ -214,6 +208,12 @@ count = 1
 file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
 code = "kan-defect"
 message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -341,6 +341,18 @@ file = "src/Application/Service/TransferMoneyParser.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
 count = 2
+
+[[issues]]
+file = "src/Application/UseCase/CancelBookingOccurrence.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
 
 [[issues]]
 file = "src/Entity/ActivityLog.php"
@@ -598,12 +610,6 @@ count = 1
 file = "src/Infrastructure/Twig/AppVersionExtension.php"
 code = "no-shorthand-ternary"
 message = "Use of the shorthand ternary operator."
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/CancelLessonBookingHandler.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -886,6 +892,12 @@ count = 1
 file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
@@ -1180,6 +1192,12 @@ count = 1
 file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "tests/Functional/WholeProcess/FastReservationJourneyTest.php"
+code = "halstead"
+message = "Method has a high halstead volume"
 count = 1
 
 [[issues]]

@@ -37,6 +37,8 @@ framework:
             'App\Application\Command\SendLoginNotification': sync
             'App\Application\Command\Notification\SendVerificationCode': sync
             'App\Application\Command\SendReservationNotification': sync
+            'App\Message\RefundLessonBooking': sync
+            'App\Message\CancelLessonBooking': sync
             # Route everything else to async
             '*': async
 

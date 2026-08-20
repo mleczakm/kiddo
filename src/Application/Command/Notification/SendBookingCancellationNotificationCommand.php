@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Command\Notification;
 
-use App\Entity\Booking;
+use Symfony\Component\Uid\Ulid;
 
 readonly class SendBookingCancellationNotificationCommand
 {
     public function __construct(
-        public Booking $booking,
+        public Ulid $bookingId,
     ) {}
 }

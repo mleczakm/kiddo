@@ -499,48 +499,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Console\Exception\
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\CommandHandler\AddBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\AddBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\AddBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\AddBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\CommandHandler\AddBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\AddBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/AddBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\CommandHandler\AddBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/CheckExpiredBookingsHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\CheckExpiredBookingsHandler::__invoke`.'
@@ -1138,6 +1096,102 @@ count = 1
 file = "src/Application/Service/WorkshopFileManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ValueError` in `App\Application\Service\WorkshopFileManager::reconcile`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/CancelBookingOccurrence.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/CancelBookingOccurrence.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/CancelBookingOccurrence.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/CancelBookingOccurrence.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/CancelBookingOccurrence.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/PlaceSingleReservation.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/RequestRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\RequestRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/RequestRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `RuntimeException` in `App\Application\UseCase\RequestRefund::__invoke`.'
 count = 1
 
 [[issues]]
@@ -2301,31 +2355,7 @@ count = 1
 [[issues]]
 file = "src/MessageHandler/CancelLessonBookingHandler.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/CancelLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/CancelLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/CancelLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/CancelLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
+message = 'Potentially unhandled exception `LogicException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -2337,7 +2367,7 @@ count = 1
 [[issues]]
 file = "src/MessageHandler/RefundLessonBookingHandler.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\MessageHandler\RefundLessonBookingHandler::__invoke`.'
+message = 'Potentially unhandled exception `LogicException` in `App\MessageHandler\RefundLessonBookingHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -3259,12 +3289,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\Inva
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Component/ReservationDetailsModal.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\UserInterface\Http\Component\ReservationDetailsModal::changePaymentStatus`.'
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\UserInterface\Http\Component\SeriesDetailsComponent::loadSeries`.'
@@ -3502,12 +3526,6 @@ count = 1
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::loadSeriesRepresentativeLesson`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::saveExistingLesson`.'
 count = 1
 
 [[issues]]

@@ -37,6 +37,6 @@ readonly class BookingWorkflowSubscriber implements EventSubscriberInterface
         // this "transition" event *before* updating the subject's marking (status), so
         // $booking->getStatus() is still the pre-transition value at this point — it
         // cannot be used to gate this notification.
-        $this->messageBus->dispatch(new SendBookingCancellationNotificationCommand($booking));
+        $this->messageBus->dispatch(new SendBookingCancellationNotificationCommand($booking->getId()));
     }
 }

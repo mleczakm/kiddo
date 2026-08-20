@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\UseCase\ApproveRefund;
 use App\Entity\ActivityLog;
 use App\Entity\Booking;
 use App\Entity\DTO\RescheduledLesson;
@@ -72,6 +73,7 @@ final class ReservationDetailsModal extends AbstractController
         private readonly ActivityLogRepository $activityLogRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
+        private readonly ApproveRefund $approveRefund,
         #[Autowire(service: 'state_machine.payment')]
         private readonly WorkflowInterface $paymentStateMachine,
     ) {}
@@ -178,17 +180,29 @@ final class ReservationDetailsModal extends AbstractController
             return;
         }
 
+        $actorId = $actor->getId();
         if (
             !in_array($transition, [Payment::TRANSITION_REFUND, Payment::TRANSITION_CANCEL], true)
             || !$this->paymentStateMachine->can($payment, $transition)
+            || $actorId === null
         ) {
             $this->errorMessage = 'Ta zmiana statusu płatności nie jest dostępna.';
             return;
         }
 
-        $this->paymentStateMachine->apply($payment, $transition);
-        $payment->recordStatusDecision($actor, $this->paymentNote);
-        $this->entityManager->flush();
+        try {
+            if ($transition === Payment::TRANSITION_REFUND) {
+                ($this->approveRefund)($payment->getId(), $actorId, $this->paymentNote);
+            } else {
+                $this->paymentStateMachine->apply($payment, $transition);
+                $payment->recordStatusDecision($actor, $this->paymentNote);
+                $this->entityManager->flush();
+            }
+        } catch (\Throwable $exception) {
+            $this->errorMessage = $exception->getMessage();
+            $this->successMessage = null;
+            return;
+        }
 
         $this->successMessage = $transition === Payment::TRANSITION_REFUND
             ? 'Płatność została oznaczona jako zwrócona.'

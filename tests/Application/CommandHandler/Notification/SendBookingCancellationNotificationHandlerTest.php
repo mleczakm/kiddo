@@ -47,7 +47,7 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(SendBookingCancellationNotificationHandler::class);
-        $handler(new SendBookingCancellationNotificationCommand($booking));
+        $handler(new SendBookingCancellationNotificationCommand($booking->getId()));
 
         static::assertCount(2, $this->mailer()->sentEmails());
 

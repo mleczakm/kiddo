@@ -20,6 +20,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\Messenger\Stamp\ReceivedStamp;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -48,11 +49,20 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
     #[\Override]
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
+        // A message routed to the 'sync' transport travels through this
+        // whole middleware stack twice: once on the outer dispatch (no
+        // ReceivedStamp yet, SendMessageMiddleware then re-dispatches into
+        // SyncTransport) and once on the inner pass SyncTransport triggers
+        // (which does carry a ReceivedStamp, and is where handling really
+        // happens). Both passes end up with a HandledStamp on the returned
+        // envelope - stamps accumulate - so gate on ReceivedStamp being
+        // present *before* handling to log exactly once regardless of
+        // whether the message ran sync or was received from a real worker.
+        $receivedBeforeHandling = $envelope->last(ReceivedStamp::class) !== null;
+
         $envelope = $stack->next()->handle($envelope, $stack);
 
-        if ($envelope->last(HandledStamp::class) === null) {
-            // Only routed to a transport so far (e.g. queued for async); the
-            // real handling — and the activity it represents — hasn't happened yet.
+        if (!$receivedBeforeHandling || $envelope->last(HandledStamp::class) === null) {
             return $envelope;
         }
 

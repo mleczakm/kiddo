@@ -6,6 +6,7 @@ namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendBookingCancellationNotificationCommand;
 use App\Application\Notification\NotificationSenderInterface;
+use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\Booking;
@@ -18,6 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final readonly class SendBookingCancellationNotificationHandler
 {
     public function __construct(
+        private BookingRepositoryInterface $bookingRepository,
         private NotificationSenderInterface $notificationSender,
         private TranslatorInterface $translator,
         private InAppNotificationService $inAppNotifications,
@@ -27,7 +29,11 @@ final readonly class SendBookingCancellationNotificationHandler
 
     public function __invoke(SendBookingCancellationNotificationCommand $command): void
     {
-        $booking = $command->booking;
+        $booking = $this->bookingRepository->find($command->bookingId);
+        if ($booking === null) {
+            return;
+        }
+
         $user = $booking->getUser();
         $lessons = $booking->getLessons();
 

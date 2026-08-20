@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\UserInterface\Http\Component;
 
 use App\Entity\Booking;
-use App\Message\CancelLessonBooking;
 use App\Message\RescheduleLessonBooking;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
@@ -66,7 +65,12 @@ final class AdminBookingsComponentTest extends WebTestCase
             'lessonId' => (string) $lesson->getId(),
         ]);
 
-        $this->transport('async')->queue()->assertContains(CancelLessonBooking::class, 1);
+        // CancelLessonBooking is routed sync (see messenger.yaml), so the
+        // cancellation has already happened by the time this call returns.
+        $this->em->clear();
+        /** @var Booking $reloaded */
+        $reloaded = $this->em->getRepository(Booking::class)->find($booking->getId());
+        static::assertTrue($reloaded->isLessonCancelled($lesson));
     }
 
     public function testRescheduleFlowDispatchesRescheduleCommand(): void

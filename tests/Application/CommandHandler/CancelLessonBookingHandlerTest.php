@@ -44,12 +44,12 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
+        // CancelLessonBooking itself is routed sync (see messenger.yaml) and
+        // runs inline; the booking-level cancel transition it triggers fires
+        // a separate notification command that is still async, so drain that.
         $this->bus()->dispatch(
             new CancelLessonBooking($booking->getId(), $lesson->getId(), $user, 'Nie damy rady przyjść'),
         );
-        // The cancel handler dispatches a further notification command, also
-        // routed to the async transport, so drain the queue until it settles.
-        $this->transport('async')->process();
         $this->transport('async')->process();
 
         $em->clear();
