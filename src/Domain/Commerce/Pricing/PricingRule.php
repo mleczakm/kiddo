@@ -26,7 +26,7 @@ final class PricingRule
     public const string STATUS_DISABLED = 'disabled';
 
     public function __construct(
-        public readonly Ulid $id,
+        public Ulid $id,
         public string $name,
         public AdjustmentType $adjustmentType,
         /**
@@ -49,7 +49,7 @@ final class PricingRule
         public ?int $perUserLimit = null,
         public string $status = self::STATUS_ACTIVE,
         public int $version = 1,
-        public readonly \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
+        public \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
     ) {}
 
     public function isActive(): bool

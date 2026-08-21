@@ -25,13 +25,13 @@ final class Cart
     public const string STATUS_ABANDONED = 'abandoned';
 
     public function __construct(
-        public readonly Ulid $id,
-        public readonly int $customerId,
-        public readonly string $currency,
+        public Ulid $id,
+        public int $customerId,
+        public string $currency,
         public string $status = self::STATUS_OPEN,
         public ?string $promotionCode = null,
         public ?Ulid $convertedOrderId = null,
-        public readonly \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
+        public \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
         public \DateTimeImmutable $updatedAt = new \DateTimeImmutable(),
         public int $version = 1,
     ) {}

@@ -18,6 +18,7 @@ use App\Domain\Commerce\Cart\Cart;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\TicketOption;
 use Brick\Money\Money;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
 
@@ -50,7 +51,18 @@ final readonly class CheckoutCart
 
     public function __invoke(Ulid $cartId, int $requestingUserId, ?string $paymentCode = null): CustomerOrder
     {
-        $cart = $this->cartRepository->find($cartId);
+        $checkout = fn(): CustomerOrder => $this->checkoutTransactionally($cartId, $requestingUserId, $paymentCode);
+
+        if ($this->em->getConnection()->isTransactionActive()) {
+            return $checkout();
+        }
+
+        return $this->em->wrapInTransaction($checkout);
+    }
+
+    private function checkoutTransactionally(Ulid $cartId, int $requestingUserId, ?string $paymentCode): CustomerOrder
+    {
+        $cart = $this->em->find(Cart::class, $cartId, LockMode::PESSIMISTIC_WRITE);
         if ($cart === null || $cart->customerId !== $requestingUserId) {
             throw new \InvalidArgumentException(sprintf('Cart %s not found for this customer.', $cartId));
         }

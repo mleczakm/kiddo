@@ -120,4 +120,11 @@ final class CustomerOrder
     {
         $this->status = self::STATUS_PAID;
     }
+
+    public function markExpired(): void
+    {
+        if ($this->status !== self::STATUS_PAID) {
+            $this->status = self::STATUS_EXPIRED;
+        }
+    }
 }

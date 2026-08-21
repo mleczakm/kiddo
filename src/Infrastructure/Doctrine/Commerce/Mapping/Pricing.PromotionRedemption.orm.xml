@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Domain\Commerce\Pricing\PromotionRedemption" table="promotion_redemption">
+        <id name="id" type="ulid" column="id"><generator strategy="NONE" /></id>
+        <field name="pricingRuleId" type="ulid" column="pricing_rule_id" />
+        <field name="orderId" type="ulid" column="order_id" />
+        <field name="orderLineId" type="ulid" column="order_line_id" />
+        <field name="customerId" type="integer" column="customer_id" />
+        <field name="status" type="string" column="status" length="20" />
+        <field name="reservedAt" type="datetime_immutable" column="reserved_at" />
+        <field name="consumedAt" type="datetime_immutable" column="consumed_at" nullable="true" />
+        <field name="releasedAt" type="datetime_immutable" column="released_at" nullable="true" />
+        <indexes>
+            <index name="idx_promotion_redemption_rule_status" columns="pricing_rule_id,status" />
+            <index name="idx_promotion_redemption_customer" columns="pricing_rule_id,customer_id,status" />
+            <index name="idx_promotion_redemption_order" columns="order_id" />
+        </indexes>
+        <unique-constraints>
+            <unique-constraint name="uniq_promotion_redemption_line_rule" columns="order_line_id,pricing_rule_id" />
+        </unique-constraints>
+    </entity>
+</doctrine-mapping>

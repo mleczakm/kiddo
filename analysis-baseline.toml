@@ -951,37 +951,139 @@ count = 1
 [[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+message = 'Potentially unhandled exception `App\Application\Service\Commerce\CapacityExceededException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
 count = 1
 
 [[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Commerce\OrderPlacementService::placeTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\Service\Commerce\OrderPlacementService::placeTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\Service\Commerce\OrderPlacementService::placeTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\Service\Commerce\OrderPlacementService::placeTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Application\Service\Commerce\OrderPlacementService::occupiedSeats`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::placeTransactionally`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\Application\Service\Commerce\OrderPlacementService::placeTransactionally`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `App\Application\Service\Commerce\PromotionLimitExceededException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Application\Service\Commerce\PromotionRedemptionService::countActive`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Application\Service\Commerce\PromotionRedemptionService::countActive`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Application\Service\Commerce\PromotionRedemptionService::findForOrder`.'
 count = 1
 
 [[issues]]
@@ -1311,31 +1413,61 @@ count = 1
 [[issues]]
 file = "src/Application/UseCase/Cart/CheckoutCart.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/UseCase/Cart/CheckoutCart.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/UseCase/Cart/CheckoutCart.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/UseCase/Cart/CheckoutCart.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
 count = 1
 
 [[issues]]
 file = "src/Application/UseCase/Cart/CheckoutCart.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\Application\UseCase\Cart\CheckoutCart::checkoutTransactionally`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unused-property"
+message = "Property `$cartRepository` is never used."
 count = 1
 
 [[issues]]
@@ -2146,6 +2278,36 @@ count = 1
 file = "src/Infrastructure/EventSubscriber/BookingWorkflowSubscriber.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Infrastructure\EventSubscriber\BookingWorkflowSubscriber::onBookingCancelled`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentExpirySubscriber.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\EventSubscriber\OrderPaymentExpirySubscriber::getSubscribedEvents`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentExpirySubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Infrastructure\EventSubscriber\OrderPaymentExpirySubscriber::onExpired`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentExpirySubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Infrastructure\EventSubscriber\OrderPaymentExpirySubscriber::onExpired`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentExpirySubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Infrastructure\EventSubscriber\OrderPaymentExpirySubscriber::onExpired`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/EventSubscriber/OrderPaymentExpirySubscriber.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Infrastructure\EventSubscriber\OrderPaymentExpirySubscriber::onExpired`.'
 count = 1
 
 [[issues]]
@@ -4949,6 +5111,42 @@ file = "tests/Application/Service/PlatformBillingServiceTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$service` (App\Application\Service\PlatformBillingService).'
 count = 1
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
+code = "ambiguous-object-method-access"
+message = "Cannot statically verify method call on a generic `object` type."
+count = 25
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
+code = "invalid-callable"
+message = "Expression of type `null` cannot be called as a function or method."
+count = 11
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
+code = "invalid-callable"
+message = "Expression of type `object` cannot be called as a function or method."
+count = 11
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
+count = 3
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 3
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 25
 
 [[issues]]
 file = "tests/Application/UseCase/Cart/PromotionCodeTest.php"

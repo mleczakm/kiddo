@@ -7,11 +7,13 @@ namespace App\Application\Service\Commerce;
 use App\Application\Service\BookingFactory;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Domain\Commerce\Order\OrderLine;
+use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
 use App\Entity\TicketType;
 use App\Entity\User;
 use Brick\Money\Money;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
 
@@ -27,6 +29,7 @@ final class OrderPlacementService
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly BookingFactory $bookingFactory,
+        private readonly PromotionRedemptionService $promotionRedemptions,
     ) {}
 
     /**
@@ -39,9 +42,34 @@ final class OrderPlacementService
         array $items,
         bool $writeOrder = true,
     ): OrderPlacementResult {
+        $place = fn(): OrderPlacementResult => $this->placeTransactionally(
+            $user,
+            $source,
+            $paymentCode,
+            $items,
+            $writeOrder,
+        );
+
+        if ($this->em->getConnection()->isTransactionActive()) {
+            return $place();
+        }
+
+        return $this->em->wrapInTransaction($place);
+    }
+
+    /** @param list<OrderItemSelection> $items */
+    private function placeTransactionally(
+        User $user,
+        string $source,
+        string $paymentCode,
+        array $items,
+        bool $writeOrder,
+    ): OrderPlacementResult {
         if ($items === []) {
             throw new \InvalidArgumentException('Cannot place an order with no items.');
         }
+
+        $this->lockAndValidateCapacity($items);
 
         $currency = $items[0]->ticketOption->price->getCurrency()->getCurrencyCode();
         $totalMinor = 0;
@@ -127,13 +155,72 @@ final class OrderPlacementService
             foreach ($orderLines as $line) {
                 $this->em->persist($line);
             }
+            $this->promotionRedemptions->reserve($order->getId(), $order->getCustomerId(), $orderLines);
         }
 
         foreach ($bookings as $booking) {
             $this->em->persist($booking);
         }
 
+        $this->em->flush();
+
         return new OrderPlacementResult($order, $orderLines, $bookings, $payment);
+    }
+
+    /** @param list<OrderItemSelection> $items */
+    private function lockAndValidateCapacity(array $items): void
+    {
+        /** @var array<string, array{lesson: Lesson, required: int}> $requirements */
+        $requirements = [];
+        foreach ($items as $item) {
+            $occurrences = $item->ticketOption->type === TicketType::CARNET_4
+                ? $item->lesson->getSeries()?->getLessonsGte($item->lesson, 4) ?? []
+                : [$item->lesson];
+            foreach ($occurrences as $lesson) {
+                $id = (string) $lesson->getId();
+                $requirements[$id] ??= ['lesson' => $lesson, 'required' => 0];
+                ++$requirements[$id]['required'];
+            }
+        }
+
+        ksort($requirements, SORT_STRING);
+        foreach ($requirements as $id => &$requirement) {
+            $locked = $this->em->find(Lesson::class, Ulid::fromString($id), LockMode::PESSIMISTIC_WRITE);
+            if (!$locked instanceof Lesson) {
+                throw new \InvalidArgumentException(sprintf('Lesson %s no longer exists.', $id));
+            }
+            $requirement['lesson'] = $locked;
+        }
+        unset($requirement);
+
+        foreach ($requirements as $id => $requirement) {
+            if (
+                !$requirement['lesson']->future()
+                || $requirement['lesson']->status !== 'active'
+                || ($requirement['lesson']->getMetadata()->capacity - $this->occupiedSeats($requirement['lesson']))
+                    < $requirement['required']
+            ) {
+                throw new CapacityExceededException(sprintf('Lesson %s has insufficient capacity.', $id));
+            }
+        }
+    }
+
+    private function occupiedSeats(Lesson $lesson): int
+    {
+        return (int) $this->em->getConnection()->fetchOne(
+            <<<'SQL'
+                    SELECT COUNT(*)
+                    FROM booking b
+                    INNER JOIN booking_lesson bl ON bl.booking_id = b.id
+                    WHERE bl.lesson_id = :lesson_id
+                      AND b.status IN ('pending', 'active', 'waiting_approval')
+                      AND jsonb_exists(b.lessons_map::jsonb -> 'active', :lesson_key)
+                SQL,
+            [
+                'lesson_id' => $lesson->getId()->toRfc4122(),
+                'lesson_key' => (string) $lesson->getId(),
+            ],
+        );
     }
 
     private static function orderNumberPrefix(string $source): string

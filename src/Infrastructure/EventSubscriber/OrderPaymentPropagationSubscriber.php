@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\EventSubscriber;
 
+use App\Application\Service\Commerce\PromotionRedemptionService;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\Payment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +23,7 @@ class OrderPaymentPropagationSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
+        private readonly PromotionRedemptionService $promotionRedemptions,
     ) {}
 
     #[\Override]
@@ -60,5 +62,6 @@ class OrderPaymentPropagationSubscriber implements EventSubscriberInterface
         // transition - matching BookingConfirmationSubscriber's precedent for
         // the same event, rather than flushing again here mid-transition.
         $order->markPaid();
+        $this->promotionRedemptions->consumeForOrder($orderId);
     }
 }
