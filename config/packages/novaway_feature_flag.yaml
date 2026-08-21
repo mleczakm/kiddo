@@ -22,7 +22,7 @@ when@test:
           # must restate every flag it wants to keep at its base-config value, not just the
           # ones it overrides.
           features:
-            cart: false
+            cart: true
             platform_billing_widget: true
             chat_assistant: true
             commerce_order_write: false

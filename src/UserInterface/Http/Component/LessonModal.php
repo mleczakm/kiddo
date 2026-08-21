@@ -7,6 +7,9 @@ namespace App\UserInterface\Http\Component;
 use App\Application\Command\AddBooking;
 use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Service\Pricing\PriceQuoter;
+use App\Application\UseCase\Cart\AddCartItem;
+use App\Application\UseCase\Cart\DuplicateCartItemException;
+use App\Application\UseCase\Cart\GetOrCreateCart;
 use App\Application\UseCase\PriceQuoteMismatchException;
 use App\Entity\Booking;
 use App\Entity\Lesson;
@@ -125,6 +128,12 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $phoneError = null;
 
+    #[LiveProp]
+    public bool $addedToCart = false;
+
+    #[LiveProp]
+    public ?string $addToCartError = null;
+
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly ChildRepository $childRepository,
@@ -135,6 +144,8 @@ class LessonModal extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly PaymentCodeGenerator $paymentCodeGenerator,
         private readonly PriceQuoter $priceQuoter,
+        private readonly GetOrCreateCart $getOrCreateCart,
+        private readonly AddCartItem $addCartItem,
     ) {}
 
     public function mount(): void
@@ -189,6 +200,8 @@ class LessonModal extends AbstractController
     {
         $this->modalOpened = true;
         $this->phoneError = null;
+        $this->addedToCart = false;
+        $this->addToCartError = null;
 
         $this->selectDefaultTicketType();
         $this->refreshQuote();
@@ -291,7 +304,64 @@ class LessonModal extends AbstractController
     {
         $this->activeTabIndex = $index;
         $this->selectedTicketType = $ticketType;
+        $this->addedToCart = false;
+        $this->addToCartError = null;
         $this->refreshQuote();
+    }
+
+    /**
+     * "Add to cart" (Stage 10-11 of the commerce rollout plan): adds one
+     * item for the currently selected ticket type/child, without reserving
+     * a seat or requiring payment yet - a separate, lighter-weight path
+     * than processPayment() below, which stays the one-line immediate
+     * checkout it always was.
+     */
+    #[LiveAction]
+    public function addToCart(): void
+    {
+        $this->addToCartError = null;
+        $this->addedToCart = false;
+
+        // Self-heals an entry path where mount() never got a chance to pick a
+        // default tab (e.g. the modal opened pre-expanded via a direct URL,
+        // see processPayment()'s own such comment below) - selectDefaultTicketType()
+        // is a no-op once a type is already selected, so this is always safe.
+        $this->selectDefaultTicketType();
+
+        $selectedTicketType = $this->selectedTicketType;
+        if ($this->lesson === null || $selectedTicketType === null || $selectedTicketType === '') {
+            $this->addToCartError = 'cart.add_error_generic';
+
+            return;
+        }
+
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $userId = $user?->getId();
+        if ($userId === null) {
+            $this->addToCartError = 'cart.add_error_generic';
+
+            return;
+        }
+
+        $cart = ($this->getOrCreateCart)($userId, 'PLN');
+
+        try {
+            ($this->addCartItem)(
+                $cart->id,
+                (string) $this->lesson->getId(),
+                $selectedTicketType,
+                $this->selectedChildId,
+                $userId,
+            );
+        } catch (DuplicateCartItemException) {
+            $this->addToCartError = 'cart.add_error_duplicate';
+
+            return;
+        }
+
+        $this->addedToCart = true;
+        $this->emit('cart:updated');
     }
 
     #[LiveAction]

@@ -26,6 +26,11 @@
 
             <div class="hidden md:flex items-center gap-4 ml-auto">
                 {% if app.user %}
+                    {% if isFeatureEnabled('cart') %}
+                        <div class="relative">
+                            {{ component('CartComponent') }}
+                        </div>
+                    {% endif %}
                     <div class="relative">
                         {{ component('NotificationTrayLiveComponent') }}
                     </div>
@@ -45,6 +50,11 @@
 
             <div class="flex md:hidden items-center gap-3 ml-auto">
                 {% if app.user %}
+                    {% if isFeatureEnabled('cart') %}
+                        <div class="relative">
+                            {{ component('CartComponent') }}
+                        </div>
+                    {% endif %}
                     <div class="relative">
                         {{ component('NotificationTrayLiveComponent') }}
                     </div>

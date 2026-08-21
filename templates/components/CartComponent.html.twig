@@ -1,0 +1,122 @@
+<div {{ attributes }}>
+    {% set items = this.getItems() %}
+    <details class="relative" data-controller="details-dropdown">
+        <summary id="cart-btn" class="list-none cursor-pointer">
+            <div class="relative inline-flex items-center justify-center h-10 w-10 rounded-full hover:bg-beige transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="text-workshop-brown">
+                    <circle cx="8" cy="21" r="1"></circle>
+                    <circle cx="19" cy="21" r="1"></circle>
+                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+                </svg>
+                <span id="cart-badge"
+                      class="absolute -top-1 -right-1 {{ items|length > 0 ? '' : 'hidden' }} min-w-5 h-5 px-1 rounded-full bg-workshop-red text-white text-xs flex items-center justify-center font-semibold">{{ items|length > 9 ? '9+' : items|length }}</span>
+            </div>
+        </summary>
+
+        <div id="cart-panel" class="absolute right-0 mt-2 w-96 max-w-[92vw] bg-popover border rounded-md shadow-md z-50 overflow-hidden">
+            <div class="px-3 py-2 text-sm font-medium text-muted-foreground border-b">
+                {{ 'cart.title'|trans }}
+            </div>
+
+            {% if this.confirmedOrderNumber is not empty %}
+                <div class="p-4 space-y-3">
+                    <p class="font-medium text-workshop-brown">{{ 'cart.checkout_success_title'|trans }}</p>
+                    <p class="text-sm">{{ 'cart.order_number'|trans({'number': this.confirmedOrderNumber}) }}</p>
+                    {% if this.confirmedPaymentCode is not empty %}
+                        <div class="rounded-md border border-workshop-yellow bg-workshop-yellow/10 px-3 py-2 text-sm">
+                            <p class="mb-1">{{ 'cart.checkout_payment_code_hint'|trans }}</p>
+                            <p class="text-lg font-bold tracking-widest text-workshop-red">{{ this.confirmedPaymentCode }}</p>
+                        </div>
+                    {% endif %}
+                    {% if this.confirmedTotal is not empty %}
+                        <p class="text-sm">{{ 'cart.amount_to_pay'|trans }}: <span class="font-semibold">{{ this.confirmedTotal|money }}</span></p>
+                    {% endif %}
+                </div>
+            {% elseif items is empty %}
+                <div class="text-sm text-muted-foreground p-4">{{ 'cart.empty'|trans }}</div>
+            {% else %}
+                <div class="max-h-72 overflow-y-auto p-2 space-y-2">
+                    {% for item in items %}
+                        <div class="rounded-md border border-slate-200 p-2 text-sm" data-id="{{ item.id }}">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <p class="font-medium truncate">{{ item.title }}</p>
+                                    <p class="text-xs text-muted-foreground">{{ item.schedule }}</p>
+                                    <p class="text-xs text-muted-foreground">
+                                        {{ item.participantName ?? 'cart.no_participant'|trans }}
+                                    </p>
+                                </div>
+                                <button type="button"
+                                        class="shrink-0 text-muted-foreground hover:text-workshop-red"
+                                        data-action="live#action"
+                                        data-live-action-param="remove"
+                                        data-live-id-param="{{ item.id }}"
+                                        aria-label="{{ 'cart.remove'|trans }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                                </button>
+                            </div>
+                            <div class="mt-1 text-right">
+                                {% if item.hasDiscount %}
+                                    <span class="text-xs text-muted-foreground line-through mr-1">{{ item.basePrice|money }}</span>
+                                {% endif %}
+                                <span class="font-semibold">{{ item.finalPrice|money }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="border-t px-3 py-2">
+                    {% if this.getPromotionCode is not empty %}
+                        <div class="flex items-center justify-between text-sm mb-2">
+                            <span>{{ 'cart.promotion_code.applied'|trans({'code': this.getPromotionCode}) }}</span>
+                            <button type="button" class="text-workshop-red hover:underline" data-action="live#action" data-live-action-param="removeCode">
+                                {{ 'cart.promotion_code.remove'|trans }}
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" data-model="promotionCodeInput"
+                                   placeholder="{{ 'cart.promotion_code.placeholder'|trans }}"
+                                   class="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-sm">
+                            <button type="button"
+                                    class="shrink-0 inline-flex items-center justify-center rounded-md border px-3 text-sm font-medium hover:bg-beige"
+                                    data-action="live#action" data-live-action-param="applyCode">
+                                {{ 'cart.promotion_code.apply'|trans }}
+                            </button>
+                        </div>
+                        {% if this.promotionCodeError is not empty %}
+                            <p class="text-xs text-red-600 mb-2">{{ this.promotionCodeError|trans }}</p>
+                        {% endif %}
+                    {% endif %}
+
+                    <div class="rounded-md border border-amber-300 bg-amber-50 px-2 py-1.5 text-xs text-amber-800 mb-2">
+                        {{ 'cart.seats_not_held_warning'|trans }}
+                    </div>
+
+                    <div class="flex items-center justify-between font-semibold mb-2">
+                        <span>{{ 'cart.total'|trans }}</span>
+                        <span>{{ this.getTotal|money }}</span>
+                    </div>
+
+                    <label class="flex items-start gap-2 text-xs mb-2">
+                        <input type="checkbox" data-model="termsAccepted" class="mt-0.5">
+                        <span>{{ 'cart.checkout_terms'|trans }}</span>
+                    </label>
+
+                    {% if this.checkoutError is not empty %}
+                        <p class="text-xs text-red-600 mb-2">{{ this.checkoutError|trans }}</p>
+                    {% endif %}
+
+                    <button type="button"
+                            class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90 disabled:opacity-50"
+                            {{ this.termsAccepted ? '' : 'disabled' }}
+                            data-action="live#action" data-live-action-param="checkout">
+                        {{ 'cart.checkout'|trans }}
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </details>
+</div>

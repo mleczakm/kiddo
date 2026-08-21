@@ -3469,6 +3469,66 @@ message = 'Potentially unhandled exception `LogicException` in `App\UserInterfac
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\UserInterface\Http\Component\CartComponent::getTotal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\UserInterface\Http\Component\CartComponent::getConfirmedTotal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\UserInterface\Http\Component\CartComponent::getItems`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\UserInterface\Http\Component\CartComponent::getConfirmedTotal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\UserInterface\Http\Component\CartComponent::getItems`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `App\UserInterface\Http\Component\CartComponent::getTotal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\UserInterface\Http\Component\CartComponent::getConfirmedTotal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\UserInterface\Http\Component\CartComponent::getItems`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\CartComponent::requireUser`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\CartComponent::remove`.'
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Component/ChildrenManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\ChildrenManager::addChild`.'
@@ -3538,6 +3598,12 @@ count = 1
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\UserInterface\Http\Component\LessonModal::getQuotedPrice`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/LessonModal.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\LessonModal::addToCart`.'
 count = 1
 
 [[issues]]

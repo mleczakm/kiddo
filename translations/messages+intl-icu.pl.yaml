@@ -476,6 +476,7 @@ booking:
   select_new_lesson: 'Wybierz nowy termin zajęć'
   confirm_reschedule: 'Potwierdź przełożenie'
   confirm_booking: Potwierdź zamówienie i opłać
+  add_to_cart: Dodaj do koszyka
   confirm_payment: Potwierdź płatność
   select_date: Wybierz dzień zajęć
   cancellation_policy: 'Anulowanie rezerwacji możliwe jest do 24h przed rozpoczęciem zajęć.'
@@ -513,6 +514,31 @@ booking:
   no_child: 'Brak przypisanego dziecka'
   resume_payment: 'Zapłać'
   pay: 'Zapłać'
+
+cart:
+  title: Koszyk
+  empty: Twój koszyk jest pusty
+  added_to_cart: Dodano do koszyka
+  add_error_generic: Nie udało się dodać do koszyka. Spróbuj ponownie.
+  add_error_duplicate: Ten bilet jest już w koszyku.
+  remove: Usuń
+  no_participant: Ja
+  seats_not_held_warning: 'Miejsca nie są zarezerwowane, dopóki nie dokończysz zamówienia.'
+  total: Razem
+  checkout: Przejdź do płatności
+  checkout_terms: 'Akceptuję regulamin'
+  checkout_error_empty: Koszyk jest pusty.
+  checkout_error_terms: Zaakceptuj regulamin, aby kontynuować.
+  checkout_success_title: Zamówienie złożone!
+  checkout_payment_code_hint: 'Wykonaj jeden przelew z tytułem:'
+  order_number: 'Numer zamówienia: {number}'
+  amount_to_pay: Do zapłaty
+  promotion_code:
+    placeholder: 'np. WELCOME10'
+    apply: Zastosuj
+    remove: Usuń kod
+    invalid: Nieprawidłowy kod promocyjny.
+    applied: 'Zastosowano kod: {code}'
 
 blik:
   instruction: "Wykonaj przelew BLIK na telefon"

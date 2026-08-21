@@ -507,9 +507,25 @@
         </div>
         <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-4">
                     <div class="flex w-full flex-col space-y-2">
+                        {% if isFeatureEnabled('cart') %}
+                            {% if addedToCart %}
+                                <div class="rounded-md border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-800">
+                                    {{ 'cart.added_to_cart'|trans }}
+                                </div>
+                            {% elseif addToCartError %}
+                                <div class="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
+                                    {{ addToCartError|trans }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
                         <div class="flex gap-2">
                             {% if isFeatureEnabled('cart') %}
-                                <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border hover:text-accent-foreground h-10 px-4 py-2 flex-1 bg-workshop-yellow/10 border-workshop-yellow text-workshop-brown hover:bg-workshop-yellow/20">
+                                <button
+                                        type="button"
+                                        data-action="live#action"
+                                        data-live-action-param="addToCart"
+                                        {{ lesson.canBeBooked and lesson.future ? '' : 'disabled' }}
+                                        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border hover:text-accent-foreground h-10 px-4 py-2 flex-1 bg-workshop-yellow/10 border-workshop-yellow text-workshop-brown hover:bg-workshop-yellow/20">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                          fill="none"
                                          stroke="currentColor" stroke-width="2" stroke-linecap="round"

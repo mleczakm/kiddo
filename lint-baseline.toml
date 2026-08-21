@@ -997,6 +997,24 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/CartComponent.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
