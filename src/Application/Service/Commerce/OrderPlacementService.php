@@ -210,15 +210,14 @@ final class OrderPlacementService
         return (int) $this->em->getConnection()->fetchOne(
             <<<'SQL'
                     SELECT COUNT(*)
-                    FROM booking b
-                    INNER JOIN booking_lesson bl ON bl.booking_id = b.id
-                    WHERE bl.lesson_id = :lesson_id
-                      AND b.status IN ('pending', 'active', 'waiting_approval')
-                      AND jsonb_exists(b.lessons_map::jsonb -> 'active', :lesson_key)
+                FROM booking_occurrence occurrence
+                INNER JOIN booking b ON b.id = occurrence.booking_id
+                WHERE occurrence.lesson_id = :lesson_id
+                  AND occurrence.status IN ('reserved', 'confirmed')
+                  AND b.status IN ('pending', 'active', 'waiting_approval')
                 SQL,
             [
                 'lesson_id' => $lesson->getId()->toRfc4122(),
-                'lesson_key' => (string) $lesson->getId(),
             ],
         );
     }

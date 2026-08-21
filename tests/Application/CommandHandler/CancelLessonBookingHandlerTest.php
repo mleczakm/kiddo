@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\CommandHandler;
 
 use App\Entity\Booking;
+use App\Entity\BookingOccurrence;
 use App\Entity\Notification;
 use App\Message\CancelLessonBooking;
 use App\Tests\Assembler\BookingAssembler;
@@ -114,6 +115,10 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
         // Doctrine's change tracking).
         static::assertTrue($reloaded->isLessonCancelled($lesson1), 'lesson1 should be cancelled after reload');
         static::assertFalse($reloaded->isLessonCancelled($lesson2), 'lesson2 should still be active after reload');
+        static::assertSame(
+            BookingOccurrence::STATUS_CANCELLED,
+            $reloaded->findOccurrence($lesson1->getId())?->getStatus(),
+        );
         static::assertSame(
             $user->getId(),
             $reloaded->getLessonsMap()->getCancelledByUserId($lesson1->getId()),

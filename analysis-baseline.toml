@@ -949,6 +949,12 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
+file = "src/Application/Service/BookingOccurrenceBackfill.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `OutOfBoundsException` in `App\Application\Service\BookingOccurrenceBackfill::run`.'
+count = 1
+
+[[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `App\Application\Service\Commerce\CapacityExceededException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
@@ -1627,6 +1633,18 @@ message = 'Potentially unhandled exception `LogicException` in `App\Entity\Booki
 count = 1
 
 [[issues]]
+file = "src/Entity/Booking.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Entity\Booking::cancelLesson`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/BookingOccurrence.php"
+code = "write-only-property"
+message = "Property `$booking` is written to but never read."
+count = 1
+
+[[issues]]
 file = "src/Entity/DTO/LessonMap.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `OutOfBoundsException` in `App\Entity\DTO\LessonMap::cancelLesson`.'
@@ -1858,6 +1876,30 @@ count = 1
 file = "src/Infrastructure/Brevo/BrevoNewsletterService.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface` in `App\Infrastructure\Brevo\BrevoNewsletterService::sendDoubleOptInConfirmation`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Console/BackfillBookingOccurrencesCommand.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Console\BackfillBookingOccurrencesCommand::execute`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Console/BackfillBookingOccurrencesCommand.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Console\Exception\LogicException` in `App\Infrastructure\Console\BackfillBookingOccurrencesCommand::__construct`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Console/CompareBookingOccurrencesCommand.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Console\CompareBookingOccurrencesCommand::execute`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Console/CompareBookingOccurrencesCommand.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Console\Exception\LogicException` in `App\Infrastructure\Console\CompareBookingOccurrencesCommand::__construct`.'
 count = 1
 
 [[issues]]

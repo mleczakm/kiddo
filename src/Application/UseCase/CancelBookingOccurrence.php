@@ -51,8 +51,10 @@ final readonly class CancelBookingOccurrence
         }
 
         // Ensure the target lesson exists within this booking
-        $bookedLesson = $booking->getBookedLesson($lessonId->toRfc4122());
-        if ($bookedLesson === null) {
+        if (
+            $booking->findOccurrence($lessonId) === null
+            && $booking->getBookedLesson($lessonId->toRfc4122()) === null
+        ) {
             $this->logger->error('Lesson not found in booking', [
                 'bookingId' => $booking->getId()->toRfc4122(),
                 'lessonId' => $lessonId->toRfc4122(),

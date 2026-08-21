@@ -55,7 +55,13 @@ readonly class RescheduleLessonBookingHandler
         }
 
         // Rescheduling is only allowed for active lessons
-        if (!$booking->getLessonsMap()->isActiveLesson($oldLesson->getId())) {
+        if (
+            !(
+                $booking->findOccurrence($oldLesson->getId())?->isActive() ?? $booking->getLessonsMap()->isActiveLesson(
+                    $oldLesson->getId(),
+                )
+            )
+        ) {
             $this->logger->warning('Attempt to reschedule a non-active lesson ignored', [
                 'bookingId' => $booking->getId(),
                 'oldLessonId' => $command->getOldLessonId(),

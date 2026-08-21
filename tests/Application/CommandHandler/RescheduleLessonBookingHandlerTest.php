@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\CommandHandler;
 
 use App\Entity\Booking;
+use App\Entity\BookingOccurrence;
 use App\Entity\Notification;
 use App\Message\RescheduleLessonBooking;
 use App\Tests\Assembler\BookingAssembler;
@@ -77,6 +78,11 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
             $reloaded->isLessonRescheduled($oldLesson),
             'old lesson should be marked rescheduled after reload',
         );
+        static::assertSame(
+            BookingOccurrence::STATUS_RESCHEDULED,
+            $reloaded->findOccurrence($oldLesson->getId())?->getStatus(),
+        );
+        static::assertTrue($reloaded->findOccurrence($newLesson->getId())?->isActive() ?? false);
         // $newLesson is a detached instance from before em->clear(), so compare
         // by id rather than Collection::contains() (which is identity-based).
         $reloadedLessonIds = array_map(static fn($l) => $l->getId()->toRfc4122(), $reloaded->getLessons()->toArray());

@@ -40,6 +40,15 @@ class Booking
     #[ORM\ManyToMany(targetEntity: Lesson::class, inversedBy: 'bookings')]
     private Collection $lessons;
 
+    /** @var Collection<int, BookingOccurrence> */
+    #[ORM\OneToMany(
+        mappedBy: 'booking',
+        targetEntity: BookingOccurrence::class,
+        cascade: ['persist'],
+        orphanRemoval: true,
+    )]
+    private Collection $occurrences;
+
     #[ORM\Column(type: 'string', length: 20)]
     private string $status;
 
@@ -87,6 +96,10 @@ class Booking
     ) {
         $this->id = new Ulid();
         $this->lessons = new ArrayCollection($lessons);
+        $this->occurrences = new ArrayCollection();
+        foreach ($lessons as $lesson) {
+            $this->occurrences->add(new BookingOccurrence($this, $lesson));
+        }
         $this->status = self::STATUS_PENDING;
         $this->createdAt = Clock::get()->now();
 
@@ -130,6 +143,7 @@ class Booking
     {
         if (!$this->lessons->contains($lesson)) {
             $this->lessons[] = $lesson;
+            $this->occurrences->add(new BookingOccurrence($this, $lesson));
             $lesson->addBooking($this);
 
             // Add to booked lessons map
@@ -211,6 +225,9 @@ class Booking
 
     public function confirm(): self
     {
+        foreach ($this->occurrences as $occurrence) {
+            $occurrence->confirm();
+        }
         return $this->setStatus(self::STATUS_ACTIVE);
     }
 
@@ -239,6 +256,9 @@ class Booking
         $newLessonMap = clone $this->getLessonsMap();
         $newLessonMap->cancelAllBookedLessons($reason, $cancelledBy);
         $this->lessonsMap = $newLessonMap;
+        foreach ($this->occurrences as $occurrence) {
+            $occurrence->cancel($reason, $cancelledBy);
+        }
 
         if ($reason) {
             $this->notes = $reason;
@@ -261,12 +281,18 @@ class Booking
         $newLessonMap = clone $this->getLessonsMap();
         $newLessonMap->reactivateAllBookedLessons($this);
         $this->lessonsMap = $newLessonMap;
+        foreach ($this->occurrences as $occurrence) {
+            $occurrence->reactivate();
+        }
 
         return $this;
     }
 
     public function complete(): self
     {
+        foreach ($this->occurrences as $occurrence) {
+            $occurrence->attend();
+        }
         return $this->setStatus(self::STATUS_PAST);
     }
 
@@ -298,6 +324,10 @@ class Booking
         // tracking picks up the update (see cancel()/rescheduleLesson()).
         $newLessonMap = clone $this->getLessonsMap();
         $result = $newLessonMap->cancelLesson($lessonId, $reason, $cancelledBy);
+        $occurrence = $this->findOccurrence(Ulid::fromString($lessonId));
+        if ($occurrence !== null) {
+            $result = $occurrence->cancel($reason, $cancelledBy);
+        }
         if ($result) {
             $this->lessonsMap = $newLessonMap;
             $this->updatedAt = Clock::get()->now();
@@ -334,6 +364,11 @@ class Booking
         $newLessonMap->rescheduleLesson($from, $to, $rescheduledBy);
         $this->lessonsMap = $newLessonMap;
 
+        $this->findOccurrence($from->getId())?->rescheduleTo($to);
+        if ($this->findOccurrence($to->getId()) === null) {
+            $this->occurrences->add(new BookingOccurrence($this, $to));
+        }
+
         $this->updatedAt = Clock::get()->now();
     }
 
@@ -342,11 +377,27 @@ class Booking
      */
     public function hasActiveBookedLessons(): bool
     {
+        if (!$this->occurrences->isEmpty()) {
+            return $this->occurrences->exists(
+                static fn(int $_key, BookingOccurrence $occurrence): bool => $occurrence->isActive(),
+            );
+        }
         return $this->getLessonsMap()->hasActiveBookedLessons();
     }
 
     public function getActiveBookedLessonEntities(): \Generator
     {
+        if (!$this->occurrences->isEmpty()) {
+            foreach ($this->occurrences as $occurrence) {
+                if (!$occurrence->isActive()) {
+                    continue;
+                }
+
+                yield $occurrence->getLesson();
+            }
+            return;
+        }
+
         yield from $this
             ->getLessonsMap()
             ->active()
@@ -380,6 +431,29 @@ class Booking
      */
     public function getLessonStatusSummary(): array
     {
+        if (!$this->occurrences->isEmpty()) {
+            $summary = [
+                'total' => $this->occurrences->count(),
+                'booked' => 0,
+                'cancelled' => 0,
+                'refunded' => 0,
+                'rescheduled' => 0,
+            ];
+            foreach ($this->occurrences as $occurrence) {
+                if ($occurrence->isActive()) {
+                    ++$summary['booked'];
+                    continue;
+                }
+                if ($occurrence->getStatus() === BookingOccurrence::STATUS_CANCELLED) {
+                    ++$summary['cancelled'];
+                    continue;
+                }
+                if ($occurrence->getStatus() === BookingOccurrence::STATUS_RESCHEDULED) {
+                    ++$summary['rescheduled'];
+                }
+            }
+            return $summary;
+        }
         return $this->getLessonsMap()->getStatusSummary();
     }
 
@@ -509,7 +583,10 @@ class Booking
 
     public function canCancelLesson(Lesson $lesson): bool
     {
-        return $this->occupiesSeat() && $lesson->future() && $this->getLessonsMap()->isActiveLesson($lesson->getId());
+        $occurrence = $this->findOccurrence($lesson->getId());
+        $active = $occurrence?->isActive() ?? $this->getLessonsMap()->isActiveLesson($lesson->getId());
+
+        return $this->occupiesSeat() && $lesson->future() && $active;
     }
 
     public function requiresNoRefundCancelWarning(Lesson $lesson): bool
@@ -584,7 +661,7 @@ class Booking
     {
         $summary = $this->getLessonStatusSummary();
 
-        return ($summary['total'] - count($this->getLessonsMap()->getRescheduled())) > 1;
+        return ($summary['total'] - $summary['rescheduled']) > 1;
     }
 
     public function getTotalLessons(): int
@@ -594,12 +671,44 @@ class Booking
 
     public function isLessonCancelled(Lesson $lesson): bool
     {
-        return $this->getLessonsMap()->isCancelledLesson($lesson->getId());
+        return (
+            $this->findOccurrence($lesson->getId())?->getStatus() === BookingOccurrence::STATUS_CANCELLED
+            || $this->occurrences->isEmpty() && $this->getLessonsMap()->isCancelledLesson($lesson->getId())
+        );
     }
 
     public function isLessonRescheduled(Lesson $lesson): bool
     {
-        return $this->getLessonsMap()->isRescheduledLesson($lesson->getId());
+        return (
+            $this->findOccurrence($lesson->getId())?->getStatus() === BookingOccurrence::STATUS_RESCHEDULED
+            || $this->occurrences->isEmpty() && $this->getLessonsMap()->isRescheduledLesson($lesson->getId())
+        );
+    }
+
+    /** @return Collection<int, BookingOccurrence> */
+    public function getOccurrences(): Collection
+    {
+        return $this->occurrences;
+    }
+
+    public function findOccurrence(Ulid $lessonId): ?BookingOccurrence
+    {
+        foreach ($this->occurrences as $occurrence) {
+            if ($occurrence->getLesson()->getId()->equals($lessonId)) {
+                return $occurrence;
+            }
+        }
+
+        return null;
+    }
+
+    public function backfillOccurrence(Lesson $lesson, string $status, ?Lesson $rescheduledTo = null): void
+    {
+        if ($this->findOccurrence($lesson->getId()) !== null) {
+            return;
+        }
+
+        $this->occurrences->add(new BookingOccurrence($this, $lesson, $status, $rescheduledTo));
     }
 
     public function getLessonIndex(Lesson $lessonToFind): int
