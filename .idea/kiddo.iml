@@ -217,6 +217,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/mleczakm/twig-now" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/carthage-software/mago" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/revolt/event-loop" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/html-sanitizer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

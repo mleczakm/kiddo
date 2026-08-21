@@ -439,6 +439,9 @@
       <path value="$PROJECT_DIR$/vendor/mleczakm/twig-now" />
       <path value="$PROJECT_DIR$/vendor/carthage-software/mago" />
       <path value="$PROJECT_DIR$/vendor/revolt/event-loop" />
+      <path value="$PROJECT_DIR$/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/vendor/symfony/html-sanitizer" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
