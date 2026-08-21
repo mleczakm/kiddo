@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Domain\Commerce\Pricing\PricingRule" table="pricing_rule">
+        <id name="id" type="ulid" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="name" type="string" column="name" length="255" />
+        <field name="adjustmentType" type="adjustment_type_enum" column="adjustment_type" length="20" />
+        <field name="adjustmentValue" type="integer" column="adjustment_value" />
+        <field name="priority" type="integer" column="priority" />
+        <field name="stackable" type="boolean" column="stackable" />
+        <field name="exclusivityGroup" type="string" column="exclusivity_group" length="60" nullable="true" />
+        <field name="userId" type="integer" column="user_id" nullable="true" />
+        <field name="seriesId" type="ulid" column="series_id" nullable="true" />
+        <field name="lessonId" type="ulid" column="lesson_id" nullable="true" />
+        <field name="ticketType" type="string" column="ticket_type" length="30" nullable="true" />
+        <field name="promotionCode" type="string" column="promotion_code" length="40" nullable="true" />
+        <field name="validFrom" type="datetime_immutable" column="valid_from" nullable="true" />
+        <field name="validUntil" type="datetime_immutable" column="valid_until" nullable="true" />
+        <field name="usageLimit" type="integer" column="usage_limit" nullable="true" />
+        <field name="perUserLimit" type="integer" column="per_user_limit" nullable="true" />
+        <field name="status" type="string" column="status" length="20" />
+        <field name="version" type="integer" column="version" version="true" />
+        <field name="createdAt" type="datetime_immutable" column="created_at" />
+
+        <indexes>
+            <index name="idx_pricing_rule_status" columns="status" />
+            <index name="idx_pricing_rule_exclusivity_group" columns="exclusivity_group" />
+            <index name="idx_pricing_rule_promotion_code" columns="promotion_code" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

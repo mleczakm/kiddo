@@ -98,6 +98,8 @@ final readonly class AdminActivityLogComponent
             ActivityType::NEWSLETTER_SUBSCRIBED => 'mail',
             ActivityType::CUSTOMER_MESSAGE => 'message-circle',
             ActivityType::USER_PROFILE_UPDATED => 'user-cog',
+            ActivityType::PRICING_RULE_CREATED, ActivityType::PRICING_RULE_UPDATED => 'tag',
+            ActivityType::PRICING_RULE_DISABLED => 'tag-off',
         };
     }
 
@@ -110,14 +112,16 @@ final readonly class AdminActivityLogComponent
             ActivityType::PAYMENT_RECEIVED,
             ActivityType::PAYMENT_MARKED_PAID,
             ActivityType::REFUND_APPROVED,
+            ActivityType::PRICING_RULE_CREATED,
                 => 'emerald',
             ActivityType::BOOKING_CANCELLED, ActivityType::REFUND_REQUESTED => 'amber',
             ActivityType::BOOKING_AUTO_CANCELLED,
             ActivityType::CUSTOMER_MESSAGE,
             ActivityType::USER_PROFILE_UPDATED,
             ActivityType::REFUND_DECLINED,
+            ActivityType::PRICING_RULE_DISABLED,
                 => 'slate',
-            ActivityType::BOOKING_RESCHEDULED => 'blue',
+            ActivityType::BOOKING_RESCHEDULED, ActivityType::PRICING_RULE_UPDATED => 'blue',
             ActivityType::TRANSFER_UNMATCHED => 'red',
         };
     }

@@ -4,6 +4,7 @@ doctrine:
     types:
       ulid: Symfony\Bridge\Doctrine\Types\UlidType
       lesson_map: App\Infrastructure\Doctrine\LessonMapType
+      adjustment_type_enum: App\Infrastructure\Doctrine\AdjustmentTypeType
     connections:
       default:
         url: '%env(resolve:DATABASE_URL)%'

@@ -21,5 +21,8 @@ interface ActivityLogRepositoryInterface extends RepositoryInterface
     /** @return ActivityLog[] */
     public function findByBookingId(string $bookingId, int $limit = 20): array;
 
+    /** @return ActivityLog[] */
+    public function findByPricingRuleId(string $pricingRuleId, int $limit = 20): array;
+
     public function existsByDedupeKey(string $dedupeKey): bool;
 }

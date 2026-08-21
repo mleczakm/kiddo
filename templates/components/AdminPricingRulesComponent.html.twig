@@ -1,0 +1,296 @@
+<div {{ attributes }}>
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 class="text-xl font-black text-slate-800">Reguły cenowe</h2>
+                <p class="text-sm text-slate-500 mt-1">Reguły stosowane są automatycznie przy szybkiej rezerwacji. Wyłączenie reguły zastępuje jej usunięcie - nic nie znika bezpowrotnie.</p>
+            </div>
+            <button type="button"
+                    data-action="live#action"
+                    data-live-action-param="openCreateModal"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                + Nowa reguła
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                <tr class="text-left text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-200">
+                    <th class="py-2 pr-4">Nazwa</th>
+                    <th class="py-2 pr-4">Status</th>
+                    <th class="py-2 pr-4">Korekta</th>
+                    <th class="py-2 pr-4">Priorytet</th>
+                    <th class="py-2 pr-4">Zakres</th>
+                    <th class="py-2 pr-4"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for rule in this.getRules() %}
+                    <tr class="border-b border-slate-100 {{ rule.status == constant('App\\Domain\\Commerce\\Pricing\\PricingRule::STATUS_DISABLED') ? 'opacity-50' : '' }}">
+                        <td class="py-3 pr-4 font-medium text-slate-800">{{ rule.name }}</td>
+                        <td class="py-3 pr-4">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-bold {{ rule.status == constant('App\\Domain\\Commerce\\Pricing\\PricingRule::STATUS_ACTIVE') ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600' }}">
+                                {{ rule.status == constant('App\\Domain\\Commerce\\Pricing\\PricingRule::STATUS_ACTIVE') ? 'aktywna' : 'wyłączona' }}
+                            </span>
+                        </td>
+                        <td class="py-3 pr-4 text-slate-600">
+                            {{ rule.adjustmentType.value }}: {{ rule.adjustmentValue }}
+                        </td>
+                        <td class="py-3 pr-4 text-slate-600">{{ rule.priority }}</td>
+                        <td class="py-3 pr-4 text-slate-500 text-xs">
+                            {% if rule.userId %}użytkownik #{{ rule.userId }} {% endif %}
+                            {% if rule.ticketType %}bilet: {{ rule.ticketType }} {% endif %}
+                            {% if rule.promotionCode %}kod: {{ rule.promotionCode }} {% endif %}
+                            {% if not rule.userId and not rule.ticketType and not rule.promotionCode and not rule.lessonId and not rule.seriesId %}wszystkie{% endif %}
+                        </td>
+                        <td class="py-3 pr-4 text-right whitespace-nowrap">
+                            <button type="button"
+                                    data-action="live#action"
+                                    data-live-action-param="edit"
+                                    data-live-id-param="{{ rule.id }}"
+                                    class="text-indigo-600 hover:underline text-xs font-bold mr-3">Edytuj</button>
+                            {% if rule.status == constant('App\\Domain\\Commerce\\Pricing\\PricingRule::STATUS_ACTIVE') %}
+                                <button type="button"
+                                        data-action="live#action"
+                                        data-live-action-param="disable"
+                                        data-live-id-param="{{ rule.id }}"
+                                        class="text-slate-500 hover:underline text-xs font-bold">Wyłącz</button>
+                            {% else %}
+                                <button type="button"
+                                        data-action="live#action"
+                                        data-live-action-param="enable"
+                                        data-live-id-param="{{ rule.id }}"
+                                        class="text-emerald-600 hover:underline text-xs font-bold">Włącz</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="py-6 text-center text-slate-400 text-sm">Brak reguł cenowych. Domyślna cena z warsztatu obowiązuje bez zmian.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 mb-6">
+        <h2 class="text-lg font-black text-slate-800 mb-1">Podgląd ceny</h2>
+        <p class="text-sm text-slate-500 mb-4">Sprawdź, jaka cena zostałaby naliczona dla wybranego użytkownika, warsztatu i terminu - bez zapisywania niczego.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div class="relative">
+                <label class="text-xs font-bold text-slate-500 mb-1 block">Użytkownik (opcjonalnie)</label>
+                <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+                       placeholder="Szukaj użytkownika..." data-model="previewUserSearch">
+                {% if previewUserSearch and previewUserSearch|length >= 2 %}
+                    {% set userResults = this.getPreviewUserResults() %}
+                    <div class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                        {% for u in userResults %}
+                            <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-sm"
+                                    data-action="live#action" data-live-action-param="selectPreviewUser"
+                                    data-live-id-param="{{ u.id }}" data-live-name-param="{{ u.name }}">
+                                {{ u.name }} <span class="text-slate-400">#{{ u.id }}</span>
+                            </button>
+                        {% else %}
+                            <div class="px-3 py-2 text-sm text-slate-500">Brak wyników</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="relative">
+                <label class="text-xs font-bold text-slate-500 mb-1 block">Warsztat</label>
+                <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+                       placeholder="Szukaj warsztatu..." data-model="previewLessonSearch">
+                {% if previewLessonSearch and previewLessonSearch|length >= 2 %}
+                    {% set lessonResults = this.getPreviewLessonResults() %}
+                    <div class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                        {% for l in lessonResults %}
+                            <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-50 text-sm"
+                                    data-action="live#action" data-live-action-param="selectPreviewLesson"
+                                    data-live-id-param="{{ l.id }}" data-live-title-param="{{ l.title }}">
+                                {{ l.title }}
+                            </button>
+                        {% else %}
+                            <div class="px-3 py-2 text-sm text-slate-500">Brak wyników</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-500 mb-1 block">Typ biletu</label>
+                <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="previewTicketType">
+                    <option value="">-- wybierz --</option>
+                    {% for t in this.getPreviewLessonTicketTypes() %}
+                        <option value="{{ t }}" {{ previewTicketType == t ? 'selected' : '' }}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-500 mb-1 block">Data/godzina (opcjonalnie)</label>
+                <input type="datetime-local" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="previewDate">
+            </div>
+        </div>
+
+        {% set quote = this.getPreviewQuote() %}
+        {% if quote %}
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                <div class="flex items-baseline gap-3">
+                    <span class="text-2xl font-black text-slate-800">{{ (quote.finalPriceMinor / 100)|number_format(2) }} {{ quote.currency }}</span>
+                    {% if quote.finalPriceMinor != quote.basePriceMinor %}
+                        <span class="text-sm text-slate-400 line-through">{{ (quote.basePriceMinor / 100)|number_format(2) }} {{ quote.currency }}</span>
+                    {% endif %}
+                </div>
+                {% if quote.adjustments|length > 0 %}
+                    <ul class="mt-2 text-xs text-slate-600 space-y-1">
+                        {% for adjustment in quote.adjustments %}
+                            <li>{{ adjustment.label }}: {{ adjustment.deltaMinor > 0 ? '+' : '' }}{{ (adjustment.deltaMinor / 100)|number_format(2) }} {{ quote.currency }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if quote.rejectedRuleReasons|length > 0 %}
+                    <details class="mt-2 text-xs text-slate-400">
+                        <summary class="cursor-pointer">{{ quote.rejectedRuleReasons|length }} reguł nie zastosowano</summary>
+                        <ul class="mt-1 space-y-1">
+                            {% for reason in quote.rejectedRuleReasons %}
+                                <li>{{ reason }}</li>
+                            {% endfor %}
+                        </ul>
+                    </details>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if isModalOpen %}
+        <div class="fixed inset-0 bg-slate-900/50 z-40 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-black text-slate-800">{{ editingRuleId ? 'Edytuj regułę' : 'Nowa reguła cenowa' }}</h3>
+                    <button type="button" data-action="live#action" data-live-action-param="closeModal" class="text-slate-400 hover:text-slate-600">✕</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Nazwa</label>
+                        <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="name">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Status</label>
+                        <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="status">
+                            <option value="active">aktywna</option>
+                            <option value="disabled">wyłączona</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Priorytet</label>
+                        <input type="number" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="priority">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Typ korekty</label>
+                        <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="adjustmentType">
+                            {% for t in this.getAdjustmentTypeOptions() %}
+                                <option value="{{ t }}" {{ adjustmentType == t ? 'selected' : '' }}>{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Wartość korekty (grosze / %)</label>
+                        <input type="number" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="adjustmentValue">
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-6">
+                        <input type="checkbox" id="stackable" data-model="stackable" class="h-4 w-4">
+                        <label for="stackable" class="text-sm text-slate-700">Można łączyć z innymi regułami</label>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Grupa wykluczania (dla reguł niełączonych)</label>
+                        <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="exclusivityGroup">
+                    </div>
+
+                    {% set warning = this.getExclusivityWarning() %}
+                    {% if warning %}
+                        <div class="md:col-span-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg p-3">
+                            ⚠ {{ warning }}
+                        </div>
+                    {% endif %}
+
+                    <div class="md:col-span-2 border-t border-slate-100 pt-4 mt-2">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Zakres reguły (puste = bez ograniczeń)</div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">ID użytkownika</label>
+                        <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="userId">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Typ biletu</label>
+                        <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="ticketType">
+                            <option value="">-- dowolny --</option>
+                            {% for t in this.getTicketTypeOptions() %}
+                                <option value="{{ t }}" {{ ticketType == t ? 'selected' : '' }}>{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">ID cyklu zajęć (seriesId)</label>
+                        <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="seriesId">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">ID pojedynczych zajęć (lessonId)</label>
+                        <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="lessonId">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Kod promocyjny (zostanie zapisany wielkimi literami)</label>
+                        <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="promotionCode">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Ważna od</label>
+                        <input type="datetime-local" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="validFrom">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Ważna do</label>
+                        <input type="datetime-local" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="validUntil">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Limit użyć łącznie</label>
+                        <input type="number" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="usageLimit">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block">Limit użyć na użytkownika</label>
+                        <input type="number" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="perUserLimit">
+                    </div>
+                </div>
+
+                {% if editingRuleId %}
+                    {% set history = this.getHistory() %}
+                    {% if history|length > 0 %}
+                        <div class="border-t border-slate-100 mt-6 pt-4">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Historia zmian</div>
+                            <ul class="space-y-2 max-h-40 overflow-y-auto">
+                                {% for entry in history %}
+                                    <li class="text-xs">
+                                        <div class="text-slate-600 font-medium">{{ entry.title }} <span class="text-slate-400 font-normal">{{ entry.createdAt|date('Y-m-d H:i') }}</span></div>
+                                        {% if entry.summary %}
+                                            <div class="text-slate-500 whitespace-pre-line">{{ entry.summary }}</div>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" data-action="live#action" data-live-action-param="closeModal"
+                            class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100">Anuluj</button>
+                    <button type="button" data-action="live#action" data-live-action-param="save"
+                            class="px-4 py-2 rounded-lg text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700">Zapisz</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

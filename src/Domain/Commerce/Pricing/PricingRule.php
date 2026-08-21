@@ -7,15 +7,26 @@ namespace App\Domain\Commerce\Pricing;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * A configurable pricing rule. Pure domain type for Stage 7 (shadow mode) -
- * not persisted yet, and nothing can create one (no admin UI until Stage 9).
- * Every scope field left null is unconstrained on that dimension, i.e. the
- * rule matches any value there.
+ * A configurable pricing rule. Persisted since Stage 9 (pricing
+ * administration) - admin-editable via public properties, matching how
+ * other entities in this codebase (e.g. Lesson) are mutated directly rather
+ * than through setters. Only $id is immutable; everything else can change
+ * over the rule's lifetime. Every scope field left null is unconstrained on
+ * that dimension, i.e. the rule matches any value there.
+ *
+ * Deliberately never referenced live from a placed order - OrderLine stores
+ * a snapshot (pricingSnapshotJson) of what a rule did at quote time, not a
+ * relation to the rule itself, so editing or disabling a rule can never
+ * change the financial record of an order already placed.
  */
-final readonly class PricingRule
+final class PricingRule
 {
+    public const string STATUS_ACTIVE = 'active';
+
+    public const string STATUS_DISABLED = 'disabled';
+
     public function __construct(
-        public Ulid $id,
+        public readonly Ulid $id,
         public string $name,
         public AdjustmentType $adjustmentType,
         /**
@@ -36,7 +47,20 @@ final readonly class PricingRule
         public ?\DateTimeImmutable $validUntil = null,
         public ?int $usageLimit = null,
         public ?int $perUserLimit = null,
+        public string $status = self::STATUS_ACTIVE,
+        public int $version = 1,
+        public readonly \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
     ) {}
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function disable(): void
+    {
+        $this->status = self::STATUS_DISABLED;
+    }
 
     /**
      * How narrowly this rule is targeted - used to pick between multiple

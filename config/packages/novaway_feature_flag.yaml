@@ -10,6 +10,7 @@ novaway_feature_flag:
           chat_assistant: true
           commerce_order_write: false
           dynamic_pricing: true
+          pricing_admin: false
 
 when@test:
   novaway_feature_flag:
@@ -26,4 +27,5 @@ when@test:
             chat_assistant: true
             commerce_order_write: false
             dynamic_pricing: true
+            pricing_admin: true
             manual_bookings: true

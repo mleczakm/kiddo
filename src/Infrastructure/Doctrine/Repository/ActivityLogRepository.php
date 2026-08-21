@@ -75,6 +75,24 @@ class ActivityLogRepository extends ServiceEntityRepository implements ActivityL
             ->getResult();
     }
 
+    /**
+     * @return ActivityLog[]
+     */
+    #[\Override]
+    public function findByPricingRuleId(string $pricingRuleId, int $limit = 20): array
+    {
+        /** @var list<ActivityLog> $result */
+        return $this
+            ->createQueryBuilder('a')
+            ->andWhere("JSON_GET_TEXT(a.context, 'pricingRuleId') = :pricingRuleId")
+            ->setParameter('pricingRuleId', $pricingRuleId)
+            ->orderBy('a.createdAt', 'DESC')
+            ->addOrderBy('a.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     #[\Override]
     public function existsByDedupeKey(string $dedupeKey): bool
     {

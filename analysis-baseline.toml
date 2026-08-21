@@ -1603,6 +1603,12 @@ message = 'Potentially unhandled exception `Symfony\Contracts\HttpClient\Excepti
 count = 1
 
 [[issues]]
+file = "src/Infrastructure/Doctrine/AdjustmentTypeType.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `ValueError` in `App\Infrastructure\Doctrine\AdjustmentTypeType::convertToPHPValue`.'
+count = 1
+
+[[issues]]
 file = "src/Infrastructure/Doctrine/CacheConnectionEnsurer.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Infrastructure\Doctrine\CacheConnectionEnsurer::ensureConnection`.'
@@ -1624,6 +1630,12 @@ count = 3
 file = "src/Infrastructure/Doctrine/Repository/ActivityLogRepository.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\ActivityLogRepository::findByBookingId`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/ActivityLogRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\ActivityLogRepository::findByPricingRuleId`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -1828,6 +1840,18 @@ count = 1
 file = "src/Infrastructure/Doctrine/Repository/PaymentRepository.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Infrastructure\Doctrine\Repository\PaymentRepository::countPendingPayments`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PricingRuleRepository.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\PricingRuleRepository::findAllForAdmin`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/PricingRuleRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Infrastructure\Doctrine\Repository\PricingRuleRepository::findActive`.'
 count = 1
 
 [[issues]]
@@ -2719,6 +2743,12 @@ message = "Assigning `mixed` type to a variable may lead to unexpected behavior.
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Admin/PricingController.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\HttpKernel\Exception\NotFoundHttpException` in `App\UserInterface\Http\Admin\PricingController::index`.'
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Admin/ScheduleController.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Admin\ScheduleController::index`.'
@@ -2980,6 +3010,102 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminPaymentsListComponent.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\AdminPaymentsListComponent::getPayments`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "invalid-return-statement"
+message = '''Invalid return type for function `App\UserInterface\Http\Component\AdminPricingRulesComponent::getHistory`: expected `list<array{'createdAt': DateTimeImmutable, 'summary': null|string, 'title': string}>`, but found `array<array-key, array{'createdAt': DateTimeImmutable, 'summary': null|string, 'title': string}>|list<array{'createdAt': DateTimeImmutable, 'summary': null|string, 'title': string}>`.'''
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `App\Entity\Lesson::getMatchingTicketOption` is possibly `null`, but parameter type `string` does not accept it.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "possibly-null-argument"
+message = 'Argument #3 of method `App\Application\Service\Pricing\PriceQuoter::quote` is possibly `null`, but parameter type `string` does not accept it.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::createNew`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::save`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::setStatus`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::updateExisting`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::disable`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::edit`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::enable`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::openCreateModal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::save`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::edit`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::setStatus`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\AdminPricingRulesComponent::updateExisting`.'
 count = 1
 
 [[issues]]

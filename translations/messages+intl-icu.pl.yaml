@@ -803,6 +803,7 @@ admin:
     lessons: Zajęcia
     schedule: Harmonogram
     transfers: Płatności
+    pricing: Cennik
     settings: Ustawienia
     coming_soon: 'Sekcja "{tab}" wkrótce dostępna'
   billing:
