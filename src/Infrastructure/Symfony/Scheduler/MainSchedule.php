@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Scheduler;
 
+use App\Application\Command\BackfillLegacyOrders;
 use App\Application\Command\CheckBookingsToMarkPast;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Command\CheckExpiredPayments;
@@ -43,6 +44,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 RecurringMessage::cron('5 * * * *', new CheckBookingsToMarkPast(), new \DateTimeZone('Europe/Warsaw')),
                 RecurringMessage::cron('1 0 * * *', new ExtendSeriesSchedule(), new \DateTimeZone('Europe/Warsaw')),
                 RecurringMessage::cron('15 3 * * *', new PurgeOldNotifications(), new \DateTimeZone('Europe/Warsaw')),
+                RecurringMessage::cron('35 3 * * *', new BackfillLegacyOrders(100), new \DateTimeZone('Europe/Warsaw')),
             );
     }
 }
