@@ -269,6 +269,8 @@ final class BookingsComponentTest extends WebTestCase
 
         static::assertStringContainsString('Zajecia oplacone', $html);
         static::assertMatchesRegularExpression('/Opłacono \d{2}\.\d{2}\.\d{4}/', $html);
+        static::assertStringContainsString('fixed inset-0 m-auto', $html);
+        static::assertStringNotContainsString('-translate-x-1/4 -translate-y-1/4', $html);
     }
 
     public function testEmptyStateMessageMatchesSelectedTab(): void
