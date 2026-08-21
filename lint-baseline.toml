@@ -313,15 +313,9 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Application/Service/Commerce/FastTrackOrderFactory.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/FastTrackOrderFactory.php"
-code = "no-redundant-nullsafe"
-message = "The nullsafe operator (`?->`) is redundant when used with `??`."
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
@@ -361,6 +355,12 @@ message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
+file = "src/Application/Service/Pricing/PriceQuoter.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Application/Service/Pricing/PricingEngine.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -397,6 +397,18 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
+file = "src/Application/UseCase/Cart/AddCartItem.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Application/UseCase/DeclineRefund.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -416,6 +428,18 @@ count = 1
 
 [[issues]]
 file = "src/Application/UseCase/RequestRefund.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Cart/Cart.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Cart/CartItem.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
 count = 1

@@ -9,18 +9,16 @@ use App\Application\Command\SendReservationNotification;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
-use App\Application\Service\BookingFactory;
-use App\Application\Service\Commerce\FastTrackOrderFactory;
+use App\Application\Service\Commerce\OrderItemSelection;
+use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\Service\Pricing\ShadowPricingEvaluator;
+use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\NotificationSeverity;
-use App\Entity\PaymentCode;
 use App\Entity\TicketOption;
-use Brick\Money\Currency;
 use Brick\Money\Money;
-use Doctrine\ORM\EntityManagerInterface;
 use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -36,18 +34,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final readonly class PlaceSingleReservation
 {
     public function __construct(
-        private EntityManagerInterface $em,
         private MessageBusInterface $bus,
         private UserRepositoryInterface $userRepository,
         private LessonRepositoryInterface $lessonRepository,
         private ChildRepositoryInterface $childRepository,
-        private BookingFactory $bookingFactory,
         private InAppNotificationService $inAppNotifications,
         private LessonInstructorResolver $instructorResolver,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
         private FeatureManager $featureManager,
-        private FastTrackOrderFactory $orderFactory,
+        private OrderPlacementService $orderPlacementService,
         private ShadowPricingEvaluator $shadowPricing,
         private PriceQuoter $priceQuoter,
     ) {}
@@ -87,40 +83,22 @@ final readonly class PlaceSingleReservation
             $this->shadowPricing->evaluate($quote, $ticketOption->price->getMinorAmount()->toInt());
         }
 
-        $booking = $this->bookingFactory->createFrom($lesson, $ticketOption, $user);
-
+        $child = null;
         if ($command->childId !== null) {
-            $child = $this->childRepository->find(Ulid::fromString($command->childId));
-            if ($child !== null && $child->getOwner()->getId() === $user->getId()) {
-                $booking->setChild($child);
+            $candidate = $this->childRepository->find(Ulid::fromString($command->childId));
+            if ($candidate !== null && $candidate->getOwner()->getId() === $user->getId()) {
+                $child = $candidate;
             }
         }
 
-        $payment = $booking->getPayment();
-        if ($payment !== null && $payment->getPaymentCode() === null) {
-            new PaymentCode($payment, $command->paymentCode);
-        }
-
-        if ($payment !== null && $this->featureManager->isEnabled('commerce_order_write')) {
-            // Persisted (and thus scheduled for insert) before $booking below, whose cascade
-            // will schedule $payment for insert: Doctrine has no mapped association between
-            // Payment/Booking and CustomerOrder/OrderLine (deliberately, to stay decoupled -
-            // see FastTrackOrderFactory), so it cannot infer the FK insert order on its own.
-            [$order, $orderLine] = $this->orderFactory->create(
-                $booking,
-                $payment,
-                $lesson,
-                $ticketOption,
-                $user,
-                $appliedQuote,
-            );
-            $booking->setOrderLineId($orderLine->getId());
-            $payment->setOrderId($order->getId());
-            $this->em->persist($order);
-            $this->em->persist($orderLine);
-        }
-
-        $this->em->persist($booking);
+        $result = $this->orderPlacementService->place(
+            user: $user,
+            source: CustomerOrder::SOURCE_FAST_TRACK,
+            paymentCode: $command->paymentCode,
+            items: [new OrderItemSelection($lesson, $ticketOption, $child, $appliedQuote)],
+            writeOrder: $this->featureManager->isEnabled('commerce_order_write'),
+        );
+        $booking = $result->bookings[0];
 
         foreach ($this->instructorResolver->resolve([$lesson], exclude: $user) as $instructor) {
             $this->inAppNotifications->notify(
@@ -148,7 +126,7 @@ final readonly class PlaceSingleReservation
                 $user->getEmail(),
                 $user->getName(),
                 $command->paymentCode,
-                $payment?->getAmount() ?? Money::zero(Currency::of('PLN')),
+                $result->payment->getAmount(),
                 lessonTitle: $lesson->getMetadata()->title,
                 lessonSchedule: $lesson->schedule,
                 ticketType: $ticketOption->type->value,

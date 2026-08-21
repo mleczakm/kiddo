@@ -8,8 +8,7 @@ use App\Application\Command\AddBooking;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
-use App\Application\Service\BookingFactory;
-use App\Application\Service\Commerce\FastTrackOrderFactory;
+use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Service\Pricing\PriceQuoter;
@@ -154,8 +153,8 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
         $lessonRepository = $container->get(LessonRepositoryInterface::class);
         /** @var ChildRepositoryInterface $childRepository */
         $childRepository = $container->get(ChildRepositoryInterface::class);
-        /** @var BookingFactory $bookingFactory */
-        $bookingFactory = $container->get(BookingFactory::class);
+        /** @var OrderPlacementService $orderPlacementService */
+        $orderPlacementService = $container->get(OrderPlacementService::class);
         /** @var InAppNotificationService $inAppNotifications */
         $inAppNotifications = $container->get(InAppNotificationService::class);
         /** @var LessonInstructorResolver $instructorResolver */
@@ -172,18 +171,16 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
         $bus = $container->get(MessageBusInterface::class);
 
         $placeSingleReservation = new PlaceSingleReservation(
-            $this->em,
             $bus,
             $userRepository,
             $lessonRepository,
             $childRepository,
-            $bookingFactory,
             $inAppNotifications,
             $instructorResolver,
             $urlGenerator,
             $translator,
             $bothEnabled,
-            new FastTrackOrderFactory(),
+            $orderPlacementService,
             $shadowPricing,
             $priceQuoter,
         );

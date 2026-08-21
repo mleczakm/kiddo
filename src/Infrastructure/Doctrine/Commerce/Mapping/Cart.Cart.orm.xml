@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Domain\Commerce\Cart\Cart" table="cart">
+        <id name="id" type="ulid" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="customerId" type="integer" column="customer_id" />
+        <field name="currency" type="string" column="currency" length="3" />
+        <field name="status" type="string" column="status" length="20" />
+        <field name="promotionCode" type="string" column="promotion_code" length="40" nullable="true" />
+        <field name="convertedOrderId" type="ulid" column="converted_order_id" nullable="true" />
+        <field name="createdAt" type="datetime_immutable" column="created_at" />
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" />
+        <field name="version" type="integer" column="version" version="true" />
+
+        <indexes>
+            <!-- The actual "one open cart per customer/currency" guarantee is a
+                 partial unique index (WHERE status = 'open'), added by raw SQL in
+                 the migration - Doctrine's XML mapping has no filtered-index
+                 support, and a plain unique constraint here would wrongly forbid a
+                 customer from ever having two converted/abandoned carts. -->
+            <index name="idx_cart_customer_currency_status" columns="customer_id,currency,status" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

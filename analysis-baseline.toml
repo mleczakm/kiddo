@@ -949,15 +949,39 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/Application/Service/Commerce/FastTrackOrderFactory.php"
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Commerce\FastTrackOrderFactory::create`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
 count = 1
 
 [[issues]]
-file = "src/Application/Service/Commerce/FastTrackOrderFactory.php"
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\Application\Service\Commerce\FastTrackOrderFactory::create`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/Commerce/OrderPlacementService.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\Application\Service\Commerce\OrderPlacementService::place`.'
 count = 1
 
 [[issues]]
@@ -1237,6 +1261,102 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
+file = "src/Application/UseCase/Cart/AddCartItem.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `App\Application\UseCase\Cart\DuplicateCartItemException` in `App\Application\UseCase\Cart\AddCartItem::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/AddCartItem.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\AddCartItem::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/AddCartItem.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\UseCase\Cart\AddCartItem::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/ApplyPromotionCode.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `App\Application\UseCase\Cart\InvalidPromotionCodeException` in `App\Application\UseCase\Cart\ApplyPromotionCode::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/ApplyPromotionCode.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\ApplyPromotionCode::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/ChangeCartParticipant.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `App\Application\UseCase\Cart\DuplicateCartItemException` in `App\Application\UseCase\Cart\ChangeCartParticipant::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/ChangeCartParticipant.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\ChangeCartParticipant::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/ChangeCartParticipant.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\UseCase\Cart\ChangeCartParticipant::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/CheckoutCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\Application\UseCase\Cart\CheckoutCart::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/RemoveCartItem.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\RemoveCartItem::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/RemovePromotionCode.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\RemovePromotionCode::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/Cart/RepriceCart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\Cart\RepriceCart::__invoke`.'
+count = 1
+
+[[issues]]
 file = "src/Application/UseCase/DeclineRefund.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\DeclineRefund::__invoke`.'
@@ -1348,6 +1468,12 @@ count = 1
 file = "src/Application/UseCase/RequestRefund.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\Application\UseCase\RequestRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Domain/Commerce/Cart/Cart.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `LogicException` in `App\Domain\Commerce\Cart\Cart::assertOpen`.'
 count = 1
 
 [[issues]]
@@ -1720,6 +1846,12 @@ count = 1
 file = "src/Infrastructure/Doctrine/Repository/BookingRepository.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Doctrine\Repository\BookingRepository::findForUserAndLessons`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/CartItemRepository.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `UnexpectedValueException` in `App\Infrastructure\Doctrine\Repository\CartItemRepository::findByCart`.'
 count = 1
 
 [[issues]]
@@ -4750,6 +4882,24 @@ count = 1
 file = "tests/Application/Service/PlatformBillingServiceTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$service` (App\Application\Service\PlatformBillingService).'
+count = 1
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/PromotionCodeTest.php"
+code = "impossible-type-comparison"
+message = "Impossible type assertion: `$item->finalPriceMinor` of type `int(4000)` can never be `int(5000)`."
+count = 1
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/PromotionCodeTest.php"
+code = "impossible-type-comparison"
+message = "Impossible type assertion: `$item->finalPriceMinor` of type `int(5000)` can never be `int(4000)`."
+count = 1
+
+[[issues]]
+file = "tests/Application/UseCase/Cart/RepriceCartTest.php"
+code = "impossible-type-comparison"
+message = "Impossible type assertion: `$item->finalPriceMinor` of type `int(5000)` can never be `int(4500)`."
 count = 1
 
 [[issues]]

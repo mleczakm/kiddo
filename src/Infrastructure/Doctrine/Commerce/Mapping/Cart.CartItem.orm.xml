@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Domain\Commerce\Cart\CartItem" table="cart_item">
+        <id name="id" type="ulid" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="cartId" type="ulid" column="cart_id" />
+        <field name="lessonId" type="ulid" column="lesson_id" />
+        <field name="ticketType" type="string" column="ticket_type" length="30" />
+        <field name="participantId" type="ulid" column="participant_id" nullable="true" />
+        <field name="basePriceMinor" type="integer" column="base_price_minor" />
+        <field name="finalPriceMinor" type="integer" column="final_price_minor" />
+        <field name="currency" type="string" column="currency" length="3" />
+        <field name="pricingQuoteHash" type="string" column="pricing_quote_hash" length="64" nullable="true" />
+        <field name="quotedAt" type="datetime_immutable" column="quoted_at" nullable="true" />
+        <field name="addedAt" type="datetime_immutable" column="added_at" />
+
+        <indexes>
+            <index name="idx_cart_item_cart_id" columns="cart_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

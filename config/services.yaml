@@ -112,6 +112,15 @@ services:
     resource: '../src/Application/CommandHandler/'
     tags: [ 'messenger.message_handler' ]
 
+  # Stage 10 of the commerce rollout plan: these use cases have no controller/
+  # LiveComponent consumer yet (that's Stage 11's cart frontend) - without a
+  # consumer, Symfony's container compiler prunes them entirely rather than
+  # just making them private, so functional tests couldn't fetch them at all.
+  # Safe to drop this override once something in src/ depends on them.
+  App\Application\UseCase\Cart\:
+    resource: '../src/Application/UseCase/Cart/'
+    public: true
+
   dunglas_doctrine_json_odm.serializer:
     class: Dunglas\DoctrineJsonOdm\Serializer
     arguments:

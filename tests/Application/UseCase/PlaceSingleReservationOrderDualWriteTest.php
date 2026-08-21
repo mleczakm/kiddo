@@ -8,8 +8,7 @@ use App\Application\Command\AddBooking;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
-use App\Application\Service\BookingFactory;
-use App\Application\Service\Commerce\FastTrackOrderFactory;
+use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Service\Pricing\PriceQuoter;
@@ -111,8 +110,8 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
         $lessonRepository = self::getContainer()->get(LessonRepositoryInterface::class);
         /** @var ChildRepositoryInterface $childRepository */
         $childRepository = self::getContainer()->get(ChildRepositoryInterface::class);
-        /** @var BookingFactory $bookingFactory */
-        $bookingFactory = self::getContainer()->get(BookingFactory::class);
+        /** @var OrderPlacementService $orderPlacementService */
+        $orderPlacementService = self::getContainer()->get(OrderPlacementService::class);
         /** @var InAppNotificationService $inAppNotifications */
         $inAppNotifications = self::getContainer()->get(InAppNotificationService::class);
         /** @var LessonInstructorResolver $instructorResolver */
@@ -127,18 +126,16 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
         $priceQuoter = self::getContainer()->get(PriceQuoter::class);
 
         $placeSingleReservation = new PlaceSingleReservation(
-            $em,
             $bus,
             $userRepository,
             $lessonRepository,
             $childRepository,
-            $bookingFactory,
             $inAppNotifications,
             $instructorResolver,
             $urlGenerator,
             $translator,
             $alwaysEnabled,
-            new FastTrackOrderFactory(),
+            $orderPlacementService,
             $shadowPricing,
             $priceQuoter,
         );
