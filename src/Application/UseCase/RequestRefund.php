@@ -6,10 +6,12 @@ namespace App\Application\UseCase;
 
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\RefundBalanceCalculator;
 use App\Application\Workflow\BookingStateMachineInterface;
 use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\Payment;
 use App\Entity\RefundRequest;
+use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Ulid;
@@ -29,6 +31,7 @@ final readonly class RequestRefund
         private BookingStateMachineInterface $bookingStateMachine,
         private PaymentStateMachineInterface $paymentStateMachine,
         private EntityManagerInterface $em,
+        private RefundBalanceCalculator $refundBalance,
     ) {}
 
     public function __invoke(Ulid $bookingId, Ulid $lessonId, int $refundedByUserId, ?string $reason): void
@@ -49,8 +52,8 @@ final readonly class RequestRefund
         }
 
         // Ensure the target lesson exists within this booking
-        $bookedLesson = $booking->getBookedLesson($lessonId->toRfc4122());
-        if ($bookedLesson === null) {
+        $occurrence = $booking->findOccurrence($lessonId);
+        if ($occurrence === null && $booking->getBookedLesson($lessonId->toRfc4122()) === null) {
             $this->logger->error('Lesson not found in booking for refund', [
                 'bookingId' => $booking->getId()->toRfc4122(),
                 'lessonId' => $lessonId->toRfc4122(),
@@ -100,13 +103,18 @@ final readonly class RequestRefund
             $this->paymentStateMachine->apply($payment, Payment::TRANSITION_REQUEST_REFUND);
             $payment->recordRefundRequest($refundedBy, $reason, !$isAdmin);
 
+            $orderLineId = $booking->getOrderLineId();
+            $requestedMinor = $this->refundBalance->refundableForBooking($payment, $orderLineId);
             $refundRequest = new RefundRequest(
                 payment: $payment,
                 booking: $booking,
                 lesson: $lesson,
-                requestedAmount: $payment->getAmount(),
+                requestedAmount: Money::ofMinor($requestedMinor, $payment->getAmount()->getCurrency()),
                 requestedBy: $refundedBy,
                 requestMessage: $reason,
+                orderId: $payment->getOrderId(),
+                orderLineId: $orderLineId,
+                occurrence: $occurrence,
             );
             $this->em->persist($refundRequest);
         }

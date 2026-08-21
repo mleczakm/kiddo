@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Application\UseCase;
 
 use App\Application\UseCase\ApproveRefund;
+use App\Domain\Commerce\Order\CustomerOrder;
+use App\Domain\Commerce\Order\OrderLine;
 use App\Entity\ActivityLog;
 use App\Entity\ActivityType;
 use App\Entity\Booking;
@@ -21,6 +23,7 @@ use Doctrine\ORM\OptimisticLockException;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\Clock;
+use Symfony\Component\Uid\Ulid;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
@@ -183,5 +186,122 @@ final class ApproveRefundTest extends KernelTestCase
         $copyForAdmin2->decline($admin2, 'Admin 2 declines');
         $this->expectException(OptimisticLockException::class);
         $this->em->flush();
+    }
+
+    public function testApprovingOneOrderLineKeepsPaymentPaidUntilAllCapturedMoneyIsRefunded(): void
+    {
+        $customer = UserAssembler::new()->assemble();
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $firstLesson = LessonAssembler::new()->assemble();
+        $secondLesson = LessonAssembler::new()->assemble();
+        $payment = PaymentAssembler::new()
+            ->withUser($customer)
+            ->withAmount(Money::of(100, 'PLN'))
+            ->withStatus(Payment::STATUS_REFUND_REQUESTED)
+            ->assemble();
+        $firstBooking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withPayment($payment)
+            ->withLessons($firstLesson)
+            ->withStatus(Booking::STATUS_CANCELLED)
+            ->assemble();
+        $secondBooking = BookingAssembler::new()
+            ->withUser($customer)
+            ->withPayment($payment)
+            ->withLessons($secondLesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+        foreach ([$customer, $admin, $firstLesson, $secondLesson, $payment, $firstBooking, $secondBooking] as $entity) {
+            $this->em->persist($entity);
+        }
+        $this->em->flush();
+
+        $order = new CustomerOrder(
+            new Ulid(),
+            'TEST-PARTIAL',
+            $customer->getId() ?? 0,
+            CustomerOrder::STATUS_PAID,
+            'PLN',
+            10_000,
+            0,
+            10_000,
+            new \DateTimeImmutable(),
+            null,
+            'partial-refund-test',
+            CustomerOrder::SOURCE_CART,
+        );
+        $firstLine = new OrderLine(
+            new Ulid(),
+            $order->getId(),
+            $firstLesson->getId(),
+            null,
+            'one_time',
+            'First',
+            null,
+            null,
+            5000,
+            5000,
+            'PLN',
+            null,
+            $firstBooking->getId(),
+        );
+        $secondLine = new OrderLine(
+            new Ulid(),
+            $order->getId(),
+            $secondLesson->getId(),
+            null,
+            'one_time',
+            'Second',
+            null,
+            null,
+            5000,
+            5000,
+            'PLN',
+            null,
+            $secondBooking->getId(),
+        );
+        $this->em->persist($order);
+        $this->em->persist($firstLine);
+        $this->em->persist($secondLine);
+        $this->em->flush();
+        $payment->setOrderId($order->getId());
+        $firstLineId = $firstLine->getId();
+        $secondLineId = $secondLine->getId();
+        $firstBooking->setOrderLineId($firstLineId);
+        $secondBooking->setOrderLineId($secondLineId);
+        $first = new RefundRequest(
+            $payment,
+            $firstBooking,
+            $firstLesson,
+            Money::of(50, 'PLN'),
+            $customer,
+            null,
+            orderLineId: $firstLineId,
+            occurrence: $firstBooking->findOccurrence($firstLesson->getId()),
+        );
+        $this->em->persist($first);
+        $this->em->flush();
+
+        ($this->approveRefund)($first->getId(), $admin->getId() ?? 0, null);
+        static::assertSame(Payment::STATUS_PAID, $payment->getStatus());
+        static::assertSame(RefundRequest::STATUS_APPROVED, $first->getStatus());
+        static::assertSame(Booking::STATUS_ACTIVE, $secondBooking->getStatus());
+
+        $payment->setStatus(Payment::STATUS_REFUND_REQUESTED);
+        $second = new RefundRequest(
+            $payment,
+            $secondBooking,
+            $secondLesson,
+            Money::of(50, 'PLN'),
+            $customer,
+            null,
+            orderLineId: $secondLineId,
+            occurrence: $secondBooking->findOccurrence($secondLesson->getId()),
+        );
+        $this->em->persist($second);
+        $this->em->flush();
+
+        ($this->approveRefund)($second->getId(), $admin->getId() ?? 0, null);
+        static::assertSame(Payment::STATUS_REFUNDED, $payment->getStatus());
     }
 }

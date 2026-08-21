@@ -1249,6 +1249,36 @@ message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` 
 count = 1
 
 [[issues]]
+file = "src/Application/Service/RefundBalanceCalculator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\Service\RefundBalanceCalculator::refundableForBooking`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/RefundBalanceCalculator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Application\Service\RefundBalanceCalculator::refundableForBooking`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/RefundBalanceCalculator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Application\Service\RefundBalanceCalculator::refundableForBooking`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/RefundBalanceCalculator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Application\Service\RefundBalanceCalculator::refundableForBooking`.'
+count = 1
+
+[[issues]]
+file = "src/Application/Service/RefundBalanceCalculator.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Application\Service\RefundBalanceCalculator::refundableForBooking`.'
+count = 1
+
+[[issues]]
 file = "src/Application/Service/RequestArrayField.php"
 code = "mixed-assignment"
 message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
@@ -1300,6 +1330,30 @@ count = 1
 file = "src/Application/Service/WorkshopFileManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ValueError` in `App\Application\Service\WorkshopFileManager::reconcile`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/ApproveRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\UseCase\ApproveRefund::__invoke`.'
 count = 1
 
 [[issues]]
@@ -1599,6 +1653,24 @@ count = 1
 [[issues]]
 file = "src/Application/UseCase/RequestRefund.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\UseCase\RequestRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/RequestRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\UseCase\RequestRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/RequestRefund.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\UseCase\RequestRefund::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/UseCase/RequestRefund.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\RequestRefund::__invoke`.'
 count = 1
 
@@ -1810,6 +1882,30 @@ count = 1
 file = "src/Entity/PaymentCode.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Random\RandomException` in `App\Entity\PaymentCode::generateCode`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\RefundRequest::__construct`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\RefundRequest::approve`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\RefundRequest::getApprovedAmountMinor`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/RefundRequest.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\RefundRequest::getRequestedAmountMinor`.'
 count = 1
 
 [[issues]]

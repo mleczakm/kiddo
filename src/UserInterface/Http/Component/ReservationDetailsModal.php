@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Repository\RefundRequestRepositoryInterface;
+use App\Application\Service\MoneyInputParser;
 use App\Application\UseCase\ApproveRefund;
 use App\Application\UseCase\DeclineRefund;
 use App\Entity\ActivityLog;
@@ -20,6 +21,7 @@ use App\Message\CancelLessonBooking;
 use App\Message\ReactivateBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
+use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -68,6 +70,9 @@ final class ReservationDetailsModal extends AbstractController
 
     #[LiveProp(writable: true)]
     public string $paymentNote = '';
+
+    #[LiveProp(writable: true)]
+    public string $approvedRefundAmount = '';
 
     public function __construct(
         private readonly BookingRepository $bookingRepository,
@@ -217,7 +222,9 @@ final class ReservationDetailsModal extends AbstractController
             }
 
             if ($transition === Payment::TRANSITION_REFUND) {
-                ($this->approveRefund)($refundRequest->getId(), $actorId, $this->paymentNote);
+                $amount = MoneyInputParser::parse($this->approvedRefundAmount);
+                $amountMinor = $amount === null ? null : Money::of($amount, 'PLN')->getMinorAmount()->toInt();
+                ($this->approveRefund)($refundRequest->getId(), $actorId, $this->paymentNote, $amountMinor);
             } else {
                 ($this->declineRefund)($refundRequest->getId(), $actorId, $this->paymentNote);
             }
@@ -232,6 +239,7 @@ final class ReservationDetailsModal extends AbstractController
             : 'Wniosek o zwrot został odrzucony.';
         $this->errorMessage = null;
         $this->paymentNote = '';
+        $this->approvedRefundAmount = '';
     }
 
     public function canChangePaymentStatus(string $transition): bool

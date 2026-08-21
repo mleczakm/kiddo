@@ -8,9 +8,11 @@ use App\Application\Command\Notification\SendRefundDecisionNotificationCommand;
 use App\Application\Repository\RefundRequestRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\ActivityLogger;
+use App\Application\Service\RefundBalanceCalculator;
 use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\ActivityType;
 use App\Entity\Payment;
+use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -37,10 +39,15 @@ final readonly class ApproveRefund
         private MessageBusInterface $bus,
         private UrlGeneratorInterface $urlGenerator,
         private EntityManagerInterface $em,
+        private RefundBalanceCalculator $refundBalance,
     ) {}
 
-    public function __invoke(Ulid $refundRequestId, int $approvedByUserId, ?string $note): void
-    {
+    public function __invoke(
+        Ulid $refundRequestId,
+        int $approvedByUserId,
+        ?string $note,
+        ?int $approvedAmountMinor = null,
+    ): void {
         $approvedBy = $this->userRepository->find($approvedByUserId);
         if ($approvedBy === null) {
             throw new \InvalidArgumentException(sprintf('User %d not found', $approvedByUserId));
@@ -61,13 +68,34 @@ final readonly class ApproveRefund
         }
 
         $payment = $refundRequest->getPayment();
-        if (!$this->paymentStateMachine->can($payment, Payment::TRANSITION_REFUND)) {
+        if (
+            $refundRequest->getBooking()->isCarnet()
+            && $refundRequest->getOccurrence() !== null
+            && $approvedAmountMinor === null
+        ) {
+            throw new \InvalidArgumentException('A carnet occurrence refund requires an explicit approved amount.');
+        }
+
+        $refundable = $this->refundBalance->refundableForBooking($payment, $refundRequest->getOrderLineId());
+        $approvedAmountMinor ??= min($refundRequest->getRequestedAmountMinor(), $refundable);
+        if ($approvedAmountMinor <= 0 || $approvedAmountMinor > $refundable) {
+            throw new \InvalidArgumentException('Approved amount exceeds the refundable balance.');
+        }
+
+        $approvedBefore = $this->refundBalance->approved($payment);
+        $fullyRefunded = ($approvedBefore + $approvedAmountMinor) === $payment->getAmount()->getMinorAmount()->toInt();
+        $transition = $fullyRefunded ? Payment::TRANSITION_REFUND : Payment::TRANSITION_DECLINE_REFUND;
+        if (!$this->paymentStateMachine->can($payment, $transition)) {
             throw new \RuntimeException('This payment cannot be refunded in its current state');
         }
 
-        $this->paymentStateMachine->apply($payment, Payment::TRANSITION_REFUND);
+        $this->paymentStateMachine->apply($payment, $transition);
         $payment->recordStatusDecision($approvedBy, $note);
-        $refundRequest->approve($approvedBy, $note);
+        $refundRequest->approve(
+            $approvedBy,
+            $note,
+            Money::ofMinor($approvedAmountMinor, $refundRequest->getCurrency()),
+        );
 
         $user = $refundRequest->getBooking()->getUser();
         $userId = $user->getId();

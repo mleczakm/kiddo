@@ -49,6 +49,25 @@ class RefundRequest
     #[ORM\Column(type: 'json_document', nullable: true)]
     private ?Money $approvedAmount = null;
 
+    #[ORM\Column(type: 'ulid', nullable: true)]
+    private ?Ulid $orderId = null;
+
+    #[ORM\Column(type: 'ulid', nullable: true)]
+    private ?Ulid $orderLineId = null;
+
+    #[ORM\ManyToOne(targetEntity: BookingOccurrence::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?BookingOccurrence $occurrence = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $requestedAmountMinor = null;
+
+    #[ORM\Column(length: 3, nullable: true)]
+    private ?string $currency = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $approvedAmountMinor = null;
+
     #[ORM\Version]
     #[ORM\Column(type: 'integer')]
     private int $version = 1;
@@ -70,9 +89,17 @@ class RefundRequest
         private ?User $requestedBy,
         #[ORM\Column(type: 'text', nullable: true)]
         private ?string $requestMessage,
+        ?Ulid $orderId = null,
+        ?Ulid $orderLineId = null,
+        ?BookingOccurrence $occurrence = null,
     ) {
         $this->id = new Ulid();
         $this->requestedAt = new \DateTimeImmutable();
+        $this->orderId = $orderId;
+        $this->orderLineId = $orderLineId;
+        $this->occurrence = $occurrence;
+        $this->requestedAmountMinor = $requestedAmount->getMinorAmount()->toInt();
+        $this->currency = $requestedAmount->getCurrency()->getCurrencyCode();
     }
 
     public function getId(): Ulid
@@ -145,6 +172,36 @@ class RefundRequest
         return $this->approvedAmount;
     }
 
+    public function getOrderId(): ?Ulid
+    {
+        return $this->orderId;
+    }
+
+    public function getOrderLineId(): ?Ulid
+    {
+        return $this->orderLineId;
+    }
+
+    public function getOccurrence(): ?BookingOccurrence
+    {
+        return $this->occurrence;
+    }
+
+    public function getRequestedAmountMinor(): int
+    {
+        return $this->requestedAmountMinor ?? $this->requestedAmount->getMinorAmount()->toInt();
+    }
+
+    public function getApprovedAmountMinor(): int
+    {
+        return $this->approvedAmountMinor ?? $this->approvedAmount?->getMinorAmount()->toInt() ?? 0;
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->currency ?? $this->requestedAmount->getCurrency()->getCurrencyCode();
+    }
+
     public function approve(User $decidedBy, ?string $note, ?Money $approvedAmount = null): void
     {
         if (!$this->isPending()) {
@@ -160,6 +217,7 @@ class RefundRequest
         $this->decidedAt = new \DateTimeImmutable();
         $this->decisionNote = $note !== null && trim($note) !== '' ? trim($note) : null;
         $this->approvedAmount = $approvedAmount ?? $this->requestedAmount;
+        $this->approvedAmountMinor = $this->approvedAmount->getMinorAmount()->toInt();
     }
 
     public function decline(User $decidedBy, ?string $note): void
