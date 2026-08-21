@@ -229,13 +229,17 @@ final readonly class PricingEngine
         string $currency,
         array $adjustments,
     ): string {
+        // evaluationTime decides which rules apply, but is not itself part of
+        // the quote identity. The modal and checkout necessarily calculate in
+        // separate requests; including the current second would make every
+        // unchanged quote look stale. A real time-boundary change still alters
+        // the applied adjustments/final price below and therefore the hash.
         $parts = [
             (string) $context->userId,
             (string) $context->lessonId,
             (string) $context->seriesId,
             $context->ticketType,
             $context->promotionCode ?? '',
-            $context->evaluationTime->format(\DateTimeInterface::ATOM),
             (string) $basePriceMinor,
             (string) $finalPriceMinor,
             $currency,

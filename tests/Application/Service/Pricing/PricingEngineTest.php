@@ -327,6 +327,49 @@ final class PricingEngineTest extends TestCase
         static::assertSame($first->quoteHash, $second->quoteHash);
     }
 
+    public function testEvaluationTimeAloneDoesNotChangeTheQuoteHash(): void
+    {
+        $first = $this->engine->quote(
+            $this->context(at: new \DateTimeImmutable('2026-06-15 12:00:00')),
+            10_000,
+            'PLN',
+            [],
+        );
+        $second = $this->engine->quote(
+            $this->context(at: new \DateTimeImmutable('2026-06-15 12:00:01')),
+            10_000,
+            'PLN',
+            [],
+        );
+
+        static::assertSame($first->quoteHash, $second->quoteHash);
+    }
+
+    public function testCrossingATimeRuleBoundaryChangesTheQuoteHash(): void
+    {
+        $rule = $this->rule(
+            AdjustmentType::FIXED_AMOUNT_OFF,
+            1_000,
+            validFrom: new \DateTimeImmutable('2026-06-15 13:00:00'),
+        );
+        $before = $this->engine->quote(
+            $this->context(at: new \DateTimeImmutable('2026-06-15 12:59:59')),
+            10_000,
+            'PLN',
+            [$rule],
+        );
+        $after = $this->engine->quote(
+            $this->context(at: new \DateTimeImmutable('2026-06-15 13:00:00')),
+            10_000,
+            'PLN',
+            [$rule],
+        );
+
+        static::assertNotSame($before->quoteHash, $after->quoteHash);
+        static::assertSame(10_000, $before->finalPriceMinor);
+        static::assertSame(9_000, $after->finalPriceMinor);
+    }
+
     public function testADifferentPromotionCodeProducesADifferentQuoteHash(): void
     {
         $at = new \DateTimeImmutable('2026-06-15 12:00:00');
