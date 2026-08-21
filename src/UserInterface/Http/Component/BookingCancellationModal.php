@@ -241,7 +241,7 @@ class BookingCancellationModal extends AbstractController
     }
 
     #[LiveAction]
-    public function selectTab(#[LiveArg] int $_index, #[LiveArg('option')] string $option): void
+    public function selectTab(#[LiveArg('option')] string $option): void
     {
         $this->selectedOption = $option;
     }
