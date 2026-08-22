@@ -311,7 +311,7 @@
     }
   },
   "require-dev": {
-    "carthage-software/mago": "^1.47.1",
+    "carthage-software/mago": "^1.47.3",
     "dama/doctrine-test-bundle": "^8.6.0",
     "kodus/mock-cache": "^2.1",
     "phpunit/phpunit": "^11.5.56",
@@ -322,7 +322,7 @@
     "symfony/css-selector": "8.0.*",
     "symfony/debug-bundle": "8.0.*",
     "symfony/maker-bundle": "^1.67",
-    "symfony/phpunit-bridge": "^8.0",
+    "symfony/phpunit-bridge": "^8.1.5",
     "symfony/stopwatch": "8.0.*",
     "symfony/web-profiler-bundle": "8.1.*",
     "zenstruck/foundry": "^2.12.0",
