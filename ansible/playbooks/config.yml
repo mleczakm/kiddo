@@ -3,7 +3,10 @@
 apps:
   - name: kiddo
     domain: "{{ domain | default('warsztatowniasensoryczna.pl') }}"
-    port: 9501
+    # 9501 collides with an unrelated app (classy-cash) already bound to this
+    # same host IPv6 - that's why every deploy since 2026-08-22 failed at
+    # "Run application container" with "port is already allocated".
+    port: 9502
     image: "ghcr.io/mleczakm/kiddo:{{ app_version | default('latest') }}"
     cache_volume: kiddo_cache
     env:
