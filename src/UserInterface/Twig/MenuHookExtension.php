@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Twig;
 
+use App\Application\Repository\LessonMetadataRepositoryInterface;
+use App\Application\Repository\MenuHookLinkRepositoryInterface;
+use App\Application\Repository\PostRepositoryInterface;
 use App\Entity\MenuHookLinkTarget;
-use App\Infrastructure\Doctrine\Repository\LessonMetadataRepository;
-use App\Infrastructure\Doctrine\Repository\MenuHookLinkRepository;
-use App\Infrastructure\Doctrine\Repository\PostRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -17,9 +17,9 @@ use Twig\TwigFunction;
 final class MenuHookExtension extends AbstractExtension
 {
     public function __construct(
-        private readonly MenuHookLinkRepository $menuHookLinkRepository,
-        private readonly PostRepository $postRepository,
-        private readonly LessonMetadataRepository $lessonMetadataRepository,
+        private readonly MenuHookLinkRepositoryInterface $menuHookLinkRepository,
+        private readonly PostRepositoryInterface $postRepository,
+        private readonly LessonMetadataRepositoryInterface $lessonMetadataRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
     ) {}

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Twig;
 
+use App\Application\Repository\LessonMetadataRepositoryInterface;
+use App\Application\Repository\MenuHookLinkRepositoryInterface;
+use App\Application\Repository\PostRepositoryInterface;
 use App\Entity\MenuHookLink;
 use App\Entity\MenuHookLinkTarget;
 use App\Entity\Post;
 use App\Entity\PostVisibility;
 use App\Entity\User;
-use App\Infrastructure\Doctrine\Repository\LessonMetadataRepository;
-use App\Infrastructure\Doctrine\Repository\MenuHookLinkRepository;
-use App\Infrastructure\Doctrine\Repository\PostRepository;
 use App\UserInterface\Twig\MenuHookExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,8 +23,8 @@ final class MenuHookExtensionTest extends TestCase
     {
         $extension = new MenuHookExtension(
             $this->createMockRepository([]),
-            $this->createMock(PostRepository::class),
-            $this->createMock(LessonMetadataRepository::class),
+            $this->createMock(PostRepositoryInterface::class),
+            $this->createMock(LessonMetadataRepositoryInterface::class),
             $this->createMock(UrlGeneratorInterface::class),
             $this->createMock(Security::class),
         );
@@ -39,8 +39,8 @@ final class MenuHookExtensionTest extends TestCase
         $mockLink = new MenuHookLink('main_nav_extra', 0, MenuHookLinkTarget::URL, 'https://example.com', 'Example');
         $extension = new MenuHookExtension(
             $this->createMockRepository([$mockLink]),
-            $this->createMock(PostRepository::class),
-            $this->createMock(LessonMetadataRepository::class),
+            $this->createMock(PostRepositoryInterface::class),
+            $this->createMock(LessonMetadataRepositoryInterface::class),
             $this->createMock(UrlGeneratorInterface::class),
             $this->createMock(Security::class),
         );
@@ -55,7 +55,7 @@ final class MenuHookExtensionTest extends TestCase
     public function testLinksForFiltersOutUnpublishedPosts(): void
     {
         $mockLink = new MenuHookLink('main_nav_extra', 0, MenuHookLinkTarget::POST, 'unpublished-article', 'Article');
-        $postRepository = $this->createMock(PostRepository::class);
+        $postRepository = $this->createMock(PostRepositoryInterface::class);
         $postRepository
             ->expects(static::once())
             ->method('findOnePublishedBySlug')
@@ -65,7 +65,7 @@ final class MenuHookExtensionTest extends TestCase
         $extension = new MenuHookExtension(
             $this->createMockRepository([$mockLink]),
             $postRepository,
-            $this->createMock(LessonMetadataRepository::class),
+            $this->createMock(LessonMetadataRepositoryInterface::class),
             $this->createMock(UrlGeneratorInterface::class),
             $this->createMock(Security::class),
         );
@@ -84,7 +84,7 @@ final class MenuHookExtensionTest extends TestCase
             'nonexistent-workshop',
             'Workshop',
         );
-        $workshopRepository = $this->createMock(LessonMetadataRepository::class);
+        $workshopRepository = $this->createMock(LessonMetadataRepositoryInterface::class);
         $workshopRepository
             ->expects(static::once())
             ->method('slugExists')
@@ -93,7 +93,7 @@ final class MenuHookExtensionTest extends TestCase
 
         $extension = new MenuHookExtension(
             $this->createMockRepository([$mockLink]),
-            $this->createMock(PostRepository::class),
+            $this->createMock(PostRepositoryInterface::class),
             $workshopRepository,
             $this->createMock(UrlGeneratorInterface::class),
             $this->createMock(Security::class),
@@ -110,7 +110,7 @@ final class MenuHookExtensionTest extends TestCase
         $post = new Post('Staff-only article', new User('author@example.test', 'Author'), 'staff-only-article');
         $post->setVisibility(PostVisibility::STAFF_ONLY);
 
-        $postRepository = $this->createMock(PostRepository::class);
+        $postRepository = $this->createMock(PostRepositoryInterface::class);
         $postRepository
             ->method('findOnePublishedBySlug')
             ->with('staff-only-article', static::anything())
@@ -123,7 +123,7 @@ final class MenuHookExtensionTest extends TestCase
         $extension = new MenuHookExtension(
             $this->createMockRepository([$mockLink]),
             $postRepository,
-            $this->createMock(LessonMetadataRepository::class),
+            $this->createMock(LessonMetadataRepositoryInterface::class),
             $this->createMock(UrlGeneratorInterface::class),
             $security,
         );
@@ -139,7 +139,7 @@ final class MenuHookExtensionTest extends TestCase
         $post = new Post('Staff-only article', new User('author@example.test', 'Author'), 'staff-only-article');
         $post->setVisibility(PostVisibility::STAFF_ONLY);
 
-        $postRepository = $this->createMock(PostRepository::class);
+        $postRepository = $this->createMock(PostRepositoryInterface::class);
         $postRepository
             ->method('findOnePublishedBySlug')
             ->with('staff-only-article', static::anything())
@@ -155,7 +155,7 @@ final class MenuHookExtensionTest extends TestCase
         $extension = new MenuHookExtension(
             $this->createMockRepository([$mockLink]),
             $postRepository,
-            $this->createMock(LessonMetadataRepository::class),
+            $this->createMock(LessonMetadataRepositoryInterface::class),
             $urlGenerator,
             $security,
         );
@@ -166,9 +166,9 @@ final class MenuHookExtensionTest extends TestCase
         static::assertSame('https://kiddo.test/blog/staff-only-article', $links[0]['url']);
     }
 
-    private function createMockRepository(array $links): MenuHookLinkRepository
+    private function createMockRepository(array $links): MenuHookLinkRepositoryInterface
     {
-        $repository = $this->createMock(MenuHookLinkRepository::class);
+        $repository = $this->createMock(MenuHookLinkRepositoryInterface::class);
         $repository->expects(static::any())->method('findActiveForSlot')->willReturn($links);
 
         return $repository;
