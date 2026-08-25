@@ -138,6 +138,8 @@ services:
       $connectionResetter: '@App\Infrastructure\Doctrine\ConnectionEnsurerInterface'
 
   App\Infrastructure\Swoole\Configurator\WithScheduler:
+    arguments:
+      $lockFactory: '@lock.factory'
     tags:
       - 'swoole_bundle.server_configurator'
 

@@ -18,6 +18,8 @@ use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePool;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePoolContainer;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePoolEntry;
 use Symfony\Component\Cache\LockRegistry;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\InMemoryStore;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 use function Swoole\Coroutine\run;
@@ -49,6 +51,7 @@ final class WithSchedulerTest extends TestCase
             new Scheduler($this->createMock(MessageBusInterface::class), []),
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
+            self::lockFactory(),
         ))->configure($this->createMock(Server::class));
 
         $ticks = iterator_to_array(Timer::list());
@@ -68,6 +71,7 @@ final class WithSchedulerTest extends TestCase
             new Scheduler($this->createMock(MessageBusInterface::class), []),
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
+            self::lockFactory(),
         ))->configure($this->createMock(Server::class));
 
         static::assertSame([], self::lockRegistryFiles());
@@ -84,6 +88,7 @@ final class WithSchedulerTest extends TestCase
             $scheduler,
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
+            self::lockFactory(),
         );
 
         run(static function () use ($withScheduler): void {
@@ -106,6 +111,7 @@ final class WithSchedulerTest extends TestCase
             $this->createMock(Scheduler::class),
             $coWrapper,
             $this->createMock(LoggerInterface::class),
+            self::lockFactory(),
         );
 
         run(static function () use ($withScheduler): void {
@@ -121,6 +127,7 @@ final class WithSchedulerTest extends TestCase
             $scheduler,
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
+            self::lockFactory(),
         );
 
         $scheduler
@@ -155,6 +162,7 @@ final class WithSchedulerTest extends TestCase
             $scheduler,
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
+            self::lockFactory(),
         );
 
         // A failed tick must not propagate - Timer::tick has no caller to catch it, so an
@@ -195,7 +203,7 @@ final class WithSchedulerTest extends TestCase
                 $loggedContext = $context;
             });
 
-        $withScheduler = new WithScheduler($scheduler, self::emptyCoWrapper(), $logger);
+        $withScheduler = new WithScheduler($scheduler, self::emptyCoWrapper(), $logger, self::lockFactory());
 
         run(static function () use ($withScheduler): void {
             $withScheduler->tick();
@@ -237,13 +245,53 @@ final class WithSchedulerTest extends TestCase
                 $loggedMessage = $message;
             });
 
-        $withScheduler = new WithScheduler($scheduler, $coWrapper, $logger);
+        $withScheduler = new WithScheduler($scheduler, $coWrapper, $logger, self::lockFactory());
 
         // No run() wrapper - this is the whole point of the test.
         $withScheduler->tick();
 
         static::assertNotNull($loggedMessage);
         static::assertStringContainsString('no coroutine context', $loggedMessage);
+    }
+
+    public function testTickSkipsWhileAnotherProcessHoldsTheLock(): void
+    {
+        // Models the actual production failure: two separate WithScheduler instances (one
+        // per OS process, e.g. Swoole's master and a manager-process tick spillover) sharing
+        // only the lock backend, not any in-process state. Without the lock, both ticks'
+        // scheduler->run() calls fired within microseconds of each other.
+        $lockFactory = self::lockFactory();
+        $second = $this->createMock(Scheduler::class);
+        $second->expects($this->never())->method('run');
+        $secondWithScheduler = new WithScheduler(
+            $second,
+            self::emptyCoWrapper(),
+            $this->createMock(LoggerInterface::class),
+            $lockFactory,
+        );
+
+        $first = $this->createMock(Scheduler::class);
+        $first
+            ->expects($this->once())
+            ->method('run')
+            ->willReturnCallback(static function () use ($secondWithScheduler): void {
+                $secondWithScheduler->tick();
+            });
+        $firstWithScheduler = new WithScheduler(
+            $first,
+            self::emptyCoWrapper(),
+            $this->createMock(LoggerInterface::class),
+            $lockFactory,
+        );
+
+        run(static function () use ($firstWithScheduler): void {
+            $firstWithScheduler->tick();
+        });
+    }
+
+    private static function lockFactory(): LockFactory
+    {
+        return new LockFactory(new InMemoryStore());
     }
 
     private static function emptyCoWrapper(): CoWrapper

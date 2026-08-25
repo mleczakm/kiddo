@@ -12,10 +12,13 @@ use Swoole\Timer;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\CoWrapper;
 use SwooleBundle\SwooleBundle\Server\Configurator\Configurator;
 use Symfony\Component\Cache\LockRegistry;
+use Symfony\Component\Lock\LockFactory;
 use Throwable;
 
 final class WithScheduler implements Configurator
 {
+    private const string LOCK_RESOURCE = 'app-scheduler-tick';
+
     private int $tickId;
 
     private bool $running = false;
@@ -29,6 +32,16 @@ final class WithScheduler implements Configurator
         // Swoole, bypassing both of those, so nothing was ever resetting for it - see tick().
         private readonly CoWrapper $coWrapper,
         private readonly LoggerInterface $logger,
+        // $running below only guards reentrancy within *this* process. The "no coroutine
+        // context" spillover tick documented in tick() runs in a genuinely separate OS
+        // process (Swoole's manager, forked from master) with its own copy of this object -
+        // a different $running instance, unreachable by the master's. Confirmed in
+        // production: that spillover was firing on effectively every tick, not just during
+        // a reload, so every due command (and every notification email it sends) was
+        // dispatched twice a few hundred microseconds apart. The lock uses a kernel-level
+        // semaphore (framework.lock: semaphore), visible to both processes, to actually
+        // serialize them.
+        private readonly LockFactory $lockFactory,
     ) {}
 
     public function __destruct()
@@ -85,6 +98,25 @@ final class WithScheduler implements Configurator
             return;
         }
 
+        // Serializes this tick against the same tick firing concurrently in another OS
+        // process (see the constructor doc on $lockFactory) - the $running flag above only
+        // ever protects against overlap within this process.
+        $lock = $this->lockFactory->createLock(self::LOCK_RESOURCE);
+
+        try {
+            if (!$lock->acquire()) {
+                return;
+            }
+        } catch (Throwable $e) {
+            // Same reasoning as the outer catch below: a broken lock backend must not crash
+            // the process, just skip this tick and let the next one retry.
+            $this->logger->error('Scheduler tick lock acquisition failed', [
+                'exception' => $e,
+            ]);
+
+            return;
+        }
+
         $this->running = true;
 
         try {
@@ -136,6 +168,7 @@ final class WithScheduler implements Configurator
             ]);
         } finally {
             $this->running = false;
+            $lock->release();
         }
     }
 }

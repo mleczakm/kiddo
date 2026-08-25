@@ -5992,7 +5992,7 @@ count = 2
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "non-existent-function"
 message = 'Could not find definition for function `Swoole\Coroutine\run` (also tried as `run` in a broader scope).'
-count = 6
+count = 7
 
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
