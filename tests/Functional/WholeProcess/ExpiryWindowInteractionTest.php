@@ -23,17 +23,18 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Characterizes a known gap: the booking-expiry window (60 minutes) is much
- * shorter than the payment-expiry window (24 hours). A booking can therefore
- * be auto-cancelled for lack of payment while its payment is still "pending"
- * and able to accept a matching transfer. This test documents the current
- * result of that race - it is not (yet) the desired behavior - so that a
- * future fix has a test to change deliberately rather than by accident.
+ * Characterizes the fixed behavior of the booking/payment expiry race: the
+ * booking-expiry window is now 24 *working* hours (weekends don't count,
+ * since bank transfers can't settle until the next business day), matching
+ * the payment-expiry window's 24h. A transfer can still legitimately arrive
+ * after a booking has already been auto-cancelled for lack of payment - this
+ * test asserts that BookingConfirmationSubscriber now reactivates that
+ * booking instead of leaving money received against a cancelled booking.
  */
 #[Group('functional')]
 final class ExpiryWindowInteractionTest extends KernelTestCase
 {
-    public function testLateTransferPaysAPaymentWhoseBookingWasAlreadyAutoCancelled(): void
+    public function testLateTransferReactivatesABookingThatWasAlreadyAutoCancelled(): void
     {
         self::bootKernel();
         $container = self::getContainer();
@@ -43,9 +44,9 @@ final class ExpiryWindowInteractionTest extends KernelTestCase
         $messageBus = $container->get(MessageBusInterface::class);
 
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
-        // Past the 60-minute booking-expiry window, but well within the 24h
-        // payment-expiry window.
-        $createdAt = $now->modify('-90 minutes');
+        // Comfortably past the 24-working-hour booking-expiry window,
+        // regardless of which weekday "now" happens to be in the test run.
+        $createdAt = $now->modify('-4 days');
 
         $user = UserAssembler::new()->assemble();
         $em->persist($user);
@@ -79,11 +80,11 @@ final class ExpiryWindowInteractionTest extends KernelTestCase
         $em->persist($booking);
         $em->flush();
 
-        // The 60-minute sweep runs first and auto-cancels the booking; the
-        // payment is untouched by it (see CheckExpiredBookingsHandler).
+        // The booking-expiry sweep runs first and auto-cancels the booking;
+        // the payment is untouched by it (see CheckExpiredBookingsHandler).
         /** @var CheckExpiredBookingsHandler $handler */
         $handler = $container->get(CheckExpiredBookingsHandler::class);
-        $handler(new CheckExpiredBookings($now->modify('-60 minutes')));
+        $handler(new CheckExpiredBookings($now));
 
         $em->clear();
         $cancelledBooking = $em->find(Booking::class, $booking->getId());
@@ -104,16 +105,15 @@ final class ExpiryWindowInteractionTest extends KernelTestCase
 
         $em->clear();
         $paidPayment = $em->find(Payment::class, $payment->getId());
-        $stillCancelledBooking = $em->find(Booking::class, $booking->getId());
+        $reactivatedBooking = $em->find(Booking::class, $booking->getId());
 
         static::assertInstanceOf(Payment::class, $paidPayment);
-        static::assertInstanceOf(Booking::class, $stillCancelledBooking);
+        static::assertInstanceOf(Booking::class, $reactivatedBooking);
 
-        // Current (undesirable) result: the payment is marked paid...
         static::assertSame(Payment::STATUS_PAID, $paidPayment->getStatus());
-        // ...but BookingConfirmationSubscriber's "confirm" transition only
-        // applies from the "pending" state, so the already-cancelled booking
-        // is left cancelled - money received for a seat that was given up.
-        static::assertSame(Booking::STATUS_CANCELLED, $stillCancelledBooking->getStatus());
+        // BookingConfirmationSubscriber falls back to the "reactivate"
+        // transition when "confirm" isn't available (i.e. the booking was
+        // already cancelled) - money received now correctly restores the seat.
+        static::assertSame(Booking::STATUS_ACTIVE, $reactivatedBooking->getStatus());
     }
 }

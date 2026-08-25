@@ -54,7 +54,7 @@ class MainScheduleTest extends TestCase
                     $reminderDates[] = $message->date;
                 }
                 if ($message instanceof CheckExpiredBookings) {
-                    $expiredBookingDates[] = $message->expirationTime;
+                    $expiredBookingDates[] = $message->referenceTime;
                 }
             }
             $mockClock->modify('+1 day');

@@ -16,6 +16,7 @@ use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -24,6 +25,7 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
 {
     public function testCancelsExpiredUnpaidBookingsAndRecordsAnAutoCancellationEvent(): void
     {
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         /** @var BookingRepository $bookingRepository */
         $bookingRepository = self::getContainer()->get(BookingRepository::class);
@@ -31,8 +33,11 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
         $activityLogRepository = self::getContainer()->get(ActivityLogRepository::class);
 
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
-        $expirationTime = $now->modify('-60 minutes');
-        $longAgo = $now->modify('-2 hours');
+        // Comfortably past the 24-working-hour window regardless of which
+        // weekday "now" happens to be in the test run.
+        $longAgo = $now->modify('-4 days');
+        // Within the 24-working-hour window even across a weekend.
+        $recently = $now->modify('-2 hours');
 
         $user = UserAssembler::new()->assemble();
 
@@ -74,12 +79,31 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
         $lessonB->addBooking($bookingB);
         $em->persist($bookingB);
 
+        // Booking C: pending, unpaid, but created too recently to have
+        // accrued 24 working hours yet -> must remain untouched.
+        $lessonC = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($now->modify('+1 day'))
+            ->assemble();
+        $em->persist($lessonC);
+        $paymentC = PaymentAssembler::new()->withUser($user)->withStatus(Payment::STATUS_PENDING)->assemble();
+        $em->persist($paymentC);
+        $bookingC = BookingAssembler::new()
+            ->withUser($user)
+            ->withPayment($paymentC)
+            ->withLessons($lessonC)
+            ->withStatus(Booking::STATUS_PENDING)
+            ->withCreatedAt($recently)
+            ->assemble();
+        $lessonC->addBooking($bookingC);
+        $em->persist($bookingC);
+
         $em->persist($user);
         $em->flush();
 
         /** @var CheckExpiredBookingsHandler $handler */
         $handler = self::getContainer()->get(CheckExpiredBookingsHandler::class);
-        $handler(new CheckExpiredBookings($expirationTime));
+        $handler(new CheckExpiredBookings($now));
 
         $em->clear();
 
@@ -104,5 +128,13 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
 
         $eventsForB = $activityLogRepository->findByBookingId((string) $bookingB->getId());
         static::assertCount(0, $eventsForB);
+
+        $savedC = $bookingRepository->find($bookingC->getId());
+        static::assertNotNull($savedC);
+        static::assertSame(
+            Booking::STATUS_PENDING,
+            $savedC->getStatus(),
+            'Booking created recently must not be auto-cancelled before 24 working hours have passed',
+        );
     }
 }
