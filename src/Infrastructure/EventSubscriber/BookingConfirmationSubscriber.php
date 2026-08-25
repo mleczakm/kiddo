@@ -41,11 +41,19 @@ class BookingConfirmationSubscriber implements EventSubscriberInterface
         $bookings = $payment->getBookings();
 
         foreach ($bookings as $booking) {
-            if (!$this->bookingStateMachine->can($booking, 'confirm')) {
+            if ($this->bookingStateMachine->can($booking, 'confirm')) {
+                $this->bookingStateMachine->apply($booking, 'confirm');
                 continue;
             }
 
-            $this->bookingStateMachine->apply($booking, 'confirm');
+            // The booking may have already been auto-cancelled (e.g. by
+            // CheckExpiredBookingsHandler) before this payment was matched -
+            // a late but valid payment should revive it rather than leave
+            // money received against a cancelled booking.
+            if ($this->bookingStateMachine->can($booking, 'reactivate')) {
+                $this->bookingStateMachine->apply($booking, 'reactivate');
+                $booking->reactivate();
+            }
         }
     }
 
