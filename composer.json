@@ -37,6 +37,8 @@
     "ext-iconv": "*",
     "ext-swoole": "*",
     "ext-zlib": "*",
+    "aeon-php/business-hours": "^1.0",
+    "aeon-php/calendar": "^1.0",
     "bgalati/monolog-sentry-handler": "^2.1",
     "brick/money": "^0.10.3",
     "carbonphp/carbon-doctrine-types": "^3.0",

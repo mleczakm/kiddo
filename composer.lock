@@ -4,8 +4,124 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad1b45113855306e1679a375843d2d6a",
+    "content-hash": "ffd568670345cf03b7b23e130b5b9ffc",
     "packages": [
+        {
+            "name": "aeon-php/business-hours",
+            "version": "1.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aeon-php/business-hours.git",
+                "reference": "17a391e1400d81f458edeab654be4c46df522b6a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aeon-php/business-hours/zipball/17a391e1400d81f458edeab654be4c46df522b6a",
+                "reference": "17a391e1400d81f458edeab654be4c46df522b6a",
+                "shasum": ""
+            },
+            "require": {
+                "aeon-php/calendar": "~1.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "require-dev": {
+                "aeon-php/calendar-holidays": "~1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aeon\\": [
+                        "src/Aeon"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Abstraction allowing to define and check against business hours",
+            "keywords": [
+                "business hours",
+                "calendar",
+                "holidays",
+                "immutable"
+            ],
+            "support": {
+                "issues": "https://github.com/aeon-php/business-hours/issues",
+                "source": "https://github.com/aeon-php/business-hours/tree/1.0.12"
+            },
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-12-04T13:02:42+00:00"
+        },
+        {
+            "name": "aeon-php/calendar",
+            "version": "1.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aeon-php/calendar.git",
+                "reference": "10387ea0944ce9ce071a12d60c398ee852de70b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aeon-php/calendar/zipball/10387ea0944ce9ce071a12d60c398ee852de70b8",
+                "reference": "10387ea0944ce9ce071a12d60c398ee852de70b8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "require-dev": {
+                "ext-bcmath": "*",
+                "ext-pcov": "*"
+            },
+            "suggest": {
+                "ext-bcmath": "Compare time units with high precision"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aeon\\": [
+                        "src/Aeon"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP type safe, immutable calendar library",
+            "keywords": [
+                "calendar",
+                "date",
+                "datetime",
+                "immutable",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/aeon-php/calendar/issues",
+                "source": "https://github.com/aeon-php/calendar/tree/1.0.12"
+            },
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-12-08T14:44:05+00:00"
+        },
         {
             "name": "beberlei/assert",
             "version": "v3.3.4",
