@@ -442,6 +442,8 @@
       <path value="$PROJECT_DIR$/vendor/league/uri" />
       <path value="$PROJECT_DIR$/vendor/league/uri-interfaces" />
       <path value="$PROJECT_DIR$/vendor/symfony/html-sanitizer" />
+      <path value="$PROJECT_DIR$/vendor/aeon-php/business-hours" />
+      <path value="$PROJECT_DIR$/vendor/aeon-php/calendar" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
