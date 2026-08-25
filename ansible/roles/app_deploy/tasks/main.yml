@@ -1,4 +1,19 @@
 ---
+- name: Verify routing secrets are present before touching the running container
+  ansible.builtin.assert:
+    that:
+      - (cloudflare_api_token | default('')) | length > 0
+      - (cloudflare_zone_id | default('')) | length > 0
+      - (cytrus_api_token | default('')) | length > 0
+      - (app.cytrus_host | default('')) | length > 0
+    fail_msg: >-
+      Missing or empty routing secret(s) for {{ app.name }}: cloudflare_api_token,
+      cloudflare_zone_id, cytrus_api_token, and app.cytrus_host (CYTRUS_IPV4) must
+      all be set, otherwise the container deploys but never receives traffic.
+      Check the CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID, CYTRUS_API_TOKEN and
+      CYTRUS_IPV4 secrets in the GitHub 'production' environment.
+  when: app.proxied | default(false)
+
 - name: Log in to GHCR
   ansible.builtin.command: "docker login ghcr.io -u {{ github_actor }} --password-stdin"
   args:
