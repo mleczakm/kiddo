@@ -584,7 +584,7 @@ class WorkshopEditorComponent extends AbstractController
      */
     public function getCategories(): array
     {
-        return ['Sensoryka', 'Muzyka', 'Ruchowe', 'Plastyczne', 'Brudna zabawa'];
+        return ['Sensoryka', 'Muzyka', 'Ruchowe', 'Plastyczne', 'Brudna zabawa', 'Rozwój ogólny'];
     }
 
     #[LiveAction]
@@ -687,7 +687,7 @@ class WorkshopEditorComponent extends AbstractController
 
         $this->description = $this->descriptionSanitizer->sanitize($this->description ?? '');
 
-        if ($this->title === null || $this->category === null || trim(strip_tags($this->description)) === '') {
+        if ($this->title === null || !$this->category || trim(strip_tags($this->description)) === '') {
             $this->addFlash('error', 'Wypełnij wszystkie wymagane pola.');
             return;
         }
