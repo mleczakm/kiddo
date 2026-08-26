@@ -2,7 +2,7 @@
 
 <div style="background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem; max-width: 32rem; text-align: center;">
     {% if lessonTitle %}
-        <div style="font-size: 1.125rem; font-weight: 600; color: #4c2e11; margin-bottom: 0.5rem;">
+        <div style="font-size: 1.125rem; font-weight: 600; color: #583818; margin-bottom: 0.5rem;">
             {{ lessonTitle }}
         </div>
     {% endif %}
@@ -23,13 +23,13 @@
     {% else %}
         <div style="margin-bottom: 1rem;"></div>
     {% endif %}
-    <div style="font-size: 1.5rem; font-weight: bold; color: #4c2e11; margin-bottom: 1rem;">
+    <div style="font-size: 1.5rem; font-weight: bold; color: #583818; margin-bottom: 1rem;">
         {{ 'reservation.blik_transfer'|trans({'blikPhoneNumber': blikPhoneNumber})|raw }}
     </div>
     <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">
         {{ 'reservation.amount_to_pay'|trans({'paymentAmount': paymentAmount|money})|raw }}. {{ 'reservation.payment_title'|trans }}
     </div>
-    <div style="font-size: 1.5rem; font-family: monospace; background-color: #f3f4f6; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; user-select: all; letter-spacing: 0.1em; color: #e34646;">{{ paymentCode }}</div>
+    <div style="font-size: 1.5rem; font-family: monospace; background-color: #f3f4f6; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; user-select: all; letter-spacing: 0.1em; color: #e85030;">{{ paymentCode }}</div>
     <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
         {{ 'reservation.confirmation_after_payment'|trans }}
     </div>

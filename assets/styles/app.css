@@ -142,14 +142,14 @@ body {
 .article-content h2,
 .tiptap h2 {
     font-size: 1.5rem;
-    background-image: linear-gradient(to right, rgb(227 70 70 / 0.7), rgb(247 195 67 / 0.7));
+    background-image: linear-gradient(to right, rgb(232 80 48 / 0.7), rgb(248 192 40 / 0.7));
     background-size: 100% 0.35em;
 }
 
 .article-content h3,
 .tiptap h3 {
     font-size: 1.2rem;
-    background-image: linear-gradient(to right, rgb(227 70 70 / 0.5), rgb(247 195 67 / 0.5));
+    background-image: linear-gradient(to right, rgb(232 80 48 / 0.5), rgb(248 192 40 / 0.5));
     background-size: 100% 0.3em;
 }
 
@@ -199,7 +199,7 @@ body {
 .tiptap blockquote {
     margin: 2rem 0;
     padding: 0 0 0 1.25rem;
-    border-left: 3px solid rgb(227 70 70 / 0.6);
+    border-left: 3px solid rgb(232 80 48 / 0.6);
     font-style: normal;
 }
 
@@ -257,8 +257,8 @@ body {
     margin: 2rem 0;
     padding: 1.25rem 1.5rem;
     border-radius: 1rem;
-    border-left: 4px solid rgb(113 195 219);
-    background-color: rgb(113 195 219 / 0.1);
+    border-left: 4px solid rgb(128 184 208);
+    background-color: rgb(128 184 208 / 0.1);
 }
 
 .article-content .callout::before,
@@ -268,7 +268,7 @@ body {
     width: 1.25rem;
     height: 1.25rem;
     margin-top: 0.2rem;
-    background-color: rgb(113 195 219);
+    background-color: rgb(128 184 208);
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E");
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat;
@@ -354,8 +354,8 @@ body {
     max-width: 42rem;
     border-radius: 1.5rem;
     padding: 2px;
-    background-image: linear-gradient(to right, rgb(227 70 70), rgb(247 195 67));
-    box-shadow: 0 10px 25px -8px rgb(76 46 17 / 0.25);
+    background-image: linear-gradient(to right, rgb(232 80 48), rgb(248 192 40));
+    box-shadow: 0 10px 25px -8px rgb(88 56 24 / 0.25);
 }
 
 .article-cta__inner {
@@ -387,7 +387,7 @@ body {
     color: hsl(var(--primary-foreground));
     padding: 0.75rem 2rem;
     font-weight: 700;
-    box-shadow: 0 4px 10px -2px rgb(227 70 70 / 0.4);
+    box-shadow: 0 4px 10px -2px rgb(232 80 48 / 0.4);
     transition: filter 0.2s ease;
 }
 
@@ -403,7 +403,7 @@ body {
     border: 1px solid hsl(var(--border) / 0.7);
     background-color: hsl(var(--card) / 0.8);
     padding: 1.5rem;
-    box-shadow: 0 1px 3px rgb(76 46 17 / 0.08);
+    box-shadow: 0 1px 3px rgb(88 56 24 / 0.08);
 }
 
 .article-downloads__title {
@@ -509,14 +509,14 @@ body {
 
 .workshops-hero {
     isolation: isolate;
-    background-image: linear-gradient(135deg, rgb(238 203 233 / 0.52), rgb(113 195 219 / 0.25), rgb(247 195 67 / 0.35));
+    background-image: linear-gradient(135deg, rgb(232 192 216 / 0.52), rgb(128 184 208 / 0.25), rgb(248 192 40 / 0.35));
 }
 
 .popular-workshops-section {
     background-color: rgb(249 241 222 / 0.72);
     background-image:
         url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%23738f3e' fill-opacity='0.2'/%3E%3C/svg%3E"),
-        linear-gradient(to bottom, transparent, rgb(247 195 67 / 0.1), rgb(113 195 219 / 0.12));
+        linear-gradient(to bottom, transparent, rgb(248 192 40 / 0.1), rgb(128 184 208 / 0.12));
 }
 
 .decorative-orb {
@@ -544,12 +544,12 @@ body {
 }
 
 .decorative-orb--yellow {
-    background: rgb(247 195 67 / 0.15);
+    background: rgb(248 192 40 / 0.15);
     box-shadow: inset 1.5rem 1.5rem 3rem rgb(255 255 255 / 0.18);
 }
 
 .decorative-orb--blue {
-    background: rgb(113 195 219 / 0.16);
+    background: rgb(128 184 208 / 0.16);
     box-shadow: inset 1rem 1rem 2.5rem rgb(255 255 255 / 0.2);
 }
 
@@ -563,7 +563,7 @@ body {
     height: 9rem;
     top: -4rem;
     left: -2rem;
-    background: rgb(113 195 219 / 0.42);
+    background: rgb(128 184 208 / 0.42);
 }
 
 .decorative-orb--hero-right {
@@ -571,7 +571,7 @@ body {
     height: 11rem;
     right: -3rem;
     bottom: -5rem;
-    background: rgb(238 203 233 / 0.48);
+    background: rgb(232 192 216 / 0.48);
     animation-delay: -2s;
 }
 
@@ -1013,11 +1013,6 @@ button, [role=button] {
 img, svg, video, canvas, audio, iframe, embed, object {
     display: block;
     vertical-align: middle
-}
-
-img, video {
-    max-width: 100%;
-    height: auto
 }
 
 [hidden] {
@@ -1701,42 +1696,42 @@ img, video {
 
 .border-workshop-blue {
     --tw-border-opacity: 1;
-    border-color: rgb(113 195 219 / var(--tw-border-opacity))
+    border-color: rgb(128 184 208 / var(--tw-border-opacity))
 }
 
 .border-workshop-blue\/30 {
-    border-color: #71c3db4d
+    border-color: #80b8d04d
 }
 
 .border-workshop-green {
     --tw-border-opacity: 1;
-    border-color: rgb(152 201 60 / var(--tw-border-opacity))
+    border-color: rgb(176 168 56 / var(--tw-border-opacity))
 }
 
 .border-workshop-pink\/30 {
-    border-color: #eecbe94d
+    border-color: #e8c0d84d
 }
 
 .border-workshop-red {
     --tw-border-opacity: 1;
-    border-color: rgb(227 70 70 / var(--tw-border-opacity))
+    border-color: rgb(232 80 48 / var(--tw-border-opacity))
 }
 
 .hover\:border-workshop-red\/40:hover {
-    border-color: rgb(227 70 70 / 0.4);
+    border-color: rgb(232 80 48 / 0.4);
 }
 
 .hover\:border-workshop-red\/50:hover {
-    border-color: rgb(227 70 70 / 0.5);
+    border-color: rgb(232 80 48 / 0.5);
 }
 
 .border-workshop-yellow {
     --tw-border-opacity: 1;
-    border-color: rgb(247 195 67 / var(--tw-border-opacity))
+    border-color: rgb(248 192 40 / var(--tw-border-opacity))
 }
 
 .border-workshop-yellow\/30 {
-    border-color: #f7c3434d
+    border-color: #f8c0284d
 }
 
 .border-l-transparent {
@@ -1745,12 +1740,12 @@ img, video {
 
 .border-l-workshop-green {
     --tw-border-opacity: 1;
-    border-left-color: rgb(152 201 60 / var(--tw-border-opacity))
+    border-left-color: rgb(176 168 56 / var(--tw-border-opacity))
 }
 
 .border-l-workshop-red {
     --tw-border-opacity: 1;
-    border-left-color: rgb(227 70 70 / var(--tw-border-opacity))
+    border-left-color: rgb(232 80 48 / var(--tw-border-opacity))
 }
 
 .border-t-transparent {
@@ -1816,33 +1811,33 @@ img, video {
 
 .bg-workshop-blue {
     --tw-bg-opacity: 1;
-    background-color: rgb(113 195 219 / var(--tw-bg-opacity))
+    background-color: rgb(128 184 208 / var(--tw-bg-opacity))
 }
 
 .bg-workshop-blue\/10 {
-    background-color: #71c3db1a
+    background-color: #80b8d01a
 }
 
 .bg-workshop-blue\/20 {
-    background-color: #71c3db33
+    background-color: #80b8d033
 }
 
 .bg-workshop-green {
     --tw-bg-opacity: 1;
-    background-color: rgb(152 201 60 / var(--tw-bg-opacity, 1));
+    background-color: rgb(176 168 56 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-workshop-green\/90:hover {
-    background-color: #98c93ce6
+    background-color: #b0a838e6
 }
 
 .bg-workshop-green\/20 {
-    background-color: #98c93c33
+    background-color: #b0a83833
 }
 
 .bg-workshop-pink {
     --tw-bg-opacity: 1;
-    background-color: rgb(238 203 233 / var(--tw-bg-opacity))
+    background-color: rgb(232 192 216 / var(--tw-bg-opacity))
 }
 
 .bg-foreground {
@@ -1883,140 +1878,140 @@ img, video {
 
 .bg-workshop-blue {
     --tw-bg-opacity: 1;
-    background-color: rgb(113 195 219 / var(--tw-bg-opacity, 1));
+    background-color: rgb(128 184 208 / var(--tw-bg-opacity, 1));
 }
 
 .bg-workshop-blue\/10 {
-    background-color: rgb(113 195 219 / 0.1);
+    background-color: rgb(128 184 208 / 0.1);
 }
 
 .bg-workshop-blue\/20 {
-    background-color: rgb(113 195 219 / 0.2);
+    background-color: rgb(128 184 208 / 0.2);
 }
 
 .bg-workshop-green {
     --tw-bg-opacity: 1;
-    background-color: rgb(152 201 60 / var(--tw-bg-opacity, 1));
+    background-color: rgb(176 168 56 / var(--tw-bg-opacity, 1));
 }
 
 .bg-workshop-green\/20 {
-    background-color: rgb(152 201 60 / 0.2);
+    background-color: rgb(176 168 56 / 0.2);
 }
 
 .bg-workshop-pink {
     --tw-bg-opacity: 1;
-    background-color: rgb(238 203 233 / var(--tw-bg-opacity, 1));
+    background-color: rgb(232 192 216 / var(--tw-bg-opacity, 1));
 }
 
 .bg-workshop-pink\/10 {
-    background-color: rgb(238 203 233 / 0.1);
+    background-color: rgb(232 192 216 / 0.1);
 }
 
 .bg-workshop-pink\/20 {
-    background-color: rgb(238 203 233 / 0.2);
+    background-color: rgb(232 192 216 / 0.2);
 }
 
 .bg-workshop-red {
     --tw-bg-opacity: 1;
-    background-color: rgb(227 70 70 / var(--tw-bg-opacity, 1));
+    background-color: rgb(232 80 48 / var(--tw-bg-opacity, 1));
 }
 
 .bg-workshop-red\/10 {
-    background-color: rgb(227 70 70 / 0.1);
+    background-color: rgb(232 80 48 / 0.1);
 }
 
 .bg-workshop-red\/5 {
-    background-color: rgb(227 70 70 / 0.05);
+    background-color: rgb(232 80 48 / 0.05);
 }
 
 .bg-workshop-yellow {
     --tw-bg-opacity: 1;
-    background-color: rgb(247 195 67 / var(--tw-bg-opacity, 1));
+    background-color: rgb(248 192 40 / var(--tw-bg-opacity, 1));
 }
 
 .bg-workshop-yellow\/10 {
-    background-color: rgb(247 195 67 / 0.1);
+    background-color: rgb(248 192 40 / 0.1);
 }
 
 .bg-workshop-yellow\/20 {
-    background-color: rgb(247 195 67 / 0.2);
+    background-color: rgb(248 192 40 / 0.2);
 }
 
 .bg-workshop-pink\/10 {
-    background-color: #eecbe91a
+    background-color: #e8c0d81a
 }
 
 .bg-workshop-pink\/20 {
-    background-color: #eecbe933
+    background-color: #e8c0d833
 }
 
 .bg-workshop-red {
     --tw-bg-opacity: 1;
-    background-color: rgb(227 70 70 / var(--tw-bg-opacity))
+    background-color: rgb(232 80 48 / var(--tw-bg-opacity))
 }
 
 .bg-workshop-yellow {
     --tw-bg-opacity: 1;
-    background-color: rgb(247 195 67 / var(--tw-bg-opacity))
+    background-color: rgb(248 192 40 / var(--tw-bg-opacity))
 }
 
 .bg-workshop-yellow\/10 {
-    background-color: #f7c3431a
+    background-color: #f8c0281a
 }
 
 /* Gradient stops for the no-image workshop card background (rotating brand palette) */
 .from-workshop-yellow {
-    --tw-gradient-from: rgb(247 195 67);
+    --tw-gradient-from: rgb(248 192 40);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .to-workshop-yellow {
-    --tw-gradient-to: rgb(247 195 67);
+    --tw-gradient-to: rgb(248 192 40);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .from-workshop-red {
-    --tw-gradient-from: rgb(227 70 70);
+    --tw-gradient-from: rgb(232 80 48);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .to-workshop-red {
-    --tw-gradient-to: rgb(227 70 70);
+    --tw-gradient-to: rgb(232 80 48);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .from-workshop-pink {
-    --tw-gradient-from: rgb(238 203 233);
+    --tw-gradient-from: rgb(232 192 216);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .to-workshop-pink {
-    --tw-gradient-to: rgb(238 203 233);
+    --tw-gradient-to: rgb(232 192 216);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .from-workshop-blue {
-    --tw-gradient-from: rgb(113 195 219);
+    --tw-gradient-from: rgb(128 184 208);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .to-workshop-blue {
-    --tw-gradient-to: rgb(113 195 219);
+    --tw-gradient-to: rgb(128 184 208);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .from-workshop-green {
-    --tw-gradient-from: rgb(152 201 60);
+    --tw-gradient-from: rgb(176 168 56);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .to-workshop-green {
-    --tw-gradient-to: rgb(152 201 60);
+    --tw-gradient-to: rgb(176 168 56);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
 .bg-workshop-yellow\/20 {
-    background-color: #f7c34333
+    background-color: #f8c02833
 }
 
 .bg-dot-pattern {
@@ -2030,13 +2025,13 @@ img, video {
 }
 
 .from-workshop-blue\/20 {
-    --tw-gradient-from: rgb(113 195 219 / .2) var(--tw-gradient-from-position);
-    --tw-gradient-to: rgb(113 195 219 / 0) var(--tw-gradient-to-position);
+    --tw-gradient-from: rgb(128 184 208 / .2) var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(128 184 208 / 0) var(--tw-gradient-to-position);
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to)
 }
 
 .to-workshop-pink\/20 {
-    --tw-gradient-to: rgb(238 203 233 / .2) var(--tw-gradient-to-position)
+    --tw-gradient-to: rgb(232 192 216 / .2) var(--tw-gradient-to-position)
 }
 
 .fill-current {
@@ -2138,32 +2133,32 @@ img, video {
 
 .text-workshop-blue {
     --tw-text-opacity: 1;
-    color: rgb(113 195 219 / var(--tw-text-opacity))
+    color: rgb(128 184 208 / var(--tw-text-opacity))
 }
 
 .text-workshop-brown {
     --tw-text-opacity: 1;
-    color: rgb(76 46 17 / var(--tw-text-opacity))
+    color: rgb(88 56 24 / var(--tw-text-opacity))
 }
 
 .text-workshop-green {
     --tw-text-opacity: 1;
-    color: rgb(152 201 60 / var(--tw-text-opacity))
+    color: rgb(176 168 56 / var(--tw-text-opacity))
 }
 
 .text-workshop-pink {
     --tw-text-opacity: 1;
-    color: rgb(238 203 233 / var(--tw-text-opacity))
+    color: rgb(232 192 216 / var(--tw-text-opacity))
 }
 
 .text-workshop-red {
     --tw-text-opacity: 1;
-    color: rgb(227 70 70 / var(--tw-text-opacity))
+    color: rgb(232 80 48 / var(--tw-text-opacity))
 }
 
 .text-workshop-yellow {
     --tw-text-opacity: 1;
-    color: rgb(247 195 67 / var(--tw-text-opacity))
+    color: rgb(248 192 40 / var(--tw-text-opacity))
 }
 
 .underline-offset-4 {
@@ -2424,15 +2419,15 @@ img, video {
 }
 
 .hover\:bg-workshop-red\/10:hover {
-    background-color: #e346461a
+    background-color: #e850301a
 }
 
 .hover\:bg-workshop-red\/90:hover {
-    background-color: #e34646e6
+    background-color: #e85030e6
 }
 
 .hover\:bg-workshop-yellow\/20:hover {
-    background-color: #f7c34333
+    background-color: #f8c02833
 }
 
 .hover\:text-accent-foreground:hover {
@@ -2462,7 +2457,7 @@ img, video {
 
 .hover\:text-workshop-red:hover {
     --tw-text-opacity: 1;
-    color: rgb(227 70 70 / var(--tw-text-opacity))
+    color: rgb(232 80 48 / var(--tw-text-opacity))
 }
 
 .hover\:underline:hover {

@@ -1,6 +1,6 @@
 {% extends 'base_public_content.html.twig' %}
 
-{% block title %}{{ post.seo.seoTitle|default(post.body.title) }} | Kiddo{% endblock %}
+{% block title %}{{ post.seo.seoTitle|default(post.body.title) }} | Warsztatownia Sensoryczna{% endblock %}
 
 {% block meta %}
     {% set metaDescription = post.seo.seoDescription|default(post.body.excerpt) %}

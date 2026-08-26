@@ -1,7 +1,7 @@
 body {
     font-family: 'Quicksand', Arial, sans-serif;
     line-height: 1.6;
-    color: #4c2e11;
+    color: #583818;
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -27,18 +27,18 @@ body {
 .logo-brand {
     letter-spacing: 0.2em;
 }
-.red { color: #e34646; }
-.green { color: #98c93c; }
-.yellow { color: #f7c343; }
-.blue { color: #71c3db; }
-.pink { color: #eecbe9; }
+.red { color: #e85030; }
+.green { color: #b0a838; }
+.yellow { color: #f8c028; }
+.blue { color: #80b8d0; }
+.pink { color: #e8c0d8; }
 h1 {
-    color: #4c2e11;
+    color: #583818;
     margin-top: 0;
 }
 .button {
     display: inline-block;
-    background-color: #e34646;
+    background-color: #e85030;
     color: white;
     text-decoration: none;
     padding: 12px 24px;
@@ -52,7 +52,7 @@ h1 {
 .note {
     background-color: rgba(247, 195, 67, 0.1);
     padding: 15px;
-    border-left: 4px solid #f7c343;
+    border-left: 4px solid #f8c028;
     margin: 20px 0;
 }
 .footer {

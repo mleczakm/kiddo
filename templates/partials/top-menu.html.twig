@@ -5,8 +5,7 @@
         <div class="flex justify-between items-center h-16">
             <a class="flex items-center shrink-0" href="{{ path('homepage') }}"
                title="{{ 'last_update'|trans }}{{ last_release()|format_date(pattern: 'HH:mm, dd MMM') }}">
-                <span class="font-display text-xl font-bold text-workshop-brown tracking-tight">Warsztatownia</span>&nbsp;<span
-                        class="font-display text-xl font-bold tracking-tight"><span class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span class="text-workshop-yellow">n</span><span class="text-workshop-blue">s</span><span class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span class="text-workshop-green">y</span><span class="text-workshop-yellow">c</span><span class="text-workshop-blue">z</span><span class="text-workshop-pink">n</span><span class="text-workshop-red">a</span></span>
+                <img src="{{ asset('images/logo-header.webp') }}" alt="Warsztatownia Sensoryczna" class="h-10 md:h-12 w-auto">
             </a>
 
             <nav class="hidden md:flex items-center gap-8 ml-8">
@@ -85,9 +84,7 @@
          data-mobile-menu-target="panel"
          aria-label="{{ 'page.menu.toggle'|trans }}">
         <div class="flex justify-between items-center mb-6">
-            <span class="font-display text-lg font-bold tracking-tight">
-                <span class="text-workshop-brown">Warsztatownia</span>&nbsp;<span class="text-workshop-red">S</span><span class="text-workshop-green">e</span><span class="text-workshop-yellow">n</span><span class="text-workshop-blue">s</span><span class="text-workshop-pink">o</span><span class="text-workshop-red">r</span><span class="text-workshop-green">y</span><span class="text-workshop-yellow">c</span><span class="text-workshop-blue">z</span><span class="text-workshop-pink">n</span><span class="text-workshop-red">a</span>
-            </span>
+            <img src="{{ asset('images/logo-header.webp') }}" alt="Warsztatownia Sensoryczna" class="h-8 w-auto">
             <button class="p-1.5 text-workshop-brown hover:bg-beige rounded-lg transition-colors"
                     data-action="mobile-menu#close"
                     aria-label="{{ 'page.menu.close'|trans }}">
