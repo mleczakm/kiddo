@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Admin;
 
+use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\PostFormHandler;
 use App\Entity\MenuHookLink;
 use App\Entity\MenuHookSlot;
@@ -30,6 +31,7 @@ final class PostsController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly PostRepository $postRepository,
         private readonly MenuHookLinkRepository $menuHookLinkRepository,
+        private readonly UserRepositoryInterface $userRepository,
     ) {}
 
     /** @throws \UnexpectedValueException */
@@ -211,6 +213,7 @@ final class PostsController extends AbstractController
             'visibilityOptions' => PostVisibility::cases(),
             'hookSlots' => $hookSlots,
             'selectedHookSlots' => $selectedHookSlots,
+            'authorOptions' => $this->userRepository->findByRoleIncluding('ROLE_MANAGE_CONTENT', $post->author),
         ]);
     }
 }

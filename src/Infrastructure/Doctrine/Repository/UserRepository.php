@@ -143,4 +143,19 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return list<User>
+     */
+    #[\Override]
+    public function findByRoleIncluding(string $role, User $mustInclude): array
+    {
+        $users = $this->findByRole($role);
+        if (!\in_array($mustInclude, $users, true)) {
+            $users[] = $mustInclude;
+        }
+        usort($users, static fn(User $a, User $b): int => $a->getName() <=> $b->getName());
+
+        return $users;
+    }
 }

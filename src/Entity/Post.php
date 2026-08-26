@@ -147,6 +147,12 @@ class Post
         $this->touch();
     }
 
+    public function setAuthor(User $author): void
+    {
+        $this->author = $author;
+        $this->touch();
+    }
+
     /**
      * Whether a viewer in this auth state may see the post — used both to
      * gate the public article page and to decide whether a menu hook link

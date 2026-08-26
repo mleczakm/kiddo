@@ -25,4 +25,13 @@ interface UserRepositoryInterface extends RepositoryInterface
 
     /** @return list<User> */
     public function findByEmailDomain(string $domain): array;
+
+    /**
+     * Users eligible to be picked as an article author: everyone holding
+     * $role, plus $mustInclude even if their role was since revoked — so an
+     * existing article never loses its current author from the picker.
+     *
+     * @return list<User>
+     */
+    public function findByRoleIncluding(string $role, User $mustInclude): array;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
+use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\Post;
 use App\Entity\PostVisibility;
 use App\Entity\User;
@@ -22,6 +23,7 @@ final readonly class PostFormHandler
         private PostEditor $editor,
         private PostSeoEditor $seoEditor,
         private MenuHookLinkReconciler $menuHookLinkReconciler,
+        private UserRepositoryInterface $userRepository,
     ) {}
 
     /**
@@ -43,6 +45,15 @@ final readonly class PostFormHandler
         $visibility = PostVisibility::tryFrom($request->request->getString('visibility'));
         if ($visibility !== null) {
             $post->setVisibility($visibility);
+        }
+
+        $authorId = $this->nullableField($request, 'author');
+        if ($authorId !== null) {
+            $author = $this->userRepository->find((int) $authorId);
+            if (!$author instanceof User) {
+                throw new \InvalidArgumentException('Wybrany autor nie istnieje.');
+            }
+            $post->setAuthor($author);
         }
 
         $contentJson = $this->decodeContentJson($request->request->getString('contentJson'));

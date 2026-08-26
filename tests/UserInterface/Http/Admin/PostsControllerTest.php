@@ -176,6 +176,40 @@ final class PostsControllerTest extends WebTestCase
         static::assertTrue($post->isPublished());
     }
 
+    public function testAdminReassignsArticleAuthor(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $originalAuthor = UserAssembler::new()->withRoles('ROLE_MANAGE_CONTENT')->assemble();
+        $newAuthor = UserAssembler::new()->withRoles('ROLE_MANAGE_CONTENT')->assemble();
+        $post = new Post('Article Needing Reassignment', $originalAuthor);
+        $entityManager->persist($admin);
+        $entityManager->persist($originalAuthor);
+        $entityManager->persist($newAuthor);
+        $entityManager->persist($post);
+        $entityManager->flush();
+        $client->loginUser($admin);
+
+        $crawler = $client->request('GET', '/admin/tresci/' . (string) $post->getId() . '/edycja');
+        $form = $crawler
+            ->selectButton('Zapisz szkic')
+            ->form([
+                'title' => 'Article Needing Reassignment',
+                'contentHtml' => '<p>Treść</p>',
+                'author' => (string) $newAuthor->getId(),
+            ]);
+        $client->submit($form);
+
+        static::assertResponseRedirects();
+        $repository = static::getContainer()->get(PostRepository::class);
+        static::assertInstanceOf(PostRepository::class, $repository);
+        $reloadedPost = $repository->find($post->getId());
+        static::assertInstanceOf(Post::class, $reloadedPost);
+        static::assertSame($newAuthor->getId(), $reloadedPost->author->getId());
+    }
+
     public function testScheduleActionRejectsInvalidCsrfToken(): void
     {
         $client = static::createClient();

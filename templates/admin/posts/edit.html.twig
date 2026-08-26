@@ -202,6 +202,15 @@
                 </div>
 
                 <label class="block">
+                    <span class="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500">Autor</span>
+                    <select name="author" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+                        {% for option in authorOptions %}
+                            <option value="{{ option.id }}" {{ post.author.id == option.id ? 'selected' : '' }}>{{ option.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="block">
                     <span class="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500">Widoczność</span>
                     <select name="visibility" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
                         {% for option in visibilityOptions %}
