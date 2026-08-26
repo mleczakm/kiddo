@@ -48,18 +48,6 @@
   when: initial_volume_inspect.rc != 0
   changed_when: true
 
-- name: Stop existing container
-  ansible.builtin.command: "docker stop {{ app.name }}"
-  register: stop_result
-  failed_when: stop_result.rc not in [0, 1]
-  changed_when: stop_result.rc == 0
-
-- name: Remove existing container
-  ansible.builtin.command: "docker rm {{ app.name }}"
-  register: remove_result
-  failed_when: remove_result.rc not in [0, 1]
-  changed_when: remove_result.rc == 0
-
 - name: Read production environment
   ansible.builtin.slurp:
     src: "{{ env_file_path }}"
@@ -92,6 +80,37 @@
     mode: '0600'
   no_log: true
 
+# Runs against the new image *before* the old container is touched, so the
+# still-running old code never sees a mid-migration schema, and the new
+# code never starts serving/processing (HTTP or Messenger task workers)
+# against a schema that hasn't caught up yet. A prior "start new container,
+# then migrate" ordering left a window where the new container was already
+# live but the columns it queries didn't exist yet.
+- name: Run database migrations
+  ansible.builtin.command: >-
+    docker run --rm
+    --env-file /tmp/{{ app.name }}.env
+    {{ app.image }}
+    bin/console doctrine:migrations:migrate --no-interaction
+  register: migration_result
+  changed_when: true
+
+- name: Display migration result
+  ansible.builtin.debug:
+    var: migration_result.stdout_lines
+
+- name: Stop existing container
+  ansible.builtin.command: "docker stop {{ app.name }}"
+  register: stop_result
+  failed_when: stop_result.rc not in [0, 1]
+  changed_when: stop_result.rc == 0
+
+- name: Remove existing container
+  ansible.builtin.command: "docker rm {{ app.name }}"
+  register: remove_result
+  failed_when: remove_result.rc not in [0, 1]
+  changed_when: remove_result.rc == 0
+
 - name: Run application container
   ansible.builtin.command: >-
     docker run -d
@@ -113,15 +132,6 @@
     host: "{{ app.ipv6 }}"
     port: "{{ app.port }}"
     timeout: 30
-
-- name: Run database migrations
-  ansible.builtin.command: "docker exec {{ app.name }} bin/console doctrine:migrations:migrate --no-interaction"
-  register: migration_result
-  changed_when: true
-
-- name: Display migration result
-  ansible.builtin.debug:
-    var: migration_result.stdout_lines
 
 - name: Wait for HTTP health endpoint
   ansible.builtin.uri:
