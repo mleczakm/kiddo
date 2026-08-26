@@ -5,6 +5,16 @@ on:
     tags:
       - '*'
 
+# Every push to master auto-creates a release tag, which triggers this
+# workflow. Without this, two tags pushed close together deploy in parallel
+# against the same production container name on the same host, and one
+# run's docker stop/run can kill another run's in-flight database
+# migration mid-execution. Queue instead of racing; never cancel a deploy
+# that's already touching the running container.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
