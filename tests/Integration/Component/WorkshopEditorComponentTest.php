@@ -12,6 +12,7 @@ use App\Entity\WorkshopFile;
 use App\Entity\WorkshopFileRole;
 use App\Entity\WorkshopType;
 use App\Infrastructure\Doctrine\Repository\NotificationRepository;
+use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\SeriesAssembler;
 use App\Tests\Assembler\UserAssembler;
@@ -118,6 +119,94 @@ final class WorkshopEditorComponentTest extends WebTestCase
         $ticketOption = $reloaded->getTicketOptions()[0] ?? null;
         static::assertNotNull($ticketOption);
         static::assertTrue($ticketOption->price->isEqualTo(Money::of('75.50', 'PLN')));
+    }
+
+    public function testCreatingNewSeriesDerivesDurationAndStartTimeFromTheHourRange(): void
+    {
+        // Regression test: the "Godzina (Od - Do)" schedule-tab picker used
+        // to be captured into startTime/endTime and then silently ignored —
+        // every new workshop was hardcoded to 90 minutes starting at
+        // midnight, regardless of what was picked here.
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+        $this->em->flush();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'startOpen' => false,
+        ]);
+
+        $component->set('title', 'Nowy Warsztat');
+        $component->set('category', 'sztuka');
+        $component->set('description', 'Opis warsztatu');
+        $component->set('scheduleType', 'recurring');
+        $component->set('startDate', '2030-07-08');
+        $component->set('endDate', '2030-07-22');
+        $component->set('startTime', '10:00');
+        $component->set('endTime', '11:15');
+        $component->call('save');
+
+        $this->em->clear();
+        /** @var list<Lesson> $lessons */
+        $lessons = $this->em
+            ->createQueryBuilder()
+            ->select('l')
+            ->from(Lesson::class, 'l')
+            ->join('l.metadata', 'm')
+            ->where('m.title = :title')
+            ->setParameter('title', 'Nowy Warsztat')
+            ->orderBy('l.schedule', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        static::assertCount(3, $lessons);
+        $lesson = $lessons[0];
+        static::assertTrue($lesson->visible);
+        $series = $lesson->getSeries();
+        static::assertNotNull($series);
+        static::assertTrue($series->visible);
+        static::assertSame(75, $lesson->getMetadata()->duration);
+        static::assertSame('2030-07-08 10:00', $lesson->schedule->format('Y-m-d H:i'));
+        static::assertCount(3, $lesson->getSeries()->lessons ?? []);
+    }
+
+    public function testCreatingNewSeriesWithAnEndTimeBeforeStartTimeIsRejectedWithoutSaving(): void
+    {
+        // There is no sensible fallback duration for a nonsensical hour
+        // range — this must be rejected rather than silently saved as some
+        // made-up length.
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+        $this->em->flush();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'startOpen' => false,
+        ]);
+
+        $component->set('title', 'Warsztat Z Błędną Godziną');
+        $component->set('category', 'sztuka');
+        $component->set('description', 'Opis warsztatu');
+        $component->set('scheduleType', 'recurring');
+        $component->set('startDate', '2030-07-08');
+        $component->set('endDate', '2030-07-22');
+        $component->set('startTime', '11:00');
+        $component->set('endTime', '10:00');
+        $component->call('save');
+
+        $this->em->clear();
+        /** @var ?Lesson $lesson */
+        $lesson = $this->em
+            ->createQueryBuilder()
+            ->select('l')
+            ->from(Lesson::class, 'l')
+            ->join('l.metadata', 'm')
+            ->where('m.title = :title')
+            ->setParameter('title', 'Warsztat Z Błędną Godziną')
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        static::assertNull($lesson);
     }
 
     public function testInvalidTicketPriceIsRejectedWithoutSaving(): void
@@ -591,6 +680,83 @@ final class WorkshopEditorComponentTest extends WebTestCase
         // Past and cancelled lessons are never touched by a series-wide edit.
         static::assertSame('Past Title', $reloadedPast->getMetadata()->title);
         static::assertSame('Cancelled Title', $reloadedCancelled->getMetadata()->title);
+    }
+
+    public function testFollowingScopeEditsCurrentAndLaterLessonsOnly(): void
+    {
+        $fixture = $this->buildSeriesWithLessons();
+        $admin = $fixture['admin'];
+        $current = $fixture['current'];
+        $sibling = $fixture['sibling'];
+        $past = $fixture['past'];
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'lessonId' => $current->getId(),
+            'startOpen' => false,
+        ]);
+
+        $component->set('editScope', 'following');
+        $component->set('title', 'Current And Following');
+        $component->call('save');
+
+        $this->em->clear();
+        static::assertSame('Past Title', $this->em->find(Lesson::class, $past->getId())?->getMetadata()->title);
+        static::assertSame(
+            'Current And Following',
+            $this->em->find(Lesson::class, $current->getId())?->getMetadata()->title,
+        );
+        static::assertSame(
+            'Current And Following',
+            $this->em->find(Lesson::class, $sibling->getId())?->getMetadata()->title,
+        );
+    }
+
+    public function testShorteningSeriesDeletesEmptyLessonsButOnlyHidesLessonsWithReservations(): void
+    {
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $customer = UserAssembler::new()->assemble();
+        $this->em->persist($admin);
+        $this->em->persist($customer);
+
+        $start = new \DateTimeImmutable('+3 days 10:00');
+        $series = SeriesAssembler::new()
+            ->withType(WorkshopType::WEEKLY)
+            ->withLastOccurrenceDate($start->modify('+3 weeks'))
+            ->assemble();
+        $this->em->persist($series);
+
+        $lessons = [];
+        for ($week = 0; $week <= 3; $week++) {
+            $lesson = LessonAssembler::new()
+                ->withTitle('Finite Series')
+                ->withSchedule($start->modify(sprintf('+%d weeks', $week)))
+                ->assemble();
+            $lesson->setSeries($series);
+            $this->em->persist($lesson);
+            $lessons[] = $lesson;
+        }
+
+        $booking = BookingAssembler::new()->withUser($customer)->withLessons($lessons[2])->assemble();
+        $lessons[2]->addBooking($booking);
+        $this->em->persist($booking);
+        $this->em->flush();
+        $protectedId = $lessons[2]->getId();
+        $emptyId = $lessons[3]->getId();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'lessonId' => $lessons[0]->getId(),
+            'startOpen' => false,
+        ]);
+        $component->set('endDate', $start->modify('+1 week')->format('Y-m-d'));
+        $component->call('save');
+
+        $this->em->clear();
+        $protected = $this->em->find(Lesson::class, $protectedId);
+        static::assertNotNull($protected);
+        static::assertFalse($protected->visible);
+        static::assertNull($this->em->find(Lesson::class, $emptyId));
     }
 
     public function testSaveNotifiesOtherInstructorsAndAdminsButExcludesTheEditor(): void

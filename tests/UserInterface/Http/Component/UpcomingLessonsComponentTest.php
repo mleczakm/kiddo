@@ -193,6 +193,7 @@ class UpcomingLessonsComponentTest extends TestCase
 
         $lesson = $this->createMock(Lesson::class);
         $lesson->method('getMetadata')->willReturn($metadata);
+        $lesson->method('isPubliclyVisible')->willReturn(true);
         $lesson->schedule = new \DateTimeImmutable();
 
         return $lesson;

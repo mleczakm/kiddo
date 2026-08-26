@@ -96,9 +96,12 @@ class WorkshopsAction extends AbstractController
                         SELECT l
                         FROM App\Entity\Lesson l
                         JOIN l.metadata m
+                        LEFT JOIN l.series s
                         WHERE m.slug = :slug
                         AND l.schedule = :schedule
                         AND l.status = 'active'
+                        AND l.visible = true
+                        AND (s.id IS NULL OR s.visible = true)
                         DQL)
                     ->setParameter('slug', $slug)
                     ->setParameter('schedule', $schedule);
@@ -122,9 +125,12 @@ class WorkshopsAction extends AbstractController
                 SELECT l
                 FROM App\Entity\Lesson l
                 JOIN l.metadata m
+                LEFT JOIN l.series s
                 WHERE m.slug = :slug
                 AND l.schedule BETWEEN :start AND :end
                 AND l.status = 'active'
+                AND l.visible = true
+                AND (s.id IS NULL OR s.visible = true)
                 ORDER BY l.schedule ASC
                 DQL)
             ->setParameter('slug', $slug)
@@ -143,8 +149,11 @@ class WorkshopsAction extends AbstractController
                 SELECT l
                 FROM App\Entity\Lesson l
                 JOIN l.metadata m
+                LEFT JOIN l.series s
                 WHERE m.slug = :slug
                 AND l.status = 'active'
+                AND l.visible = true
+                AND (s.id IS NULL OR s.visible = true)
                 AND l.schedule >= :now
                 ORDER BY l.schedule ASC
                 DQL)

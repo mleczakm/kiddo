@@ -80,6 +80,10 @@
               <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
                 {{ status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
               </span>
+              {% set isVisible = series ? series.visible : group.lessons[0].visible %}
+              <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold {{ isVisible ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-300 bg-slate-100 text-slate-600' }}">
+                {{ isVisible ? 'admin.lessons.visibility.visible'|trans : 'admin.lessons.visibility.hidden'|trans }}
+              </span>
             </div>
             <div class="text-xs text-muted-foreground mt-1">
               {% if series %}
@@ -98,6 +102,14 @@
           </div>
           {% if series and is_granted('ROLE_MANAGE_SCHEDULE') %}
             <div class="flex gap-2 shrink-0">
+              <button data-action="click->live#action:stop"
+                      data-live-action-param="toggleSeriesVisibility"
+                      data-live-series-id-param="{{ series.id }}"
+                      class="inline-flex items-center justify-center whitespace-nowrap text-xs font-bold border h-9 rounded-md px-3 {{ series.visible ? 'border-slate-400 text-slate-700 hover:bg-slate-100' : 'border-green-600 text-green-700 hover:bg-green-50' }}">
+                {{ series.visible
+                  ? 'admin.lessons.actions.hide_count'|trans({ count: series.lessons|length })
+                  : 'admin.lessons.actions.show_count'|trans({ count: series.lessons|length }) }}
+              </button>
               <button data-action="click->live#action:stop"
                       data-live-action-param="startEdit"
                       data-live-series-id-param="{{ series.id }}"
@@ -121,7 +133,17 @@
                   <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
                     {{ lesson.status == 'active' ? 'admin.lessons.status.active'|trans : 'admin.lessons.status.cancelled'|trans }}
                   </span>
+                  <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold {{ lesson.visible ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-300 bg-slate-100 text-slate-600' }}">
+                    {{ lesson.visible ? 'admin.lessons.visibility.visible'|trans : 'admin.lessons.visibility.hidden'|trans }}
+                  </span>
                   {% if is_granted('LESSON_MANAGE', lesson) %}
+                    <button type="button"
+                            data-action="click->live#action"
+                            data-live-action-param="toggleLessonVisibility"
+                            data-live-lesson-id-param="{{ lesson.id }}"
+                            class="inline-flex items-center justify-center whitespace-nowrap text-xs font-bold border h-7 rounded-md px-2.5 {{ lesson.visible ? 'border-slate-400 text-slate-700 hover:bg-slate-100' : 'border-green-600 text-green-700 hover:bg-green-50' }}">
+                      {{ lesson.visible ? ('admin.lessons.actions.hide_one'|trans) : ('admin.lessons.actions.show_one'|trans) }}
+                    </button>
                     <button type="button"
                             data-action="click->live#action"
                             data-live-action-param="toggleLessonStatus"
@@ -140,6 +162,13 @@
             <a class="text-sm text-slate-500 hover:underline mr-auto" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">{{ 'admin.lessons.open'|trans }}</a>
             <span class="text-xs font-medium text-slate-500">{{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}</span>
             {% if is_granted('LESSON_MANAGE', lesson) %}
+              <button type="button"
+                      data-action="click->live#action"
+                      data-live-action-param="toggleLessonVisibility"
+                      data-live-lesson-id-param="{{ lesson.id }}"
+                      class="inline-flex items-center justify-center whitespace-nowrap text-xs font-bold border h-7 rounded-md px-2.5 {{ lesson.visible ? 'border-slate-400 text-slate-700 hover:bg-slate-100' : 'border-green-600 text-green-700 hover:bg-green-50' }}">
+                {{ lesson.visible ? ('admin.lessons.actions.hide_one'|trans) : ('admin.lessons.actions.show_one'|trans) }}
+              </button>
               <button type="button"
                       data-action="click->live#action"
                       data-live-action-param="toggleLessonStatus"

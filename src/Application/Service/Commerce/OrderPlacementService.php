@@ -197,6 +197,7 @@ final class OrderPlacementService
             if (
                 !$requirement['lesson']->future()
                 || $requirement['lesson']->status !== 'active'
+                || !$requirement['lesson']->isPubliclyVisible()
                 || ($requirement['lesson']->getMetadata()->capacity - $this->occupiedSeats($requirement['lesson']))
                     < $requirement['required']
             ) {

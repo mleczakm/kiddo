@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Doctrine\Repository;
 
+use App\Entity\Series;
+use App\Entity\WorkshopType;
 use App\Infrastructure\Doctrine\Repository\LessonRepository;
 use App\Tests\Assembler\AgeRangeAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -20,6 +24,7 @@ class LessonRepositoryTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-07-09 10:00:00');
         $otherDate = new DateTimeImmutable('2025-07-10 10:00:00');
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
@@ -39,10 +44,24 @@ class LessonRepositoryTest extends KernelTestCase
             ->withMetadata(LessonMetadataAssembler::new()->assemble())
             ->withSchedule($date)
             ->assemble();
+        $hiddenLesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date)
+            ->withVisible(false)
+            ->assemble();
+        $hiddenSeries = new Series(new ArrayCollection(), WorkshopType::WEEKLY, visible: false);
+        $hiddenBySeries = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($date)
+            ->assemble();
+        $hiddenBySeries->setSeries($hiddenSeries);
 
         $em->persist($lesson1);
         $em->persist($lesson2);
         $em->persist($lessonOther);
+        $em->persist($hiddenLesson);
+        $em->persist($hiddenSeries);
+        $em->persist($hiddenBySeries);
         $em->persist($lessonOther2);
         $em->flush();
 
@@ -62,6 +81,7 @@ class LessonRepositoryTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-07-09 10:00:00');
         $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
@@ -106,6 +126,7 @@ class LessonRepositoryTest extends KernelTestCase
         $date = new DateTimeImmutable('+2 day')->setTime(12, 12);
         $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()

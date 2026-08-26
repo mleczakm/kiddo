@@ -9,6 +9,8 @@ use App\Application\Repository\FileRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Service\MoneyInputParser;
+use App\Application\Service\SeriesScheduleImpact;
+use App\Application\Service\SeriesScheduleSynchronizer;
 use App\Application\Service\WorkshopFileManager;
 use App\Entity\AgeRange;
 use App\Entity\File;
@@ -53,6 +55,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
  * reaches:
  *  - 'occurrence' (default): only this Lesson's own metadata/ticket
  *    options/instructors change.
+ *  - 'following': this Lesson and every later active occurrence.
  *  - 'series': the same content fields (never the date/time — each
  *    occurrence keeps its own) propagate to every other still-upcoming,
  *    active Lesson in the series, and ticket options/instructors move to
@@ -78,11 +81,14 @@ class WorkshopEditorComponent extends AbstractController
     public string $activeTab = 'general';
 
     /**
-     * 'occurrence' or 'series' — only meaningful when editingLessonId is set
+     * 'occurrence', 'following' or 'series' — only meaningful when editingLessonId is set
      * and that lesson belongs to a Series.
      */
     #[LiveProp(writable: true)]
     public string $editScope = 'occurrence';
+
+    #[LiveProp(writable: true)]
+    public bool $visible = true;
 
     // General tab fields
     #[LiveProp(writable: true)]
@@ -161,9 +167,6 @@ class WorkshopEditorComponent extends AbstractController
     public string $scheduleType = 'recurring';
 
     #[LiveProp(writable: true)]
-    public ?string $dayOfWeek = null;
-
-    #[LiveProp(writable: true)]
     public ?string $startTime = null;
 
     #[LiveProp(writable: true)]
@@ -207,6 +210,7 @@ class WorkshopEditorComponent extends AbstractController
         private readonly InAppNotificationService $inAppNotifications,
         private readonly LessonInstructorResolver $instructorResolver,
         private readonly WorkshopFileManager $workshopFileManager,
+        private readonly SeriesScheduleSynchronizer $scheduleSynchronizer,
         private readonly FileRepositoryInterface $fileRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly TranslatorInterface $translator,
@@ -285,6 +289,8 @@ class WorkshopEditorComponent extends AbstractController
             $this->editingSeriesId = $series->getId();
             $this->endDate = $series->lastOccurrenceDate?->format('Y-m-d');
         }
+
+        $this->visible = $this->editScope === 'series' && $series !== null ? $series->visible : $lesson->visible;
 
         $metadata = $lesson->getMetadata();
         $this->title = $metadata->title;
@@ -379,6 +385,58 @@ class WorkshopEditorComponent extends AbstractController
         }
 
         return $count;
+    }
+
+    public function getFollowingSeriesLessonsCount(): int
+    {
+        $lesson = $this->getEditingLesson();
+        if ($lesson === null || $lesson->getSeries() === null) {
+            return 0;
+        }
+
+        return count($this->getAffectedLessons($lesson, 'following')) - 1;
+    }
+
+    /**
+     * Exact operation counts shown next to the save button before the admin commits the change.
+     *
+     * @return array{create: int, hide: int, delete: int, update: int}
+     */
+    public function getSaveImpact(): array
+    {
+        $impact = new SeriesScheduleImpact();
+        $update = 0;
+
+        try {
+            if ($this->editingLessonId === null) {
+                $start = $this->parseScheduleDateTime($this->startDate, $this->startTime);
+                $type = $this->scheduleType === 'single' ? WorkshopType::ONE_TIME : WorkshopType::WEEKLY;
+                $end = $type === WorkshopType::ONE_TIME ? $start : $this->requireEndDate();
+                $impact = $this->scheduleSynchronizer->previewNew($type, $start, $end);
+            } else {
+                $lesson = $this->getEditingLesson();
+                if ($lesson !== null) {
+                    $scope = $this->normalizeScope($lesson);
+                    $update = count($this->getAffectedLessons($lesson, $scope));
+                    $series = $lesson->getSeries();
+                    if ($series !== null && $this->isGranted('ROLE_MANAGE_SCHEDULE')) {
+                        $end = $this->parseExistingSeriesEndDate($series);
+                        if ($this->seriesEndChanged($series, $end)) {
+                            $impact = $this->scheduleSynchronizer->previewExisting($series, $end);
+                        }
+                    }
+                }
+            }
+        } catch (\DomainException|\InvalidArgumentException) {
+            // Incomplete form values are validated on save; the preview simply stays at zero meanwhile.
+        }
+
+        return [
+            'create' => $impact->create,
+            'hide' => $impact->hide,
+            'delete' => $impact->delete,
+            'update' => $update,
+        ];
     }
 
     /**
@@ -527,22 +585,6 @@ class WorkshopEditorComponent extends AbstractController
     public function getCategories(): array
     {
         return ['Sensoryka', 'Muzyka', 'Ruchowe', 'Plastyczne', 'Brudna zabawa'];
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getDaysOfWeek(): array
-    {
-        return [
-            'Monday' => 'Poniedziałek',
-            'Tuesday' => 'Wtorek',
-            'Wednesday' => 'Środa',
-            'Thursday' => 'Czwartek',
-            'Friday' => 'Piątek',
-            'Saturday' => 'Sobota',
-            'Sunday' => 'Niedziela',
-        ];
     }
 
     #[LiveAction]
@@ -725,7 +767,7 @@ class WorkshopEditorComponent extends AbstractController
         }
 
         $series = $lesson->getSeries();
-        $scope = $this->editScope === 'series' && $series !== null ? 'series' : 'occurrence';
+        $scope = $this->normalizeScope($lesson);
 
         $scheduleString = trim(($this->occurrenceDate ?? '') . ' ' . ($this->occurrenceTime ?? ''));
         try {
@@ -735,18 +777,31 @@ class WorkshopEditorComponent extends AbstractController
             return;
         }
 
-        $affectedLessons = [$lesson];
         $lesson->schedule = $newSchedule;
 
-        // Last-occurrence date is a series-wide scheduling setting (stops
-        // ExtendSeriesScheduleHandler from generating further occurrences),
-        // independent of the content edit scope — only ROLE_MANAGE_SCHEDULE
-        // can change it, same as creating/cancelling a series.
+        // The end date is series-wide and immediately reconciles materialized
+        // occurrences, independent of the content edit scope. Only schedule
+        // managers can change it, same as creating/cancelling a series.
         if ($series !== null && $this->isGranted('ROLE_MANAGE_SCHEDULE')) {
-            $series->lastOccurrenceDate = $this->parseDate($this->endDate);
+            $end = $this->parseExistingSeriesEndDate($series);
+            if ($this->seriesEndChanged($series, $end)) {
+                $this->scheduleSynchronizer->synchronize($series, $end);
+            }
         }
 
-        if ($scope === 'series') {
+        if ($series !== null && !$series->lessons->contains($lesson)) {
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Harmonogram warsztatu został zaktualizowany.');
+            $this->isModalOpen = false;
+            $this->emitUp('workshopEditorSaved');
+            return;
+        }
+
+        // Recompute after schedule synchronization so newly-created lessons
+        // are included in a "this and following" or whole-series edit.
+        $affectedLessons = $this->getAffectedLessons($lesson, $scope);
+
+        if ($scope !== 'occurrence') {
             if ($series === null) {
                 throw new \LogicException('A series edit requires the lesson to belong to a series.');
             }
@@ -758,15 +813,10 @@ class WorkshopEditorComponent extends AbstractController
             $sharedMetadata = $this->buildMetadataFor($lesson);
             $lesson->setMetadata($sharedMetadata);
 
-            $now = Clock::get()->now();
-            foreach ($series->lessons as $sibling) {
-                if ($sibling === $lesson || $sibling->status !== 'active' || $sibling->schedule < $now) {
-                    continue;
-                }
+            foreach ($affectedLessons as $sibling) {
                 // Content (and the shared metadata row) propagates; each
                 // occurrence keeps its own date/time.
                 $sibling->setMetadata($sharedMetadata);
-                $affectedLessons[] = $sibling;
             }
         } else {
             $lesson->setMetadata($this->buildMetadataFor($lesson));
@@ -779,14 +829,26 @@ class WorkshopEditorComponent extends AbstractController
         if ($scope === 'series') {
             \assert($series !== null, 'A series edit requires the lesson to belong to a series.');
             $series->ticketOptions = $ticketOptions;
+            $series->visible = $this->visible;
             $lesson->setTicketOptions();
             $series->instructors->clear();
             foreach ($instructors as $user) {
                 $series->addInstructor($user);
             }
             $lesson->getInstructors()->clear();
+        } elseif ($scope === 'following') {
+            \assert($series !== null, 'A following edit requires the lesson to belong to a series.');
+            foreach ($affectedLessons as $affectedLesson) {
+                $affectedLesson->setTicketOptions(...$ticketOptions);
+                $affectedLesson->visible = $this->visible;
+                $affectedLesson->getInstructors()->clear();
+                foreach ($instructors as $user) {
+                    $affectedLesson->addInstructor($user);
+                }
+            }
         } else {
             $lesson->setTicketOptions(...$ticketOptions);
+            $lesson->visible = $this->visible;
             $lesson->getInstructors()->clear();
             foreach ($instructors as $user) {
                 $lesson->addInstructor($user);
@@ -815,8 +877,11 @@ class WorkshopEditorComponent extends AbstractController
             return;
         }
 
-        $series = new Series(new ArrayCollection(), WorkshopType::WEEKLY);
-        $series->lastOccurrenceDate = $this->parseDate($this->endDate);
+        $type = $this->scheduleType === 'single' ? WorkshopType::ONE_TIME : WorkshopType::WEEKLY;
+        $start = $this->parseScheduleDateTime($this->startDate, $this->startTime);
+        $end = $type === WorkshopType::ONE_TIME ? $start : $this->requireEndDate();
+        $series = new Series(new ArrayCollection(), $type, visible: $this->visible);
+        $series->lastOccurrenceDate = $end;
         $this->entityManager->persist($series);
 
         $instructors = $this->resolveSelectedInstructors();
@@ -832,7 +897,7 @@ class WorkshopEditorComponent extends AbstractController
             visualTheme: $this->visualTheme ?? LessonMetadata::DEFAULT_VISUAL_THEME,
             description: (string) $this->description,
             capacity: $this->capacity ?? 10,
-            duration: $this->duration ?? 90,
+            duration: $this->duration ?? $this->computeDurationMinutes($this->startTime, $this->endTime),
             ageRange: new AgeRange($this->ageMin ?? 0, $this->ageMax ?? 10),
             category: (string) $this->category,
         );
@@ -842,13 +907,10 @@ class WorkshopEditorComponent extends AbstractController
             $metadata = $metadata->withImage($upload['data'], $upload['mime']);
         }
 
-        $lesson = new Lesson($metadata, $this->parseDate($this->startDate) ?? Clock::get()->now());
-        $lesson->setSeries($series);
-        foreach ($instructors as $user) {
-            $lesson->addInstructor($user);
+        $lessons = $this->scheduleSynchronizer->createInitialLessons($series, $metadata, $start, $end);
+        if ($lessons === []) {
+            throw new \LogicException('Nie utworzono żadnego terminu zajęć.');
         }
-
-        $this->entityManager->persist($lesson);
         $this->reconcileWorkshopFiles($metadata);
         $this->entityManager->flush();
 
@@ -930,6 +992,124 @@ class WorkshopEditorComponent extends AbstractController
         }
     }
 
+    /** @throws \InvalidArgumentException */
+    private function requireEndDate(): \DateTimeImmutable
+    {
+        $end = $this->parseDate($this->endDate);
+        if ($end === null) {
+            throw new \InvalidArgumentException(
+                'Podaj datę zakończenia cyklu, aby utworzyć wszystkie terminy od razu.',
+            );
+        }
+
+        return $end;
+    }
+
+    private function seriesEndChanged(Series $series, ?\DateTimeImmutable $end): bool
+    {
+        return $series->lastOccurrenceDate?->format('Y-m-d') !== $end?->format('Y-m-d');
+    }
+
+    /** @throws \InvalidArgumentException */
+    private function parseExistingSeriesEndDate(Series $series): ?\DateTimeImmutable
+    {
+        if ($series->type !== WorkshopType::WEEKLY) {
+            return $this->parseDate($this->endDate);
+        }
+
+        // Legacy open-ended series may still be edited without inventing an
+        // arbitrary cutoff. Once an end date is supplied, it is required and
+        // all dates through it are materialized immediately.
+        if (($this->endDate === null || $this->endDate === '') && $series->lastOccurrenceDate === null) {
+            return null;
+        }
+
+        return $this->requireEndDate();
+    }
+
+    private function normalizeScope(Lesson $lesson): string
+    {
+        if ($lesson->getSeries() === null || !in_array($this->editScope, ['following', 'series'], true)) {
+            return 'occurrence';
+        }
+
+        return $this->editScope;
+    }
+
+    /**
+     * @return list<Lesson>
+     */
+    private function getAffectedLessons(Lesson $lesson, string $scope): array
+    {
+        $series = $lesson->getSeries();
+        if ($series === null || $scope === 'occurrence') {
+            return [$lesson];
+        }
+
+        $threshold = $scope === 'following' ? $lesson->schedule : Clock::get()->now();
+        $affected = [];
+        foreach ($series->lessons as $candidate) {
+            if (!($candidate === $lesson || $candidate->status === 'active' && $candidate->schedule >= $threshold)) {
+                continue;
+            }
+
+            $affected[] = $candidate;
+        }
+
+        usort($affected, static fn(Lesson $a, Lesson $b): int => $a->schedule <=> $b->schedule);
+
+        return $affected;
+    }
+
+    /**
+     * Combines the "Początek cyklu" date with the "Godzina Od" time picked
+     * on the schedule tab, so a new series' first occurrence starts at the
+     * chosen hour instead of defaulting to midnight.
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function parseScheduleDateTime(?string $date, ?string $time): \DateTimeImmutable
+    {
+        if ($date === null || $date === '' || $time === null || $time === '') {
+            throw new \InvalidArgumentException('Podaj datę i godzinę rozpoczęcia warsztatu.');
+        }
+
+        try {
+            return new \DateTimeImmutable($date . ' ' . $time);
+        } catch (\Exception) {
+            throw new \InvalidArgumentException('Nieprawidłowa data lub godzina rozpoczęcia.');
+        }
+    }
+
+    /**
+     * Derives a workshop's length in minutes from the "Godzina Od - Do"
+     * range picked on the schedule tab, since there is no separate raw
+     * duration input.
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function computeDurationMinutes(?string $startTime, ?string $endTime): int
+    {
+        if ($startTime === null || $startTime === '' || $endTime === null || $endTime === '') {
+            throw new \InvalidArgumentException('Podaj godzinę rozpoczęcia i zakończenia warsztatu.');
+        }
+
+        try {
+            $start = new \DateTimeImmutable($startTime);
+            $end = new \DateTimeImmutable($endTime);
+        } catch (\Exception) {
+            throw new \InvalidArgumentException('Nieprawidłowy format godziny.');
+        }
+
+        $minutes = (int) (($end->getTimestamp() - $start->getTimestamp()) / 60);
+
+        if ($minutes <= 0) {
+            throw new \InvalidArgumentException('Godzina zakończenia musi być późniejsza niż godzina rozpoczęcia.');
+        }
+
+        return $minutes;
+    }
+
     /**
      * @return array{data: string, mime: string}|null
      */
@@ -1008,9 +1188,11 @@ class WorkshopEditorComponent extends AbstractController
 
         $lessonTitle = $affectedLessons[0]->getMetadata()->title;
         $scopeLabel = $this->translator->trans(
-            $scope === 'series'
-                ? 'admin.workshop_editor.scope.series_short'
-                : 'admin.workshop_editor.scope.occurrence_short',
+            match ($scope) {
+                'series' => 'admin.workshop_editor.scope.series_short',
+                'following' => 'admin.workshop_editor.scope.following_short',
+                default => 'admin.workshop_editor.scope.occurrence_short',
+            },
             [],
             'messages',
         );

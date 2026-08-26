@@ -216,4 +216,44 @@ final class AdminScheduleComponent extends AbstractController
         $lesson->status = $lesson->status === 'active' ? 'cancelled' : 'active';
         $this->em->flush();
     }
+
+    /**
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
+    #[LiveAction]
+    public function toggleLessonVisibility(#[LiveArg] string $lessonId): void
+    {
+        $lesson = $this->em->find(Lesson::class, Ulid::fromString($lessonId));
+        if (!$lesson instanceof Lesson || !$this->isGranted(LessonVoter::MANAGE, $lesson)) {
+            return;
+        }
+
+        $lesson->visible = !$lesson->visible;
+        $this->em->flush();
+    }
+
+    /**
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
+    #[LiveAction]
+    public function toggleSeriesVisibility(#[LiveArg] string $seriesId): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_MANAGE_SCHEDULE');
+        $series = $this->em->find(Series::class, Ulid::fromString($seriesId));
+        if (!$series instanceof Series) {
+            return;
+        }
+
+        $series->visible = !$series->visible;
+        $this->em->flush();
+    }
 }

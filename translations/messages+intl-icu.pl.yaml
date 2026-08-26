@@ -901,6 +901,13 @@ admin:
     actions:
       activate: "Aktywuj"
       deactivate: "Dezaktywuj"
+      hide_one: "Ukryj 1 zajęcia"
+      show_one: "Pokaż 1 zajęcia"
+      hide_count: "Ukryj {count} zajęć"
+      show_count: "Pokaż {count} zajęć"
+    visibility:
+      visible: "Widoczne"
+      hidden: "Ukryte"
     status:
       active: "Aktywne"
       cancelled: "Anulowane"
@@ -989,16 +996,26 @@ admin:
     this_occurrence: "Ten termin"
     occurrence_date_hint: "Data i godzina dotyczą tylko tego pojedynczego wydarzenia."
     last_occurrence:
-      label: "Ostatni termin cyklu (opcjonalnie)"
-      hint: "Po tej dacie nowe terminy nie będą automatycznie dodawane. Tydzień później cykl zostanie oznaczony jako zakończony. Już zaplanowane zajęcia pozostaną bez zmian."
-      ending_today_hint: "Kończysz cykl dzisiaj. Po zapisaniu nowe terminy nie będą dodawane, a za tydzień warsztat zostanie automatycznie oznaczony jako zakończony."
+      label: "Ostatni termin cyklu"
+      hint: "Po zapisaniu wszystkie cotygodniowe terminy do tej daty powstaną od razu. Terminy późniejsze bez rezerwacji zostaną usunięte, a terminy z rezerwacjami tylko ukryte."
+      ending_today_hint: "Kończysz cykl dzisiaj. Późniejsze zajęcia bez rezerwacji zostaną usunięte, a z rezerwacjami ukryte."
+    visibility:
+      label: "Widoczne dla klientów"
+      hint: "Nowe warsztaty i zajęcia są widoczne od początku. Wyłączenie widoczności nie anuluje zajęć ani rezerwacji."
+    impact:
+      label: "Skutek kliknięcia „{action}”:"
+      summary: "utworzy {create}, zmieni {update}, ukryje {hide} i usunie {delete} zajęć."
+      reservation_safety: "Zajęcia mające co najmniej jedną rezerwację nigdy nie są usuwane — mogą zostać tylko ukryte."
     scope:
       label: "Zakres zmian"
       occurrence: "Tylko to wydarzenie"
       occurrence_hint: "Zmiana dotyczy wyłącznie terminu {date} {time}."
+      following: "To i wszystkie kolejne"
+      following_hint: "Zmiana obejmie ten termin i {count} kolejnych wydarzeń."
       series: "Cały cykl"
       series_hint: "Zmiana obejmie także {count} nadchodzących wydarzeń z tej serii."
       occurrence_short: "tylko to wydarzenie"
+      following_short: "to i wszystkie kolejne wydarzenia"
       series_short: "cały cykl"
 
 

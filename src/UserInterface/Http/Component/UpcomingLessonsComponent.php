@@ -38,7 +38,10 @@ final class UpcomingLessonsComponent extends AbstractController
         $startDate = new \DateTimeImmutable($this->week);
         $endDate = $startDate->modify('+7 days');
 
-        return $this->lessonRepository->findUpcomingInRange($startDate, $endDate, $this->showCancelled);
+        return array_values(array_filter(
+            $this->lessonRepository->findUpcomingInRange($startDate, $endDate, $this->showCancelled),
+            static fn(Lesson $lesson): bool => $lesson->isPubliclyVisible(),
+        ));
     }
 
     public function getWeekStart(): \DateTimeImmutable

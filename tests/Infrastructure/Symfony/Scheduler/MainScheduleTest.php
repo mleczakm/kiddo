@@ -23,7 +23,9 @@ class MainScheduleTest extends TestCase
     {
         $schedule = new MainSchedule(new NullAdapter())->getSchedule();
 
-        static::assertCount(9, $schedule->getRecurringMessages());
+        // Weekly workshop occurrences are materialized by the editor now,
+        // so the former midnight extension message is no longer scheduled.
+        static::assertCount(8, $schedule->getRecurringMessages());
         static::assertNotNull($schedule->getState());
     }
 

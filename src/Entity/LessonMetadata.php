@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Ulid;
 /**
  * A workshop's content: title, description, visual theme, image, etc. A
  * Lesson occurrence references one of these — occurrences generated
- * together (e.g. by ExtendSeriesScheduleHandler) share the same row instead
+ * together (e.g. by SeriesScheduleSynchronizer) share the same row instead
  * of each duplicating a full copy, since this content is normally identical
  * across a series' occurrences. Only `schedule` (each occurrence's own
  * date/time) lives on Lesson directly, since that's the one thing that must

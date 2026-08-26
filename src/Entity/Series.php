@@ -38,19 +38,17 @@ class Series
             'default' => 'active',
         ])]
         public string $status = 'active',
+        #[ORM\Column(type: 'boolean', options: [
+            'default' => true,
+        ])]
+        public bool $visible = true,
         /**
          * @var Collection<int, User>
          */
         #[ORM\ManyToMany(targetEntity: User::class)]
         #[ORM\JoinTable(name: 'series_instructor')]
         public Collection $instructors = new ArrayCollection(),
-        /**
-         * When set, ExtendSeriesScheduleHandler stops generating new Lesson
-         * occurrences for this series once it reaches this date — existing
-         * occurrences (including ones after this date, if already created)
-         * are left untouched. This is the supported way to wind a recurring
-         * series down on a known date.
-         */
+        /** The inclusive end date used by the editor's immediate schedule synchronization. */
         #[ORM\Column(type: 'date_immutable', nullable: true)]
         public ?\DateTimeImmutable $lastOccurrenceDate = null,
     ) {

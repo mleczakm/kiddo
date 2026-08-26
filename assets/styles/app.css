@@ -1178,7 +1178,8 @@ img, video {
 
 .workshop-card {
     position: relative;
-    border-radius: .75rem;
+    overflow: hidden;
+    border-radius: var(--radius);
     border-width: 2px;
     border-style: solid;
     background-color: hsl(var(--card));

@@ -46,8 +46,11 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
 
         /** @var array<int, Lesson> $result */
         return $qb
+            ->leftJoin('l.series', 'visibilitySeries')
             ->andWhere('l.schedule > :afterDate')
             ->andWhere('l.status = :status')
+            ->andWhere('l.visible = true')
+            ->andWhere('visibilitySeries.id IS NULL OR visibilitySeries.visible = true')
             ->andWhere('l.series = :series')
             ->setParameter('afterDate', $afterDate)
             ->setParameter('status', 'active')
@@ -70,6 +73,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
         /** @var Lesson[] $result */
         return $this
             ->createQueryBuilder('l')
+            ->leftJoin('l.series', 'visibilitySeries')
             ->leftJoin('l.bookings', 'b')
             ->leftJoin('b.child', 'c')
             ->leftJoin('b.user', 'u')
@@ -77,6 +81,8 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->where('l.schedule >= :start')
             ->andWhere('l.schedule <= :end')
             ->andWhere('l.status = :status')
+            ->andWhere('l.visible = true')
+            ->andWhere('visibilitySeries.id IS NULL OR visibilitySeries.visible = true')
             ->setParameter('status', 'active')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
@@ -98,7 +104,10 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
         $qb = $this
             ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
+            ->leftJoin('l.series', 'visibilitySeries')
             ->andWhere('l.status = :status')
+            ->andWhere('l.visible = true')
+            ->andWhere('visibilitySeries.id IS NULL OR visibilitySeries.visible = true')
             ->setParameter('status', 'active')
             ->orderBy('l.schedule', 'ASC');
 

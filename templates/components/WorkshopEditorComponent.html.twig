@@ -32,12 +32,19 @@
             {% if editingLessonId and this.getEditingSeries() %}
                 <div class="px-4 sm:px-6 py-3 bg-amber-50 border-b border-amber-100 shrink-0">
                     <p class="text-xs font-bold text-amber-900 mb-2 uppercase tracking-wide">{{ 'admin.workshop_editor.scope.label'|trans }}</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
                         <label class="flex items-start gap-2 p-3 rounded-xl border-2 cursor-pointer transition {{ editScope == 'occurrence' ? 'border-indigo-600 bg-white' : 'border-transparent bg-white/60 hover:bg-white' }}">
                             <input type="radio" name="editScope" data-model="editScope" value="occurrence" class="mt-0.5 w-4 h-4 text-indigo-600" />
                             <span>
                                 <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.scope.occurrence'|trans }}</span>
                                 <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.occurrence_hint'|trans({ date: occurrenceDate, time: occurrenceTime }) }}</span>
+                            </span>
+                        </label>
+                        <label class="flex items-start gap-2 p-3 rounded-xl border-2 cursor-pointer transition {{ editScope == 'following' ? 'border-indigo-600 bg-white' : 'border-transparent bg-white/60 hover:bg-white' }}">
+                            <input type="radio" name="editScope" data-model="editScope" value="following" class="mt-0.5 w-4 h-4 text-indigo-600" />
+                            <span>
+                                <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.scope.following'|trans }}</span>
+                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.following_hint'|trans({ count: this.getFollowingSeriesLessonsCount() }) }}</span>
                             </span>
                         </label>
                         <label class="flex items-start gap-2 p-3 rounded-xl border-2 cursor-pointer transition {{ editScope == 'series' ? 'border-indigo-600 bg-white' : 'border-transparent bg-white/60 hover:bg-white' }}">
@@ -93,6 +100,13 @@
                 <!-- TAB: GENERAL -->
                 {% if activeTab == 'general' %}
                     <div class="space-y-5">
+                        <label class="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
+                            <input type="checkbox" data-model="visible" class="mt-0.5 w-4 h-4 rounded text-indigo-600" {{ visible ? 'checked' : '' }} />
+                            <span>
+                                <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.visibility.label'|trans }}</span>
+                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.visibility.hint'|trans }}</span>
+                            </span>
+                        </label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="space-y-1.5 col-span-2 md:col-span-1">
                                 <label class="text-sm font-bold text-slate-700">Nazwa warsztatów *</label>
@@ -181,13 +195,14 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="space-y-1.5">
                                 <label class="text-sm font-bold text-slate-700">Krótki opis (lead)</label>
-                                <input
-                                    type="text"
+                                <textarea
                                     data-model="lead"
-                                    value="{{ lead|default('') }}"
+                                    data-controller="autogrow-textarea"
+                                    data-action="input->autogrow-textarea#resize"
+                                    rows="2"
                                     placeholder="Krótki opis w jednym zdaniu"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
-                                />
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none overflow-hidden focus:outline-none"
+                                >{{ lead|default('') }}</textarea>
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-sm font-bold text-slate-700">Kolor motywu</label>
@@ -449,19 +464,7 @@
                                 Konfiguracja Cyklu
                             </h3>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div class="space-y-1.5">
-                                    <label class="text-sm font-bold text-slate-700">Dzień tygodnia</label>
-                                    <select
-                                        data-model="dayOfWeek"
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
-                                    >
-                                        <option value="">Wybierz dzień...</option>
-                                        {% for dayKey, dayLabel in this.getDaysOfWeek() %}
-                                            <option value="{{ dayKey }}" {{ dayOfWeek == dayKey ? 'selected' : '' }}>{{ dayLabel }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
+                            <div class="grid grid-cols-1 gap-5">
                                 <div class="space-y-1.5">
                                     <label class="text-sm font-bold text-slate-700">Godzina (Od - Do)</label>
                                     <div class="flex items-center gap-2">
@@ -491,14 +494,17 @@
                                         class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
                                     />
                                 </div>
-                                <div class="space-y-1.5">
-                                    <label class="text-sm font-bold text-slate-700">Zakończenie cyklu (opcjonalne)</label>
-                                    <input
-                                        type="date"
-                                        data-model="endDate"
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
-                                    />
-                                </div>
+                                {% if scheduleType == 'recurring' %}
+                                    <div class="space-y-1.5">
+                                        <label class="text-sm font-bold text-slate-700">Zakończenie cyklu *</label>
+                                        <input
+                                            type="date"
+                                            data-model="endDate"
+                                            required
+                                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"
+                                        />
+                                    </div>
+                                {% endif %}
                             </div>
 
                             <div class="pt-2">
@@ -634,6 +640,19 @@
             </div>
 
             <!-- Footer -->
+            {% set impact = this.getSaveImpact() %}
+            <div class="px-4 sm:px-6 pt-3 border-t border-slate-100 bg-indigo-50/70 text-xs text-indigo-900 shrink-0">
+                <span class="font-bold">{{ 'admin.workshop_editor.impact.label'|trans({
+                    action: editingLessonId ? ('admin.workshop_editor.save_edit'|trans) : ('admin.workshop_editor.save_create'|trans)
+                }) }}</span>
+                {{ 'admin.workshop_editor.impact.summary'|trans({
+                    create: impact.create,
+                    update: impact.update,
+                    hide: impact.hide,
+                    delete: impact.delete
+                }) }}
+                <span class="block mt-1 text-slate-500">{{ 'admin.workshop_editor.impact.reservation_safety'|trans }}</span>
+            </div>
             <div class="p-4 sm:p-6 border-t border-slate-100 bg-white flex flex-col-reverse sm:flex-row justify-end gap-3 rounded-b-2xl shrink-0">
                 <button
                     data-action="live#action" data-live-action-param="close"

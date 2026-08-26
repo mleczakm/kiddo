@@ -46,6 +46,11 @@ class SeriesAssembler extends EntityAssembler
         return $this->with('lastOccurrenceDate', $lastOccurrenceDate);
     }
 
+    public function withVisible(bool $visible): static
+    {
+        return $this->with('visible', $visible);
+    }
+
     #[\Override]
     public function assemble(): Series
     {
@@ -61,11 +66,13 @@ class SeriesAssembler extends EntityAssembler
 
         /** @var ?\DateTimeImmutable $lastOccurrenceDate */
         $lastOccurrenceDate = $this->properties['lastOccurrenceDate'] ?? null;
+        $visible = (bool) ($this->properties['visible'] ?? true);
 
         $series = new Series(
             lessons: new ArrayCollection($lessons),
             type: $type,
             ticketOptions: $ticketOptionsList,
+            visible: $visible,
             lastOccurrenceDate: $lastOccurrenceDate,
         );
 

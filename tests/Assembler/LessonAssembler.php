@@ -28,6 +28,11 @@ class LessonAssembler extends EntityAssembler
         return $this->with('status', $status);
     }
 
+    public function withVisible(bool $visible): static
+    {
+        return $this->with('visible', $visible);
+    }
+
     public function withMetadata(LessonMetadata $metadata): static
     {
         return $this->with('metadata', $metadata);
@@ -121,6 +126,10 @@ class LessonAssembler extends EntityAssembler
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('status');
             $property->setValue($lesson, $this->properties['status']);
+        }
+
+        if (isset($this->properties['visible'])) {
+            $lesson->visible = (bool) $this->properties['visible'];
         }
 
         if (isset($this->properties['ticketOptions'])) {

@@ -14,6 +14,11 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity(repositoryClass: LessonRepository::class)]
 class Lesson
 {
+    #[ORM\Column(type: 'boolean', options: [
+        'default' => true,
+    ])]
+    public bool $visible;
+
     #[ORM\Column(type: 'string', nullable: false, options: [
         'default' => 'active',
     ])]
@@ -61,6 +66,7 @@ class Lesson
     ) {
         $this->id = new Ulid();
         $this->status = 'active';
+        $this->visible = true;
         $this->bookings = new ArrayCollection();
         $this->instructors = new ArrayCollection();
     }
@@ -88,10 +94,8 @@ class Lesson
         // Keyed by TicketType so a per-occurrence override replaces the
         // series-level option of the same type instead of duplicating it.
         $options = [];
-        if ($this->series) {
-            foreach ($this->series->ticketOptions as $option) {
-                $options[$option->type->value] = $option;
-            }
+        foreach ($this->series->ticketOptions ?? [] as $option) {
+            $options[$option->type->value] = $option;
         }
         foreach ($this->ticketOptions as $option) {
             $options[$option->type->value] = $option;
@@ -168,7 +172,20 @@ class Lesson
 
     public function canBeBooked(): bool
     {
-        return $this->status === 'active' && $this->getAvailableSpots() > 0;
+        return !in_array(
+            false,
+            [
+                $this->isPubliclyVisible(),
+                $this->status === 'active',
+                $this->getAvailableSpots() > 0,
+            ],
+            true,
+        );
+    }
+
+    public function isPubliclyVisible(): bool
+    {
+        return !in_array(false, [$this->visible, $this->series->visible ?? true], true);
     }
 
     public function future(): bool
@@ -232,22 +249,12 @@ class Lesson
      */
     public function getAllInstructors(): array
     {
-        $instructors = $this->instructors->toArray();
-        if ($this->series) {
-            $instructors = array_merge($instructors, $this->series->getInstructors()->toArray());
-        }
-
-        // Remove duplicates
+        $instructors = array_merge($this->instructors->toArray(), $this->series?->getInstructors()->toArray() ?? []);
         $uniqueInstructors = [];
-        $seen = [];
         foreach ($instructors as $instructor) {
-            $id = $instructor->getId();
-            if (!in_array($id, $seen, true)) {
-                $seen[] = $id;
-                $uniqueInstructors[] = $instructor;
-            }
+            $uniqueInstructors[(string) $instructor->getId()] = $instructor;
         }
 
-        return $uniqueInstructors;
+        return array_values($uniqueInstructors);
     }
 }
