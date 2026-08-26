@@ -17,15 +17,9 @@ body {
     margin-bottom: 30px;
 }
 .logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: hsl(30 76% 18%);
-}
-.logo span {
-    display: inline-block;
-}
-.logo-brand {
-    letter-spacing: 0.2em;
+    width: 220px;
+    max-width: 100%;
+    height: auto;
 }
 .red { color: #e85030; }
 .green { color: #b0a838; }
@@ -78,7 +72,7 @@ h1 {
         border-radius: 8px !important;
     }
     .logo {
-        font-size: 22px !important;
+        width: 160px !important;
     }
     .button {
         display: block !important;

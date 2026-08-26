@@ -72,7 +72,7 @@ final class AuthControllerTest extends WebTestCase
         $this->assertEmailCount(1);
         $sentEmail = $this->mailer()->sentEmails()->first();
         $sentEmail->assertSubject('Twój kod weryfikacyjny');
-        $code = $this->extractCode((string) $sentEmail->getHtmlBody() . (string) $sentEmail->getTextBody());
+        $code = $this->extractCode((string) $sentEmail->getTextBody() . (string) $sentEmail->getHtmlBody());
 
         $verifyResponse = $this->verify([
             'email' => $email,
@@ -130,7 +130,7 @@ final class AuthControllerTest extends WebTestCase
         );
 
         $sentEmail = $this->mailer()->sentEmails()->first();
-        $code = $this->extractCode((string) $sentEmail->getHtmlBody() . (string) $sentEmail->getTextBody());
+        $code = $this->extractCode((string) $sentEmail->getTextBody() . (string) $sentEmail->getHtmlBody());
         $response = $this->login([
             'email' => $email,
             'code' => $code,
@@ -273,6 +273,11 @@ final class AuthControllerTest extends WebTestCase
         return json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * Matches the first run of 6 digits, so callers must pass the plain-text body
+     * first: the HTML body's inline CSS can contain an all-numeric 6-digit hex
+     * color (e.g. #583818) ahead of the real code.
+     */
     private function extractCode(string $body): string
     {
         self::assertMatchesRegularExpression('/\d{6}/', $body);

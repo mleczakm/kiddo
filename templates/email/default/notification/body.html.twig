@@ -12,7 +12,9 @@
     <body>
     <div class="email-container {{ ("urgent" == importance ? "alert" : ("high" == importance ? "warning" : "default")) }}">
         <div class="header">
-            <div class="logo">Warsztatownia&nbsp;<span class="logo-brand"><span class="red">S</span><span class="green">e</span><span class="yellow">n</span><span class="blue">s</span><span class="pink">o</span><span class="red">r</span><span class="green">y</span><span class="yellow">c</span><span class="blue">z</span><span class="pink">n</span><span class="red">a</span></span></div>
+            {# Absolute URL is hardcoded: this template also renders from Messenger workers
+               with no HTTP request in scope, so absolute_url() has no host to resolve against. #}
+            <img src="https://warsztatowniasensoryczna.pl{{ asset('images/logo-header.webp') }}" alt="Warsztatownia Sensoryczna" class="logo">
         </div>
         {% block lead %}
             <p class="lead">
