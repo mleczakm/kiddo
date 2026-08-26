@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ffd568670345cf03b7b23e130b5b9ffc",
+    "content-hash": "a26c7743694dddf356742eafb70f8a7d",
     "packages": [
         {
             "name": "aeon-php/business-hours",
@@ -121,6 +121,63 @@
                 }
             ],
             "time": "2025-12-08T14:44:05+00:00"
+        },
+        {
+            "name": "aeon-php/calendar-holidays",
+            "version": "1.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aeon-php/calendar-holidays.git",
+                "reference": "e41755543853fbf1f4606dfbf359e91be3cf1ba0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aeon-php/calendar-holidays/zipball/e41755543853fbf1f4606dfbf359e91be3cf1ba0",
+                "reference": "e41755543853fbf1f4606dfbf359e91be3cf1ba0",
+                "shasum": ""
+            },
+            "require": {
+                "aeon-php/calendar": "~1.0",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "require-dev": {
+                "google/apiclient": "^2.18"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aeon\\": [
+                        "src/Aeon"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Holidays calendar abstraction layer for Aeon Time management framework",
+            "keywords": [
+                "calendar",
+                "holidays",
+                "immutable"
+            ],
+            "support": {
+                "issues": "https://github.com/aeon-php/calendar-holidays/issues",
+                "source": "https://github.com/aeon-php/calendar-holidays/tree/1.0.12"
+            },
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-12-08T14:43:57+00:00"
         },
         {
             "name": "beberlei/assert",
@@ -3237,6 +3294,69 @@
                 "source": "https://github.com/modelcontextprotocol/php-sdk/tree/v0.7.1"
             },
             "time": "2026-08-10T20:09:23+00:00"
+        },
+        {
+            "name": "mleczakm/aeon-school-holidays",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mleczakm/aeon-school-holidays.git",
+                "reference": "0eb0f8d734527bfb6b6c3fc26e45f810f57cacd6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mleczakm/aeon-school-holidays/zipball/0eb0f8d734527bfb6b6c3fc26e45f810f57cacd6",
+                "reference": "0eb0f8d734527bfb6b6c3fc26e45f810f57cacd6",
+                "shasum": ""
+            },
+            "require": {
+                "aeon-php/calendar-holidays": "^1.0",
+                "ext-json": "*",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "esi/phpunit-coverage-check": "^3.0",
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "friendsofphp/php-cs-fixer": "^3.87",
+                "guzzlehttp/guzzle": "^8.1",
+                "infection/infection": "^0.35",
+                "php": "^8.4",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^13.0",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mleczakm\\AeonSchoolHolidays\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michał Mleczko",
+                    "email": "do@mleczki.pl"
+                }
+            ],
+            "description": "Polish school holiday calendars for Aeon PHP, including voivodeship-specific winter breaks.",
+            "homepage": "https://github.com/mleczakm/aeon-school-holidays",
+            "keywords": [
+                "School",
+                "aeon",
+                "calendar",
+                "holidays",
+                "poland"
+            ],
+            "support": {
+                "issues": "https://github.com/mleczakm/aeon-school-holidays/issues",
+                "source": "https://github.com/mleczakm/aeon-school-holidays/tree/v1.0.0"
+            },
+            "time": "2026-08-26T23:23:14+00:00"
         },
         {
             "name": "mleczakm/twig-now",

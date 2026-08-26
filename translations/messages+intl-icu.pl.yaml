@@ -970,6 +970,9 @@ admin:
       amount: "Kwota"
     no_bookings: "Brak rezerwacji."
   lesson_show:
+    school_holiday:
+      title: "Termin podczas przerwy szkolnej"
+      message: "Te zajęcia przypadają w okresie: {holiday}."
     reschedule: "Zmień termin"
     modify: "Modyfikuj"
     contact_attendees: "Kontakt z uczestnikami"

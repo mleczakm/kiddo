@@ -17,7 +17,7 @@ final class LessonsControllerTest extends WebTestCase
     public function testHostSeesALessonTheyreAssignedTo(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em = $this->entityManager();
 
         $host = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();
         $em->persist($host);
@@ -28,7 +28,7 @@ final class LessonsControllerTest extends WebTestCase
         $em->flush();
 
         $client->loginUser($host);
-        $client->request('GET', '/admin/zajecia/' . $lesson->getId());
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('button[data-live-action-param="openModal"]', 'Modyfikuj');
@@ -38,7 +38,7 @@ final class LessonsControllerTest extends WebTestCase
     public function testHostGets404OnALessonTheyreNotAssignedTo(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em = $this->entityManager();
 
         $host = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();
         $otherInstructor = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();
@@ -51,7 +51,7 @@ final class LessonsControllerTest extends WebTestCase
         $em->flush();
 
         $client->loginUser($host);
-        $client->request('GET', '/admin/zajecia/' . $lesson->getId());
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
@@ -59,7 +59,7 @@ final class LessonsControllerTest extends WebTestCase
     public function testAdminSeesAnyLessonRegardlessOfInstructor(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em = $this->entityManager();
 
         $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $em->persist($admin);
@@ -69,8 +69,59 @@ final class LessonsControllerTest extends WebTestCase
         $em->flush();
 
         $client->loginUser($admin);
-        $client->request('GET', '/admin/zajecia/' . $lesson->getId());
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
 
         $this->assertResponseIsSuccessful();
+    }
+
+    public function testAdminSeesWarningForLessonDuringMasovianSchoolHolidays(): void
+    {
+        $client = static::createClient();
+        $em = $this->entityManager();
+
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $em->persist($admin);
+
+        $lesson = LessonAssembler::new()->withSchedule(
+            new \DateTimeImmutable('2027-02-01 10:00:00', new \DateTimeZone('Europe/Warsaw')),
+        )->assemble();
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($admin);
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-testid="school-holiday-warning"]', 'Termin podczas przerwy szkolnej');
+        $this->assertSelectorTextContains('[data-testid="school-holiday-warning"]', 'Ferie zimowe');
+    }
+
+    public function testAdminDoesNotSeeWarningForLessonOutsideSchoolHolidays(): void
+    {
+        $client = static::createClient();
+        $em = $this->entityManager();
+
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $em->persist($admin);
+
+        $lesson = LessonAssembler::new()->withSchedule(
+            new \DateTimeImmutable('2027-03-01 10:00:00', new \DateTimeZone('Europe/Warsaw')),
+        )->assemble();
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($admin);
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorNotExists('[data-testid="school-holiday-warning"]');
+    }
+
+    private function entityManager(): EntityManagerInterface
+    {
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+
+        return $entityManager;
     }
 }

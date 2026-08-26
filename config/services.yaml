@@ -99,6 +99,14 @@ services:
   App\Application\Workflow\PaymentStateMachineInterface:
     alias: App\Infrastructure\Symfony\Workflow\SymfonyPaymentStateMachine
 
+  Mleczakm\AeonSchoolHolidays\PolishSchoolHolidays:
+    arguments:
+      $voivodeship: !php/enum Mleczakm\AeonSchoolHolidays\Voivodeship::Masovian
+
+  App\Application\Service\SchoolHolidayChecker:
+    arguments:
+      $holidays: '@Mleczakm\AeonSchoolHolidays\PolishSchoolHolidays'
+
   App\Application\Notification\NotificationSenderInterface:
     alias: App\Infrastructure\Symfony\Notifier\SymfonyNotificationSender
 
