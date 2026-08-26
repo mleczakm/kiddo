@@ -121,6 +121,35 @@ final class WorkshopEditorComponentTest extends WebTestCase
         static::assertTrue($ticketOption->price->isEqualTo(Money::of('75.50', 'PLN')));
     }
 
+    public function testEditingAnExistingLessonCanChangeItsDuration(): void
+    {
+        // Regression test: the editor had no field at all to change an
+        // existing workshop's duration after creation.
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $this->em->persist($admin);
+
+        $lesson = LessonAssembler::new()->withDuration(60)->assemble();
+        $this->em->persist($lesson);
+        $this->em->flush();
+        $lessonId = $lesson->getId();
+
+        $this->client->loginUser($admin);
+        $component = $this->createLiveComponent(name: 'WorkshopEditor', client: $this->client, data: [
+            'lessonId' => $lessonId,
+            'startOpen' => false,
+        ]);
+
+        static::assertSame(60, $component->component()->duration);
+
+        $component->set('duration', 120);
+        $component->call('save');
+
+        $this->em->clear();
+        $reloaded = $this->em->find(Lesson::class, $lessonId);
+        static::assertNotNull($reloaded);
+        static::assertSame(120, $reloaded->getMetadata()->duration);
+    }
+
     public function testCreatingNewSeriesDerivesDurationAndStartTimeFromTheHourRange(): void
     {
         // Regression test: the "Godzina (Od - Do)" schedule-tab picker used
