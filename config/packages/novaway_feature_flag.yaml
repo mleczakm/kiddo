@@ -8,7 +8,7 @@ novaway_feature_flag:
           cart: false
           platform_billing_widget: false
           chat_assistant: true
-          commerce_order_write: false
+          commerce_order_write: true
           dynamic_pricing: true
           pricing_admin: false
 
