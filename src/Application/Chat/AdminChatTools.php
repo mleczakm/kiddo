@@ -12,12 +12,16 @@ use App\Application\Repository\PaymentRepositoryInterface;
 use App\Application\Repository\SeriesRepositoryInterface;
 use App\Application\Repository\TransferRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\BookingFactory;
 use App\Application\Service\InAppNotificationService;
+use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
+use App\Entity\PaymentCode;
+use App\Entity\PaymentMethod;
 use App\Entity\Series;
 use App\Entity\TicketOption;
 use App\Entity\TicketReschedulePolicy;
@@ -26,6 +30,8 @@ use App\Entity\User;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
+use Brick\Math\Exception\MathException;
+use Brick\Money\Exception\MoneyException;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -48,6 +54,8 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         private PaymentStateMachineInterface $paymentStateMachine,
         private LessonPresenter $presenter,
         private InAppNotificationService $inAppNotificationService,
+        private BookingFactory $bookingFactory,
+        private PaymentCodeGenerator $paymentCodeGenerator,
     ) {}
 
     #[\Override]
@@ -252,7 +260,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             ),
             new ToolDefinition(
                 'admin.create_booking',
-                'Create an active booking for a user (fast booking, no payment).',
+                'Create a booking for a user. ALWAYS ask the admin how it is paid and pass "payment": '
+                . '"paid" = money already received (booking active, payment recorded as paid); '
+                . '"send_code" = will be paid by BLIK/transfer (booking stays pending with a payment code — '
+                . 'relay the returned BLIK instruction; auto-cancels if unpaid in ~24h); '
+                . '"on_site" = will be paid in person (booking active, payment stays pending, method pay-on-place). '
+                . 'price_override sets a custom amount (comp/discount); omit to charge the ticket option price.',
                 [
                     'type' => 'object',
                     'properties' => [
@@ -266,11 +279,24 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         'name' => [
                             'type' => 'string',
                         ],
+                        'ticket_type' => [
+                            'type' => 'string',
+                            'enum' => ['one_time', 'carnet_4'],
+                        ],
+                        'payment' => [
+                            'type' => 'string',
+                            'enum' => ['paid', 'send_code', 'on_site'],
+                            'description' => 'How the booking is paid — ask the admin, do not assume.',
+                        ],
+                        'price_override' => [
+                            'type' => 'string',
+                            'description' => 'Optional custom amount, e.g. "90.00". Defaults to the ticket option price.',
+                        ],
                         'notes' => [
                             'type' => 'string',
                         ],
                     ],
-                    'required' => ['confirm', 'lesson_id', 'email'],
+                    'required' => ['confirm', 'lesson_id', 'email', 'ticket_type', 'payment'],
                 ],
                 requiresAdmin: true,
                 requiresConfirm: true,
@@ -662,6 +688,15 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         if ($lesson === null) {
             return ToolResult::failure('Lesson not found');
         }
+
+        // Throws \InvalidArgumentException (caught in call()) when the lesson has no such ticket option.
+        $ticketOption = $lesson->getMatchingTicketOption($args->requireString('ticket_type'));
+
+        $paymentMode = $args->requireString('payment');
+        if (!in_array($paymentMode, ['paid', 'send_code', 'on_site'], true)) {
+            return ToolResult::failure('payment must be one of: paid, send_code, on_site');
+        }
+
         $email = strtolower(trim($args->requireString('email')));
         $user = $this->userRepository->findOneBy([
             'email' => $email,
@@ -670,17 +705,84 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             $user = new User($email, $args->string('name') ?? $email);
             $this->entityManager->persist($user);
         }
-        $booking = new Booking($user, null, $lesson);
-        $booking->setStatus(Booking::STATUS_ACTIVE);
+
+        $price = $ticketOption->price;
+        if ($args->has('price_override')) {
+            try {
+                $price = Money::of(
+                    $args->requireString('price_override'),
+                    $price->getCurrency()->getCurrencyCode(),
+                );
+            } catch (MoneyException | MathException $e) {
+                return ToolResult::failure('Invalid price_override: ' . $e->getMessage());
+            }
+        }
+
+        $payment = new Payment(
+            $user,
+            $price,
+            $paymentMode === 'on_site' ? PaymentMethod::PAY_ON_PLACE : PaymentMethod::ONLINE,
+        );
+        $this->entityManager->persist($payment);
+
+        // BookingFactory handles the one_time / carnet_4 lesson split and keeps
+        // Payment's inverse bookings collection in sync (needed by
+        // BookingConfirmationSubscriber when we apply the pay transition below).
+        $booking = $this->bookingFactory->createFrom($lesson, $ticketOption, $user, $payment);
         if ($args->has('notes')) {
             $booking->setNotes($args->requireString('notes'));
         }
         $this->entityManager->persist($booking);
+
+        $summary = $this->applyBookingPaymentMode($paymentMode, $booking, $payment, $price, $email);
+
         $this->entityManager->flush();
 
-        return ToolResult::success(
-            sprintf('Utworzono aktywną rezerwację dla %s.', $email),
-            $this->presenter->booking($booking),
+        return ToolResult::success($summary, $this->presenter->booking($booking));
+    }
+
+    /**
+     * Applies the admin-chosen payment mode to a freshly built (pending) booking
+     * and its payment, and returns the Polish summary line for the chat reply.
+     */
+    private function applyBookingPaymentMode(
+        string $mode,
+        Booking $booking,
+        Payment $payment,
+        Money $price,
+        string $email,
+    ): string {
+        if ($mode === 'paid') {
+            if ($this->paymentStateMachine->can($payment, Payment::TRANSITION_PAY)) {
+                $this->paymentStateMachine->apply($payment, Payment::TRANSITION_PAY);
+            } else {
+                $payment->setStatus(Payment::STATUS_PAID);
+            }
+            if ($booking->getStatus() === Booking::STATUS_PENDING) {
+                $booking->setStatus(Booking::STATUS_ACTIVE);
+            }
+
+            return sprintf('Utworzono opłaconą, aktywną rezerwację dla %s.', $email);
+        }
+
+        if ($mode === 'on_site') {
+            $booking->setStatus(Booking::STATUS_ACTIVE);
+
+            return sprintf(
+                'Utworzono aktywną rezerwację dla %s — płatność na miejscu (%s %s, status płatności: oczekująca).',
+                $email,
+                (string) $price->getAmount()->toFloat(),
+                $price->getCurrency()->getCurrencyCode(),
+            );
+        }
+
+        // send_code — pending booking + payment code, like the parent flow.
+        new PaymentCode($payment, $this->paymentCodeGenerator->generateAvailable());
+
+        return sprintf(
+            'Utworzono rezerwację dla %s ze statusem "oczekująca". Przekaż instrukcję płatności BLIK z pola '
+            . 'payment.instruction_pl; rezerwacja anuluje się automatycznie, jeśli nie zostanie opłacona w ~24h.',
+            $email,
         );
     }
 

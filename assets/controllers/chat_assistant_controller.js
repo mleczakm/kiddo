@@ -238,7 +238,8 @@ export default class extends Controller {
                         'Rezerwacje → admin.list_bookings. Oczekujące/niepotwierdzone płatności → admin.list_payments. Nieprzypisane przelewy → admin.list_unmatched_transfers.\n' +
                         'Użytkownicy → admin.search_users / admin.get_user.\n' +
                         'Nowe wystąpienie w grafiku → admin.clone_template_lesson (nie do listowania oferty).\n' +
-                        'Mutacje admin (toggle_lesson, update_lesson_capacity, create_booking, mark_booking_paid, cancel_lesson, refund_lesson, reschedule_lesson, assign_transfer, reject_transfer, notify_user) wymagają confirm=true po wyraźnej zgodzie użytkownika — ale wywołania odczytu (list/get) wykonuj od razu, bez pytania o zgodę.',
+                        'Mutacje admin (toggle_lesson, update_lesson_capacity, create_booking, mark_booking_paid, cancel_lesson, refund_lesson, reschedule_lesson, assign_transfer, reject_transfer, notify_user) wymagają confirm=true po wyraźnej zgodzie użytkownika — ale wywołania odczytu (list/get) wykonuj od razu, bez pytania o zgodę.\n' +
+                        'admin.create_booking: ZAWSZE zapytaj, jak rezerwacja jest opłacana i podaj payment= "paid" (już zapłacone), "send_code" (zapłaci przelewem/BLIK — przekaż zwróconą instrukcję payment.instruction_pl) albo "on_site" (zapłaci na miejscu). Podaj też ticket_type; price_override tylko dla nietypowej kwoty.',
                 })
             );
             return;

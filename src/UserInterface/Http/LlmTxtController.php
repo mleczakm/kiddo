@@ -81,7 +81,7 @@ final class LlmTxtController extends AbstractController
             - `admin_update_series`: Replace ticket options for a series (requires confirm=true)
             - `admin_clone_template_lesson`: Create a new lesson occurrence by cloning a template lesson (requires confirm=true)
             - `admin_list_bookings`: Search bookings by status or user email fragment
-            - `admin_create_booking`: Create an active booking for a user (fast booking, no payment) (requires confirm=true)
+            - `admin_create_booking`: Create a booking for a user; requires ticket_type and payment=paid|send_code|on_site (always ask the admin how it is paid), optional price_override (requires confirm=true)
             - `admin_mark_booking_paid`: Mark booking payment as paid (requires confirm=true)
             - `admin_cancel_lesson`: Cancel a lesson on any booking (admin) (requires confirm=true)
             - `admin_refund_lesson`: Refund a lesson on any booking (admin) (requires confirm=true)
