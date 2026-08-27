@@ -6,6 +6,7 @@ namespace App\Tests\Assembler;
 
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
+use App\Entity\PaymentMethod;
 use App\Entity\Transfer;
 use App\Entity\User;
 use Brick\Money\Money as BrickMoney;
@@ -19,6 +20,8 @@ class PaymentAssembler
     private BrickMoney $amount;
 
     private string $status = Payment::STATUS_PENDING;
+
+    private ?PaymentMethod $method = null;
 
     private \DateTimeImmutable $createdAt;
 
@@ -69,6 +72,13 @@ class PaymentAssembler
         return $clone;
     }
 
+    public function withMethod(PaymentMethod $method): self
+    {
+        $clone = clone $this;
+        $clone->method = $method;
+        return $clone;
+    }
+
     public function withPaymentCode(PaymentCode $paymentCode): self
     {
         $clone = clone $this;
@@ -105,6 +115,11 @@ class PaymentAssembler
 
         $createdAtProperty = $reflection->getProperty('createdAt');
         $createdAtProperty->setValue($payment, $createdAt);
+
+        if ($this->method !== null) {
+            $methodProperty = $reflection->getProperty('method');
+            $methodProperty->setValue($payment, $this->method);
+        }
 
         // Add payment code if provided
         if ($this->paymentCode) {

@@ -11,7 +11,12 @@ use App\Entity\Payment;
  */
 interface PaymentRepositoryInterface extends RepositoryInterface
 {
-    /** @return array<Payment> */
+    /**
+     * Pending payments older than the window, excluding pay-on-place payments
+     * (which have no code/transfer validity window and are settled in person).
+     *
+     * @return array<Payment>
+     */
     public function findExpiredPendingPayments(int $expirationMinutes): array;
 
     /** @return Payment[] */

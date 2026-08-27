@@ -6,6 +6,7 @@ namespace App\Infrastructure\Doctrine\Repository;
 
 use App\Application\Repository\PaymentRepositoryInterface;
 use App\Entity\Payment;
+use App\Entity\PaymentMethod;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -27,13 +28,19 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
     {
         $expirationTime = new \DateTimeImmutable(sprintf('-%d minutes', $expirationMinutes));
 
+        // Pay-on-place payments have no BLIK code / transfer window - they stay
+        // pending until an admin settles them in person, so they must never be
+        // auto-expired (which would also auto-cancel their booking via
+        // BookingConfirmationSubscriber).
         /** @var array<Payment> $result */
         return $this
             ->createQueryBuilder('p')
             ->where('p.status = :status')
             ->andWhere('p.createdAt < :expirationTime')
+            ->andWhere('(p.method IS NULL OR p.method != :payOnPlace)')
             ->setParameter('status', Payment::STATUS_PENDING)
             ->setParameter('expirationTime', $expirationTime)
+            ->setParameter('payOnPlace', PaymentMethod::PAY_ON_PLACE->value)
             ->getQuery()
             ->getResult();
     }
