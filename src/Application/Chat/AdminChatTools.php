@@ -709,11 +709,8 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         $price = $ticketOption->price;
         if ($args->has('price_override')) {
             try {
-                $price = Money::of(
-                    $args->requireString('price_override'),
-                    $price->getCurrency()->getCurrencyCode(),
-                );
-            } catch (MoneyException | MathException $e) {
+                $price = Money::of($args->requireString('price_override'), $price->getCurrency()->getCurrencyCode());
+            } catch (MoneyException|MathException $e) {
                 return ToolResult::failure('Invalid price_override: ' . $e->getMessage());
             }
         }
