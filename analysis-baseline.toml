@@ -517,12 +517,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/ExtendSeriesScheduleHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `DateInvalidTimeZoneException` in `App\Application\CommandHandler\ExtendSeriesScheduleHandler::__invoke`.'
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\ImportTransfersFromMailHandler::__invoke`.'
@@ -4730,45 +4724,9 @@ count = 1
 
 [[issues]]
 file = "tests/Application/CommandHandler/CheckExpiredBookingsHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/CheckExpiredBookingsHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 9
-
-[[issues]]
-file = "tests/Application/CommandHandler/CheckExpiredBookingsHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/ExtendSeriesScheduleHandlerTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 3
-
-[[issues]]
-file = "tests/Application/CommandHandler/ExtendSeriesScheduleHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/Application/CommandHandler/ExtendSeriesScheduleHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 10
-
-[[issues]]
-file = "tests/Application/CommandHandler/ExtendSeriesScheduleHandlerTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 3
 
 [[issues]]
 file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
@@ -5798,18 +5756,6 @@ count = 3
 
 [[issues]]
 file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 13
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/Repository/LessonRepositoryTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 3
@@ -6155,24 +6101,6 @@ file = "tests/UserInterface/HomepageTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 9
-
-[[issues]]
-file = "tests/UserInterface/Http/Admin/LessonsControllerTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 10
-
-[[issues]]
-file = "tests/UserInterface/Http/Admin/LessonsControllerTest.php"
-code = "implicit-to-string-cast"
-message = 'Implicit conversion to `string` for right operand via `Symfony\Component\Uid\Ulid::__toString()`.'
-count = 3
-
-[[issues]]
-file = "tests/UserInterface/Http/Admin/LessonsControllerTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 10
 
 [[issues]]
 file = "tests/UserInterface/Http/Admin/PostsControllerFileUploadTest.php"

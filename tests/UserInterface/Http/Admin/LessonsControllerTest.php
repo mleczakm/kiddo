@@ -92,8 +92,32 @@ final class LessonsControllerTest extends WebTestCase
         $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('[data-testid="school-holiday-warning"]', 'Termin podczas przerwy szkolnej');
-        $this->assertSelectorTextContains('[data-testid="school-holiday-warning"]', 'Ferie zimowe');
+        $this->assertSelectorTextContains(
+            '[data-testid="holiday-warning"]',
+            'Termin podczas święta lub przerwy szkolnej',
+        );
+        $this->assertSelectorTextContains('[data-testid="holiday-warning"]', 'Ferie zimowe');
+    }
+
+    public function testAdminSeesWarningForLessonDuringPolishPublicHoliday(): void
+    {
+        $client = static::createClient();
+        $em = $this->entityManager();
+
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $em->persist($admin);
+
+        $lesson = LessonAssembler::new()->withSchedule(
+            new \DateTimeImmutable('2026-11-11 10:00:00', new \DateTimeZone('Europe/Warsaw')),
+        )->assemble();
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($admin);
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-testid="holiday-warning"]', 'Narodowe Święto Niepodległości');
     }
 
     public function testAdminDoesNotSeeWarningForLessonOutsideSchoolHolidays(): void
@@ -114,7 +138,7 @@ final class LessonsControllerTest extends WebTestCase
         $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorNotExists('[data-testid="school-holiday-warning"]');
+        $this->assertSelectorNotExists('[data-testid="holiday-warning"]');
     }
 
     private function entityManager(): EntityManagerInterface

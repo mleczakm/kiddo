@@ -139,7 +139,9 @@ final class WorkshopEditorComponentTest extends WebTestCase
             'startOpen' => false,
         ]);
 
-        static::assertSame(60, $component->component()->duration);
+        $workshopEditorComponent = $component->component();
+        static::assertInstanceOf(WorkshopEditorComponent::class, $workshopEditorComponent);
+        static::assertSame(60, $workshopEditorComponent->duration);
 
         $component->set('duration', 120);
         $component->call('save');

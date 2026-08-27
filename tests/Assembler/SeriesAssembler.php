@@ -66,7 +66,10 @@ class SeriesAssembler extends EntityAssembler
 
         /** @var ?\DateTimeImmutable $lastOccurrenceDate */
         $lastOccurrenceDate = $this->properties['lastOccurrenceDate'] ?? null;
-        $visible = (bool) ($this->properties['visible'] ?? true);
+        $visible = true;
+        if (is_bool($this->properties['visible'] ?? null)) {
+            $visible = $this->properties['visible'];
+        }
 
         $series = new Series(
             lessons: new ArrayCollection($lessons),

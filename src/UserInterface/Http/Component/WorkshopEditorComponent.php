@@ -292,7 +292,15 @@ class WorkshopEditorComponent extends AbstractController
 
         $this->visible = $this->editScope === 'series' && $series !== null ? $series->visible : $lesson->visible;
 
-        $metadata = $lesson->getMetadata();
+        $this->loadMetadataFields($lesson->getMetadata());
+        $this->occurrenceDate = $lesson->schedule->format('Y-m-d');
+        $this->occurrenceTime = $lesson->schedule->format('H:i');
+        $this->instructorIds = array_map(static fn(User $u) => (string) $u->getId(), $lesson->getAllInstructors());
+        $this->loadTicketPrices($lesson);
+    }
+
+    private function loadMetadataFields(LessonMetadata $metadata): void
+    {
         $this->title = $metadata->title;
         $this->category = $metadata->category;
         $this->description = $metadata->description;
@@ -307,15 +315,16 @@ class WorkshopEditorComponent extends AbstractController
             $this->attachmentRoles[$fileId] = $workshopFile->getRole()->value;
             $this->attachmentCaptions[$fileId] = $workshopFile->getCaption() ?? '';
         }
-        $this->occurrenceDate = $lesson->schedule->format('Y-m-d');
-        $this->occurrenceTime = $lesson->schedule->format('H:i');
+    }
 
-        $this->instructorIds = array_map(static fn(User $u) => (string) $u->getId(), $lesson->getAllInstructors());
-
+    private function loadTicketPrices(Lesson $lesson): void
+    {
         foreach ($lesson->getTicketOptions() as $option) {
             if ($option->type === TicketType::ONE_TIME) {
                 $this->singleTicketPrice = (string) $option->price->getAmount();
-            } elseif ($option->type === TicketType::CARNET_4) {
+                continue;
+            }
+            if ($option->type === TicketType::CARNET_4) {
                 $this->carnet4Price = (string) $option->price->getAmount();
             }
         }
@@ -429,6 +438,8 @@ class WorkshopEditorComponent extends AbstractController
             }
         } catch (\DomainException|\InvalidArgumentException) {
             // Incomplete form values are validated on save; the preview simply stays at zero meanwhile.
+            $impact = new SeriesScheduleImpact();
+            $update = 0;
         }
 
         return [
@@ -824,6 +835,24 @@ class WorkshopEditorComponent extends AbstractController
 
         $this->reconcileWorkshopFiles($lesson->getMetadata());
 
+        $this->applyEditScope($lesson, $scope, $affectedLessons, $ticketOptions);
+
+        $this->entityManager->flush();
+
+        $this->notifyAboutEdit($affectedLessons, $scope);
+
+        $this->addFlash('success', 'Warsztat został zaktualizowany.');
+        $this->isModalOpen = false;
+        $this->emitUp('workshopEditorSaved');
+    }
+
+    /**
+     * @param list<Lesson> $affectedLessons
+     * @param list<TicketOption> $ticketOptions
+     */
+    private function applyEditScope(Lesson $lesson, string $scope, array $affectedLessons, array $ticketOptions): void
+    {
+        $series = $lesson->getSeries();
         $instructors = $this->resolveSelectedInstructors();
 
         if ($scope === 'series') {
@@ -836,7 +865,11 @@ class WorkshopEditorComponent extends AbstractController
                 $series->addInstructor($user);
             }
             $lesson->getInstructors()->clear();
-        } elseif ($scope === 'following') {
+
+            return;
+        }
+
+        if ($scope === 'following') {
             \assert($series !== null, 'A following edit requires the lesson to belong to a series.');
             foreach ($affectedLessons as $affectedLesson) {
                 $affectedLesson->setTicketOptions(...$ticketOptions);
@@ -846,22 +879,16 @@ class WorkshopEditorComponent extends AbstractController
                     $affectedLesson->addInstructor($user);
                 }
             }
-        } else {
-            $lesson->setTicketOptions(...$ticketOptions);
-            $lesson->visible = $this->visible;
-            $lesson->getInstructors()->clear();
-            foreach ($instructors as $user) {
-                $lesson->addInstructor($user);
-            }
+
+            return;
         }
 
-        $this->entityManager->flush();
-
-        $this->notifyAboutEdit($affectedLessons, $scope);
-
-        $this->addFlash('success', 'Warsztat został zaktualizowany.');
-        $this->isModalOpen = false;
-        $this->emitUp('workshopEditorSaved');
+        $lesson->setTicketOptions(...$ticketOptions);
+        $lesson->visible = $this->visible;
+        $lesson->getInstructors()->clear();
+        foreach ($instructors as $user) {
+            $lesson->addInstructor($user);
+        }
     }
 
     /**

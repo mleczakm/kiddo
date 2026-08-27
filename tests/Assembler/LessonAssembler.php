@@ -128,8 +128,8 @@ class LessonAssembler extends EntityAssembler
             $property->setValue($lesson, $this->properties['status']);
         }
 
-        if (isset($this->properties['visible'])) {
-            $lesson->visible = (bool) $this->properties['visible'];
+        if (is_bool($this->properties['visible'] ?? null)) {
+            $lesson->visible = $this->properties['visible'];
         }
 
         if (isset($this->properties['ticketOptions'])) {
@@ -159,8 +159,9 @@ class LessonAssembler extends EntityAssembler
 
     private function getMetadata(): LessonMetadata
     {
-        if (isset($this->properties['metadata']) && $this->properties['metadata'] instanceof LessonMetadata) {
-            return $this->properties['metadata'];
+        $metadata = $this->normalizeMetadata($this->properties['metadata'] ?? null);
+        if ($metadata !== null) {
+            return $metadata;
         }
 
         return new LessonMetadata(
@@ -173,5 +174,10 @@ class LessonAssembler extends EntityAssembler
             ageRange: new AgeRange(5, 10),
             category: 'test',
         );
+    }
+
+    private function normalizeMetadata(mixed $metadata): ?LessonMetadata
+    {
+        return $metadata instanceof LessonMetadata ? $metadata : null;
     }
 }

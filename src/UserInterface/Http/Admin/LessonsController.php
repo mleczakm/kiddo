@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Admin;
 
-use App\Application\Service\SchoolHolidayChecker;
+use App\Application\Service\HolidayChecker;
 use App\Entity\Lesson;
 use App\Infrastructure\Symfony\Security\Voter\LessonVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +21,7 @@ final class LessonsController extends AbstractController
     #[Route('/admin/zajecia/{id}', name: 'app_admin_lesson_view', requirements: [
         'id' => '[A-Za-z0-9]+',
     ])]
-    public function view(Lesson $lesson, SchoolHolidayChecker $schoolHolidayChecker): Response
+    public function view(Lesson $lesson, HolidayChecker $holidayChecker): Response
     {
         if (!$this->isGranted(LessonVoter::VIEW, $lesson)) {
             throw $this->createNotFoundException();
@@ -35,7 +35,7 @@ final class LessonsController extends AbstractController
             'lesson' => $lesson,
             'prevLesson' => $prev,
             'nextLesson' => $next,
-            'schoolHolidayName' => $schoolHolidayChecker->holidayNameAt($lesson->schedule),
+            'holidayNames' => $holidayChecker->holidayNamesAt($lesson->schedule),
         ]);
     }
 

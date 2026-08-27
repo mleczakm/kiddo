@@ -103,9 +103,11 @@ services:
     arguments:
       $voivodeship: !php/enum Mleczakm\AeonSchoolHolidays\Voivodeship::Masovian
 
-  App\Application\Service\SchoolHolidayChecker:
+  App\Application\Service\HolidayChecker:
     arguments:
-      $holidays: '@Mleczakm\AeonSchoolHolidays\PolishSchoolHolidays'
+      $holidayProviders:
+        - '@App\Infrastructure\Calendar\PolishPublicHolidays'
+        - '@Mleczakm\AeonSchoolHolidays\PolishSchoolHolidays'
 
   App\Application\Notification\NotificationSenderInterface:
     alias: App\Infrastructure\Symfony\Notifier\SymfonyNotificationSender

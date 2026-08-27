@@ -1504,6 +1504,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             reactor_count?: scalar|Param|null, // Default: 1
  *             worker_max_request?: scalar|Param|null, // Default: 0
  *             worker_max_request_grace?: scalar|Param|null, // Default: null
+ *             worker_max_wait_time?: scalar|Param|null, // Default: null
  *             upload_tmp_dir?: scalar|Param|null, // Default: "/tmp"
  *             user?: scalar|Param|null,
  *             group?: scalar|Param|null,

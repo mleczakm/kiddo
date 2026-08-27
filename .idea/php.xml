@@ -446,6 +446,7 @@
       <path value="$PROJECT_DIR$/vendor/aeon-php/calendar" />
       <path value="$PROJECT_DIR$/vendor/mleczakm/aeon-school-holidays" />
       <path value="$PROJECT_DIR$/vendor/aeon-php/calendar-holidays" />
+      <path value="$PROJECT_DIR$/vendor/azuyalabs/yasumi" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
