@@ -118,6 +118,7 @@ notifications:
   loading: Loading…
   empty: No new notifications.
   dismiss: Dismiss
+  clear_all: Clear all
   my_bookings: My bookings
   profile_settings: Profile settings
   admin_panel: Admin panel

@@ -70,6 +70,32 @@ final class NotificationRepositoryTest extends KernelTestCase
         static::assertSame('Old', $recent[2]->getTitle());
     }
 
+    public function testSoftDeleteAllForUserOnlyTouchesOwnLiveRows(): void
+    {
+        $user = new User('clearall@example.com', 'Clear User');
+        $other = new User('keep@example.com', 'Keep User');
+        $this->persist($user);
+        $this->persist($other);
+
+        $n1 = new Notification($user, 'One', null, null, NotificationSeverity::Info);
+        $this->persist($n1);
+        $n2 = new Notification($user, 'Two', null, null, NotificationSeverity::Warning);
+        $this->persist($n2);
+        $alreadyGone = new Notification($user, 'Gone', null, null, NotificationSeverity::Error);
+        $this->persist($alreadyGone);
+        $alreadyGone->softDelete();
+        $this->em->flush();
+        $foreign = new Notification($other, 'Foreign', null, null, NotificationSeverity::Info);
+        $this->persist($foreign);
+
+        $cleared = $this->repo->softDeleteAllForUser($user);
+        static::assertSame(2, $cleared);
+
+        $this->em->clear();
+        static::assertCount(0, $this->repo->findRecentForUser($user, 10));
+        static::assertCount(1, $this->repo->findRecentForUser($other, 10));
+    }
+
     public function testHardDeleteOlderThanRemovesOnlyAgedRows(): void
     {
         $user = new User('purge@example.com', 'Purge User');

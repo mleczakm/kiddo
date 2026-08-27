@@ -17,5 +17,7 @@ interface NotificationRepositoryInterface extends RepositoryInterface
 
     public function countUnreadForUser(User $user): int;
 
+    public function softDeleteAllForUser(User $user, ?\DateTimeImmutable $at = null): int;
+
     public function hardDeleteOlderThan(\DateTimeImmutable $cutoff): int;
 }

@@ -87,6 +87,18 @@ final class NotificationTrayLiveComponent extends AbstractController
         $this->em->flush();
     }
 
+    /**
+     * @throws \LogicException
+     */
+    #[LiveAction]
+    public function clearAll(): void
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $this->notifications->softDeleteAllForUser($user);
+    }
+
     #[LiveAction]
     public function suggest(): void
     {

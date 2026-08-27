@@ -11,6 +11,7 @@
         </summary>
 
         <div id="notif-tray" class="absolute right-0 mt-2 w-80 max-w-[90vw] bg-popover border rounded-md shadow-md z-50 overflow-hidden">
+            {% set items = this.getItems() %}
             <div class="px-3 py-2 text-sm font-medium text-muted-foreground border-b flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -18,10 +19,17 @@
                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
                 </svg>
                 {{ 'notifications.title'|trans }}
+                {% if items is not empty %}
+                    <button type="button"
+                            class="ml-auto text-xs font-normal text-muted-foreground hover:text-destructive cursor-pointer"
+                            data-action="live#action"
+                            data-live-action-param="clearAll">
+                        {{ 'notifications.clear_all'|trans }}
+                    </button>
+                {% endif %}
             </div>
 
             <div id="notif-list" class="max-h-64 overflow-y-auto p-2 space-y-1">
-                {% set items = this.getItems() %}
                 {% if items is empty %}
                     <div class="text-sm text-muted-foreground p-3">{{ 'notifications.empty'|trans }}</div>
                 {% else %}

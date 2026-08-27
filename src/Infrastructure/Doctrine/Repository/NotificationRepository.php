@@ -53,6 +53,24 @@ class NotificationRepository extends ServiceEntityRepository implements Notifica
     }
 
     #[\Override]
+    public function softDeleteAllForUser(User $user, ?\DateTimeImmutable $at = null): int
+    {
+        /** @var int|string|null $updated */
+        $updated = $this
+            ->createQueryBuilder('n')
+            ->update()
+            ->set('n.deletedAt', ':at')
+            ->andWhere('n.user = :user')
+            ->andWhere('n.deletedAt IS NULL')
+            ->setParameter('at', $at ?? new \DateTimeImmutable('now'))
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
+
+        return is_int($updated) ? $updated : 0;
+    }
+
+    #[\Override]
     public function hardDeleteOlderThan(\DateTimeImmutable $cutoff): int
     {
         $deleted = $this

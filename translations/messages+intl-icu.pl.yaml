@@ -65,6 +65,7 @@ notifications:
   loading: Ładowanie…
   empty: Brak nowych powiadomień.
   dismiss: Odrzuć
+  clear_all: Wyczyść wszystkie
   my_bookings: Moje rezerwacje
   profile_settings: Ustawienia profilu
   admin_panel: Panel administracyjny
