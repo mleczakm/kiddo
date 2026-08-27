@@ -72,4 +72,19 @@ class WorkingDaysDeadlineCalculatorTest extends TestCase
 
         static::assertSame('2024-01-09 00:00:00', $deadline->format('Y-m-d H:i:s'));
     }
+
+    #[Test]
+    public function polishPublicHolidayDoesNotCountTowardTheDeadline(): void
+    {
+        $calculator = new WorkingDaysDeadlineCalculator();
+
+        // Friday 2025-01-03 12:00 UTC. Monday 2025-01-06 is Epiphany, a Polish
+        // public holiday, so 24 working hours land on Tuesday: 12h on Friday
+        // plus 12h once Tuesday starts.
+        $from = new \DateTimeImmutable('2025-01-03 12:00:00', new \DateTimeZone('UTC'));
+
+        $deadline = $calculator->addWorkingTime($from, TimeUnit::hours(24));
+
+        static::assertSame('2025-01-07 12:00:00', $deadline->format('Y-m-d H:i:s'));
+    }
 }

@@ -7,6 +7,6 @@ namespace App\Application\Command;
 final readonly class CheckExpiredPayments
 {
     public function __construct(
-        public int $expirationMinutes = 30,
+        public \DateTimeImmutable $referenceTime = new \DateTimeImmutable(),
     ) {}
 }

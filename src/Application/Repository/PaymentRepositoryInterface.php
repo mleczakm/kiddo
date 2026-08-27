@@ -12,12 +12,14 @@ use App\Entity\Payment;
 interface PaymentRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Pending payments older than the window, excluding pay-on-place payments
-     * (which have no code/transfer validity window and are settled in person).
+     * Pending payments created before $expirationTime, excluding pay-on-place
+     * payments (which have no code/transfer validity window and are settled in
+     * person). This is a naive pre-filter - the caller still applies the
+     * working-hours deadline per payment.
      *
      * @return array<Payment>
      */
-    public function findExpiredPendingPayments(int $expirationMinutes): array;
+    public function findExpiredPendingPayments(\DateTimeImmutable $expirationTime): array;
 
     /** @return Payment[] */
     public function findPendingWithSearch(string $search): array;

@@ -29,7 +29,9 @@ final class CheckExpiredPaymentsHandlerTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
 
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
-        $longAgo = $now->modify('-25 hours');
+        // Comfortably past the 24-working-hour window regardless of which
+        // weekday (or public holiday) "now" happens to land on in the test run.
+        $longAgo = $now->modify('-6 days');
         $recently = $now->modify('-5 minutes');
 
         $user = UserAssembler::new()->assemble();
@@ -87,8 +89,7 @@ final class CheckExpiredPaymentsHandlerTest extends KernelTestCase
 
         /** @var CheckExpiredPaymentsHandler $handler */
         $handler = self::getContainer()->get(CheckExpiredPaymentsHandler::class);
-        // Matches MainSchedule's production configuration: payments expire after 24h.
-        $handler(new CheckExpiredPayments(expirationMinutes: 24 * 60));
+        $handler(new CheckExpiredPayments($now));
         // Unlike CheckExpiredBookingsHandler (which flushes as a side effect of
         // its own activity-log write), this handler does not flush itself.
         $em->flush();
@@ -121,7 +122,7 @@ final class CheckExpiredPaymentsHandlerTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
 
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
-        $longAgo = $now->modify('-25 hours');
+        $longAgo = $now->modify('-6 days');
 
         $user = UserAssembler::new()->assemble();
         $em->persist($user);
@@ -156,7 +157,7 @@ final class CheckExpiredPaymentsHandlerTest extends KernelTestCase
 
         /** @var CheckExpiredPaymentsHandler $handler */
         $handler = self::getContainer()->get(CheckExpiredPaymentsHandler::class);
-        $handler(new CheckExpiredPayments(expirationMinutes: 24 * 60));
+        $handler(new CheckExpiredPayments($now));
         $em->flush();
         $em->clear();
 
@@ -166,5 +167,62 @@ final class CheckExpiredPaymentsHandlerTest extends KernelTestCase
         static::assertInstanceOf(Booking::class, $reloadedBooking);
         static::assertSame(Payment::STATUS_PENDING, $reloadedPayment->getStatus());
         static::assertSame(Booking::STATUS_ACTIVE, $reloadedBooking->getStatus());
+    }
+
+    public function testPolishPublicHolidayPushesTheExpiryDeadlineOut(): void
+    {
+        self::bootKernel();
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()->assemble();
+        $em->persist($user);
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule(new \DateTimeImmutable('2025-01-20 10:00:00', new \DateTimeZone('UTC')))
+            ->assemble();
+        $em->persist($lesson);
+
+        // Created Friday 2025-01-03 12:00. Only Friday 12:00-24:00 (12h) counts
+        // before Monday: Sat/Sun are weekend and Mon 2025-01-06 is Epiphany, a
+        // Polish public holiday. So 24 working hours are not reached until
+        // Tuesday the 7th - a sweep run on the holiday Monday must not expire it.
+        $payment = PaymentAssembler::new()
+            ->withUser($user)
+            ->withAmount(Money::of(45, 'PLN'))
+            ->withStatus(Payment::STATUS_PENDING)
+            ->withCreatedAt(new \DateTimeImmutable('2025-01-03 12:00:00', new \DateTimeZone('UTC')))
+            ->assemble();
+        $em->persist($payment);
+        $booking = BookingAssembler::new()
+            ->withUser($user)
+            ->withPayment($payment)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_PENDING)
+            ->assemble();
+        $em->persist($booking);
+        $em->flush();
+        $paymentId = $payment->getId();
+        $em->clear();
+
+        /** @var CheckExpiredPaymentsHandler $handler */
+        $handler = self::getContainer()->get(CheckExpiredPaymentsHandler::class);
+
+        // Monday the 6th (Epiphany): 66 wall-clock hours have passed but only
+        // 12 working hours, because the holiday does not count -> still pending.
+        $handler(new CheckExpiredPayments(new \DateTimeImmutable('2025-01-06 12:00:00', new \DateTimeZone('UTC'))));
+        $em->flush();
+        $em->clear();
+        $stillPending = $em->find(Payment::class, $paymentId);
+        static::assertInstanceOf(Payment::class, $stillPending);
+        static::assertSame(Payment::STATUS_PENDING, $stillPending->getStatus());
+
+        // Wednesday the 8th: well past 24 working hours -> expires.
+        $handler(new CheckExpiredPayments(new \DateTimeImmutable('2025-01-08 12:00:00', new \DateTimeZone('UTC'))));
+        $em->flush();
+        $em->clear();
+        $expired = $em->find(Payment::class, $paymentId);
+        static::assertInstanceOf(Payment::class, $expired);
+        static::assertSame(Payment::STATUS_EXPIRED, $expired->getStatus());
     }
 }

@@ -15,7 +15,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final readonly class LessonPresenter
 {
     /**
-     * Matches CheckExpiredPayments(expirationMinutes: 24 * 60) in MainSchedule.
+     * Matches CheckExpiredPaymentsHandler::EXPIRATION_WORKING_HOURS - the code
+     * is valid for 24 working hours, so this wall-clock figure is a lower bound
+     * (the copy that uses it already hedges with "~").
      */
     public const int PAYMENT_CODE_VALID_HOURS = 24;
 

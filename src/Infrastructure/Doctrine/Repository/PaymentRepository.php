@@ -24,10 +24,8 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
      * @return array<Payment>
      */
     #[\Override]
-    public function findExpiredPendingPayments(int $expirationMinutes): array
+    public function findExpiredPendingPayments(\DateTimeImmutable $expirationTime): array
     {
-        $expirationTime = new \DateTimeImmutable(sprintf('-%d minutes', $expirationMinutes));
-
         // Pay-on-place payments have no BLIK code / transfer window - they stay
         // pending until an admin settles them in person, so they must never be
         // auto-expired (which would also auto-cancel their booking via
