@@ -71,14 +71,16 @@ body {
    so it never leaks into the admin panel, which keeps Tailwind's default
    font-sans stack.
 
-   Headings use Comic Neue (loaded via partials/frontend-fonts.html.twig,
-   latin-ext subset for Polish diacritics), with `cursive` kept only as a
-   last-resort fallback. This matches the mockup's declared `"Comic Neue",
-   cursive` stack and gives the playful comic-style look the brand wants.
-   The bare `cursive` generic can't be relied on: it resolves per browser
-   (Chromium/Android picks Dancing Script, iOS Safari picks Snell Roundhand,
-   an ornate copperplate face that renders all-caps Polish headings nearly
-   illegibly), so the font has to be named explicitly. */
+   Headings use Comic Relief (loaded via partials/frontend-fonts.html.twig),
+   with `cursive` kept only as a last-resort fallback. It's a metric-clone
+   of Comic Sans — the playful comic look the brand wants — and, unlike
+   Comic Neue, its Google Fonts build ships a latin-ext subset, so Polish
+   diacritics (ł ń ą ę ś ż ź ć) render in-font instead of falling back
+   glyph-by-glyph to a mismatched face. The bare `cursive` generic can't
+   be relied on either: it resolves per browser (Chromium/Android picks
+   Dancing Script, iOS Safari picks Snell Roundhand, an ornate copperplate
+   face that renders all-caps Polish headings nearly illegibly), so the
+   font has to be named explicitly. */
 .site-shell {
     font-family: Quicksand, sans-serif;
     font-weight: 500;
@@ -90,7 +92,7 @@ body {
 .site-shell h4,
 .site-shell h5,
 .site-shell h6 {
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-weight: 700;
 }
 
@@ -131,7 +133,7 @@ body {
     max-width: 100%;
     margin: 2.75rem auto 1.25rem;
     padding-bottom: 0.3em;
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.25;
@@ -175,7 +177,7 @@ body {
 .article-content thead th,
 .tiptap thead th {
     padding: 0.85rem 1.25rem;
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -208,7 +210,7 @@ body {
 .article-content blockquote p:first-of-type,
 .tiptap blockquote p:first-of-type {
     margin-top: 0;
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-weight: 700;
     font-size: 1.125rem;
     color: hsl(var(--foreground));
@@ -298,7 +300,7 @@ body {
 .tiptap .callout-title {
     display: block;
     margin-bottom: 0.35rem;
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-weight: 700;
     color: hsl(var(--foreground));
 }
@@ -368,7 +370,7 @@ body {
 }
 
 .article-cta__title {
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-weight: 700;
     font-size: 1.5rem;
     color: hsl(var(--foreground));
@@ -410,7 +412,7 @@ body {
 
 .article-downloads__title {
     margin-bottom: 1rem;
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-weight: 700;
     font-size: 1.125rem;
     color: hsl(var(--foreground));
@@ -1290,7 +1292,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
 
 .section-title {
     margin-bottom: 2rem;
-    font-family: "Comic Neue", cursive;
+    font-family: "Comic Relief", cursive;
     font-size: 1.875rem;
     line-height: 2.25rem;
     font-weight: 700;
@@ -2065,7 +2067,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
 }
 
 .font-display {
-    font-family: "Comic Neue", cursive
+    font-family: "Comic Relief", cursive
 }
 
 .text-\[0\.8rem\] {
