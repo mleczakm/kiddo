@@ -5,7 +5,7 @@ novaway_feature_flag:
       factory: 'novaway_feature_flag.factory.array'
       options:
         features:
-          cart: false
+          cart: true
           platform_billing_widget: false
           chat_assistant: true
           commerce_order_write: true
