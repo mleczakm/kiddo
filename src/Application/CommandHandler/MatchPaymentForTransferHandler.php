@@ -88,10 +88,9 @@ final readonly class MatchPaymentForTransferHandler
                 yield $substituted;
             }
 
-            $substituted = strtr($token, [
-                '0' => 'O',
-                'O' => '0',
-            ]);
+            // 3-arg strtr swaps '0' and 'O' in a single pass (no re-translation),
+            // and sidesteps the numeric-string-key typing issue the array form has.
+            $substituted = strtr($token, '0O', 'O0');
 
             if (!hash_equals($substituted, $token)) {
                 yield $substituted;
