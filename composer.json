@@ -43,7 +43,7 @@
     "bgalati/monolog-sentry-handler": "^2.1",
     "brick/money": "^0.10.3",
     "carbonphp/carbon-doctrine-types": "^3.0",
-    "directorytree/imapengine": "^1.25.4",
+    "directorytree/imapengine": "^1.25.6",
     "doctrine/dbal": "^4.4",
     "doctrine/doctrine-bundle": "^3.0",
     "doctrine/doctrine-migrations-bundle": "^3.7",
@@ -61,7 +61,7 @@
     "odolbeau/phone-number-bundle": "^4.2.5",
     "phpdocumentor/reflection-docblock": "^5.6.7",
     "scienta/doctrine-json-functions": "^6.5",
-    "sentry/sentry-symfony": "^5.11.0",
+    "sentry/sentry-symfony": "^5.13.0",
     "swoole-bundle/resetter-bundle": "^2.0",
     "swoole-bundle/swoole-bundle": "^0.32.0",
     "swoole-bundle/z-engine": "dev-fix/get-raw-class-alias-ptr as 8.5.1",
@@ -315,7 +315,7 @@
     }
   },
   "require-dev": {
-    "carthage-software/mago": "^1.47.3",
+    "carthage-software/mago": "^1.47.4",
     "dama/doctrine-test-bundle": "^8.6.0",
     "kodus/mock-cache": "^2.1",
     "phpunit/phpunit": "^11.5.56",
@@ -329,7 +329,7 @@
     "symfony/phpunit-bridge": "^8.1.5",
     "symfony/stopwatch": "8.0.*",
     "symfony/web-profiler-bundle": "8.1.*",
-    "zenstruck/foundry": "^2.12.0",
+    "zenstruck/foundry": "^2.12.1",
     "zenstruck/mailer-test": "^1.5.0",
     "zenstruck/messenger-test": "^1.15"
   }
