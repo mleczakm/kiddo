@@ -9,6 +9,8 @@ apps:
     port: 9502
     image: "ghcr.io/mleczakm/kiddo:{{ app_version | default('latest') }}"
     cache_volume: kiddo_cache
+    # Shared external network the docker-autoheal container (and Traefik) live on.
+    shared_network: mikrus
     env:
       APP_ENV: prod
     ipv6: "{{ mikrus_ipv6 }}"

@@ -111,16 +111,38 @@
   failed_when: remove_result.rc not in [0, 1]
   changed_when: remove_result.rc == 0
 
+# The image ships a HEALTHCHECK, but plain `docker run` never acts on the
+# resulting "unhealthy" state - `--restart always` only reacts to the process
+# exiting. The shared compose stack used to get this for free: the `kiddo`
+# service carried `autoheal.monitor.enable` and sat on the `mikrus` network
+# alongside the docker-autoheal container that restarts unhealthy members.
+# Since the deploy no longer goes through that compose file, we reattach the
+# same label and network here so autoheal keeps watching this container.
 - name: Run application container
   ansible.builtin.command: >-
     docker run -d
     --name {{ app.name }}
     --restart always
+    --label autoheal.monitor.enable=true
+    --label autoheal.restart.enable=true
     -p [{{ app.ipv6 }}]:{{ app.port }}:9501
     --env-file /tmp/{{ app.name }}.env
     --mount type=volume,src={{ app.cache_volume }},dst=/var/cache/prod/pools/app
     {{ app.image }}
   changed_when: true
+
+# Attach to the shared external network in addition to the default bridge
+# (mirroring the old compose `networks: {mikrus:, default:}`), so the
+# autoheal container - and Traefik, for anything still routed that way - can
+# reach it. Kept as a separate `network connect` to leave the proven
+# IPv6 port-publish path on the default bridge untouched.
+- name: Attach container to the shared mikrus network
+  ansible.builtin.command: "docker network connect {{ app.shared_network | default('mikrus') }} {{ app.name }}"
+  register: network_connect_result
+  changed_when: network_connect_result.rc == 0
+  failed_when:
+    - network_connect_result.rc != 0
+    - '"already exists" not in network_connect_result.stderr'
 
 - name: Remove temporary environment file
   ansible.builtin.file:
