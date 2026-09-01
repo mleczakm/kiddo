@@ -25,7 +25,7 @@ final class SampleResourceUsageHandlerTest extends TestCase
             ->willReturnCallback(static function (
                 string $name,
                 int|float $value,
-                array $attributes = [],
+                array $_attributes = [],
                 ?Unit $unit = null,
             ) use (&$recorded): void {
                 $recorded[$name] = ['value' => $value, 'unit' => $unit?->__toString()];
