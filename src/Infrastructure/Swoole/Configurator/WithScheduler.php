@@ -168,7 +168,7 @@ final class WithScheduler implements Configurator
                 // has to be the thing we can walk away from on timeout.
                 $this->runWithTimeout();
             }
-  
+
             $this->heartbeat->beat();
         } catch (Throwable $e) {
             // Timer::tick has no caller to propagate an exception to - nothing catches it,
