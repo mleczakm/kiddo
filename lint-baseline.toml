@@ -781,6 +781,12 @@ message = "Avoid `elseif` clauses."
 count = 1
 
 [[issues]]
+file = "src/Infrastructure/System/ResourceUsageSnapshot.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Infrastructure/Twig/AppVersionExtension.php"
 code = "no-shorthand-ternary"
 message = "Use of the shorthand ternary operator."

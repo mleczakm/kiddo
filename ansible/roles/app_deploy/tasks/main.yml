@@ -118,6 +118,15 @@
 # alongside the docker-autoheal container that restarts unhealthy members.
 # Since the deploy no longer goes through that compose file, we reattach the
 # same label and network here so autoheal keeps watching this container.
+#
+# --ulimit nofile: `docker run` otherwise inherits the daemon default soft limit
+# of 1024 open files. The Swoole server pools DB/HTTP/IMAP connections across
+# long-lived workers and coroutines; production has hit a state where memory
+# climbs and outbound connections (e.g. outgoing mail) silently start failing
+# while /health still passes - an fd/socket ceiling that low is one way that
+# happens. Raise the soft limit to 65536 (hard stays at the daemon default
+# 524288); the /health memory_usage check now reports open_fds / tcp_allocated
+# so this can be confirmed or ruled out.
 - name: Run application container
   ansible.builtin.command: >-
     docker run -d
@@ -125,6 +134,7 @@
     --restart always
     --label autoheal.monitor.enable=true
     --label autoheal.restart.enable=true
+    --ulimit nofile=65536:524288
     -p [{{ app.ipv6 }}]:{{ app.port }}:9501
     --env-file /tmp/{{ app.name }}.env
     --mount type=volume,src={{ app.cache_volume }},dst=/var/cache/prod/pools/app

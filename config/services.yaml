@@ -14,6 +14,14 @@ parameters:
   # recycling (briefly overlapping old/new workers), while still tripping well before the
   # leak patterns seen in production (~20 to ~1030 extra processes).
   env(HEALTHCHECK_MAX_PROCESSES): '20'
+  # Total resident memory (MiB) across every process in the container's PID namespace above
+  # which /health's memory_usage check flips to unhealthy (so autoheal restarts it instead
+  # of it wedging - memory climbing, outgoing connections failing - until someone notices).
+  # Steady state is ~250-550 MiB total (~200-270 MiB per worker once the coroutine pools are
+  # bounded - see config/packages/swoole.yaml); a real runaway went multi-GB. 1536 leaves
+  # generous headroom over worker_max_request recycle overlap while still tripping on a leak.
+  # Set to 0 to disable the failure and only surface the numbers.
+  env(HEALTHCHECK_MAX_RSS_MIB): '1536'
 
 services:
   # default configuration for services in *this* file
@@ -281,6 +289,10 @@ services:
   App\Infrastructure\Healthcheck\ProcessCountHealthcheck:
     arguments:
       $maxProcesses: '%env(int:HEALTHCHECK_MAX_PROCESSES)%'
+
+  App\Infrastructure\Healthcheck\MemoryUsageHealthcheck:
+    arguments:
+      $maxRssMib: '%env(int:HEALTHCHECK_MAX_RSS_MIB)%'
 
   # Symfony normally builds this via the HttpClient::create() factory, whose return type
   # (CurlHttpClient vs NativeHttpClient) is only known at runtime. The coroutine proxifier
