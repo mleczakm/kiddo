@@ -2701,6 +2701,12 @@ message = 'Attempting to access a property on a non-object type (`unknown-ref(Sw
 count = 1
 
 [[issues]]
+file = "src/Infrastructure/Scheduler/SchedulerHeartbeat.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
 file = "src/Infrastructure/Search/PostgresGlobalSearchQuery.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Infrastructure\Search\PostgresGlobalSearchQuery::search`.'
@@ -2768,6 +2774,12 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
 code = "mixed-property-type-coercion"
 message = "A value with a less specific type `mixed` is being assigned to property `$tickId` (int)."
 count = 1
@@ -2781,8 +2793,14 @@ count = 1
 [[issues]]
 file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
 code = "non-existent-method"
+message = 'Method `after` does not exist on type `Swoole\Timer`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
+code = "non-existent-method"
 message = 'Method `clear` does not exist on type `Swoole\Timer`.'
-count = 2
+count = 3
 
 [[issues]]
 file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
@@ -2794,36 +2812,6 @@ count = 1
 file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
 code = "non-existent-method"
 message = 'Method `tick` does not exist on type `Swoole\Timer`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-method"
-message = 'Method `create` does not exist on type `Swoole\Coroutine`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-class"
-message = 'Class `Swoole\Coroutine\Channel` not found.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "impossible-assignment"
-message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Scheduler/SchedulerHeartbeat.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
 
 [[issues]]
@@ -3718,18 +3706,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminUserDetailComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\AdminUserDetailComponent::sendNotification`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AssignPaymentModalComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\AssignPaymentModalComponent::confirmAssignment`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AssignPaymentModalComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Workflow\Exception\LogicException` in `App\UserInterface\Http\Component\AssignPaymentModalComponent::confirmAssignment`.'
 count = 1
 
 [[issues]]
@@ -5954,6 +5930,12 @@ count = 3
 
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\Tests\Infrastructure\Swoole\Configurator\WithSchedulerTest::lockRegistryFiles`. Saw type `mixed`.'
 count = 1
@@ -5968,19 +5950,19 @@ count = 2
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "non-existent-function"
 message = 'Could not find definition for function `Swoole\Coroutine\run` (also tried as `run` in a broader scope).'
-count = 9
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "non-existent-method"
-message = 'Method `sleep` does not exist on type `Swoole\Coroutine`.'
-count = 1
+count = 8
 
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "non-existent-method"
 message = 'Method `list` does not exist on type `Swoole\Timer`.'
 count = 3
+
+[[issues]]
+file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
+code = "non-existent-method"
+message = 'Method `sleep` does not exist on type `Swoole\Coroutine`.'
+count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
