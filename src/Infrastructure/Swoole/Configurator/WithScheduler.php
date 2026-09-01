@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Swoole\Configurator;
 
+use App\Infrastructure\Scheduler\SchedulerHeartbeat;
 use App\Infrastructure\Symfony\Scheduler;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
+use Swoole\Coroutine\Channel;
 use Swoole\Http\Server;
 use Swoole\Timer;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\CoWrapper;
@@ -42,6 +44,18 @@ final class WithScheduler implements Configurator
         // semaphore (framework.lock: semaphore), visible to both processes, to actually
         // serialize them.
         private readonly LockFactory $lockFactory,
+        // Written after every successful run() so SchedulerHeartbeatHealthcheck can tell,
+        // from the HTTP worker, whether ticks are still completing.
+        private readonly SchedulerHeartbeat $heartbeat,
+        // A SysV semaphore is not released when the coroutine holding it dies, so a run()
+        // that never returns (seen repeatedly in production - a bare executeQuery('SELECT 1')
+        // that just hangs) wedges the scheduler permanently: the finally below never runs,
+        // $running stays true, every later tick either short-circuits or fails to acquire.
+        // run() now executes in a child coroutine we wait on with a deadline; on timeout we
+        // abandon it and fall through to finally, so the lock is freed and the next tick can
+        // retry. Kept well under SchedulerHeartbeatHealthcheck's threshold so a single slow
+        // tick self-heals without ever tripping the check.
+        private readonly int $tickTimeoutSeconds = 15,
     ) {}
 
     public function __destruct()
@@ -145,13 +159,17 @@ final class WithScheduler implements Configurator
             // zero crashes, server stayed healthy throughout.
             if (Coroutine::getCid() === -1) {
                 $this->logger->warning(
-                    'Scheduler tick has no coroutine context (likely mid worker reload/recycle) - skipping pooled-service reset for this tick',
+                    'Scheduler tick has no coroutine context (likely mid worker reload/recycle) - skipping pooled-service reset and run() timeout for this tick',
                 );
+                $this->scheduler->run();
             } else {
-                $this->coWrapper->defer();
+                // defer() and run() both move into the child coroutine: the reset has to
+                // bind to the coroutine that actually touches the pooled services, and run()
+                // has to be the thing we can walk away from on timeout.
+                $this->runWithTimeout();
             }
 
-            $this->scheduler->run();
+            $this->heartbeat->beat();
         } catch (Throwable $e) {
             // Timer::tick has no caller to propagate an exception to - nothing catches it,
             // so PHP's default uncaught-exception handling kicks in, which under Symfony's
@@ -169,6 +187,57 @@ final class WithScheduler implements Configurator
         } finally {
             $this->running = false;
             $lock->release();
+        }
+    }
+
+    /**
+     * Runs the pooled-service reset and Scheduler::run() in a child coroutine, waiting on it
+     * with a deadline. On timeout the child is cancelled best-effort and a RuntimeException
+     * is thrown so tick()'s finally still runs - freeing the semaphore and letting the next
+     * tick retry - instead of run() hanging forever with the lock held.
+     *
+     * @throws \Throwable the timeout RuntimeException, or whatever Scheduler::run() threw
+     *                    (re-raised on the tick coroutine); tick()'s own catch handles both
+     */
+    private function runWithTimeout(): void
+    {
+        $channel = new Channel(1);
+
+        $childCid = Coroutine::create(function () use ($channel): void {
+            try {
+                $this->coWrapper->defer();
+                $this->scheduler->run();
+            } catch (Throwable $e) {
+                $channel->push($e);
+
+                return;
+            }
+
+            $channel->push(true);
+        });
+
+        if ($childCid === false) {
+            // Coroutine pool exhausted (max_concurrency) - nothing will ever push, so bail
+            // now rather than block this tick until the channel read times out.
+            throw new \RuntimeException('Could not spawn the scheduler run() coroutine');
+        }
+
+        /** @var true|Throwable|false $outcome false only on pop() timeout (we never push false) */
+        $outcome = $channel->pop($this->tickTimeoutSeconds);
+
+        if ($outcome === false) {
+            if (Coroutine::exists($childCid)) {
+                Coroutine::cancel($childCid);
+            }
+
+            throw new \RuntimeException(sprintf(
+                'Scheduler run() did not finish within %ds; abandoned this tick and released the lock',
+                $this->tickTimeoutSeconds,
+            ));
+        }
+
+        if ($outcome instanceof Throwable) {
+            throw $outcome;
         }
     }
 }

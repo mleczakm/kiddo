@@ -16,5 +16,6 @@ symfony_health_check:
         - id: App\Infrastructure\Healthcheck\HttpClientHealthcheck
         - id: App\Infrastructure\Healthcheck\ProcessCountHealthcheck
         - id: App\Infrastructure\Healthcheck\MemoryUsageHealthcheck
+        - id: App\Infrastructure\Healthcheck\SchedulerHeartbeatHealthcheck
     ping_checks:
         - id: symfony_health_check.status_up_check

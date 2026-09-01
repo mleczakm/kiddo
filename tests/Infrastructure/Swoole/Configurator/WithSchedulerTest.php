@@ -4,20 +4,26 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Swoole\Configurator;
 
+use App\Infrastructure\Scheduler\SchedulerHeartbeat;
 use App\Infrastructure\Swoole\Configurator\WithScheduler;
 use App\Infrastructure\Symfony\Scheduler;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use ReflectionClass;
 use RuntimeException;
+use Swoole\Coroutine;
 use Swoole\Http\Server;
 use Swoole\Timer;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\CoWrapper;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePool;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePoolContainer;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePoolEntry;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\LockRegistry;
+use Symfony\Component\Cache\Psr16Cache;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\InMemoryStore;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -52,6 +58,7 @@ final class WithSchedulerTest extends TestCase
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
             self::lockFactory(),
+            self::heartbeat(),
         ))->configure($this->createMock(Server::class));
 
         $ticks = iterator_to_array(Timer::list());
@@ -72,6 +79,7 @@ final class WithSchedulerTest extends TestCase
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
             self::lockFactory(),
+            self::heartbeat(),
         ))->configure($this->createMock(Server::class));
 
         static::assertSame([], self::lockRegistryFiles());
@@ -89,6 +97,7 @@ final class WithSchedulerTest extends TestCase
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
             self::lockFactory(),
+            self::heartbeat(),
         );
 
         run(static function () use ($withScheduler): void {
@@ -112,6 +121,7 @@ final class WithSchedulerTest extends TestCase
             $coWrapper,
             $this->createMock(LoggerInterface::class),
             self::lockFactory(),
+            self::heartbeat(),
         );
 
         run(static function () use ($withScheduler): void {
@@ -128,6 +138,7 @@ final class WithSchedulerTest extends TestCase
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
             self::lockFactory(),
+            self::heartbeat(),
         );
 
         $scheduler
@@ -163,6 +174,7 @@ final class WithSchedulerTest extends TestCase
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
             self::lockFactory(),
+            self::heartbeat(),
         );
 
         // A failed tick must not propagate - Timer::tick has no caller to catch it, so an
@@ -203,7 +215,13 @@ final class WithSchedulerTest extends TestCase
                 $loggedContext = $context;
             });
 
-        $withScheduler = new WithScheduler($scheduler, self::emptyCoWrapper(), $logger, self::lockFactory());
+        $withScheduler = new WithScheduler(
+            $scheduler,
+            self::emptyCoWrapper(),
+            $logger,
+            self::lockFactory(),
+            self::heartbeat(),
+        );
 
         run(static function () use ($withScheduler): void {
             $withScheduler->tick();
@@ -245,7 +263,7 @@ final class WithSchedulerTest extends TestCase
                 $loggedMessage = $message;
             });
 
-        $withScheduler = new WithScheduler($scheduler, $coWrapper, $logger, self::lockFactory());
+        $withScheduler = new WithScheduler($scheduler, $coWrapper, $logger, self::lockFactory(), self::heartbeat());
 
         // No run() wrapper - this is the whole point of the test.
         $withScheduler->tick();
@@ -268,6 +286,7 @@ final class WithSchedulerTest extends TestCase
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
             $lockFactory,
+            self::heartbeat(),
         );
 
         $first = $this->createMock(Scheduler::class);
@@ -282,6 +301,7 @@ final class WithSchedulerTest extends TestCase
             self::emptyCoWrapper(),
             $this->createMock(LoggerInterface::class),
             $lockFactory,
+            self::heartbeat(),
         );
 
         run(static function () use ($firstWithScheduler): void {
@@ -289,9 +309,61 @@ final class WithSchedulerTest extends TestCase
         });
     }
 
+    public function testTickAbandonsARunThatExceedsTheTimeoutAndLetsTheNextTickProceed(): void
+    {
+        $scheduler = $this->createMock(Scheduler::class);
+        $scheduler
+            ->expects($this->exactly(2))
+            ->method('run')
+            ->willReturnCallback(static function (): void {
+                static $calls = 0;
+                ++$calls;
+
+                if ($calls === 1) {
+                    // Hangs past the 1s timeout below - stands in for the production
+                    // "executeQuery('SELECT 1') that never returns" wedge.
+                    Coroutine::sleep(5);
+                }
+            });
+
+        $loggedError = null;
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->method('error')
+            ->willReturnCallback(static function (string $message) use (&$loggedError): void {
+                $loggedError = $message;
+            });
+
+        $withScheduler = new WithScheduler(
+            $scheduler,
+            self::emptyCoWrapper(),
+            $logger,
+            self::lockFactory(),
+            self::heartbeat(),
+            1,
+        );
+
+        // First tick: run() hangs, watchdog abandons it. Must return rather than block here.
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
+        });
+
+        static::assertSame('Scheduler tick failed', $loggedError);
+
+        // Second tick: the lock was released and $running reset, so this one runs normally.
+        run(static function () use ($withScheduler): void {
+            $withScheduler->tick();
+        });
+    }
+
     private static function lockFactory(): LockFactory
     {
         return new LockFactory(new InMemoryStore());
+    }
+
+    private static function heartbeat(): SchedulerHeartbeat
+    {
+        return new SchedulerHeartbeat(new Psr16Cache(new ArrayAdapter()), new MockClock(), new NullLogger());
     }
 
     private static function emptyCoWrapper(): CoWrapper

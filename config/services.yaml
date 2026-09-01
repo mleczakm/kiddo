@@ -22,6 +22,16 @@ parameters:
   # generous headroom over worker_max_request recycle overlap while still tripping on a leak.
   # Set to 0 to disable the failure and only surface the numbers.
   env(HEALTHCHECK_MAX_RSS_MIB): '1536'
+  # Seconds without a completed scheduler tick above which /health's scheduler_heartbeat
+  # check fails (503 -> autoheal restart). The Timer::tick interval is 1s, so 90 is ~90
+  # missed ticks - comfortably past a single slow tick or the SCHEDULER_TICK_TIMEOUT_SECONDS
+  # watchdog below, but far short of the hours it would take memory_usage to notice.
+  env(HEALTHCHECK_SCHEDULER_MAX_SILENCE_SECONDS): '90'
+  # Deadline for one Scheduler::run() pass. A SysV semaphore is not freed when the coroutine
+  # holding it dies, so a run() that hangs (seen in production) wedges the scheduler forever;
+  # past this the tick is abandoned, the lock released, and the next tick retries. Well under
+  # HEALTHCHECK_SCHEDULER_MAX_SILENCE_SECONDS so a one-off hang self-heals without a restart.
+  env(SCHEDULER_TICK_TIMEOUT_SECONDS): '15'
 
 services:
   # default configuration for services in *this* file
@@ -158,6 +168,7 @@ services:
   App\Infrastructure\Swoole\Configurator\WithScheduler:
     arguments:
       $lockFactory: '@lock.factory'
+      $tickTimeoutSeconds: '%env(int:SCHEDULER_TICK_TIMEOUT_SECONDS)%'
     tags:
       - 'swoole_bundle.server_configurator'
 
@@ -293,6 +304,10 @@ services:
   App\Infrastructure\Healthcheck\MemoryUsageHealthcheck:
     arguments:
       $maxRssMib: '%env(int:HEALTHCHECK_MAX_RSS_MIB)%'
+
+  App\Infrastructure\Healthcheck\SchedulerHeartbeatHealthcheck:
+    arguments:
+      $maxSilenceSeconds: '%env(int:HEALTHCHECK_SCHEDULER_MAX_SILENCE_SECONDS)%'
 
   # Symfony normally builds this via the HttpClient::create() factory, whose return type
   # (CurlHttpClient vs NativeHttpClient) is only known at runtime. The coroutine proxifier

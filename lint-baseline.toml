@@ -746,6 +746,12 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
 count = 1
