@@ -320,9 +320,10 @@ final class WithSchedulerTest extends TestCase
                 ++$calls;
 
                 if ($calls === 1) {
-                    // Hangs past the 1s timeout below - stands in for the production
-                    // "executeQuery('SELECT 1') that never returns" wedge.
-                    Coroutine::sleep(5);
+                    // Outlasts the 1s timeout below - stands in for the production
+                    // "executeQuery('SELECT 1') that never returns" wedge. Co\run() still
+                    // drains this child before returning, so nothing dangles into teardown.
+                    Coroutine::sleep(2);
                 }
             });
 

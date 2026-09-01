@@ -168,7 +168,7 @@ final class WithScheduler implements Configurator
                 // has to be the thing we can walk away from on timeout.
                 $this->runWithTimeout();
             }
-
+  
             $this->heartbeat->beat();
         } catch (Throwable $e) {
             // Timer::tick has no caller to propagate an exception to - nothing catches it,
@@ -192,9 +192,15 @@ final class WithScheduler implements Configurator
 
     /**
      * Runs the pooled-service reset and Scheduler::run() in a child coroutine, waiting on it
-     * with a deadline. On timeout the child is cancelled best-effort and a RuntimeException
-     * is thrown so tick()'s finally still runs - freeing the semaphore and letting the next
-     * tick retry - instead of run() hanging forever with the lock held.
+     * with a deadline. On timeout a RuntimeException is thrown so tick()'s finally still runs
+     * - freeing the semaphore and letting the next tick retry - instead of run() hanging
+     * forever with the lock held.
+     *
+     * The stuck child coroutine is deliberately left to run itself out rather than
+     * Coroutine::cancel()'d: cancelling a coroutine blocked in a native call is unreliable
+     * anyway, and freeing the lock (which the finally does) is the part that matters. A
+     * persistently hung run() therefore leaks one coroutine per timeout, which
+     * SchedulerHeartbeatHealthcheck -> autoheal clears within ~90s.
      *
      * @throws \Throwable the timeout RuntimeException, or whatever Scheduler::run() threw
      *                    (re-raised on the tick coroutine); tick()'s own catch handles both
@@ -226,12 +232,8 @@ final class WithScheduler implements Configurator
         $outcome = $channel->pop($this->tickTimeoutSeconds);
 
         if ($outcome === false) {
-            if (Coroutine::exists($childCid)) {
-                Coroutine::cancel($childCid);
-            }
-
             throw new \RuntimeException(sprintf(
-                'Scheduler run() did not finish within %ds; abandoned this tick and released the lock',
+                'Scheduler run() did not finish within %ds; abandoned this tick and released the lock so the next one can retry',
                 $this->tickTimeoutSeconds,
             ));
         }

@@ -2804,18 +2804,6 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-method"
-message = 'Method `exists` does not exist on type `Swoole\Coroutine`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-method"
-message = 'Method `cancel` does not exist on type `Swoole\Coroutine`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
 code = "non-existent-class"
 message = 'Class `Swoole\Coroutine\Channel` not found.'
 count = 1
