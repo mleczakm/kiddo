@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\UseCase\RejectTransfer;
 use App\Entity\Transfer;
 use App\Infrastructure\Doctrine\Repository\SettingRepository;
 use App\Infrastructure\Doctrine\Repository\TransferRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -21,8 +22,9 @@ final class PaymentComponent extends AbstractController
 
     public function __construct(
         private readonly TransferRepository $transferRepository,
-        private readonly EntityManagerInterface $entityManager,
         private readonly SettingRepository $settingRepository,
+        private readonly RejectTransfer $rejectTransfer,
+        private readonly LoggerInterface $logger,
     ) {}
 
     /**
@@ -59,10 +61,15 @@ final class PaymentComponent extends AbstractController
     #[LiveAction]
     public function reject(#[LiveArg] int $transferId): void
     {
-        $transfer = $this->transferRepository->find($transferId);
-        if ($transfer) {
-            $this->entityManager->remove($transfer);
-            $this->entityManager->flush();
+        try {
+            ($this->rejectTransfer)($transferId);
+        } catch (\RuntimeException $exception) {
+            // The transfer was assigned to a payment between this list render
+            // and the click - the refreshed list no longer offers it to reject.
+            $this->logger->warning('Transfer rejection was refused', [
+                'transferId' => $transferId,
+                'reason' => $exception->getMessage(),
+            ]);
         }
     }
 }
