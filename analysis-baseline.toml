@@ -5930,12 +5930,6 @@ count = 3
 
 [[issues]]
 file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\Tests\Infrastructure\Swoole\Configurator\WithSchedulerTest::lockRegistryFiles`. Saw type `mixed`.'
 count = 1

@@ -795,17 +795,24 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             $booking->payment = $payment;
             $this->entityManager->persist($payment);
         }
-        if ($this->paymentStateMachine->can($payment, Payment::TRANSITION_PAY)) {
-            $this->paymentStateMachine->apply($payment, Payment::TRANSITION_PAY);
-        } else {
-            $payment->setStatus(Payment::STATUS_PAID);
-        }
+        $this->markPaymentPaid($payment);
         if ($booking->getStatus() === Booking::STATUS_PENDING) {
             $booking->setStatus(Booking::STATUS_ACTIVE);
         }
         $this->entityManager->flush();
 
         return ToolResult::success('Płatność oznaczona jako opłacona.', $this->presenter->booking($booking));
+    }
+
+    private function markPaymentPaid(Payment $payment): void
+    {
+        if ($this->paymentStateMachine->can($payment, Payment::TRANSITION_PAY)) {
+            $this->paymentStateMachine->apply($payment, Payment::TRANSITION_PAY);
+
+            return;
+        }
+
+        $payment->setStatus(Payment::STATUS_PAID);
     }
 
     private function cancelLesson(ChatActor $actor, ToolArguments $args): ToolResult

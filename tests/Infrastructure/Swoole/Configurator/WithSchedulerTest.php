@@ -315,9 +315,8 @@ final class WithSchedulerTest extends TestCase
         // and drives the Swoole event loop. Doing that while Xdebug's coverage driver is
         // recording reliably segfaults the process on shutdown under CI (exit 139, after
         // every test has already passed). Every synchronous path through tick() is covered
-        // by the other tests; skip just this one when coverage is being collected.
-        $xdebugModes = function_exists('xdebug_info') ? xdebug_info('mode') : null;
-        if (is_array($xdebugModes) && in_array('coverage', $xdebugModes, true)) {
+        // by the other tests; skip just this one when coverage mode is enabled.
+        if (str_contains((string) ini_get('xdebug.mode'), 'coverage')) {
             static::markTestSkipped('Swoole coroutine suspend + Xdebug coverage segfaults on shutdown');
         }
 
