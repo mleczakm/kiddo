@@ -8,7 +8,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/symfony-swoole/swoole-bundle.git",
+      "url": "https://github.com/mleczakm/swoole-bundle.git",
       "no-api": true
     },
     {
@@ -63,7 +63,7 @@
     "scienta/doctrine-json-functions": "^6.5",
     "sentry/sentry-symfony": "^5.13.0",
     "swoole-bundle/resetter-bundle": "^2.0",
-    "swoole-bundle/swoole-bundle": "^0.32.0",
+    "swoole-bundle/swoole-bundle": "dev-fix/nonshared-service-pool-leak as v0.32.0",
     "swoole-bundle/z-engine": "dev-fix/get-raw-class-alias-ptr as 8.5.1",
     "symfony/asset": "8.0.*",
     "symfony/asset-mapper": "8.0.*",
@@ -322,7 +322,7 @@
     "roave/security-advisories": "dev-latest",
     "rregeer/phpunit-coverage-check": "^0.3.1",
     "symfony/browser-kit": "8.0.*",
-    "symfony/contracts": "^3.7.2",
+    "symfony/contracts": "^3.7.3",
     "symfony/css-selector": "8.0.*",
     "symfony/debug-bundle": "8.0.*",
     "symfony/maker-bundle": "^1.67",

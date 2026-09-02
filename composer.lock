@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a626ff187ad64dc89071ea8397b63a48",
+    "content-hash": "4aea38c8db595a97763fd60ae9db2695",
     "packages": [
         {
             "name": "aeon-php/business-hours",
@@ -5597,16 +5597,16 @@
         },
         {
             "name": "swoole-bundle/swoole-bundle",
-            "version": "v0.32.0",
+            "version": "dev-fix/nonshared-service-pool-leak",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony-swoole/swoole-bundle.git",
-                "reference": "2ae2591271b1c44fc59f09560ce46ebfa36e5150"
+                "url": "https://github.com/mleczakm/swoole-bundle.git",
+                "reference": "549fd2be3992aa47ec2c29cab9f747757276d3a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/2ae2591271b1c44fc59f09560ce46ebfa36e5150",
-                "reference": "2ae2591271b1c44fc59f09560ce46ebfa36e5150",
+                "url": "https://api.github.com/repos/mleczakm/swoole-bundle/zipball/549fd2be3992aa47ec2c29cab9f747757276d3a4",
+                "reference": "549fd2be3992aa47ec2c29cab9f747757276d3a4",
                 "shasum": ""
             },
             "require": {
@@ -5843,7 +5843,7 @@
                 "Server",
                 "Swoole"
             ],
-            "time": "2026-08-13T13:45:09+00:00"
+            "time": "2026-09-02T07:26:13+00:00"
         },
         {
             "name": "swoole-bundle/z-engine",
@@ -6456,16 +6456,16 @@
         },
         {
             "name": "symfony/contracts",
-            "version": "v3.7.2",
+            "version": "v3.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/contracts.git",
-                "reference": "08b31f5896b6963278abd0fc80bb39b49bb542dc"
+                "reference": "e31324c9a62c0117df80ee08484f02c27ee0f4e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/contracts/zipball/08b31f5896b6963278abd0fc80bb39b49bb542dc",
-                "reference": "08b31f5896b6963278abd0fc80bb39b49bb542dc",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/e31324c9a62c0117df80ee08484f02c27ee0f4e2",
+                "reference": "e31324c9a62c0117df80ee08484f02c27ee0f4e2",
                 "shasum": ""
             },
             "require": {
@@ -6531,7 +6531,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/contracts/tree/v3.7.2"
+                "source": "https://github.com/symfony/contracts/tree/v3.7.3"
             },
             "funding": [
                 {
@@ -6551,7 +6551,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-27T21:05:00+00:00"
+            "time": "2026-08-04T08:41:16+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -7885,16 +7885,16 @@
         },
         {
             "name": "symfony/http-kernel",
-            "version": "v8.1.5",
+            "version": "v8.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "0306e1e65b90023fe40de6c6be95d06396bcb2e6"
+                "reference": "2f73beb7c6f1a97d2c17bbf4dbd59da8cc18b355"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/0306e1e65b90023fe40de6c6be95d06396bcb2e6",
-                "reference": "0306e1e65b90023fe40de6c6be95d06396bcb2e6",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/2f73beb7c6f1a97d2c17bbf4dbd59da8cc18b355",
+                "reference": "2f73beb7c6f1a97d2c17bbf4dbd59da8cc18b355",
                 "shasum": ""
             },
             "require": {
@@ -7971,7 +7971,7 @@
             "description": "Provides a structured process for converting a Request into a Response",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-kernel/tree/v8.1.5"
+                "source": "https://github.com/symfony/http-kernel/tree/v8.1.6"
             },
             "funding": [
                 {
@@ -7991,7 +7991,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-22T13:45:00+00:00"
+            "time": "2026-08-30T21:40:49+00:00"
         },
         {
             "name": "symfony/intl",
@@ -12037,16 +12037,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v8.1.5",
+            "version": "v8.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "61743d9bc7ab23b194527ca1be2fafd7dc93b74a"
+                "reference": "3783365b58972f4779254d98372af80fbf15e170"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/61743d9bc7ab23b194527ca1be2fafd7dc93b74a",
-                "reference": "61743d9bc7ab23b194527ca1be2fafd7dc93b74a",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3783365b58972f4779254d98372af80fbf15e170",
+                "reference": "3783365b58972f4779254d98372af80fbf15e170",
                 "shasum": ""
             },
             "require": {
@@ -12100,7 +12100,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v8.1.5"
+                "source": "https://github.com/symfony/var-dumper/tree/v8.1.6"
             },
             "funding": [
                 {
@@ -12120,20 +12120,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-21T12:16:08+00:00"
+            "time": "2026-08-30T20:10:55+00:00"
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v8.1.5",
+            "version": "v8.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "b8f7dd85493e8372c7c81a1547caaaf86b9c16d1"
+                "reference": "802362f41128c430fd6685491e1fb72127fae78a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/b8f7dd85493e8372c7c81a1547caaaf86b9c16d1",
-                "reference": "b8f7dd85493e8372c7c81a1547caaaf86b9c16d1",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/802362f41128c430fd6685491e1fb72127fae78a",
+                "reference": "802362f41128c430fd6685491e1fb72127fae78a",
                 "shasum": ""
             },
             "require": {
@@ -12183,7 +12183,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v8.1.5"
+                "source": "https://github.com/symfony/var-exporter/tree/v8.1.6"
             },
             "funding": [
                 {
@@ -12203,7 +12203,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-13T16:11:28+00:00"
+            "time": "2026-08-29T06:30:03+00:00"
         },
         {
             "name": "symfony/web-link",
@@ -17642,6 +17642,12 @@
             "alias_normalized": "3.0.2.0"
         },
         {
+            "package": "swoole-bundle/swoole-bundle",
+            "version": "dev-fix/nonshared-service-pool-leak",
+            "alias": "v0.32.0",
+            "alias_normalized": "0.32.0.0"
+        },
+        {
             "package": "swoole-bundle/z-engine",
             "version": "dev-fix/get-raw-class-alias-ptr",
             "alias": "8.5.1",
@@ -17652,6 +17658,7 @@
     "stability-flags": {
         "novaway/feature-flag-bundle": 20,
         "roave/security-advisories": 20,
+        "swoole-bundle/swoole-bundle": 20,
         "swoole-bundle/z-engine": 20
     },
     "prefer-stable": true,
