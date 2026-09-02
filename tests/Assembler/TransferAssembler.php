@@ -47,6 +47,11 @@ class TransferAssembler extends EntityAssembler
         return $this->with('payment', $payment);
     }
 
+    public function withMessageId(string $messageId): static
+    {
+        return $this->with('messageId', $messageId);
+    }
+
     #[\Override]
     public function assemble(): Transfer
     {
@@ -68,6 +73,12 @@ class TransferAssembler extends EntityAssembler
             amount: $amount,
             transferredAt: $transferredAt,
         );
+
+        /** @var string|null $messageId */
+        $messageId = $this->properties['messageId'] ?? null;
+        if ($messageId !== null) {
+            $transfer->setMessageId($messageId);
+        }
 
         if (isset($this->properties['id'])) {
             $reflection = new \ReflectionClass($transfer);

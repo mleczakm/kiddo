@@ -9,6 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 #[ORM\Entity]
+#[ORM\UniqueConstraint(name: 'uniq_transfer_message_id', columns: ['message_id'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
 class Transfer
 {
@@ -20,6 +21,15 @@ class Transfer
     #[ORM\ManyToOne(targetEntity: Payment::class, inversedBy: 'transfers')]
     #[ORM\JoinColumn(name: 'payment_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?Payment $payment = null;
+
+    /**
+     * RFC 5322 Message-ID of the bank notification e-mail this transfer was
+     * imported from. Unique so the same e-mail can never be inserted twice, even
+     * if it is processed again after a crash or an async retry. Null for transfers
+     * that did not originate from an e-mail (demo seed data, manual entry).
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $messageId = null;
 
     public function __construct(
         #[ORM\Column(type: 'string', length: 255)]
@@ -82,5 +92,17 @@ class Transfer
     public function getTransferredAt(): \DateTimeImmutable
     {
         return $this->transferredAt;
+    }
+
+    public function getMessageId(): ?string
+    {
+        return $this->messageId;
+    }
+
+    public function setMessageId(?string $messageId): self
+    {
+        $this->messageId = $messageId;
+
+        return $this;
     }
 }

@@ -46,33 +46,64 @@ readonly class ImportTransfersFromMailHandler
             return;
         }
 
-        $transfers = [];
+        $imported = 0;
         /** @var Message $incomingNotification */
         foreach (($this->incomingNotificationMailQuery)() as $incomingNotification) {
+            $messageId = $incomingNotification->messageId();
+
+            if ($messageId !== null && $this->alreadyImported($messageId)) {
+                // Same e-mail already stored on an earlier run - e.g. the process
+                // died after persisting but before the IMAP \Seen flag stuck, or
+                // the async ImportTransfersFromMail message was retried. Re-set
+                // the flag and skip it; one e-mail is never imported twice. The
+                // unique index on transfer.message_id is the hard backstop for
+                // the narrow race between this check and the insert: it turns a
+                // duplicate into a failed run (retried 30s later) rather than a
+                // duplicate row.
+                $this->logger->info('Skipping bank notification e-mail already imported', [
+                    'message_id' => $messageId,
+                ]);
+                $incomingNotification->markSeen();
+
+                continue;
+            }
+
+            $transfer = null;
             if (str_starts_with($incomingNotification->subject() ?: '', 'Uznanie rachunku')) {
                 $parsed = $this->mailParser->fromMailSubjectAndContent(
                     $incomingNotification->subject() ?: '',
                     $incomingNotification->html() ?: ',',
                 );
                 if ($parsed) {
-                    $transfers[] = new Transfer(
+                    $transfer = new Transfer(
                         $parsed->accountNumber,
                         $parsed->sender,
                         $parsed->title,
                         $parsed->amount,
                         Clock::get()->now(),
                     );
+                    $transfer->setMessageId($messageId);
                 }
             }
+
             $incomingNotification->markSeen();
-        }
-        foreach ($transfers as $transfer) {
-            $this->messageBus->dispatch(new SaveTransfer($transfer));
+
+            if ($transfer !== null) {
+                $this->messageBus->dispatch(new SaveTransfer($transfer));
+                ++$imported;
+            }
         }
 
-        if (count($transfers) > 0) {
+        if ($imported > 0) {
             $this->updateLastSuccessfulImportDate();
         }
+    }
+
+    private function alreadyImported(string $messageId): bool
+    {
+        return $this->transferRepository->findOneBy([
+            'messageId' => $messageId,
+        ]) !== null;
     }
 
     private function rematchUnmatchedTransfers(): void

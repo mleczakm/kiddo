@@ -27,25 +27,57 @@ class ImportTransfersFromMailHandlerTest extends TestCase
 {
     public function testFetchProperlyEmailsFromMailbox(): void
     {
-        $settingRepository = $this->createMock(SettingRepositoryInterface::class);
-        $entityManager = $this->createMock(EntityManagerInterface::class);
         $transferRepository = $this->createMock(TransferRepositoryInterface::class);
-        $logger = $this->createMock(LoggerInterface::class);
 
-        (new ImportTransfersFromMailHandler(
-            new AliorMailParser(),
-            $messengerFake = new MessengerFake(),
-            new FakeQuery(),
-            $settingRepository,
-            $entityManager,
-            $transferRepository,
-            $logger,
-            mailboxUsername: 'user@example.com',
-            mailboxPassword: 'secret',
-        ))(new ImportTransfersFromMail());
+        $messengerFake = new MessengerFake();
+        $this->makeHandler($messengerFake, new FakeQuery(), $transferRepository)(new ImportTransfersFromMail());
 
         static::assertNotEmpty($messengerFake->dispatched);
-        static::assertInstanceOf(SaveTransfer::class, $messengerFake->dispatched[0]->getMessage());
+        $saveTransfer = $messengerFake->dispatched[0]->getMessage();
+        static::assertInstanceOf(SaveTransfer::class, $saveTransfer);
+        static::assertStringContainsString(
+            'test-uznanie-1@alior.pl',
+            $saveTransfer->transfer->getMessageId() ?? '',
+            'The originating e-mail Message-ID is carried onto the Transfer',
+        );
+    }
+
+    public function testDoesNotReimportAnEmailWhoseMessageIdIsAlreadyStored(): void
+    {
+        $transferRepository = $this->createMock(TransferRepositoryInterface::class);
+        $transferRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturnCallback(static function (array $criteria): Transfer {
+                static::assertSame(['messageId'], array_keys($criteria));
+                static::assertIsString($criteria['messageId']);
+                static::assertStringContainsString('test-uznanie-1@alior.pl', $criteria['messageId']);
+
+                return new Transfer('123', 'Sender', 'WW5J', '60.00', new \DateTimeImmutable());
+            });
+
+        $messengerFake = new MessengerFake();
+        $this->makeHandler($messengerFake, new FakeQuery(), $transferRepository)(new ImportTransfersFromMail());
+
+        static::assertEmpty($messengerFake->dispatched, 'An already-imported e-mail is never dispatched again');
+    }
+
+    private function makeHandler(
+        MessengerFake $messengerFake,
+        IncomingNotificationMailQuery $incomingQuery,
+        TransferRepositoryInterface $transferRepository,
+    ): ImportTransfersFromMailHandler {
+        return new ImportTransfersFromMailHandler(
+            new AliorMailParser(),
+            $messengerFake,
+            $incomingQuery,
+            $this->createMock(SettingRepositoryInterface::class),
+            $this->createMock(EntityManagerInterface::class),
+            $transferRepository,
+            $this->createMock(LoggerInterface::class),
+            mailboxUsername: 'user@example.com',
+            mailboxPassword: 'secret',
+        );
     }
 
     public function testSkipsImapAndRematchesUnmatchedTransfersWhenCredentialsMissing(): void
@@ -113,6 +145,7 @@ class FakeQuery implements IncomingNotificationMailQuery
             From: powiadomienia@alior.pl
             To: recipient@example.com
             Subject: Uznanie rachunku 91...1234 kwotą 50,00 PLN
+            Message-ID: <test-uznanie-1@alior.pl>
             Content-Type: text/html; charset=utf-8
 
             <html><br/>
