@@ -11,6 +11,25 @@ novaway_feature_flag:
           commerce_order_write: true
           dynamic_pricing: true
           pricing_admin: false
+          # Monthly-subscription ticket type + recurring billing. OFF on prod
+          # until operational sign-off; on in dev/test via the blocks below.
+          subscriptions: false
+
+# The "features" map is a raw array and REPLACES the base map (see the test
+# block's comment) - so any environment override must restate every flag.
+when@dev:
+  novaway_feature_flag:
+    managers:
+      default:
+        options:
+          features:
+            cart: true
+            platform_billing_widget: false
+            chat_assistant: true
+            commerce_order_write: true
+            dynamic_pricing: true
+            pricing_admin: false
+            subscriptions: true
 
 when@test:
   novaway_feature_flag:
@@ -29,3 +48,4 @@ when@test:
             dynamic_pricing: true
             pricing_admin: true
             manual_bookings: true
+            subscriptions: true

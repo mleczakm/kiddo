@@ -155,12 +155,27 @@ class Payment
         private Money $amount,
         #[ORM\Column(type: 'string', enumType: PaymentMethod::class, nullable: true)]
         private ?PaymentMethod $method = null,
+        /** Human label for payments not tied to a booking (e.g. a monthly enrollment fee). */
+        #[ORM\Column(type: 'string', length: 255, nullable: true)]
+        private ?string $description = null,
     ) {
         $this->id = new Ulid();
         $this->createdAt = new \DateTimeImmutable();
         $this->bookings = new ArrayCollection();
         $this->transfers = new ArrayCollection();
         $this->method ??= PaymentMethod::ONLINE;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
     public function getId(): Ulid
@@ -381,6 +396,10 @@ class Payment
         return $this->amount->isLessThanOrEqualTo($this->getAmountPaid());
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     */
     public function getAmountPaid(): Money
     {
         return $this->transfers->map(static fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount))->reduce(

@@ -10,6 +10,7 @@ use App\Domain\Commerce\Order\OrderLine;
 use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\PaymentCode;
+use App\Entity\Subscription;
 use App\Entity\TicketType;
 use App\Entity\User;
 use Brick\Money\Money;
@@ -90,6 +91,27 @@ final class OrderPlacementService
             if ($item->participant !== null) {
                 $booking->setChild($item->participant);
             }
+
+            if ($item->ticketOption->type === TicketType::MONTHLY) {
+                $series = $item->lesson->getSeries() ?? throw new \InvalidArgumentException(
+                    'A monthly ticket requires a series.',
+                );
+                $subscription = new Subscription(
+                    $user,
+                    $series,
+                    $item->ticketOption->price->getMinorAmount()->toInt(),
+                    $item->participant,
+                );
+                $this->em->persist($subscription);
+                $subscription->markCharged($item->lesson->schedule);
+                $booking->setSubscriptionId($subscription->getId());
+                $payment->setDescription(sprintf(
+                    '%s · %s',
+                    $item->lesson->getMetadata()->title,
+                    $item->lesson->schedule->format('m.Y'),
+                ));
+            }
+
             $bookings[] = $booking;
 
             $finalPriceMinor = $item->ticketOption->price->getMinorAmount()->toInt();
@@ -100,7 +122,7 @@ final class OrderPlacementService
                 continue;
             }
 
-            $isSeries = $item->ticketOption->type === TicketType::CARNET_4;
+            $isSeries = $item->ticketOption->type->isSeriesScoped();
             $line = new OrderLine(
                 id: new Ulid(),
                 orderId: $orderId,
@@ -173,9 +195,11 @@ final class OrderPlacementService
         /** @var array<string, array{lesson: Lesson, required: int}> $requirements */
         $requirements = [];
         foreach ($items as $item) {
-            $occurrences = $item->ticketOption->type === TicketType::CARNET_4
-                ? $item->lesson->getSeries()?->getLessonsGte($item->lesson, 4) ?? []
-                : [$item->lesson];
+            $occurrences = match ($item->ticketOption->type) {
+                TicketType::CARNET_4 => $item->lesson->getSeries()?->getLessonsGte($item->lesson, 4) ?? [],
+                TicketType::MONTHLY => BookingFactory::monthLessons($item->lesson),
+                TicketType::ONE_TIME => [$item->lesson],
+            };
             foreach ($occurrences as $lesson) {
                 $id = (string) $lesson->getId();
                 $requirements[$id] ??= ['lesson' => $lesson, 'required' => 0];

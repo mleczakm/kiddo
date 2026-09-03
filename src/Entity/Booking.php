@@ -86,6 +86,12 @@ class Booking
     #[ORM\Column(type: 'ulid', nullable: true)]
     private ?Ulid $orderLineId = null;
 
+    // Set on the per-month Booking a monthly-subscription ticket produces, so
+    // it can be traced back to its Subscription. Scalar reference, like
+    // orderLineId. Null for one-time / carnet bookings.
+    #[ORM\Column(type: 'ulid', nullable: true)]
+    private ?Ulid $subscriptionId = null;
+
     public function __construct(
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
         #[ORM\JoinColumn(nullable: false)]
@@ -126,6 +132,23 @@ class Booking
         $this->orderLineId = $orderLineId;
 
         return $this;
+    }
+
+    public function getSubscriptionId(): ?Ulid
+    {
+        return $this->subscriptionId;
+    }
+
+    public function setSubscriptionId(?Ulid $subscriptionId): self
+    {
+        $this->subscriptionId = $subscriptionId;
+
+        return $this;
+    }
+
+    public function isSubscription(): bool
+    {
+        return $this->subscriptionId !== null;
     }
 
     /**
@@ -548,7 +571,11 @@ class Booking
 
     public function getReschedulePolicyFor(Lesson $lesson): TicketReschedulePolicy
     {
-        $type = $this->isCarnet() ? TicketType::CARNET_4 : TicketType::ONE_TIME;
+        $type = match (true) {
+            $this->subscriptionId !== null => TicketType::MONTHLY,
+            $this->isCarnet() => TicketType::CARNET_4,
+            default => TicketType::ONE_TIME,
+        };
         foreach ($lesson->getTicketOptions() as $option) {
             if ($option->type === $type) {
                 return $option->reschedulePolicy;

@@ -381,6 +381,8 @@ lesson:
   booking_options: Opcje rezerwacji
   carnet_4: karnet 4 wejścia
   one_time: jednorazowy
+  monthly: abonament miesięczny
+  monthly.description: "Wszystkie zajęcia w danym miesiącu, rozliczane co miesiąc."
   carnet_4.description: >-
     4 następujące po sobie wejścia na zajęcia.
     

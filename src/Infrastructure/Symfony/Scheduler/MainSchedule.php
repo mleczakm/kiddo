@@ -9,6 +9,7 @@ use App\Application\Command\CheckBookingsToMarkPast;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Command\CheckExpiredPayments;
 use App\Application\Command\ImportTransfersFromMail;
+use App\Application\Command\IssueSubscriptionCharges;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Command\PurgeOldNotifications;
 use App\Application\Command\SampleResourceUsage;
@@ -52,6 +53,14 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 RecurringMessage::cron('5 * * * *', new CheckBookingsToMarkPast(), new \DateTimeZone('Europe/Warsaw')),
                 RecurringMessage::cron('15 3 * * *', new PurgeOldNotifications(), new \DateTimeZone('Europe/Warsaw')),
                 RecurringMessage::cron('35 3 * * *', new BackfillLegacyOrders(100), new \DateTimeZone('Europe/Warsaw')),
+                // Monthly-subscription invoicing. The handler no-ops unless there
+                // are active subscriptions (only created behind the `subscriptions`
+                // flag), so this is inert on prod.
+                RecurringMessage::cron(
+                    '20 4 1 * *',
+                    new CallbackMessageProvider(static fn() => [new IssueSubscriptionCharges()]),
+                    new \DateTimeZone('Europe/Warsaw'),
+                ),
             );
     }
 }

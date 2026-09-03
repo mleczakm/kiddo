@@ -194,6 +194,10 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $carnet4Price = null;
 
+    /** Monthly-subscription price (whole span of a month's series lessons). Gated by the `subscriptions` flag. */
+    #[LiveProp(writable: true)]
+    public ?string $monthlyPrice = null;
+
     // Instructors
     /**
      * @var array<int, string>
@@ -326,6 +330,10 @@ class WorkshopEditorComponent extends AbstractController
             }
             if ($option->type === TicketType::CARNET_4) {
                 $this->carnet4Price = (string) $option->price->getAmount();
+                continue;
+            }
+            if ($option->type === TicketType::MONTHLY) {
+                $this->monthlyPrice = (string) $option->price->getAmount();
             }
         }
     }
@@ -1181,6 +1189,16 @@ class WorkshopEditorComponent extends AbstractController
                 Money::of($carnet4Price, 'PLN'),
                 'Karnet: 4 wejścia',
                 TicketReschedulePolicy::ONETIME_24H_BEFORE,
+            );
+        }
+
+        $monthlyPrice = MoneyInputParser::parse($this->monthlyPrice);
+        if ($monthlyPrice !== null) {
+            $ticketOptions[] = new TicketOption(
+                TicketType::MONTHLY,
+                Money::of($monthlyPrice, 'PLN'),
+                'Abonament miesięczny',
+                TicketReschedulePolicy::NOT_ALLOWED,
             );
         }
 

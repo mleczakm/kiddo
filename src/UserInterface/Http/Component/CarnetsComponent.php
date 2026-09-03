@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Repository\SubscriptionRepositoryInterface;
 use App\Entity\Booking;
+use App\Entity\Subscription;
+use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -18,7 +21,22 @@ class CarnetsComponent extends AbstractController
 
     public function __construct(
         private readonly BookingRepository $bookingRepository,
+        private readonly SubscriptionRepositoryInterface $subscriptionRepository,
     ) {}
+
+    /**
+     * Active monthly subscriptions - shown alongside carnets.
+     *
+     * @return list<Subscription>
+     *
+     * @throws \LogicException
+     */
+    public function getSubscriptions(): array
+    {
+        $user = $this->getUser();
+
+        return $user instanceof User ? $this->subscriptionRepository->findActiveForUser($user) : [];
+    }
 
     /**
      * @return list<Booking>
