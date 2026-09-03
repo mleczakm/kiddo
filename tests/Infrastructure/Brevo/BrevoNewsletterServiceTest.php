@@ -147,7 +147,7 @@ final class BrevoNewsletterServiceTest extends TestCase
         $service->removeContactFromList('goodbye@example.com');
 
         static::assertSame('POST', $captured['method']);
-        static::assertSame('https://api.brevo.com/v3/contacts/goodbye@example.com/removeList', $captured['url']);
+        static::assertSame('https://api.brevo.com/v3/contacts/goodbye%40example.com/removeList', $captured['url']);
 
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $captured['body'], true, flags: JSON_THROW_ON_ERROR);
@@ -187,7 +187,7 @@ final class BrevoNewsletterServiceTest extends TestCase
         $service->sendDoubleOptInConfirmation('guest@example.com');
 
         static::assertSame('POST', $captured['method']);
-        static::assertSame('https://api.brevo.com/v3/doubleOptInConfirmations', $captured['url']);
+        static::assertSame('https://api.brevo.com/v3/contacts/doubleOptinConfirmation', $captured['url']);
 
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $captured['body'], true, flags: JSON_THROW_ON_ERROR);
@@ -208,6 +208,47 @@ final class BrevoNewsletterServiceTest extends TestCase
         );
 
         $this->expectException(\RuntimeException::class);
+        $service->sendDoubleOptInConfirmation('a@b.com');
+    }
+
+    public function testSendDoubleOptInConfirmationThrowsWhenTemplateIdIsZero(): void
+    {
+        $service = new BrevoNewsletterService(
+            new MockHttpClient([]),
+            self::API_KEY,
+            self::LIST_ID,
+            0,
+            self::REDIRECTION_URL,
+        );
+
+        $this->expectException(\RuntimeException::class);
+        $service->sendDoubleOptInConfirmation('a@b.com');
+    }
+
+    public function testSendDoubleOptInConfirmationThrowsWhenRedirectionUrlIsEmpty(): void
+    {
+        $service = new BrevoNewsletterService(
+            new MockHttpClient([]),
+            self::API_KEY,
+            self::LIST_ID,
+            self::TEMPLATE_ID,
+            '',
+        );
+
+        $this->expectException(\RuntimeException::class);
+        $service->sendDoubleOptInConfirmation('a@b.com');
+    }
+
+    public function testSendDoubleOptInConfirmationThrowsWhenBrevoRejectsRequest(): void
+    {
+        $service = $this->createService(new MockHttpClient([
+            new MockResponse('{"code":"invalid_parameter"}', [
+                'http_code' => 400,
+            ]),
+        ]));
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Brevo API request failed with HTTP 400');
         $service->sendDoubleOptInConfirmation('a@b.com');
     }
 

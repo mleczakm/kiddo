@@ -13,6 +13,9 @@ apps:
     shared_network: mikrus
     env:
       APP_ENV: prod
+      BREVO_NEWSLETTER_LIST_ID: "5"
+      BREVO_DOI_TEMPLATE_ID: "1"
+      BREVO_DOI_REDIRECTION_URL: "https://warsztatowniasensoryczna.pl/newsletter-potwierdzony"
     ipv6: "{{ mikrus_ipv6 }}"
     cytrus_host: "{{ cytrus_host }}"
     proxied: true
