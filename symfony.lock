@@ -81,6 +81,9 @@
             "config/routes/symfony_health_check.yaml"
         ]
     },
+    "mleczakm/swoole-bundle-scheduler": {
+        "version": "dev-main"
+    },
     "novaway/feature-flag-bundle": {
         "version": "3.0.0-beta2"
     },

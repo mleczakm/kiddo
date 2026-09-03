@@ -10,6 +10,7 @@ use Misd\PhoneNumberBundle\MisdPhoneNumberBundle;
 use Novaway\Bundle\FeatureFlagBundle\NovawayFeatureFlagBundle;
 use Sentry\SentryBundle\SentryBundle;
 use SwooleBundle\ResetterBundle\SwooleBundleResetterBundle;
+use SwooleBundle\Scheduler\SwooleBundleSchedulerBundle;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Bundle\SwooleBundle;
 use Symfony\AI\McpBundle\McpBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
@@ -69,6 +70,9 @@ return [
         'dev' => true,
     ],
     SwooleBundle::class => [
+        'all' => true,
+    ],
+    SwooleBundleSchedulerBundle::class => [
         'all' => true,
     ],
     SymfonycastsTailwindBundle::class => [

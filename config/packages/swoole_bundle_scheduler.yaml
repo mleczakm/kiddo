@@ -1,0 +1,43 @@
+# Symfony Scheduler polled on the Swoole event loop (mleczakm/swoole-bundle-scheduler),
+# replacing the former app-local App\Infrastructure\Symfony\Scheduler +
+# App\Infrastructure\Swoole\Configurator\WithScheduler. Every value here reproduces the
+# behaviour those classes had in production - see their former docblocks / git history and
+# config/services.yaml for the incident write-ups behind each knob.
+swoole_bundle_scheduler:
+    enabled: true
+
+    # 1s tick: MainSchedule has sub-minute recurrences (RecurringMessage::every(30) etc.).
+    interval: 1
+
+    # Ensure both the ORM connection and the dedicated DBAL 'cache' connection are alive
+    # before each poll pass / dispatch - a stale pooled connection was surfacing mid
+    # Checkpoint::save(). Invokable adapter over App\Infrastructure\Doctrine\ConnectionEnsurerInterface.
+    pre_run: 'App\Infrastructure\Doctrine\SchedulerConnectionGuard'
+
+    # The Timer::tick also fires once in Swoole's manager process during Server::reload();
+    # without a kernel-visible lock every due command (and its notification mail) dispatched
+    # twice a few hundred microseconds apart. framework.lock is 'semaphore' (see lock.yaml).
+    lock:
+        enabled: true
+        factory: lock.factory
+        resource: app-scheduler-tick
+
+    # A SysV semaphore is not freed when the coroutine holding it hangs, so a Scheduler::run()
+    # that never returns (seen in production, e.g. a bare 'SELECT 1' that never comes back)
+    # wedges the scheduler forever. Past this deadline the tick is abandoned and the lock
+    # force-released; well under health_check.max_silence so a one-off hang self-heals.
+    watchdog:
+        enabled: true
+        timeout: '%env(int:SCHEDULER_TICK_TIMEOUT_SECONDS)%'
+
+    # cache.app is the DBAL 'cache' connection pool (cache.yaml) - cross-process and
+    # deploy-surviving, the same store DoctrineInsideTaskWorkerHealthcheck relies on.
+    heartbeat:
+        enabled: true
+        cache: cache.app
+
+    # 503 -> autoheal restart when ticks stop completing, in ~90s instead of waiting hours
+    # for the memory_usage threshold. Registered in config/packages/symfony_health_check.yaml.
+    health_check:
+        enabled: true
+        max_silence: '%env(int:HEALTHCHECK_SCHEDULER_MAX_SILENCE_SECONDS)%'

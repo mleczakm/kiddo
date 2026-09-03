@@ -159,18 +159,11 @@ services:
     autowire: false
     autoconfigure: false
 
-  App\Infrastructure\Symfony\Scheduler:
-    arguments:
-      $scheduleProviders:
-        - '@App\Infrastructure\Symfony\Scheduler\MainSchedule'
-      $connectionResetter: '@App\Infrastructure\Doctrine\ConnectionEnsurerInterface'
-
-  App\Infrastructure\Swoole\Configurator\WithScheduler:
-    arguments:
-      $lockFactory: '@lock.factory'
-      $tickTimeoutSeconds: '%env(int:SCHEDULER_TICK_TIMEOUT_SECONDS)%'
-    tags:
-      - 'swoole_bundle.server_configurator'
+  # Symfony Scheduler now runs on the Swoole event loop via mleczakm/swoole-bundle-scheduler
+  # (see config/packages/swoole_bundle_scheduler.yaml). The former app-local Scheduler,
+  # WithScheduler configurator and heartbeat/health-check classes moved into that bundle;
+  # MainSchedule stays here and is discovered through its #[AsSchedule] attribute.
+  # SchedulerConnectionGuard is the pre_run hook - autowired from src/, no config needed.
 
   DirectoryTree\ImapEngine\MailboxInterface:
     class: DirectoryTree\ImapEngine\Mailbox
@@ -304,10 +297,6 @@ services:
   App\Infrastructure\Healthcheck\MemoryUsageHealthcheck:
     arguments:
       $maxRssMib: '%env(int:HEALTHCHECK_MAX_RSS_MIB)%'
-
-  App\Infrastructure\Healthcheck\SchedulerHeartbeatHealthcheck:
-    arguments:
-      $maxSilenceSeconds: '%env(int:HEALTHCHECK_SCHEDULER_MAX_SILENCE_SECONDS)%'
 
   # Symfony normally builds this via the HttpClient::create() factory, whose return type
   # (CurlHttpClient vs NativeHttpClient) is only known at runtime. The coroutine proxifier

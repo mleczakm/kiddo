@@ -13,12 +13,16 @@ use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\Command\PurgeOldNotifications;
 use App\Application\Command\SampleResourceUsage;
 use App\Application\Command\TriggerMatchPaymentForTransferForPastTransfers;
+use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Component\Scheduler\Trigger\CallbackMessageProvider;
 use Symfony\Contracts\Cache\CacheInterface;
 
+// Discovered by mleczakm/swoole-bundle-scheduler via the scheduler.schedule_provider tag
+// this attribute adds. Not consumed by a messenger:consume worker.
+#[AsSchedule('main')]
 final readonly class MainSchedule implements ScheduleProviderInterface
 {
     public function __construct(

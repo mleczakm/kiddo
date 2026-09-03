@@ -1546,6 +1546,31 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         max_active_sessions?: int|Param, // Default: 1024
  *     },
  * }
+ * @psalm-type SwooleBundleSchedulerConfig = array{
+ *     enabled?: bool|Param, // Register the Swoole Timer::tick scheduler polling loop as a server configurator. // Default: false
+ *     interval?: int|Param, // How often, in seconds, to poll Symfony Scheduler schedules for due messages. // Default: 60
+ *     pre_run?: scalar|Param|null, // Optional service id, invoked as a callable before each poll pass and before each message dispatch (e.g. a database connection liveness check). Must be invokable. // Default: null
+ *     after_tick?: scalar|Param|null, // Optional service id, invoked as a callable after every tick whether it succeeded or not (e.g. resetting shared, non-pooled app state). Must be invokable. // Default: null
+ *     lock?: array{ // Cross-process lock around each tick, to stop a spillover tick in a second OS process double-dispatching.
+ *         enabled?: bool|Param, // Default: false
+ *         factory?: scalar|Param|null, // Service id of a Symfony\Component\Lock\LockFactory backed by a cross-process store. // Default: "lock.factory"
+ *         resource?: scalar|Param|null, // Lock resource name. // Default: "swoole-scheduler-tick"
+ *     },
+ *     watchdog?: array{ // Timer::after deadline for a single Scheduler::run() pass; past it the tick is abandoned and the lock force-released.
+ *         enabled?: bool|Param, // Default: false
+ *         timeout?: int|Param, // Seconds a single Scheduler::run() pass is allowed before the watchdog force-releases the tick. // Default: 15
+ *     },
+ *     heartbeat?: array{ // Record a "last completed tick" timestamp after every successful run, for an HTTP-worker health check to read.
+ *         enabled?: bool|Param, // Default: false
+ *         cache?: scalar|Param|null, // Cache pool service id (PSR-6). Must be a cross-process, deploy-surviving store (Redis / DBAL), not an in-memory pool. // Default: "cache.app"
+ *         key?: scalar|Param|null, // Default: "scheduler_last_tick_at"
+ *         ttl?: int|Param, // Default: 86400
+ *     },
+ *     health_check?: array{ // Register a macpaw/symfony-health-check-bundle check that fails when ticks stop completing. Implies heartbeat.
+ *         enabled?: bool|Param, // Default: false
+ *         max_silence?: int|Param, // Seconds without a completed tick above which the /health check fails. // Default: 90
+ *     },
+ * }
  * @psalm-type SymfonycastsTailwindConfig = array{
  *     input_css?: list<scalar|Param|null>,
  *     config_file?: scalar|Param|null, // Path to the tailwind.config.js file // Default: "%kernel.project_dir%/tailwind.config.js"
@@ -1832,6 +1857,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     security?: SecurityConfig,
  *     monolog?: MonologConfig,
  *     swoole?: SwooleConfig,
+ *     swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
  *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     twig_component?: TwigComponentConfig,
  *     live_component?: LiveComponentConfig,
@@ -1859,6 +1885,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         monolog?: MonologConfig,
  *         maker?: MakerConfig,
  *         swoole?: SwooleConfig,
+ *         swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,
@@ -1885,6 +1912,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
  *         swoole?: SwooleConfig,
+ *         swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,
@@ -1912,6 +1940,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
  *         swoole?: SwooleConfig,
+ *         swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,

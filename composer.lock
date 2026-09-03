@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4aea38c8db595a97763fd60ae9db2695",
+    "content-hash": "bf834aedea717a1175f94bd8b68a6567",
     "packages": [
         {
             "name": "aeon-php/business-hours",
@@ -3430,6 +3430,82 @@
                 "source": "https://github.com/mleczakm/aeon-school-holidays/tree/v1.0.0"
             },
             "time": "2026-08-26T23:23:14+00:00"
+        },
+        {
+            "name": "mleczakm/swoole-bundle-scheduler",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mleczakm/swoole-bundle-scheduler.git",
+                "reference": "cbc50cb2162340ccb54fc77cfed67332876df16b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mleczakm/swoole-bundle-scheduler/zipball/cbc50cb2162340ccb54fc77cfed67332876df16b",
+                "reference": "cbc50cb2162340ccb54fc77cfed67332876df16b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-swoole": "*",
+                "php": "^8.3",
+                "psr/cache": "^2.0 || ^3.0",
+                "psr/clock": "^1.0",
+                "psr/event-dispatcher": "^1.0",
+                "psr/log": "^3.0",
+                "swoole-bundle/swoole-bundle": "^0.32",
+                "symfony/cache": "^7.4 || ^8.0",
+                "symfony/clock": "^7.4 || ^8.0",
+                "symfony/config": "^7.4 || ^8.0",
+                "symfony/dependency-injection": "^7.4 || ^8.0",
+                "symfony/http-kernel": "^7.4 || ^8.0",
+                "symfony/messenger": "^7.4 || ^8.0",
+                "symfony/scheduler": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.94",
+                "macpaw/symfony-health-check-bundle": "^2.1",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^11.5 || ^12.5",
+                "symfony/framework-bundle": "^7.4 || ^8.0",
+                "symfony/lock": "^7.4 || ^8.0"
+            },
+            "suggest": {
+                "macpaw/symfony-health-check-bundle": "Enables the /health scheduler heartbeat check (swoole_bundle_scheduler.health_check)",
+                "symfony/lock": "Enables the opt-in cross-process tick lock (swoole_bundle_scheduler.lock)"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "SwooleBundle\\Scheduler\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michał Mleczko",
+                    "email": "do@mleczki.pl"
+                }
+            ],
+            "description": "Run Symfony Scheduler inside the Swoole HTTP server on a Swoole\\Timer::tick() loop instead of a blocking messenger:consume worker.",
+            "keywords": [
+                "Messenger",
+                "cron",
+                "openswoole",
+                "scheduler",
+                "swoole",
+                "swoole-bundle",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/mleczakm/swoole-bundle-scheduler/issues",
+                "source": "https://github.com/mleczakm/swoole-bundle-scheduler/tree/v0.1.0"
+            },
+            "time": "2026-09-03T09:53:37+00:00"
         },
         {
             "name": "mleczakm/twig-now",
