@@ -171,6 +171,7 @@
          data-admin-tour-label-skip-value="{{ 'admin.tour.skip'|trans }}"
          data-admin-tour-label-finish-value="{{ 'admin.tour.finish'|trans }}"
          data-admin-tour-step-counter-format-value="{{ admin_tour_step_counter_format }}">
+        {{ include('partials/_toasts.html.twig') }}
         {# Sidebar #}
         {% block sidebar %}
             {{ include('components/AdminMenu.html.twig') }}

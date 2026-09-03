@@ -1,0 +1,17 @@
+{#
+  Shared toast container — mounted once in `base.html.twig` and once in
+  `admin/base.html.twig`. The `toast` Stimulus controller drains the
+  server-flash seed nodes on connect and then listens for `toast` events.
+#}
+<div data-controller="toast"
+     class="fixed top-4 right-4 z-[200] flex w-full max-w-sm flex-col gap-2 pointer-events-none"
+     aria-live="polite"
+     aria-atomic="false">
+    {% for level, messages in app.flashes %}
+        {% for message in messages %}
+            <span data-toast-message="{{ message|trans }}"
+                  data-toast-level="{{ level == 'success' or level == 'error' or level == 'warning' ? level : 'info' }}"
+                  hidden></span>
+        {% endfor %}
+    {% endfor %}
+</div>

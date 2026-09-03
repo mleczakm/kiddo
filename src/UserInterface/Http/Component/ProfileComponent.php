@@ -6,6 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Application\Newsletter\NewsletterSubscriptionManager;
 use App\Entity\User;
+use App\UserInterface\Http\Component\Concern\ToastableComponent;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberFormat;
@@ -22,6 +23,7 @@ use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 class ProfileComponent extends AbstractController
 {
     use DefaultActionTrait;
+    use ToastableComponent;
     use ValidatableComponentTrait;
 
     #[LiveProp]
@@ -77,6 +79,9 @@ class ProfileComponent extends AbstractController
         $this->phoneError = null;
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     #[LiveAction]
     public function save(): void
     {
@@ -114,7 +119,7 @@ class ProfileComponent extends AbstractController
 
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'profile.update_success');
+        $this->toast('profile.update_success');
         $this->isEditing = false;
 
         $this->user = $user;
