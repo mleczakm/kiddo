@@ -1845,7 +1845,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:387:13}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:406:13}`.'
 count = 1
 
 [[issues]]
@@ -1863,7 +1863,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:387:13}`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:406:13}`.'
 count = 1
 
 [[issues]]
@@ -1930,6 +1930,12 @@ count = 1
 file = "src/Entity/Series.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\Entity\Series::getLastLesson`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/Subscription.php"
+code = "unused-property"
+message = "Property `$version` is never used."
 count = 1
 
 [[issues]]
@@ -2701,12 +2707,6 @@ message = 'Attempting to access a property on a non-object type (`unknown-ref(Sw
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Scheduler/SchedulerHeartbeat.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Search/PostgresGlobalSearchQuery.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\DBAL\Exception` in `App\Infrastructure\Search\PostgresGlobalSearchQuery::search`.'
@@ -2767,54 +2767,6 @@ message = 'Call to deprecated function: `Sentry\trace_metrics`.'
 count = 4
 
 [[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "invalid-method-access"
-message = 'Attempting to access a method on a non-object type (`unknown-ref(Swoole\Http\Server)`).'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "mixed-property-type-coercion"
-message = "A value with a less specific type `mixed` is being assigned to property `$tickId` (int)."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `Swoole\Http\Server`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-method"
-message = 'Method `after` does not exist on type `Swoole\Timer`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-method"
-message = 'Method `clear` does not exist on type `Swoole\Timer`.'
-count = 3
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-method"
-message = 'Method `getCid` does not exist on type `Swoole\Coroutine`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "non-existent-method"
-message = 'Method `tick` does not exist on type `Swoole\Timer`.'
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Swoole/ExceptionLoggingTaskHandler.php"
 code = "non-existent-class-like"
 message = 'Cannot find class, interface, enum, or type alias `Swoole\Server\Task`.'
@@ -2842,18 +2794,6 @@ count = 1
 file = "src/Infrastructure/Swoole/TaskWorkerConnectionEnsuringHandler.php"
 code = "non-existent-class-like"
 message = 'Cannot find class, interface, enum, or type alias `Swoole\Server`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Scheduler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Infrastructure\Symfony\Scheduler::run`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Scheduler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Throwable` in `App\Infrastructure\Symfony\Scheduler::run`.'
 count = 1
 
 [[issues]]
@@ -5353,6 +5293,54 @@ message = 'A value of a less specific type `null|object` is being assigned to pr
 count = 1
 
 [[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "ambiguous-object-method-access"
+message = "Cannot statically verify method call on a generic `object` type."
+count = 7
+
+[[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Tests\Functional\Application\MonthlySubscriptionTest::persistWeeklySeriesWithMonthly`: expected `Doctrine\ORM\EntityManagerInterface`, but provided type `null|object` is less specific.'
+count = 2
+
+[[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
+count = 6
+
+[[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 6
+
+[[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 13
+
+[[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 7
+
+[[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `App\Tests\Functional\Application\MonthlySubscriptionTest::persistWeeklySeriesWithMonthly` is possibly `null`, but parameter type `Doctrine\ORM\EntityManagerInterface` does not accept it.'
+count = 2
+
+[[issues]]
 file = "tests/Functional/BookingPersistenceTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
@@ -5434,12 +5422,6 @@ count = 1
 file = "tests/Functional/Infrastructure/Swoole/HttpServerSwooleServerProviderTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$provider` (App\Infrastructure\Swoole\SwooleServerProviderInterface).'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Symfony/SchedulerTest.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `null|object` is being assigned to property `$scheduler` (App\Infrastructure\Symfony\Scheduler).'
 count = 1
 
 [[issues]]
@@ -5923,54 +5905,6 @@ message = 'Property `$taskworker` does not exist on interface `PHPUnit\Framework
 count = 1
 
 [[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `iterator_to_array`: expected `Traversable<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>|array<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>`, but found `mixed`."
-count = 3
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\Tests\Infrastructure\Swoole\Configurator\WithSchedulerTest::lockRegistryFiles`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "non-existent-class-like"
-message = 'Class, interface, enum, or trait `Swoole\Http\Server` not found.'
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "non-existent-function"
-message = 'Could not find definition for function `Swoole\Coroutine\run` (also tried as `run` in a broader scope).'
-count = 8
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "non-existent-method"
-message = 'Method `list` does not exist on type `Swoole\Timer`.'
-count = 3
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "non-existent-method"
-message = 'Method `sleep` does not exist on type `Swoole\Coroutine`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `App\Infrastructure\Swoole\Configurator\WithScheduler::configure`: expected `unknown-ref(Swoole\Http\Server)`, but possibly received `PHPUnit\Framework\MockObject\MockObject&Swoole\Http\Server`.'
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "possibly-invalid-argument"
-message = '''Possible argument type mismatch for argument #1 of `SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePoolEntry::__construct`: expected `SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePool<('T.swoolebundle\swoolebundle\bridge\symfony\container\servicepool\servicepoolentry extends object)>`, but possibly received `PHPUnit\Framework\MockObject\MockObject&SwooleBundle\SwooleBundle\Bridge\Symfony\Container\ServicePool\ServicePool`.'''
-count = 2
-
-[[issues]]
 file = "tests/Infrastructure/Symfony/SentryHubServiceWiringTest.php"
 code = "less-specific-return-statement"
 message = 'Returned type `array<array-key, mixed>` is less specific than the declared return type `array<string, mixed>` for function `App\Tests\Infrastructure\Symfony\SentryHubServiceWiringTest::block`.'
@@ -6404,15 +6338,9 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$this->component->showCancelled` of type `false` can never be `true`."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 4
+count = 2
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"

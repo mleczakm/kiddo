@@ -307,6 +307,12 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
+file = "src/Application/Service/BookingFactory.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -352,6 +358,12 @@ count = 1
 file = "src/Application/Service/MoneyInputParser.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/OrganizationDetails.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -739,24 +751,6 @@ message = "Class has high complexity."
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/Configurator/WithScheduler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
-
-[[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -982,6 +976,12 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -1447,6 +1447,12 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
+file = "tests/Functional/Application/MonthlySubscriptionTest.php"
+code = "readable-literal"
+message = "Numeric literal could use underscore separators for readability."
+count = 1
+
+[[issues]]
 file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
@@ -1486,12 +1492,6 @@ count = 1
 file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
 code = "single-class-per-file"
 message = "File contains multiple class-like definitions; found class `ThrowingFolder` but class `AliorNotificationMailProviderTest` is already defined in this file."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Swoole/Configurator/WithSchedulerTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
 count = 1
 
 [[issues]]
