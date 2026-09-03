@@ -9,7 +9,6 @@ use App\Infrastructure\Doctrine\Repository\LessonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\Clock;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -20,9 +19,6 @@ final class UpcomingLessonsComponent extends AbstractController
 
     #[LiveProp(writable: true, url: true)]
     public string $week;
-
-    #[LiveProp(writable: true, url: true)]
-    public bool $showCancelled = false;
 
     public function __construct(
         private readonly LessonRepository $lessonRepository,
@@ -39,7 +35,9 @@ final class UpcomingLessonsComponent extends AbstractController
         $endDate = $startDate->modify('+7 days');
 
         return array_values(array_filter(
-            $this->lessonRepository->findUpcomingInRange($startDate, $endDate, $this->showCancelled),
+            // Always fetch cancelled lessons too; the template groups them into
+            // the shared "inactive reservations" disclosure.
+            $this->lessonRepository->findUpcomingInRange($startDate, $endDate, true),
             static fn(Lesson $lesson): bool => $lesson->isPubliclyVisible(),
         ));
     }
@@ -52,11 +50,5 @@ final class UpcomingLessonsComponent extends AbstractController
     public function getWeekEnd(): \DateTimeImmutable
     {
         return $this->getWeekStart()->modify('+7 days');
-    }
-
-    #[LiveAction]
-    public function toggleCancelled(): void
-    {
-        $this->showCancelled = !$this->showCancelled;
     }
 }

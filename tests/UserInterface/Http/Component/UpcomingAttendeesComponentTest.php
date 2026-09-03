@@ -133,7 +133,7 @@ class UpcomingAttendeesComponentTest extends WebTestCase
         static::assertSame(3, $updatedLesson->getMetadata()->capacity);
     }
 
-    public function testDoNotShowCancelledBookingsWhenFilterNotEnabled(): void
+    public function testCancelledBookingsAreShownAsInactiveReservations(): void
     {
         $futureDate = Clock::get()->now()->modify('+1 day');
         $lesson = LessonAssembler::new()
@@ -174,24 +174,17 @@ class UpcomingAttendeesComponentTest extends WebTestCase
             'Active booking should be shown',
         );
 
-        static::assertStringNotContainsString(
-            (string) $cancelledBooking->getId(),
-            $rendered,
-            'Cancelled booking should not be shown by default',
-        );
-
-        $testComponent->set('showCancelled', true);
-        $rendered = (string) $testComponent->render();
-
-        static::assertStringContainsString(
-            (string) $activeBooking->getId(),
-            $rendered,
-            'Active booking should be shown when showCancelled is true',
-        );
+        // Cancelled bookings are no longer hidden behind a toggle — they render
+        // as an "inactive reservation" (struck through / grouped).
         static::assertStringContainsString(
             (string) $cancelledBooking->getId(),
             $rendered,
-            'Cancelled booking should be shown when showCancelled is true',
+            'Cancelled booking should be rendered as an inactive reservation',
+        );
+        static::assertStringContainsString(
+            'line-through',
+            $rendered,
+            'Cancelled booking should be visually distinguished with a strikethrough',
         );
     }
 

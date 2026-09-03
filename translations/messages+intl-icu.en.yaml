@@ -369,6 +369,9 @@ homepage:
     error: "An error occurred. Please try again later."
 
 admin_dashboard:
+  reservations:
+    inactive_count: '{count, plural, one {# inactive reservation} other {# inactive reservations}}'
+    inactive_lessons_count: '{count, plural, one {# inactive lesson} other {# inactive lessons}}'
   bookings:
     title: 'All Bookings & Carnets'
     search_placeholder: 'Search by name, email, or workshop...'
@@ -398,8 +401,6 @@ admin_dashboard:
     no_bookings: 'No bookings found'
   upcoming_lessons:
     title: 'Upcoming Lessons'
-    show_cancelled_lessons_and_bookings: 'Show cancelled lessons and bookings'
-    hide_cancelled_lessons_and_bookings: 'Hide cancelled lessons and bookings'
     attendees: 'Attendees'
     cancelled: 'Cancelled'
     actions: 'Actions'

@@ -1,4 +1,7 @@
 {% set activeTab = 'lessons' %}
+{% import 'admin/_lesson_attendee_row.html.twig' as rows %}
+{# Seats actually held on this occurrence — excludes bookings cancelled or rescheduled away (mirrors Lesson::getAvailableSpots()). #}
+{% set takenSpots = lesson.bookings|filter(b => b.occupiesSeat() and b.lessonsMap.active.hasKey(lesson.id))|length %}
 {% set sub_breadcrumbs = [
     {'label': lesson.metadata.title},
     {'label': lesson.schedule|date('Y-m-d H:i')}
@@ -17,7 +20,7 @@
                 </span>
             </h1>
             <p class="text-slate-500 mt-1">
-                {{ lesson.schedule|format_datetime('medium', 'short') }} · {{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }} · {{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}
+                {{ lesson.schedule|format_datetime('medium', 'short') }} · {{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }} · {{ takenSpots }}/{{ lesson.metadata.capacity }}
             </p>
         </div>
         <div class="flex items-center gap-2">
@@ -84,35 +87,39 @@
                             <th class="px-6 py-4 font-semibold">{{ 'admin.lesson_show.notes'|trans }}</th>
                         </tr>
                     </thead>
+                    {% set inactiveBookings = lesson.bookings|filter(b => b.isCancelled() or b.isLessonCancelled(lesson) or b.isLessonRescheduled(lesson)) %}
+                    {% set activeBookings = lesson.bookings|filter(b => not (b.isCancelled() or b.isLessonCancelled(lesson) or b.isLessonRescheduled(lesson))) %}
                     <tbody class="divide-y divide-slate-100">
-                        {% for booking in lesson.bookings %}
-                            <tr class="cursor-pointer hover:bg-indigo-50/50 transition" data-controller="reservation-modal-trigger" data-action="click->reservation-modal-trigger#open" data-reservation-modal-trigger-booking-id-value="{{ booking.id }}" data-reservation-modal-trigger-lesson-id-value="{{ lesson.id }}">
-                                <td class="px-6 py-4">
-                                    {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
-                                </td>
-                                <td class="px-6 py-4">
-                                    {% set status = booking.status %}
-                                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold transition-colors
-                                        {{ status == 'confirmed' ? 'bg-green-100 text-green-700' : (status == 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600') }}">
-                                        {{ status|trans }}
-                                    </span>
-                                    {% if booking.isLessonRescheduled(lesson) %}
-                                        <span class="ml-2 text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">{{ 'admin.lesson_show.rescheduled'|trans }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-xs text-slate-400 font-medium">—</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-xs text-slate-600 font-medium">{{ booking.notes ?? '—' }}</span>
-                                </td>
-                            </tr>
-                        {% else %}
+                        {% for booking in activeBookings %}
+                            {{ rows.attendee_row(booking, lesson, false) }}
+                        {% endfor %}
+                        {% if activeBookings is empty and inactiveBookings is empty %}
                             <tr>
                                 <td colspan="4" class="px-6 py-8 text-center text-slate-400 font-medium">{{ 'admin.lesson_show.no_bookings'|trans }}</td>
                             </tr>
-                        {% endfor %}
+                        {% endif %}
                     </tbody>
+                    {% if inactiveBookings is not empty %}
+                        {% set inactiveCount = inactiveBookings|length %}
+                        <tbody class="divide-y divide-slate-100 border-t-4 border-slate-100" data-controller="disclosure">
+                            {% if inactiveCount > 1 %}
+                                <tr>
+                                    <td colspan="4" class="px-6 py-3 bg-slate-50">
+                                        <button type="button" data-disclosure-trigger data-action="disclosure#toggle" aria-expanded="false"
+                                                class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors">
+                                            <svg data-disclosure-target="icon" class="h-3.5 w-3.5 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                            {{ 'admin_dashboard.reservations.inactive_count'|trans({count: inactiveCount}) }}
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% for booking in inactiveBookings %}
+                                {{ rows.attendee_row(booking, lesson, inactiveCount > 1) }}
+                            {% endfor %}
+                        </tbody>
+                    {% endif %}
                 </table>
             </div>
         </section>
@@ -128,7 +135,7 @@
                 </div>
                 <div class="flex items-center justify-between border-t border-slate-100 pt-3">
                     <span class="text-sm font-semibold text-slate-500">{{ 'admin.lesson_show.booked'|trans }}</span>
-                    <span class="text-sm font-black text-slate-800">{{ lesson.bookings|length }}</span>
+                    <span class="text-sm font-black text-slate-800">{{ takenSpots }}</span>
                 </div>
                 <div class="flex items-center justify-between border-t border-slate-100 pt-3">
                     <span class="text-sm font-semibold text-slate-500">{{ 'admin.lesson_show.available'|trans }}</span>

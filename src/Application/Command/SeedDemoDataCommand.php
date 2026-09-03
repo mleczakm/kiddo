@@ -252,6 +252,14 @@ final class SeedDemoDataCommand extends Command
                 'Pokazowe',
                 '#fee2e2',
             ),
+            $this->newLesson(
+                '[DEMO] Warsztaty z wieloma nieaktywnymi rezerwacjami',
+                $now->modify('+4 days 2 hours'),
+                12,
+                new AgeRange(2, 8),
+                'Sensoryka',
+                '#e0e7ff',
+            ),
         ];
         $oneTimeLessons[3]->status = 'cancelled';
         foreach ($oneTimeLessons as $lesson) {
@@ -391,6 +399,8 @@ final class SeedDemoDataCommand extends Command
             $oneTime[2],
         );
 
+        $manyInactive = $this->createManyInactiveReservations($now, $admin, $parents, $oneTime[4], $weekly[2]);
+
         $this->createUnmatchedTransfers($now);
 
         return [
@@ -403,7 +413,77 @@ final class SeedDemoDataCommand extends Command
             $rescheduled,
             $past,
             $unpaidWithoutPayment,
+            ...$manyInactive,
         ];
+    }
+
+    /**
+     * One lesson carrying several inactive reservations at once (three cancelled
+     * plus one rescheduled away), with two active attendees left next to them —
+     * so the "N nieaktywnych rezerwacji" disclosure shows up both on the admin
+     * dashboard widgets and on /admin/zajecia/{id}.
+     *
+     * @param list<User> $parents
+     *
+     * @return list<Booking>
+     */
+    private function createManyInactiveReservations(
+        \DateTimeImmutable $now,
+        User $admin,
+        array $parents,
+        Lesson $lesson,
+        Lesson $rescheduleTarget,
+    ): array {
+        $bookings = [];
+        $childOf = static function (User $parent): ?Child {
+            $child = $parent->getChildren()->first();
+
+            return $child === false ? null : $child;
+        };
+
+        foreach ([0, 1] as $i) {
+            $bookings[] = $this->booking(
+                $parents[$i],
+                $childOf($parents[$i]),
+                $this->payment($parents[$i], '95', PaymentMethod::ONLINE, Payment::STATUS_PAID),
+                Booking::STATUS_ACTIVE,
+                $now->modify(sprintf('-%d days', 6 - $i)),
+                null,
+                $lesson,
+            );
+        }
+
+        foreach ([
+            [0, 'Rezygnacja rodzica.'],
+            [1, 'Dziecko chore.'],
+            [2, 'Anulowane przez organizatora.'],
+        ] as [$parentIdx, $reason]) {
+            $cancelled = $this->booking(
+                $parents[$parentIdx],
+                $childOf($parents[$parentIdx]),
+                $this->payment($parents[$parentIdx], '95', PaymentMethod::ONLINE, Payment::STATUS_PAID),
+                Booking::STATUS_ACTIVE,
+                $now->modify(sprintf('-%d days 2 hours', $parentIdx + 3)),
+                null,
+                $lesson,
+            );
+            $cancelled->cancel($admin, $reason);
+            $bookings[] = $cancelled;
+        }
+
+        $rescheduledAway = $this->booking(
+            $parents[3],
+            $childOf($parents[3]),
+            $this->payment($parents[3], '95', PaymentMethod::ONLINE, Payment::STATUS_PAID),
+            Booking::STATUS_ACTIVE,
+            $now->modify('-7 days 5 hours'),
+            'Przeniesione na inny termin na prośbę rodzica.',
+            $lesson,
+        );
+        $rescheduledAway->rescheduleLesson($lesson, $rescheduleTarget, $admin);
+        $bookings[] = $rescheduledAway;
+
+        return $bookings;
     }
 
     /**
@@ -411,7 +491,12 @@ final class SeedDemoDataCommand extends Command
      */
     private function newUser(string $mailbox, string $name, array $roles, string $phone): User
     {
-        $user = new User($this->demoEmail($mailbox), $name);
+        // Reuse the demo user if a previous run left it behind (its content,
+        // e.g. authored posts, keeps working across reseeds).
+        $user = $this->userRepository->findOneBy([
+            'email' => $this->demoEmail($mailbox),
+        ]) ?? new User($this->demoEmail($mailbox), $name);
+        $user->setName($name);
         $user->setRoles($roles);
         $user->setPhone(PhoneNumberUtil::getInstance()->parse($phone, 'PL'));
 
@@ -553,9 +638,9 @@ final class SeedDemoDataCommand extends Command
 
             $this->entityManager->remove($demoSeries);
         }
-        foreach ($users as $user) {
-            $this->entityManager->remove($user);
-        }
+        // Demo users are kept and reused on the next run (see newUser()). They
+        // may own content that outlives a reseed — e.g. a blog post authored
+        // while previewing — which a delete would trip over via FK constraints.
         $this->entityManager->flush();
     }
 

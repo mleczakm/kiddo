@@ -606,6 +606,9 @@ dashboard:
 admin_dashboard:
   title: Warsztatownia Sensoryczna - Panel administracyjny
   frontpage: Strona główna
+  reservations:
+    inactive_count: '{count, plural, one {# nieaktywna rezerwacja} few {# nieaktywne rezerwacje} many {# nieaktywnych rezerwacji} other {# nieaktywnych rezerwacji}}'
+    inactive_lessons_count: '{count, plural, one {# nieaktywne zajęcia} few {# nieaktywne zajęcia} many {# nieaktywnych zajęć} other {# nieaktywnych zajęć}}'
   activity_log:
     title: 'Ostatnia aktywność'
     refresh: 'Odśwież'
@@ -614,8 +617,6 @@ admin_dashboard:
     title: 'Nadchodzące zajęcia'
     actions: 'Akcje'
     no_upcoming_lessons: Brak nadchodzących wydarzeń
-    show_cancelled_lessons_and_bookings: 'Pokaż anulowane zajęcia i rezerwacje'
-    hide_cancelled_lessons_and_bookings: 'Ukryj anulowane zajęcia i rezerwacje'
     attendees: 'Uczestnicy'
     cancelled: 'Anulowane'
   upcoming_attendees:
@@ -630,8 +631,6 @@ admin_dashboard:
     cancelled_bookings: 'Anulowane rezerwacje'
     decrease_capacity: 'Zmniejsz ilość dostępnych miejsc'
     increase_capacity: 'Zwiększ ilość dostępnych miejsc'
-    show_cancelled: 'Pokaż anulowane'
-    hide_cancelled: 'Ukryj anulowane'
   quick_actions:
     title: 'Szybkie akcje'
     create_workshop: 'Utwórz warsztat'

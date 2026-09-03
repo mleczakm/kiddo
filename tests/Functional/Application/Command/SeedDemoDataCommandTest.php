@@ -44,7 +44,7 @@ final class SeedDemoDataCommandTest extends KernelTestCase
         static::assertSame(0, $this->commandTester->execute([
             '--replace' => true,
         ]));
-        static::assertStringContainsString('9 bookings', $this->commandTester->getDisplay());
+        static::assertStringContainsString('15 bookings', $this->commandTester->getDisplay());
 
         $users = self::getContainer()->get(UserRepository::class);
         $lessons = self::getContainer()->get(LessonRepository::class);
@@ -65,7 +65,7 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             ->setParameter('prefix', '[DEMO] %')
             ->getQuery()
             ->getResult();
-        static::assertCount(10, $demoLessons);
+        static::assertCount(11, $demoLessons);
 
         /** @var list<Booking> $demoBookings */
         $demoBookings = $bookings
@@ -75,7 +75,7 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             ->setParameter('domain', '%@demo.kiddo.local')
             ->getQuery()
             ->getResult();
-        static::assertCount(9, $demoBookings);
+        static::assertCount(15, $demoBookings);
         static::assertContains(Booking::STATUS_PENDING, array_map(
             static fn(Booking $booking): string => $booking->getStatus(),
             $demoBookings,
@@ -85,6 +85,24 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             $demoBookings,
         ));
         static::assertTrue(array_any($demoBookings, static fn(Booking $booking): bool => $booking->hasBeenRescheduled()));
+
+        // At least one lesson carries several inactive reservations at once, so
+        // the "N nieaktywnych rezerwacji" disclosure has something to show.
+        $cancelledPerLesson = [];
+        foreach ($demoBookings as $booking) {
+            if (!$booking->isCancelled()) {
+                continue;
+            }
+            $lesson = $booking->getLesson();
+            if ($lesson !== null) {
+                $key = $lesson->getId()->toString();
+                $cancelledPerLesson[$key] = ($cancelledPerLesson[$key] ?? 0) + 1;
+            }
+        }
+        static::assertNotEmpty(
+            array_filter($cancelledPerLesson, static fn(int $count): bool => $count >= 2),
+            'Expected at least one demo lesson with 2+ cancelled reservations.',
+        );
 
         static::assertSame(0, $this->commandTester->execute([]));
         static::assertStringContainsString('already exists', $this->commandTester->getDisplay());
@@ -96,6 +114,6 @@ final class SeedDemoDataCommandTest extends KernelTestCase
             ->setParameter('domain', '%@demo.kiddo.local')
             ->getQuery()
             ->getResult();
-        static::assertCount(9, $unchangedBookings);
+        static::assertCount(15, $unchangedBookings);
     }
 }

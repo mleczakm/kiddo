@@ -1,0 +1,54 @@
+{#
+  One attendee row for the lesson_show bookings table.
+  - booking:   Booking entity
+  - lesson:    Lesson entity (the lesson being shown)
+  - inactive:  bool — cancelled/rescheduled row (muted + struck through, collapsible)
+#}
+{% macro attendee_row(booking, lesson, inactive = false) %}
+    <tr class="cursor-pointer hover:bg-indigo-50/50 transition {{ inactive ? 'opacity-60' : '' }}"
+        {% if inactive %}data-disclosure-target="content" hidden{% endif %}
+        data-controller="reservation-modal-trigger"
+        data-action="click->reservation-modal-trigger#open"
+        data-reservation-modal-trigger-booking-id-value="{{ booking.id }}"
+        data-reservation-modal-trigger-lesson-id-value="{{ lesson.id }}">
+        <td class="px-6 py-4">
+            <div class="{{ inactive ? 'line-through text-slate-400' : '' }}">
+                {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+            </div>
+        </td>
+        <td class="px-6 py-4">
+            {#
+              For an inactive row, show what happened to *this* occurrence
+              (moved away / cancelled) rather than the booking's global status —
+              otherwise a still-active booking rescheduled to another date reads
+              as a contradictory "Aktywna + Przełożono".
+            #}
+            {% if booking.isLessonRescheduled(lesson) %}
+                {% set occurrence = booking.findOccurrence(lesson.id) %}
+                {% set movedTo = occurrence ? occurrence.rescheduledTo : null %}
+                <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-amber-100 text-amber-700">
+                    {{ 'admin.lesson_show.rescheduled'|trans }}
+                </span>
+                {% if movedTo %}
+                    <span class="ml-2 text-xs font-medium text-slate-500">→ {{ movedTo.schedule|format_datetime('medium', 'short') }}</span>
+                {% endif %}
+            {% elseif booking.isCancelled() or booking.isLessonCancelled(lesson) %}
+                <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-red-100 text-red-700">
+                    {{ 'cancelled'|trans }}
+                </span>
+            {% else %}
+                {% set status = booking.status %}
+                <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold transition-colors
+                    {{ status == 'confirmed' ? 'bg-green-100 text-green-700' : (status == 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600') }}">
+                    {{ status|trans }}
+                </span>
+            {% endif %}
+        </td>
+        <td class="px-6 py-4">
+            <span class="text-xs text-slate-400 font-medium">—</span>
+        </td>
+        <td class="px-6 py-4">
+            <span class="text-xs text-slate-600 font-medium">{{ booking.notes ?? '—' }}</span>
+        </td>
+    </tr>
+{% endmacro %}

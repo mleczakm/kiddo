@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Admin;
 
+use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
@@ -139,6 +140,55 @@ final class LessonsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorNotExists('[data-testid="holiday-warning"]');
+    }
+
+    public function testCancelledBookingsAreGroupedBehindTheInactiveReservationsDisclosure(): void
+    {
+        $client = static::createClient();
+        $em = $this->entityManager();
+
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $em->persist($admin);
+
+        $lesson = LessonAssembler::new()->assemble();
+
+        $activeUser = UserAssembler::new()->assemble();
+        $active = BookingAssembler::new()
+            ->withStatus('active')
+            ->withUser($activeUser)
+            ->withLessons($lesson)
+            ->assemble();
+
+        $em->persist($activeUser);
+        $em->persist($active);
+        $lesson->addBooking($active);
+
+        foreach (['Anna Anulowana', 'Bartek Anulowany'] as $name) {
+            $user = UserAssembler::new()->withName($name)->assemble();
+            $cancelled = BookingAssembler::new()
+                ->withStatus('cancelled')
+                ->withUser($user)
+                ->withLessons($lesson)
+                ->assemble();
+            $em->persist($user);
+            $em->persist($cancelled);
+            $lesson->addBooking($cancelled);
+        }
+
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($admin);
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
+
+        $this->assertResponseIsSuccessful();
+        // Two cancelled bookings collapse behind the shared disclosure...
+        $this->assertSelectorTextContains(
+            '[data-controller="disclosure"] [data-disclosure-trigger]',
+            'nieaktywne rezerwacje',
+        );
+        // ...and their rows are struck through and hidden until expanded.
+        $this->assertSelectorExists('tr[data-disclosure-target="content"][hidden] .line-through');
     }
 
     private function entityManager(): EntityManagerInterface

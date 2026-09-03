@@ -66,6 +66,7 @@ class UpcomingLessonsComponentTest extends TestCase
                 static::callback(
                     static fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'),
                 ),
+                true,
             )
             ->willReturn([]);
 
@@ -139,43 +140,19 @@ class UpcomingLessonsComponentTest extends TestCase
         static::assertCount(0, $result);
     }
 
-    public function testToggleCancelledChangesShowCancelledState(): void
-    {
-        static::assertFalse($this->component->showCancelled);
-
-        $this->component->toggleCancelled();
-
-        static::assertTrue($this->component->showCancelled);
-    }
-
-    public function testGetLessonsCallsRepositoryWithShowCancelledParameter(): void
+    public function testGetLessonsAlwaysRequestsCancelledLessons(): void
     {
         $this->component->week = '2024-02-20';
-        $this->component->showCancelled = true;
 
-        $expectedStartDate = new \DateTimeImmutable('2024-02-20');
-        $expectedEndDate = new \DateTimeImmutable('2024-02-27');
-
+        // Cancelled lessons are always fetched; the template groups them into
+        // the shared "inactive reservations" disclosure.
         $this->lessonRepository
             ->expects($this->once())
             ->method('findUpcomingInRange')
-            ->with(
-                static::callback(
-                    static fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d'),
-                ),
-                static::callback(
-                    static fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'),
-                ),
-                true, // showCancelled = true
-            )
+            ->with(static::anything(), static::anything(), true)
             ->willReturn([]);
 
         $this->component->getLessons();
-    }
-
-    public function testDefaultShowCancelledIsFalse(): void
-    {
-        static::assertFalse($this->component->showCancelled);
     }
 
     private function createMockLesson(string $title): Lesson

@@ -36,9 +36,6 @@ final class UpcomingAttendeesComponent extends AbstractController
     #[LiveProp(writable: true, url: true)]
     public string $week;
 
-    #[LiveProp(writable: true, url: true)]
-    public bool $showCancelled = false;
-
     // Fast booking modal state/fields
     #[LiveProp(writable: true)]
     public bool $modalOpened = false;
@@ -128,20 +125,30 @@ final class UpcomingAttendeesComponent extends AbstractController
         $startDate = new \DateTimeImmutable($this->week);
         $endDate = $startDate->modify('+7 days');
 
-        return $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, $this->showCancelled);
+        // Always fetch cancelled lessons/bookings too; the template groups them
+        // into the shared "inactive reservations" disclosure.
+        return $this->lessonRepository->findUpcomingWithBookingsInRange($startDate, $endDate, true);
     }
 
     /**
-     * @return array{carnets: Booking[], single: Booking[]}
+     * @return array{carnets: Booking[], single: Booking[], inactive: Booking[]}
      */
     public function getGroupedBookings(Lesson $lesson): array
     {
         $carnets = [];
         $single = [];
+        $inactive = [];
 
         foreach ($lesson->getBookings() as $booking) {
-            // Skip cancelled bookings if not showing them; pending holds a seat and must be visible
-            if (!$booking->occupiesSeat() && !$this->showCancelled) {
+            // Cancelled bookings — and bookings whose seat on *this* lesson was
+            // cancelled or rescheduled away — go into the inactive group;
+            // pending holds a seat and stays with the active attendees.
+            if (
+                !$booking->occupiesSeat()
+                || $booking->isLessonCancelled($lesson)
+                || $booking->isLessonRescheduled($lesson)
+            ) {
+                $inactive[] = $booking;
                 continue;
             }
 
@@ -155,6 +162,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         return [
             'carnets' => $carnets,
             'single' => $single,
+            'inactive' => $inactive,
         ];
     }
 
@@ -189,12 +197,6 @@ final class UpcomingAttendeesComponent extends AbstractController
             $lesson->getMetadata()->capacity--;
             $this->entityManager->flush();
         }
-    }
-
-    #[LiveAction]
-    public function toggleCancelled(): void
-    {
-        $this->showCancelled = !$this->showCancelled;
     }
 
     #[LiveAction]

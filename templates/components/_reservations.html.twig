@@ -1,0 +1,51 @@
+{#
+  Shared helpers for rendering *inactive* reservations (cancelled or rescheduled)
+  in a consistent way across admin surfaces.
+
+  - 0 inactive  -> nothing
+  - 1 inactive  -> rendered inline, muted + struck through
+  - 2+ inactive -> collapsed behind a "N inactive reservations" disclosure
+
+  `content` must be caller-captured, trusted markup (via {% set x %}...{% endset %}).
+#}
+
+{% macro inactive_badge(rescheduled = false) %}
+    {%- if rescheduled -%}
+        <span class="inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-2 py-0.5 text-[11px] font-bold border border-amber-200">
+            {{ 'dashboard.status.rescheduled'|trans }}
+        </span>
+    {%- else -%}
+        <span class="inline-flex items-center rounded-full bg-red-50 text-red-700 px-2 py-0.5 text-[11px] font-bold border border-red-200">
+            {{ 'dashboard.status.cancelled'|trans }}
+        </span>
+    {%- endif -%}
+{% endmacro %}
+
+{#
+  kind: 'reservations' (default) or 'lessons' — selects the summary label.
+  extra_class: appended to the outer wrapper.
+#}
+{% macro inactive_group(count, content, kind = 'reservations', extra_class = '') %}
+    {%- if count == 1 -%}
+        <div class="mt-3 {{ extra_class }}">{{ content|raw }}</div>
+    {%- elseif count > 1 -%}
+        {%- set label = kind == 'lessons'
+            ? ('admin_dashboard.reservations.inactive_lessons_count'|trans({count: count}))
+            : ('admin_dashboard.reservations.inactive_count'|trans({count: count})) -%}
+        <div class="mt-3 {{ extra_class }}" data-controller="disclosure">
+            <button type="button"
+                    data-disclosure-trigger
+                    data-action="disclosure#toggle"
+                    aria-expanded="false"
+                    class="flex w-full items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors">
+                <svg data-disclosure-target="icon" class="h-3.5 w-3.5 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                </svg>
+                {{ label }}
+            </button>
+            <div data-disclosure-target="content" hidden class="mt-2 space-y-2">
+                {{ content|raw }}
+            </div>
+        </div>
+    {%- endif -%}
+{% endmacro %}
