@@ -6,6 +6,7 @@ namespace App\Infrastructure\Brevo;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 readonly class BrevoNewsletterService
 {
@@ -52,13 +53,15 @@ readonly class BrevoNewsletterService
             $data['attributes'] = $attributes;
         }
 
-        $this->httpClient->request('POST', 'https://api.brevo.com/v3/contacts', [
+        $response = $this->httpClient->request('POST', 'https://api.brevo.com/v3/contacts', [
             'headers' => [
                 'api-key' => $this->apiKey,
                 'Content-Type' => 'application/json',
             ],
             'json' => $data,
         ]);
+
+        $this->assertSuccessful($response);
     }
 
     /**
@@ -70,15 +73,21 @@ readonly class BrevoNewsletterService
             throw new \RuntimeException('Brevo is not configured (BREVO_API_KEY / BREVO_NEWSLETTER_LIST_ID)');
         }
 
-        $this->httpClient->request('POST', sprintf('https://api.brevo.com/v3/contacts/%s/removeList', $email), [
-            'headers' => [
-                'api-key' => $this->apiKey,
-                'Content-Type' => 'application/json',
+        $response = $this->httpClient->request(
+            'POST',
+            sprintf('https://api.brevo.com/v3/contacts/%s/removeList', rawurlencode($email)),
+            [
+                'headers' => [
+                    'api-key' => $this->apiKey,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'listIds' => [$this->newsletterListId],
+                ],
             ],
-            'json' => [
-                'listIds' => [$this->newsletterListId],
-            ],
-        ]);
+        );
+
+        $this->assertSuccessful($response);
     }
 
     /**
@@ -86,13 +95,13 @@ readonly class BrevoNewsletterService
      */
     public function sendDoubleOptInConfirmation(string $email): void
     {
-        if (!$this->isConfigured()) {
+        if (!$this->isConfigured() || $this->doiTemplateId <= 0 || $this->doiRedirectionUrl === '') {
             throw new \RuntimeException(
-                'Brevo is not configured (BREVO_API_KEY / BREVO_NEWSLETTER_LIST_ID / BREVO_DOI_TEMPLATE_ID)',
+                'Brevo is not configured (BREVO_API_KEY / BREVO_NEWSLETTER_LIST_ID / BREVO_DOI_TEMPLATE_ID / BREVO_DOI_REDIRECTION_URL)',
             );
         }
 
-        $this->httpClient->request('POST', 'https://api.brevo.com/v3/doubleOptInConfirmations', [
+        $response = $this->httpClient->request('POST', 'https://api.brevo.com/v3/contacts/doubleOptinConfirmation', [
             'headers' => [
                 'api-key' => $this->apiKey,
                 'Content-Type' => 'application/json',
@@ -104,5 +113,19 @@ readonly class BrevoNewsletterService
                 'redirectionUrl' => $this->doiRedirectionUrl,
             ],
         ]);
+
+        $this->assertSuccessful($response);
+    }
+
+    /**
+     * @throws \RuntimeException
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    private function assertSuccessful(ResponseInterface $response): void
+    {
+        $statusCode = $response->getStatusCode();
+        if ($statusCode < 200 || $statusCode >= 300) {
+            throw new \RuntimeException(sprintf('Brevo API request failed with HTTP %d', $statusCode));
+        }
     }
 }
