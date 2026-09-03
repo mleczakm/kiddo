@@ -66,6 +66,76 @@ body {
     color: #333;
 }
 
+/* --- Customer self-service panel ------------------------------------------
+   A calm, legible surface for data-dense self-service screens (bookings,
+   schedule, billing). Keeps the Kiddo warmth as a single coral accent on an
+   almost-white warm-neutral canvas, with a clean Inter face instead of the
+   playful marketing headings. Scoped to `.panel-shell` so none of this
+   leaks into the marketing site or the admin CRM. */
+@theme {
+    --color-panel-canvas: #faf8f5;
+    --color-panel-surface: #ffffff;
+    --color-panel-line: #ece7df;
+    --color-panel-ink: #2a2520;
+    --color-panel-muted: #8c8377;
+    --color-panel-accent: #e85030;
+    --color-panel-accent-soft: #fdeee8;
+    --color-panel-accent-ink: #b23a22;
+}
+
+.panel-shell {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Re-point the shadcn design tokens (assets/styles/app.css :root) to the
+       calm panel palette so shared components rendered inside the panel
+       (BookingsComponent, CarnetsComponent, ProfileComponent, the cancel
+       modal…) pick up white cards / neutral borders without being rewritten. */
+    --background: 40 33% 98%;
+    --foreground: 28 16% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 28 16% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 28 16% 14%;
+    --primary: 9 79% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 30% 96%;
+    --secondary-foreground: 28 16% 14%;
+    --muted: 38 22% 96%;
+    --muted-foreground: 30 8% 47%;
+    --accent: 38 30% 95%;
+    --accent-foreground: 28 16% 14%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 36 22% 90%;
+    --input: 36 22% 90%;
+    --ring: 9 79% 55%;
+    --radius: 0.75rem;
+}
+
+.panel-shell h1,
+.panel-shell h2,
+.panel-shell h3,
+.panel-shell h4 {
+    font-family: inherit;
+    letter-spacing: -0.011em;
+}
+
+/* Off-canvas panel drawer — only below md; at md+ the sidebar is in-flow
+   (md:static) so no transform must apply there. */
+@media (max-width: 767px) {
+    .panel-drawer {
+        transform: translateX(-100%);
+        transition: transform 0.2s ease-out;
+        box-shadow: 0 10px 40px rgb(0 0 0 / 0.25);
+    }
+
+    .panel-drawer.open {
+        transform: translateX(0);
+    }
+}
+
 /* Frontend typography, from the article-page mockup. Scoped to .site-shell
    (the frontend base layout's own wrapper, absent from admin/base.html.twig)
    so it never leaks into the admin panel, which keeps Tailwind's default

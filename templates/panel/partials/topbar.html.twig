@@ -1,0 +1,17 @@
+<header class="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-panel-line bg-panel-surface/90 px-5 backdrop-blur md:px-10">
+    <button type="button"
+            class="-ml-1 rounded-lg p-2 text-panel-muted transition-colors hover:bg-panel-canvas hover:text-panel-ink md:hidden"
+            data-action="panel-sidebar#toggle"
+            aria-label="{{ 'panel.menu.toggle'|trans }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+
+    <a href="{{ path('homepage') }}" class="hidden items-center gap-2 text-sm font-medium text-panel-muted transition-colors hover:text-panel-accent md:inline-flex">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        {{ 'panel.topbar.back_to_site'|trans }}
+    </a>
+
+    <div class="ml-auto flex items-center">
+        {{ component('NotificationTrayLiveComponent') }}
+    </div>
+</header>

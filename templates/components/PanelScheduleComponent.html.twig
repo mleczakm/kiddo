@@ -1,0 +1,69 @@
+<div {{ attributes }} class="space-y-5">
+    <div class="flex items-center justify-end">
+        <div class="inline-flex rounded-lg border border-panel-line bg-panel-surface p-0.5 text-xs font-semibold">
+            {% for opt in this.rangeOptions %}
+                <button type="button"
+                        data-model="weeks"
+                        data-value="{{ opt }}"
+                        data-action="live#update"
+                        class="rounded-md px-2.5 py-1.5 transition-colors {{ weeks == opt ? 'bg-panel-accent text-white' : 'text-panel-muted hover:text-panel-ink' }}">
+                    {{ 'panel.schedule.weeks'|trans({count: opt}) }}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% set days = this.getDays() %}
+    {% if days is empty %}
+        <div class="rounded-xl border border-panel-line bg-panel-surface p-10 text-center">
+            <p class="text-sm text-panel-muted">{{ 'dashboard.no_upcoming_sessions'|trans }}</p>
+            <a href="{{ path('workshops') }}" class="mt-2 inline-block text-sm font-semibold text-panel-accent hover:underline">{{ 'dashboard.browse_workshops'|trans }}</a>
+        </div>
+    {% else %}
+        <div class="space-y-6">
+            {% for date, rows in days %}
+                {% set day = date|date('Y-m-d') %}
+                {% set is_today = day == "now"|date('Y-m-d') %}
+                <section>
+                    <p class="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider {{ is_today ? 'text-panel-accent' : 'text-panel-muted' }}">
+                        {{ date|format_datetime(pattern: 'EEEE, d MMMM')|capitalize }}
+                        {% if is_today %}<span class="rounded-full bg-panel-accent px-2 py-0.5 text-[10px] text-white">{{ 'panel.overview.today'|trans }}</span>{% endif %}
+                    </p>
+                    <div class="space-y-2.5">
+                        {% for row in rows %}
+                            {% set lesson = row.lesson %}
+                            {% set booking = row.booking %}
+                            <div class="rounded-xl border border-panel-line bg-panel-surface p-4 {{ row.cancelled ? 'opacity-60' : '' }}">
+                                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <div class="min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="font-semibold text-panel-ink {{ row.cancelled ? 'line-through' : '' }}">{{ lesson.metadata.title }}</h3>
+                                            {% if row.cancelled %}
+                                                <span class="inline-flex items-center rounded-full bg-panel-accent-soft px-2 py-0.5 text-[11px] font-bold text-panel-accent-ink">{{ 'dashboard.status.cancelled'|trans }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="mt-0.5 text-sm text-panel-muted">
+                                            {{ lesson.schedule|date('H:i') }}–{{ lesson.schedule|date_modify('+' ~ lesson.metadata.duration ~ ' minutes')|date('H:i') }}
+                                            {% if booking.child %} · {{ booking.child.name }}{% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="flex shrink-0 items-center gap-2">
+                                        <a href="{{ path('panel_lesson_ics', {lesson: lesson.id}) }}"
+                                           class="inline-flex items-center gap-1.5 rounded-lg border border-panel-line px-3 py-2 text-xs font-semibold text-panel-ink transition-colors hover:bg-panel-canvas"
+                                           aria-label="{{ 'panel.overview.add_to_calendar'|trans }}">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/></svg>
+                                            .ics
+                                        </a>
+                                        {% if not row.cancelled and booking.canCancelLesson(lesson) %}
+                                            {{ component('BookingCancellationModal', {booking: booking, lesson: lesson}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

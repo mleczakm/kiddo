@@ -1,5 +1,5 @@
 <div {{ attributes }}>
-    <h2 class="text-2xl font-bold mb-4 font-display text-workshop-brown">{{ 'page.my_bookings'|trans }}</h2>
+    <h2 class="sr-only">{{ 'page.my_bookings'|trans }}</h2>
     <div dir="ltr" data-orientation="horizontal">
         <div role="tablist" aria-orientation="horizontal"
              class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full mb-6"
@@ -165,7 +165,8 @@
                                     {% set canModify = (not isCancelled) and (not isRescheduled) and isFuture %}
                                     {% if canModify %}
                                         {{ component('BookingCancellationModal', {booking: booking, lesson: lesson}) }}
-                                    {% else %}
+                                    {% elseif isFuture and (not isCancelled) and (not isRescheduled) %}
+                                        {# Upcoming, still active, but past the cancellation cut-off. #}
                                         <span class="text-sm text-muted-foreground text-center">
                                             {{ 'booking.cancellation_not_available'|trans }}
                                         </span>

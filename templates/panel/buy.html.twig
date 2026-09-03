@@ -1,0 +1,10 @@
+{% extends 'panel/base.html.twig' %}
+
+{% block title %}{{ 'panel.nav.buy'|trans }}{% endblock %}
+{% block panel_title %}{{ 'panel.nav.buy'|trans }}{% endblock %}
+{% block panel_subtitle %}<p class="mt-1 text-sm text-panel-muted">{{ 'panel.buy.lead'|trans }}</p>{% endblock %}
+
+{% block panel_body %}
+    {{ component('OutstandingPaymentsComponent') }}
+    {{ component('BuyTicketComponent') }}
+{% endblock %}

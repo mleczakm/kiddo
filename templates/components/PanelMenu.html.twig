@@ -1,0 +1,69 @@
+{% set current_route = app.request.attributes.get('_route') %}
+{% set nav_items = [
+    { route: 'dashboard',       icon: 'layout-dashboard', label: 'panel.nav.overview',  match: ['dashboard'] },
+    { route: 'panel_schedule',  icon: 'calendar-days',    label: 'panel.nav.schedule',  match: ['panel_schedule'] },
+    { route: 'panel_bookings',  icon: 'ticket',           label: 'panel.nav.bookings',  match: ['panel_bookings'] },
+    { route: 'panel_buy',       icon: 'plus',             label: 'panel.nav.buy',       match: ['panel_buy'] },
+    { route: 'panel_billing',   icon: 'wallet',           label: 'panel.nav.billing',   match: ['panel_billing'] },
+    { route: 'profile',         icon: 'user',             label: 'panel.nav.personal',  match: ['profile'] },
+] %}
+
+{% set icons = {
+    'layout-dashboard': '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="10" rx="1"/><rect width="7" height="5" x="3" y="14" rx="1"/>',
+    'ticket': '<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>',
+    'credit-card': '<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>',
+    'calendar-days': '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>',
+    'wallet': '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+    'user': '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    'plus': '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    'search': '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+} %}
+
+<aside class="panel-drawer fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col bg-panel-ink text-white/70 md:static md:z-auto md:translate-x-0"
+       data-panel-sidebar-target="panel">
+    {% set org = organization() %}
+    <div class="flex items-start justify-between gap-2 px-4 pb-3 pt-4">
+        <a href="{{ path('homepage') }}" class="block rounded-xl bg-white p-2.5 shadow-sm">
+            <img src="{{ asset('images/logo-header.webp') }}" alt="{{ org.name }}" class="h-8 w-auto">
+        </a>
+        <button type="button"
+                class="mt-1 rounded-lg p-1.5 text-white/60 hover:bg-white/10 hover:text-white transition-colors md:hidden"
+                data-action="panel-sidebar#close"
+                aria-label="{{ 'panel.menu.close'|trans }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+
+    <nav aria-label="{{ 'panel.title'|trans }}" class="flex-1 overflow-y-auto px-3 py-4">
+        <ul class="space-y-1">
+            {% for item in nav_items %}
+                {% set active = current_route in item.match %}
+                <li>
+                    <a href="{{ path(item.route) }}"
+                       class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors {{ active
+                           ? 'bg-white text-panel-accent-ink shadow-sm'
+                           : 'text-white/70 hover:bg-white/10 hover:text-white' }}"
+                       aria-current="{{ active ? 'page' : 'false' }}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ active ? '2.5' : '2.25' }}" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">{{ icons[item.icon]|raw }}</svg>
+                        <span>{{ item.label|trans }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    <div class="border-t border-white/10 px-3 pb-2 pt-2">
+        <a href="{{ path('workshops') }}"
+           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-colors">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">{{ icons['search']|raw }}</svg>
+            <span>{{ 'panel.nav.browse'|trans }}</span>
+        </a>
+    </div>
+
+    <div class="border-t border-white/10 px-5 py-4 text-xs leading-relaxed text-white/45">
+        <p class="font-semibold text-white/70">{{ org.name }}</p>
+        <p>{{ org.addressLine }}</p>
+        <a href="mailto:{{ org.email }}" class="block truncate hover:text-white/80 transition-colors">{{ org.email }}</a>
+        <a href="tel:{{ org.phone|replace({' ': ''}) }}" class="block hover:text-white/80 transition-colors">{{ org.phone }}</a>
+    </div>
+</aside>

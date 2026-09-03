@@ -7,6 +7,7 @@ namespace App\Infrastructure\Doctrine\Repository;
 use App\Application\Repository\PaymentRepositoryInterface;
 use App\Entity\Payment;
 use App\Entity\PaymentMethod;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,6 +19,49 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Payment::class);
+    }
+
+    /**
+     * @return list<Payment>
+     */
+    #[\Override]
+    public function findUnpaidForUser(User $user): array
+    {
+        /** @var list<Payment> */
+        return $this
+            ->createQueryBuilder('p')
+            ->select('p', 'b', 'l', 'pc')
+            ->leftJoin('p.bookings', 'b')
+            ->leftJoin('b.lessons', 'l')
+            ->leftJoin('p.paymentCode', 'pc')
+            ->where('p.user = :user')
+            ->andWhere('p.status IN (:statuses)')
+            ->setParameter('user', $user)
+            ->setParameter('statuses', [Payment::STATUS_PENDING, Payment::STATUS_EXPIRED])
+            ->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return list<Payment>
+     */
+    #[\Override]
+    public function findForUser(User $user): array
+    {
+        /** @var list<Payment> */
+        return $this
+            ->createQueryBuilder('p')
+            ->select('p', 'b', 'l', 'c', 'pc')
+            ->leftJoin('p.bookings', 'b')
+            ->leftJoin('b.lessons', 'l')
+            ->leftJoin('b.child', 'c')
+            ->leftJoin('p.paymentCode', 'pc')
+            ->where('p.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     /**

@@ -1,8 +1,43 @@
-<div {{ attributes }}>
+<div {{ attributes }} class="space-y-6">
+    {% set subscriptions = this.getSubscriptions() %}
+    {% if subscriptions is not empty %}
+        <section>
+            <h2 class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'panel.carnets.subscriptions'|trans }}</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {% for sub in subscriptions %}
+                    <div class="rounded-xl border border-panel-line bg-panel-surface p-5 border-l-4 border-l-emerald-500">
+                        <div class="flex items-start justify-between gap-3">
+                            <h3 class="font-semibold text-panel-ink">{{ sub.series.lessons|length ? sub.series.lessons|first.metadata.title : '—' }}</h3>
+                            <span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">{{ ('panel.subscription.status.' ~ sub.status)|trans }}</span>
+                        </div>
+                        <dl class="mt-3 space-y-1.5 text-sm">
+                            <div class="flex justify-between">
+                                <dt class="text-panel-muted">{{ 'panel.carnets.monthly_rate'|trans }}</dt>
+                                <dd class="font-medium text-panel-ink">{{ (sub.monthlyRateMinor / 100)|number_format(2, ',', ' ') }} zł</dd>
+                            </div>
+                            {% if sub.child %}
+                                <div class="flex justify-between">
+                                    <dt class="text-panel-muted">{{ 'booking.child.label'|trans }}</dt>
+                                    <dd class="font-medium text-panel-ink">{{ sub.child.name }}</dd>
+                                </div>
+                            {% endif %}
+                            {% if sub.lastChargedPeriod %}
+                                <div class="flex justify-between">
+                                    <dt class="text-panel-muted">{{ 'panel.carnets.last_charged'|trans }}</dt>
+                                    <dd class="font-medium text-panel-ink">{{ sub.lastChargedPeriod }}</dd>
+                                </div>
+                            {% endif %}
+                        </dl>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
     {% set carnets = this.getCarnets() %}
     {% if carnets is not empty %}
         <section>
-            <h2 class="text-2xl font-bold mb-4 font-display text-workshop-brown">{{ 'page.my_carnets'|trans }}</h2>
+            <h2 class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'page.my_carnets'|trans }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {% for booking in carnets %}
                     <div class="rounded-lg border bg-card text-card-foreground shadow-sm border-l-4 border-l-workshop-green">

@@ -32,8 +32,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 <span class="text-[10px] font-bold tracking-tight">{{ 'page.workshops'|trans }}</span>
             </a>
-            <a href="{{ path('dashboard') }}" 
-               class="flex flex-col items-center gap-1 {{ current_route == 'dashboard' and activeTab|default('') != 'profile' ? 'text-workshop-red font-bold' : 'text-workshop-brown hover:text-workshop-red' }} transition-colors">
+            <a href="{{ path('dashboard') }}"
+               class="flex flex-col items-center gap-1 {{ current_route starts with 'panel' or current_route == 'dashboard' ? 'text-workshop-red font-bold' : 'text-workshop-brown hover:text-workshop-red' }} transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ticket"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
                 <span class="text-[10px] font-bold tracking-tight">{{ 'mobile_nav.tickets'|trans }}</span>
             </a>

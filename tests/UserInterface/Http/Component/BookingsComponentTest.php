@@ -312,7 +312,7 @@ final class BookingsComponentTest extends WebTestCase
         static::getContainer()->get(EntityManagerInterface::class)->flush();
 
         $client->loginUser($user);
-        $client->request('GET', '/panel?activeTab=cancelled');
+        $client->request('GET', '/panel/rezerwacje?activeTab=cancelled');
 
         self::assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();

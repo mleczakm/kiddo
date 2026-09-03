@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http;
 
-use App\Entity\User;
-use App\Infrastructure\Doctrine\Repository\BookingRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardAction extends AbstractController
@@ -20,13 +16,9 @@ class DashboardAction extends AbstractController
         'pl' => '/panel',
     ], name: 'dashboard')]
     #[IsGranted('ROLE_USER')]
-    public function __invoke(
-        BookingRepository $_bookingRepository,
-        EntityManagerInterface $_entityManager,
-        #[CurrentUser]
-        User $_user,
-    ): Response {
-        return $this->render('dashboard.html.twig', [
+    public function __invoke(): Response
+    {
+        return $this->render('panel/overview.html.twig', [
             'page' => [
                 'title' => 'dashboard.title',
                 'description' => 'dashboard.description',

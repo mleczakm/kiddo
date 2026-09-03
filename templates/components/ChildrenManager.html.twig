@@ -1,61 +1,52 @@
-<div {{ attributes }}>
-    <div class="flex flex-col space-y-1.5 p-6">
-        <h3 class="text-2xl font-semibold leading-none tracking-tight">
-            {{ 'profile.children.title'|trans({'default':'Children'}) }}
-        </h3>
-        <p class="text-sm text-muted-foreground">
-            {{ 'profile.children.lead'|trans({'default':'Add your child details to attach them to bookings.'}) }}
-        </p>
+<div {{ attributes }} class="rounded-xl border border-panel-line bg-panel-surface p-6">
+    <h2 class="text-base font-bold text-panel-ink">{{ 'profile.children.title'|trans({'default':'Children'}) }}</h2>
+    <p class="mt-0.5 text-sm text-panel-muted">{{ 'profile.children.lead'|trans({'default':'Add your child details to attach them to bookings.'}) }}</p>
+
+    <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
+        <div class="space-y-1.5">
+            <label class="text-sm font-medium text-panel-ink" for="childName">{{ 'profile.children.name'|trans({'default':'Child name'}) }}</label>
+            <input id="childName" type="text" data-model="childName"
+                   class="flex h-10 w-full rounded-lg border border-panel-line bg-panel-surface px-3 py-2 text-sm text-panel-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-panel-accent">
+        </div>
+        <div class="space-y-1.5">
+            <label class="text-sm font-medium text-panel-ink" for="childBirthday">
+                {{ 'profile.children.birthday'|trans({'default':'Birthday'}) }}
+                <span class="text-panel-muted">({{ 'common.optional'|trans({'default':'optional'}) }})</span>
+            </label>
+            <input id="childBirthday" type="date" data-model="childBirthday"
+                   class="flex h-10 w-full rounded-lg border border-panel-line bg-panel-surface px-3 py-2 text-sm text-panel-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-panel-accent">
+        </div>
+        <button data-action="live#action" data-live-action-param="addChild"
+                class="inline-flex h-10 items-center justify-center rounded-lg bg-panel-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-panel-accent/90">
+            {{ 'profile.children.add'|trans({'default':'Add child'}) }}
+        </button>
     </div>
 
-    <div class="p-6 pt-0 space-y-6">
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="space-y-2">
-                    <label class="text-sm font-medium leading-none" for="childName">{{ 'profile.children.name'|trans({'default':'Child name'}) }}</label>
-                    <input id="childName" type="text" data-model="childName"
-                           class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
-                </div>
-                <div class="space-y-2">
-                    <label class="text-sm font-medium leading-none" for="childBirthday">{{ 'profile.children.birthday'|trans({'default':'Birthday'}) }} <span class="text-muted-foreground">({{ 'common.optional'|trans({'default':'optional'}) }})</span></label>
-                    <input id="childBirthday" type="date" data-model="childBirthday"
-                           class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
-                </div>
-                <div class="flex items-end">
-                    <button data-action="live#action" data-live-action-param="addChild"
-                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-10 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90">
-                        {{ 'profile.children.add'|trans({'default':'Add child'}) }}
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="space-y-2">
-            <h4 class="text-lg font-medium">{{ 'profile.children.list'|trans({'default':'Your children'}) }}</h4>
-            {% if this.children is empty %}
-                <p class="text-sm text-muted-foreground">{{ 'profile.children.empty'|trans({'default':'No children added yet.'}) }}</p>
-            {% else %}
-                <ul class="divide-y rounded-md border">
-                    {% for c in this.children %}
-                        <li class="flex items-center justify-between p-3">
-                            <div>
-                                <div class="font-medium">{{ c.name }}</div>
-                                {% if c.birthday or c.age is not null %}
-                                    <div class="text-xs text-muted-foreground">
-                                        {% if c.birthday %}{{ c.birthday }}{% endif %}
-                                        {% if c.birthday and c.age is not null %} • {% endif %}
-                                        {% if c.age is not null %}{{ 'profile.children.years'|trans({count: c.age}) }}{% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <button data-action="live#action" data-live-action-param="deleteChild" data-live-id-param="{{ c.id }}"
-                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border bg-background hover:text-accent-foreground h-10 px-3 py-2">
-                                {{ 'profile.children.delete'|trans({'default':'Remove'}) }}
-                            </button>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
+    <div class="mt-5">
+        <p class="text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'profile.children.list'|trans({'default':'Your children'}) }}</p>
+        {% if this.children is empty %}
+            <p class="mt-2 text-sm text-panel-muted">{{ 'profile.children.empty'|trans({'default':'No children added yet.'}) }}</p>
+        {% else %}
+            <ul class="mt-2 divide-y divide-panel-line rounded-lg border border-panel-line">
+                {% for c in this.children %}
+                    <li class="flex items-center justify-between gap-3 p-3.5">
+                        <div>
+                            <p class="text-sm font-medium text-panel-ink">{{ c.name }}</p>
+                            {% if c.birthday or c.age is not null %}
+                                <p class="text-xs text-panel-muted">
+                                    {% if c.birthday %}{{ c.birthday }}{% endif %}
+                                    {% if c.birthday and c.age is not null %} · {% endif %}
+                                    {% if c.age is not null %}{{ 'profile.children.years'|trans({count: c.age}) }}{% endif %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <button data-action="live#action" data-live-action-param="deleteChild" data-live-id-param="{{ c.id }}"
+                                class="inline-flex items-center rounded-lg border border-panel-line px-3 py-1.5 text-xs font-semibold text-panel-ink transition-colors hover:bg-panel-canvas">
+                            {{ 'profile.children.delete'|trans({'default':'Remove'}) }}
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 </div>

@@ -557,9 +557,12 @@ blik:
   amount: "Kwota do zapłaty: {amount}"
   instruction_3: "W tytule przelewu wpisz:"
   phone: '571 531 213'
+  account_number: '46 2490 0005 0000 4000 1897 5420'
 
 
 dashboard:
+  title: "Twój panel"
+  description: "Zarządzaj rezerwacjami, karnetami i płatnościami"
   status:
     active: Aktywne
     cancelled: Anulowane
@@ -589,6 +592,10 @@ dashboard:
     paid: Opłacone
     pending: Oczekująca płatność
     expired: "Płatność wygasła"
+    failed: "Płatność nieudana"
+    refunded: "Zwrócono"
+    refund_requested: "Zgłoszono zwrot"
+    cancelled: "Anulowano"
   confirm_cancel: Czy na pewno chcesz anulować tę rezerwację? Wybierz sposób
   single_session: Pojedyncze zajęcia
   actions:
@@ -604,6 +611,91 @@ dashboard:
   rescheduled_by: "Przełożone przez {name}, {date}"
   rescheduled_on: "Przełożone {date}"
   view_reservation: "Zobacz w panelu rezerwacji"
+
+panel:
+  title: "Panel"
+  menu:
+    toggle: "Otwórz menu panelu"
+    close: "Zamknij menu"
+  topbar:
+    back_to_site: "Powrót na stronę"
+  nav:
+    overview: "Przegląd"
+    bookings: "Moje rezerwacje"
+    carnets: "Karnety"
+    schedule: "Nadchodzące zajęcia"
+    billing: "Rozliczenia"
+    personal: "Moje dane"
+    buy: "Kup wejście"
+    browse: "Przeglądaj warsztaty"
+  overview:
+    next_class: "Najbliższe zajęcia"
+    today: "Dziś"
+    tomorrow: "Jutro"
+    add_to_calendar: "Dodaj do kalendarza"
+    see_all: "Zobacz wszystkie"
+    no_carnets: "Nie masz aktywnych karnetów"
+    quick_actions: "Szybkie akcje"
+    unread_notifications: >-
+      {count, plural,
+          one {# nieprzeczytane powiadomienie}
+          few {# nieprzeczytane powiadomienia}
+          many {# nieprzeczytanych powiadomień}
+          other {# nieprzeczytanych powiadomień}
+      }
+  schedule:
+    weeks: >-
+      {count, plural,
+          one {# tydzień}
+          few {# tygodnie}
+          many {# tygodni}
+          other {# tygodni}
+      }
+  documents:
+    title: "Zgody i dokumenty"
+    lead: "Regulaminy i dokumenty zaakceptowane przy zapisie."
+    general_regulations: "Regulamin zajęć"
+    download: "Pobierz"
+  buy:
+    lead: "Kup wejście na nadchodzące zajęcia — jednorazowe, karnet lub abonament."
+    participant: "Uczestnik"
+    no_child: "Bez wskazania dziecka"
+    empty: "Brak zajęć do kupienia w najbliższym czasie."
+    month_short: "mies."
+    bought: "Dodano do koszyka płatności — opłać w zakładce Rozliczenia."
+    failed: "Nie udało się kupić wejścia (brak miejsc lub zmiana ceny)."
+  carnets:
+    subscriptions: "Abonamenty"
+    monthly_rate: "Opłata miesięczna"
+    last_charged: "Ostatnia opłata"
+  subscription:
+    status:
+      active: "Aktywny"
+      paused: "Wstrzymany"
+      ended: "Zakończony"
+  billing:
+    outstanding_title: "Masz zaległą płatność"
+    outstanding_lead: "Opłać rezerwację, aby ją potwierdzić."
+    pay_title: "Szybka płatność"
+    pay_later: "Zapłacę później"
+    payment_confirmed: "Płatność zaksięgowana. Dziękujemy!"
+    payment_generic: "Rezerwacja"
+    issued_on: "Wystawiono {date}"
+    paid_on: "Opłacono {date}"
+    total_due: "Do zapłaty"
+    all_paid: "Wszystko opłacone – dziękujemy!"
+    all_paid_lead: "Nie masz żadnych zaległości."
+    filter_child: "Dziecko"
+    filter_all_children: "Wszystkie dzieci"
+    only_unpaid: "Tylko nieopłacone"
+    legend_paid: "wpłata / opłacone"
+    legend_due: "do zapłaty"
+    empty: "Brak historii płatności."
+    code: "Tytuł:"
+    method:
+      transfer: "Przelew"
+      online: "Płatność online"
+      pay_on_place: "Płatność na miejscu"
 
 admin_dashboard:
   title: Warsztatownia Sensoryczna - Panel administracyjny
@@ -1052,6 +1144,7 @@ from_day_of_week: >-
   }
 common:
   cancel: Anuluj
+  optional: opcjonalnie
 
 # Payment system
 payment:

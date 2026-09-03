@@ -1,0 +1,95 @@
+<div {{ attributes }} class="space-y-5">
+    {% set next = this.getNextLesson() %}
+    {% set carnets = this.getCarnets() %}
+    {% set unread = this.getUnreadNotificationCount() %}
+
+    {# Next class #}
+    <section class="rounded-xl border border-panel-line bg-panel-surface p-6">
+        <p class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'panel.overview.next_class'|trans }}</p>
+        {% if next %}
+            {% set d = next.lesson.schedule %}
+            {% set is_today = d|date('Y-m-d') == "now"|date('Y-m-d') %}
+            {% set is_tomorrow = d|date('Y-m-d') == "now"|date_modify('+1 day')|date('Y-m-d') %}
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h2 class="text-lg font-bold text-panel-ink">{{ next.lesson.metadata.title }}</h2>
+                        {% if is_today %}
+                            <span class="inline-flex items-center rounded-full bg-panel-accent px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">{{ 'panel.overview.today'|trans }}</span>
+                        {% elseif is_tomorrow %}
+                            <span class="inline-flex items-center rounded-full bg-panel-accent-soft px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-panel-accent-ink">{{ 'panel.overview.tomorrow'|trans }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="mt-1 text-sm text-panel-muted">
+                        {{ d|format_datetime(pattern: 'EEEE, d MMMM')|capitalize }} · {{ d|date('H:i') }}–{{ d|date_modify('+' ~ next.lesson.metadata.duration ~ ' minutes')|date('H:i') }}
+                    </p>
+                    {% if next.booking.child %}
+                        <p class="mt-1 text-sm font-medium text-panel-ink">{{ next.booking.child.name }}</p>
+                    {% endif %}
+                </div>
+                <a href="{{ path('panel_lesson_ics', {lesson: next.lesson.id}) }}"
+                   class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-panel-line px-4 py-2 text-sm font-semibold text-panel-ink transition-colors hover:bg-panel-canvas">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/></svg>
+                    {{ 'panel.overview.add_to_calendar'|trans }}
+                </a>
+            </div>
+        {% else %}
+            <p class="text-sm text-panel-muted">{{ 'dashboard.no_upcoming_sessions'|trans }}</p>
+            <a href="{{ path('workshops') }}" class="mt-2 inline-block text-sm font-semibold text-panel-accent hover:underline">{{ 'dashboard.browse_workshops'|trans }}</a>
+        {% endif %}
+    </section>
+
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        {# Carnets #}
+        <section class="rounded-xl border border-panel-line bg-panel-surface p-6">
+            <div class="mb-4 flex items-center justify-between">
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'page.my_carnets'|trans }}</p>
+                <a href="{{ path('panel_bookings') }}" class="text-xs font-semibold text-panel-accent hover:underline">{{ 'panel.overview.see_all'|trans }}</a>
+            </div>
+            {% if carnets is empty %}
+                <p class="text-sm text-panel-muted">{{ 'panel.overview.no_carnets'|trans }}</p>
+            {% else %}
+                <ul class="space-y-4">
+                    {% for c in carnets %}
+                        <li>
+                            <div class="flex items-baseline justify-between gap-2 text-sm">
+                                <span class="truncate font-medium text-panel-ink">{{ c.title }}</span>
+                                <span class="shrink-0 font-semibold text-panel-ink">{{ c.remaining }}<span class="text-panel-muted">/{{ c.total }}</span></span>
+                            </div>
+                            <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-panel-canvas">
+                                <div class="h-full rounded-full bg-panel-accent" style="width: {{ c.total > 0 ? (c.remaining / c.total * 100)|round : 0 }}%;"></div>
+                            </div>
+                            {% if c.next %}
+                                <p class="mt-1.5 text-xs text-panel-muted">{{ 'dashboard.upcoming_sessions'|trans }}: {{ c.next|format_datetime(pattern: 'd MMM') }}, {{ c.next|date('H:i') }}</p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+
+        {# Quick actions #}
+        <section class="rounded-xl border border-panel-line bg-panel-surface p-6">
+            <p class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'panel.overview.quick_actions'|trans }}</p>
+            {% if unread > 0 %}
+                <a href="#" class="mb-2 flex items-center gap-2.5 rounded-lg bg-panel-accent-soft px-3 py-2.5 text-sm font-medium text-panel-accent-ink">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                    {{ 'panel.overview.unread_notifications'|trans({count: unread}) }}
+                </a>
+            {% endif %}
+            {% set actions = [
+                { route: 'workshops',      label: 'panel.nav.browse',   icon: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>' },
+                { route: 'panel_schedule', label: 'panel.nav.schedule', icon: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/>' },
+                { route: 'panel_billing',  label: 'panel.nav.billing',  icon: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>' },
+            ] %}
+            <div class="space-y-1">
+                {% for a in actions %}
+                    <a href="{{ path(a.route) }}" class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-panel-ink transition-colors hover:bg-panel-canvas">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="text-panel-muted">{{ a.icon|raw }}</svg>
+                        {{ a.label|trans }}
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>

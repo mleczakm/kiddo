@@ -1,0 +1,110 @@
+<div {{ attributes }} class="space-y-5">
+    {# Balance summary #}
+    {% set totalDue = this.getTotalOutstanding() %}
+    {% if totalDue.isPositive %}
+        <section class="rounded-xl border border-panel-accent/30 bg-panel-accent-soft/50 p-5 sm:p-6">
+            <div class="flex items-baseline justify-between gap-3">
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-panel-accent-ink">{{ 'panel.billing.total_due'|trans }}</span>
+                <span class="text-2xl font-bold text-panel-accent-ink">{{ totalDue|money }}</span>
+            </div>
+        </section>
+        {{ component('OutstandingPaymentsComponent') }}
+    {% else %}
+        <section class="rounded-xl border border-emerald-200 bg-emerald-50 p-5 sm:p-6">
+            <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-emerald-600"><path d="M20 6 9 17l-5-5"/></svg>
+                <div>
+                    <p class="font-bold text-emerald-800">{{ 'panel.billing.all_paid'|trans }}</p>
+                    <p class="text-sm text-emerald-700">{{ 'panel.billing.all_paid_lead'|trans }}</p>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# Filters + legend #}
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-wrap items-center gap-3">
+            {% if this.children|length > 1 %}
+                <label class="sr-only" for="billing-child">{{ 'panel.billing.filter_child'|trans }}</label>
+                <select id="billing-child" data-model="childId" data-action="change->live#update"
+                        class="h-9 rounded-lg border border-panel-line bg-panel-surface px-3 text-sm font-medium text-panel-ink">
+                    <option value="">{{ 'panel.billing.filter_all_children'|trans }}</option>
+                    {% for child in this.children %}
+                        <option value="{{ child.id }}">{{ child.name }}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+            <label class="inline-flex items-center gap-2 text-sm font-medium text-panel-ink">
+                <input type="checkbox" data-model="onlyUnpaid" data-action="change->live#update"
+                       class="h-4 w-4 rounded border-panel-line text-panel-accent focus:ring-panel-accent">
+                {{ 'panel.billing.only_unpaid'|trans }}
+            </label>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-panel-muted">
+            <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>{{ 'panel.billing.legend_paid'|trans }}</span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-panel-accent"></span>{{ 'panel.billing.legend_due'|trans }}</span>
+        </div>
+    </div>
+
+    {# Ledger #}
+    {% set months = this.getMonths() %}
+    {% if months is empty %}
+        <div class="rounded-xl border border-panel-line bg-panel-surface p-10 text-center">
+            <p class="text-sm text-panel-muted">{{ 'panel.billing.empty'|trans }}</p>
+        </div>
+    {% else %}
+        {% for month in months %}
+            <section>
+                <div class="mb-2 flex items-baseline justify-between">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider text-panel-muted">
+                        {{ month.date|format_datetime(pattern: 'LLLL yyyy')|capitalize }}
+                    </p>
+                    <span class="text-sm font-semibold text-panel-ink">{{ month.total|money }}</span>
+                </div>
+                <div class="divide-y divide-panel-line overflow-hidden rounded-xl border border-panel-line bg-panel-surface">
+                    {% for payment in month.payments %}
+                        {% set status = payment.status %}
+                        {% set statusClass =
+                            status == 'paid' ? 'bg-emerald-100 text-emerald-800' :
+                            (status == 'pending' ? 'bg-amber-100 text-amber-800' :
+                            (status == 'refunded' ? 'bg-sky-100 text-sky-800' :
+                            (status == 'refund_requested' ? 'bg-amber-100 text-amber-800' :
+                            'bg-panel-canvas text-panel-muted'))) %}
+                        {% set outstanding = this.isOutstanding(payment) %}
+                        <div class="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between {{ outstanding ? 'bg-panel-accent-soft/30' : '' }}">
+                            <div class="min-w-0">
+                                <p class="font-medium text-panel-ink">{{ this.paymentTitle(payment) ?? ('panel.billing.payment_generic'|trans) }}</p>
+                                <p class="mt-0.5 text-xs text-panel-muted">
+                                    {% if payment.paidAt %}
+                                        {{ 'panel.billing.paid_on'|trans({date: payment.paidAt|date('d.m.Y H:i')}) }}
+                                    {% else %}
+                                        {{ 'panel.billing.issued_on'|trans({date: payment.createdAt|date('d.m.Y')}) }}
+                                    {% endif %}
+                                </p>
+                                <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                    {% set childName = this.paymentChildName(payment) %}
+                                    {% if childName %}
+                                        <span class="inline-flex items-center rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">{{ childName }}</span>
+                                    {% endif %}
+                                    <span class="inline-flex items-center rounded-full bg-panel-canvas px-2 py-0.5 text-[11px] font-medium text-panel-muted">
+                                        {{ ('panel.billing.method.' ~ (payment.method ? payment.method.value : 'transfer'))|trans }}
+                                    </span>
+                                    {% set code = payment.paymentCode ? payment.paymentCode.code : payment.paymentCodeSnapshot %}
+                                    {% if code %}
+                                        <span class="inline-flex items-center rounded-full bg-panel-canvas px-2 py-0.5 font-mono text-[11px] font-semibold text-panel-muted">{{ 'panel.billing.code'|trans }} {{ code }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="flex shrink-0 items-center gap-3">
+                                <span class="whitespace-nowrap font-bold text-panel-ink">{{ payment.amount|money }}</span>
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold {{ statusClass }}">
+                                    {{ ('dashboard.payment.' ~ status)|trans }}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endfor %}
+    {% endif %}
+</div>

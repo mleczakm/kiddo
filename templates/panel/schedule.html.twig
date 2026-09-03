@@ -1,0 +1,9 @@
+{% extends 'panel/base.html.twig' %}
+
+{% block title %}{{ 'panel.nav.schedule'|trans }}{% endblock %}
+{% block panel_title %}{{ 'panel.nav.schedule'|trans }}{% endblock %}
+
+{% block panel_body %}
+    {{ component('OutstandingPaymentsComponent') }}
+    {{ component('PanelScheduleComponent') }}
+{% endblock %}

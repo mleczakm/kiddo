@@ -1,0 +1,8 @@
+{% extends 'panel/base.html.twig' %}
+
+{% block title %}{{ 'panel.nav.billing'|trans }}{% endblock %}
+{% block panel_title %}{{ 'panel.nav.billing'|trans }}{% endblock %}
+
+{% block panel_body %}
+    {{ component('BillingComponent') }}
+{% endblock %}

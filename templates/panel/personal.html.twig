@@ -1,0 +1,12 @@
+{% extends 'panel/base.html.twig' %}
+
+{% block title %}{{ 'panel.nav.personal'|trans }}{% endblock %}
+{% block panel_title %}{{ 'panel.nav.personal'|trans }}{% endblock %}
+
+{% block panel_body %}
+    <div class="space-y-5">
+        {{ component('ProfileComponent') }}
+        {{ component('ChildrenManager') }}
+        {{ component('PanelDocumentsComponent') }}
+    </div>
+{% endblock %}

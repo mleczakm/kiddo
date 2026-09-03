@@ -1,0 +1,75 @@
+{#
+  Customer self-service panel shell — standalone (does NOT extend the marketing
+  base), modelled on templates/admin/base.html.twig: dedicated doctype, Inter,
+  a persistent sidebar + minimal topbar + a prominent page header, on a calm
+  warm-neutral canvas with a single coral accent.
+
+  Section templates: {% extends 'panel/base.html.twig' %} then fill
+  {% block panel_title %}, optionally {% block panel_subtitle %} /
+  {% block panel_actions %} / {% block panel_breadcrumb %}, and {% block panel_body %}.
+#}
+{% set current_route = app.request.attributes.get('_route') %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ 'panel.title'|trans }}{% endblock %} · Warsztatownia Sensoryczna</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% block stylesheets %}{% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body class="panel-shell bg-panel-canvas text-panel-ink antialiased">
+{{ include('partials/_toasts.html.twig') }}
+
+<div id="root" class="flex min-h-screen w-full" data-controller="panel-sidebar">
+    {# Mobile drawer backdrop #}
+    <div class="hidden fixed inset-0 bg-panel-ink/40 z-40 md:hidden"
+         data-panel-sidebar-target="backdrop"
+         data-action="click->panel-sidebar#close"
+         aria-hidden="true"></div>
+
+    {{ include('components/PanelMenu.html.twig') }}
+
+    <div class="flex min-w-0 flex-1 flex-col">
+        {{ include('panel/partials/topbar.html.twig') }}
+
+        <main class="flex-1 px-5 py-6 md:px-10 md:py-8">
+            <div class="mx-auto max-w-5xl">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="flex flex-wrap items-center gap-1.5 text-xs font-medium text-panel-muted">
+                        <li class="inline-flex items-center gap-1.5">
+                            <a href="{{ path('dashboard') }}" class="hover:text-panel-accent transition-colors">{{ 'panel.title'|trans }}</a>
+                        </li>
+                        {% block panel_breadcrumb %}
+                            <li class="inline-flex items-center gap-1.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                                <span class="text-panel-ink">{{ block('panel_title') }}</span>
+                            </li>
+                        {% endblock %}
+                    </ol>
+                </nav>
+
+                <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight text-panel-ink sm:text-[28px]">{% block panel_title %}{% endblock %}</h1>
+                        {% block panel_subtitle %}{% endblock %}
+                    </div>
+                    <div class="flex shrink-0 items-center gap-2">{% block panel_actions %}{% endblock %}</div>
+                </div>
+
+                {% block panel_body %}{% endblock %}
+            </div>
+        </main>
+    </div>
+</div>
+
+{{ include('partials/chat_assistant.html.twig', { variant: 'floating' }) }}
+</body>
+</html>

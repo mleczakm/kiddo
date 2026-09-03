@@ -1,0 +1,47 @@
+<div {{ attributes }} class="space-y-5">
+    <div class="flex items-center justify-end">
+        <div class="inline-flex rounded-lg border border-panel-line bg-panel-surface p-0.5 text-xs font-semibold">
+            {% for opt in this.rangeOptions %}
+                <button type="button"
+                        data-model="weeks"
+                        data-value="{{ opt }}"
+                        data-action="live#update"
+                        class="rounded-md px-2.5 py-1.5 transition-colors {{ weeks == opt ? 'bg-panel-accent text-white' : 'text-panel-muted hover:text-panel-ink' }}">
+                    {{ 'panel.schedule.weeks'|trans({count: opt}) }}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% set lessons = this.getLessons() %}
+    {% if lessons is empty %}
+        <div class="rounded-xl border border-panel-line bg-panel-surface p-10 text-center">
+            <p class="text-sm text-panel-muted">{{ 'panel.buy.empty'|trans }}</p>
+            <a href="{{ path('workshops') }}" class="mt-2 inline-block text-sm font-semibold text-panel-accent hover:underline">{{ 'dashboard.browse_workshops'|trans }}</a>
+        </div>
+    {% else %}
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {% for lesson in lessons %}
+                <div class="flex flex-col rounded-xl border border-panel-line bg-panel-surface p-5">
+                    <h3 class="font-semibold text-panel-ink">{{ lesson.metadata.title }}</h3>
+                    <p class="mt-0.5 text-sm text-panel-muted">
+                        {{ lesson.schedule|format_datetime(pattern: 'EEEE, d MMMM')|capitalize }} · {{ lesson.schedule|date('H:i') }}
+                    </p>
+                    <p class="mt-1 text-xs text-panel-muted">{{ 'workshop.spots_available'|trans({count: lesson.availableSpots}) }}</p>
+
+                    <div class="mt-3 flex flex-wrap gap-1.5">
+                        {% for option in lesson.ticketOptions|filter(o => o.type.value != 'monthly' or isFeatureEnabled('subscriptions')) %}
+                            <span class="inline-flex items-center rounded-full bg-panel-canvas px-2 py-0.5 text-[11px] font-medium text-panel-muted">
+                                {{ ('lesson.' ~ option.type.value)|trans }} · {{ option.price|money }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4 pt-1">
+                        {{ component('LessonModal', { key: lesson.id, lesson: lesson, week: lesson.schedule|date('Y-m-d'), closeUrl: path('panel_buy') }) }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,27 @@
+<div {{ attributes }} class="rounded-xl border border-panel-line bg-panel-surface p-6">
+    <h2 class="text-base font-bold text-panel-ink">{{ 'panel.documents.title'|trans }}</h2>
+    <p class="mt-0.5 text-sm text-panel-muted">{{ 'panel.documents.lead'|trans }}</p>
+
+    <ul class="mt-4 divide-y divide-panel-line rounded-lg border border-panel-line">
+        {% for doc in this.getDocuments() %}
+            <li class="flex items-center justify-between gap-3 p-3.5">
+                <div class="flex min-w-0 items-center gap-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-panel-muted"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-medium text-panel-ink">
+                            {{ doc.title starts with 'panel.documents.' ? doc.title|trans : doc.title }}
+                        </p>
+                        {% if doc.context %}
+                            <p class="truncate text-xs text-panel-muted">{{ doc.context }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{{ doc.url }}" target="_blank" rel="noopener"
+                   class="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-panel-line px-3 py-1.5 text-xs font-semibold text-panel-ink transition-colors hover:bg-panel-canvas">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    {{ 'panel.documents.download'|trans }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

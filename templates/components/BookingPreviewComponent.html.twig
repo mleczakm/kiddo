@@ -60,7 +60,7 @@
                                     {{ 'booking.pay'|trans }} {{ booking.payment.amount|money }}
                                 </button>
                             {% endif %}
-                            <a href="{{ path('dashboard', {activeTab: reservationTab}) }}#reservation-{{ lesson.id }}"
+                            <a href="{{ path('panel_bookings', {activeTab: reservationTab}) }}#reservation-{{ lesson.id }}"
                                title="{{ 'dashboard.view_reservation'|trans }}"
                                class="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200 text-slate-500 hover:text-workshop-red hover:border-workshop-red/40 hover:bg-workshop-red/5 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

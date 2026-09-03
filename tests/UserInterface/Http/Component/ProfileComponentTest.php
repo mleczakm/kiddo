@@ -83,10 +83,9 @@ class ProfileComponentTest extends WebTestCase
         /** @var ProfileComponent $profileComponent */
         $profileComponent = $testComponent->component();
         static::assertTrue($profileComponent->isEditing);
-        static::assertStringContainsString(
-            '<form data-action="live#action" data-live-action-param="save">',
-            (string) $testComponent->render(),
-        );
+        $editHtml = (string) $testComponent->render();
+        static::assertStringContainsString('<form data-action="live#action"', $editHtml);
+        static::assertStringContainsString('data-live-action-param="save"', $editHtml);
 
         // Set new values (phone is required on profile save)
         $testComponent->set('name', 'New Name')->set('email', 'new.email@example.com')->set('phone', '500 600 700');

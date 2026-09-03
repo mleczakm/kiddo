@@ -208,6 +208,8 @@ day:
   Sunday: Sunday
 
 dashboard:
+  title: "Your panel"
+  description: "Manage your bookings, passes and payments"
   status:
     active: Active
     cancelled: Cancelled
@@ -234,6 +236,10 @@ dashboard:
     paid: Paid
     pending: Awaiting payment
     expired: "Payment expired"
+    failed: "Payment failed"
+    refunded: "Refunded"
+    refund_requested: "Refund requested"
+    cancelled: "Cancelled"
     pending_transfers: 'Pending Payment Transfers'
     sender: 'Customer'
     title: 'Workshop'
@@ -257,6 +263,81 @@ dashboard:
   rescheduled_by: "Rescheduled by {name} on {date}"
   rescheduled_on: "Rescheduled on {date}"
   view_reservation: "View in your bookings"
+
+panel:
+  title: "Panel"
+  menu:
+    toggle: "Open panel menu"
+    close: "Close menu"
+  topbar:
+    back_to_site: "Back to site"
+  nav:
+    overview: "Overview"
+    bookings: "My bookings"
+    carnets: "Passes"
+    schedule: "Upcoming classes"
+    billing: "Billing"
+    personal: "My data"
+    buy: "Buy a ticket"
+    browse: "Browse workshops"
+  overview:
+    next_class: "Next class"
+    today: "Today"
+    tomorrow: "Tomorrow"
+    add_to_calendar: "Add to calendar"
+    see_all: "See all"
+    no_carnets: "No active passes"
+    quick_actions: "Quick actions"
+    unread_notifications: >-
+      {count, plural, one {# unread notification} other {# unread notifications}}
+  schedule:
+    weeks: >-
+      {count, plural, one {# week} other {# weeks}}
+  documents:
+    title: "Consents & documents"
+    lead: "Regulations and documents accepted at sign-up."
+    general_regulations: "Training regulations"
+    download: "Download"
+  buy:
+    lead: "Buy a ticket for an upcoming class - single, carnet or subscription."
+    participant: "Participant"
+    no_child: "No specific child"
+    empty: "Nothing to buy in the near future."
+    month_short: "mo"
+    bought: "Added to your payments - settle it under Billing."
+    failed: "Could not buy the ticket (no spots left or the price changed)."
+  carnets:
+    subscriptions: "Subscriptions"
+    monthly_rate: "Monthly fee"
+    last_charged: "Last charged"
+  subscription:
+    status:
+      active: "Active"
+      paused: "Paused"
+      ended: "Ended"
+  billing:
+    outstanding_title: "You have an outstanding payment"
+    outstanding_lead: "Pay for your booking to confirm it."
+    pay_title: "Quick payment"
+    pay_later: "Pay later"
+    payment_confirmed: "Payment received. Thank you!"
+    payment_generic: "Booking"
+    issued_on: "Issued {date}"
+    paid_on: "Paid {date}"
+    total_due: "To pay"
+    all_paid: "All settled – thank you!"
+    all_paid_lead: "You have no outstanding balance."
+    filter_child: "Child"
+    filter_all_children: "All children"
+    only_unpaid: "Unpaid only"
+    legend_paid: "payment / paid"
+    legend_due: "to pay"
+    empty: "No payment history yet."
+    code: "Ref:"
+    method:
+      transfer: "Bank transfer"
+      online: "Online payment"
+      pay_on_place: "Pay on site"
 
 workshop:
   fully_booked: 'Fully booked'
