@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Service\OrganizationDetailsProvider;
 use App\Application\Service\Payment\TransferReviewThresholdProvider;
 use App\Entity\FinanceContact;
 use App\Entity\Setting;
@@ -44,12 +45,17 @@ class AdminSettingsComponent extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $financeContactSearch = null;
 
+    /** @var array<string, string> */
+    #[LiveProp(writable: true)]
+    public array $organization = [];
+
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly FinanceContactRepository $financeContactRepository,
         private readonly SettingRepository $settingRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly TransferReviewThresholdProvider $transferReviewThreshold,
+        private readonly OrganizationDetailsProvider $organizationDetails,
     ) {}
 
     public function mount(): void
@@ -71,6 +77,18 @@ class AdminSettingsComponent extends AbstractController
             : "User-agent: *\nAllow: /\nDisallow: /admin/";
 
         $this->transferReviewThresholdPln = $this->transferReviewThreshold->get()->getAmount()->toInt();
+
+        $org = $this->organizationDetails->get();
+        $this->organization = [
+            'name' => $org->name,
+            'street' => $org->street,
+            'postal_code' => $org->postalCode,
+            'city' => $org->city,
+            'email' => $org->email,
+            'phone' => $org->phone,
+            'bank_account' => $org->bankAccount,
+            'blik_phone' => $org->blikPhone,
+        ];
     }
 
     /**
@@ -287,5 +305,30 @@ class AdminSettingsComponent extends AbstractController
         $this->entityManager->flush();
 
         $this->addFlash('success', 'Próg ręcznego przeglądu przelewów został zapisany.');
+    }
+
+    /**
+     * @throws \LogicException
+     */
+    #[LiveAction]
+    public function saveOrganizationDetails(): void
+    {
+        $setting = $this->settingRepository->findOneByKey(OrganizationDetailsProvider::SETTING_KEY);
+        if ($setting === null) {
+            $setting = new Setting();
+            $setting->setKey(OrganizationDetailsProvider::SETTING_KEY);
+            $this->entityManager->persist($setting);
+        }
+
+        $keys = ['name', 'street', 'postal_code', 'city', 'email', 'phone', 'bank_account', 'blik_phone'];
+        $content = [];
+        foreach ($keys as $key) {
+            $content[$key] = trim($this->organization[$key] ?? '');
+        }
+
+        $setting->setContent($content);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Dane firmy zostały zapisane.');
     }
 }

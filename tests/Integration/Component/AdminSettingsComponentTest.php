@@ -324,4 +324,32 @@ class AdminSettingsComponentTest extends WebTestCase
         $ids = array_map(static fn(User $u) => $u->getId(), $results);
         static::assertNotContains($this->adminUser->getId(), $ids);
     }
+
+    public function testOrganizationDetailsCanBeSavedThroughTheComponent(): void
+    {
+        $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
+        $component->set('organization', [
+            'name' => 'Warsztatownia Testowa',
+            'street' => 'ul. Przykładowa 5',
+            'postal_code' => '01-234',
+            'city' => 'Warszawa',
+            'email' => 'biuro@example.com',
+            'phone' => '+48 600 100 200',
+            'bank_account' => '00 1111 2222 3333 4444 5555 6666',
+            'blik_phone' => '600 100 200',
+        ]);
+
+        $component->call('saveOrganizationDetails');
+
+        $this->entityManager->clear();
+        $setting = $this->settingRepository->findOneBy([
+            'key' => 'organization_details',
+        ]);
+        static::assertNotNull($setting);
+        $content = $setting->getContent();
+        static::assertIsArray($content);
+        static::assertSame('Warsztatownia Testowa', $content['name']);
+        static::assertSame('biuro@example.com', $content['email']);
+        static::assertSame('00 1111 2222 3333 4444 5555 6666', $content['bank_account']);
+    }
 }

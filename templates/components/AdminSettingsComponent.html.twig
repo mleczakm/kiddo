@@ -38,6 +38,14 @@
                 >
                     Przelewy i płatności
                 </button>
+                <button
+                    data-action="live#update"
+                    data-model="settingsTab"
+                    data-value="organization"
+                    class="text-left px-4 py-3 rounded-xl text-sm font-bold transition {{ settingsTab == 'organization' ? 'bg-white shadow-sm text-indigo-600 border border-slate-200' : 'text-slate-600 hover:bg-slate-200/50' }}"
+                >
+                    Dane firmy i kontakt
+                </button>
             </div>
 
             <!-- Kontent Ustawień -->
@@ -266,6 +274,48 @@
                             class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition"
                         >
                             Zapisz próg
+                        </button>
+                    </div>
+                {% endif %}
+
+                {% if settingsTab == 'organization' %}
+                    <div class="space-y-6 animate-in fade-in max-w-2xl">
+                        <div>
+                            <h2 class="text-xl font-black text-slate-800">Dane firmy i kontakt</h2>
+                            <p class="text-xs text-slate-500 mt-1">
+                                Wyświetlane w panelu klienta (stopka menu) oraz w instrukcji płatności BLIK / przelewem.
+                            </p>
+                        </div>
+
+                        {% set org_fields = [
+                            { key: 'name', label: 'Nazwa', full: true },
+                            { key: 'street', label: 'Ulica i numer', full: true },
+                            { key: 'postal_code', label: 'Kod pocztowy' },
+                            { key: 'city', label: 'Miejscowość' },
+                            { key: 'email', label: 'E-mail' },
+                            { key: 'phone', label: 'Telefon' },
+                            { key: 'bank_account', label: 'Numer konta bankowego', full: true },
+                            { key: 'blik_phone', label: 'Telefon BLIK' },
+                        ] %}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {% for field in org_fields %}
+                                <div class="space-y-1.5 {{ field.full|default(false) ? 'sm:col-span-2' : '' }}">
+                                    <label class="text-sm font-bold text-slate-700">{{ field.label }}</label>
+                                    <input
+                                        type="text"
+                                        data-model="organization.{{ field.key }}"
+                                        value="{{ organization[field.key]|default('') }}"
+                                        class="w-full bg-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button
+                            data-action="live#action" data-live-action-param="saveOrganizationDetails"
+                            class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition"
+                        >
+                            Zapisz dane firmy
                         </button>
                     </div>
                 {% endif %}
