@@ -78,6 +78,19 @@ export default class extends Controller {
     }
 
     /**
+     * The message box is a <textarea>, which does not submit its form on Enter.
+     * Send on Enter, keep Shift+Enter for a newline, and ignore Enter while an
+     * IME candidate is being composed.
+     */
+    onKeydown(event) {
+        if (event.key !== 'Enter' || event.shiftKey || event.isComposing || event.keyCode === 229) {
+            return;
+        }
+        event.preventDefault();
+        this.send(event);
+    }
+
+    /**
      * Fetch signed URL + chat token without opening the ConvAI WebSocket.
      */
     async prefetchSession() {
