@@ -75,14 +75,19 @@ jobs:
           ansible-galaxy install -r infrastructure-mikrus/ansible-collections-requirements.yml
 
       - name: Setup SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       - name: Create .env file
+        env:
+          DOTENV_CONTENT: ${{ secrets.DOTENV }}
         run: |
-          echo "${{ secrets.DOTENV }}" > .env.production
+          umask 077
+          printf '%s\n' "$DOTENV_CONTENT" > .env.production
           echo "ENV_FILE_PATH=$(pwd)/.env.production" >> $GITHUB_ENV
 
       - name: Deploy to Mikrus
