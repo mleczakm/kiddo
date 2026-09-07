@@ -28,10 +28,10 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $user = UserAssembler::new()->assemble();
         $lesson = LessonAssembler::new()->assemble();
-        $paymentSettings = SettingAssembler::new()->asPayment()->assemble();
+        $organizationDetails = SettingAssembler::new()->asOrganizationDetails()->assemble();
         $em->persist($user);
         $em->persist($lesson);
-        $em->persist($paymentSettings);
+        $em->persist($organizationDetails);
         $em->flush();
 
         /** @var ChatToolRegistry $registry */

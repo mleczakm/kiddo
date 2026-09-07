@@ -46,10 +46,10 @@ final class AdminChatToolsCreateBookingTest extends KernelTestCase
 
         $admin = UserAssembler::new()->assemble();
         $this->lesson = LessonAssembler::new()->assemble();
-        $paymentSettings = SettingAssembler::new()->asPayment()->assemble();
+        $organizationDetails = SettingAssembler::new()->asOrganizationDetails()->assemble();
         $this->em->persist($admin);
         $this->em->persist($this->lesson);
-        $this->em->persist($paymentSettings);
+        $this->em->persist($organizationDetails);
         $this->em->flush();
 
         $this->actor = new ChatActor($admin, ['ROLE_ADMIN']);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Chat;
 
-use App\Application\Repository\SettingRepositoryInterface;
+use App\Application\Service\OrganizationDetailsProvider;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Payment;
@@ -22,7 +22,7 @@ final readonly class LessonPresenter
     public const int PAYMENT_CODE_VALID_HOURS = 24;
 
     public function __construct(
-        private SettingRepositoryInterface $settingRepository,
+        private OrganizationDetailsProvider $organizationDetails,
         private TranslatorInterface $translator,
     ) {}
 
@@ -182,8 +182,9 @@ final readonly class LessonPresenter
     public function paymentInstructions(Payment $payment): array
     {
         $base = $this->payment($payment);
-        $blikPhone = $this->paymentSetting('blik_phone');
-        $bankAccount = $this->paymentSetting('bank_account');
+        $org = $this->organizationDetails->get();
+        $blikPhone = $org->blikPhone;
+        $bankAccount = $org->bankAccount;
         $expiresAt = $payment->getCreatedAt()->modify(sprintf('+%d hours', self::PAYMENT_CODE_VALID_HOURS));
         $code = $base['code'] ?? '—';
         $amount = $base['amount'];
@@ -234,22 +235,5 @@ final readonly class LessonPresenter
             'roles' => $user->getRoles(),
             'children_count' => $user->getChildren()->count(),
         ];
-    }
-
-    private function paymentSetting(string $key): string
-    {
-        $setting = $this->settingRepository->findOneByKey('payment');
-        $content = $setting?->getContent();
-        if (!is_array($content)) {
-            throw new \RuntimeException('Payment settings not configured');
-        }
-
-        $value = $content[$key] ?? null;
-
-        if (!is_string($value) || $value === '') {
-            throw new \RuntimeException(sprintf('Payment setting %s not configured', $key));
-        }
-
-        return $value;
     }
 }

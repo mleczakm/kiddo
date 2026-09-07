@@ -24,13 +24,23 @@ final class SettingAssembler extends EntityAssembler
         return $this->with('content', $content);
     }
 
-    public function asPayment(
+    /**
+     * The admin-editable organization details row, source of truth for the
+     * BLIK phone + bank account shown on every payment instruction.
+     */
+    public function asOrganizationDetails(
         string $blikPhone = '571 531 213',
         string $bankAccount = '46 2490 0005 0000 4000 1897 5420',
     ): static {
-        return $this->withKey('payment')->withContent([
-            'blik_phone' => $blikPhone,
+        return $this->withKey('organization_details')->withContent([
+            'name' => 'Warsztatownia Sensoryczna',
+            'street' => 'Aleja Jana Pawła II 12D',
+            'postal_code' => '05-250',
+            'city' => 'Radzymin',
+            'email' => 'warsztatownia.sensoryczna@gmail.com',
+            'phone' => '+48 571 531 213',
             'bank_account' => $bankAccount,
+            'blik_phone' => $blikPhone,
         ]);
     }
 
@@ -38,11 +48,17 @@ final class SettingAssembler extends EntityAssembler
     public function assemble(): Setting
     {
         $setting = new Setting();
-        $setting->setKey($this->properties['key'] ?? 'payment');
+        $setting->setKey($this->properties['key'] ?? 'organization_details');
         $setting->setContent(
             $this->properties['content'] ?? [
-                'blik_phone' => '571 531 213',
+                'name' => 'Warsztatownia Sensoryczna',
+                'street' => 'Aleja Jana Pawła II 12D',
+                'postal_code' => '05-250',
+                'city' => 'Radzymin',
+                'email' => 'warsztatownia.sensoryczna@gmail.com',
+                'phone' => '+48 571 531 213',
                 'bank_account' => '46 2490 0005 0000 4000 1897 5420',
+                'blik_phone' => '571 531 213',
             ],
         );
 

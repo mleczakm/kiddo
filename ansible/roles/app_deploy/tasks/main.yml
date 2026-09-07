@@ -99,6 +99,25 @@
   ansible.builtin.debug:
     var: migration_result.stdout_lines
 
+# Runs against the new image while the old container is still serving, so a
+# fresh/incomplete `setting` table fails the release here (with the exact list
+# of missing keys for the super admin) instead of shipping wrong customer-facing
+# payment details - OrganizationDetailsProvider silently substitutes historical
+# hard-coded BLIK / bank-account values when the `organization_details` setting
+# is absent.
+- name: Verify required application settings are configured
+  ansible.builtin.command: >-
+    docker run --rm
+    --env-file /tmp/{{ app.name }}.env
+    {{ app.image }}
+    bin/console app:check-installation
+  register: installation_check_result
+  changed_when: false
+
+- name: Display installation check result
+  ansible.builtin.debug:
+    var: installation_check_result.stdout_lines
+
 - name: Stop existing container
   ansible.builtin.command: "docker stop {{ app.name }}"
   register: stop_result
