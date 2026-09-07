@@ -126,17 +126,18 @@ final class CheckInstallationCommand extends Command
         }
 
         if ($missingCritical !== []) {
-            $io->error(sprintf(
-                "Critical setting(s) not configured - customer-facing payment details are falling back to built-in defaults:\n  - %s",
-                implode("\n  - ", $missingCritical),
-            ));
+            $io->error(
+                'Critical setting(s) not configured - customer-facing payment details are falling back to built-in defaults:'
+                    . "\n  - "
+                    . implode("\n  - ", $missingCritical),
+            );
         }
 
         if ($missingRecommended !== []) {
-            $io->warning(sprintf(
-                "Setting(s) not configured - the app is falling back to built-in defaults:\n  - %s",
-                implode("\n  - ", $missingRecommended),
-            ));
+            $io->warning(
+                'Setting(s) not configured - the app is falling back to built-in defaults:' . "\n  - "
+                    . implode("\n  - ", $missingRecommended),
+            );
         }
 
         $io->note(
