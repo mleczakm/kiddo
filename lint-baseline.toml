@@ -67,6 +67,24 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
+file = "src/Application/Chat/StaffChatTools.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/StaffChatTools.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/Chat/StaffChatTools.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
 file = "src/Application/Chat/ToolArguments.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -287,6 +305,12 @@ file = "src/Application/Repository/LessonRepositoryInterface.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 4
+
+[[issues]]
+file = "src/Application/Repository/LessonRepositoryInterface.php"
+code = "too-many-methods"
+message = "Interface has too many methods."
+count = 1
 
 [[issues]]
 file = "src/Application/Repository/PostRepositoryInterface.php"
@@ -1318,6 +1342,12 @@ count = 2
 file = "src/UserInterface/Twig/ReadingTimeExtension.php"
 code = "no-shorthand-ternary"
 message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "tests/Application/Chat/StaffChatToolsTest.php"
+code = "too-many-methods"
+message = "Class has too many methods."
 count = 1
 
 [[issues]]

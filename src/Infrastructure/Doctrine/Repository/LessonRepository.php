@@ -326,4 +326,47 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return list<Lesson>
+     */
+    #[\Override]
+    public function findForStaff(
+        ?string $titleQuery,
+        ?\DateTimeImmutable $from,
+        ?\DateTimeImmutable $to,
+        ?User $instructor,
+        int $limit,
+    ): array {
+        $qb = $this
+            ->createQueryBuilder('l')
+            ->join('l.metadata', 'm')
+            ->leftJoin('l.series', 's')
+            ->andWhere('l.status = :status')
+            ->setParameter('status', 'active')
+            ->orderBy('l.schedule', 'ASC')
+            ->setMaxResults($limit);
+
+        if ($titleQuery !== null && trim($titleQuery) !== '') {
+            $qb->andWhere('ILIKE(m.title, :query) = TRUE')->setParameter('query', '%' . trim($titleQuery) . '%');
+        }
+
+        if ($from !== null) {
+            $qb->andWhere('l.schedule >= :from')->setParameter('from', $from);
+        }
+
+        if ($to !== null) {
+            $qb->andWhere('l.schedule <= :to')->setParameter('to', $to);
+        }
+
+        if ($instructor !== null) {
+            $qb->andWhere(':instructor MEMBER OF l.instructors OR :instructor MEMBER OF s.instructors')->setParameter(
+                'instructor',
+                $instructor,
+            );
+        }
+
+        /** @var list<Lesson> $lessons */
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -34,6 +34,9 @@ final class ChatSignedUrlAction extends AbstractController
         $user = $this->getUser();
         $isLoggedIn = $user instanceof User;
         $isAdmin = $isLoggedIn && $this->isGranted('ROLE_ADMIN');
+        // ROLE_HOST is a workshop instructor; admins inherit it via role_hierarchy.
+        $isHost = $isLoggedIn && $this->isGranted('ROLE_HOST');
+        $isStaff = $isAdmin || $isHost;
 
         if ($isLoggedIn) {
             $chatToken = $this->chatTokenManager->mint($user);
@@ -44,6 +47,8 @@ final class ChatSignedUrlAction extends AbstractController
                 'kiddo_roles' => implode(',', $user->getRoles()),
                 'kiddo_chat_token' => $chatToken,
                 'kiddo_is_admin' => $isAdmin ? 'true' : 'false',
+                'kiddo_is_host' => $isHost ? 'true' : 'false',
+                'kiddo_is_staff' => $isStaff ? 'true' : 'false',
                 'kiddo_is_guest' => 'false',
             ];
         } else {
@@ -55,6 +60,8 @@ final class ChatSignedUrlAction extends AbstractController
                 'kiddo_roles' => '',
                 'kiddo_chat_token' => $chatToken,
                 'kiddo_is_admin' => 'false',
+                'kiddo_is_host' => 'false',
+                'kiddo_is_staff' => 'false',
                 'kiddo_is_guest' => 'true',
             ];
         }
@@ -73,7 +80,7 @@ final class ChatSignedUrlAction extends AbstractController
         }
 
         try {
-            $signed = $this->elevenLabsClient->getSignedUrl($dynamicVariables, $isAdmin);
+            $signed = $this->elevenLabsClient->getSignedUrl($dynamicVariables, $isStaff);
         } catch (\Throwable $e) {
             return $this->json([
                 'error' => $e->getMessage(),

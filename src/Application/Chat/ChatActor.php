@@ -40,6 +40,16 @@ final readonly class ChatActor
         return in_array('ROLE_ADMIN', $this->roles, true) || in_array('ROLE_SUPER_ADMIN', $this->roles, true);
     }
 
+    /**
+     * Staff tier: a workshop instructor (ROLE_HOST) or an admin. The chat
+     * token carries roles as stored on the user (no role_hierarchy
+     * expansion), so an admin without an explicit ROLE_HOST still counts.
+     */
+    public function isHost(): bool
+    {
+        return $this->isAdmin() || in_array('ROLE_HOST', $this->roles, true);
+    }
+
     public function userId(): int
     {
         $id = $this->requireUser()->getId();

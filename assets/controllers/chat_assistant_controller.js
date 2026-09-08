@@ -233,6 +233,7 @@ export default class extends Controller {
         const email = this.dynamicVariables.kiddo_user_email || '';
         const userId = this.dynamicVariables.kiddo_user_id || '';
         const isAdmin = this.dynamicVariables.kiddo_is_admin === 'true';
+        const isHost = this.dynamicVariables.kiddo_is_host === 'true';
         if (!userId && !email) {
             return;
         }
@@ -252,7 +253,28 @@ export default class extends Controller {
                         'Użytkownicy → admin.search_users / admin.get_user.\n' +
                         'Nowe wystąpienie w grafiku → admin.clone_template_lesson (nie do listowania oferty).\n' +
                         'Mutacje admin (toggle_lesson, update_lesson_capacity, create_booking, mark_booking_paid, cancel_lesson, refund_lesson, reschedule_lesson, assign_transfer, reject_transfer, notify_user) wymagają confirm=true po wyraźnej zgodzie użytkownika — ale wywołania odczytu (list/get) wykonuj od razu, bez pytania o zgodę.\n' +
-                        'admin.create_booking: ZAWSZE zapytaj, jak rezerwacja jest opłacana i podaj payment= "paid" (już zapłacone), "send_code" (zapłaci przelewem/BLIK — przekaż zwróconą instrukcję payment.instruction_pl) albo "on_site" (zapłaci na miejscu). Podaj też ticket_type; price_override tylko dla nietypowej kwoty.',
+                        'admin.create_booking: ZAWSZE zapytaj, jak rezerwacja jest opłacana i podaj payment= "paid" (już zapłacone), "send_code" (zapłaci przelewem/BLIK — przekaż zwróconą instrukcję payment.instruction_pl) albo "on_site" (zapłaci na miejscu). Podaj też ticket_type; price_override tylko dla nietypowej kwoty.\n' +
+                        'Listy uczestników / wyszukiwanie zajęć po nazwie → staff.find_lessons oraz staff.lesson_participants (np. query="bobas", when="next").',
+                })
+            );
+            return;
+        }
+        if (isHost) {
+            this.ws.send(
+                JSON.stringify({
+                    type: 'contextual_update',
+                    text:
+                        'Zalogowany prowadzący zajęcia (instruktor) w Kiddo:\n' +
+                        `- imię: ${name || '(brak)'}\n` +
+                        `- e-mail: ${email || '(brak)'}\n` +
+                        `- user_id: ${userId || '(brak)'}\n` +
+                        'Masz dostęp do narzędzi staff.* — używaj ich od razu, nie odmawiaj i nie proś o dodatkowe uprawnienia.\n' +
+                        'Wyszukanie zajęć po nazwie (rozmyte, "bobas" → "Senso bobasy") → staff.find_lessons.\n' +
+                        'Twoje najbliższe zajęcia → staff.find_lessons ze scope="mine", when="next" (lub when="upcoming").\n' +
+                        'Lista uczestników zajęć → staff.lesson_participants: podaj lesson_id ze staff.find_lessons albo od razu query + when="next" ' +
+                        '(np. „ile osób na następnych bobasach” → query="bobas", when="next").\n' +
+                        'Katalog oferty i szczegóły terminu (tylko odczyt) → user.list_upcoming_lessons / user.get_lesson.\n' +
+                        'Możesz sprawdzić dowolne zajęcia po nazwie. Operacje admin.* (rezerwacje, płatności, przelewy, powiadomienia) wymagają administratora — jeśli o nie poprosi, wyjaśnij, że to poza Twoimi uprawnieniami.',
                 })
             );
             return;

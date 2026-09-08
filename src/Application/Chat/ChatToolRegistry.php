@@ -27,6 +27,9 @@ final readonly class ChatToolRegistry
                 if (!$includeAll && $definition->requiresAdmin && ($actor === null || !$actor->isAdmin())) {
                     continue;
                 }
+                if (!$includeAll && $definition->requiresHost && ($actor === null || !$actor->isHost())) {
+                    continue;
+                }
                 $definitions[] = $definition;
             }
         }
@@ -85,6 +88,12 @@ final readonly class ChatToolRegistry
                 }
                 if ($definition->requiresAdmin && !$actor->isAdmin()) {
                     return ToolResult::failure('This tool requires ROLE_ADMIN');
+                }
+                if ($definition->requiresHost && !$actor->isHost()) {
+                    return ToolResult::failure(
+                        'This tool requires ROLE_HOST or ROLE_ADMIN',
+                        'Ta akcja jest dostępna tylko dla prowadzących zajęcia i administratorów.',
+                    );
                 }
                 if ($definition->requiresAuth && $actor->isGuest()) {
                     return ToolResult::failure(

@@ -106,6 +106,71 @@ final class ChatToolRegistryTest extends TestCase
         static::assertNotContains('admin.today_schedule', $names);
     }
 
+    public function testHostTierToolsGatedByRoleHost(): void
+    {
+        $provider = new class implements ChatToolProviderInterface {
+            #[\Override]
+            public function definitions(): array
+            {
+                return [
+                    new ToolDefinition(
+                        'staff.lesson_participants',
+                        'roster',
+                        [
+                            'type' => 'object',
+                            'properties' => new \stdClass(),
+                        ],
+                        requiresHost: true,
+                    ),
+                ];
+            }
+
+            #[\Override]
+            public function supports(string $name): bool
+            {
+                return str_starts_with($name, 'staff.');
+            }
+
+            #[\Override]
+            public function call(string $name, ChatActor $actor, array $arguments): ToolResult
+            {
+                return ToolResult::success('ok');
+            }
+        };
+
+        $registry = new ChatToolRegistry([$provider]);
+        $parentUser = UserAssembler::new()
+            ->withId(10)
+            ->withEmail('parent2@example.com')
+            ->withRoles('ROLE_USER')
+            ->assemble();
+        $hostUser = UserAssembler::new()->withId(11)->withEmail('host@example.com')->withRoles('ROLE_HOST')->assemble();
+        $adminUser = UserAssembler::new()
+            ->withId(12)
+            ->withEmail('admin2@example.com')
+            ->withRoles('ROLE_ADMIN')
+            ->assemble();
+
+        $parent = new ChatActor($parentUser, ['ROLE_USER']);
+        $host = new ChatActor($hostUser, ['ROLE_HOST']);
+        $admin = new ChatActor($adminUser, ['ROLE_ADMIN']);
+
+        $parentNames = array_map(static fn(ToolDefinition $d) => $d->name, $registry->definitions($parent));
+        static::assertNotContains('staff.lesson_participants', $parentNames);
+        static::assertContains('staff.lesson_participants', array_map(
+            static fn(ToolDefinition $d) => $d->name,
+            $registry->definitions($host),
+        ));
+        static::assertContains('staff.lesson_participants', array_map(
+            static fn(ToolDefinition $d) => $d->name,
+            $registry->definitions($admin),
+        ));
+
+        static::assertFalse($registry->call('staff.lesson_participants', $parent, [])->ok);
+        static::assertTrue($registry->call('staff.lesson_participants', $host, [])->ok);
+        static::assertTrue($registry->call('staff.lesson_participants', $admin, [])->ok);
+    }
+
     public function testGuestCannotCallAuthToolsButCanCallPublicCatalog(): void
     {
         $provider = new class implements ChatToolProviderInterface {

@@ -2151,6 +2151,12 @@ count = 1
 [[issues]]
 file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
 code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findForStaff`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
+code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\Infrastructure\Doctrine\Repository\LessonRepository::findUpcomingInRangeForInstructor`. Saw type `mixed`.'
 count = 1
 

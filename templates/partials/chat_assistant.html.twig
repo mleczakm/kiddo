@@ -1,13 +1,28 @@
 {% if isFeatureEnabled('chat_assistant') %}
-    {% set isAdminChat = is_granted('ROLE_ADMIN') and (admin_chat|default(app.request.pathInfo starts with '/admin')) %}
     {% set variant = variant|default('floating') %}
     {% set isHero = variant == 'hero' %}
+    {# ROLE_HOST = workshop instructor; admins inherit it via role_hierarchy. #}
+    {% set isAdmin = is_granted('ROLE_ADMIN') %}
+    {% set isStaff = is_granted('ROLE_HOST') %}
+    {# Staff get the same assistant on the main-page hero as on the /admin floating widget. #}
+    {% set isStaffChat = isStaff and (isHero or admin_chat|default(app.request.pathInfo starts with '/admin')) %}
+    {% set staffSuggestions = isAdmin ? [
+        'admin.chat.suggestions.today_schedule',
+        'admin.chat.suggestions.unmatched_transfers',
+        'admin.chat.suggestions.pending_payments',
+        'admin.chat.suggestions.find_user',
+    ] : [
+        'admin.chat.suggestions.my_lessons',
+        'admin.chat.suggestions.my_next_participants',
+        'admin.chat.suggestions.count_by_name',
+    ] %}
+    {% set chatStorageKey = isStaffChat ? 'kiddo_admin_chat_history' : 'kiddo_chat_history' %}
 
     {% if isHero %}
         <section
             data-controller="chat-assistant"
             data-chat-assistant-hero-value="true"
-            data-chat-assistant-storage-key-value="kiddo_chat_history"
+            data-chat-assistant-storage-key-value="{{ chatStorageKey }}"
             class="relative overflow-hidden bg-gradient-to-b from-workshop-blue/10 via-beige to-beige"
         >
             <div class="absolute top-10 left-6 h-20 w-20 rounded-full bg-workshop-pink/20 animate-bounce-slight"></div>
@@ -37,7 +52,7 @@
                     <div class="flex items-center justify-between border-b border-muted px-4 py-3 shrink-0">
                         <div class="flex items-center gap-2">
                             <span class="h-2 w-2 rounded-full bg-workshop-green" data-chat-assistant-target="statusDot"></span>
-                            <span class="text-sm font-medium text-workshop-brown">{{ 'homepage.chat_hero.guide_label'|trans }}</span>
+                            <span class="text-sm font-medium text-workshop-brown">{{ (isStaffChat ? 'homepage.chat_hero.admin_label' : 'homepage.chat_hero.guide_label')|trans }}</span>
                             <span class="text-xs text-muted-foreground" data-chat-assistant-target="status">{{ 'homepage.chat_hero.status.idle'|trans }}</span>
                         </div>
                         <button
@@ -70,15 +85,15 @@
                             class="flex h-full flex-col items-center justify-center gap-4 py-8 text-center"
                         >
                             <p class="max-w-sm text-muted-foreground">
-                                {{ 'homepage.chat_hero.welcome'|trans }}
+                                {{ (isStaffChat ? 'admin.chat.welcome' : 'homepage.chat_hero.welcome')|trans }}
                             </p>
                             <div class="flex flex-wrap justify-center gap-2">
-                                {% for suggestion in [
+                                {% for suggestion in (isStaffChat ? staffSuggestions : [
                                     'homepage.chat_hero.suggestions.age',
                                     'homepage.chat_hero.suggestions.saturday',
                                     'homepage.chat_hero.suggestions.book',
                                     'homepage.chat_hero.suggestions.carnet',
-                                ] %}
+                                ]) %}
                                     <button
                                         type="button"
                                         data-action="chat-assistant#suggest"
@@ -152,7 +167,7 @@
         <div
             data-controller="chat-assistant"
             data-chat-assistant-hero-value="false"
-            data-chat-assistant-storage-key-value="{{ isAdminChat ? 'kiddo_admin_chat_history' : 'kiddo_chat_history' }}"
+            data-chat-assistant-storage-key-value="{{ chatStorageKey }}"
             class="fixed bottom-4 right-4 z-[90] flex flex-col items-end gap-2"
         >
             <div
@@ -164,7 +179,7 @@
                         <span class="h-2 w-2 rounded-full bg-workshop-green" data-chat-assistant-target="statusDot"></span>
                         <div>
                             <p class="text-sm font-medium text-workshop-brown">
-                                {{ isAdminChat ? 'homepage.chat_hero.admin_label'|trans : 'homepage.chat_hero.guide_label'|trans }}
+                                {{ isStaffChat ? 'homepage.chat_hero.admin_label'|trans : 'homepage.chat_hero.guide_label'|trans }}
                             </p>
                             <p class="text-xs text-muted-foreground" data-chat-assistant-target="status">{{ 'homepage.chat_hero.status.idle'|trans }}</p>
                         </div>
@@ -192,15 +207,10 @@
                         class="flex h-full flex-col items-center justify-center gap-3 py-6 text-center"
                     >
                         <p class="max-w-xs text-sm text-muted-foreground">
-                            {{ (isAdminChat ? 'admin.chat.welcome' : 'homepage.chat_hero.welcome')|trans }}
+                            {{ (isStaffChat ? 'admin.chat.welcome' : 'homepage.chat_hero.welcome')|trans }}
                         </p>
                         <div class="flex flex-wrap justify-center gap-2">
-                            {% set floatingSuggestions = isAdminChat ? [
-                                'admin.chat.suggestions.today_schedule',
-                                'admin.chat.suggestions.unmatched_transfers',
-                                'admin.chat.suggestions.pending_payments',
-                                'admin.chat.suggestions.find_user',
-                            ] : [
+                            {% set floatingSuggestions = isStaffChat ? staffSuggestions : [
                                 'homepage.chat_hero.suggestions.age',
                                 'homepage.chat_hero.suggestions.saturday',
                                 'homepage.chat_hero.suggestions.book',

@@ -865,6 +865,9 @@ admin:
       unmatched_transfers: 'Pokaż nieprzypisane przelewy'
       pending_payments: 'Jakie płatności czekają na potwierdzenie?'
       find_user: 'Znajdź klienta po adresie e-mail'
+      my_lessons: 'Pokaż moje najbliższe zajęcia'
+      my_next_participants: 'Lista uczestników moich najbliższych zajęć'
+      count_by_name: 'Ile osób jest na najbliższych Senso bobasach?'
   breadcrumb:
     root: 'Admin'
   menu:

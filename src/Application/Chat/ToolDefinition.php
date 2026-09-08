@@ -18,6 +18,11 @@ final readonly class ToolDefinition
         public bool $requiresConfirm = false,
         public bool $requiresAuth = true,
         public array $mcpAliases = [],
+        /**
+         * Staff tier: available to workshop instructors (ROLE_HOST) and
+         * admins. Implied by requiresAdmin.
+         */
+        public bool $requiresHost = false,
     ) {}
 
     /**
@@ -28,6 +33,9 @@ final readonly class ToolDefinition
         $description = $this->description;
         if ($this->requiresConfirm) {
             $description .= ' Requires confirm=true in arguments before mutation.';
+        }
+        if ($this->requiresHost && !$this->requiresAdmin) {
+            $description .= ' Requires ROLE_HOST (workshop instructor) or ROLE_ADMIN.';
         }
         if (!$this->requiresAuth) {
             $description .= ' Available without login (public catalog).';
