@@ -67,6 +67,14 @@ class User implements UserInterface
     private ?\DateTimeImmutable $lastLoginAt = null;
 
     /**
+     * Unguessable secret for this user's personal calendar subscription feed
+     * (see StaffCalendarFeedAction). Null until the user generates a link;
+     * regenerating it revokes every previously shared URL.
+     */
+    #[ORM\Column(type: 'string', length: 64, nullable: true, unique: true)]
+    private ?string $calendarFeedToken = null;
+
+    /**
      * @var Collection<int, Booking>
      */
     #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'user')]
@@ -94,6 +102,22 @@ class User implements UserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCalendarFeedToken(): ?string
+    {
+        return $this->calendarFeedToken;
+    }
+
+    /**
+     * Assigns a fresh feed secret and returns it; any URL built from the
+     * previous token stops working.
+     *
+     * @throws \Random\RandomException
+     */
+    public function regenerateCalendarFeedToken(): string
+    {
+        return $this->calendarFeedToken = bin2hex(random_bytes(20));
     }
 
     /**

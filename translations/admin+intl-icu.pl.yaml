@@ -1,3 +1,15 @@
+calendar_feed:
+  title: 'Subskrypcja kalendarza'
+  intro: 'Podłącz zajęcia jako subskrybowany kalendarz w Google lub Apple. Kalendarz odświeża się automatycznie – nowe, zmienione i odwołane zajęcia pojawią się bez ponownego dodawania.'
+  generate: 'Wygeneruj link'
+  reset: 'Zresetuj link'
+  reset_confirm: 'Zresetować link? Wszystkie wcześniej udostępnione adresy przestaną działać.'
+  copy: 'Kopiuj'
+  add_google: 'Dodaj do Google Calendar'
+  scope_all: 'Wszystkie zajęcia'
+  scope_mine: 'Moje zajęcia'
+  refresh_note: 'Google odświeża subskrybowane kalendarze co kilka–kilkanaście godzin, więc zmiany nie pojawią się natychmiast.'
+
 admin_dashboard:
   upcoming_attendees:
     admin_actions: 'Akcje administracyjne'

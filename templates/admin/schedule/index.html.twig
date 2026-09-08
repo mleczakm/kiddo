@@ -3,5 +3,10 @@
 {% block title %}{{ 'admin.tabs.schedule'|trans }}{% endblock %}
 
 {% block body %}
+    {% if is_granted('ROLE_HOST') %}
+        <div class="mb-6">
+            {{ component('StaffCalendarSubscription') }}
+        </div>
+    {% endif %}
     {{ component('AdminScheduleComponent') }}
 {% endblock %}
