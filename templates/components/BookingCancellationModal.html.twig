@@ -300,11 +300,15 @@
                 >
                     {{ 'booking.keep_booking'|trans }}
                 </button>
+                {# data-loading disables the button for the duration of the Ajax
+                   call so a second click cannot re-dispatch processCancellation
+                   (https://symfony.com/bundles/ux-live-component/current/index.html#loading-content-data-loading). #}
                 <button
                         type="submit"
                         data-action="live#action"
                         data-live-action-param="processCancellation"
                         data-live-type-param="{{ this.selectedOption }}"
+                        data-loading="action(processCancellation)|addAttribute(disabled)"
                         class="inline-flex h-10 items-center justify-center rounded-md bg-workshop-red px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-workshop-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-workshop-red focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                         {% if this.isButtonDisabled %}disabled{% endif %}
                 >

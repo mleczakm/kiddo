@@ -188,7 +188,7 @@
                                 <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
                                     <h3 class="mb-3 text-xs font-black uppercase tracking-wider text-emerald-700">Rezerwacja anulowana</h3>
                                     <p class="mb-4 text-sm text-emerald-800">Jeśli płatność jednak wpłynęła, możesz przywrócić rezerwację.</p>
-                                    <button type="button" data-action="live#action" data-live-action-param="reactivateBooking" class="w-full rounded-xl bg-emerald-600 px-3 py-2.5 text-sm font-bold text-white hover:bg-emerald-700">Przywróć rezerwację</button>
+                                    <button type="button" data-action="live#action" data-live-action-param="reactivateBooking" data-loading="action(reactivateBooking)|addAttribute(disabled)" class="w-full rounded-xl bg-emerald-600 px-3 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 disabled:pointer-events-none disabled:opacity-50">Przywróć rezerwację</button>
                                 </section>
                             {% endif %}
 
@@ -206,7 +206,7 @@
                                             <p class="text-sm font-bold text-slate-800">{{ this.action == 'reschedule' ? 'Wybierz nowy termin' : (this.action == 'refund' ? 'Anulowanie ze zwrotem' : 'Anulowanie rezerwacji') }}</p>
                                             {% if this.action == 'reschedule' %}<select data-model="targetLessonId" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"><option value="">Wybierz zajęcia…</option>{% for target in this.availableLessons %}<option value="{{ target.id }}">{{ target.schedule|date('d.m.Y H:i') }} — {{ target.metadata.title }}</option>{% endfor %}</select>{% endif %}
                                             <textarea data-model="reason" rows="2" placeholder="Powód (opcjonalnie)" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"></textarea>
-                                            <div class="flex gap-2"><button type="button" data-action="live#action" data-live-action-param="selectAction" data-live-value-param="" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Wróć</button><button type="button" data-action="live#action" data-live-action-param="executeAction" class="flex-1 rounded-lg px-3 py-2 text-sm font-bold text-white {{ this.action == 'refund' ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700' }}">Potwierdź</button></div>
+                                            <div class="flex gap-2"><button type="button" data-action="live#action" data-live-action-param="selectAction" data-live-value-param="" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Wróć</button><button type="button" data-action="live#action" data-live-action-param="executeAction" data-loading="action(executeAction)|addAttribute(disabled)" class="flex-1 rounded-lg px-3 py-2 text-sm font-bold text-white disabled:pointer-events-none disabled:opacity-50 {{ this.action == 'refund' ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700' }}">Potwierdź</button></div>
                                         </div>
                                     {% endif %}
                                 </section>

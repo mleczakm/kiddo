@@ -270,7 +270,8 @@
                                                     data-action="click->live#action:stop"
                                                     data-live-action-param="reactivateBooking"
                                                     data-live-booking-id-param="{{ booking.id }}"
-                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-indigo-600 text-white hover:bg-indigo-700 h-9 rounded-lg px-3"
+                                                    data-loading="action(reactivateBooking)|addAttribute(disabled)"
+                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-indigo-600 text-white hover:bg-indigo-700 h-9 rounded-lg px-3 disabled:pointer-events-none disabled:opacity-50"
                                                 >
                                                     {{ 'admin_dashboard.bookings.actions.reactivate'|trans }}
                                                 </button>
@@ -359,7 +360,8 @@
                                     data-action="click->live#action:stop"
                                     data-live-action-param="reactivateBooking"
                                     data-live-booking-id-param="{{ booking.id }}"
-                                    class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-indigo-600 text-white hover:bg-indigo-700 h-9 rounded-lg px-3"
+                                    data-loading="action(reactivateBooking)|addAttribute(disabled)"
+                                    class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold transition bg-indigo-600 text-white hover:bg-indigo-700 h-9 rounded-lg px-3 disabled:pointer-events-none disabled:opacity-50"
                                 >
                                     {{ 'admin_dashboard.bookings.actions.reactivate'|trans }}
                                 </button>
@@ -452,7 +454,8 @@
                                 data-live-action-param="cancelLesson"
                                 data-live-booking-id-param="{{ booking.id }}"
                                 data-live-lesson-id-param="{{ lesson.id }}"
-                                class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2"
+                                data-loading="action(cancelLesson)|addAttribute(disabled)"
+                                class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2 disabled:pointer-events-none disabled:opacity-50"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
                                     <circle cx="12" cy="12" r="10"></circle>
@@ -466,7 +469,8 @@
                                 data-live-action-param="refundLesson"
                                 data-live-booking-id-param="{{ booking.id }}"
                                 data-live-lesson-id-param="{{ lesson.id }}"
-                                class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2"
+                                data-loading="action(refundLesson)|addAttribute(disabled)"
+                                class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-md h-7 text-xs px-2 disabled:pointer-events-none disabled:opacity-50"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3">
                                     <line x1="12" x2="12" y1="2" y2="22"></line>

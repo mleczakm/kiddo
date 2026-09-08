@@ -174,21 +174,6 @@ class BookingCancellationModal extends AbstractController
             throw new \RuntimeException('User not authenticated or invalid user type');
         }
 
-        // Idempotent guard. The modal can be submitted twice — a double click, a
-        // browser back-then-resubmit, a second tab, or simply after the booking
-        // was already cancelled elsewhere. Re-dispatching CancelLessonBooking /
-        // RefundLessonBooking then fails deep inside the (synchronous) handler
-        // and surfaces to the customer as a broken modal / 500. If this lesson
-        // is already cancelled there is nothing left to do, so just close.
-        if (
-            in_array($typeParam, ['cancel', 'refund'], true)
-            && ($booking->isCancelled() || $booking->isLessonCancelled($lesson))
-        ) {
-            $this->resetAfterSubmit();
-
-            return;
-        }
-
         if (
             $typeParam === 'cancel'
             && $this->requiresLateCancelAcknowledgment()
@@ -248,11 +233,6 @@ class BookingCancellationModal extends AbstractController
                 break;
         }
 
-        $this->resetAfterSubmit();
-    }
-
-    private function resetAfterSubmit(): void
-    {
         $this->modalOpened = false;
         $this->selectedOption = 'reschedule';
         $this->cancellationReason = '';
