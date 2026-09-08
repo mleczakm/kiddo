@@ -66,12 +66,29 @@ final readonly class CancelBookingOccurrence
         // Always use plain cancel here; refund is handled by a separate use case
         $transition = 'cancel';
 
+        // A cancel request for a booking that is already cancelled (a retried
+        // message, a double-submit, a stale modal, or a concurrent cancel that
+        // won the race) is a no-op, not an error: the desired end state is
+        // already in place. Anything else that blocks the transition is
+        // unexpected and worth a warning, but still must not blow up a
+        // fire-and-forget message with a fatal HandlerFailedException.
         if (!$this->bookingStateMachine->can($booking, $transition)) {
-            $this->logger->error('Cannot apply cancel transition to booking', [
+            $context = [
                 'bookingId' => $booking->getId()->toRfc4122(),
+                'lessonId' => $lessonId->toRfc4122(),
                 'status' => $booking->getStatus(),
-            ]);
-            throw new \RuntimeException(sprintf('Cannot %s this booking in its current state', $transition));
+                'transition' => $transition,
+            ];
+
+            if ($booking->isCancelled()) {
+                $this->logger->info('Skipping booking cancel — booking already cancelled', $context);
+
+                return;
+            }
+
+            $this->logger->warning('Skipping booking cancel — transition not applicable', $context);
+
+            return;
         }
 
         // Perform domain operation: cancel the specific lesson ONLY (do not cancel the whole booking)

@@ -11,6 +11,7 @@ use App\Message\CancelLessonBooking;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\Clock;
@@ -68,6 +69,53 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
             'user' => $user,
         ]);
         static::assertCount(1, $notifications);
+    }
+
+    public function testCancellingAnAlreadyCancelledBookingIsANoOpNotAFatal(): void
+    {
+        self::bootKernel();
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+
+        $user = UserAssembler::new()->assemble();
+        $em->persist($user);
+
+        $lesson = LessonAssembler::new()
+            ->withTitle('Sensoplastyka')
+            ->withSchedule(Clock::get()->now()->modify('+1 day'))
+            ->assemble();
+        $em->persist($lesson);
+
+        $booking = BookingAssembler::new()
+            ->withUser($user)
+            ->withLessons($lesson)
+            ->withStatus(Booking::STATUS_ACTIVE)
+            ->assemble();
+        $em->persist($booking);
+        $em->flush();
+        $bookingId = $booking->getId();
+
+        // First cancel succeeds and flips the (single-lesson) booking to cancelled.
+        $this->bus()->dispatch(new CancelLessonBooking($bookingId, $lesson->getId(), $user, 'Rezygnacja'));
+        $this->transport('async')->process();
+
+        $em->clear();
+        $reloaded = $em->getRepository(Booking::class)->find($bookingId);
+        static::assertInstanceOf(Booking::class, $reloaded);
+        static::assertSame(Booking::STATUS_CANCELLED, $reloaded->getStatus());
+
+        // Second cancel (double submit / stale modal / retried message): must not
+        // throw a HandlerFailedException, and must leave the booking cancelled.
+        // No new cancellation email either — the total stays at the one sent by
+        // the first cancel.
+        $this->bus()->dispatch(new CancelLessonBooking($bookingId, $lesson->getId(), $user, 'Rezygnacja'));
+        $this->transport('async')->process();
+
+        $em->clear();
+        $stillCancelled = $em->getRepository(Booking::class)->find($bookingId);
+        static::assertInstanceOf(Booking::class, $stillCancelled);
+        static::assertSame(Booking::STATUS_CANCELLED, $stillCancelled->getStatus());
+        $this->mailer()->assertSentEmailCount(1);
     }
 
     public function testCancellingOneLessonOfAMultiLessonBookingKeepsBookingActive(): void

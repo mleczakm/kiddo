@@ -32,11 +32,15 @@ class ReactivateBookingHandler
         }
 
         if (!$this->bookingStateMachine->can($booking, 'reactivate')) {
-            $this->logger->error('Cannot apply reactivate transition to booking', [
+            // Idempotent: the booking is already active (or otherwise cannot be
+            // reactivated). This runs as a fire-and-forget message from the admin
+            // UI, so a fatal here is just noise — log and stop.
+            $this->logger->info('Skipping booking reactivate — transition not applicable', [
                 'bookingId' => $booking->getId()->toRfc4122(),
                 'status' => $booking->getStatus(),
             ]);
-            throw new \RuntimeException('Cannot reactivate this booking in its current state');
+
+            return;
         }
 
         $this->bookingStateMachine->apply($booking, 'reactivate');
