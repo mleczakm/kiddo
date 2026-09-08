@@ -5,6 +5,7 @@
     - amount        Brick\Money\Money  amount still owed
     - payment_code  string             the 4-char transfer title / BLIK reference
     - awaiting      bool (optional)    show the "awaiting payment" hint
+    - bookings      iterable<Booking> (optional)  render an "add to calendar" link per booked lesson
 
   Extracted from LessonModal / UpcomingAttendeesComponent so the customer panel
   (OutstandingPaymentsComponent, BillingComponent) renders the exact same block.
@@ -31,4 +32,17 @@
             'account': '<span class="whitespace-nowrap font-semibold text-panel-ink">' ~ org.bankAccount ~ '</span>',
         })|raw }}
     </p>
+    {% if bookings|default([]) is not empty %}
+        <div class="mt-4 flex flex-col items-center gap-2 border-t border-panel-line pt-4">
+            {% for booking in bookings %}
+                {% for lesson in booking.lessons %}
+                    <a href="{{ lesson_google_calendar_url(lesson) }}" target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 rounded-lg border border-panel-line px-4 py-2 text-sm font-semibold text-panel-ink transition-colors hover:bg-panel-canvas">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+                        {{ 'payment.add_to_calendar'|trans }} — {{ lesson.metadata.title }}
+                    </a>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>

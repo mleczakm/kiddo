@@ -103,6 +103,13 @@
                         <div class="text-muted-foreground text-sm border-t pt-4 mt-4">
                             {{ 'blik.alt_transfer'|trans({'title': paymentCode,'account': '<span class="text-workshop-red whitespace-nowrap">' ~ organization().bankAccount ~ '</span>'})|raw }}
                         </div>
+                        {% if lesson %}
+                            <a href="{{ lesson_google_calendar_url(lesson) }}" target="_blank" rel="noopener"
+                               class="mt-4 inline-flex items-center gap-2 rounded-md border border-workshop-brown/20 px-4 py-2 text-sm font-semibold text-workshop-brown transition-colors hover:bg-workshop-brown/5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+                                {{ 'payment.add_to_calendar'|trans }}
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             {% else %}

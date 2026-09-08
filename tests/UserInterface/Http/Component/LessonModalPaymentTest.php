@@ -209,6 +209,47 @@ final class LessonModalPaymentTest extends WebTestCase
         static::assertSame((string) $booking->getId(), $lessonModal->resumedBookingId);
     }
 
+    public function testPaymentScreenShowsAddToCalendarLink(): void
+    {
+        Clock::set(new MockClock('2024-02-20 08:00:00'));
+
+        $client = static::createClient();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $user = UserAssembler::new()->withPhone('501111111')->assemble();
+        $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
+        $lesson = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensory')->assemble())
+            ->withSchedule(new \DateTimeImmutable('2024-02-21 10:30:00'))
+            ->assemble();
+        $lesson->setSeries($series);
+
+        $em->persist($user);
+        $em->persist($series);
+        $em->persist($lesson);
+        $em->flush();
+
+        $client->loginUser($user);
+
+        $component = $this->createLiveComponent(
+            name: LessonModal::class,
+            data: [
+                'lesson' => $lesson,
+                'modalOpened' => true,
+                'termsAccepted' => true,
+                'closeUrl' => '/warsztaty',
+            ],
+            client: $client,
+        );
+
+        $component->call('processPayment');
+
+        $html = (string) $component->render();
+        static::assertStringContainsString('https://calendar.google.com/calendar/render', $html);
+        static::assertStringContainsString('text=Sensory', $html);
+    }
+
     public function testResumePaymentViaEventFromBookingPreview(): void
     {
         Clock::set(new MockClock('2024-02-20 08:00:00'));

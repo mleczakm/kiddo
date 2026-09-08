@@ -127,6 +127,8 @@ final class OutstandingPaymentsComponentTest extends WebTestCase
         $html = (string) $rendered->render();
 
         static::assertStringContainsString('data-poll', $html);
+        static::assertStringContainsString('https://calendar.google.com/calendar/render', $html);
+        static::assertStringContainsString('Zajecia do oplacenia', $html);
 
         $em->clear();
         $reloaded = $em->getRepository(Payment::class)->find($payment->getId());

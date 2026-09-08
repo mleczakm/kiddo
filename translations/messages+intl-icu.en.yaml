@@ -112,6 +112,7 @@ payment:
   paid_success: "Payment received!"
   paid_message: "Thank you for your payment. Your booking has been confirmed."
   awaiting: "Waiting for payment confirmation..."
+  add_to_calendar: "Add to calendar"
 
 notifications:
   title: Notifications
