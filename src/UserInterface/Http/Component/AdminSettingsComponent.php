@@ -12,20 +12,22 @@ use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\FinanceContactRepository;
 use App\Infrastructure\Doctrine\Repository\SettingRepository;
 use App\Infrastructure\Doctrine\Repository\UserRepository;
+use App\UserInterface\Http\Component\Concern\ToastableComponent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent('AdminSettings', template: 'components/AdminSettingsComponent.html.twig')]
 class AdminSettingsComponent extends AbstractController
 {
     use DefaultActionTrait;
-    use ComponentToolsTrait;
+    // Save actions run as LiveComponent AJAX requests, so addFlash() feedback
+    // never reaches a full page render - raise an app-wide toast instead.
+    use ToastableComponent;
 
     #[LiveProp(writable: true)]
     public string $settingsTab = 'roles';
@@ -262,6 +264,9 @@ class AdminSettingsComponent extends AbstractController
         $this->entityManager->flush();
     }
 
+    /**
+     * @throws \LogicException
+     */
     #[LiveAction]
     public function saveRobotsTxt(): void
     {
@@ -280,9 +285,12 @@ class AdminSettingsComponent extends AbstractController
         ]);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'robots.txt has been saved successfully.');
+        $this->toast('robots.txt has been saved successfully.');
     }
 
+    /**
+     * @throws \LogicException
+     */
     #[LiveAction]
     public function saveTransferReviewThreshold(): void
     {
@@ -305,7 +313,7 @@ class AdminSettingsComponent extends AbstractController
         ]);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'Próg ręcznego przeglądu przelewów został zapisany.');
+        $this->toast('Próg ręcznego przeglądu przelewów został zapisany.');
     }
 
     /**
@@ -340,6 +348,6 @@ class AdminSettingsComponent extends AbstractController
         $setting->setContent($content);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'Dane firmy zostały zapisane.');
+        $this->toast('Dane firmy zostały zapisane.');
     }
 }
