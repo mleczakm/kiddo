@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\CommandHandler\Notification;
 
+use App\Application\Calendar\LessonCalendarFactory;
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
+use App\Application\Notification\EmailAttachment;
 use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
@@ -26,8 +28,13 @@ readonly class SendPaymentNotificationHandler
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
+        private LessonCalendarFactory $calendarFactory,
     ) {}
 
+    /**
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
+     */
     public function __invoke(SendPaymentNotificationCommand $command): void
     {
         $payment = $command->payment;
@@ -45,6 +52,10 @@ readonly class SendPaymentNotificationHandler
         $this->sendAdminNotifications($payment);
     }
 
+    /**
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
+     */
     private function sendUserNotification(Payment $payment, User $user): void
     {
         $bookings = $payment->getBookings();
@@ -54,6 +65,11 @@ readonly class SendPaymentNotificationHandler
             foreach ($booking->getLessons() as $lesson) {
                 $lessons[] = $lesson;
             }
+        }
+
+        $calendarLinks = [];
+        foreach ($lessons as $lesson) {
+            $calendarLinks[] = $this->calendarFactory->googleCalendarUrl($lesson);
         }
 
         $subject = $this->templateRenderer->render('email/notification/payment-notification-user-subject.html.twig', [
@@ -68,8 +84,14 @@ readonly class SendPaymentNotificationHandler
             'reference' => $firstBooking->getId(),
             'lessons' => $lessons,
             'bookings' => $bookings,
+            'calendarLinks' => $calendarLinks,
         ]);
-        $this->notificationSender->send($user->getEmailString(), $subject, $content);
+
+        $attachments = $lessons === []
+            ? []
+            : [new EmailAttachment('kalendarz.ics', $this->calendarFactory->icsForLessons($lessons), 'text/calendar')];
+
+        $this->notificationSender->send($user->getEmailString(), $subject, $content, $attachments);
 
         $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()->title;
         $this->inAppNotifications->notify(

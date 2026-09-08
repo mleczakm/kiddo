@@ -5,6 +5,7 @@
 <p>{{ 'daily_lessons_schedule.user_reminder'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM') }) }}</p>
 <ul>
   {% for lesson in lessons %}
+    {% set calendarLink = calendarLinks[loop.index0] ?? null %}
     <li>
       <strong>{{ lesson.metadata.title }}</strong>
       ({{ lesson.schedule|format_datetime(pattern='HH:mm') }})
@@ -13,8 +14,16 @@
           - {{ booking.child.name }}{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}
         {% endif %}
       {% endfor %}
+      {% if calendarLink %}
+        <br>
+        <a href="{{ calendarLink }}" style="display:inline-block; margin-top:4px; color:#e85030; font-weight:600; text-decoration:none;">
+          {{ 'daily_lessons_schedule.add_to_calendar'|trans }}
+        </a>
+      {% endif %}
     </li>
   {% endfor %}
 </ul>
+
+<p style="color:#6b7280; font-size:0.875rem;">{{ 'daily_lessons_schedule.calendar_hint'|trans }}</p>
 
 <p>{{ 'daily_lessons_schedule.user_footer'|trans }}</p>

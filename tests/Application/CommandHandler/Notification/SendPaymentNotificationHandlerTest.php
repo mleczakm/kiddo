@@ -78,6 +78,16 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         static::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
         static::assertStringContainsString('niedziela 24 sie', (string) $userEmail->getHtmlBody());
 
+        // The confirmation email carries an .ics calendar file and an "add to calendar" link.
+        $userEmail->assertHasFile('kalendarz.ics', 'text/calendar');
+        $icsAttachment = $userEmail->getAttachments()[0];
+        static::assertStringContainsString('BEGIN:VEVENT', $icsAttachment->getBody());
+        static::assertStringContainsString('SUMMARY:Joga', $icsAttachment->getBody());
+        static::assertStringContainsString('calendar.google.com/calendar/render', (string) $userEmail->getHtmlBody());
+        static::assertStringContainsString('Dodaj do kalendarza', (string) $userEmail->getHtmlBody());
+
+        static::assertSame([], $adminEmail1->getAttachments());
+
         $notifications = $em->getRepository(Notification::class)->findAll();
         static::assertCount(3, $notifications); // user + 2 admins
         $titles = array_map(static fn(Notification $n) => $n->getTitle(), $notifications);

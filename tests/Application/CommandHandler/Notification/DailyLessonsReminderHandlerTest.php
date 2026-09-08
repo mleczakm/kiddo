@@ -51,6 +51,12 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         static::assertStringContainsString('Joga', $body);
         static::assertStringContainsString('09.07', $body);
         static::assertStringContainsString('12:00', $body);
+
+        // The reminder carries an .ics calendar file and an "add to calendar" link.
+        $userEmail->assertHasFile('kalendarz.ics', 'text/calendar');
+        static::assertStringContainsString('BEGIN:VEVENT', $userEmail->getAttachments()[0]->getBody());
+        static::assertStringContainsString('calendar.google.com/calendar/render', $body);
+        static::assertStringContainsString('Dodaj do kalendarza', $body);
     }
 
     public function testAdminScheduleAndUserReminderIncludeChildName(): void

@@ -79,8 +79,10 @@ payment:
 
 
         Zarezerwowane zajęcia:
-        
 
+
+      add_to_calendar: 'Dodaj do kalendarza'
+      calendar_hint: 'Wydarzenia znajdziesz też w załączonym pliku kalendarza (.ics).'
       footer: 'W razie pytań prosimy o kontakt.'
     admin:
       subject: 'Nowa płatność od {user} za'
@@ -130,6 +132,8 @@ daily_lessons_schedule:
   user_greeting: 'Cześć {name},'
   user_reminder: 'To szybkie przypomnienie o Twoich dzisiejszych zajęciach w {date}:'
   user_footer: "Do zobaczenia na zajęciach w Warsztatowni Sensorycznej!"
+  add_to_calendar: 'Dodaj do kalendarza'
+  calendar_hint: 'Wydarzenia znajdziesz też w załączonym pliku kalendarza (.ics).'
   instructor_subject: 'Twoje zajęcia dzisiaj ({date})'
   instructor_greeting: 'Cześć {name},'
   instructor_reminder: 'Oto podsumowanie Twoich zajęć na dziś ({date}):'

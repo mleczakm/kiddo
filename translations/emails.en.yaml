@@ -40,6 +40,8 @@ payment:
       subject: 'Payment Confirmation - '
       greeting: 'Thank you for your payment, {name}!'
       footer: 'If you have any questions, please contact the administrator.'
+      add_to_calendar: 'Add to calendar'
+      calendar_hint: 'You can also find these events in the attached calendar file (.ics).'
       info: >-
         We are pleased to confirm that we have received your payment of {amount}.
 
@@ -66,6 +68,8 @@ daily_lessons_schedule:
   user_greeting: "Hi {name},"
   user_reminder: "This is a quick reminder about your lessons today on {date}:"
   user_footer: "See you at the workshop!"
+  add_to_calendar: 'Add to calendar'
+  calendar_hint: 'You can also find these events in the attached calendar file (.ics).'
   instructor_subject: "Your lessons today ({date})"
   instructor_greeting: "Hi {name},"
   instructor_reminder: "Here's a summary of your lessons today ({date}):"

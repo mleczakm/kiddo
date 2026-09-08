@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\CommandHandler\Notification;
 
+use App\Application\Calendar\LessonCalendarFactory;
 use App\Application\Command\Notification\DailyLessonsReminder;
+use App\Application\Notification\EmailAttachment;
 use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Application\Repository\BookingRepositoryInterface;
@@ -39,8 +41,13 @@ readonly class DailyLessonsReminderHandler
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
+        private LessonCalendarFactory $calendarFactory,
     ) {}
 
+    /**
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
+     */
     public function __invoke(DailyLessonsReminder $command): void
     {
         $date = $command->date;
@@ -55,6 +62,10 @@ readonly class DailyLessonsReminderHandler
         $newBookings = $this->bookingRepository->findCreatedBetween($yesterdayStart, $yesterdayEnd);
         $revenue = array_reduce(
             $this->paymentRepository->findPaidBetween($yesterdayStart, $yesterdayEnd),
+            /**
+             * @throws \Brick\Math\Exception\MathException
+             * @throws \Brick\Money\Exception\MoneyMismatchException
+             */
             static fn(Money $carry, Payment $payment): Money => $carry->plus($payment->getAmount()),
             Money::zero('PLN'),
         );
@@ -123,15 +134,27 @@ readonly class DailyLessonsReminderHandler
             }
         }
         foreach ($usersWithLessons as $user => $userLessons) {
+            $calendarLinks = [];
+            foreach ($userLessons as $lesson) {
+                $calendarLinks[] = $this->calendarFactory->googleCalendarUrl($lesson);
+            }
+
             $userContent = $this->templateRenderer->render('email/notification/daily-user-reminder.html.twig', [
                 'lessons' => $userLessons,
                 'date' => $date,
                 'user' => $user,
+                'calendarLinks' => $calendarLinks,
             ]);
             $userSubject = $this->templateRenderer->render('email/notification/daily-user-reminder-subject.html.twig', [
                 'date' => $date,
             ]);
-            $this->notificationSender->send($user->getEmail(), $userSubject, $userContent);
+            $this->notificationSender->send($user->getEmail(), $userSubject, $userContent, [
+                new EmailAttachment(
+                    'kalendarz.ics',
+                    $this->calendarFactory->icsForLessons($userLessons),
+                    'text/calendar',
+                ),
+            ]);
 
             $titles = [];
             foreach ($userLessons as $lesson) {
