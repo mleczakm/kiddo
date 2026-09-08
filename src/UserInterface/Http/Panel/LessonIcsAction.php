@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Panel;
 
+use App\Application\Calendar\LessonCalendarFactory;
 use App\Entity\Lesson;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
@@ -35,6 +36,7 @@ final class LessonIcsAction extends AbstractController
         string $lesson,
         LessonRepository $lessonRepository,
         BookingRepository $bookingRepository,
+        LessonCalendarFactory $calendarFactory,
         #[CurrentUser]
         User $user,
     ): Response {
@@ -47,35 +49,9 @@ final class LessonIcsAction extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $utc = new \DateTimeZone('UTC');
-        $start = $entity->schedule;
-        $end = $start->modify('+' . $entity->getMetadata()->duration . ' minutes');
-        $stamp = new \DateTimeImmutable('now', $utc);
-
-        $lines = [
-            'BEGIN:VCALENDAR',
-            'VERSION:2.0',
-            'PRODID:-//Warsztatownia Sensoryczna//Panel//PL',
-            'CALSCALE:GREGORIAN',
-            'METHOD:PUBLISH',
-            'BEGIN:VEVENT',
-            'UID:lesson-' . (string) $entity->getId() . '@warsztatowniasensoryczna.pl',
-            'DTSTAMP:' . $stamp->format('Ymd\THis\Z'),
-            'DTSTART:' . $start->setTimezone($utc)->format('Ymd\THis\Z'),
-            'DTEND:' . $end->setTimezone($utc)->format('Ymd\THis\Z'),
-            'SUMMARY:' . $this->escapeIcs($entity->getMetadata()->title),
-            'END:VEVENT',
-            'END:VCALENDAR',
-        ];
-
-        return new Response(implode("\r\n", $lines) . "\r\n", Response::HTTP_OK, [
+        return new Response($calendarFactory->icsForLesson($entity), Response::HTTP_OK, [
             'Content-Type' => 'text/calendar; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="lekcja-' . $start->format('Y-m-d') . '.ics"',
+            'Content-Disposition' => 'attachment; filename="lekcja-' . $entity->schedule->format('Y-m-d') . '.ics"',
         ]);
-    }
-
-    private function escapeIcs(string $value): string
-    {
-        return str_replace(['\\', ';', ',', "\n"], ['\\\\', '\\;', '\\,', '\\n'], $value);
     }
 }
