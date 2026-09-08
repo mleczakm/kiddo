@@ -63,6 +63,9 @@ payment:
       footer: Please log in to the admin panel for more details.
     and_others: 'emails'
 
+social:
+  facebook_follow: 'Find news and updates on our Facebook page.'
+
 daily_lessons_schedule:
   user_subject: "Reminder about today's lessons ({date})"
   user_greeting: "Hi {name},"
@@ -70,6 +73,8 @@ daily_lessons_schedule:
   user_footer: "See you at the workshop!"
   add_to_calendar: 'Add to calendar'
   calendar_hint: 'You can also find these events in the attached calendar file (.ics).'
+  facebook_contact: 'If you have any questions or anything changes, you can also reach us via'
+  facebook_contact_link: 'our Facebook page'
   instructor_subject: "Your lessons today ({date})"
   instructor_greeting: "Hi {name},"
   instructor_reminder: "Here's a summary of your lessons today ({date}):"

@@ -337,6 +337,7 @@ class AdminSettingsComponentTest extends WebTestCase
             'phone' => '+48 600 100 200',
             'bank_account' => '00 1111 2222 3333 4444 5555 6666',
             'blik_phone' => '600 100 200',
+            'facebook_url' => 'https://www.facebook.com/warsztatownia',
         ]);
 
         $component->call('saveOrganizationDetails');
@@ -351,5 +352,6 @@ class AdminSettingsComponentTest extends WebTestCase
         static::assertSame('Warsztatownia Testowa', $content['name']);
         static::assertSame('biuro@example.com', $content['email']);
         static::assertSame('00 1111 2222 3333 4444 5555 6666', $content['bank_account']);
+        static::assertSame('https://www.facebook.com/warsztatownia', $content['facebook_url']);
     }
 }

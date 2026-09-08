@@ -1,0 +1,29 @@
+{# Site-wide Facebook / social integration for SEO: rel="me", the Open Graph
+   publisher hint and an Organization JSON-LD block whose sameAs points search
+   engines at the Facebook page. All of it is driven by the admin-editable
+   organization() details and disappears entirely when the Facebook URL is
+   blanked in the admin panel. #}
+{% set org = organization() %}
+{% if org.facebookUrl %}
+    <link rel="me" href="{{ org.facebookUrl }}">
+    <meta property="og:site_name" content="{{ org.name }}">
+    <meta property="article:publisher" content="{{ org.facebookUrl }}">
+    {% set orgJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: org.name,
+        url: url('homepage'),
+        logo: absolute_url(asset('images/logo-full.webp')),
+        email: org.email,
+        telephone: org.phone,
+        address: {
+            '@type': 'PostalAddress',
+            streetAddress: org.street,
+            postalCode: org.postalCode,
+            addressLocality: org.city,
+            addressCountry: 'PL',
+        },
+        sameAs: [org.facebookUrl],
+    } %}
+    <script type="application/ld+json">{{ orgJsonLd|json_encode|raw }}</script>
+{% endif %}

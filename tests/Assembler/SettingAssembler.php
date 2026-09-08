@@ -31,6 +31,7 @@ final class SettingAssembler extends EntityAssembler
     public function asOrganizationDetails(
         string $blikPhone = '571 531 213',
         string $bankAccount = '46 2490 0005 0000 4000 1897 5420',
+        string $facebookUrl = '',
     ): static {
         return $this->withKey('organization_details')->withContent([
             'name' => 'Warsztatownia Sensoryczna',
@@ -41,6 +42,7 @@ final class SettingAssembler extends EntityAssembler
             'phone' => '+48 571 531 213',
             'bank_account' => $bankAccount,
             'blik_phone' => $blikPhone,
+            'facebook_url' => $facebookUrl,
         ]);
     }
 

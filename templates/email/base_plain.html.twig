@@ -43,6 +43,13 @@
     {% block content %}
     {{ content|raw }}
     {% endblock %}
+    {% set org = organization() %}
+    {% if org.facebookUrl %}
+        <div class="footer">
+            <a href="{{ org.facebookUrl }}" style="color:#1877f2; text-decoration:none; font-weight:600;">Facebook</a>
+            &mdash; {{ 'social.facebook_follow'|trans({}, 'emails') }}
+        </div>
+    {% endif %}
     <div class="footer">
         {{ 'emails.footer'|trans({}, 'emails') }}
     </div>

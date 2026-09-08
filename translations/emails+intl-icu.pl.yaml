@@ -1,5 +1,8 @@
 exception: Załączony ślad stosu wyjątku.
 
+social:
+  facebook_follow: 'Aktualności i nowości znajdziesz na naszym Facebooku.'
+
 link_warning_upper: Jeśli powyższy przycisk nie działa, możesz skopiować i wkleić poniższy link do swojej przeglądarki
 link_warning_underlying: Jeśli nie prosiłeś(-aś) o link do logowania, zignoruj tę wiadomość. Bezpieczeństwo Twojego konta jest dla nas ważne.
 
@@ -134,6 +137,8 @@ daily_lessons_schedule:
   user_footer: "Do zobaczenia na zajęciach w Warsztatowni Sensorycznej!"
   add_to_calendar: 'Dodaj do kalendarza'
   calendar_hint: 'Wydarzenia znajdziesz też w załączonym pliku kalendarza (.ics).'
+  facebook_contact: 'W razie jakichkolwiek pytań lub zmian możesz się z nami skontaktować także przez'
+  facebook_contact_link: 'nasz profil na Facebooku'
   instructor_subject: 'Twoje zajęcia dzisiaj ({date})'
   instructor_greeting: 'Cześć {name},'
   instructor_reminder: 'Oto podsumowanie Twoich zajęć na dziś ({date}):'

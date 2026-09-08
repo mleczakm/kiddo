@@ -40,6 +40,11 @@ final readonly class OrganizationDetailsProvider
             ? trim($stored[$key])
             : self::DEFAULTS[$key];
 
+        // The Facebook URL has no built-in default: the site/email integration
+        // stays off until an admin sets it under Admin -> Settings, and can be
+        // switched back off by clearing the field.
+        $facebookUrl = is_string($stored['facebook_url'] ?? null) ? trim($stored['facebook_url']) : '';
+
         return new OrganizationDetails(
             name: $value('name'),
             street: $value('street'),
@@ -49,6 +54,7 @@ final readonly class OrganizationDetailsProvider
             phone: $value('phone'),
             bankAccount: $value('bank_account'),
             blikPhone: $value('blik_phone'),
+            facebookUrl: $facebookUrl,
         );
     }
 }

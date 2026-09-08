@@ -26,4 +26,11 @@
 
 <p style="color:#6b7280; font-size:0.875rem;">{{ 'daily_lessons_schedule.calendar_hint'|trans }}</p>
 
+{% set org = organization() %}
+{% if org.facebookUrl %}
+  <p>{{ 'daily_lessons_schedule.facebook_contact'|trans }}
+    <a href="{{ org.facebookUrl }}" style="color:#e85030; font-weight:600; text-decoration:none;">{{ 'daily_lessons_schedule.facebook_contact_link'|trans }}</a>.
+  </p>
+{% endif %}
+
 <p>{{ 'daily_lessons_schedule.user_footer'|trans }}</p>

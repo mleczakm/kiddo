@@ -9,6 +9,9 @@ namespace App\Application\Service;
  * sidebar footer and the BLIK/transfer payment instructions. Admin-editable
  * (see AdminSettingsComponent); OrganizationDetailsProvider fills any unset
  * field with a sensible default.
+ *
+ * $facebookUrl has no default: it is an empty string until an admin sets it,
+ * and clearing the admin field switches the Facebook integration back off.
  */
 final readonly class OrganizationDetails
 {
@@ -21,6 +24,7 @@ final readonly class OrganizationDetails
         public string $phone,
         public string $bankAccount,
         public string $blikPhone,
+        public string $facebookUrl,
     ) {}
 
     public function addressLine(): string

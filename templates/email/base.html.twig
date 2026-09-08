@@ -80,6 +80,13 @@
         <img src="https://warsztatowniasensoryczna.pl{{ asset('images/logo-header.webp') }}" alt="Warsztatownia Sensoryczna">
     </div>
     {{ content|trans({}, 'email') }}
+    {% set org = organization() %}
+    {% if org.facebookUrl %}
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ org.facebookUrl }}" style="display:inline-block; width:36px; height:36px; line-height:36px; border-radius:50%; background-color:#1877f2; color:#ffffff; font-family:Georgia,'Times New Roman',serif; font-size:20px; font-weight:bold; text-decoration:none;">f</a>
+            <p style="margin-top:8px; font-size:14px; color:#738f3e;">{{ 'social.facebook_follow'|trans({}, 'emails') }}</p>
+        </div>
+    {% endif %}
     <div class="footer">
         {{ 'footer'|trans({}, 'email') }}
     </div>

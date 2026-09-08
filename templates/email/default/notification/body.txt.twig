@@ -18,3 +18,10 @@ Exception stack trace attached.
 {{ exception }}
 {% endif %}
 {% endblock %}
+
+{% block social %}
+{% set org = organization() %}
+{% if org.facebookUrl %}
+{{ 'social.facebook_follow'|trans({}, 'emails') }} {{ org.facebookUrl }}
+{% endif %}
+{% endblock %}

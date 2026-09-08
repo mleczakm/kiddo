@@ -10,8 +10,10 @@ use App\Entity\Child;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
+use App\Tests\Assembler\SettingAssembler;
 use App\Tests\Assembler\UserAssembler;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
@@ -26,9 +28,15 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-07-09 10:00:00', new \DateTimeZone('UTC'));
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
         $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($admin);
+        $em->persist(
+            SettingAssembler::new()->asOrganizationDetails(
+                facebookUrl: 'https://www.facebook.com/profile.php?id=61564631314322',
+            )->assemble(),
+        );
 
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())
@@ -57,6 +65,10 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         static::assertStringContainsString('BEGIN:VEVENT', $userEmail->getAttachments()[0]->getBody());
         static::assertStringContainsString('calendar.google.com/calendar/render', $body);
         static::assertStringContainsString('Dodaj do kalendarza', $body);
+
+        // With a Facebook URL configured, the reminder invites contact that way.
+        static::assertStringContainsString('facebook.com/profile.php?id=61564631314322', $body);
+        static::assertStringContainsString('skontaktować', $body);
     }
 
     public function testAdminScheduleAndUserReminderIncludeChildName(): void
@@ -65,6 +77,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $user = UserAssembler::new()->withEmail('parent@example.com')->withName('Anna Nowak')->assemble();
         $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $child = new Child($user, 'Zosia', new DateTimeImmutable('2018-03-15'));
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($admin);

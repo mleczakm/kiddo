@@ -25,6 +25,38 @@ final class OrganizationDetailsProviderTest extends KernelTestCase
         static::assertSame('46 2490 0005 0000 4000 1897 5420', $org->bankAccount);
         static::assertSame('571 531 213', $org->blikPhone);
         static::assertSame('Aleja Jana Pawła II 12D, 05-250 Radzymin', $org->addressLine());
+        // The Facebook URL has no built-in default - it is empty until configured.
+        static::assertSame('', $org->facebookUrl);
+    }
+
+    public function testFacebookUrlIsReturnedOnlyWhenExplicitlyConfigured(): void
+    {
+        self::bootKernel();
+
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        $setting = new Setting();
+        $setting->setKey(OrganizationDetailsProvider::SETTING_KEY);
+        $setting->setContent([
+            'name' => 'Warsztatownia Sensoryczna',
+            'facebook_url' => '  https://www.facebook.com/warsztatownia  ',
+        ]);
+        $em->persist($setting);
+        $em->flush();
+
+        /** @var OrganizationDetailsProvider $provider */
+        $provider = self::getContainer()->get(OrganizationDetailsProvider::class);
+
+        static::assertSame('https://www.facebook.com/warsztatownia', $provider->get()->facebookUrl);
+
+        // Clearing the field switches the integration back off.
+        $setting->setContent([
+            'name' => 'Warsztatownia Sensoryczna',
+            'facebook_url' => '',
+        ]);
+        $em->flush();
+
+        static::assertSame('', $provider->get()->facebookUrl);
     }
 
     public function testUsesAdminConfiguredValuesAndKeepsDefaultsForBlankFields(): void

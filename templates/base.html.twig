@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}{{ 'page.default.header'|trans }}{% endblock %}</title>
     {% block meta %}{% endblock %}
+    {{ include('partials/_social_meta.html.twig') }}
     <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     {{ include('partials/frontend-fonts.html.twig') }}

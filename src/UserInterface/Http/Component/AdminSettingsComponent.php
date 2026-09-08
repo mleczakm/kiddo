@@ -88,6 +88,7 @@ class AdminSettingsComponent extends AbstractController
             'phone' => $org->phone,
             'bank_account' => $org->bankAccount,
             'blik_phone' => $org->blikPhone,
+            'facebook_url' => $org->facebookUrl,
         ];
     }
 
@@ -320,7 +321,17 @@ class AdminSettingsComponent extends AbstractController
             $this->entityManager->persist($setting);
         }
 
-        $keys = ['name', 'street', 'postal_code', 'city', 'email', 'phone', 'bank_account', 'blik_phone'];
+        $keys = [
+            'name',
+            'street',
+            'postal_code',
+            'city',
+            'email',
+            'phone',
+            'bank_account',
+            'blik_phone',
+            'facebook_url',
+        ];
         $content = [];
         foreach ($keys as $key) {
             $content[$key] = trim($this->organization[$key] ?? '');

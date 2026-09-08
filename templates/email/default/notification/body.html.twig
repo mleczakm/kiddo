@@ -50,6 +50,17 @@
                 <p><em>{{ 'exception'|trans({}, 'emails') }}</em></p>
             {% endif %}
         {% endblock %}
+
+        {% block social %}
+            {% set org = organization() %}
+            {% if org.facebookUrl %}
+                <spacer size="16"></spacer>
+                <div style="text-align: center;">
+                    <a href="{{ org.facebookUrl }}" style="display:inline-block; width:36px; height:36px; line-height:36px; border-radius:50%; background-color:#1877f2; color:#ffffff; font-family:Georgia,'Times New Roman',serif; font-size:20px; font-weight:bold; text-decoration:none;">f</a>
+                    <p class="help-text" style="margin-top:8px;">{{ 'social.facebook_follow'|trans({}, 'emails') }}</p>
+                </div>
+            {% endif %}
+        {% endblock %}
     </div>
     </body>
     </html>

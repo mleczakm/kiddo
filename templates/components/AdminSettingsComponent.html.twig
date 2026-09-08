@@ -284,6 +284,9 @@
                             <h2 class="text-xl font-black text-slate-800">Dane firmy i kontakt</h2>
                             <p class="text-xs text-slate-500 mt-1">
                                 Wyświetlane w panelu klienta (stopka menu) oraz w instrukcji płatności BLIK / przelewem.
+                                Po uzupełnieniu adres Facebooka trafia do stopki strony, nawigacji, stopki e-maili
+                                oraz danych SEO (schema.org / <code>rel="me"</code>). Puste pole = brak integracji
+                                z Facebookiem (domyślnie wyłączona).
                             </p>
                         </div>
 
@@ -296,6 +299,7 @@
                             { key: 'phone', label: 'Telefon' },
                             { key: 'bank_account', label: 'Numer konta bankowego', full: true },
                             { key: 'blik_phone', label: 'Telefon BLIK' },
+                            { key: 'facebook_url', label: 'Facebook (adres profilu / strony)', full: true },
                         ] %}
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {% for field in org_fields %}
