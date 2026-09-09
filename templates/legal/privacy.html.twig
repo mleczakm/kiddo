@@ -1,0 +1,127 @@
+{% extends 'legal/layout.html.twig' %}
+
+{% block document_title %}Polityka prywatności{% endblock %}
+{% block document_description %}Informacje o przetwarzaniu danych osobowych przez Warsztatownię Sensoryczną.{% endblock %}
+{% block document_canonical %}{{ url('legal_privacy') }}{% endblock %}
+{% block document_heading %}Polityka prywatności Warsztatowni Sensorycznej{% endblock %}
+
+{% block document_content %}
+    <h2>1. Administrator danych</h2>
+    <p>Administratorem danych osobowych jest <strong>Sylwia Chocholska, prowadząca działalność gospodarczą pod firmą „Warsztatownia sensoryczna Sylwia Chocholska”</strong>, al. Jana Pawła II 12D, 05-250 Radzymin, NIP: 1251772640, REGON: 529411541 (dalej: <strong>„Administrator”</strong>).</p>
+    <p>Kontakt w sprawie danych osobowych: <a href="mailto:kontakt@warsztatowniasensoryczna.pl">kontakt@warsztatowniasensoryczna.pl</a>, tel. <a href="tel:+48571531213">+48 571 531 213</a>, adres korespondencyjny jak wyżej.</p>
+    <p>Administrator nie wyznaczył inspektora ochrony danych; we wszystkich sprawach dotyczących danych osobowych należy kontaktować się pod adresem <a href="mailto:kontakt@warsztatowniasensoryczna.pl">kontakt@warsztatowniasensoryczna.pl</a>.</p>
+
+    <h2>2. Jakie dane przetwarzamy, w jakim celu i na jakiej podstawie</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Cel</th>
+            <th>Kategorie danych</th>
+            <th>Podstawa prawna (RODO)</th>
+            <th>Okres przechowywania</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Prowadzenie konta w aplikacji, logowanie (link e-mail), obsługa użytkownika</td>
+            <td>imię lub nazwa, adres e-mail, numer telefonu</td>
+            <td>art. 6 ust. 1 lit. b (wykonanie umowy o konto)</td>
+            <td>do usunięcia konta; po usunięciu – dane zanonimizowane, z wyjątkiem danych wymaganych przepisami</td>
+        </tr>
+        <tr>
+            <td>Rejestracja Uczestnika (dziecka) i realizacja zajęć</td>
+            <td>imię dziecka, data urodzenia / wiek</td>
+            <td>art. 6 ust. 1 lit. b (wykonanie umowy o zajęcia zawartej przez opiekuna)</td>
+            <td>jw. dla powiązanego konta</td>
+        </tr>
+        <tr>
+            <td>Rezerwacje i rozliczenia (wejścia, karnety, płatności przelewem/BLIK bez pośrednika)</td>
+            <td>dane rezerwacji, kwoty, indywidualny kod płatności, tytuł i dane przelewu przychodzącego</td>
+            <td>art. 6 ust. 1 lit. b (wykonanie umowy) oraz art. 6 ust. 1 lit. c (obowiązki podatkowe i rachunkowe)</td>
+            <td>5 lat, licząc od końca roku, w którym powstał obowiązek podatkowy</td>
+        </tr>
+        <tr>
+            <td>Rozpatrywanie reklamacji, zwrotów i zgłoszeń</td>
+            <td>dane kontaktowe, treść zgłoszenia, dane rezerwacji</td>
+            <td>art. 6 ust. 1 lit. c oraz art. 6 ust. 1 lit. f (obrona przed roszczeniami)</td>
+            <td>do przedawnienia roszczeń</td>
+        </tr>
+        <tr>
+            <td>Wysyłka newslettera</td>
+            <td>adres e-mail (imię – opcjonalnie)</td>
+            <td>art. 6 ust. 1 lit. a (zgoda) oraz art. 10 ustawy o świadczeniu usług drogą elektroniczną</td>
+            <td>do wycofania zgody / wypisania się</td>
+        </tr>
+        <tr>
+            <td>Asystent AI (tekstowy/głosowy) w aplikacji</td>
+            <td>treść zapytań, a w przypadku asystenta głosowego – nagranie głosu; kontekst konta niezbędny do udzielenia odpowiedzi</td>
+            <td>art. 6 ust. 1 lit. b oraz art. 6 ust. 1 lit. f (obsługa użytkownika)</td>
+            <td>u dostawcy (ElevenLabs) – maks. 60 dni; dane nie są wykorzystywane do trenowania modeli</td>
+        </tr>
+        <tr>
+            <td>Bezpieczeństwo aplikacji, diagnostyka błędów, logi</td>
+            <td>adres IP, dane techniczne przeglądarki, identyfikatory sesji, dane zdarzeń błędów</td>
+            <td>art. 6 ust. 1 lit. f (prawnie uzasadniony interes – bezpieczeństwo i poprawność działania)</td>
+            <td>logi i zdarzenia błędów: do 90 dni</td>
+        </tr>
+        <tr>
+            <td>Dochodzenie i obrona roszczeń</td>
+            <td>dane niezbędne w danej sprawie</td>
+            <td>art. 6 ust. 1 lit. f</td>
+            <td>do przedawnienia roszczeń</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>3. Dane dzieci</h2>
+    <ol>
+        <li>Aplikacja nie zakłada kont dla dzieci. Dane Uczestników (dzieci) – imię i data urodzenia – podaje wyłącznie rodzic lub opiekun prawny, w ramach swojego konta, w celu zapisania dziecka na zajęcia.</li>
+        <li>Podając dane dziecka, opiekun oświadcza, że jest uprawniony do ich przekazania i że przysługuje mu władza rodzicielska lub opieka nad dzieckiem.</li>
+        <li><strong>Aplikacja nie gromadzi danych o stanie zdrowia dziecka.</strong> Informacje o alergiach, nietolerancjach lub ograniczeniach zdrowotnych opiekun przekazuje – jeśli jest to potrzebne dla bezpieczeństwa dziecka – bezpośrednio osobom prowadzącym zajęcia; nie są one wprowadzane do Aplikacji ani w niej przechowywane.</li>
+    </ol>
+
+    <h2>4. Odbiorcy danych i podmioty przetwarzające</h2>
+    <p>Dane mogą być powierzane następującym podmiotom, wyłącznie w zakresie niezbędnym do wskazanych celów:</p>
+    <ol>
+        <li><strong>Dostawca hostingu / infrastruktury serwerowej</strong> – Jakub Mrugalski, prowadzący działalność pod nazwą <strong>UW-TEAM.org</strong> (usługa MIKR.US), NIP: 6821639338; serwery zlokalizowane w Polsce.</li>
+        <li><strong>Dostawca usługi wysyłki wiadomości e-mail (Brevo, Sendinblue GmbH)</strong> – w zakresie wysyłki wiadomości transakcyjnych oraz newslettera; serwery w UE.</li>
+        <li><strong>ElevenLabs, Inc.</strong> (USA) – dostawca systemów AI wykorzystywanych przez asystenta. Dane nie są wykorzystywane do trenowania modeli i są usuwane po maks. 60 dniach.</li>
+        <li><strong>Dostawca narzędzia monitorowania błędów aplikacji (Sentry / Functional Software, Inc.)</strong> (USA) – w zakresie danych technicznych zawartych w zgłoszeniach błędów (m.in. adres IP, dane żądania).</li>
+        <li><strong>Bank prowadzący rachunek Administratora</strong> – w zakresie obsługi płatności przelewem (bez pośrednictwa operatora płatności).</li>
+        <li>Organy i podmioty uprawnione do uzyskania danych na podstawie przepisów prawa.</li>
+    </ol>
+    <p>Administrator nie korzysta z zewnętrznego biura rachunkowego.</p>
+    <p>Administrator nie sprzedaje danych osobowych ani nie udostępnia ich w celach marketingowych podmiotom trzecim.</p>
+
+    <h2>5. Przekazywanie danych poza EOG</h2>
+    <p>Co do zasady dane przetwarzane są w Europejskim Obszarze Gospodarczym. Wyjątkiem jest korzystanie z usług <strong>ElevenLabs, Inc.</strong> (asystent AI) oraz <strong>Sentry / Functional Software, Inc.</strong> (monitorowanie błędów) – w tym zakresie dane mogą być przekazywane do USA. Podstawą przekazania jest decyzja Komisji Europejskiej o odpowiednim stopniu ochrony w ramach <strong>EU-US Data Privacy Framework</strong> (obaj dostawcy są uczestnikami DPF), a posiłkowo – <strong>standardowe klauzule umowne</strong> zatwierdzone przez Komisję Europejską (art. 46 RODO). Kopię zabezpieczeń można uzyskać, kontaktując się z Administratorem.</p>
+
+    <h2>6. Pliki cookies i technologie śledzące</h2>
+    <ol>
+        <li>Aplikacja korzysta wyłącznie z <strong>niezbędnych</strong> plików cookies i podobnych technologii, koniecznych do jej działania: utrzymania sesji zalogowanego użytkownika, mechanizmu logowania „zapamiętaj mnie” oraz ochrony przed atakami (token CSRF).</li>
+        <li>Aplikacja <strong>nie stosuje</strong> cookies analitycznych, marketingowych ani narzędzi profilujących i śledzących osoby odwiedzające (brak Google Analytics, brak pikseli reklamowych). Z tego względu nie jest wyświetlany baner zgody na cookies.</li>
+        <li>Wiadomości e-mail (w tym newsletter) mogą zawierać standardowe mechanizmy statystyki otwarć i kliknięć, służące ocenie skuteczności komunikacji; nie są one wykorzystywane do profilowania.</li>
+        <li>Cookies niezbędne przetwarzane są na podstawie art. 6 ust. 1 lit. f RODO oraz art. 173 ust. 3 Prawa telekomunikacyjnego (wyjątek dla cookies niezbędnych).</li>
+    </ol>
+
+    <h2>7. Prawa osób, których dane dotyczą</h2>
+    <p>Przysługuje Ci prawo do: dostępu do danych i uzyskania ich kopii, sprostowania, usunięcia („prawo do bycia zapomnianym”), ograniczenia przetwarzania, przenoszenia danych, wniesienia sprzeciwu wobec przetwarzania opartego na prawnie uzasadnionym interesie, a także cofnięcia zgody w dowolnym momencie (bez wpływu na zgodność z prawem przetwarzania przed cofnięciem).</p>
+    <p>W aplikacji udostępniamy narzędzia do samodzielnego: pobrania kopii danych, dezaktywacji konta oraz trwałego usunięcia konta wraz z anonimizacją danych. Żądania można też kierować na <a href="mailto:kontakt@warsztatowniasensoryczna.pl">kontakt@warsztatowniasensoryczna.pl</a>.</p>
+    <p>Realizacja żądania usunięcia nie obejmuje danych, których dalsze przechowywanie jest wymagane przepisami prawa (np. dokumentacja rozliczeniowa) – takie dane są przechowywane przez okres wymagany przepisami, a następnie usuwane lub anonimizowane.</p>
+    <p>Masz prawo wniesienia skargi do <strong>Prezesa Urzędu Ochrony Danych Osobowych</strong> (ul. Stawki 2, 00-193 Warszawa).</p>
+
+    <h2>8. Dobrowolność podania danych</h2>
+    <p>Podanie danych jest dobrowolne, jednak:</p>
+    <ul>
+        <li>podanie imienia/nazwy i adresu e-mail jest niezbędne do założenia konta i korzystania z aplikacji,</li>
+        <li>podanie imienia i daty urodzenia dziecka jest niezbędne do zapisania go na zajęcia,</li>
+        <li>podanie adresu e-mail do newslettera jest dobrowolne i nie wpływa na możliwość korzystania z aplikacji.</li>
+    </ul>
+
+    <h2>9. Zautomatyzowane podejmowanie decyzji</h2>
+    <p>Administrator nie podejmuje wobec osób, których dane dotyczą, decyzji opierających się wyłącznie na zautomatyzowanym przetwarzaniu (w tym profilowaniu), które wywoływałyby skutki prawne lub w podobny sposób istotnie na nie wpływały. Asystent AI wspiera obsługę użytkownika, ale nie podejmuje takich decyzji.</p>
+
+    <h2>10. Zmiany Polityki prywatności</h2>
+    <p>Administrator może aktualizować Politykę prywatności. O istotnych zmianach użytkownicy posiadający konto są informowani na adres e-mail przypisany do konta oraz przez komunikat w aplikacji. Aktualna wersja jest zawsze dostępna pod adresem <a href="{{ url('legal_privacy') }}">warsztatowniasensoryczna.pl/polityka-prywatnosci</a>.</p>
+    <p>Wersja obowiązuje od dnia 10 września 2026 r.</p>
+{% endblock %}

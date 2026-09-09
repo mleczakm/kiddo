@@ -1,0 +1,190 @@
+{% extends 'legal/layout.html.twig' %}
+
+{% block document_title %}Regulamin aplikacji{% endblock %}
+{% block document_description %}Regulamin korzystania z aplikacji Warsztatownia Sensoryczna oraz rezerwowania zajęć.{% endblock %}
+{% block document_canonical %}{{ url('legal_app_terms') }}{% endblock %}
+{% block document_heading %}Regulamin aplikacji Warsztatownia Sensoryczna{% endblock %}
+
+{% block document_content %}
+    <h2>§ 1. Postanowienia ogólne</h2>
+    <ol>
+        <li>Niniejszy regulamin (dalej: <strong>„Regulamin”</strong>) określa zasady i warunki korzystania z aplikacji internetowej dostępnej pod adresem <a href="{{ url('homepage') }}">warsztatowniasensoryczna.pl</a> (dalej: <strong>„Aplikacja”</strong>) oraz usług świadczonych za jej pośrednictwem przez Usługodawcę.</li>
+        <li>Regulamin jest regulaminem świadczenia usług drogą elektroniczną w rozumieniu art. 8 ustawy z dnia 18 lipca 2002 r. o świadczeniu usług drogą elektroniczną (dalej: <strong>„Ustawa o świadczeniu usług drogą elektroniczną”</strong>).</li>
+        <li>Aplikacja służy do prezentacji oferty zajęć, warsztatów i klubów dla dzieci prowadzonych przez Usługodawcę, dokonywania rezerwacji i zakupu wejść lub karnetów na te zajęcia, zarządzania rezerwacjami oraz obsługi konta Usługobiorcy. Aplikacja jest przeznaczona zarówno dla konsumentów, jak i dla przedsiębiorców.</li>
+        <li>Usługodawcą jest <strong>Sylwia Chocholska, prowadząca działalność gospodarczą pod firmą „Warsztatownia sensoryczna Sylwia Chocholska”</strong>, adres stałego miejsca wykonywania działalności gospodarczej: al. Jana Pawła II 12D, 05-250 Radzymin, wpisana do Centralnej Ewidencji i Informacji o Działalności Gospodarczej prowadzonej przez ministra właściwego ds. gospodarki, <strong>NIP: 1251772640</strong>, <strong>REGON: 529411541</strong> (dalej: <strong>„Usługodawca”</strong>).</li>
+        <li>Kontakt z Usługodawcą jest możliwy za pomocą:
+            <ol>
+                <li>poczty elektronicznej – pod adresem: <a href="mailto:kontakt@warsztatowniasensoryczna.pl">kontakt@warsztatowniasensoryczna.pl</a>,</li>
+                <li>poczty tradycyjnej – pod adresem: al. Jana Pawła II 12D, 05-250 Radzymin,</li>
+                <li>telefonu – pod numerem: <a href="tel:+48571531213">+48 571 531 213</a>.</li>
+            </ol>
+        </li>
+        <li>Zgodnie z rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2022/2065 z dnia 19 października 2022 r. w sprawie jednolitego rynku usług cyfrowych (akt o usługach cyfrowych, dalej: <strong>„DSA”</strong>), Usługodawca wyznacza pojedynczy punkt kontaktowy do bezpośredniej komunikacji z organami państw członkowskich UE, Komisją Europejską, Radą ds. Usług Cyfrowych oraz z Usługobiorcami w sprawach objętych DSA. Punkt kontaktowy jest dostępny pod adresem: <a href="mailto:kontakt@warsztatowniasensoryczna.pl">kontakt@warsztatowniasensoryczna.pl</a>. Językiem komunikacji jest język polski.</li>
+        <li>Przed rozpoczęciem korzystania z Aplikacji Usługobiorca zobowiązany jest zapoznać się z Regulaminem oraz <a href="{{ path('legal_privacy') }}">Polityką prywatności</a>.</li>
+    </ol>
+
+    <h2>§ 2. Definicje</h2>
+    <p>Użyte w Regulaminie wyrazy pisane wielką literą mają następujące znaczenie:</p>
+    <ol>
+        <li><strong>Aplikacja</strong> – aplikacja internetowa, o której mowa w § 1 ust. 1.</li>
+        <li><strong>Cennik</strong> – informacja o aktualnych cenach wejść, karnetów i pozostałych świadczeń, prezentowana w Aplikacji przy poszczególnych zajęciach.</li>
+        <li><strong>Konsument</strong> – osoba fizyczna dokonująca z Usługodawcą czynności prawnej niezwiązanej bezpośrednio z jej działalnością gospodarczą lub zawodową.</li>
+        <li><strong>Przedsiębiorca na prawach Konsumenta</strong> – osoba fizyczna zawierająca umowę bezpośrednio związaną z jej działalnością gospodarczą, gdy z treści tej umowy wynika, że nie posiada ona dla tej osoby charakteru zawodowego.</li>
+        <li><strong>Konto</strong> – prowadzony dla Usługobiorcy w systemie teleinformatycznym Aplikacji zbiór zasobów i uprawnień, umożliwiający korzystanie z funkcjonalności Aplikacji.</li>
+        <li><strong>Uczestnik</strong> – dziecko, które bierze udział w zajęciach na podstawie rezerwacji dokonanej przez Usługobiorcę będącego jego rodzicem lub opiekunem prawnym.</li>
+        <li><strong>Usługa korzystania z Aplikacji / Usługa</strong> – usługa cyfrowa w rozumieniu ustawy z dnia 30 maja 2014 r. o prawach konsumenta (dalej: <strong>„Ustawa o prawach konsumenta”</strong>), polegająca na nieodpłatnym umożliwieniu Usługobiorcy korzystania z funkcjonalności Aplikacji, w tym prowadzenia Konta.</li>
+        <li><strong>Rezerwacja</strong> – zamówienie przez Usługobiorcę wejścia jednorazowego lub karnetu na wskazane zajęcia, na warunkach określonych w Cenniku i Regulaminie zajęć.</li>
+        <li><strong>Regulamin zajęć</strong> – ogólny regulamin uczestnictwa w zajęciach dostępny na stronie <a href="{{ path('legal_classes_terms') }}">Regulamin zajęć</a> oraz odrębny regulamin przypisany do danych zajęć lub warsztatu (<strong>„Regulamin danych zajęć”</strong>), udostępniany Usługobiorcy przed dokonaniem Rezerwacji, który określa w szczególności ceny, liczbę wejść w karnecie i okres jego ważności oraz zasady nieobecności, przekładania i zwrotów dla tych zajęć. W razie rozbieżności pierwszeństwo ma Regulamin danych zajęć.</li>
+        <li><strong>Umowa o Konto</strong> – zawierana nieodpłatnie umowa o dostarczanie Usługi korzystania z Aplikacji; warunkiem jej zawarcia jest założenie Konta.</li>
+        <li><strong>Umowa o Zajęcia</strong> – odpłatna umowa o świadczenie usług, zawierana na podstawie Rezerwacji, której przedmiotem jest udział Uczestnika we wskazanych zajęciach w oznaczonym terminie.</li>
+        <li><strong>Polityka prywatności</strong> – dokument zawierający informacje o przetwarzaniu danych osobowych przez Usługodawcę, dostępny na stronie <a href="{{ path('legal_privacy') }}">Polityka prywatności</a>.</li>
+        <li><strong>Treści Usługobiorcy</strong> – wszelkie dane, pliki, informacje i materiały wprowadzone przez Usługobiorcę do Aplikacji lub na Konto.</li>
+        <li><strong>Opinia</strong> – wypowiedź Usługobiorcy dotycząca zajęć lub Aplikacji.</li>
+        <li><strong>Usługobiorca</strong> – osoba fizyczna posiadająca pełną zdolność do czynności prawnych, osoba prawna albo jednostka organizacyjna nieposiadająca osobowości prawnej, korzystająca z Aplikacji; Usługobiorcą może być Konsument, Przedsiębiorca na prawach Konsumenta lub przedsiębiorca.</li>
+    </ol>
+
+    <h2>§ 3. Wymagania techniczne, zasady korzystania i bezpieczeństwo</h2>
+    <ol>
+        <li>Do prawidłowego korzystania z Aplikacji niezbędne są łącznie: połączenie z siecią Internet, urządzenie z aktualną przeglądarką internetową obsługującą JavaScript i pliki cookies oraz aktywne konto poczty elektronicznej.</li>
+        <li>Zabronione jest korzystanie w ramach Aplikacji z wirusów, botów, robaków ani innych kodów, plików lub narzędzi automatyzujących, a także podejmowanie działań zakłócających działanie Aplikacji lub obchodzących jej zabezpieczenia.</li>
+        <li>Usługodawca stosuje środki techniczne i organizacyjne odpowiednie do zagrożeń, w tym szyfrowanie połączenia (SSL/TLS) oraz mechanizmy uwierzytelniania. Mimo stosowanych zabezpieczeń korzystanie z sieci Internet może wiązać się z ryzykiem; Usługodawca zaleca stosowanie oprogramowania chroniącego urządzenie Usługobiorcy.</li>
+        <li>Usługobiorca zobowiązany jest podawać dane zgodne ze stanem rzeczywistym oraz nie udostępniać osobom trzecim danych umożliwiających dostęp do Konta. Usługodawca nie ponosi odpowiedzialności za skutki udostępnienia przez Usługobiorcę tych danych osobom trzecim.</li>
+        <li>Korzystanie z Aplikacji (prowadzenie Konta) jest nieodpłatne. Odpłatne są wyłącznie zajęcia objęte Rezerwacją, zgodnie z Cennikiem.</li>
+    </ol>
+
+    <h2>§ 4. Umowa o Konto</h2>
+    <ol>
+        <li>Zawarcie Umowy o Konto następuje przez:
+            <ol>
+                <li>wypełnienie formularza rejestracji dostępnego w Aplikacji (imię lub nazwa oraz adres e-mail),</li>
+                <li>obowiązkowe zaznaczenie checkboxa przy oświadczeniu o zapoznaniu się z Regulaminem i Polityką prywatności oraz akceptacji ich postanowień,</li>
+                <li>kliknięcie przycisku rejestracji,</li>
+                <li>potwierdzenie rejestracji przez kliknięcie w link przesłany na podany adres e-mail.</li>
+            </ol>
+        </li>
+        <li>Kliknięcie w link, o którym mowa w ust. 1 pkt 4, jest równoznaczne z zawarciem nieodpłatnej Umowy o Konto.</li>
+        <li>Logowanie do Konta odbywa się bez hasła – przez jednorazowy link uwierzytelniający przesyłany na adres e-mail przypisany do Konta. Usługobiorca zobowiązany jest chronić dostęp do swojej skrzynki e-mail.</li>
+        <li>Zapisanie się na newsletter jest dobrowolne, następuje przez zaznaczenie odrębnego, niezaznaczonego domyślnie checkboxa i nie jest warunkiem zawarcia Umowy o Konto ani dokonania Rezerwacji. Zgodę na newsletter można w każdej chwili wycofać.</li>
+        <li>Usługobiorca może w każdej chwili wypowiedzieć Umowę o Konto ze skutkiem natychmiastowym przez samodzielne usunięcie Konta w Aplikacji albo przez przesłanie żądania jego usunięcia na adres wskazany w § 1 ust. 5 pkt 1. Aplikacja udostępnia w tym celu opcję:
+            <ol>
+                <li><strong>dezaktywacji Konta</strong> – odwracalnego zawieszenia dostępu, z zachowaniem danych,</li>
+                <li><strong>trwałego usunięcia Konta</strong> – połączonego z anonimizacją danych osobowych Usługobiorcy oraz danych Uczestników, z zastrzeżeniem danych, których dalsze przechowywanie jest wymagane przepisami prawa (w szczególności dokumentacji rozliczeniowej i podatkowej), które są przechowywane w zakresie i przez okres wynikający z tych przepisów.</li>
+            </ol>
+        </li>
+        {# Projekt źródłowy oznacza 14-dniowy okres jako wymagający potwierdzenia przed publikacją. #}
+        <li>Trwałe usunięcie Konta następuje po upływie <strong>14 dni</strong> od zgłoszenia żądania. W tym okresie Konto pozostaje zablokowane; zalogowanie się przez Usługobiorcę w tym czasie anuluje żądanie usunięcia.</li>
+        <li>Przed trwałym usunięciem Konta Usługobiorca może pobrać kopię swoich danych (w tym danych o Rezerwacjach i płatnościach) w ustrukturyzowanym formacie. Usługodawca udostępnia dane nie później niż w terminie 30 dni od zgłoszenia żądania.</li>
+        <li>Usługodawca może wypowiedzieć Umowę o Konto z zachowaniem 7-dniowego okresu wypowiedzenia, przez oświadczenie przesłane na adres e-mail Usługobiorcy, w przypadku istotnego naruszenia przez Usługobiorcę Regulaminu i nieusunięcia naruszenia mimo wezwania. W okresie wypowiedzenia Usługodawca może zablokować dostęp do Konta, jeżeli jest to niezbędne do zapobieżenia dalszym naruszeniom.</li>
+        <li>Usunięcie Konta nie wpływa na Umowy o Zajęcia zawarte przed jego usunięciem ani na obowiązki rozliczeniowe stron powstałe przed usunięciem.</li>
+    </ol>
+
+    <h2>§ 5. Rezerwacje i zawarcie Umowy o Zajęcia</h2>
+    <ol>
+        <li>Informacje o zajęciach, terminach i cenach prezentowane w Aplikacji stanowią zaproszenie do zawarcia umowy, a nie ofertę w rozumieniu Kodeksu cywilnego.</li>
+        <li>W celu dokonania Rezerwacji Usługobiorca wybiera zajęcia i rodzaj wejścia (wejście jednorazowe albo karnet), wskazuje Uczestnika, a następnie – po udostępnieniu mu Regulaminu, Regulaminu zajęć, Regulaminu danych zajęć i Polityki prywatności oraz po zaznaczeniu:
+            <ol>
+                <li>checkboxa akceptacji ww. dokumentów oraz</li>
+                <li>odrębnego checkboxa, w którym Usługobiorca będący Konsumentem lub Przedsiębiorcą na prawach Konsumenta przyjmuje do wiadomości, że zajęcia odbywają się w oznaczonym terminie i że zgodnie z art. 38 pkt 12 Ustawy o prawach konsumenta nie przysługuje mu prawo odstąpienia od Umowy o Zajęcia w terminie 14 dni,</li>
+            </ol>
+            potwierdza Rezerwację przyciskiem oznaczonym słowami „Zamawiam z obowiązkiem zapłaty” lub równoważnymi.
+        </li>
+        <li>Zawarcie Umowy o Zajęcia następuje z chwilą potwierdzenia Rezerwacji przez Usługobiorcę. Usługodawca niezwłocznie potwierdza zawarcie umowy oraz przekazuje dane do płatności (w tym indywidualny kod płatności) na adres e-mail Usługobiorcy lub w Aplikacji.</li>
+        <li>Karnet uprawnia do liczby wejść oraz obowiązuje przez okres wskazany w Cenniku i w Regulaminie danych zajęć; tam też określone są zasady nieobecności i przepisywania wejść dla danych zajęć.</li>
+        <li>Zajęcia objęte Rezerwacją odbywają się w oznaczonym dniu lub oznaczonym okresie, wskazanym w Aplikacji oraz w Regulaminie danych zajęć.</li>
+    </ol>
+
+    <h2>§ 6. Ceny i płatności</h2>
+    <ol>
+        <li>Ceny w Cenniku są wyrażone w złotych (PLN) i są cenami brutto. Usługi Usługodawcy korzystają ze zwolnienia przedmiotowego z podatku od towarów i usług na podstawie art. 43 ust. 1 pkt 24 ustawy z dnia 11 marca 2004 r. o podatku od towarów i usług (usługi w zakresie opieki nad dziećmi), w związku z czym do cen nie dolicza się podatku VAT.</li>
+        <li>Płatności są realizowane bezpośrednio na rachunek bankowy Usługodawcy przelewem tradycyjnym lub przelewem BLIK, bez pośrednictwa zewnętrznego operatora płatności. Dane do płatności oraz indywidualny kod płatności Usługobiorca otrzymuje po dokonaniu Rezerwacji.</li>
+        <li>Za dzień zapłaty uznaje się dzień uznania rachunku bankowego Usługodawcy. Brak zapłaty w terminie wskazanym w Aplikacji lub w Regulaminie zajęć może skutkować anulowaniem Rezerwacji i zwolnieniem miejsca.</li>
+        <li>Usługodawca nie stosuje płatności cyklicznych ani automatycznego odnawiania karnetów. Każde kolejne wejście lub karnet wymaga odrębnej Rezerwacji.</li>
+        <li>Na żądanie Usługobiorcy Usługodawca wystawia dokument potwierdzający dokonanie płatności zgodnie z obowiązującymi przepisami.</li>
+    </ol>
+
+    <h2>§ 7. Reklamacje dotyczące Usługi korzystania z Aplikacji – Konsumenci oraz Przedsiębiorcy na prawach Konsumenta</h2>
+    <ol>
+        <li>Usługa korzystania z Aplikacji powinna być zgodna z Umową o Konto przez cały okres jej dostarczania. Kryteria zgodności określa art. 43k Ustawy o prawach konsumenta.</li>
+        <li>W przypadku braku zgodności Usługi z Umową o Konto Usługobiorca może złożyć reklamację na adres wskazany w § 1 ust. 5 pkt 1, wskazując opis niezgodności oraz żądanie doprowadzenia Usługi do zgodności z umową.</li>
+        <li>Usługodawca rozpatruje reklamację w terminie 14 dni od jej otrzymania i informuje Usługobiorcę o sposobie jej rozpatrzenia na adres e-mail.</li>
+        <li>Na zasadach określonych w art. 43m–43o Ustawy o prawach konsumenta Usługobiorcy przysługuje prawo żądania obniżenia ceny lub – w braku ceny (Usługa nieodpłatna) – prawo do zakończenia Umowy o Konto w razie istotnej niezgodności.</li>
+    </ol>
+
+    <h2>§ 8. Reklamacje dotyczące zajęć</h2>
+    <ol>
+        <li>Reklamacje dotyczące organizacji i przebiegu zajęć rozpatrywane są na zasadach określonych w Regulaminie zajęć.</li>
+        <li>Reklamację można złożyć na adres wskazany w § 1 ust. 5 pkt 1. Usługodawca ustosunkowuje się do reklamacji Konsumenta oraz Przedsiębiorcy na prawach Konsumenta w terminie 14 dni od jej otrzymania.</li>
+    </ol>
+
+    <h2>§ 9. Prawo odstąpienia od umowy</h2>
+    <ol>
+        <li><strong>Umowa o Konto (nieodpłatna).</strong> Konsument oraz Przedsiębiorca na prawach Konsumenta może odstąpić od Umowy o Konto bez podania przyczyny w terminie 14 dni od jej zawarcia, składając oświadczenie na adres wskazany w § 1 ust. 5 pkt 1 albo usuwając Konto w Aplikacji. Usługodawca potwierdza otrzymanie oświadczenia na adres e-mail. Z uwagi na nieodpłatny charakter Umowy o Konto odstąpienie nie wiąże się z żadnymi rozliczeniami.</li>
+        <li><strong>Umowa o Zajęcia (odpłatna).</strong> Zgodnie z art. 38 pkt 12 Ustawy o prawach konsumenta prawo odstąpienia od umowy zawartej na odległość <strong>nie przysługuje</strong> w odniesieniu do umów o świadczenie usług związanych z wypoczynkiem, wydarzeniami rozrywkowymi, sportowymi lub kulturalnymi, jeżeli w umowie oznaczono dzień lub okres świadczenia usługi. Zajęcia objęte Rezerwacją odbywają się w oznaczonym dniu lub okresie, wobec czego ustawowe 14-dniowe prawo odstąpienia od Umowy o Zajęcia nie przysługuje. Usługodawca informuje o tym Usługobiorcę przed zawarciem Umowy o Zajęcia, a Usługobiorca będący Konsumentem lub Przedsiębiorcą na prawach Konsumenta potwierdza przyjęcie tej informacji do wiadomości przez zaznaczenie odrębnego checkboxa, o którym mowa w § 5 ust. 2 pkt 2.</li>
+        <li>Niezależnie od ust. 2 Usługobiorcy przysługują uprawnienia dotyczące nieobecności, przekładania wejść i zwrotów określone w Regulaminie danych zajęć. Warunki te różnią się w zależności od rodzaju zajęć i rodzaju wejścia (wejście jednorazowe albo karnet) i są udostępniane Usługobiorcy przed dokonaniem Rezerwacji.</li>
+    </ol>
+
+    <h2>§ 10. Treści i Opinie Usługobiorcy</h2>
+    <ol>
+        <li>Usługobiorca może przesłać Usługodawcy Opinię. Przesłanie Opinii nie zobowiązuje Usługodawcy do jej publikacji; opublikowana Opinia może zostać usunięta w dowolnym czasie.</li>
+        <li>Zabronione jest zamieszczanie Treści Usługobiorcy i Opinii: zawierających nieprawdziwe dane, sprzecznych z prawem, Regulaminem lub dobrymi obyczajami, nawołujących do przemocy lub nienawiści, naruszających dobra osobiste, prawa autorskie lub inne prawa osób trzecich, o charakterze reklamowym, promującym działalność konkurencyjną.</li>
+        <li>Przesłanie Treści Usługobiorcy lub Opinii jest równoznaczne z oświadczeniem, że Usługobiorca jest ich wyłącznym autorem i ponosi odpowiedzialność za skutki ich publikacji, oraz z udzieleniem Usługodawcy nieodpłatnej, niewyłącznej licencji na korzystanie z Opinii bez ograniczeń czasowych i terytorialnych w materiałach informacyjnych i promocyjnych Usługodawcy, w tym prawa do jej modyfikacji w zakresie niezbędnym do rozpowszechnienia, bez zmiany jej istoty.</li>
+        <li>Każda osoba może zgłosić Usługodawcy Treść Usługobiorcy lub Opinię, która może naruszać prawo lub Regulamin, na adres <a href="mailto:kontakt@warsztatowniasensoryczna.pl">kontakt@warsztatowniasensoryczna.pl</a>. Zgłoszenie powinno zawierać uzasadnienie, wskazanie lokalizacji treści oraz dane kontaktowe zgłaszającego. Usługodawca potwierdza otrzymanie zgłoszenia i rozpatruje je bez zbędnej zwłoki, nie później niż w terminie 14 dni, informując zgłaszającego i autora treści o podjętej decyzji wraz z uzasadnieniem. Decyzje nie są podejmowane w sposób wyłącznie zautomatyzowany.</li>
+    </ol>
+
+    <h2>§ 11. Wykorzystanie sztucznej inteligencji (AI)</h2>
+    <ol>
+        <li>Aplikacja udostępnia asystenta wykorzystującego systemy sztucznej inteligencji dostarczane przez <strong>ElevenLabs, Inc.</strong> (asystent tekstowy/głosowy), którego zadaniem jest wsparcie Usługobiorcy w obsłudze Konta i uzyskiwaniu informacji o zajęciach.</li>
+        <li>Usługobiorca przyjmuje do wiadomości, że wyniki generowane przez asystenta AI:
+            <ol>
+                <li>mogą zawierać błędy, nieścisłości lub tzw. halucynacje,</li>
+                <li>wymagają weryfikacji przez Usługobiorcę przed ich wykorzystaniem,</li>
+                <li>nie stanowią porady prawnej, medycznej, psychologicznej ani finansowej.</li>
+            </ol>
+        </li>
+        <li>Jeżeli asystent AI umożliwia wykonanie czynności na Koncie (np. dodanie danych Uczestnika, zmianę danych), Usługobiorca zobowiązany jest sprawdzić poprawność wykonanej czynności. Usługodawca nie ponosi odpowiedzialności za skutki decyzji podjętych przez Usługobiorcę wyłącznie na podstawie wyników działania asystenta AI.</li>
+        <li>Dane wprowadzane do asystenta (treść zapytań, a w przypadku asystenta głosowego – nagranie głosu) są przekazywane do ElevenLabs, Inc. w celu wygenerowania odpowiedzi. Dane te <strong>nie są wykorzystywane do trenowania modeli</strong> i są przechowywane przez ElevenLabs, Inc. przez okres nie dłuższy niż 60 dni. ElevenLabs, Inc. ma siedzibę w USA; przekazanie danych następuje na podstawie uczestnictwa w EU-US Data Privacy Framework, a posiłkowo – standardowych klauzul umownych zatwierdzonych przez Komisję Europejską. Szczegóły zawiera Polityka prywatności.</li>
+        <li>Asystent AI jest systemem sztucznej inteligencji minimalnego ryzyka w rozumieniu rozporządzenia (UE) 2024/1689 (AI Act). Niezależnie od tego, zgodnie z obowiązkiem przejrzystości, Usługobiorca jest informowany, że prowadzi interakcję z systemem AI.</li>
+    </ol>
+
+    <h2>§ 12. Odpowiedzialność i poziom usług</h2>
+    <ol>
+        <li>Usługodawca zobowiązuje się świadczyć Usługę z należytą starannością.</li>
+        <li>Usługodawca nie gwarantuje nieprzerwanej dostępności Aplikacji. Usługodawca dokłada starań, aby prace serwisowe prowadzić w sposób możliwie najmniej uciążliwy i w miarę możliwości informować o nich z wyprzedzeniem.</li>
+        <li>W zakresie dozwolonym przepisami Usługodawca nie ponosi odpowiedzialności za zakłócenia w działaniu Aplikacji wynikające z siły wyższej (w tym niedostępności API kluczowych dostawców zewnętrznych), z przyczyn leżących po stronie Usługobiorcy lub osób trzecich, za które Usługodawca nie odpowiada.</li>
+        <li>Wobec Usługobiorcy będącego przedsiębiorcą (z wyłączeniem Przedsiębiorcy na prawach Konsumenta) wyłącza się odpowiedzialność Usługodawcy z tytułu utraconych korzyści.</li>
+        <li>Postanowienia niniejszego paragrafu nie ograniczają ani nie wyłączają odpowiedzialności Usługodawcy w zakresie, w jakim nie jest to dopuszczalne wobec Konsumentów oraz Przedsiębiorców na prawach Konsumenta.</li>
+    </ol>
+
+    <h2>§ 13. Własność intelektualna Usługodawcy</h2>
+    <ol>
+        <li>Aplikacja oraz jej elementy (w szczególności nazwa, logo, teksty, zdjęcia, grafika, interfejs, oprogramowanie, kod źródłowy, bazy danych) podlegają ochronie prawnej. Korzystanie z nich bez uprzedniej, wyraźnej zgody Usługodawcy jest zabronione, z wyjątkiem korzystania w zakresie dozwolonego użytku.</li>
+    </ol>
+
+    <h2>§ 14. Pozasądowe rozwiązywanie sporów – Konsumenci oraz Przedsiębiorcy na prawach Konsumenta</h2>
+    <ol>
+        <li>Konsument oraz Przedsiębiorca na prawach Konsumenta może skorzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym za pośrednictwem powiatowych (miejskich) rzeczników konsumentów, wojewódzkich inspektoratów Inspekcji Handlowej oraz organizacji społecznych zajmujących się ochroną konsumentów. Informacje w tym zakresie dostępne są także na stronie internetowej Urzędu Ochrony Konkurencji i Konsumentów.</li>
+        <li>Skorzystanie z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń ma charakter dobrowolny.</li>
+    </ol>
+
+    <h2>§ 15. Dane osobowe</h2>
+    <ol>
+        <li>Administratorem danych osobowych Usługobiorców oraz danych Uczestników jest Usługodawca. Szczegółowe informacje o przetwarzaniu danych, w tym danych dzieci, zawiera <a href="{{ path('legal_privacy') }}">Polityka prywatności</a>. Aplikacja nie gromadzi danych dotyczących zdrowia Uczestników.</li>
+    </ol>
+
+    <h2>§ 16. Zmiana Regulaminu</h2>
+    <ol>
+        <li>Usługodawca może zmienić Regulamin w przypadku: zmiany przepisów prawa lub konieczności dostosowania Regulaminu do nich, zmiany zakresu lub sposobu świadczenia Usługi, zmian technicznych w Aplikacji, zmiany zakresu działalności Usługodawcy, względów bezpieczeństwa.</li>
+        <li>O zmianie Regulaminu Usługodawca informuje Usługobiorcę przez opublikowanie zmienionej wersji w Aplikacji oraz przesłanie informacji o zmianie na adres e-mail przypisany do Konta, wraz z opisem zmian, nie później niż 10 dni przed wejściem zmian w życie.</li>
+        <li>Usługobiorca, który nie akceptuje zmiany Regulaminu, może wypowiedzieć Umowę o Konto ze skutkiem natychmiastowym w terminie 10 dni od otrzymania informacji o zmianie, przez usunięcie Konta lub oświadczenie na adres wskazany w § 1 ust. 5 pkt 1. Brak wypowiedzenia w tym terminie oznacza akceptację zmienionego Regulaminu.</li>
+        <li>Do Umów o Zajęcia zawartych przed wejściem w życie zmiany stosuje się Regulamin w brzmieniu z chwili zawarcia danej umowy.</li>
+    </ol>
+
+    <h2>§ 17. Postanowienia końcowe</h2>
+    <ol>
+        <li>Regulamin w niniejszym brzmieniu obowiązuje od dnia 10 września 2026 r.</li>
+        <li>Regulamin podlega prawu polskiemu. Wybór prawa polskiego nie pozbawia Konsumenta ochrony wynikającej z bezwzględnie obowiązujących przepisów państwa jego zwykłego pobytu.</li>
+        <li>Spory z udziałem Konsumenta lub Przedsiębiorcy na prawach Konsumenta rozpoznaje sąd właściwy według przepisów ogólnych. Spory z udziałem pozostałych Usługobiorców rozpoznaje sąd właściwy miejscowo dla siedziby Usługodawcy.</li>
+        <li>W sprawach nieuregulowanych w Regulaminie stosuje się przepisy prawa polskiego, w szczególności Kodeksu cywilnego, Ustawy o prawach konsumenta oraz Ustawy o świadczeniu usług drogą elektroniczną.</li>
+        <li>Poprzednie wersje Regulaminu są udostępniane w Aplikacji wraz ze wskazaniem okresu ich obowiązywania.</li>
+    </ol>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% block document_title %}{% endblock %} | Warsztatownia Sensoryczna{% endblock %}
+
+{% block meta %}
+    <meta name="description" content="{% block document_description %}{% endblock %}">
+    <link rel="canonical" href="{% block document_canonical %}{% endblock %}">
+{% endblock %}
+
+{% block body %}
+    <main class="grow px-5 py-12 md:py-16">
+        <article class="mx-auto max-w-5xl rounded-3xl bg-white px-6 py-10 shadow-sm md:px-12 md:py-14">
+            <a href="{{ path('homepage') }}"
+               class="inline-flex items-center gap-2 text-sm font-semibold text-stone-500 transition-colors hover:text-workshop-red">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Powrót do strony głównej
+            </a>
+
+            <header class="mt-8 border-b border-stone-200 pb-8">
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-workshop-red">Dokument prawny</p>
+                <h1 class="mt-4 text-3xl leading-tight text-workshop-brown md:text-5xl">{% block document_heading %}{% endblock %}</h1>
+                <p class="mt-4 text-sm font-semibold text-stone-500">Obowiązuje od 10 września 2026 r.</p>
+            </header>
+
+            <div class="article-content prose prose-lg mx-auto mt-10 max-w-3xl">
+                {% block document_content %}{% endblock %}
+            </div>
+        </article>
+    </main>
+{% endblock %}

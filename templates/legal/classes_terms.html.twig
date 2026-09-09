@@ -1,0 +1,74 @@
+{% extends 'legal/layout.html.twig' %}
+
+{% block document_title %}Regulamin zajęć{% endblock %}
+{% block document_description %}Ogólne zasady uczestnictwa w zajęciach Warsztatowni Sensorycznej.{% endblock %}
+{% block document_canonical %}{{ url('legal_classes_terms') }}{% endblock %}
+{% block document_heading %}Regulamin zajęć Warsztatowni Sensorycznej (ogólny){% endblock %}
+
+{% block document_content %}
+    <h2>§ 1. Postanowienia ogólne</h2>
+    <ol>
+        <li>Niniejszy regulamin (dalej: <strong>„Regulamin zajęć”</strong>) określa <strong>wspólne</strong> zasady organizacyjne uczestnictwa w zajęciach, warsztatach i klubach prowadzonych przez <strong>Warsztatownię sensoryczną Sylwia Chocholska</strong>, al. Jana Pawła II 12D, 05-250 Radzymin, NIP: 1251772640, REGON: 529411541 (dalej: <strong>„Warsztatownia”</strong>).</li>
+        <li>Każdy rodzaj zajęć (m.in. Trening Umiejętności Społecznych, Klub Malucha, pozostałe warsztaty) posiada <strong>odrębny Regulamin danych zajęć</strong>, dołączony do danego warsztatu w Aplikacji i udostępniany przed dokonaniem rezerwacji. Określa on w szczególności: cenę, liczbę wejść w karnecie i okres jego ważności, godziny, zasady nieobecności, przekładania wejść i zwrotów oraz ewentualne wymagania dodatkowe. W razie rozbieżności z niniejszym Regulaminem zajęć pierwszeństwo ma Regulamin danych zajęć.</li>
+        <li>Regulamin zajęć stanowi uzupełnienie <a href="{{ path('legal_app_terms') }}">Regulaminu aplikacji</a>. W zakresie rezerwacji, płatności, reklamacji, prawa odstąpienia i danych osobowych stosuje się Regulamin aplikacji oraz <a href="{{ path('legal_privacy') }}">Politykę prywatności</a>.</li>
+        <li><strong>Uczestnik</strong> – dziecko biorące udział w zajęciach. <strong>Opiekun</strong> – rodzic lub opiekun prawny Uczestnika, dokonujący rezerwacji i zawierający umowę o udział w zajęciach.</li>
+        <li>Dokonanie rezerwacji wejścia lub karnetu oznacza zapoznanie się z niniejszym Regulaminem zajęć oraz z Regulaminem danych zajęć i akceptację wszystkich ich postanowień.</li>
+    </ol>
+
+    <h2>§ 2. Bezpieczeństwo i zdrowie Uczestnika</h2>
+    <ol>
+        <li>Za bezpieczeństwo dzieci pozostających na sali bez rodziców odpowiadają osoby prowadzące zajęcia. Za bezpieczeństwo dzieci pozostających na sali z opiekunem odpowiada opiekun.</li>
+        <li>W zajęciach mogą uczestniczyć wyłącznie dzieci zdrowe (bez kataru i kaszlu) oraz zdrowi opiekunowie.</li>
+        <li>Opiekun zobowiązany jest przekazać osobom prowadzącym – przed rozpoczęciem zajęć – informacje o alergiach, nietolerancjach, ograniczeniach zdrowotnych oraz innych istotnych potrzebach Uczestnika mających znaczenie dla jego bezpieczeństwa. Informacje te opiekun przekazuje bezpośrednio osobom prowadzącym; nie są one wprowadzane do Aplikacji.</li>
+        <li>Osoby prowadzące nie podają Uczestnikom żadnych lekarstw.</li>
+        <li>Dzieci są przyprowadzane i odbierane z zajęć przez rodziców, opiekunów prawnych lub osoby przez nich pisemnie upoważnione. Osoba upoważniona powinna mieć przy sobie dokument potwierdzający tożsamość. O odbiorze dziecka przez inną osobę niż opiekun prawny należy powiadomić osobę prowadzącą przed zajęciami.</li>
+        <li>W Warsztatowni obowiązuje zasada wzajemnego szacunku wobec dzieci, opiekunów i osób prowadzących. Posiłki i przekąski dzieci mogą być spożywane wyłącznie w części warsztatowej.</li>
+        <li>Dziecko przychodzi na zajęcia w wygodnym stroju, który może ulec zabrudzeniu podczas aktywności sensorycznych.</li>
+    </ol>
+
+    <h2>§ 3. Wejścia i karnety</h2>
+    <ol>
+        <li>Wejścia jednorazowe i karnety nabywa się za pośrednictwem <a href="{{ path('homepage') }}">Aplikacji</a>.</li>
+        <li>Dostępne rodzaje wejść (wejście jednorazowe, karnet), ich ceny, liczbę wejść w karnecie oraz okres jego ważności określa Cennik prezentowany przy danych zajęciach oraz Regulamin danych zajęć.</li>
+        <li>O ile Regulamin danych zajęć nie stanowi inaczej, po wykorzystaniu karnetu miejsce w grupie pozostaje zarezerwowane przez 7 dni; aby je zachować, należy wykupić kolejny karnet w tym terminie. Warsztatownia zastrzega prawo otwarcia zapisów na nieopłacone miejsce.</li>
+        <li>Warsztatownia nie stosuje płatności cyklicznych ani automatycznego odnawiania karnetów.</li>
+    </ol>
+
+    <h2>§ 4. Nieobecności, przekładanie wejść i zwroty</h2>
+    <ol>
+        <li>Nieobecność Uczestnika należy zgłosić przez Aplikację. O ile Regulamin danych zajęć nie przewiduje innego terminu, zgłoszenia dokonuje się najpóźniej <strong>24 godziny</strong> przed rozpoczęciem zajęć.</li>
+        <li>Skutki nieobecności (możliwość i zasady przepisania wejścia na kolejny termin, ewentualny zwrot ceny, przypadki, w których wejście przepada) określa <strong>Regulamin danych zajęć</strong> – zasady te różnią się w zależności od rodzaju zajęć i rodzaju wejścia.</li>
+        <li>W przypadku zajęć <strong>odwołanych przez Warsztatownię</strong> Opiekunowi przysługuje, według jego wyboru, przepisanie wejścia na inny termin albo zwrot ceny za odwołane zajęcia.</li>
+        <li>Zwroty realizowane są na rachunek bankowy, z którego dokonano płatności, w terminie określonym w Regulaminie danych zajęć.</li>
+        <li>Postanowienia niniejszego paragrafu oraz Regulaminu danych zajęć stanowią uprawnienia przyznane Opiekunowi przez Warsztatownię i nie ograniczają praw Konsumenta wynikających z bezwzględnie obowiązujących przepisów.</li>
+    </ol>
+
+    <h2>§ 5. Adaptacja</h2>
+    <p><strong>Dotyczy Klubu Malucha oraz zajęć, dla których Regulamin danych zajęć tak stanowi.</strong></p>
+    <ol>
+        <li>Adaptacja ma na celu stopniowe i łagodne wprowadzenie dziecka do nowego środowiska; jej czas jest indywidualny i zależy od potrzeb dziecka.</li>
+        <li>Etapy adaptacji: (I) udział dziecka w zajęciach z opiekunem przez cały czas ich trwania; (II) opiekun pozostaje na sali, ale wycofuje się z aktywnego udziału i przygotowuje dziecko do samodzielności; (III) samodzielny udział dziecka, przy dostępności opiekuna „pod telefonem”.</li>
+        <li>Po opuszczeniu sali opiekun nie wchodzi do niej samodzielnie; chęć wcześniejszego odebrania dziecka zgłasza telefonicznie osobom prowadzącym, które wyprowadzają dziecko na korytarz.</li>
+        <li>Podczas adaptacji obowiązuje zakaz spożywania słodyczy i napojów gazowanych na sali. Dzieci mogą przynosić ważne dla siebie przedmioty, mając na uwadze, że inne dzieci mogą chcieć się nimi bawić.</li>
+        <li>Trudności adaptacyjne Opiekun omawia z osobami prowadzącymi w celu wspólnego znalezienia najlepszego rozwiązania.</li>
+    </ol>
+
+    <h2>§ 6. Dane osobowe</h2>
+    <ol>
+        <li>Administratorem danych osobowych Opiekunów i Uczestników jest Warsztatownia. Zasady przetwarzania danych określa <a href="{{ path('legal_privacy') }}">Polityka prywatności</a>.</li>
+        <li>Aplikacja nie gromadzi danych o stanie zdrowia dzieci. Informacje, o których mowa w § 2 ust. 3, opiekun przekazuje bezpośrednio osobom prowadzącym wyłącznie w celu zapewnienia dziecku bezpiecznego udziału w zajęciach.</li>
+    </ol>
+
+    <h2>§ 7. Reklamacje</h2>
+    <ol>
+        <li>Reklamacje dotyczące organizacji i przebiegu zajęć można składać na adres <a href="mailto:kontakt@warsztatowniasensoryczna.pl">kontakt@warsztatowniasensoryczna.pl</a>.</li>
+        <li>Reklamacja powinna zawierać dane Opiekuna, wskazanie zajęć oraz opis zastrzeżeń. Warsztatownia rozpatruje reklamację Konsumenta oraz Przedsiębiorcy na prawach Konsumenta w terminie 14 dni od jej otrzymania.</li>
+    </ol>
+
+    <h2>§ 8. Postanowienia końcowe</h2>
+    <ol>
+        <li>Regulamin zajęć w niniejszym brzmieniu obowiązuje od dnia 10 września 2026 r.</li>
+        <li>Do zmiany Regulaminu zajęć oraz Regulaminu danych zajęć stosuje się odpowiednio § 16 Regulaminu aplikacji (informacja z 10-dniowym wyprzedzeniem, prawo wypowiedzenia, stosowanie wersji z chwili zawarcia umowy do rezerwacji już opłaconych).</li>
+        <li>W sprawach nieuregulowanych stosuje się Regulamin aplikacji oraz przepisy prawa polskiego.</li>
+    </ol>
+{% endblock %}

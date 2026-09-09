@@ -1,6 +1,6 @@
 <footer class="bg-white py-8 border-t border-muted">
     <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             <div><img src="{{ asset('images/logo-full.webp') }}" alt="Warsztatownia Sensoryczna" class="h-20 w-auto mb-4">
                 <p class="text-muted-foreground mb-4">{{ 'page.description'|trans }}</p></div>
             <div><h4 class="font-bold mb-4 text-workshop-brown">{{ 'page.quick_links'|trans }}</h4>
@@ -22,6 +22,16 @@
                         <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
                                href="{{ link.url }}">{{ link.label }}</a></li>
                     {% endfor %}
+                </ul>
+            </div>
+            <div><h4 class="font-bold mb-4 text-workshop-brown">Dokumenty</h4>
+                <ul class="space-y-2">
+                    <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
+                           href="{{ path('legal_app_terms') }}">Regulamin aplikacji</a></li>
+                    <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
+                           href="{{ path('legal_classes_terms') }}">Regulamin zajęć</a></li>
+                    <li><a class="text-muted-foreground hover:text-workshop-red transition-colors"
+                           href="{{ path('legal_privacy') }}">Polityka prywatności</a></li>
                 </ul>
             </div>
             <div><h4 class="font-bold mb-4 text-workshop-brown">{{ 'page.contact_us'|trans }}</h4>
