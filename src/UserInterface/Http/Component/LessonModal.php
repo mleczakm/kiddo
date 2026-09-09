@@ -251,7 +251,7 @@ class LessonModal extends AbstractController
 
     /**
      * The workshop's own terms-of-use attachment, when the admin has set
-     * one; otherwise the shared default that used to be the only option.
+     * one; otherwise the managed general classes terms page.
      *
      * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
      * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
@@ -261,7 +261,7 @@ class LessonModal extends AbstractController
     {
         $termsAttachment = $this->lesson?->getMetadata()->getTermsAttachment();
         if ($termsAttachment === null) {
-            return '/docs/Regulamin.pdf';
+            return $this->urlGenerator->generate('legal_classes_terms');
         }
 
         return $this->urlGenerator->generate('stored_file', [

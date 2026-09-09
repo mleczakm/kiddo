@@ -19,7 +19,7 @@ final class LessonModalTermsUrlTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
-    public function testGetTermsUrlFallsBackToTheStaticFileWhenNoneIsAttached(): void
+    public function testGetTermsUrlFallsBackToTheManagedGeneralTermsWhenNoneIsAttached(): void
     {
         $client = static::createClient();
         $em = $this->getEntityManager();
@@ -36,7 +36,7 @@ final class LessonModalTermsUrlTest extends WebTestCase
 
         $lessonModal = $component->component();
         static::assertInstanceOf(LessonModal::class, $lessonModal);
-        static::assertSame('/docs/Regulamin.pdf', $lessonModal->getTermsUrl());
+        static::assertSame('/regulamin-zajec', $lessonModal->getTermsUrl());
     }
 
     public function testGetTermsUrlPointsToTheWorkshopsOwnTermsAttachmentWhenPresent(): void

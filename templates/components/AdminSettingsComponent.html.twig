@@ -46,6 +46,16 @@
                 >
                     Dane firmy i kontakt
                 </button>
+                {% if isFeatureEnabled('legal_documents') %}
+                    <button
+                        data-action="live#update"
+                        data-model="settingsTab"
+                        data-value="legal_documents"
+                        class="text-left px-4 py-3 rounded-xl text-sm font-bold transition {{ settingsTab == 'legal_documents' ? 'bg-white shadow-sm text-indigo-600 border border-slate-200' : 'text-slate-600 hover:bg-slate-200/50' }}"
+                    >
+                        Dokumenty prawne
+                    </button>
+                {% endif %}
             </div>
 
             <!-- Kontent Ustawień -->
@@ -322,6 +332,10 @@
                             Zapisz dane firmy
                         </button>
                     </div>
+                {% endif %}
+
+                {% if settingsTab == 'legal_documents' and isFeatureEnabled('legal_documents') %}
+                    {{ component('AdminLegalDocuments') }}
                 {% endif %}
             </div>
         </div>

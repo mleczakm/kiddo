@@ -22,7 +22,7 @@
             <header class="mt-8 border-b border-stone-200 pb-8">
                 <p class="text-xs font-black uppercase tracking-[0.2em] text-workshop-red">Dokument prawny</p>
                 <h1 class="mt-4 text-3xl leading-tight text-workshop-brown md:text-5xl">{% block document_heading %}{% endblock %}</h1>
-                <p class="mt-4 text-sm font-semibold text-stone-500">Obowiązuje od 10 września 2026 r.</p>
+                <p class="mt-4 text-sm font-semibold text-stone-500">{% block document_effective_date %}Obowiązuje od 10 września 2026 r.{% endblock %}</p>
             </header>
 
             <div class="article-content prose prose-lg mx-auto mt-10 max-w-3xl">

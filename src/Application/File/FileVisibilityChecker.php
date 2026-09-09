@@ -35,7 +35,7 @@ final readonly class FileVisibilityChecker
             }
         }
 
-        return $this->isAttachedToWorkshop($file);
+        return $this->isAttachedToWorkshop($file) || $this->isPublishedLegalDocument($file, $now);
     }
 
     public function isInline(File $file): bool
@@ -58,7 +58,11 @@ final readonly class FileVisibilityChecker
             return true;
         }
 
-        return $this->isWorkshopTermsAttachment($file);
+        return (
+            $this->isWorkshopTermsAttachment($file)
+            || $file->getMimeType() === 'application/pdf'
+            && $this->isLegalDocumentFile($file)
+        );
     }
 
     private function isAttachedToWorkshop(File $file): bool
@@ -88,6 +92,43 @@ final readonly class FileVisibilityChecker
             ->andWhere('wf.role = :role')
             ->setParameter('file', $file->getId(), 'ulid')
             ->setParameter('role', WorkshopFileRole::TERMS_OF_USE->value)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        /** @var list<mixed> $result */
+        $result = $query->getResult();
+
+        return \count($result) > 0;
+    }
+
+    private function isPublishedLegalDocument(File $file, \DateTimeImmutable $now): bool
+    {
+        $query = $this->em
+            ->createQueryBuilder()
+            ->select('1')
+            ->from('App\Entity\LegalDocumentVersion', 'version')
+            ->where('version.file = :file')
+            ->andWhere('version.publishedAt <= :now')
+            ->andWhere('version.effectiveFrom <= :now')
+            ->setParameter('file', $file->getId(), 'ulid')
+            ->setParameter('now', $now)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        /** @var list<mixed> $result */
+        $result = $query->getResult();
+
+        return \count($result) > 0;
+    }
+
+    private function isLegalDocumentFile(File $file): bool
+    {
+        $query = $this->em
+            ->createQueryBuilder()
+            ->select('1')
+            ->from('App\Entity\LegalDocumentVersion', 'version')
+            ->where('version.file = :file')
+            ->setParameter('file', $file->getId(), 'ulid')
             ->setMaxResults(1)
             ->getQuery();
 

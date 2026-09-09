@@ -50,7 +50,10 @@ final class FileAction extends AbstractController
         $now = Clock::get()->now();
 
         $isPublic = $this->visibility->isPublic($file, $now);
-        if (!$isPublic && (!$this->getUser() || !$this->isGranted('ROLE_MANAGE_CONTENT'))) {
+        if (
+            !$isPublic
+            && (!$this->getUser() || !$this->isGranted('ROLE_MANAGE_CONTENT') && !$this->isGranted('ROLE_SETTINGS'))
+        ) {
             throw $this->createAccessDeniedException();
         }
 

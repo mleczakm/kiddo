@@ -11,6 +11,7 @@ use InvalidArgumentException;
  * article_image: pictures in cover/inline/attachments (JPEG, PNG, WebP, AVIF)
  * article_video: playable media with Range support (MP4, WebM, Ogg)
  * article_document: downloadable files (PDF, DOCX, XLSX, PPTX)
+ * legal_document: published legal documents (PDF or DOCX)
  */
 final readonly class FileUploadPolicy
 {
@@ -34,7 +35,7 @@ final readonly class FileUploadPolicy
         $this->fileSizeLimit = $fileSizeLimit ?? match ($usage) {
             'article_image' => 8 * 1024 * 1024, // 8 MB per image
             'article_video' => 50 * 1024 * 1024, // 50 MB per video
-            'article_document' => 20 * 1024 * 1024, // 20 MB per document
+            'article_document', 'legal_document' => 20 * 1024 * 1024, // 20 MB per document
             default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
 
@@ -42,6 +43,7 @@ final readonly class FileUploadPolicy
             'article_image' => 10,
             'article_video' => 5,
             'article_document' => 10,
+            'legal_document' => 1,
             default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
 
@@ -49,6 +51,7 @@ final readonly class FileUploadPolicy
             'article_image' => 50 * 1024 * 1024, // 50 MB total images
             'article_video' => 100 * 1024 * 1024, // 100 MB total videos
             'article_document' => 100 * 1024 * 1024, // 100 MB total documents
+            'legal_document' => 20 * 1024 * 1024,
             default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
 
@@ -60,6 +63,10 @@ final readonly class FileUploadPolicy
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            ],
+            'legal_document' => [
+                'application/pdf',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ],
             default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };

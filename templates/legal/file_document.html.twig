@@ -1,0 +1,54 @@
+{% extends 'legal/layout.html.twig' %}
+
+{% block document_title %}{{ documentType.label }}{% endblock %}
+{% block document_description %}Aktualna i archiwalna wersja dokumentu: {{ documentType.label }}.{% endblock %}
+{% block document_canonical %}{{ url(routeName) }}{% endblock %}
+{% block document_heading %}{{ documentType.heading }}{% endblock %}
+{% block document_effective_date %}Obowiązuje od {{ selectedVersion.effectiveFrom|format_datetime('long', 'none', locale: 'pl') }} · wersja {{ selectedVersion.version }}{% endblock %}
+
+{% block document_content %}
+    {% if currentVersion and selectedVersion.id != currentVersion.id %}
+        <div class="not-prose mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+            Przeglądasz archiwalną wersję dokumentu.
+            <a href="{{ path(routeName) }}" class="font-bold underline">Przejdź do aktualnej wersji</a>.
+        </div>
+    {% endif %}
+
+    {% set fileUrl = path('stored_file', {id: selectedVersion.file.id, safeName: selectedVersion.file.originalName}) %}
+    <div class="not-prose">
+        {% if selectedVersion.file.mimeType == 'application/pdf' %}
+            <iframe
+                src="{{ fileUrl }}"
+                title="{{ documentType.label }}, wersja {{ selectedVersion.version }}"
+                class="h-[75vh] min-h-[36rem] w-full rounded-2xl border border-stone-200 bg-stone-50"
+            ></iframe>
+            <p class="mt-4 text-center text-sm text-stone-600">
+                Jeśli dokument nie wyświetla się w przeglądarce,
+                <a href="{{ fileUrl }}" class="font-bold text-workshop-red underline">otwórz plik PDF</a>.
+            </p>
+        {% else %}
+            <div class="rounded-2xl border border-stone-200 bg-stone-50 p-6 text-center">
+                <p class="text-stone-700">Ta wersja dokumentu jest dostępna jako plik do pobrania.</p>
+                <a href="{{ fileUrl }}" class="mt-4 inline-flex rounded-xl bg-workshop-red px-5 py-3 font-bold text-white">
+                    Pobierz {{ selectedVersion.file.originalName }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if versions|length > 1 %}
+        <h2>Poprzednie wersje</h2>
+        <ul>
+            {% for version in versions %}
+                <li>
+                    {% if version.id == selectedVersion.id %}
+                        <strong>Wersja {{ version.version }} — {{ version.effectiveFrom|format_datetime('long', 'none', locale: 'pl') }}</strong>
+                    {% else %}
+                        <a href="{{ path(routeName, {v: version.id}) }}">Wersja {{ version.version }} — {{ version.effectiveFrom|format_datetime('long', 'none', locale: 'pl') }}</a>
+                    {% endif %}
+                    {% if version.changeSummary %}<br><small>{{ version.changeSummary }}</small>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
