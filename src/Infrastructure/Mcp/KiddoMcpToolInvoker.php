@@ -54,10 +54,8 @@ final readonly class KiddoMcpToolInvoker
         unset($arguments['kiddo_chat_token'], $arguments['chat_token']);
 
         try {
-            $actor = $token !== null
-                ? $this->actorResolver->fromTokenString($token)
-                : ChatActor::guest();
-        } catch (\InvalidArgumentException | \JsonException $e) {
+            $actor = $token !== null ? $this->actorResolver->fromTokenString($token) : ChatActor::guest();
+        } catch (\InvalidArgumentException|\JsonException $e) {
             $this->logger->warning('MCP chat token rejected', [
                 'tool' => $toolName,
                 'reason' => $e->getMessage(),

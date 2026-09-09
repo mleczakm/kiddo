@@ -32,18 +32,23 @@ final class KiddoMcpToolInvokerTest extends KernelTestCase
         $stack = $container->get(RequestStack::class);
         $stack->push(Request::create('/api/mcp', 'POST', server: $server));
 
-        return $container->get(KiddoMcpToolInvoker::class);
+        $invoker = $container->get(KiddoMcpToolInvoker::class);
+        \assert($invoker instanceof KiddoMcpToolInvoker, 'MCP invoker service must be wired');
+
+        return $invoker;
     }
 
     public function testPublicToolRunsAsGuestWithoutAToken(): void
     {
+        /** @var array{ok: bool, summary: string} $result */
         $result = $this->invoker(null)->invoke('user.list_upcoming_lessons', []);
 
-        static::assertTrue($result['ok'], (string) json_encode($result));
+        static::assertTrue($result['ok'], $result['summary']);
     }
 
     public function testAuthOnlyToolReturnsLoginPromptForGuestInsteadOfThrowing(): void
     {
+        /** @var array{ok: bool, summary: string} $result */
         $result = $this->invoker(null)->invoke('user.list_bookings', []);
 
         static::assertFalse($result['ok']);
@@ -52,6 +57,7 @@ final class KiddoMcpToolInvokerTest extends KernelTestCase
 
     public function testUnresolvedDynamicVariablePlaceholderIsTreatedAsNoToken(): void
     {
+        /** @var array{ok: bool, summary: string} $result */
         $result = $this->invoker('{{kiddo_chat_token}}')->invoke('user.list_bookings', []);
 
         static::assertFalse($result['ok']);
@@ -60,6 +66,7 @@ final class KiddoMcpToolInvokerTest extends KernelTestCase
 
     public function testMalformedTokenReturnsStructuredFailureInsteadOfThrowing(): void
     {
+        /** @var array{ok: bool, summary: string} $result */
         $result = $this->invoker('not-a-real-token')->invoke('user.list_bookings', []);
 
         static::assertFalse($result['ok']);

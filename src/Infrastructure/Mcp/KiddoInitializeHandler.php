@@ -67,10 +67,7 @@ final readonly class KiddoInitializeHandler implements RequestHandlerInterface
                 // suspend a Fiber and push the POST onto the SSE streaming path,
                 // which hangs the single Swoole HTTP worker until the client's
                 // 30s tool timeout fires.
-                new ServerCapabilities(
-                    tools: true,
-                    toolsListChanged: true,
-                ),
+                new ServerCapabilities(tools: true, toolsListChanged: true),
                 new Implementation($this->app, $this->version, $this->description),
                 $this->instructions,
                 null,
