@@ -60,16 +60,16 @@ final readonly class KiddoInitializeHandler implements RequestHandlerInterface
         return new Response(
             $request->getId(),
             new InitializeResult(
+                // Advertise only what the server actually implements. The chat tool
+                // loader registers tools and nothing else — no prompts, resources,
+                // logging sink or completion provider. Advertising them invited
+                // ElevenLabs to issue resources/subscribe & prompts/list calls that
+                // suspend a Fiber and push the POST onto the SSE streaming path,
+                // which hangs the single Swoole HTTP worker until the client's
+                // 30s tool timeout fires.
                 new ServerCapabilities(
                     tools: true,
                     toolsListChanged: true,
-                    resources: true,
-                    resourcesSubscribe: true,
-                    resourcesListChanged: true,
-                    prompts: true,
-                    promptsListChanged: true,
-                    logging: true,
-                    completions: true,
                 ),
                 new Implementation($this->app, $this->version, $this->description),
                 $this->instructions,
