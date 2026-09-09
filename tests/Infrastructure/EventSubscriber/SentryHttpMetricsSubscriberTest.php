@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Infrastructure\EventSubscriber;
 
 use App\Infrastructure\EventSubscriber\SentryHttpMetricsSubscriber;
-use App\Infrastructure\Sentry\MetricsRecorderInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SwooleBundle\Observability\Metrics\MetricsRecorderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;

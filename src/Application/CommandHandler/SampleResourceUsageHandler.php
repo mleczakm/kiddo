@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Command\SampleResourceUsage;
-use App\Infrastructure\Sentry\MetricsRecorderInterface;
-use App\Infrastructure\System\ProcResourceUsageProbe;
 use Psr\Log\LoggerInterface;
 use Sentry\Unit;
+use SwooleBundle\Observability\Metrics\MetricsRecorderInterface;
+use SwooleBundle\Observability\System\ProcResourceUsageProbe;
 
 /**
  * Auto-registered as a message handler by the `App\Application\CommandHandler\` block in

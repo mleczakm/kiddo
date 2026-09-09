@@ -6,12 +6,12 @@ namespace App\Tests\Application\CommandHandler;
 
 use App\Application\Command\SampleResourceUsage;
 use App\Application\CommandHandler\SampleResourceUsageHandler;
-use App\Infrastructure\Sentry\MetricsRecorderInterface;
-use App\Infrastructure\System\ProcResourceUsageProbe;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Sentry\Unit;
+use SwooleBundle\Observability\Metrics\MetricsRecorderInterface;
+use SwooleBundle\Observability\System\ProcResourceUsageProbe;
 
 #[Group('unit')]
 final class SampleResourceUsageHandlerTest extends TestCase

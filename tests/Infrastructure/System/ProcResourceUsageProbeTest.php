@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\System;
 
-use App\Infrastructure\System\ProcResourceUsageProbe;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use SwooleBundle\Observability\System\ProcResourceUsageProbe;
 use Symfony\Component\Filesystem\Filesystem;
 
 #[Group('unit')]

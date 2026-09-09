@@ -222,9 +222,6 @@ services:
   Sentry\Integration\RequestFetcherInterface:
     class: Sentry\Integration\RequestFetcher
 
-  App\Infrastructure\Sentry\MetricsRecorderInterface:
-    alias: App\Infrastructure\Sentry\MetricsRecorder
-
   Symfony\Contracts\Service\ResetInterface:
     alias: services_resetter
 
@@ -285,18 +282,6 @@ services:
   App\Infrastructure\Healthcheck\DoctrineDbalCacheHealthcheck:
     arguments:
       $cacheConnection: '@doctrine.dbal.cache_connection'
-
-  App\Infrastructure\Healthcheck\HttpClientHealthcheck:
-    arguments:
-      $url: '%env(HTTP_CLIENT_HEALTHCHECK_URL)%'
-
-  App\Infrastructure\Healthcheck\ProcessCountHealthcheck:
-    arguments:
-      $maxProcesses: '%env(int:HEALTHCHECK_MAX_PROCESSES)%'
-
-  App\Infrastructure\Healthcheck\MemoryUsageHealthcheck:
-    arguments:
-      $maxRssMib: '%env(int:HEALTHCHECK_MAX_RSS_MIB)%'
 
   # Symfony normally builds this via the HttpClient::create() factory, whose return type
   # (CurlHttpClient vs NativeHttpClient) is only known at runtime. The coroutine proxifier

@@ -1,0 +1,5 @@
+swoole_bundle_observability:
+  health_checks: true
+  max_processes: '%env(int:HEALTHCHECK_MAX_PROCESSES)%'
+  max_rss_mib: '%env(int:HEALTHCHECK_MAX_RSS_MIB)%'
+  http_url: '%env(HTTP_CLIENT_HEALTHCHECK_URL)%'

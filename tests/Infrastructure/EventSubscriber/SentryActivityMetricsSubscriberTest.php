@@ -7,10 +7,10 @@ namespace App\Tests\Infrastructure\EventSubscriber;
 use App\Application\Event\ActivityOccurred;
 use App\Entity\ActivityType;
 use App\Infrastructure\EventSubscriber\SentryActivityMetricsSubscriber;
-use App\Infrastructure\Sentry\MetricsRecorderInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SwooleBundle\Observability\Metrics\MetricsRecorderInterface;
 
 #[Group('unit')]
 class SentryActivityMetricsSubscriberTest extends TestCase

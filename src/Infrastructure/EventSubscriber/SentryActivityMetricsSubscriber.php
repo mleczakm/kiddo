@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\EventSubscriber;
 
 use App\Application\Event\ActivityOccurred;
-use App\Infrastructure\Sentry\MetricsRecorderInterface;
+use SwooleBundle\Observability\Metrics\MetricsRecorderInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final readonly class SentryActivityMetricsSubscriber

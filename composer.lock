@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf834aedea717a1175f94bd8b68a6567",
+    "content-hash": "1cae2e5a5bf5c2a2c67b699e81544985",
     "packages": [
         {
             "name": "aeon-php/business-hours",
@@ -3430,6 +3430,71 @@
                 "source": "https://github.com/mleczakm/aeon-school-holidays/tree/v1.0.0"
             },
             "time": "2026-08-26T23:23:14+00:00"
+        },
+        {
+            "name": "mleczakm/swoole-bundle-observability",
+            "version": "v0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mleczakm/swoole-bundle-observability.git",
+                "reference": "5bea4d9467d47b6dfc74b471350f7d1040a56dff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mleczakm/swoole-bundle-observability/zipball/5bea4d9467d47b6dfc74b471350f7d1040a56dff",
+                "reference": "5bea4d9467d47b6dfc74b471350f7d1040a56dff",
+                "shasum": ""
+            },
+            "require": {
+                "macpaw/symfony-health-check-bundle": "^2.1",
+                "php": "^8.3",
+                "psr/log": "^3.0",
+                "sentry/sentry": "^4.0",
+                "symfony/config": "^7.4 || ^8.0",
+                "symfony/dependency-injection": "^7.4 || ^8.0",
+                "symfony/filesystem": "^7.4 || ^8.0",
+                "symfony/http-client-contracts": "^3.5",
+                "symfony/http-kernel": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^11.5 || ^12.5",
+                "symfony/http-client": "^7.4 || ^8.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "SwooleBundle\\Observability\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "SwooleBundle\\Observability\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michał Mleczko",
+                    "email": "do@mleczki.pl"
+                }
+            ],
+            "description": "Runtime process, memory, file-descriptor and TCP observability for Symfony applications running on Swoole.",
+            "keywords": [
+                "health-check",
+                "metrics",
+                "observability",
+                "sentry",
+                "swoole",
+                "symfony"
+            ],
+            "support": {
+                "source": "https://github.com/mleczakm/swoole-bundle-observability/tree/v0.1.2",
+                "issues": "https://github.com/mleczakm/swoole-bundle-observability/issues"
+            },
+            "time": "2026-09-09T05:12:35+00:00"
         },
         {
             "name": "mleczakm/swoole-bundle-scheduler",

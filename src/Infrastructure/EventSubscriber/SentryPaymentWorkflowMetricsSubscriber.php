@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\EventSubscriber;
 
 use App\Entity\Payment;
-use App\Infrastructure\Sentry\MetricsRecorderInterface;
+use SwooleBundle\Observability\Metrics\MetricsRecorderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 

@@ -28,6 +28,11 @@
     {
       "type": "vcs",
       "url": "https://github.com/mleczakm/twig-now.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/mleczakm/swoole-bundle-observability.git",
+      "no-api": true
     }
   ],
   "require": {
@@ -55,6 +60,7 @@
     "martin-georgiev/postgresql-for-doctrine": "^3.7.0",
     "mleczakm/aeon-school-holidays": "^1.0",
     "mleczakm/swoole-bundle-scheduler": "^0.1.0",
+    "mleczakm/swoole-bundle-observability": "^0.1.2",
     "mleczakm/twig-now": "^0.1.0",
     "mleczakm/zip-bomb-honeypot": "^1.0",
     "novaway/feature-flag-bundle": "dev-master as 3.0.2",

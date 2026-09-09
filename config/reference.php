@@ -1571,6 +1571,12 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         max_silence?: int|Param, // Seconds without a completed tick above which the /health check fails. // Default: 90
  *     },
  * }
+ * @psalm-type SwooleBundleObservabilityConfig = array{
+ *     health_checks?: bool|Param, // Default: true
+ *     max_processes?: int|Param, // Default: 20
+ *     max_rss_mib?: int|Param, // Default: 1536
+ *     http_url?: scalar|Param|null, // Default: "https://connectivitycheck.gstatic.com/generate_204"
+ * }
  * @psalm-type SymfonycastsTailwindConfig = array{
  *     input_css?: list<scalar|Param|null>,
  *     config_file?: scalar|Param|null, // Path to the tailwind.config.js file // Default: "%kernel.project_dir%/tailwind.config.js"
@@ -1858,6 +1864,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     monolog?: MonologConfig,
  *     swoole?: SwooleConfig,
  *     swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
+ *     swoole_bundle_observability?: SwooleBundleObservabilityConfig,
  *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     twig_component?: TwigComponentConfig,
  *     live_component?: LiveComponentConfig,
@@ -1886,6 +1893,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         maker?: MakerConfig,
  *         swoole?: SwooleConfig,
  *         swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
+ *         swoole_bundle_observability?: SwooleBundleObservabilityConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,
@@ -1913,6 +1921,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         monolog?: MonologConfig,
  *         swoole?: SwooleConfig,
  *         swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
+ *         swoole_bundle_observability?: SwooleBundleObservabilityConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,
@@ -1941,6 +1950,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         monolog?: MonologConfig,
  *         swoole?: SwooleConfig,
  *         swoole_bundle_scheduler?: SwooleBundleSchedulerConfig,
+ *         swoole_bundle_observability?: SwooleBundleObservabilityConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,

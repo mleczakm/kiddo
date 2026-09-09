@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Healthcheck;
 
-use App\Infrastructure\Healthcheck\HttpClientHealthcheck;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use SwooleBundle\Observability\HealthCheck\HttpClientHealthCheck;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -18,7 +18,7 @@ final class HttpClientHealthcheckTest extends TestCase
 
     public function testPassesWhenEndpointReturnsNoContent(): void
     {
-        $healthcheck = new HttpClientHealthcheck(new MockHttpClient(new MockResponse('', [
+        $healthcheck = new HttpClientHealthCheck(new MockHttpClient(new MockResponse('', [
             'http_code' => 204,
         ])), self::URL);
 
@@ -31,7 +31,7 @@ final class HttpClientHealthcheckTest extends TestCase
 
     public function testFailsWhenEndpointReturnsUnexpectedStatusCode(): void
     {
-        $healthcheck = new HttpClientHealthcheck(new MockHttpClient(new MockResponse('', [
+        $healthcheck = new HttpClientHealthCheck(new MockHttpClient(new MockResponse('', [
             'http_code' => 503,
         ])), self::URL);
 
@@ -44,7 +44,7 @@ final class HttpClientHealthcheckTest extends TestCase
 
     public function testFailsWhenHttpClientThrows(): void
     {
-        $healthcheck = new HttpClientHealthcheck(new MockHttpClient(static function (): never {
+        $healthcheck = new HttpClientHealthCheck(new MockHttpClient(static function (): never {
             throw new TransportException('cURL option is not supported');
         }), self::URL);
 

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Infrastructure\EventSubscriber;
 
 use App\Infrastructure\EventSubscriber\SentryPaymentWorkflowMetricsSubscriber;
-use App\Infrastructure\Sentry\MetricsRecorderInterface;
 use App\Tests\Assembler\PaymentAssembler;
 use Brick\Money\Money;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SwooleBundle\Observability\Metrics\MetricsRecorderInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Transition;
 
