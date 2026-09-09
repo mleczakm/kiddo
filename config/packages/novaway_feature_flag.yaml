@@ -9,6 +9,7 @@ novaway_feature_flag:
           platform_billing_widget: false
           chat_assistant: true
           commerce_order_write: true
+          consents: false
           dynamic_pricing: true
           legal_documents: false
           pricing_admin: false
@@ -28,6 +29,7 @@ when@dev:
             platform_billing_widget: false
             chat_assistant: true
             commerce_order_write: true
+            consents: true
             dynamic_pricing: true
             legal_documents: true
             pricing_admin: false
@@ -47,6 +49,7 @@ when@test:
             platform_billing_widget: true
             chat_assistant: true
             commerce_order_write: false
+            consents: true
             dynamic_pricing: true
             legal_documents: true
             pricing_admin: true

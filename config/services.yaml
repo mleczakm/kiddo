@@ -350,3 +350,7 @@ when@test:
     App\Application\Newsletter\NewsletterSubscriptionManager:
       autowire: true
       public: true
+
+    App\Application\Consent\ConsentRecorder:
+      autowire: true
+      public: true
