@@ -41,17 +41,17 @@ final readonly class RegistrationConsentManager
 
         try {
             $acceptanceText = $this->translator->trans('form.register.accept_terms_text');
-            $this->consentRecorder->record(
+            $this->consentRecorder->recordMany(
                 $user,
-                ConsentType::APP_TERMS,
                 ConsentSource::REGISTRATION,
-                ConsentEvidence::currentDocument(LegalDocumentType::APP_TERMS, $acceptanceText),
-            );
-            $this->consentRecorder->record(
-                $user,
-                ConsentType::PRIVACY,
-                ConsentSource::REGISTRATION,
-                ConsentEvidence::currentDocument(LegalDocumentType::PRIVACY, $acceptanceText),
+                new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
+                    LegalDocumentType::APP_TERMS,
+                    $acceptanceText,
+                )),
+                new ConsentGrant(ConsentType::PRIVACY, ConsentEvidence::currentDocument(
+                    LegalDocumentType::PRIVACY,
+                    $acceptanceText,
+                )),
             );
         } catch (\Throwable $exception) {
             $this->logger->error('Unable to prepare registration legal consent evidence.', [

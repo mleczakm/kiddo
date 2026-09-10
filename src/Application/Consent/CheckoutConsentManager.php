@@ -45,36 +45,36 @@ final readonly class CheckoutConsentManager
         try {
             $context = sprintf('order:%s', $order->getId());
             $termsText = $this->translator->trans('cart.checkout_terms_text');
-            $this->consentRecorder->record(
-                $user,
-                ConsentType::APP_TERMS,
-                ConsentSource::CHECKOUT,
-                ConsentEvidence::currentDocument(LegalDocumentType::APP_TERMS, $termsText, $context),
-            );
-            $this->consentRecorder->record(
-                $user,
-                ConsentType::CLASSES_TERMS,
-                ConsentSource::CHECKOUT,
-                ConsentEvidence::currentDocument(LegalDocumentType::CLASSES_TERMS_GENERAL, $termsText, $context),
-            );
+            $grants = [
+                new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
+                    LegalDocumentType::APP_TERMS,
+                    $termsText,
+                    $context,
+                )),
+                new ConsentGrant(ConsentType::CLASSES_TERMS, ConsentEvidence::currentDocument(
+                    LegalDocumentType::CLASSES_TERMS_GENERAL,
+                    $termsText,
+                    $context,
+                )),
+            ];
 
             foreach ($workshopTerms as $terms) {
-                $this->consentRecorder->record(
-                    $user,
-                    ConsentType::CLASSES_TERMS,
-                    ConsentSource::CHECKOUT,
-                    ConsentEvidence::externalDocument($terms->documentRef, $terms->checksum, $termsText, $context),
-                );
+                $grants[] = new ConsentGrant(ConsentType::CLASSES_TERMS, ConsentEvidence::externalDocument(
+                    $terms->documentRef,
+                    $terms->checksum,
+                    $termsText,
+                    $context,
+                ));
             }
 
             if ($order->getBuyerType() === BuyerType::PRIVATE) {
-                $this->consentRecorder->record(
-                    $user,
-                    ConsentType::WITHDRAWAL_INFO_ACK,
-                    ConsentSource::CHECKOUT,
-                    ConsentEvidence::statement($this->translator->trans('cart.withdrawal_ack'), $context),
-                );
+                $grants[] = new ConsentGrant(ConsentType::WITHDRAWAL_INFO_ACK, ConsentEvidence::statement(
+                    $this->translator->trans('cart.withdrawal_ack'),
+                    $context,
+                ));
             }
+
+            $this->consentRecorder->recordMany($user, ConsentSource::CHECKOUT, ...$grants);
         } catch (\Throwable $exception) {
             $this->logger->error('Unable to prepare checkout consent evidence.', [
                 'exception' => $exception,

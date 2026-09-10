@@ -35,26 +35,50 @@ final readonly class ConsentRecorder
         ConsentSource $source,
         ConsentEvidence $evidence,
     ): ?UserConsent {
+        return $this->recordMany($user, $source, new ConsentGrant($type, $evidence))[0] ?? null;
+    }
+
+    /**
+     * Persists a complete acceptance set in one flush, so a registration or
+     * checkout cannot leave only part of its required evidence behind.
+     *
+     * @return list<UserConsent>
+     */
+    public function recordMany(User $user, ConsentSource $source, ConsentGrant ...$grants): array
+    {
+        if ($grants === []) {
+            return [];
+        }
+
         try {
-            $evidence = $this->resolveDocumentVersion($evidence);
-            if ($evidence === null) {
-                return null;
+            $resolvedGrants = [];
+            foreach ($grants as $grant) {
+                $evidence = $this->resolveDocumentVersion($grant->evidence);
+                if ($evidence === null) {
+                    return [];
+                }
+
+                $resolvedGrants[] = new ConsentGrant($grant->type, $evidence);
             }
 
-            $consent = new UserConsent($user, $type, $source, $evidence, $this->requestContext);
-            $this->entityManager->persist($consent);
+            $consents = [];
+            foreach ($resolvedGrants as $grant) {
+                $consent = new UserConsent($user, $grant->type, $source, $grant->evidence, $this->requestContext);
+                $this->entityManager->persist($consent);
+                $consents[] = $consent;
+            }
             $this->entityManager->flush();
 
-            return $consent;
+            return $consents;
         } catch (\Throwable $exception) {
-            $this->logger->error('Unable to record user consent.', [
+            $this->logger->error('Unable to record user consent set.', [
                 'exception' => $exception,
                 'user_id' => $user->getId(),
-                'consent_type' => $type->value,
+                'consent_types' => array_map(static fn(ConsentGrant $grant): string => $grant->type->value, $grants),
                 'consent_source' => $source->value,
             ]);
 
-            return null;
+            return [];
         }
     }
 

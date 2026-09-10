@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Application\Consent;
 
 use App\Application\Consent\ConsentEvidence;
+use App\Application\Consent\ConsentGrant;
 use App\Application\Consent\ConsentRecorder;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
@@ -114,6 +115,68 @@ final class ConsentRecorderTest extends KernelTestCase
         );
 
         static::assertNull($consent);
+        /** @var UserConsentRepository $repository */
+        $repository = $container->get(UserConsentRepository::class);
+        static::assertSame([], $repository->findHistoryForUser($user));
+    }
+
+    public function testRecordsACompleteConsentSetInOneOperation(): void
+    {
+        Clock::set(new MockClock('2026-09-10 12:00:00'));
+        self::bootKernel();
+        $container = static::getContainer();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get(EntityManagerInterface::class);
+        $user = $this->persistUser($entityManager);
+        $this->persistLegalVersion($entityManager, $user, LegalDocumentType::APP_TERMS);
+        $this->persistLegalVersion($entityManager, $user, LegalDocumentType::PRIVACY);
+        /** @var ConsentRecorder $recorder */
+        $recorder = $container->get(ConsentRecorder::class);
+
+        $consents = $recorder->recordMany(
+            $user,
+            ConsentSource::REGISTRATION,
+            new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
+                LegalDocumentType::APP_TERMS,
+                'Akceptuję dokumenty.',
+            )),
+            new ConsentGrant(ConsentType::PRIVACY, ConsentEvidence::currentDocument(
+                LegalDocumentType::PRIVACY,
+                'Akceptuję dokumenty.',
+            )),
+        );
+
+        static::assertCount(2, $consents);
+        static::assertSame(ConsentType::APP_TERMS, $consents[0]->getType());
+        static::assertSame(ConsentType::PRIVACY, $consents[1]->getType());
+    }
+
+    public function testDoesNotPersistAPartialSetWhenOneDocumentIsMissing(): void
+    {
+        Clock::set(new MockClock('2026-09-10 12:00:00'));
+        self::bootKernel();
+        $container = static::getContainer();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get(EntityManagerInterface::class);
+        $user = $this->persistUser($entityManager);
+        $this->persistLegalVersion($entityManager, $user, LegalDocumentType::APP_TERMS);
+        /** @var ConsentRecorder $recorder */
+        $recorder = $container->get(ConsentRecorder::class);
+
+        $consents = $recorder->recordMany(
+            $user,
+            ConsentSource::REGISTRATION,
+            new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
+                LegalDocumentType::APP_TERMS,
+                'Akceptuję dokumenty.',
+            )),
+            new ConsentGrant(ConsentType::PRIVACY, ConsentEvidence::currentDocument(
+                LegalDocumentType::PRIVACY,
+                'Akceptuję dokumenty.',
+            )),
+        );
+
+        static::assertSame([], $consents);
         /** @var UserConsentRepository $repository */
         $repository = $container->get(UserConsentRepository::class);
         static::assertSame([], $repository->findHistoryForUser($user));
