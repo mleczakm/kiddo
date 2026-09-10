@@ -105,8 +105,15 @@
                         <p class="font-medium">{{ 'cart.precontract.title'|trans }}</p>
                         <p>{{ 'cart.precontract.price'|trans({'amount': this.getTotal|money}) }}</p>
                         <p>{{ 'cart.precontract.payment'|trans }}</p>
-                        <p>{{ 'cart.precontract.schedule'|trans }}</p>
-                        <a href="{{ path('legal_classes_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.precontract.returns'|trans }}</a>
+                        <p>{{ 'cart.precontract.schedule'|trans({'venue': organization().addressLine}) }}</p>
+                        <p>
+                            {{ 'cart.precontract.returns'|trans }}:
+                            {% for terms in workshopTerms %}
+                                <a href="{{ path('stored_file', {id: terms.fileId, safeName: terms.fileName}) }}" target="_blank" class="text-workshop-red underline">{{ terms.title }}</a>{{ loop.last ? '' : ',' }}
+                            {% else %}
+                                <a href="{{ path('legal_classes_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.classes_terms'|trans }}</a>
+                            {% endfor %}
+                        </p>
                     </div>
 
                     <fieldset class="mb-2 text-xs">

@@ -575,7 +575,7 @@ cart:
     title: Information before ordering
     price: 'Gross price: {amount} (VAT exempt).'
     payment: 'Payment by bank transfer or BLIK using the payment reference shown after ordering.'
-    schedule: 'The date and venue are shown for each cart item.'
+    schedule: 'The date is shown for each cart item. Venue: {venue}.'
     returns: Cancellation and refund rules
   promotion_code:
     placeholder: 'e.g. WELCOME10'

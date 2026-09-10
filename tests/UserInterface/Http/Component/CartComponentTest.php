@@ -333,6 +333,10 @@ final class CartComponentTest extends WebTestCase
 
         $client->loginUser($user);
         $component = $this->createLiveComponent(name: CartComponent::class, client: $client);
+        $html = (string) $component->render();
+        static::assertStringContainsString('Aleja Jana Pawła II 12D, 05-250 Radzymin', $html);
+        static::assertStringContainsString('workshop-terms.pdf', $html);
+        static::assertStringContainsString('Zamawiam z obowiązkiem zapłaty', $html);
         $component->set('termsAccepted', true);
         $component->call('checkout');
         /** @var CartComponent $cartComponent */
