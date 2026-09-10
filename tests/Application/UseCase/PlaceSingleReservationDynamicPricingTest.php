@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\UseCase;
 
 use App\Application\Command\AddBooking;
+use App\Application\Consent\BookingConsentManager;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
@@ -170,6 +171,8 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
         $priceQuoter = $container->get(PriceQuoter::class);
         /** @var MessageBusInterface $bus */
         $bus = $container->get(MessageBusInterface::class);
+        /** @var BookingConsentManager $bookingConsentManager */
+        $bookingConsentManager = $container->get(BookingConsentManager::class);
 
         $placeSingleReservation = new PlaceSingleReservation(
             $bus,
@@ -185,6 +188,7 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
             $shadowPricing,
             $priceQuoter,
             $this->createMock(WaitlistEntryRepositoryInterface::class),
+            $bookingConsentManager,
         );
 
         $placeSingleReservation(new AddBooking(

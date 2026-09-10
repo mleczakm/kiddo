@@ -40,7 +40,16 @@
             class="fixed inset-0 m-auto z-50 w-[calc(100%-2rem)] h-fit gap-4 border bg-background p-6 sm:p-10 shadow-lg duration-200 sm:rounded-2xl max-w-3xl max-h-[90vh] overflow-y-auto data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
         <div class="grid">
             {% if termsOpened %}
-                <div class="flex flex-col space-y-2 text-center sm:text-left mb-6 h-[80vh]">
+                <div class="mb-4 space-y-2 text-sm text-stone-700">
+                    <p class="font-bold">{{ 'booking.legal_documents'|trans }}</p>
+                    <ul class="list-disc space-y-1 pl-5">
+                        <li><a href="{{ path('legal_app_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.app_terms'|trans }}</a></li>
+                        <li><a href="{{ path('legal_classes_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.classes_terms'|trans }}</a></li>
+                        <li><a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a></li>
+                    </ul>
+                </div>
+                {% if this.hasWorkshopTerms %}
+                <div class="flex flex-col space-y-2 text-center sm:text-left mb-6 h-[70vh]">
                     <object
                             data="{{ this.getTermsUrl() }}"
                             type="application/pdf"
@@ -54,6 +63,7 @@
                         </p>
                     </object>
                 </div>
+                {% endif %}
                 <div class="flex justify-end gap-4 mt-4">
                     <div class="flex flex-col sm:flex-row gap-4 mt-4">
                         <button type="button"
@@ -284,12 +294,19 @@
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-4">
-                    <div class="flex items-center {% if not termsAccepted and paymentStatus == 'error' %}border border-red-500 rounded bg-red-50 p-2{% endif %}">
+                    <div class="flex items-start {% if not termsAccepted and paymentStatus == 'error' %}border border-red-500 rounded bg-red-50 p-2{% endif %}">
                         <input type="checkbox" id="terms"
                                data-model="termsAccepted"
-                               class="mr-2 h-4 w-4 rounded border-input text-workshop-red focus:ring-2 focus:ring-workshop-red/50">
+                               class="mr-2 mt-0.5 h-4 w-4 rounded border-input text-workshop-red focus:ring-2 focus:ring-workshop-red/50">
                         <label for="terms"
-                               class="text-sm text-muted-foreground">{{ 'lesson.accept_terms'|trans|raw }}</label>
+                               class="text-sm text-muted-foreground">
+                            {{ 'booking.legal_acceptance_prefix'|trans }}
+                            <a href="{{ path('legal_app_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.app_terms'|trans }}</a>,
+                            <a href="{{ path('legal_classes_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.classes_terms'|trans }}</a>
+                            {{ 'cart.checkout_terms_connector'|trans }}
+                            <a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a>{% if this.hasWorkshopTerms %},
+                                <button type="button" data-action="live#action" data-live-action-param="openTerms" class="text-workshop-red underline">{{ 'booking.workshop_terms'|trans }}</button>{% endif %}.
+                        </label>
                     </div>
                     <button type="button"
                             data-action="click->modal-transition#close click->live#action click->workshop-url#pushClose"
@@ -512,6 +529,38 @@
                 </div>
             </div>
         </div>
+        <div class="space-y-3 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs">
+            <p class="font-medium">{{ 'booking.precontract.title'|trans }}</p>
+            <p>{{ 'booking.precontract.price'|trans({'amount': (this.quotedPrice ?? activeTicketOption.price)|money}) }}</p>
+            <p>{{ 'booking.precontract.payment'|trans }}</p>
+            <p>{{ 'booking.precontract.schedule'|trans({
+                'date': lesson.schedule|format_datetime(pattern: 'd MMMM yyyy, HH:mm'),
+                'venue': organization().addressLine
+            }) }}</p>
+            <p><a href="{{ this.getTermsUrl() }}" target="_blank" class="text-workshop-red underline">{{ 'booking.precontract.returns'|trans }}</a></p>
+        </div>
+
+        <label class="flex items-start gap-2 text-xs">
+            <input type="checkbox" data-model="termsAccepted" class="mt-0.5">
+            <span>
+                {{ 'booking.legal_acceptance_prefix'|trans }}
+                <a href="{{ path('legal_app_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.app_terms'|trans }}</a>,
+                <a href="{{ path('legal_classes_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.classes_terms'|trans }}</a>
+                {{ 'cart.checkout_terms_connector'|trans }}
+                <a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a>{% if this.hasWorkshopTerms %},
+                    <a href="{{ this.getTermsUrl() }}" target="_blank" class="text-workshop-red underline">{{ 'booking.workshop_terms'|trans }}</a>{% endif %}.
+            </span>
+        </label>
+
+        {% if this.isBookingConsentRequired %}
+            <label class="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-xs">
+                <input type="checkbox" data-model="withdrawalAcknowledged" class="mt-0.5">
+                <span>{{ 'booking.withdrawal_ack'|trans }}</span>
+            </label>
+            {% if paymentStatus == 'error' and not withdrawalAcknowledged %}
+                <p class="text-xs text-red-600">{{ 'booking.withdrawal_required'|trans }}</p>
+            {% endif %}
+        {% endif %}
         <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-4">
                     <div class="flex w-full flex-col space-y-2">
                         {% if isFeatureEnabled('cart') %}
@@ -549,7 +598,7 @@
                             <button
                                     data-action="live#action"
                                     data-live-action-param="processPayment"
-                                    {{ lesson.canBeBooked and lesson.future ? '' : 'disabled pointer-events-none' }}
+                                    {{ lesson.canBeBooked and lesson.future and termsAccepted and (not this.isBookingConsentRequired or withdrawalAcknowledged) ? '' : 'disabled pointer-events-none' }}
                                     class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 flex-1 bg-workshop-red text-white hover:bg-workshop-red/90">
                                 {{ 'booking.confirm_booking'|trans }}
                             </button>

@@ -19,5 +19,7 @@ final readonly class AddBooking
          * price is charged with no staleness check.
          */
         public ?string $expectedQuoteHash = null,
+        public bool $legalAcceptanceConfirmed = false,
+        public bool $withdrawalAcknowledged = false,
     ) {}
 }

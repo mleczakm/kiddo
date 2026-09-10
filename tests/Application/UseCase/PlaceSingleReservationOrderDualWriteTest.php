@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\UseCase;
 
 use App\Application\Command\AddBooking;
+use App\Application\Consent\BookingConsentManager;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
@@ -125,6 +126,8 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
         $shadowPricing = self::getContainer()->get(ShadowPricingEvaluator::class);
         /** @var PriceQuoter $priceQuoter */
         $priceQuoter = self::getContainer()->get(PriceQuoter::class);
+        /** @var BookingConsentManager $bookingConsentManager */
+        $bookingConsentManager = self::getContainer()->get(BookingConsentManager::class);
 
         $placeSingleReservation = new PlaceSingleReservation(
             $bus,
@@ -140,6 +143,7 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
             $shadowPricing,
             $priceQuoter,
             $this->createMock(WaitlistEntryRepositoryInterface::class),
+            $bookingConsentManager,
         );
 
         $userId = $user->getId();

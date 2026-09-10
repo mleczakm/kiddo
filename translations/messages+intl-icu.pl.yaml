@@ -495,7 +495,7 @@ booking:
   available_lessons_count: 'Dostępne terminy: {count}'
   select_new_lesson: 'Wybierz nowy termin zajęć'
   confirm_reschedule: 'Potwierdź przełożenie'
-  confirm_booking: Potwierdź zamówienie i opłać
+  confirm_booking: Zamawiam z obowiązkiem zapłaty
   add_to_cart: Dodaj do koszyka
   confirm_payment: Potwierdź płatność
   select_date: Wybierz dzień zajęć
@@ -530,6 +530,18 @@ booking:
   rescheduled: Przełożona
   cancelled: Anulowana
   accept_terms_and_close: Zaakceptuj i zamknij
+  legal_documents: Dokumenty dotyczące rezerwacji
+  legal_acceptance_prefix: Akceptuję
+  legal_acceptance_text: 'Akceptuję Regulamin aplikacji, Regulamin zajęć, Politykę prywatności i regulamin danych wybranych zajęć.'
+  workshop_terms: regulamin danych tych zajęć
+  withdrawal_ack: 'Przyjmuję do wiadomości, że zajęcia odbywają się w oznaczonym terminie i nie przysługuje mi prawo odstąpienia od umowy w terminie 14 dni (art. 38 pkt 12 ustawy o prawach konsumenta).'
+  withdrawal_required: Potwierdź informację o braku prawa odstąpienia, aby kontynuować.
+  precontract:
+    title: Informacje przed zamówieniem
+    price: 'Cena brutto: {amount} (sprzedaż zwolniona z VAT).'
+    payment: Płatność przelewem lub BLIK zgodnie z kodem płatności wyświetlonym po zamówieniu.
+    schedule: 'Termin: {date}. Miejsce: {venue}.'
+    returns: Zasady rezygnacji, przekładania i zwrotów
   existing_bookings: 'Istniejące rezerwacje'
   no_child: 'Brak przypisanego dziecka'
   resume_payment: 'Zapłać'

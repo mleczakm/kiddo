@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\AddBooking;
+use App\Application\Consent\BookingConsentManager;
 use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\UseCase\Cart\AddCartItem;
@@ -23,7 +24,9 @@ use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Messenger\Exception\DelayedMessageHandlingException;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -59,6 +62,9 @@ class LessonModal extends AbstractController
 
     #[LiveProp(writable: true)]
     public bool $termsAccepted = false;
+
+    #[LiveProp(writable: true)]
+    public bool $withdrawalAcknowledged = false;
 
     #[LiveProp(writable: true)]
     public ?string $selectedTicketType = null;
@@ -146,6 +152,8 @@ class LessonModal extends AbstractController
         private readonly PriceQuoter $priceQuoter,
         private readonly GetOrCreateCart $getOrCreateCart,
         private readonly AddCartItem $addCartItem,
+        private readonly BookingConsentManager $bookingConsentManager,
+        private readonly LoggerInterface $logger,
     ) {}
 
     public function mount(): void
@@ -232,6 +240,8 @@ class LessonModal extends AbstractController
     public function closeModal(): void
     {
         $this->modalOpened = false;
+        $this->termsAccepted = false;
+        $this->withdrawalAcknowledged = false;
         $this->paymentModal = false;
         $this->paymentCode = null;
         $this->paymentAmountMinor = null;
@@ -268,6 +278,16 @@ class LessonModal extends AbstractController
             'id' => (string) $termsAttachment->getFile()->getId(),
             'safeName' => $termsAttachment->getFile()->getOriginalName(),
         ]);
+    }
+
+    public function hasWorkshopTerms(): bool
+    {
+        return $this->lesson?->getMetadata()->getTermsAttachment() !== null;
+    }
+
+    public function isBookingConsentRequired(): bool
+    {
+        return $this->bookingConsentManager->isRequired();
     }
 
     private function workshopUrl(): string
@@ -368,7 +388,7 @@ class LessonModal extends AbstractController
     public function proceedToPayment(#[LiveArg] string $paymentMethod): void
     {
         $selectedTicketType = $this->selectedTicketType;
-        if (!$this->termsAccepted || $selectedTicketType === null || $selectedTicketType === '') {
+        if (!$this->hasRequiredAcceptances() || $selectedTicketType === null || $selectedTicketType === '') {
             $this->paymentStatus = 'error';
             return;
         }
@@ -394,6 +414,8 @@ class LessonModal extends AbstractController
         $nextLesson = $this->lesson->getSeries()?->getLessonsGt($this->lesson);
         if ($nextLesson) {
             $this->lesson = $nextLesson;
+            $this->termsAccepted = false;
+            $this->withdrawalAcknowledged = false;
         }
     }
 
@@ -416,6 +438,8 @@ class LessonModal extends AbstractController
         $previousLesson = $this->lesson->getSeries()?->getLessonsLt($this->lesson);
         if ($previousLesson) {
             $this->lesson = $previousLesson;
+            $this->termsAccepted = false;
+            $this->withdrawalAcknowledged = false;
         }
     }
 
@@ -459,15 +483,16 @@ class LessonModal extends AbstractController
         }
 
         $selectedTicketType = $this->selectedTicketType;
-        if (!$this->termsAccepted || $selectedTicketType === null || $selectedTicketType === '') {
+        if (!$this->hasRequiredAcceptances() || $selectedTicketType === null || $selectedTicketType === '') {
             $this->paymentStatus = 'error';
             return;
         }
 
         /** @var ?User $user */
         $user = $this->getUser();
+        $lesson = $this->lesson;
 
-        if ($this->lesson && $user) {
+        if ($lesson && $user) {
             $userId = $user->getId();
             if ($userId === null) {
                 $this->paymentStatus = 'error';
@@ -483,12 +508,22 @@ class LessonModal extends AbstractController
             try {
                 $this->bus->dispatch(new AddBooking(
                     userId: $userId,
-                    lessonId: (string) $this->lesson->getId(),
+                    lessonId: (string) $lesson->getId(),
                     ticketType: $selectedTicketType,
                     childId: $this->selectedChildId,
                     paymentCode: $paymentCode,
                     expectedQuoteHash: $this->expectedQuoteHash,
+                    legalAcceptanceConfirmed: $this->termsAccepted,
+                    withdrawalAcknowledged: $this->withdrawalAcknowledged,
                 ));
+            } catch (DelayedMessageHandlingException $exception) {
+                // AddBooking itself has already committed. A delayed consent or
+                // notification failure must not present a successful booking as failed.
+                $this->logger->error('A post-booking operation failed after the booking was committed.', [
+                    'exception' => $exception,
+                    'user_id' => $userId,
+                    'lesson_id' => (string) $lesson->getId(),
+                ]);
             } catch (HandlerFailedException|PriceQuoteMismatchException $e) {
                 if (!$this->handlePriceQuoteMismatch($e)) {
                     throw $e;
@@ -503,7 +538,7 @@ class LessonModal extends AbstractController
             // still current (or dynamic_pricing is off, in which case it's unchanged
             // from the ticket price anyway).
             $this->setPaymentAmount(
-                $this->getQuotedPrice() ?? $this->lesson->getMatchingTicketOption($selectedTicketType)->price,
+                $this->getQuotedPrice() ?? $lesson->getMatchingTicketOption($selectedTicketType)->price,
             );
             $this->paymentStatus = 'awaiting_payment';
             $this->paymentModal = false;
@@ -512,6 +547,11 @@ class LessonModal extends AbstractController
             return;
         }
         $this->paymentStatus = 'error';
+    }
+
+    private function hasRequiredAcceptances(): bool
+    {
+        return $this->termsAccepted && (!$this->isBookingConsentRequired() || $this->withdrawalAcknowledged);
     }
 
     /**

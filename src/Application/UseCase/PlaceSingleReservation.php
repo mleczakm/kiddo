@@ -6,6 +6,7 @@ namespace App\Application\UseCase;
 
 use App\Application\Command\AddBooking;
 use App\Application\Command\SendReservationNotification;
+use App\Application\Consent\BookingConsentManager;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
@@ -50,6 +51,7 @@ final readonly class PlaceSingleReservation
         private ShadowPricingEvaluator $shadowPricing,
         private PriceQuoter $priceQuoter,
         private WaitlistEntryRepositoryInterface $waitlist,
+        private BookingConsentManager $bookingConsentManager,
     ) {}
 
     public function __invoke(AddBooking $command): void
@@ -105,6 +107,10 @@ final readonly class PlaceSingleReservation
                 : OrderPlacementOptions::withoutOrder(),
         );
         $booking = $result->bookings[0];
+
+        if ($command->legalAcceptanceConfirmed && $command->withdrawalAcknowledged) {
+            $this->bookingConsentManager->recordAfterBooking($user, $booking, $lesson);
+        }
 
         // If this parent was on the lesson's waitlist (waiting or holding an
         // offer), close that entry — they took the seat.
