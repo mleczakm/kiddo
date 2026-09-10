@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\Service\Commerce;
 
 use App\Application\Service\Commerce\OrderItemSelection;
+use App\Application\Service\Commerce\OrderPlacementOptions;
 use App\Application\Service\Commerce\OrderPlacementService;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\TicketType;
@@ -91,7 +92,7 @@ final class OrderPlacementServiceTest extends KernelTestCase
             source: CustomerOrder::SOURCE_FAST_TRACK,
             paymentCode: 'NOOR',
             items: [new OrderItemSelection($lesson, $ticket, null, null)],
-            writeOrder: false,
+            options: OrderPlacementOptions::withoutOrder(),
         );
 
         static::assertNull($result->order);

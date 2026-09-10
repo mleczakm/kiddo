@@ -537,3 +537,49 @@ admin_users:
     title: 'Children'
     empty: 'No children registered'
     no_birthday: 'No birthday set'
+
+cart:
+  title: Cart
+  empty: Your cart is empty
+  added_to_cart: Added to cart
+  add_error_generic: Could not add the item to your cart. Please try again.
+  add_error_duplicate: This ticket is already in your cart.
+  remove: Remove
+  no_participant: Me
+  seats_not_held_warning: 'Places are not reserved until you complete the order.'
+  total: Total
+  checkout: Order with obligation to pay
+  checkout_terms: 'I accept the terms'
+  checkout_terms_prefix: I accept the
+  checkout_terms_connector: and the
+  checkout_terms_text: 'I accept the Application Terms, Classes Terms, Privacy Policy and workshop terms listed in the cart.'
+  app_terms: Application Terms
+  classes_terms: Classes Terms
+  privacy: Privacy Policy
+  workshop_terms_prefix: 'and workshop terms:'
+  withdrawal_ack: 'I acknowledge that the classes take place on a specified date and that I do not have a 14-day right to withdraw from the contract.'
+  checkout_error_empty: The cart is empty.
+  checkout_error_terms: Accept the terms to continue.
+  checkout_error_withdrawal: Acknowledge the withdrawal information to continue.
+  checkout_error_tax_identifier: Enter a valid Polish NIP.
+  checkout_success_title: Order placed!
+  checkout_payment_code_hint: 'Make one transfer using this payment reference:'
+  order_number: 'Order number: {number}'
+  amount_to_pay: Amount to pay
+  tax_identifier: NIP
+  buyer_type:
+    label: Purchasing as
+    private: Private customer
+    company: Company
+  precontract:
+    title: Information before ordering
+    price: 'Gross price: {amount} (VAT exempt).'
+    payment: 'Payment by bank transfer or BLIK using the payment reference shown after ordering.'
+    schedule: 'The date and venue are shown for each cart item.'
+    returns: Cancellation and refund rules
+  promotion_code:
+    placeholder: 'e.g. WELCOME10'
+    apply: Apply
+    remove: Remove code
+    invalid: Invalid promotion code.
+    applied: 'Applied code: {code}'

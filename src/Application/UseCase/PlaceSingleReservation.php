@@ -10,6 +10,7 @@ use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\Commerce\OrderItemSelection;
+use App\Application\Service\Commerce\OrderPlacementOptions;
 use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
@@ -96,7 +97,9 @@ final readonly class PlaceSingleReservation
             source: CustomerOrder::SOURCE_FAST_TRACK,
             paymentCode: $command->paymentCode,
             items: [new OrderItemSelection($lesson, $ticketOption, $child, $appliedQuote)],
-            writeOrder: $this->featureManager->isEnabled('commerce_order_write'),
+            options: $this->featureManager->isEnabled('commerce_order_write')
+                ? OrderPlacementOptions::standard()
+                : OrderPlacementOptions::withoutOrder(),
         );
         $booking = $result->bookings[0];
 

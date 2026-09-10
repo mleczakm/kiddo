@@ -537,10 +537,31 @@ cart:
   no_participant: Ja
   seats_not_held_warning: 'Miejsca nie są zarezerwowane, dopóki nie dokończysz zamówienia.'
   total: Razem
-  checkout: Przejdź do płatności
+  checkout: Zamawiam z obowiązkiem zapłaty
   checkout_terms: 'Akceptuję regulamin'
+  checkout_terms_prefix: Akceptuję
+  checkout_terms_connector: oraz
+  checkout_terms_text: 'Akceptuję Regulamin aplikacji, Regulamin zajęć, Politykę prywatności i regulaminy warsztatów wskazane w koszyku.'
+  app_terms: Regulamin aplikacji
+  classes_terms: Regulamin zajęć
+  privacy: Politykę prywatności
+  workshop_terms_prefix: 'oraz regulaminy warsztatów:'
+  withdrawal_ack: 'Przyjmuję do wiadomości, że zajęcia odbywają się w oznaczonym terminie i nie przysługuje mi prawo odstąpienia od umowy w terminie 14 dni (art. 38 pkt 12 ustawy o prawach konsumenta).'
   checkout_error_empty: Koszyk jest pusty.
   checkout_error_terms: Zaakceptuj regulamin, aby kontynuować.
+  checkout_error_withdrawal: Potwierdź informację o braku prawa odstąpienia, aby kontynuować.
+  checkout_error_tax_identifier: Podaj prawidłowy polski NIP.
+  tax_identifier: NIP
+  buyer_type:
+    label: Kupuję jako
+    private: Osoba prywatna
+    company: Firma
+  precontract:
+    title: Informacje przed zamówieniem
+    price: 'Cena brutto: {amount} (sprzedaż zwolniona z VAT).'
+    payment: 'Płatność przelewem lub BLIK zgodnie z kodem płatności wyświetlonym po zamówieniu.'
+    schedule: 'Termin i miejsce wynikają z każdej pozycji koszyka.'
+    returns: Zasady rezygnacji i zwrotów
   checkout_success_title: Zamówienie złożone!
   checkout_payment_code_hint: 'Wykonaj jeden przelew z tytułem:'
   order_number: 'Numer zamówienia: {number}'

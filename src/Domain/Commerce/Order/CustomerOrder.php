@@ -48,6 +48,8 @@ final class CustomerOrder
         private ?\DateTimeImmutable $expiresAt,
         private readonly string $checkoutKey,
         private readonly string $source,
+        private readonly string $buyerType = BuyerType::PRIVATE->value,
+        private readonly ?string $taxIdentifier = null,
         private int $version = 1,
     ) {}
 
@@ -109,6 +111,16 @@ final class CustomerOrder
     public function getSource(): string
     {
         return $this->source;
+    }
+
+    public function getBuyerType(): BuyerType
+    {
+        return BuyerType::tryFrom($this->buyerType) ?? BuyerType::PRIVATE;
+    }
+
+    public function getTaxIdentifier(): ?string
+    {
+        return $this->taxIdentifier;
     }
 
     public function getVersion(): int

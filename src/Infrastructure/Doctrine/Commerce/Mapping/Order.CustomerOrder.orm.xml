@@ -20,6 +20,8 @@
         <field name="expiresAt" type="datetime_immutable" column="expires_at" nullable="true" />
         <field name="checkoutKey" type="string" column="checkout_key" length="64" unique="true" />
         <field name="source" type="string" column="source" length="20" />
+        <field name="buyerType" type="string" column="buyer_type" length="20" />
+        <field name="taxIdentifier" type="string" column="tax_identifier" length="20" nullable="true" />
         <field name="version" type="integer" column="version" version="true" />
 
         <indexes>

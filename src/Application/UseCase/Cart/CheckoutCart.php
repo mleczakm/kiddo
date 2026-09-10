@@ -11,10 +11,12 @@ use App\Application\Repository\CustomerOrderRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\Commerce\OrderItemSelection;
+use App\Application\Service\Commerce\OrderPlacementOptions;
 use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Domain\Commerce\Cart\Cart;
+use App\Domain\Commerce\Order\BuyerDetails;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\TicketOption;
 use Brick\Money\Money;
@@ -49,9 +51,19 @@ final readonly class CheckoutCart
         private EntityManagerInterface $em,
     ) {}
 
-    public function __invoke(Ulid $cartId, int $requestingUserId, ?string $paymentCode = null): CustomerOrder
-    {
-        $checkout = fn(): CustomerOrder => $this->checkoutTransactionally($cartId, $requestingUserId, $paymentCode);
+    public function __invoke(
+        Ulid $cartId,
+        int $requestingUserId,
+        ?string $paymentCode = null,
+        ?BuyerDetails $buyerDetails = null,
+    ): CustomerOrder {
+        $buyerDetails ??= BuyerDetails::privateCustomer();
+        $checkout = fn(): CustomerOrder => $this->checkoutTransactionally(
+            $cartId,
+            $requestingUserId,
+            $paymentCode,
+            $buyerDetails,
+        );
 
         if ($this->em->getConnection()->isTransactionActive()) {
             return $checkout();
@@ -60,8 +72,12 @@ final readonly class CheckoutCart
         return $this->em->wrapInTransaction($checkout);
     }
 
-    private function checkoutTransactionally(Ulid $cartId, int $requestingUserId, ?string $paymentCode): CustomerOrder
-    {
+    private function checkoutTransactionally(
+        Ulid $cartId,
+        int $requestingUserId,
+        ?string $paymentCode,
+        BuyerDetails $buyerDetails,
+    ): CustomerOrder {
         $cart = $this->em->find(Cart::class, $cartId, LockMode::PESSIMISTIC_WRITE);
         if ($cart === null || $cart->customerId !== $requestingUserId) {
             throw new \InvalidArgumentException(sprintf('Cart %s not found for this customer.', $cartId));
@@ -132,6 +148,7 @@ final readonly class CheckoutCart
             source: CustomerOrder::SOURCE_CART,
             paymentCode: $paymentCode,
             items: $items,
+            options: OrderPlacementOptions::forBuyer($buyerDetails),
         );
 
         $order = $result->order ?? throw new \LogicException(

@@ -1,5 +1,6 @@
 <div {{ attributes }}>
     {% set items = this.getItems() %}
+    {% set workshopTerms = this.getWorkshopTerms() %}
     <details class="relative" data-controller="details-dropdown">
         <summary id="cart-btn" class="list-none cursor-pointer">
             <div class="relative inline-flex items-center justify-center h-10 w-10 rounded-full hover:bg-beige transition-colors">
@@ -100,10 +101,58 @@
                         <span>{{ this.getTotal|money }}</span>
                     </div>
 
+                    <div class="rounded-md border border-slate-200 bg-slate-50 p-2 text-xs mb-2 space-y-1">
+                        <p class="font-medium">{{ 'cart.precontract.title'|trans }}</p>
+                        <p>{{ 'cart.precontract.price'|trans({'amount': this.getTotal|money}) }}</p>
+                        <p>{{ 'cart.precontract.payment'|trans }}</p>
+                        <p>{{ 'cart.precontract.schedule'|trans }}</p>
+                        <a href="{{ path('legal_classes_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.precontract.returns'|trans }}</a>
+                    </div>
+
+                    <fieldset class="mb-2 text-xs">
+                        <legend class="font-medium mb-1">{{ 'cart.buyer_type.label'|trans }}</legend>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-1">
+                                <input type="radio" value="private" data-model="buyerType">
+                                <span>{{ 'cart.buyer_type.private'|trans }}</span>
+                            </label>
+                            <label class="flex items-center gap-1">
+                                <input type="radio" value="company" data-model="buyerType">
+                                <span>{{ 'cart.buyer_type.company'|trans }}</span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    {% if this.buyerType == 'company' %}
+                        <label class="block text-xs mb-2">
+                            <span class="font-medium">{{ 'cart.tax_identifier'|trans }}</span>
+                            <input type="text" data-model="taxIdentifier" inputmode="numeric"
+                                   class="mt-1 flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-sm"
+                                   placeholder="1234567890">
+                        </label>
+                    {% endif %}
+
                     <label class="flex items-start gap-2 text-xs mb-2">
                         <input type="checkbox" data-model="termsAccepted" class="mt-0.5">
-                        <span>{{ 'cart.checkout_terms'|trans }}</span>
+                        <span>
+                            {{ 'cart.checkout_terms_prefix'|trans }}
+                            <a href="{{ path('legal_app_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.app_terms'|trans }}</a>,
+                            <a href="{{ path('legal_classes_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.classes_terms'|trans }}</a>
+                            {{ 'cart.checkout_terms_connector'|trans }}
+                            <a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a>
+                            {% for terms in workshopTerms %}
+                                {% if loop.first %} {{ 'cart.workshop_terms_prefix'|trans }}{% endif %}
+                                <a href="{{ path('stored_file', {id: terms.fileId, safeName: terms.fileName}) }}" target="_blank" class="text-workshop-red underline">{{ terms.title }}</a>{{ loop.last ? '.' : ',' }}
+                            {% endfor %}
+                        </span>
                     </label>
+
+                    {% if this.isWithdrawalAcknowledgementRequired() %}
+                        <label class="flex items-start gap-2 text-xs mb-2 rounded-md border border-amber-300 bg-amber-50 p-2">
+                            <input type="checkbox" data-model="withdrawalAcknowledged" class="mt-0.5">
+                            <span>{{ 'cart.withdrawal_ack'|trans }}</span>
+                        </label>
+                    {% endif %}
 
                     {% if this.checkoutError is not empty %}
                         <p class="text-xs text-red-600 mb-2">{{ this.checkoutError|trans }}</p>
@@ -111,7 +160,7 @@
 
                     <button type="button"
                             class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-workshop-red text-white hover:bg-workshop-red/90 disabled:opacity-50"
-                            {{ this.termsAccepted ? '' : 'disabled' }}
+                            {{ this.termsAccepted and (not this.isWithdrawalAcknowledgementRequired() or this.withdrawalAcknowledged) ? '' : 'disabled' }}
                             data-action="live#action" data-live-action-param="checkout">
                         {{ 'cart.checkout'|trans }}
                     </button>

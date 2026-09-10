@@ -34,4 +34,16 @@ final readonly class ConsentRequirements
             && $this->versionRepository->findCurrent(LegalDocumentType::PRIVACY, $now) !== null
         );
     }
+
+    public function isCheckoutAcceptanceRequired(): bool
+    {
+        if (!$this->isRegistrationAcceptanceRequired()) {
+            return false;
+        }
+
+        return (
+            $this->versionRepository->findCurrent(LegalDocumentType::CLASSES_TERMS_GENERAL, Clock::get()->now())
+            !== null
+        );
+    }
 }

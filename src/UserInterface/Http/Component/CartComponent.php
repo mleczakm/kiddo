@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Consent\WorkshopTermsCollector;
+use App\Application\Consent\WorkshopTermsEvidence;
 use App\Application\Repository\CartItemRepositoryInterface;
 use App\Application\Repository\CartRepositoryInterface;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
-use App\Application\Repository\PaymentRepositoryInterface;
 use App\Application\UseCase\Cart\ApplyPromotionCode;
-use App\Application\UseCase\Cart\CheckoutCart;
+use App\Application\UseCase\Cart\CartCheckoutCoordinator;
 use App\Application\UseCase\Cart\InvalidPromotionCodeException;
 use App\Application\UseCase\Cart\RemoveCartItem;
 use App\Application\UseCase\Cart\RemovePromotionCode;
 use App\Domain\Commerce\Cart\Cart;
-use App\Entity\Payment;
+use App\Domain\Commerce\Order\BuyerDetails;
+use App\Domain\Commerce\Order\BuyerType;
 use App\Entity\User;
 use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,6 +50,15 @@ final class CartComponent extends AbstractController
     #[LiveProp(writable: true)]
     public bool $termsAccepted = false;
 
+    #[LiveProp(writable: true)]
+    public bool $withdrawalAcknowledged = false;
+
+    #[LiveProp(writable: true)]
+    public string $buyerType = 'private';
+
+    #[LiveProp(writable: true)]
+    public string $taxIdentifier = '';
+
     #[LiveProp]
     public ?string $promotionCodeError = null;
 
@@ -71,19 +82,16 @@ final class CartComponent extends AbstractController
     #[LiveProp]
     public ?string $confirmedTotalMinor = null;
 
-    #[LiveProp]
-    public ?string $confirmedTotalCurrency = null;
-
     public function __construct(
         private readonly CartRepositoryInterface $cartRepository,
         private readonly CartItemRepositoryInterface $cartItemRepository,
         private readonly LessonRepositoryInterface $lessonRepository,
         private readonly ChildRepositoryInterface $childRepository,
-        private readonly PaymentRepositoryInterface $paymentRepository,
         private readonly RemoveCartItem $removeCartItem,
         private readonly ApplyPromotionCode $applyPromotionCode,
         private readonly RemovePromotionCode $removePromotionCode,
-        private readonly CheckoutCart $checkoutCart,
+        private readonly CartCheckoutCoordinator $checkoutCoordinator,
+        private readonly WorkshopTermsCollector $workshopTermsCollector,
     ) {}
 
     /**
@@ -138,6 +146,27 @@ final class CartComponent extends AbstractController
         }
 
         return $total;
+    }
+
+    /** @return list<WorkshopTermsEvidence> */
+    public function getWorkshopTerms(): array
+    {
+        $cart = $this->getCart();
+        if ($cart === null) {
+            return [];
+        }
+
+        return $this->workshopTermsCollector->collect($cart);
+    }
+
+    public function isCheckoutConsentRequired(): bool
+    {
+        return $this->checkoutCoordinator->isConsentRequired();
+    }
+
+    public function isWithdrawalAcknowledgementRequired(): bool
+    {
+        return $this->isCheckoutConsentRequired() && $this->buyerType === BuyerType::PRIVATE->value;
     }
 
     public function getPromotionCode(): ?string
@@ -200,12 +229,9 @@ final class CartComponent extends AbstractController
     public function checkout(): void
     {
         $this->checkoutError = null;
-        if (!$this->termsAccepted) {
-            $this->checkoutError = 'cart.checkout_error_terms';
-
+        if (!$this->hasValidAcceptances()) {
             return;
         }
-
         $cart = $this->getCart();
         $user = $this->requireUser();
         if ($cart === null || $user === null) {
@@ -214,30 +240,65 @@ final class CartComponent extends AbstractController
             return;
         }
 
+        $buyerDetails = $this->buyerDetails();
+        if ($buyerDetails === null) {
+            return;
+        }
+        $workshopTerms = $this->getWorkshopTerms();
         try {
-            $order = ($this->checkoutCart)($cart->id, $user->getId() ?? 0);
+            $completed = $this->checkoutCoordinator->complete($cart, $user, $buyerDetails, $workshopTerms);
         } catch (\LogicException) {
             $this->checkoutError = 'cart.checkout_error_empty';
 
             return;
         }
 
-        $payment = $this->paymentRepository->findOneBy(['orderId' => $order->getId()]);
+        $this->showCompletedCheckout($completed);
+    }
 
-        $this->confirmedOrderNumber = $order->getOrderNumber();
-        $this->confirmedPaymentCode = $payment instanceof Payment ? $payment->getPaymentCode()?->getCode() : null;
-        $this->confirmedTotalMinor = (string) $order->getTotalMinor();
-        $this->confirmedTotalCurrency = $order->getCurrency();
+    private function hasValidAcceptances(): bool
+    {
+        if (!$this->termsAccepted) {
+            $this->checkoutError = 'cart.checkout_error_terms';
+
+            return false;
+        }
+        if ($this->isWithdrawalAcknowledgementRequired() && !$this->withdrawalAcknowledged) {
+            $this->checkoutError = 'cart.checkout_error_withdrawal';
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function buyerDetails(): ?BuyerDetails
+    {
+        try {
+            return BuyerDetails::fromInput($this->buyerType, $this->taxIdentifier);
+        } catch (\InvalidArgumentException) {
+            $this->checkoutError = 'cart.checkout_error_tax_identifier';
+
+            return null;
+        }
+    }
+
+    private function showCompletedCheckout(\App\Application\UseCase\Cart\CompletedCheckout $completed): void
+    {
+        $this->confirmedOrderNumber = $completed->order->getOrderNumber();
+        $this->confirmedPaymentCode = $completed->paymentCode;
+        $this->confirmedTotalMinor = (string) $completed->order->getTotalMinor();
         $this->termsAccepted = false;
+        $this->withdrawalAcknowledged = false;
     }
 
     public function getConfirmedTotal(): ?Money
     {
-        if ($this->confirmedTotalMinor === null || $this->confirmedTotalCurrency === null) {
+        if ($this->confirmedTotalMinor === null) {
             return null;
         }
 
-        return Money::ofMinor((int) $this->confirmedTotalMinor, $this->confirmedTotalCurrency);
+        return Money::ofMinor((int) $this->confirmedTotalMinor, self::CURRENCY);
     }
 
     private function getCart(): ?Cart

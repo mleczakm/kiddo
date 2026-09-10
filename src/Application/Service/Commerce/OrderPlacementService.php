@@ -41,14 +41,15 @@ final class OrderPlacementService
         string $source,
         string $paymentCode,
         array $items,
-        bool $writeOrder = true,
+        ?OrderPlacementOptions $options = null,
     ): OrderPlacementResult {
+        $options ??= OrderPlacementOptions::standard();
         $place = fn(): OrderPlacementResult => $this->placeTransactionally(
             $user,
             $source,
             $paymentCode,
             $items,
-            $writeOrder,
+            $options,
         );
 
         if ($this->em->getConnection()->isTransactionActive()) {
@@ -64,7 +65,7 @@ final class OrderPlacementService
         string $source,
         string $paymentCode,
         array $items,
-        bool $writeOrder,
+        OrderPlacementOptions $options,
     ): OrderPlacementResult {
         if ($items === []) {
             throw new \InvalidArgumentException('Cannot place an order with no items.');
@@ -118,7 +119,7 @@ final class OrderPlacementService
             $basePriceMinor = $item->quote->basePriceMinor ?? $finalPriceMinor;
             $subtotalMinor += $basePriceMinor;
 
-            if (!$writeOrder) {
+            if (!$options->writeOrder) {
                 continue;
             }
 
@@ -154,7 +155,7 @@ final class OrderPlacementService
         }
 
         $order = null;
-        if ($writeOrder) {
+        if ($options->writeOrder) {
             $order = new CustomerOrder(
                 id: $orderId,
                 orderNumber: self::orderNumberPrefix($source) . '-' . $orderId->toBase32(),
@@ -170,6 +171,8 @@ final class OrderPlacementService
                 expiresAt: null,
                 checkoutKey: (string) new Ulid(),
                 source: $source,
+                buyerType: $options->buyerDetails->type->value,
+                taxIdentifier: $options->buyerDetails->taxIdentifier,
             );
             $payment->setOrderId($order->getId());
 
