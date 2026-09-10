@@ -4,6 +4,7 @@
       <h3 class="flex items-center gap-3 text-lg font-black text-slate-800">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card w-5 h-5 text-indigo-600"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
         <span>{{ 'admin.payments.title'|trans }}</span>
+        {{ include('admin/help/_context_button.html.twig', {slug: 'platnosci-przelewy-i-dopasowanie', label: 'Płatności, przelewy i dopasowanie'}) }}
       </h3>
       <div class="flex flex-wrap items-center gap-2">
         <label class="sr-only" for="payment-status-filter">{{ 'admin.payments.filter.status'|trans }}</label>

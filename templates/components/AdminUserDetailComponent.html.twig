@@ -3,7 +3,11 @@
 
     <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div class="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between gap-4">
-            <h3 class="text-lg font-black text-slate-800">Dane osobowe</h3>
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-black text-slate-800">Dane osobowe</h3>
+                {{ include('admin/help/_context_button.html.twig', {slug: 'crm-klienci-i-dzieci', label: 'Klienci, dzieci i notatki'}) }}
+                {{ include('admin/help/_context_button.html.twig', {slug: 'crm-cykl-zycia-konta', label: 'Cykl życia konta'}) }}
+            </div>
             <button type="button"
                     data-action="live#action" data-live-action-param="startCompose"
                     class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm transition">
@@ -72,7 +76,12 @@
                     </p>
                 </div>
                 <div class="col-span-1 md:col-span-2">
-                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Role</label>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Role</label>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {{ include('admin/help/_context_button.html.twig', {slug: 'role-i-uprawnienia', label: 'Role i uprawnienia'}) }}
+                        {% endif %}
+                    </div>
                     <p class="text-sm font-bold text-slate-800 mt-1">
                         {{ user.roles|map(role => '<span class="px-2 py-0.5 bg-slate-100 rounded text-xs text-slate-600 font-semibold">' ~ role ~ '</span>')|join(' ')|raw }}
                     </p>
@@ -99,7 +108,10 @@
             <div class="bg-white w-full sm:max-w-md rounded-2xl shadow-2xl flex flex-col animate-in fade-in-0 zoom-in-95 duration-200">
                 <div class="flex justify-between items-center p-6 border-b border-slate-100">
                     <div>
-                        <h2 class="text-lg font-black text-slate-800">Wyślij powiadomienie</h2>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-lg font-black text-slate-800">Wyślij powiadomienie</h2>
+                            {{ include('admin/help/_context_button.html.twig', {slug: 'powiadomienia-i-komunikacja', label: 'Powiadomienia i komunikacja z klientem'}) }}
+                        </div>
                         <p class="text-sm text-slate-500">{{ user.name }} ({{ user.email }})</p>
                     </div>
                     <button data-action="live#action" data-live-action-param="cancelCompose" class="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition">

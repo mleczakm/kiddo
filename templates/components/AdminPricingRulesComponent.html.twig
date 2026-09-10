@@ -2,7 +2,10 @@
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h2 class="text-xl font-black text-slate-800">Reguły cenowe</h2>
+                <div class="flex items-center gap-2">
+                    <h2 class="text-xl font-black text-slate-800">Reguły cenowe</h2>
+                    {{ include('admin/help/_context_button.html.twig', {slug: 'cennik-reguly-i-karnety', label: 'Cennik: reguły i karnety'}) }}
+                </div>
                 <p class="text-sm text-slate-500 mt-1">Reguły stosowane są automatycznie przy szybkiej rezerwacji. Wyłączenie reguły zastępuje jej usunięcie - nic nie znika bezpowrotnie.</p>
             </div>
             <button type="button"
@@ -243,7 +246,10 @@
                         <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="lessonId">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-xs font-bold text-slate-500 mb-1 block">Kod promocyjny (zostanie zapisany wielkimi literami)</label>
+                        <div class="mb-1 flex items-center gap-2">
+                            <label class="text-xs font-bold text-slate-500">Kod promocyjny (zostanie zapisany wielkimi literami)</label>
+                            {{ include('admin/help/_context_button.html.twig', {slug: 'kody-promocyjne', label: 'Kody promocyjne i limity użycia'}) }}
+                        </div>
                         <input type="text" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" data-model="promotionCode">
                     </div>
 

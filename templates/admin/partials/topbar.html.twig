@@ -32,7 +32,10 @@
     </h1>
 
     <div class="flex-1 max-w-xl mx-4 md:mx-8 relative hidden md:block" data-tour-target="global-search">
-        {{ component('AdminGlobalSearchComponent') }}
+        <div class="flex items-center gap-2">
+            <div class="min-w-0 flex-1">{{ component('AdminGlobalSearchComponent') }}</div>
+            {{ include('admin/help/_context_button.html.twig', {slug: 'wprowadzenie', label: 'Nawigacja i wyszukiwarka w panelu'}) }}
+        </div>
     </div>
 
     <div class="flex items-center gap-2 md:gap-4 shrink-0">

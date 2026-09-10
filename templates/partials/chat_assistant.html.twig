@@ -193,6 +193,9 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
+                        {% if isStaffChat %}
+                            {{ include('admin/help/_context_button.html.twig', {slug: 'asystent-ai', label: 'Asystent AI'}) }}
+                        {% endif %}
                         <button type="button" class="text-xs text-muted-foreground hover:text-workshop-brown underline" data-action="chat-assistant#clear">
                             {{ 'homepage.chat_hero.new_conversation'|trans }}
                         </button>

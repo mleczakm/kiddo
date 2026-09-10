@@ -1,0 +1,33 @@
+{#---
+slug: kody-promocyjne
+title: "Kody promocyjne i limity użycia"
+section: pricing
+role: ROLE_MANAGE_PRICING
+summary: "Jak utworzyć regułę aktywowaną kodem, ograniczyć jej czas i liczbę wykorzystań."
+keywords: [kod promocyjny, promocja, rabat, limit użycia, limit na klienta, ważność, koszyk]
+primary_route: app_admin_pricing
+related: [cennik-reguly-i-karnety]
+---#}
+<p>
+    Kod promocyjny jest warunkiem <a href="{{ path('app_admin_pricing') }}">reguły cenowej</a>.
+    Klient wpisuje go w koszyku, a system przelicza wszystkie pozycje według aktualnie aktywnych reguł.
+</p>
+
+<h2>Tworzenie promocji</h2>
+<ol>
+    <li>Dodaj nową regułę cenową i wybierz sposób korekty ceny.</li>
+    <li>Wpisz <strong>kod promocyjny</strong>; zostanie zapisany wielkimi literami.</li>
+    <li>Opcjonalnie zawęź promocję do rodzaju biletu, cyklu, terminu albo konkretnego klienta.</li>
+    <li>Ustaw przedział ważności, łączny limit użyć i limit na jednego klienta.</li>
+    <li>W razie nakładania się reguł ustaw priorytet i grupę wyłączności.</li>
+</ol>
+
+<h2>Weryfikacja</h2>
+<p>
+    Użyj <strong>Podglądu ceny</strong>, aby sprawdzić regułę na konkretnym kliencie i terminie.
+    Podgląd pokazuje też reguły odrzucone oraz powód, dla którego nie zostały zastosowane.
+</p>
+
+<div class="help-callout">
+    Wyłączenie reguły blokuje nowe użycia kodu, ale nie zmienia cen w już złożonych zamówieniach.
+</div>

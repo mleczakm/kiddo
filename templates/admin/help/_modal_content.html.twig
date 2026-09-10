@@ -1,0 +1,15 @@
+<div data-help-title="{{ article.title }}">
+    <p class="mb-4 text-sm text-slate-500">{{ article.summary }}</p>
+
+    <div class="help-prose">
+        {{ include(article.template()) }}
+    </div>
+
+    <div class="mt-6 border-t border-slate-200 pt-4">
+        <a href="{{ path('app_admin_help_article', {slug: article.slug}) }}"
+           class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700">
+            Otwórz pełny artykuł
+            <span aria-hidden="true">→</span>
+        </a>
+    </div>
+</div>

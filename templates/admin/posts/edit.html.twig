@@ -8,6 +8,9 @@
 
 {% block body %}
 <div class="mx-auto max-w-6xl space-y-4" data-controller="post-editor-form">
+    <div class="flex justify-end">
+        {{ include('admin/help/_context_button.html.twig', {slug: 'tresci-blog', label: 'Edycja i publikacja artykułu'}) }}
+    </div>
     {% if not isNew %}
         <p data-post-editor-form-target="warning" class="hidden text-xs font-semibold text-amber-600">Podgląd pokazuje ostatnio zapisaną wersję — masz niezapisane zmiany.</p>
     {% endif %}

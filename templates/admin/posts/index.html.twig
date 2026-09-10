@@ -7,7 +7,10 @@
     <div class="flex items-center justify-between gap-4">
         <div>
             <p class="text-xs font-bold uppercase tracking-wider text-indigo-600">CMS</p>
-            <h1 class="text-3xl font-black text-slate-900">Artykuły</h1>
+            <div class="flex items-center gap-2">
+                <h1 class="text-3xl font-black text-slate-900">Artykuły</h1>
+                {{ include('admin/help/_context_button.html.twig', {slug: 'tresci-blog', label: 'Treści i blog'}) }}
+            </div>
         </div>
         <a href="{{ path('app_admin_post_new') }}" class="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-700">Nowy artykuł</a>
     </div>

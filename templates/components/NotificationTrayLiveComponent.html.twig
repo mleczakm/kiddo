@@ -19,6 +19,7 @@
                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
                 </svg>
                 {{ 'notifications.title'|trans }}
+                {{ include('admin/help/_context_button.html.twig', {slug: 'powiadomienia-i-komunikacja', label: 'Powiadomienia i komunikacja z klientem'}) }}
                 {% if items is not empty %}
                     <button type="button"
                             class="ml-auto text-xs font-normal text-muted-foreground hover:text-destructive cursor-pointer"

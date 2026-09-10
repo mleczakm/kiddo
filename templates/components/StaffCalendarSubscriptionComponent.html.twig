@@ -4,6 +4,7 @@
             <h3 class="flex items-center gap-3 text-base font-black text-slate-800">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
                 <span>{{ 'calendar_feed.title'|trans({}, 'admin') }}</span>
+                {{ include('admin/help/_context_button.html.twig', {slug: 'kalendarz-personelu', label: 'Subskrypcja kalendarza personelu'}) }}
             </h3>
             {% if this.token %}
                 <button type="button"

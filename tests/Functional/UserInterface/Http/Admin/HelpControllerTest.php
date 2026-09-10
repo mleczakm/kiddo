@@ -43,6 +43,26 @@ final class HelpControllerTest extends WebTestCase
         self::assertSelectorTextContains('article h1', 'Wprowadzenie do panelu');
     }
 
+    public function testContextualHelpRendersOnlyTheRequestedArticleFragment(): void
+    {
+        $this->client->loginUser($this->user('ROLE_HOST'));
+        $this->client->request('GET', '/admin/pomoc/rezerwacje-manualne-i-szybkie/modal');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('[data-help-title="Rezerwacje manualne i szybkie"]');
+        self::assertSelectorTextContains('.help-prose h2', 'Formularz manualny');
+        self::assertSelectorExists('a[href="/admin/pomoc/rezerwacje-manualne-i-szybkie"]');
+        self::assertSelectorNotExists('#root');
+    }
+
+    public function testContextualHelpStillHonoursArticleRole(): void
+    {
+        $this->client->loginUser($this->user('ROLE_HOST'));
+        $this->client->request('GET', '/admin/pomoc/rozliczenie-platformy/modal');
+
+        self::assertResponseStatusCodeSame(404);
+    }
+
     public function testUnknownSlugIsNotFound(): void
     {
         $this->client->loginUser($this->user('ROLE_HOST'));
@@ -60,12 +80,19 @@ final class HelpControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(404);
     }
 
-    public function testAdminSeesTheSettingsArticle(): void
+    public function testAdminSeesTheSettingsArticlesAndCriticalBackgroundIntervals(): void
     {
         $this->client->loginUser($this->user('ROLE_ADMIN'));
         $this->client->request('GET', '/admin/pomoc/ustawienia-systemu');
 
         self::assertResponseIsSuccessful();
+        $this->client->request('GET', '/admin/pomoc/automatyzacje-i-zadania-w-tle');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('article', 'Co 30 sekund');
+        self::assertSelectorTextContains('article', 'Codziennie 08:45');
+        self::assertSelectorTextContains('article', '1. dnia miesiąca 04:20');
+        self::assertSelectorTextContains('article', 'Co 5 sekund');
     }
 
     public function testAnonymousIsRedirectedToLogin(): void

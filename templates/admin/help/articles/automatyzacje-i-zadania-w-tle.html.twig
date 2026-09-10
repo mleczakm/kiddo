@@ -1,0 +1,84 @@
+{#---
+slug: automatyzacje-i-zadania-w-tle
+title: "Automatyzacje i zadania działające w tle"
+section: settings
+role: ROLE_ADMIN
+summary: "Pełny harmonogram automatycznych operacji, powiadomień i technicznego nadzoru aplikacji."
+keywords: [automatyzacje, zadania w tle, harmonogram, scheduler, cron, godziny, import, przypomnienia, wygaszanie, anonimizacja, healthcheck]
+primary_route: app_admin_settings
+related: [platnosci-przelewy-i-dopasowanie, powiadomienia-i-komunikacja, kolejka-rezerwowa, subskrypcje-miesieczne, crm-cykl-zycia-konta]
+---#}
+<p>
+    Poniżej znajduje się harmonogram wszystkich cyklicznych zadań zdefiniowanych w aplikacji. Godziny
+    kalendarzowe są podane w strefie <strong>Europe/Warsaw</strong>. Zadania „co N minut” nie mają stałej
+    godziny startu — kolejne wykonanie jest liczone od harmonogramu procesu.
+</p>
+
+<div class="help-callout">
+    Harmonogram jest sprawdzany co sekundę, ale właściwe zadanie może rozpocząć się nieco później z powodu
+    obciążenia kolejki. Po przerwie aplikacja wykonuje tylko ostatnie pominięte uruchomienie danego zadania,
+    a nie wszystkie zaległe uruchomienia.
+</div>
+
+<h2>Operacje biznesowe</h2>
+<div class="overflow-x-auto">
+    <table class="min-w-full border-separate border-spacing-0 text-left text-sm">
+        <thead>
+            <tr>
+                <th class="border-b border-slate-300 px-3 py-2 font-bold text-slate-900">Kiedy</th>
+                <th class="border-b border-slate-300 px-3 py-2 font-bold text-slate-900">Co robi system</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co 30 sekund</td><td class="border-b border-slate-200 px-3 py-2">Czyta przez IMAP nieprzeczytane e-maile Aliora, zapisuje przelewy i próbuje dopasować je do płatności po kodzie.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co 1 minutę</td><td class="border-b border-slate-200 px-3 py-2">Ponawia dopasowanie wszystkich nadal nieprzypisanych przelewów z ostatnich 12 godzin.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co 5 minut</td><td class="border-b border-slate-200 px-3 py-2">Wygasza oczekujące płatności starsze niż 24 godziny robocze. Soboty, niedziele i polskie święta ustawowe nie zużywają tego czasu; wygaszenie płatności anuluje powiązane oczekujące rezerwacje, wygasza zamówienie i zwalnia zarezerwowane użycia promocji.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co 10 minut<br><span class="font-normal text-slate-500">:00, :10, :20…</span></td><td class="border-b border-slate-200 px-3 py-2">Wygasza 60-minutowe oferty miejsc z kolejki rezerwowej i proponuje zwolnione miejsce następnej osobie.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co 60 minut</td><td class="border-b border-slate-200 px-3 py-2">Niezależnie kontroluje oczekujące rezerwacje i anuluje nieopłacone po 24 godzinach roboczych. Zapisuje powód w rezerwacji i zdarzenie w dzienniku aktywności.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co godzinę o :05</td><td class="border-b border-slate-200 px-3 py-2">Zmienia aktywne rezerwacje na zakończone, gdy wszystkie objęte nimi zajęcia są już w przeszłości.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 08:45</td><td class="border-b border-slate-200 px-3 py-2">Wysyła klientom i prowadzącym przypomnienia o dzisiejszych zajęciach. Klienci dostają również ICS i linki do kalendarza. Administratorzy otrzymują plan dnia oraz podsumowanie poprzedniego dnia: nowych kont, rezerwacji i przychodu.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 03:15</td><td class="border-b border-slate-200 px-3 py-2">Trwale usuwa powiadomienia w panelu starsze niż 2 miesiące. Nie usuwa rezerwacji, płatności ani wpisów dziennika aktywności.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 03:35</td><td class="border-b border-slate-200 px-3 py-2">Uzupełnia dane zamówień dla najstarszych płatności utworzonych przed wdrożeniem systemu zamówień — maksymalnie 100 płatności w jednym przebiegu.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 03:50</td><td class="border-b border-slate-200 px-3 py-2">Anonimizuje konta, dla których 14-dniowy okres po żądaniu usunięcia już minął. Gdy jednocześnie kwalifikuje się więcej niż 25 kont, zadanie niczego nie usuwa i zgłasza alert do ręcznej kontroli.</td></tr>
+            <tr><td class="px-3 py-2 font-semibold">1. dnia miesiąca 04:20</td><td class="px-3 py-2">Dla aktywnych abonamentów tworzy płatność z kodem i rezerwację na przyszłe zajęcia danego miesiąca. Nie nalicza drugi raz tego samego okresu; przy braku przyszłych terminów oznacza miesiąc jako obsłużony bez tworzenia opłaty. Funkcja działa tylko przy włączonych abonamentach.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<h2>Zadania uruchamiane przez zdarzenia</h2>
+<p>
+    Nie mają określonej godziny. Trafiają do stale obsługiwanej kolejki natychmiast po zdarzeniu w panelu
+    lub po zadaniu cyklicznym:
+</p>
+<ul>
+    <li>potwierdzenie rozpoznanej płatności i aktywacja albo reaktywacja rezerwacji;</li>
+    <li>e-maile i powiadomienia o płatności dla klienta i administratorów;</li>
+    <li>obsługa przeniesienia lub przywrócenia rezerwacji; przy przeniesieniu system informuje klienta,
+        prowadzących i administratorów, a przy przywróceniu zapisuje zmianę w dzienniku aktywności;</li>
+    <li>powiadomienie klienta o decyzji dotyczącej zwrotu;</li>
+    <li>oferta miejsca dla pierwszej osoby z kolejki zaraz po anulowaniu pojedynczego terminu rezerwacji;</li>
+    <li>alert o niedopasowanym przelewie albo przelewie przekraczającym próg automatycznej obsługi;</li>
+    <li>powiadomienie o nowym użytkowniku przy jego pierwszym logowaniu;</li>
+    <li>powiadomienia o nowej wersji dokumentu prawnego, jeżeli podczas publikacji zaznaczono ich wysłanie.</li>
+</ul>
+<p>
+    Błąd zadania kolejki jest ponawiany maksymalnie 5 razy, z podwajanym opóźnieniem. Po wyczerpaniu prób
+    wiadomość trafia do osobnej kolejki błędów i wymaga interwencji technicznej.
+</p>
+
+<h2>Nadzór techniczny</h2>
+<ul>
+    <li><strong>Co 1 sekundę</strong> — proces harmonogramu sprawdza, czy któreś zadanie jest gotowe. Wspólna
+        blokada zapobiega podwójnemu uruchomieniu podczas przeładowania serwera, a pojedynczy przebieg jest
+        przerywany po 15 sekundach, jeśli się zawiesi.</li>
+    <li><strong>Co 1 minutę</strong> — zbierane są metryki pamięci, liczby procesów, otwartych plików i połączeń
+        TCP. Trafiają do logów i systemu monitoringu.</li>
+    <li><strong>Co 5 sekund</strong> — kontener wywołuje pełny endpoint zdrowia z limitem 5 sekund. Kontrolowane
+        są m.in. baza danych, magazyn stanu harmonogramu, proces obsługujący zadania, dostęp do internetu,
+        liczba procesów, pamięć oraz regularność pracy harmonogramu.</li>
+    <li><strong>Co 29 sekund w środowisku produkcyjnym</strong> — sprawdzane są długotrwałe połączenia z bazą,
+        aby nie używać zerwanego połączenia z puli.</li>
+    <li>Brak poprawnego przebiegu harmonogramu przez około <strong>90 sekund</strong> powoduje błąd kontroli
+        zdrowia. Po pięciu kolejnych nieudanych kontrolach środowisko oznacza kontener jako niesprawny,
+        a zewnętrzny mechanizm autoheal może go automatycznie uruchomić ponownie.</li>
+</ul>

@@ -1,0 +1,39 @@
+{#---
+slug: rezerwacje-manualne-i-szybkie
+title: "Rezerwacje manualne i szybkie"
+section: bookings
+role: ROLE_MANAGE_BOOKINGS
+summary: "Kiedy używać formularza manualnego, a kiedy szybkiego zapisu z listy nadchodzących zajęć."
+keywords: [rezerwacja manualna, szybka rezerwacja, rezerwacja telefoniczna, gotówka, karta, przelew, blik]
+primary_route: app_admin_bookings
+related: [rezerwacje-tworzenie, rezerwacje-statusy-i-termin-platnosci, platnosci-przelewy-i-dopasowanie]
+---#}
+<p>
+    Panel ma dwa skrócone sposoby zapisu klienta. Oba mogą znaleźć istniejące konto po adresie e-mail
+    albo utworzyć nowe, gdy klient nie był jeszcze w bazie.
+</p>
+
+<h2>Formularz manualny</h2>
+<p>
+    W <a href="{{ path('app_admin_bookings') }}">Rezerwacjach</a> podajesz klienta, kwotę, sposób
+    płatności i jeden lub kilka terminów. Ten wariant zapisuje rezerwację jako aktywną i płatność jako
+    opłaconą — używaj go do wpłat już przyjętych poza automatycznym dopasowaniem, np. gotówką lub kartą.
+</p>
+
+<h2>Szybka rezerwacja</h2>
+<p>
+    Na pulpicie, przy konkretnych nadchodzących zajęciach, przycisk <strong>Szybka rezerwacja</strong>
+    od razu rezerwuje to jedno miejsce. Możesz wybrać istniejącego klienta i dziecko lub wpisać dane
+    nowej osoby. Zapis powstaje bez płatności — rozliczenie można dodać później w szczegółach.
+</p>
+
+<h2>Płatność BLIK / przelew</h2>
+<p>
+    Gdy powstanie płatność oczekująca, panel pokazuje numer telefonu BLIK, kwotę i unikalny kod do
+    wpisania w tytule. Ten sam kod działa przy zwykłym przelewie i pozwala na automatyczne dopasowanie.
+</p>
+
+<div class="help-callout">
+    Nie oznaczaj jako opłaconej wpłaty, której jeszcze nie ma. Dla płatności oczekującej przekaż
+    klientowi kod i poczekaj na import lub przypisz przelew ręcznie.
+</div>

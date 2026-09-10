@@ -1,36 +1,94 @@
 {#---
 slug: platnosci-przelewy-i-dopasowanie
-title: "Przelewy i dopasowanie do płatności"
+title: "Szybka płatność BLIK i dopasowanie przelewu"
 section: finance
 role: ROLE_MANAGE_PAYMENTS
-summary: "Jak działa import przelewów, dopasowanie do płatności po kodzie i odrzucanie pozycji."
-keywords: [przelew, płatność, dopasowanie, księgowanie, kod płatności, bank, import, zaległości]
+summary: "Pełna droga płatności: od wygenerowania kodu, przez przelew klienta i e-mail Aliora, po automatyczne zaksięgowanie."
+keywords: [blik na telefon, przelew, płatność, kod płatności, Alior, e-mail bankowy, IMAP, dopasowanie, księgowanie, niedopłata, nadpłata]
 primary_route: app_admin_transfers
-related: [platnosci-zwroty, rezerwacje-tworzenie]
+related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, rozliczenie-platformy, platnosci-zwroty]
 ---#}
+<div class="help-callout">
+    <strong>Kiddo nie jest operatorem płatności i nie pobiera pieniędzy z konta klienta.</strong>
+    Aplikacja pokazuje dane odbiorcy i kod. Klient sam wykonuje przelew BLIK na telefon albo zwykły
+    przelew ze swojej aplikacji bankowej.
+</div>
+
+<h2>1. Rezerwacja i wygenerowanie kodu</h2>
+<ol>
+    <li>Klient wybiera zajęcia, uczestnika i bilet, akceptuje wymagane dokumenty oraz potwierdza zapis.</li>
+    <li>System ponownie sprawdza aktualną cenę i dostępność, a następnie tworzy rezerwację oraz płatność
+        ze statusem <strong>oczekująca</strong>.</li>
+    <li>Do płatności powstaje losowy, czteroznakowy kod z wielkich liter i cyfr. Przed zapisaniem system
+        sprawdza, czy kod nie jest już używany przez inną płatność.</li>
+    <li>Klient widzi kwotę, skonfigurowany numer telefonu BLIK, numer rachunku dla zwykłego przelewu
+        i kod. Te same dane otrzymuje w potwierdzeniu rezerwacji.</li>
+</ol>
+
+<h2>2. Klient sam wysyła pieniądze</h2>
 <p>
-    Sekcja <a href="{{ path('app_admin_transfers') }}">Płatności / Finanse</a> zbiera przelewy
-    przychodzące i pozwala łączyć je z konkretnymi płatnościami za rezerwacje.
+    Klient otwiera aplikację swojego banku i wybiera <strong>przelew BLIK na telefon</strong> na numer
+    pokazany przez Kiddo. Alternatywnie może wykonać zwykły przelew na podany rachunek. Powinien wysłać
+    dokładną kwotę i koniecznie wpisać czteroznakowy kod w tytule lub wiadomości przelewu.
+</p>
+<p>
+    Nie ma przekierowania do bramki płatniczej, kodu BLIK do zatwierdzenia w Kiddo ani komunikacji
+    z operatorem płatności. Moment faktycznego zaksięgowania zależy od banków.
 </p>
 
-<h2>Jak to działa</h2>
+<h2>3. Alior informuje o uznaniu rachunku</h2>
+<p>
+    Po wpływie pieniędzy Alior wysyła na skonfigurowaną skrzynkę wiadomość z adresu
+    <code>powiadomienia@alior.pl</code>. System przyjmuje nieprzeczytane wiadomości, których temat
+    zaczyna się od <code>Uznanie rachunku</code>. Z tematu i treści odczytuje rachunek odbiorcy, kwotę,
+    nadawcę oraz tytuł przelewu.
+</p>
+
+<h2>4. Skrzynka jest sprawdzana co 30 sekund</h2>
 <ul>
-    <li>Przelewy trafiają na listę automatycznie (import ze skrzynki bankowej).</li>
-    <li>Każda płatność ma <strong>kod</strong>, który klient podaje w tytule przelewu — po nim
-        system proponuje dopasowanie.</li>
-    <li><strong>Przypisz</strong> przelew do płatności, gdy dopasowanie jest poprawne — rezerwacja
-        przechodzi w stan opłaconej.</li>
-    <li><strong>Odrzuć</strong> pozycję, która nie jest wpłatą klienta (np. zwrot z innego tytułu,
-        pomyłka).</li>
+    <li>Importer łączy się ze skrzynką przez IMAP i pobiera tylko nieprzeczytane powiadomienia Aliora.</li>
+    <li>Importy są wykonywane pojedynczo — blokada nie pozwala dwóm procesom jednocześnie czytać tej
+        samej wiadomości.</li>
+    <li>Identyfikator wiadomości zapobiega ponownemu zapisaniu tego samego przelewu, nawet gdy poprzedni
+        import został przerwany.</li>
+    <li>Po obsłużeniu wiadomość jest oznaczana jako przeczytana. Poprawnie rozpoznany przelew zostaje
+        zachowany w Kiddo niezależnie od tego, czy da się go od razu dopasować.</li>
 </ul>
 
-<h2>Zaległości i kody</h2>
+<h2>5. Dopasowanie po kodzie</h2>
 <p>
-    Widok zaległych płatności pokazuje rezerwacje bez wpłaty. Wyszukiwarka (Ctrl+K) znajduje
-    płatność po kodzie także wtedy, gdy powiązanie kodu zostało już rozłączone po zaksięgowaniu.
+    System dzieli tytuł na słowa, ignoruje znaki interpunkcyjne i wielkość liter. Rozpoznaje również kod
+    rozdzielony spacją oraz typową pomyłkę między literą <code>O</code> i cyfrą <code>0</code>. Po znalezieniu
+    kodu przypina przelew do odpowiadającej mu płatności.
+</p>
+<ul>
+    <li><strong>Pełna kwota lub suma kilku przelewów</strong> — gdy pokrywa należność, płatność zostaje opłacona.</li>
+    <li><strong>Niedopłata</strong> — przelew pozostaje przypisany, ale płatność nadal oczekuje na brakującą kwotę.</li>
+    <li><strong>Nadpłata</strong> — płatność zostaje opłacona i oznaczona do kontroli.</li>
+    <li><strong>Brak poprawnego kodu</strong> — przelew trafia do ręcznej obsługi w
+        <a href="{{ path('app_admin_transfers') }}">Płatności / Finanse</a>.</li>
+    <li><strong>Kwota ponad próg bezpieczeństwa</strong> — przelew nie jest automatycznie łączony. Administratorzy
+        dostają alert i muszą go sprawdzić. Domyślny próg to 1000 PLN, ale można go zmienić w ustawieniach.</li>
+</ul>
+<p>
+    Nierozpoznane przelewy z ostatnich 12 godzin są ponownie dopasowywane co minutę. Dzięki temu przelew
+    może zostać rozpoznany także wtedy, gdy płatność z właściwym kodem pojawiła się chwilę później.
 </p>
 
+<h2>6. Co dzieje się po zaksięgowaniu</h2>
+<ul>
+    <li>Płatność zmienia status na <strong>opłacona</strong>, a powiązane oczekujące rezerwacje stają się aktywne.</li>
+    <li>Jeżeli automat anulował wcześniej rezerwację, ale sama płatność nadal ma status oczekującej,
+        poprawnie dopasowany przelew może reaktywować rezerwację.</li>
+    <li>Powiązane zamówienie zostaje oznaczone jako opłacone, a użycia promocji zostają rozliczone.</li>
+    <li>Do bieżącego rozliczenia platformy doliczana jest prowizja 2%, a zdarzenie trafia do dziennika aktywności.</li>
+    <li>Klient dostaje e-mail i powiadomienie w panelu; wiadomość zawiera również plik kalendarza ICS.
+        Administratorzy dostają potwierdzenie e-mailem i w panelu.</li>
+    <li>Otwarty ekran płatności sprawdza status co 3 sekundy i po wykryciu wpłaty pokazuje potwierdzenie.</li>
+</ul>
+
 <div class="help-callout">
-    Sporadyczne kolizje kodów płatności są akceptowalne przy obecnej skali — jeśli dwie płatności
-    mają ten sam kod, dopasuj ręcznie po kwocie i kliencie.
+    Kod jest usuwany z aktywnego powiązania po opłaceniu, ale jego kopia pozostaje przy płatności, dlatego
+    można później odnaleźć transakcję w wyszukiwarce. Alert o niedopasowanym lub dużym przelewie jest
+    ograniczony do jednego powiadomienia na dany przelew w ciągu 24 godzin.
 </div>

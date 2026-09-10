@@ -1,0 +1,34 @@
+{#---
+slug: powiadomienia-i-komunikacja
+title: "Powiadomienia i komunikacja z klientem"
+section: dashboard
+role: ROLE_HOST
+summary: "Jak działa dzwonek powiadomień, oznaczanie wiadomości i ręczna wiadomość do klienta."
+keywords: [powiadomienia, dzwonek, wiadomość, komunikacja, nieprzeczytane, email, klient]
+primary_route: app_admin_dashboard
+related: [pulpit, crm-klienci-i-dzieci]
+---#}
+<p>
+    Dzwonek w prawym górnym rogu zbiera powiadomienia związane m.in. z rezerwacjami, płatnościami,
+    zwrotami i zmianami zajęć. Kolorowa kropka oznacza wiadomość jeszcze nieotwartą.
+</p>
+
+<h2>Obsługa dzwonka</h2>
+<ul>
+    <li>Kliknięcie wiadomości oznacza ją jako przeczytaną i — jeśli ma przypisany cel — przenosi do
+        właściwej rezerwacji, płatności lub klienta.</li>
+    <li>Krzyżyk usuwa jedną wiadomość, a <strong>Wyczyść wszystkie</strong> porządkuje całą listę.</li>
+    <li>Usunięcie powiadomienia nie usuwa zdarzenia ani danych, których dotyczy.</li>
+</ul>
+
+<h2>Wiadomość do konkretnego klienta</h2>
+<p>
+    Na profilu osoby w <a href="{{ path('app_admin_users') }}">CRM</a> wybierz
+    <strong>Wyślij powiadomienie</strong>. Wiadomość pojawi się w jej panelu; mechanizmy systemowe
+    mogą dodatkowo wysyłać e-mail zależnie od rodzaju zdarzenia.
+</p>
+
+<div class="help-callout">
+    Dziennik aktywności i powiadomienia służą do innych celów: dziennik jest historią działań, a
+    dzwonek listą komunikatów wymagających przeczytania lub reakcji.
+</div>

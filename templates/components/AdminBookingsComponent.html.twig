@@ -11,6 +11,8 @@
                         <path d="M3 10h18"></path>
                     </svg>
                     <span>{{ 'admin_dashboard.bookings.title'|trans }}</span>
+                    {{ include('admin/help/_context_button.html.twig', {slug: 'rezerwacje-statusy-i-termin-platnosci', label: 'Statusy rezerwacji i termin płatności'}) }}
+                    {{ include('admin/help/_context_button.html.twig', {slug: 'rezerwacje-anulowanie-i-przeniesienie', label: 'Anulowanie i przenoszenie rezerwacji'}) }}
                 </h3>
             </div>
         </div>
@@ -64,7 +66,10 @@
             {# Manual Booking Form #}
             {% if isFeatureEnabled('manual_bookings') %}
             <div class="mb-6 p-5 border border-slate-200 rounded-xl bg-slate-50">
-                <h3 class="text-sm font-bold text-slate-800 mb-4">{{ 'admin_dashboard.bookings.manual.add_title'|trans }}</h3>
+                <div class="mb-4 flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-slate-800">{{ 'admin_dashboard.bookings.manual.add_title'|trans }}</h3>
+                    {{ include('admin/help/_context_button.html.twig', {slug: 'rezerwacje-manualne-i-szybkie', label: 'Rezerwacje manualne i szybkie'}) }}
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                     <input type="text" placeholder="{{ 'admin_dashboard.bookings.manual.customer_name_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.customerName }}" data-model="customerName" />
                     <input type="email" placeholder="{{ 'admin_dashboard.bookings.manual.customer_email_placeholder'|trans }}" class="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="{{ this.customerEmail }}" data-model="customerEmail" />

@@ -62,10 +62,7 @@ final class HelpController extends AbstractController
     {
         $this->assertEnabled();
 
-        $article = $this->registry->get($slug);
-        if (!$article instanceof DocArticle || !$this->isGranted($article->role)) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getVisibleArticle($slug);
 
         $related = [];
         foreach ($article->related as $relatedSlug) {
@@ -82,6 +79,29 @@ final class HelpController extends AbstractController
     }
 
     /**
+     * Small, layout-free version used by contextual help buttons throughout the panel.
+     *
+     * @throws \Throwable
+     */
+    #[Route(
+        '/admin/pomoc/{slug}/modal',
+        name: 'app_admin_help_modal',
+        methods: ['GET'],
+        requirements: [
+            'slug' => '[a-z0-9-]+',
+        ],
+    )]
+    public function modal(string $slug): Response
+    {
+        $this->assertEnabled();
+        $article = $this->getVisibleArticle($slug);
+
+        return $this->render('admin/help/_modal_content.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     private function assertEnabled(): void
@@ -89,5 +109,19 @@ final class HelpController extends AbstractController
         if (!$this->featureManager->isEnabled('help_center')) {
             throw $this->createNotFoundException();
         }
+    }
+
+    /**
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    private function getVisibleArticle(string $slug): DocArticle
+    {
+        $article = $this->registry->get($slug);
+        if (!$article instanceof DocArticle || !$this->isGranted($article->role)) {
+            throw $this->createNotFoundException();
+        }
+
+        return $article;
     }
 }

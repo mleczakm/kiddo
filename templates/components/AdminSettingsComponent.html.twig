@@ -13,7 +13,10 @@
                     Użytkownicy i Uprawnienia
                 </button>
                 
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-4 mt-4">System i Księgowość</div>
+                <div class="mb-2 mt-4 flex items-center justify-between px-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <span>System i Księgowość</span>
+                    {{ include('admin/help/_context_button.html.twig', {slug: 'automatyzacje-i-zadania-w-tle', label: 'Automatyzacje i zadania działające w tle'}) }}
+                </div>
                 <button 
                     data-action="live#update" 
                     data-model="settingsTab" 
@@ -64,7 +67,12 @@
                 {% if settingsTab == 'roles' %}
                     <div class="space-y-6 animate-in fade-in">
                         <div>
-                            <h2 class="text-xl font-black text-slate-800">Administratorzy i Prowadzący</h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-black text-slate-800">Administratorzy i Prowadzący</h2>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    {{ include('admin/help/_context_button.html.twig', {slug: 'role-i-uprawnienia', label: 'Role i uprawnienia'}) }}
+                                {% endif %}
+                            </div>
                             <p class="text-sm text-slate-500 mt-1">Nadawaj uprawnienia użytkownikom. Prowadzący (ROLE_HOST) widzą tylko zajęcia i rezerwacje, do których są przypisani jako instruktorzy. Administratorzy mają pełen dostęp.</p>
                         </div>
 
@@ -184,7 +192,10 @@
                 {% if settingsTab == 'billing' %}
                     <div class="space-y-6 animate-in fade-in">
                         <div>
-                            <h2 class="text-xl font-black text-slate-800">Kontakty Finansowe i Fakturowanie</h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-black text-slate-800">Kontakty Finansowe i Fakturowanie</h2>
+                                {{ include('admin/help/_context_button.html.twig', {slug: 'ustawienia-systemu', label: 'Ustawienia systemu'}) }}
+                            </div>
                             <p class="text-sm text-slate-500 mt-1">Kto powinien otrzymywać na email automatyczne zestawienia prowizji (2%) oraz raporty niezidentyfikowanych przelewów?</p>
                         </div>
                         
@@ -236,7 +247,10 @@
                 {% if settingsTab == 'seo' %}
                     <div class="space-y-6 animate-in fade-in">
                         <div>
-                            <h2 class="text-xl font-black text-slate-800">SEO & Pliki Systemowe</h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-black text-slate-800">SEO & Pliki Systemowe</h2>
+                                {{ include('admin/help/_context_button.html.twig', {slug: 'ustawienia-systemu', label: 'Ustawienia systemu'}) }}
+                            </div>
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-bold text-slate-700 flex items-center gap-2">
@@ -261,7 +275,10 @@
                 {% if settingsTab == 'payments' %}
                     <div class="space-y-6 animate-in fade-in">
                         <div>
-                            <h2 class="text-xl font-black text-slate-800">Przelewy i płatności</h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-black text-slate-800">Przelewy i płatności</h2>
+                                {{ include('admin/help/_context_button.html.twig', {slug: 'platnosci-przelewy-i-dopasowanie', label: 'Przelewy i dopasowanie do płatności'}) }}
+                            </div>
                         </div>
                         <div class="space-y-2 max-w-xs">
                             <label class="text-sm font-bold text-slate-700">
@@ -291,7 +308,10 @@
                 {% if settingsTab == 'organization' %}
                     <div class="space-y-6 animate-in fade-in max-w-2xl">
                         <div>
-                            <h2 class="text-xl font-black text-slate-800">Dane firmy i kontakt</h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-black text-slate-800">Dane firmy i kontakt</h2>
+                                {{ include('admin/help/_context_button.html.twig', {slug: 'ustawienia-systemu', label: 'Ustawienia systemu'}) }}
+                            </div>
                             <p class="text-xs text-slate-500 mt-1">
                                 Wyświetlane w panelu klienta (stopka menu) oraz w instrukcji płatności BLIK / przelewem.
                                 Po uzupełnieniu adres Facebooka trafia do stopki strony, nawigacji, stopki e-maili

@@ -1,0 +1,34 @@
+{#---
+slug: rozliczenie-platformy
+title: "Opłata systemowa i rozliczenie platformy"
+section: finance
+role: ROLE_ADMIN
+summary: "Jak naliczana jest prowizja platformy oraz jak rozliczyć zaległość na pulpicie."
+keywords: [opłata systemowa, prowizja, platforma, 2 procent, zaległość, bieżący miesiąc, rozliczenie]
+primary_route: app_admin_dashboard
+related: [platnosci-przelewy-i-dopasowanie, ustawienia-systemu, pulpit]
+---#}
+<p>
+    Kafelek na <a href="{{ path('app_admin_dashboard') }}">pulpicie</a> pokazuje prognozę opłaty
+    systemowej za bieżący miesiąc oraz nierozliczoną zaległość z poprzedniego okresu.
+</p>
+
+<h2>Co jest naliczane</h2>
+<p>
+    Prowizja wynosi <strong>2% kwoty płatności przechodzącej do statusu opłaconej</strong> przez mechanizm
+    płatności. Dotyczy to zarówno przelewu dopasowanego automatycznie po kodzie, jak i przelewu przypisanego
+    ręcznie do oczekującej płatności. Rezerwacje oznaczane jako opłacone bez tworzenia oczekującej płatności,
+    np. wpłata przyjęta na miejscu w formularzu manualnym, nie uruchamiają tego przejścia.
+</p>
+
+<h2>Rozliczenie zaległości</h2>
+<ul>
+    <li><strong>Oznacz zaległość jako opłaconą</strong> zeruje całą zaległość i uwzględnia rozliczenie
+        w saldzie bieżącego miesiąca.</li>
+    <li><strong>Wpłać inną kwotę</strong> pozwala rozliczyć część; nadpłata pomniejsza bieżącą należność.</li>
+</ul>
+
+<div class="help-callout">
+    Te przyciski ewidencjonują rozliczenie w Kiddo — nie wykonują przelewu bankowego. Użyj ich dopiero
+    po faktycznym opłaceniu platformy.
+</div>

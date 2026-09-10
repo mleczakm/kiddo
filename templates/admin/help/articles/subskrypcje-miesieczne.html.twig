@@ -1,0 +1,34 @@
+{#---
+slug: subskrypcje-miesieczne
+title: "Abonamenty miesięczne"
+section: pricing
+role: ROLE_MANAGE_LESSONS
+summary: "Jak skonfigurować miesięczny abonament na cykl i jak powstają kolejne rozliczenia."
+keywords: [abonament, subskrypcja, miesięczna, cykl, opłata cykliczna, miesięczna stawka, rozliczenie]
+primary_route: app_admin_schedule
+related: [warsztaty-tworzenie, warsztaty-terminy-i-serie, cennik-reguly-i-karnety]
+---#}
+<p>
+    Abonament miesięczny jest opcją biletu dla cyklicznego warsztatu. Ustawiasz jego stawkę w edytorze
+    warsztatu w <a href="{{ path('app_admin_schedule') }}">grafiku</a>.
+</p>
+
+<h2>Konfiguracja</h2>
+<ul>
+    <li>Warsztat musi należeć do serii z terminami w kolejnych miesiącach.</li>
+    <li>Pole <strong>Abonament / mies.</strong> określa miesięczną kwotę widoczną przy zakupie.</li>
+    <li>Cena jest zapamiętywana w chwili uruchomienia subskrypcji; późniejsza zmiana cennika nie
+        zmienia istniejącego abonamentu.</li>
+</ul>
+
+<h2>Kolejne miesiące</h2>
+<p>
+    Raz w miesiącu system tworzy zwykłą płatność oczekującą z kodem oraz rezerwację obejmującą
+    pozostałe terminy tej serii w danym miesiącu. Jeśli w miesiącu nie ma żadnego przyszłego terminu,
+    opłata nie powstaje.
+</p>
+
+<div class="help-callout">
+    Funkcja jest widoczna tylko przy włączonej fladze <code>subscriptions</code>. Status i ostatni
+    rozliczony miesiąc klient widzi w swoim panelu obok karnetów.
+</div>

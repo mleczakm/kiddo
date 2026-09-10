@@ -1,0 +1,41 @@
+{#---
+slug: rezerwacje-statusy-i-termin-platnosci
+title: "Statusy rezerwacji i termin płatności"
+section: bookings
+role: ROLE_MANAGE_BOOKINGS
+summary: "Co oznaczają statusy rezerwacji i płatności oraz kiedy nieopłacony zapis jest anulowany."
+keywords: [status rezerwacji, status płatności, oczekująca, aktywna, anulowana, wygasła, termin płatności, 24 godziny robocze, święta]
+primary_route: app_admin_bookings
+related: [rezerwacje-tworzenie, rezerwacje-anulowanie-i-przeniesienie, platnosci-przelewy-i-dopasowanie]
+---#}
+<p>
+    Lista <a href="{{ path('app_admin_bookings') }}">Rezerwacji</a> łączy dwa niezależne cykle:
+    status samego zapisu oraz status powiązanej płatności. Dlatego aktywna rezerwacja może nadal
+    oczekiwać na wpłatę.
+</p>
+
+<h2>Status rezerwacji</h2>
+<ul>
+    <li><strong>Oczekująca</strong> — zapis wymaga potwierdzenia lub opłaty.</li>
+    <li><strong>Aktywna</strong> — uczestnik ma miejsce na zajęciach.</li>
+    <li><strong>Anulowana</strong> — miejsce zostało zwolnione, ale historia pozostaje.</li>
+    <li><strong>Zakończona</strong> — zajęcia z rezerwacji są już w przeszłości.</li>
+</ul>
+
+<h2>Status płatności</h2>
+<p>
+    Płatność może oczekiwać, być opłacona, nieudana, wygasła, anulowana albo przejść przez prośbę
+    o zwrot do statusu zwróconej. Zmiana płatności nie zawsze automatycznie usuwa rezerwację.
+</p>
+
+<h2>Automatyczny termin</h2>
+<p>
+    Nieopłacona rezerwacja i płatność wygasają po <strong>24 godzinach roboczych</strong>. Sobota,
+    niedziela i polskie święta ustawowe nie zużywają tego czasu. Przykładowo zapis z piątku wieczorem
+    nie wygaśnie w sobotę wieczorem — licznik ruszy dalej w następny dzień roboczy.
+</p>
+
+<div class="help-callout">
+    Gdy klient twierdzi, że zapłacił przed terminem, najpierw sprawdź nierozpoznane przelewy. Import
+    bankowy i dopasowanie mogą zakończyć się później niż samo wysłanie wpłaty.
+</div>

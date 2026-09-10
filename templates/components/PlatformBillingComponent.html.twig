@@ -14,7 +14,10 @@
     </svg>
     <div class="flex justify-between items-start">
         <div>
-            <div class="text-sm font-semibold text-slate-300 mb-1">Opłata systemowa (2% prowizji)</div>
+            <div class="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-300">
+                <span>Opłata systemowa (2% prowizji)</span>
+                {{ include('admin/help/_context_button.html.twig', {slug: 'rozliczenie-platformy', label: 'Opłata systemowa i rozliczenie platformy'}) }}
+            </div>
             <div class="flex items-baseline gap-2">
                 <span class="text-3xl font-black text-white">{{ this.getCurrentDue()|number_format(2) }} zł</span>
                 <span class="text-xs text-slate-400">Prognoza za bieżący miesiąc</span>

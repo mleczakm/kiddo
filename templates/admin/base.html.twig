@@ -155,6 +155,22 @@
                     transform: none !important;
                 }
             }
+
+            .help-prose { color: rgb(51, 65, 85); font-size: 0.925rem; line-height: 1.65; }
+            .help-prose > *:first-child { margin-top: 0; }
+            .help-prose > *:last-child { margin-bottom: 0; }
+            .help-prose h2 { font-size: 1.15rem; font-weight: 800; color: rgb(15, 23, 42); margin: 1.6rem 0 0.6rem; }
+            .help-prose h3 { font-size: 1rem; font-weight: 700; color: rgb(15, 23, 42); margin: 1.3rem 0 0.4rem; }
+            .help-prose p { margin: 0.6rem 0; }
+            .help-prose ul, .help-prose ol { margin: 0.6rem 0; padding-left: 1.3rem; }
+            .help-prose ul { list-style: disc; }
+            .help-prose ol { list-style: decimal; }
+            .help-prose li { margin: 0.3rem 0; }
+            .help-prose a { color: rgb(79, 70, 229); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+            .help-prose a:hover { color: rgb(67, 56, 202); }
+            .help-prose code { background: rgb(241, 245, 249); border-radius: 6px; padding: 0.1rem 0.35rem; font-size: 0.85em; }
+            .help-prose strong { font-weight: 700; color: rgb(15, 23, 42); }
+            .help-prose .help-callout { border-left: 3px solid rgb(129, 140, 248); background: rgb(238, 242, 255); padding: 0.75rem 1rem; border-radius: 0 12px 12px 0; margin: 1rem 0; }
         </style>
     {% endblock %}
 
@@ -164,7 +180,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
     <div id="root" class="flex w-full min-h-screen"
-         data-controller="admin-sidebar admin-tour"
+         data-controller="admin-sidebar admin-tour help-dialog"
          data-admin-tour-steps-value="{{ admin_tour_steps|json_encode }}"
          data-admin-tour-label-next-value="{{ 'admin.tour.next'|trans }}"
          data-admin-tour-label-back-value="{{ 'admin.tour.back'|trans }}"
@@ -273,6 +289,9 @@
         </div>
         {{ component('ReservationDetailsModal') }}
         {{ include('partials/chat_assistant.html.twig', { variant: 'floating', admin_chat: true }) }}
+        {% if isFeatureEnabled('help_center') %}
+            {{ include('admin/help/_dialog.html.twig') }}
+        {% endif %}
     </div>
 </body>
 </html>
