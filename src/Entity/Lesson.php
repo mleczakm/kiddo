@@ -24,6 +24,13 @@ class Lesson
     ])]
     public string $status;
 
+    /**
+     * Per-occurrence waitlist override. `null` = inherit the global `waitlist`
+     * feature flag; `false` = no waitlist for this lesson even when the flag is on.
+     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $waitlistEnabled = null;
+
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     private Ulid $id;
@@ -84,6 +91,25 @@ class Lesson
     public function setMetadata(LessonMetadata $metadata): void
     {
         $this->metadata = $metadata;
+    }
+
+    public function getWaitlistEnabled(): ?bool
+    {
+        return $this->waitlistEnabled;
+    }
+
+    public function setWaitlistEnabled(?bool $waitlistEnabled): void
+    {
+        $this->waitlistEnabled = $waitlistEnabled;
+    }
+
+    /**
+     * Effective waitlist state: the per-lesson override when set, otherwise the
+     * caller-supplied global default (the `waitlist` feature flag).
+     */
+    public function isWaitlistEnabled(bool $flagDefault): bool
+    {
+        return $this->waitlistEnabled ?? $flagDefault;
     }
 
     /**

@@ -220,6 +220,13 @@ booking_cancellation:
 
       Zaloguj się do panelu administracyjnego, aby zobaczyć szczegóły.
 
+waitlist_offer:
+  subject: 'Zwolniło się miejsce na {lessonTitle}'
+  heading: 'Zwolniło się miejsce!'
+  body: 'Cześć {name}, na zajęcia {lessonTitle} ({lessonDate}) zwolniło się miejsce.'
+  deadline: 'Masz około {holdMinutes} minut, do {offerExpiresAt}, aby zarezerwować je z tego linku. Później miejsce przejdzie do kolejnej osoby z listy.'
+  cta: 'Zarezerwuj miejsce'
+
 lesson_rescheduled_by_admin_notification:
   subject: 'Twoje zajęcia zostały przełożone'
   greeting: 'Cześć {name},'

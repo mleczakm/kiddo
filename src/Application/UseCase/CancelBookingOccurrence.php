@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase;
 
+use App\Application\Command\OfferWaitlistSeats;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\InAppNotificationService;
@@ -11,6 +12,9 @@ use App\Application\Service\LessonInstructorResolver;
 use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\NotificationSeverity;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,8 +35,12 @@ final readonly class CancelBookingOccurrence
         private LessonInstructorResolver $instructorResolver,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
+        private MessageBusInterface $bus,
     ) {}
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(Ulid $bookingId, Ulid $lessonId, int $cancelledByUserId, ?string $reason): void
     {
         $cancelledBy = $this->userRepository->find($cancelledByUserId);
@@ -102,6 +110,10 @@ final readonly class CancelBookingOccurrence
             ]);
             return;
         }
+
+        // A seat just freed on this occurrence — after this cancel commits, offer
+        // it to the lesson's waitlist. No-ops when the waitlist feature is off.
+        $this->bus->dispatch(new Envelope(new OfferWaitlistSeats($lessonId))->with(new DispatchAfterCurrentBusStamp()));
 
         // If no active lessons remain, mark the whole booking as cancelled. Apply the
         // workflow transition (instead of setting the status directly) so that

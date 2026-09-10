@@ -41,6 +41,10 @@ framework:
             'App\Application\Command\SendReservationNotification': sync
             'App\Message\RefundLessonBooking': sync
             'App\Message\CancelLessonBooking': sync
+            # Waitlist: dispatched from the (sync) cancel path with DispatchAfterCurrentBusStamp
+            # and from the scheduler; keep sync so it never becomes a nested async dispatch.
+            'App\Application\Command\OfferWaitlistSeats': sync
+            'App\Application\Command\ExpireWaitlistOffers': sync
             # Route everything else to async
             '*': async
 

@@ -111,6 +111,9 @@ services:
   App\Application\Repository\UserRepositoryInterface:
     alias: App\Infrastructure\Doctrine\Repository\UserRepository
 
+  App\Application\Repository\WaitlistEntryRepositoryInterface:
+    alias: App\Infrastructure\Doctrine\Repository\WaitlistEntryRepository
+
   App\Application\Workflow\BookingStateMachineInterface:
     alias: App\Infrastructure\Symfony\Workflow\SymfonyBookingStateMachine
 

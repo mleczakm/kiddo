@@ -101,6 +101,59 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
         ?int $limit = null,
         bool $orderByPopularity = false,
     ): array {
+        $weekStart = new \DateTimeImmutable($week);
+        $result = $this->queryCatalog(
+            $query,
+            $age,
+            $weekStart,
+            $weekStart->modify('+7 days 23:59:59'),
+            $orderByPopularity ? null : $limit,
+        );
+
+        if (!$orderByPopularity) {
+            return $result;
+        }
+
+        /** @var Lesson[] $ranked */
+        $ranked = new Vector($result)
+            ->reduce(static function (PriorityQueue $queue, Lesson $lesson): PriorityQueue {
+                $queue->push($lesson, $lesson->getBookings()->count());
+
+                return $queue;
+            }, new PriorityQueue())
+            ?->toArray();
+
+        return $limit !== null ? array_slice($ranked, 0, $limit) : $ranked;
+    }
+
+    /**
+     * @return list<Lesson>
+     */
+    #[\Override]
+    public function findPublicCatalog(
+        ?string $query,
+        ?int $age,
+        \DateTimeImmutable $from,
+        \DateTimeImmutable $to,
+        ?int $limit = null,
+    ): array {
+        return array_values($this->queryCatalog($query, $age, $from, $to, $limit));
+    }
+
+    /**
+     * Shared public-catalog query: active + visible lessons (series visibility
+     * respected), optional fuzzy title and age filters, `[$from, $to]` schedule
+     * window, schedule ASC.
+     *
+     * @return Lesson[]
+     */
+    private function queryCatalog(
+        ?string $query,
+        ?int $age,
+        \DateTimeImmutable $from,
+        \DateTimeImmutable $to,
+        ?int $limit,
+    ): array {
         $qb = $this
             ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
@@ -119,35 +172,14 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             $qb->andWhere('m.ageRange.min <= :age')->andWhere('m.ageRange.max >= :age')->setParameter('age', $age);
         }
 
-        $weekStart = new \DateTimeImmutable($week);
-        $weekEnd = $weekStart->modify('+7 days 23:59:59');
+        $qb->andWhere('l.schedule BETWEEN :from AND :to')->setParameter('from', $from)->setParameter('to', $to);
 
-        $qb
-            ->andWhere('l.schedule BETWEEN :weekStart AND :weekEnd')
-            ->setParameter('weekStart', $weekStart)
-            ->setParameter('weekEnd', $weekEnd);
-
-        if ($limit !== null && !$orderByPopularity) {
+        if ($limit !== null) {
             $qb->setMaxResults($limit);
         }
 
         /** @var Lesson[] $result */
         $result = $qb->getQuery()->getResult();
-
-        if ($orderByPopularity) {
-            /** @var Lesson[] $result */
-            $result = new Vector($result)
-                ->reduce(static function (PriorityQueue $queue, Lesson $lesson): PriorityQueue {
-                    $queue->push($lesson, $lesson->getBookings()->count());
-
-                    return $queue;
-                }, new PriorityQueue())
-                ?->toArray();
-
-            if ($limit !== null) {
-                $result = array_slice($result, 0, $limit);
-            }
-        }
 
         return $result;
     }

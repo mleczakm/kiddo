@@ -16,6 +16,10 @@ novaway_feature_flag:
           # Monthly-subscription ticket type + recurring billing. OFF on prod
           # until operational sign-off; on in dev/test via the blocks below.
           subscriptions: false
+          # Chat-assistant waitlist ("notify me when a spot frees up"). OFF on
+          # prod until sign-off; on in dev/test. A single lesson can still be
+          # opted out via Lesson::waitlistEnabled = false while the flag is on.
+          waitlist: false
 
 # The "features" map is a raw array and REPLACES the base map (see the test
 # block's comment) - so any environment override must restate every flag.
@@ -34,6 +38,7 @@ when@dev:
             legal_documents: true
             pricing_admin: false
             subscriptions: true
+            waitlist: true
 
 when@test:
   novaway_feature_flag:
@@ -55,3 +60,4 @@ when@test:
             pricing_admin: true
             manual_bookings: true
             subscriptions: true
+            waitlist: true

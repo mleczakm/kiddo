@@ -8,6 +8,7 @@ use App\Application\Command\AddBooking;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
@@ -138,6 +139,7 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
             $orderPlacementService,
             $shadowPricing,
             $priceQuoter,
+            $this->createMock(WaitlistEntryRepositoryInterface::class),
         );
 
         $userId = $user->getId();

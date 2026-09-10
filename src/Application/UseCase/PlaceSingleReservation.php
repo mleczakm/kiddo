@@ -9,6 +9,7 @@ use App\Application\Command\SendReservationNotification;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\Commerce\OrderItemSelection;
 use App\Application\Service\Commerce\OrderPlacementOptions;
 use App\Application\Service\Commerce\OrderPlacementService;
@@ -21,6 +22,7 @@ use App\Entity\NotificationSeverity;
 use App\Entity\TicketOption;
 use Brick\Money\Money;
 use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
@@ -47,6 +49,7 @@ final readonly class PlaceSingleReservation
         private OrderPlacementService $orderPlacementService,
         private ShadowPricingEvaluator $shadowPricing,
         private PriceQuoter $priceQuoter,
+        private WaitlistEntryRepositoryInterface $waitlist,
     ) {}
 
     public function __invoke(AddBooking $command): void
@@ -102,6 +105,10 @@ final readonly class PlaceSingleReservation
                 : OrderPlacementOptions::withoutOrder(),
         );
         $booking = $result->bookings[0];
+
+        // If this parent was on the lesson's waitlist (waiting or holding an
+        // offer), close that entry — they took the seat.
+        $this->waitlist->findActiveForUserAndLesson($user, $lesson)?->claim(Clock::get()->now());
 
         foreach ($this->instructorResolver->resolve([$lesson], exclude: $user) as $instructor) {
             $this->inAppNotifications->notify(

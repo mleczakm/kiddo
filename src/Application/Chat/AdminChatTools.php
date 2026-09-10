@@ -157,6 +157,27 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresConfirm: true,
             ),
             new ToolDefinition(
+                'admin.set_lesson_waitlist',
+                'Enable, disable or reset the waitlist for one lesson. "inherit" follows the global '
+                . 'waitlist feature flag; "off" disables the waitlist for this lesson only.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'lesson_id' => [
+                            'type' => 'string',
+                        ],
+                        'mode' => [
+                            'type' => 'string',
+                            'enum' => ['on', 'off', 'inherit'],
+                        ],
+                    ],
+                    'required' => ['confirm', 'lesson_id', 'mode'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
                 'admin.list_series',
                 'List series in a date range.',
                 [
@@ -540,6 +561,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'admin.get_lesson' => $this->getLesson($args),
                 'admin.toggle_lesson' => $this->toggleLesson($args),
                 'admin.update_lesson_capacity' => $this->updateCapacity($args),
+                'admin.set_lesson_waitlist' => $this->setLessonWaitlist($args),
                 'admin.list_series' => $this->listSeries($args),
                 'admin.update_series' => $this->updateSeries($args),
                 'admin.clone_template_lesson' => $this->cloneTemplateLesson($args),
@@ -630,6 +652,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         return ToolResult::success(sprintf('%s — %d uczestników.', $data['title'], count($attendees)), [
             ...$data,
+            'waitlist_enabled' => $lesson->getWaitlistEnabled(),
             'attendees' => $attendees,
         ]);
     }
@@ -666,6 +689,30 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             sprintf('Ustawiono pojemność na %d (wolne: %d).', $capacity, $lesson->getAvailableSpots()),
             $this->presenter->lesson($lesson),
         );
+    }
+
+    /**
+     * @throws \InvalidArgumentException on a malformed lesson_id — caught in {@see call()}
+     */
+    private function setLessonWaitlist(ToolArguments $args): ToolResult
+    {
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        if ($lesson === null) {
+            return ToolResult::failure('Lesson not found');
+        }
+
+        $mode = $args->requireString('mode');
+        if (!in_array($mode, ['on', 'off', 'inherit'], true)) {
+            return ToolResult::failure('mode must be on, off or inherit');
+        }
+        $lesson->setWaitlistEnabled(match ($mode) {
+            'on' => true,
+            'off' => false,
+            default => null,
+        });
+        $this->entityManager->flush();
+
+        return ToolResult::success(sprintf('Waitlist dla lekcji: %s.', $mode), $this->presenter->lesson($lesson));
     }
 
     private function listBookings(ToolArguments $args): ToolResult

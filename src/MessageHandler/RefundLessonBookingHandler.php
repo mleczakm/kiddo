@@ -15,6 +15,9 @@ class RefundLessonBookingHandler
         private readonly CancelAndRequestRefund $cancelAndRequestRefund,
     ) {}
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(RefundLessonBooking $command): void
     {
         ($this->cancelAndRequestRefund)(

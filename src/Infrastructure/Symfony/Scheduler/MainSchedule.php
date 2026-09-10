@@ -8,6 +8,7 @@ use App\Application\Command\BackfillLegacyOrders;
 use App\Application\Command\CheckBookingsToMarkPast;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Command\CheckExpiredPayments;
+use App\Application\Command\ExpireWaitlistOffers;
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\IssueSubscriptionCharges;
 use App\Application\Command\Notification\DailyLessonsReminder;
@@ -39,6 +40,13 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->add(
                 RecurringMessage::every('5 minutes', new CallbackMessageProvider(static fn() => [new CheckExpiredPayments()])),
                 RecurringMessage::every('60 minutes', new CallbackMessageProvider(static fn() => [new CheckExpiredBookings()])),
+                // Cron (not every()) so it doesn't collide with the 5-minute CheckExpiredPayments
+                // trigger; a fresh referenceTime each run needs the callback provider.
+                RecurringMessage::cron(
+                    '*/10 * * * *',
+                    new CallbackMessageProvider(static fn() => [new ExpireWaitlistOffers()]),
+                    new \DateTimeZone('Europe/Warsaw'),
+                ),
                 RecurringMessage::every(30, new ImportTransfersFromMail()),
                 // Container memory/fd/socket sample -> Sentry metrics + JSON log line, so a
                 // slow leak between restarts is a time series, not just the last few /health

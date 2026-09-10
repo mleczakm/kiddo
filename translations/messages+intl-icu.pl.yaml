@@ -111,6 +111,9 @@ notifications:
     cancellation_admin:
       title: Rezerwacja anulowana (brak wpłaty)
       body: 'Rezerwacja na <strong>{lesson}</strong> ({date}) użytkownika <strong>{email}</strong> została automatycznie anulowana z powodu braku płatności.'
+    waitlist_offer:
+      title: Zwolniło się miejsce z listy rezerwowej
+      body: 'Na <strong>{lessonTitle}</strong> ({lessonDate}) zwolniło się miejsce. Zarezerwuj je do {offerExpiresAt}, zanim przejdzie do kolejnej osoby.'
     refund_decision:
       approved:
         title: Zwrot zatwierdzony

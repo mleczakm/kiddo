@@ -30,6 +30,9 @@ final readonly class CancelAndRequestRefund
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(Ulid $bookingId, Ulid $lessonId, int $actingUserId, ?string $reason): void
     {
         ($this->requestRefund)($bookingId, $lessonId, $actingUserId, $reason);

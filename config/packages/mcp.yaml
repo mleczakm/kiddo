@@ -10,7 +10,10 @@ mcp:
         Logged-in parents: never ask for name/email/phone already on the account — use user.me and user.list_children.
         Always confirm mutations with the user; mutating tools require confirm=true.
         Never invent availability — call tools for seats and prices.
+        user.list_upcoming_lessons searches ~90 days ahead by default; pass week= or from/to to change the window. Booking a future lesson is fine.
         After user.create_booking, relay the returned BLIK-to-phone instructions (phone, amount, title code, ~24h validity) verbatim.
+        Guest asking about an existing reservation and holding a payment code: user.request_booking_access (emails a code), then user.confirm_booking_access with the code they read back — it returns the booking and a chat_token to reuse as a tool argument.
+        Lesson full (available_spots = 0) and caller is logged in: offer user.join_waitlist. An offered seat must be booked with user.create_booking within ~60 minutes or it passes to the next person.
         Admin tools require a chat token with ROLE_ADMIN.
     client_transports:
         stdio: true

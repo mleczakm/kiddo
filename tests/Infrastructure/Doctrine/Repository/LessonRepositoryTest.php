@@ -121,6 +121,49 @@ class LessonRepositoryTest extends KernelTestCase
         static::assertCount(1, $repo->findByFilters('OOOOO', null, week: $date->format('Y-m-d')));
     }
 
+    public function testFindPublicCatalogSpansAnArbitraryRangeUnlikeFindByFilters(): void
+    {
+        $thisWeek = new DateTimeImmutable('2025-07-09 10:00:00');
+        $inSixWeeks = new DateTimeImmutable('2025-08-20 10:00:00');
+
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        \assert($em instanceof EntityManagerInterface);
+
+        $near = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($thisWeek)
+            ->assemble();
+        $far = LessonAssembler::new()
+            ->withMetadata(LessonMetadataAssembler::new()->assemble())
+            ->withSchedule($inSixWeeks)
+            ->assemble();
+        $em->persist($near);
+        $em->persist($far);
+        $em->flush();
+
+        $repo = self::getContainer()->get(LessonRepository::class);
+        \assert($repo instanceof LessonRepository);
+
+        // 7-day week window sees only the near lesson.
+        static::assertCount(1, $repo->findByFilters(null, null, week: $thisWeek->format('Y-m-d')));
+
+        // A 90-day catalog window from the same day sees both.
+        static::assertCount(2, $repo->findPublicCatalog(
+            null,
+            null,
+            $thisWeek->setTime(0, 0),
+            $thisWeek->modify('+90 days'),
+        ));
+
+        // Range respects both bounds.
+        static::assertCount(1, $repo->findPublicCatalog(
+            null,
+            null,
+            $inSixWeeks->modify('-1 day'),
+            $inSixWeeks->modify('+1 day'),
+        ));
+    }
+
     public function testFindUpcoming(): void
     {
         $date = new DateTimeImmutable('+2 day')->setTime(12, 12);

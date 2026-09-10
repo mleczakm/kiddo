@@ -15,6 +15,9 @@ class CancelLessonBookingHandler
         private readonly CancelBookingOccurrence $cancelBookingOccurrence,
     ) {}
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(CancelLessonBooking $command): void
     {
         ($this->cancelBookingOccurrence)(

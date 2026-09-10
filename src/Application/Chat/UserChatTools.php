@@ -12,15 +12,19 @@ use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\NotificationRepositoryInterface;
 use App\Application\Repository\PaymentCodeRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Entity\Child;
+use App\Entity\Lesson;
 use App\Entity\User;
+use App\Entity\WaitlistEntry;
 use App\Message\CancelLessonBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -47,6 +51,8 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         private RateLimiterFactory $authEmailRateLimiter,
         private CacheItemPoolInterface $cache,
         private PaymentCodeGenerator $paymentCodeGenerator,
+        private WaitlistEntryRepositoryInterface $waitlistRepository,
+        private FeatureManager $featureManager,
     ) {}
 
     #[\Override]
@@ -134,7 +140,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             ),
             new ToolDefinition(
                 'user.list_upcoming_lessons',
-                'List available workshops/lessons for browsing or booking. Optional filters: age (years), week (Monday YYYY-MM-DD), query, limit. Public — works for guests.',
+                'List available workshops/lessons for browsing or booking. Searches upcoming '
+                . 'workshops from today, ~90 days ahead by default (not just this week). Pass '
+                . 'week=Monday YYYY-MM-DD to narrow to one week, or from/to ISO dates for a '
+                . 'custom range. Optional filters: age (years), query, limit. Public — works for guests.',
                 [
                     'type' => 'object',
                     'properties' => [
@@ -148,7 +157,15 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                         ],
                         'week' => [
                             'type' => 'string',
-                            'description' => 'Week start Monday YYYY-MM-DD; defaults to today',
+                            'description' => 'Narrow to a single week: its Monday as YYYY-MM-DD.',
+                        ],
+                        'from' => [
+                            'type' => 'string',
+                            'description' => 'Range lower bound (ISO date/datetime). Defaults to now.',
+                        ],
+                        'to' => [
+                            'type' => 'string',
+                            'description' => 'Range upper bound (ISO date/datetime). Defaults to from + 90 days.',
                         ],
                         'limit' => [
                             'type' => 'integer',
@@ -406,6 +423,78 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresAuth: false,
             ),
+            new ToolDefinition(
+                'user.request_booking_access',
+                'Guest lookup of an existing reservation by its payment/reservation code (e.g. "0NQ7"). '
+                . 'Does NOT return booking data — it emails a 6-digit code to the address on the account. '
+                . 'Ask the caller to read that code back, then call user.confirm_booking_access.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'payment_code' => [
+                            'type' => 'string',
+                            'description' => 'The payment/reservation code from the confirmation (BLIK title).',
+                        ],
+                    ],
+                    'required' => ['payment_code'],
+                ],
+                requiresAuth: false,
+            ),
+            new ToolDefinition(
+                'user.confirm_booking_access',
+                'Second step after user.request_booking_access: verify the emailed code and unlock the '
+                . 'reservation. Returns the booking(s), payment/BLIK details and a chat_token — pass that '
+                . 'chat_token as an argument on any follow-up user.* call.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'payment_code' => [
+                            'type' => 'string',
+                        ],
+                        'code' => [
+                            'type' => 'string',
+                            'description' => '6-digit code the caller received by email.',
+                        ],
+                    ],
+                    'required' => ['payment_code', 'code'],
+                ],
+                requiresAuth: false,
+            ),
+            new ToolDefinition(
+                'user.join_waitlist',
+                'Join the waitlist for a FULL lesson so the parent is emailed when a seat frees up. '
+                . 'Only for lessons with no available spots — otherwise book directly with user.create_booking. '
+                . 'When a seat opens the earliest person in the queue is offered it and has '
+                . '~60 minutes to book before it passes to the next.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'lesson_id' => [
+                            'type' => 'string',
+                            'description' => 'ULID from user.list_upcoming_lessons / user.get_lesson',
+                        ],
+                    ],
+                    'required' => ['lesson_id'],
+                ],
+            ),
+            new ToolDefinition('user.leave_waitlist', 'Remove the parent from a lesson waitlist.', [
+                'type' => 'object',
+                'properties' => [
+                    'lesson_id' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'required' => ['lesson_id'],
+            ]),
+            new ToolDefinition(
+                'user.list_waitlist',
+                'List the lessons this parent is currently waitlisted for, with queue status and, '
+                . 'when a seat has been offered, the deadline to claim it.',
+                [
+                    'type' => 'object',
+                    'properties' => new \stdClass(),
+                ],
+            ),
         ];
     }
 
@@ -444,6 +533,11 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'user.register' => $this->registerUser($args),
                 'user.request_login_code' => $this->requestLoginCode($args),
                 'user.login_with_code' => $this->loginWithCode($args),
+                'user.request_booking_access' => $this->requestBookingAccess($args),
+                'user.confirm_booking_access' => $this->confirmBookingAccess($args),
+                'user.join_waitlist' => $this->joinWaitlist($actor, $args),
+                'user.leave_waitlist' => $this->leaveWaitlist($actor, $args),
+                'user.list_waitlist' => $this->listWaitlist($actor),
                 default => ToolResult::failure(sprintf('Unknown user tool: %s', $name)),
             };
         } catch (\InvalidArgumentException $e) {
@@ -530,20 +624,79 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success(sprintf('Usunięto dziecko %s.', $name));
     }
 
+    /** Default look-ahead when neither `week` nor `from`/`to` is given. */
+    private const int CATALOG_HORIZON_DAYS = 90;
+
+    /**
+     * @throws \InvalidArgumentException on a malformed week/from/to date — caught in {@see call()}
+     */
     private function listUpcomingLessons(ToolArguments $args): ToolResult
     {
-        $week = $args->string('week') ?? new \DateTimeImmutable('today')->format('Y-m-d');
         $query = $args->string('query');
         $age = $args->int('age');
-        $limit = $args->int('limit', 20) ?? 20;
+        $limit = max(1, min($args->int('limit', 20) ?? 20, 100));
 
-        $lessons = $this->lessonRepository->findByFilters($query, $age, $week, $limit);
+        [$from, $to, $label] = $this->catalogWindow($args);
+
+        $lessons = $this->lessonRepository->findPublicCatalog($query, $age, $from, $to, $limit);
         $items = array_map($this->presenter->lesson(...), $lessons);
 
-        return ToolResult::success(sprintf('Znaleziono %d zajęć (tydzień od %s).', count($items), $week), [
-            'week' => $week,
+        return ToolResult::success(sprintf('Znaleziono %d zajęć (%s).', count($items), $label), [
+            'from' => $from->format(\DateTimeInterface::ATOM),
+            'to' => $to->format(\DateTimeInterface::ATOM),
             'lessons' => $items,
         ]);
+    }
+
+    /**
+     * Resolve the catalog date window: an explicit `week` (its 7 days), an
+     * explicit `from`/`to` range, or "from now, ~90 days ahead" by default.
+     * The span is clamped to at most 366 days.
+     *
+     * @return array{0: \DateTimeImmutable, 1: \DateTimeImmutable, 2: string}
+     *
+     * @throws \InvalidArgumentException on an unparseable date — caught in {@see call()}
+     */
+    private function catalogWindow(ToolArguments $args): array
+    {
+        if ($args->has('week')) {
+            $weekStart = $this->parseDate($args->requireString('week'))->setTime(0, 0);
+            $weekEnd = $weekStart->modify('+7 days 23:59:59');
+
+            return [$weekStart, $weekEnd, sprintf('tydzień od %s', $weekStart->format('Y-m-d'))];
+        }
+
+        $now = Clock::get()->now();
+        $from = $args->has('from') ? $this->parseDate($args->requireString('from')) : $now;
+        $to = $args->has('to')
+            ? $this->parseDate($args->requireString('to'))
+            : $from->modify(sprintf('+%d days', self::CATALOG_HORIZON_DAYS));
+
+        if ($to <= $from) {
+            $to = $from->modify(sprintf('+%d days', self::CATALOG_HORIZON_DAYS));
+        }
+        $maxTo = $from->modify('+366 days');
+        if ($to > $maxTo) {
+            $to = $maxTo;
+        }
+
+        $label = $args->has('from') || $args->has('to')
+            ? sprintf('%s – %s', $from->format('Y-m-d'), $to->format('Y-m-d'))
+            : sprintf('od dziś, %d dni', self::CATALOG_HORIZON_DAYS);
+
+        return [$from, $to, $label];
+    }
+
+    /**
+     * @throws \InvalidArgumentException on an unparseable date — caught in {@see call()}
+     */
+    private function parseDate(string $value): \DateTimeImmutable
+    {
+        try {
+            return new \DateTimeImmutable($value);
+        } catch (\Throwable $e) {
+            throw new \InvalidArgumentException(sprintf('Invalid date "%s": %s', $value, $e->getMessage()), 0, $e);
+        }
     }
 
     private function getLesson(ToolArguments $args): ToolResult
@@ -552,7 +705,11 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         if ($lesson === null) {
             return ToolResult::failure('Lesson not found');
         }
-        $data = $this->presenter->lesson($lesson);
+        $data = [
+            ...$this->presenter->lesson($lesson),
+            // null = inherit the global `waitlist` feature flag
+            'waitlist_enabled' => $lesson->getWaitlistEnabled(),
+        ];
 
         return ToolResult::success(
             sprintf(
@@ -972,6 +1129,220 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * Step 1 of guest reservation lookup: resolve the payment code to the
+     * owning account and email that address a login code. Reveals nothing about
+     * the booking beyond a masked hint of which address was used.
+     */
+    private function requestBookingAccess(ToolArguments $args): ToolResult
+    {
+        $user = $this->resolvePaymentCodeUser($args->requireString('payment_code'));
+        if ($user === null) {
+            return ToolResult::failure(
+                'No reservation found for this payment code.',
+                'Nie znalazłem rezerwacji dla tego kodu. Sprawdź kod z potwierdzenia i spróbuj ponownie.',
+            );
+        }
+
+        $email = $user->getEmail();
+        $limit = $this->authEmailRateLimiter->create($email)->consume(1);
+        if (!$limit->isAccepted()) {
+            $retryAfter = $limit->getRetryAfter()->getTimestamp() - time();
+
+            return ToolResult::failure(
+                sprintf('Too many code requests. Try again in %d seconds.', $retryAfter),
+                'Zbyt wiele prób. Spróbuj ponownie za chwilę.',
+            );
+        }
+
+        $this->issueVerificationCode($email);
+
+        return ToolResult::success(
+            sprintf(
+                'Wysłałem 6-cyfrowy kod na adres e-mail powiązany z rezerwacją (%s). '
+                . 'Poproś rozmówcę o odczytanie kodu, a następnie wywołaj user.confirm_booking_access.',
+                $this->maskEmail($email),
+            ),
+            [
+                'email_hint' => $this->maskEmail($email),
+                'code_sent' => true,
+            ],
+        );
+    }
+
+    /**
+     * Step 2: verify the emailed code and return the reservation plus a chat
+     * token the agent can reuse on follow-up calls.
+     */
+    private function confirmBookingAccess(ToolArguments $args): ToolResult
+    {
+        $paymentCode = $args->requireString('payment_code');
+        $code = $args->requireString('code');
+
+        $payment = $this->paymentCodeRepository->findOneByCode(strtoupper(trim($paymentCode)))?->getPayment();
+        $user = $payment?->getUser();
+        if ($payment === null || $user === null) {
+            return ToolResult::failure(
+                'No reservation found for this payment code.',
+                'Nie znalazłem rezerwacji dla tego kodu.',
+            );
+        }
+
+        $storedCode = $this->readVerificationCode($user->getEmail());
+        if ($storedCode === null || !hash_equals($storedCode, trim($code))) {
+            return ToolResult::failure(
+                'Invalid or expired code.',
+                'Nieprawidłowy lub wygasły kod. Poproś o nowy przez user.request_booking_access.',
+            );
+        }
+
+        $this->forgetVerificationCode($user->getEmail());
+        if ($user->getConfirmedAt() === null) {
+            $user->setConfirmedAt(Clock::get()->now());
+        }
+        $user->setLastLoginAt(Clock::get()->now());
+        $this->entityManager->flush();
+
+        $bookings = array_map($this->presenter->booking(...), $payment->getBookings()->toArray());
+
+        return ToolResult::success(sprintf('Potwierdzono tożsamość. Rezerwacje: %d.', count($bookings)), [
+            'chat_token' => $this->tokenManager->mint($user),
+            'payment' => $this->presenter->paymentInstructions($payment),
+            'bookings' => $bookings,
+        ]);
+    }
+
+    private function resolvePaymentCodeUser(string $paymentCode): ?User
+    {
+        return $this->paymentCodeRepository
+            ->findOneByCode(strtoupper(trim($paymentCode)))
+            ?->getPayment()
+            ->getUser();
+    }
+
+    private function maskEmail(string $email): string
+    {
+        $at = strpos($email, '@');
+        if ($at === false || $at === 0) {
+            return '***';
+        }
+
+        $local = substr($email, 0, 1) . '***';
+        $domain = substr($email, $at + 1);
+        $labels = explode('.', $domain);
+        $tld = array_pop($labels);
+        $maskedDomain = implode('.', array_map(static fn(string $l): string => ($l[0] ?? '') . '***', $labels));
+
+        return $maskedDomain === '' ? $local . '@***.' . $tld : $local . '@' . $maskedDomain . '.' . $tld;
+    }
+
+    /**
+     * @throws \InvalidArgumentException on a malformed lesson_id — caught in {@see call()}
+     */
+    private function joinWaitlist(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $user = $actor->requireUser();
+
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        if (!$lesson instanceof Lesson) {
+            return ToolResult::failure('Lesson not found');
+        }
+        if (!$this->waitlistAvailableFor($lesson)) {
+            return ToolResult::failure(
+                'Waitlist is not available for this lesson.',
+                'Lista rezerwowa nie jest dostępna dla tych zajęć.',
+            );
+        }
+        if ($lesson->getAvailableSpots() > 0) {
+            return ToolResult::failure(
+                'This lesson still has free spots — book it directly with user.create_booking.',
+                'Na te zajęcia są jeszcze wolne miejsca — zarezerwuj je bezpośrednio (user.create_booking).',
+            );
+        }
+
+        $existing = $this->waitlistRepository->findActiveForUserAndLesson($user, $lesson);
+        if ($existing !== null) {
+            return ToolResult::success(
+                'Jesteś już na liście rezerwowej dla tych zajęć.',
+                $this->waitlistRow($existing),
+            );
+        }
+
+        $entry = new WaitlistEntry($lesson, $user, $user->getEmail(), $user->getName());
+        $this->entityManager->persist($entry);
+        $this->entityManager->flush();
+
+        $position = count($this->waitlistRepository->findActiveForLesson($lesson));
+
+        return ToolResult::success(
+            sprintf(
+                'Dodano do listy rezerwowej (pozycja %d). Powiadomimy Cię e-mailem, gdy zwolni się miejsce.',
+                $position,
+            ),
+            [
+                ...$this->waitlistRow($entry),
+                'position' => $position,
+            ],
+        );
+    }
+
+    /**
+     * @throws \InvalidArgumentException on a malformed lesson_id — caught in {@see call()}
+     */
+    private function leaveWaitlist(ChatActor $actor, ToolArguments $args): ToolResult
+    {
+        $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
+        if (!$lesson instanceof Lesson) {
+            return ToolResult::failure('Lesson not found');
+        }
+
+        $entry = $this->waitlistRepository->findActiveForUserAndLesson($actor->requireUser(), $lesson);
+        if ($entry === null) {
+            return ToolResult::failure(
+                'Not on the waitlist for this lesson.',
+                'Nie jesteś na liście rezerwowej dla tych zajęć.',
+            );
+        }
+
+        $entry->cancel(Clock::get()->now());
+        $this->entityManager->flush();
+
+        return ToolResult::success('Usunięto z listy rezerwowej.');
+    }
+
+    private function listWaitlist(ChatActor $actor): ToolResult
+    {
+        $entries = array_map(
+            $this->waitlistRow(...),
+            $this->waitlistRepository->findActiveForUser($actor->requireUser()),
+        );
+
+        return ToolResult::success(sprintf('Listy rezerwowe: %d.', count($entries)), [
+            'waitlist' => $entries,
+        ]);
+    }
+
+    private function waitlistAvailableFor(Lesson $lesson): bool
+    {
+        return $this->featureManager->isEnabled('waitlist') && $lesson->isWaitlistEnabled(true);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function waitlistRow(WaitlistEntry $entry): array
+    {
+        $lesson = $entry->getLesson();
+
+        return [
+            'lesson_id' => (string) $lesson->getId(),
+            'lesson_title' => $lesson->getMetadata()->title,
+            'schedule' => $lesson->schedule->format(\DateTimeInterface::ATOM),
+            'status' => $entry->getStatus(),
+            'offer_expires_at' => $entry->getOfferExpiresAt()?->format(\DateTimeInterface::ATOM),
+        ];
+    }
+
     private function issueVerificationCode(string $email): void
     {
         $code = $this->generateVerificationCode();
@@ -981,6 +1352,30 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         $this->cache->save($item);
 
         $this->bus->dispatch(new SendVerificationCode($email, $code));
+    }
+
+    /** Cache keys are hashed, so `Psr\Cache\InvalidArgumentException` is unreachable — treat as a miss. */
+    private function readVerificationCode(string $email): ?string
+    {
+        try {
+            $item = $this->cache->getItem($this->verificationCodeCacheKey($email));
+        } catch (\Psr\Cache\InvalidArgumentException) {
+            return null;
+        }
+        /** @var mixed $stored */
+        $stored = $item->get();
+
+        return $item->isHit() && is_string($stored) ? $stored : null;
+    }
+
+    private function forgetVerificationCode(string $email): void
+    {
+        try {
+            $this->cache->deleteItem($this->verificationCodeCacheKey($email));
+        } catch (\Psr\Cache\InvalidArgumentException) {
+            // Cache keys are hashed, so this is unreachable; nothing to clean up.
+            return;
+        }
     }
 
     private function verificationCodeCacheKey(string $email): string

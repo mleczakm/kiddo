@@ -33,6 +33,21 @@ interface LessonRepositoryInterface extends RepositoryInterface
         bool $orderByPopularity = false,
     ): array;
 
+    /**
+     * Public workshop catalog over an explicit [$from, $to] schedule window
+     * (as opposed to {@see findByFilters()}'s fixed 7-day week). Active +
+     * visible lessons only, optional fuzzy title / age filters, schedule ASC.
+     *
+     * @return list<Lesson>
+     */
+    public function findPublicCatalog(
+        ?string $query,
+        ?int $age,
+        \DateTimeImmutable $from,
+        \DateTimeImmutable $to,
+        ?int $limit = null,
+    ): array;
+
     /** @return array<int, Lesson> */
     public function findUpcoming(\DateTimeImmutable $since, int $limit): array;
 
