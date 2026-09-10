@@ -11,6 +11,12 @@ form:
     login: Log in
     name: Name
     newsletter: "I want to receive information about new workshops and offers (Newsletter)"
+    accept_terms_prefix: "I accept the"
+    app_terms: "Application Terms"
+    accept_terms_connector: "and confirm that I have read the"
+    privacy: "Privacy Policy"
+    accept_terms_text: "I accept the Application Terms and confirm that I have read the Privacy Policy."
+    accept_terms_required: "Acceptance of the Application Terms and Privacy Policy is required."
     success:
       title: Registration successful!
       message: Thank you for registering. We've sent a login link to your email address.

@@ -14,6 +14,12 @@ form:
     login: "Zaloguj się"
     name: "Imię"
     newsletter: "Chcę otrzymywać informacje o nowych warsztatach i ofertach (Newsletter)"
+    accept_terms_prefix: "Akceptuję"
+    app_terms: "Regulamin aplikacji"
+    accept_terms_connector: "i potwierdzam zapoznanie się z"
+    privacy: "Polityką prywatności"
+    accept_terms_text: "Akceptuję Regulamin aplikacji i potwierdzam zapoznanie się z Polityką prywatności."
+    accept_terms_required: "Akceptacja Regulaminu aplikacji i Polityki prywatności jest wymagana."
     success:
       title: "Rejestracja zakończona pomyślnie!"
       message: "Dziękujemy za rejestrację. Na podany adres e-mail wysłaliśmy link do logowania."

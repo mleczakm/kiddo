@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Command\SendLoginNotification;
+use App\Application\Consent\RegistrationConsentManager;
 use App\Application\Newsletter\NewsletterSubscriptionManager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,6 +38,7 @@ class RegisterUser extends AbstractController
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $messageBus,
         private NewsletterSubscriptionManager $newsletterSubscriptionManager,
+        private RegistrationConsentManager $registrationConsentManager,
     ) {}
 
     /**
@@ -47,25 +49,32 @@ class RegisterUser extends AbstractController
     {
         $this->user = new User();
 
+        $builder = $this->createFormBuilder($this->user)->add('name', TextType::class, [
+            'label' => 'form.register.name',
+            'constraints' => [new Assert\NotBlank(), new Assert\Length(min: 2, max: 100)],
+        ])->add('email', EmailType::class, [
+            'constraints' => [new Assert\NotBlank(), new Assert\Email()],
+        ])->add('newsletterSubscribed', CheckboxType::class, [
+            'label' => 'form.register.newsletter',
+            'required' => false,
+            'mapped' => true,
+        ]);
+
+        if ($this->registrationConsentManager->isLegalAcceptanceRequired()) {
+            $builder->add('acceptTerms', CheckboxType::class, [
+                'label' => false,
+                'required' => true,
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\IsTrue(message: 'form.register.accept_terms_required'),
+                ],
+            ]);
+        }
+
         /** @var FormInterface<User> $form */
-        return $this
-            ->createFormBuilder($this->user)
-            ->add('name', TextType::class, [
-                'label' => 'form.register.name',
-                'constraints' => [new Assert\NotBlank(), new Assert\Length(min: 2, max: 100)],
-            ])
-            ->add('email', EmailType::class, [
-                'constraints' => [new Assert\NotBlank(), new Assert\Email()],
-            ])
-            ->add('newsletterSubscribed', CheckboxType::class, [
-                'label' => 'form.register.newsletter',
-                'required' => false,
-                'mapped' => true,
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'form.register.submit',
-            ])
-            ->getForm();
+        return $builder->add('submit', SubmitType::class, [
+            'label' => 'form.register.submit',
+        ])->getForm();
     }
 
     #[LiveAction]
@@ -83,6 +92,11 @@ class RegisterUser extends AbstractController
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+
+            $this->registrationConsentManager->recordLegalAcceptance($user);
+            if ($desiredNewsletter) {
+                $this->registrationConsentManager->recordMarketingAcceptance($user);
+            }
 
             $this->messageBus->dispatch(new SendLoginNotification($user->getEmail()));
 

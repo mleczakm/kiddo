@@ -1,2 +1,6 @@
 user:
   mail_uniqueness: "Ten adres e-mail jest już zajęty. Zaloguj się lub użyj innego adresu."
+
+form:
+  register:
+    accept_terms_required: "Akceptacja Regulaminu aplikacji i Polityki prywatności jest wymagana."
