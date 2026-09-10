@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http;
 
+use App\Application\Consent\MarketingConsentManager;
+use App\Application\Newsletter\InvalidNewsletterSubscription;
+use App\Application\Newsletter\NewsletterSubscriptionRequestParser;
+use App\Entity\ConsentSource;
+use App\Entity\User;
 use App\Infrastructure\Brevo\BrevoNewsletterService;
 use App\Infrastructure\Doctrine\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
@@ -12,8 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 final class NewsletterController extends AbstractController
@@ -22,52 +25,34 @@ final class NewsletterController extends AbstractController
         private readonly LoggerInterface $logger = new NullLogger(),
     ) {}
 
+    /** @throws \LogicException */
     #[Route('/api/newsletter/subscribe', name: 'newsletter_subscribe', methods: ['POST'])]
     public function subscribe(
         Request $request,
-        ValidatorInterface $validator,
+        NewsletterSubscriptionRequestParser $requestParser,
         UserRepository $userRepository,
         BrevoNewsletterService $brevoNewsletterService,
+        MarketingConsentManager $marketingConsentManager,
     ): JsonResponse {
-        $content = $request->getContent();
-        if ($content === '') {
+        try {
+            $input = $requestParser->parse($request);
+        } catch (InvalidNewsletterSubscription $exception) {
             return new JsonResponse([
-                'error' => 'newsletter.email_required',
+                'error' => $exception->getMessage(),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        /** @var array<string, mixed>|null $data */
-        $data = json_decode($content, true);
-        if (!is_array($data)) {
-            return new JsonResponse([
-                'error' => 'newsletter.email_required',
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        // Honeypot check - if the honeypot field is filled, silently succeed.
-        if (!empty($data['website'] ?? '')) {
+        if ($input->spam) {
             return new JsonResponse([
                 'success' => true,
             ], JsonResponse::HTTP_OK);
         }
 
-        $email = $data['email'] ?? null;
+        $email = $input->email;
 
-        if (!is_string($email)) {
-            return new JsonResponse([
-                'error' => 'newsletter.email_required',
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        $email = mb_strtolower(trim($email));
-
-        $violations = $validator->validate($email, [new Assert\NotBlank(), new Assert\Email()]);
-
-        if (count($violations) > 0) {
-            return new JsonResponse([
-                'error' => 'newsletter.email_invalid',
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
+        $authenticatedUser = $this->getUser();
+        $consentingUser =
+            $authenticatedUser instanceof User && $authenticatedUser->getEmail() === $email ? $authenticatedUser : null;
 
         // If the email already belongs to a registered user with an active newsletter
         // subscription in our DB, skip the DOI round-trip.
@@ -79,13 +64,21 @@ final class NewsletterController extends AbstractController
             'email' => $email,
         ]);
         if ($existingUser !== null && $existingUser->isNewsletterSubscribed()) {
+            if ($consentingUser !== null) {
+                $marketingConsentManager->grant($consentingUser, ConsentSource::NEWSLETTER_FORM);
+            }
+
             return new JsonResponse([
                 'message' => 'newsletter.already_subscribed',
             ], JsonResponse::HTTP_OK);
         }
 
         try {
-            $brevoNewsletterService->sendDoubleOptInConfirmation($email);
+            $brevoNewsletterService->sendDoubleOptInConfirmation($email, [
+                'CONSENT_VERSION' => MarketingConsentManager::VERSION,
+                'CONSENT_SOURCE' => ConsentSource::NEWSLETTER_FORM->value,
+                'CONSENT_TEXT_SHA256' => hash('sha256', $marketingConsentManager->text()),
+            ]);
         } catch (\RuntimeException|TransportExceptionInterface $exception) {
             $this->logger->error('Failed to send Brevo double opt-in confirmation', [
                 'email' => $email,
@@ -95,6 +88,10 @@ final class NewsletterController extends AbstractController
             return new JsonResponse([
                 'error' => 'newsletter.service_error',
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($consentingUser !== null) {
+            $marketingConsentManager->grant($consentingUser, ConsentSource::NEWSLETTER_FORM);
         }
 
         return new JsonResponse([

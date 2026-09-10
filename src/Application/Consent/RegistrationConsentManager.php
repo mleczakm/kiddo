@@ -60,25 +60,4 @@ final readonly class RegistrationConsentManager
             ]);
         }
     }
-
-    public function recordMarketingAcceptance(User $user): void
-    {
-        try {
-            if (!$this->consentRequirements->isEnabled()) {
-                return;
-            }
-
-            $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
-                new ConsentGrant(
-                    ConsentType::MARKETING_EMAIL,
-                    ConsentEvidence::statement($this->translator->trans('form.register.newsletter')),
-                ),
-            ]));
-        } catch (\Throwable $exception) {
-            $this->logger->error('Unable to record registration marketing consent.', [
-                'exception' => $exception,
-                'user_id' => $user->getId(),
-            ]);
-        }
-    }
 }

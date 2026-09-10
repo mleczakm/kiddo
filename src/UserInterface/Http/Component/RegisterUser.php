@@ -7,6 +7,7 @@ namespace App\UserInterface\Http\Component;
 use App\Application\Command\SendLoginNotification;
 use App\Application\Consent\RegistrationConsentManager;
 use App\Application\Newsletter\NewsletterSubscriptionManager;
+use App\Entity\ConsentSource;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,7 +56,7 @@ class RegisterUser extends AbstractController
         ])->add('email', EmailType::class, [
             'constraints' => [new Assert\NotBlank(), new Assert\Email()],
         ])->add('newsletterSubscribed', CheckboxType::class, [
-            'label' => 'form.register.newsletter',
+            'label' => 'newsletter.marketing_consent_text',
             'required' => false,
             'mapped' => true,
         ]);
@@ -95,17 +96,18 @@ class RegisterUser extends AbstractController
 
             $this->messageBus->dispatch(new SendLoginNotification($user->getEmail()));
 
-            $this->newsletterSubscriptionManager->applyTransition($user, false, $desiredNewsletter);
+            $this->newsletterSubscriptionManager->applyTransition(
+                $user,
+                false,
+                $desiredNewsletter,
+                ConsentSource::REGISTRATION,
+            );
             $this->entityManager->flush();
 
             // Consent audit rows are written last, through their own bus
             // transaction. RegistrationConsentManager contains any failure, so a
             // consent-store hiccup can neither roll back nor block the sign-up.
             $this->registrationConsentManager->recordLegalAcceptance($user);
-            if ($desiredNewsletter) {
-                $this->registrationConsentManager->recordMarketingAcceptance($user);
-            }
-
             $this->isSuccessful = true;
             $this->isSubmitted = true;
         } else {

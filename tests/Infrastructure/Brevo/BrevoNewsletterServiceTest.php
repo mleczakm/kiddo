@@ -184,7 +184,9 @@ final class BrevoNewsletterServiceTest extends TestCase
         });
 
         $service = $this->createService($httpClient);
-        $service->sendDoubleOptInConfirmation('guest@example.com');
+        $service->sendDoubleOptInConfirmation('guest@example.com', [
+            'CONSENT_VERSION' => '2026-09-10',
+        ]);
 
         static::assertSame('POST', $captured['method']);
         static::assertSame('https://api.brevo.com/v3/contacts/doubleOptinConfirmation', $captured['url']);
@@ -195,6 +197,12 @@ final class BrevoNewsletterServiceTest extends TestCase
         static::assertSame([self::LIST_ID], $payload['includeListIds']);
         static::assertSame(self::TEMPLATE_ID, $payload['templateId']);
         static::assertSame(self::REDIRECTION_URL, $payload['redirectionUrl']);
+        static::assertSame(
+            [
+                'CONSENT_VERSION' => '2026-09-10',
+            ],
+            $payload['attributes'],
+        );
     }
 
     public function testSendDoubleOptInConfirmationThrowsWhenUnconfigured(): void

@@ -23,9 +23,12 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-2">
-                    {{ form_widget(form.newsletterSubscribed, {'attr': {'class': 'h-4 w-4 rounded border-gray-300 text-workshop-red focus:ring-workshop-red'}}) }}
-                    {{ form_label(form.newsletterSubscribed, 'form.register.newsletter', {'label_attr': {'class': 'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'}}) }}
+                <div class="flex items-start space-x-2">
+                    {{ form_widget(form.newsletterSubscribed, {'attr': {'class': 'mt-0.5 h-4 w-4 rounded border-gray-300 text-workshop-red focus:ring-workshop-red'}}) }}
+                    <div class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {{ form_label(form.newsletterSubscribed) }}
+                        <a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a>.
+                    </div>
                     {{ form_errors(form.newsletterSubscribed) }}
                 </div>
 

@@ -121,6 +121,8 @@ profile:
 newsletter:
   subscribed: "Subscribed"
   not_subscribed: "Not subscribed"
+  marketing_consent_text: "I consent to receiving information about new Kiddo workshops, offers and updates by email. I may withdraw my consent at any time. Details:"
+  consent_required: "Accept the current marketing communication consent to continue."
   confirmed:
     title: "Subscription confirmed!"
     message: "Thank you for subscribing to our newsletter. You will receive information about new workshops and offers."

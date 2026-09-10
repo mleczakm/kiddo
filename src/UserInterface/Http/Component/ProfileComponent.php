@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Newsletter\NewsletterSubscriptionManager;
+use App\Entity\ConsentSource;
 use App\Entity\User;
 use App\UserInterface\Http\Component\Concern\ToastableComponent;
 use Doctrine\ORM\EntityManagerInterface;
@@ -115,6 +116,7 @@ class ProfileComponent extends AbstractController
             $user,
             $user->isNewsletterSubscribed(),
             $this->newsletterSubscribed,
+            ConsentSource::PROFILE,
         );
 
         $this->entityManager->flush();

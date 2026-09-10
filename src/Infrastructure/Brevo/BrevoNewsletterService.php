@@ -93,7 +93,8 @@ readonly class BrevoNewsletterService
     /**
      * Send Double Opt-In confirmation email (for homepage guests).
      */
-    public function sendDoubleOptInConfirmation(string $email): void
+    /** @param array<string, string> $attributes */
+    public function sendDoubleOptInConfirmation(string $email, array $attributes = []): void
     {
         if (!$this->isConfigured() || $this->doiTemplateId <= 0 || $this->doiRedirectionUrl === '') {
             throw new \RuntimeException(
@@ -101,17 +102,22 @@ readonly class BrevoNewsletterService
             );
         }
 
+        $data = [
+            'email' => $email,
+            'includeListIds' => [$this->newsletterListId],
+            'templateId' => $this->doiTemplateId,
+            'redirectionUrl' => $this->doiRedirectionUrl,
+        ];
+        if ($attributes !== []) {
+            $data['attributes'] = $attributes;
+        }
+
         $response = $this->httpClient->request('POST', 'https://api.brevo.com/v3/contacts/doubleOptinConfirmation', [
             'headers' => [
                 'api-key' => $this->apiKey,
                 'Content-Type' => 'application/json',
             ],
-            'json' => [
-                'email' => $email,
-                'includeListIds' => [$this->newsletterListId],
-                'templateId' => $this->doiTemplateId,
-                'redirectionUrl' => $this->doiRedirectionUrl,
-            ],
+            'json' => $data,
         ]);
 
         $this->assertSuccessful($response);

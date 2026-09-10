@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Component;
 
+use App\Entity\ConsentSource;
+use App\Entity\ConsentType;
 use App\Entity\User;
+use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use App\Tests\Assembler\UserAssembler;
 use App\UserInterface\Http\Component\ProfileComponent;
 use Doctrine\ORM\EntityManagerInterface;
@@ -132,6 +135,12 @@ class ProfileComponentTest extends WebTestCase
         $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
         static::assertTrue($updatedUser->isNewsletterSubscribed());
         static::assertNotNull($updatedUser->getNewsletterConsentDate());
+        /** @var UserConsentRepository $consentRepository */
+        $consentRepository = self::getContainer()->get(UserConsentRepository::class);
+        $consents = $consentRepository->findHistoryForUser($updatedUser);
+        static::assertCount(1, $consents);
+        static::assertSame(ConsentType::MARKETING_EMAIL, $consents[0]->getType());
+        static::assertSame(ConsentSource::PROFILE, $consents[0]->getSource());
     }
 
     public function testDisablingNewsletterClearsSubscription(): void

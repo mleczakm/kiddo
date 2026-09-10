@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\Newsletter;
 
+use App\Application\Consent\MarketingConsentManager;
 use App\Application\Newsletter\NewsletterSubscriptionManager;
 use App\Application\Service\ActivityLogger;
+use App\Entity\ConsentSource;
 use App\Entity\User;
 use App\Infrastructure\Brevo\BrevoNewsletterService;
 use PHPUnit\Framework\Attributes\Group;
@@ -34,9 +36,11 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $brevo = $this->createMock(BrevoNewsletterService::class);
         $brevo->expects(self::once())->method('addOrUpdateContact')->with('someone@example.com', 'Alice');
         $brevo->expects(self::never())->method('removeContactFromList');
+        $consents = $this->createMock(MarketingConsentManager::class);
+        $consents->expects(self::once())->method('grant')->with($user, ConsentSource::PROFILE);
 
-        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
-        $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: true);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $consents);
+        $manager->applyTransition($user, false, true, ConsentSource::PROFILE);
 
         static::assertTrue($user->isNewsletterSubscribed());
         static::assertNotNull($user->getNewsletterConsentDate());
@@ -51,9 +55,11 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $brevo = $this->createMock(BrevoNewsletterService::class);
         $brevo->expects(self::never())->method('addOrUpdateContact');
         $brevo->expects(self::once())->method('removeContactFromList')->with('gone@example.com');
+        $consents = $this->createMock(MarketingConsentManager::class);
+        $consents->expects(self::once())->method('revoke')->with($user, ConsentSource::PROFILE);
 
-        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
-        $manager->applyTransition($user, wasSubscribed: true, desiredSubscribed: false);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $consents);
+        $manager->applyTransition($user, true, false, ConsentSource::PROFILE);
 
         static::assertFalse($user->isNewsletterSubscribed());
         static::assertNull($user->getNewsletterConsentDate());
@@ -66,9 +72,12 @@ final class NewsletterSubscriptionManagerTest extends TestCase
         $brevo = $this->createMock(BrevoNewsletterService::class);
         $brevo->expects(self::never())->method('addOrUpdateContact');
         $brevo->expects(self::never())->method('removeContactFromList');
+        $consents = $this->createMock(MarketingConsentManager::class);
+        $consents->expects(self::never())->method('grant');
+        $consents->expects(self::never())->method('revoke');
 
-        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator());
-        $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: false);
+        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $consents);
+        $manager->applyTransition($user, false, false, ConsentSource::PROFILE);
 
         static::assertFalse($user->isNewsletterSubscribed());
     }
@@ -79,6 +88,8 @@ final class NewsletterSubscriptionManagerTest extends TestCase
 
         $brevo = $this->createMock(BrevoNewsletterService::class);
         $brevo->method('addOrUpdateContact')->willThrowException(new \RuntimeException('Brevo down'));
+        $consents = $this->createMock(MarketingConsentManager::class);
+        $consents->expects(self::once())->method('grant')->with($user, ConsentSource::REGISTRATION);
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger
@@ -89,8 +100,14 @@ final class NewsletterSubscriptionManagerTest extends TestCase
                 static::callback(static fn(array $context) => ($context['email'] ?? null) === 'boom@example.com'),
             );
 
-        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $logger);
-        $manager->applyTransition($user, wasSubscribed: false, desiredSubscribed: true);
+        $manager = new NewsletterSubscriptionManager(
+            $brevo,
+            $this->activityLogger(),
+            $this->urlGenerator(),
+            $consents,
+            $logger,
+        );
+        $manager->applyTransition($user, false, true, ConsentSource::REGISTRATION);
 
         static::assertTrue($user->isNewsletterSubscribed());
         static::assertNotNull($user->getNewsletterConsentDate());
@@ -104,6 +121,8 @@ final class NewsletterSubscriptionManagerTest extends TestCase
 
         $brevo = $this->createMock(BrevoNewsletterService::class);
         $brevo->method('removeContactFromList')->willThrowException(new \RuntimeException('Brevo down'));
+        $consents = $this->createMock(MarketingConsentManager::class);
+        $consents->expects(self::once())->method('revoke')->with($user, ConsentSource::PROFILE);
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger
@@ -111,8 +130,14 @@ final class NewsletterSubscriptionManagerTest extends TestCase
             ->method('warning')
             ->with(static::stringContains('Failed to remove contact'), static::anything());
 
-        $manager = new NewsletterSubscriptionManager($brevo, $this->activityLogger(), $this->urlGenerator(), $logger);
-        $manager->applyTransition($user, wasSubscribed: true, desiredSubscribed: false);
+        $manager = new NewsletterSubscriptionManager(
+            $brevo,
+            $this->activityLogger(),
+            $this->urlGenerator(),
+            $consents,
+            $logger,
+        );
+        $manager->applyTransition($user, true, false, ConsentSource::PROFILE);
 
         static::assertFalse($user->isNewsletterSubscribed());
         static::assertNull($user->getNewsletterConsentDate());

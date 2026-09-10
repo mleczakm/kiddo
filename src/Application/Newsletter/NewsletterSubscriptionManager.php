@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Newsletter;
 
+use App\Application\Consent\MarketingConsentManager;
 use App\Application\Service\ActivityLogger;
 use App\Entity\ActivityType;
+use App\Entity\ConsentSource;
 use App\Entity\User;
 use App\Infrastructure\Brevo\BrevoNewsletterService;
 use Psr\Log\LoggerInterface;
@@ -20,6 +22,7 @@ class NewsletterSubscriptionManager
         private readonly BrevoNewsletterService $brevoNewsletterService,
         private readonly ActivityLogger $activityLogger,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly MarketingConsentManager $marketingConsentManager,
         private readonly LoggerInterface $logger = new NullLogger(),
     ) {}
 
@@ -31,8 +34,12 @@ class NewsletterSubscriptionManager
      * downstream mirror. Failures are logged but never rethrown so the parent
      * flow (registration / profile edit) is not broken by a downstream outage.
      */
-    public function applyTransition(User $user, bool $wasSubscribed, bool $desiredSubscribed): void
-    {
+    public function applyTransition(
+        User $user,
+        bool $wasSubscribed,
+        bool $desiredSubscribed,
+        ConsentSource $source,
+    ): void {
         if ($wasSubscribed === $desiredSubscribed) {
             return;
         }
@@ -40,6 +47,7 @@ class NewsletterSubscriptionManager
         if ($desiredSubscribed) {
             $user->setNewsletterSubscribed(true);
             $user->setNewsletterConsentDate(Clock::get()->now());
+            $this->marketingConsentManager->grant($user, $source);
 
             try {
                 $this->brevoNewsletterService->addOrUpdateContact($user->getEmail(), $user->getName());
@@ -66,6 +74,7 @@ class NewsletterSubscriptionManager
 
         $user->setNewsletterSubscribed(false);
         $user->setNewsletterConsentDate(null);
+        $this->marketingConsentManager->revoke($user, $source);
 
         try {
             $this->brevoNewsletterService->removeContactFromList($user->getEmail());

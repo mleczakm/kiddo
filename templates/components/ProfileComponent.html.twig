@@ -79,10 +79,13 @@
                         <p class="text-sm text-panel-accent">{{ phoneError|trans }}</p>
                     {% endif %}
                 </div>
-                <label class="flex items-center gap-2 text-sm font-medium text-panel-ink">
+                <label class="flex items-start gap-2 text-sm font-medium text-panel-ink">
                     <input type="checkbox" data-model="newsletterSubscribed"
-                           class="h-4 w-4 rounded border-panel-line text-panel-accent focus:ring-panel-accent">
-                    {{ 'profile.newsletter'|trans }}
+                           class="mt-0.5 h-4 w-4 rounded border-panel-line text-panel-accent focus:ring-panel-accent">
+                    <span>
+                        {{ 'newsletter.marketing_consent_text'|trans }}
+                        <a href="{{ path('legal_privacy') }}" target="_blank" class="text-panel-accent underline">{{ 'cart.privacy'|trans }}</a>.
+                    </span>
                 </label>
                 <div class="flex gap-3 border-t border-panel-line pt-4">
                     <button type="submit"

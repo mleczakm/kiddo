@@ -167,14 +167,32 @@
                             <p class="text-lg text-muted-foreground mb-8">
                                 {{ 'homepage.newsletter.subtitle'|trans }}
                             </p>
-                            <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                                <input
-                                        type="email"
-                                        id="newsletter-email"
-                                        placeholder="{{ 'homepage.newsletter.email_placeholder'|trans }}"
-                                        class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-workshop-blue focus:border-transparent"
-                                        required
-                                >
+                            <form id="newsletter-form" class="flex max-w-md flex-col gap-4 mx-auto">
+                                <div class="flex flex-col gap-4 sm:flex-row">
+                                    <input
+                                            type="email"
+                                            id="newsletter-email"
+                                            placeholder="{{ 'homepage.newsletter.email_placeholder'|trans }}"
+                                            class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-workshop-blue focus:border-transparent"
+                                            required
+                                    >
+                                    <button
+                                            type="submit"
+                                            id="newsletter-submit"
+                                            class="bg-workshop-red hover:bg-workshop-red/90 text-white font-medium py-3 px-8 rounded-lg transition-colors whitespace-nowrap"
+                                    >
+                                        {{ 'homepage.newsletter.subscribe'|trans }}
+                                    </button>
+                                </div>
+                                {% if isFeatureEnabled('consents') %}
+                                    <label class="flex items-start gap-2 text-left text-xs text-muted-foreground">
+                                        <input type="checkbox" id="newsletter-consent" class="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-workshop-red focus:ring-workshop-red" required>
+                                        <span>
+                                            {{ 'newsletter.marketing_consent_text'|trans }}
+                                            <a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a>.
+                                        </span>
+                                    </label>
+                                {% endif %}
                                 <input
                                         type="text"
                                         name="website"
@@ -182,13 +200,6 @@
                                         tabindex="-1"
                                         autocomplete="off"
                                 >
-                                <button
-                                        type="submit"
-                                        id="newsletter-submit"
-                                        class="bg-workshop-red hover:bg-workshop-red/90 text-white font-medium py-3 px-8 rounded-lg transition-colors whitespace-nowrap"
-                                >
-                                    {{ 'homepage.newsletter.subscribe'|trans }}
-                                </button>
                             </form>
                             <div id="newsletter-message" class="mt-4 text-sm hidden"></div>
                         </div>
@@ -201,6 +212,7 @@
                     
                     const form = this;
                     const emailInput = document.getElementById('newsletter-email');
+                    const consentInput = document.getElementById('newsletter-consent');
                     const submitBtn = document.getElementById('newsletter-submit');
                     const messageDiv = document.getElementById('newsletter-message');
                     
@@ -216,6 +228,8 @@
                             },
                             body: JSON.stringify({
                                 email: emailInput.value,
+                                consent: consentInput ? consentInput.checked : true,
+                                consentVersion: '{{ constant('App\\Application\\Consent\\MarketingConsentManager::VERSION') }}',
                                 website: form.querySelector('input[name="website"]').value
                             })
                         });
@@ -228,6 +242,9 @@
                             messageDiv.textContent = '{{ 'homepage.newsletter.confirmation_sent'|trans }}';
                             messageDiv.classList.add('text-green-600');
                             emailInput.value = '';
+                            if (consentInput) {
+                                consentInput.checked = false;
+                            }
                         } else {
                             messageDiv.textContent = '{{ 'homepage.newsletter.error'|trans }}';
                             messageDiv.classList.add('text-red-600');

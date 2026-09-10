@@ -471,6 +471,8 @@ profile:
 newsletter:
   subscribed: "Zapisany"
   not_subscribed: "Nie zapisany"
+  marketing_consent_text: "Wyrażam zgodę na otrzymywanie drogą elektroniczną informacji o nowych warsztatach, ofertach i aktualnościach Kiddo. Zgodę mogę wycofać w każdej chwili. Szczegóły:"
+  consent_required: "Zaznacz zgodę na komunikację marketingową i zaakceptuj jej aktualną treść."
   confirmed:
     title: "Zapis potwierdzony!"
     message: "Dziękujemy za zapisanie się na nasz newsletter. Będziesz otrzymywać informacje o nowych warsztatach i ofertach."
