@@ -6,7 +6,7 @@ novaway_feature_flag:
       options:
         features:
           cart: true
-          platform_billing_widget: false
+          platform_billing_widget: true
           chat_assistant: true
           commerce_order_write: true
           consents: false
@@ -15,6 +15,8 @@ novaway_feature_flag:
           # until the content is reviewed; on in dev/test via the blocks below.
           help_center: false
           legal_documents: false
+          # Admin manual + quick booking form on the bookings screen / dashboard.
+          manual_bookings: true
           pricing_admin: false
           # Monthly-subscription ticket type + recurring billing. OFF on prod
           # until operational sign-off; on in dev/test via the blocks below.
@@ -33,13 +35,14 @@ when@dev:
         options:
           features:
             cart: true
-            platform_billing_widget: false
+            platform_billing_widget: true
             chat_assistant: true
             commerce_order_write: true
             consents: true
             dynamic_pricing: true
             help_center: true
             legal_documents: true
+            manual_bookings: true
             pricing_admin: false
             subscriptions: true
             waitlist: true
