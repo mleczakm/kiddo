@@ -74,4 +74,18 @@ final class AdminLegalDocumentsComponentTest extends WebTestCase
             }
         }
     }
+
+    public function testNotificationOptionIsPreparedButDisabledUntilItsRolloutStage(): void
+    {
+        $admin = new User('legal-ui-admin@example.test', 'Legal UI Admin');
+        $admin->setRoles(['ROLE_SETTINGS']);
+        $this->entityManager->persist($admin);
+        $this->entityManager->flush();
+        $this->client->loginUser($admin);
+
+        $html = (string) $this->createLiveComponent(name: 'AdminLegalDocuments', client: $this->client)->render();
+
+        static::assertStringContainsString('Powiadom użytkowników o zmianie', $html);
+        static::assertMatchesRegularExpression('/<input type="checkbox" disabled/', $html);
+    }
 }
