@@ -22,6 +22,16 @@
         </button>
     </div>
 
+    {% if this.isGuardianDeclarationRequired() %}
+        <label class="mt-3 flex items-start gap-2 text-xs text-panel-muted">
+            <input type="checkbox" data-model="guardianConfirmed" class="mt-0.5 h-4 w-4 shrink-0 rounded border-panel-line text-panel-accent focus:ring-panel-accent">
+            <span>
+                {{ 'profile.children.guardian_declaration_text'|trans }}
+                <a href="{{ path('legal_privacy') }}" target="_blank" class="text-panel-accent underline">{{ 'cart.privacy'|trans }}</a>.
+            </span>
+        </label>
+    {% endif %}
+
     <div class="mt-5">
         <p class="text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'profile.children.list'|trans({'default':'Your children'}) }}</p>
         {% if this.children is empty %}

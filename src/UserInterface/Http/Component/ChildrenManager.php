@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Consent\ChildConsentManager;
 use App\Entity\Child;
+use App\Entity\ConsentSource;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\ChildRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,14 +39,30 @@ class ChildrenManager extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $childBirthday = null; // Y-m-d (optional)
 
+    #[LiveProp(writable: true)]
+    public bool $guardianConfirmed = false;
+
     public function __construct(
         private readonly ChildRepository $childRepository,
         private readonly EntityManagerInterface $em,
+        private readonly ChildConsentManager $childConsentManager,
     ) {}
 
     public function mount(): void
     {
         $this->reload();
+    }
+
+    /** @throws \LogicException */
+    public function isGuardianDeclarationRequired(): bool
+    {
+        $user = $this->getUser();
+
+        return (
+            $user instanceof User
+            && $this->childConsentManager->isRequired()
+            && !$this->childConsentManager->hasDeclaration($user)
+        );
     }
 
     private function reload(): void
@@ -67,6 +85,11 @@ class ChildrenManager extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
+        if ($this->isGuardianDeclarationRequired() && !$this->guardianConfirmed) {
+            $this->addFlash('error', 'profile.children.guardian_required');
+            return;
+        }
+
         $birthday = null;
         if ($this->childBirthday) {
             $parsedBirthday = \DateTimeImmutable::createFromFormat('Y-m-d', $this->childBirthday);
@@ -81,8 +104,11 @@ class ChildrenManager extends AbstractController
         $this->em->persist($child);
         $this->em->flush();
 
+        $this->childConsentManager->recordDeclaration($user, $child, ConsentSource::CHILD_FORM);
+
         $this->childName = '';
         $this->childBirthday = null;
+        $this->guardianConfirmed = false;
 
         $this->reload();
         $this->addFlash('success', 'Child added.');

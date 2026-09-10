@@ -445,6 +445,8 @@ profile:
         other {# lata}
       }
     delete: 'Usuń'
+    guardian_declaration_text: 'Oświadczam, że jestem rodzicem lub opiekunem prawnym dziecka i mam podstawę do podania jego danych. Zapoznałem/am się z informacją o przetwarzaniu danych dziecka w'
+    guardian_required: 'Potwierdź oświadczenie opiekuna, aby dodać dziecko.'
   title: 'Mój profil'
   personal_data:
     title: 'Dane osobowe'
@@ -724,7 +726,38 @@ panel:
     title: "Zgody i dokumenty"
     lead: "Regulaminy i dokumenty zaakceptowane przy zapisie."
     general_regulations: "Regulamin zajęć"
+    app_terms: "Regulamin aplikacji"
+    classes_terms: "Regulamin zajęć"
+    privacy: "Polityka prywatności"
     download: "Pobierz"
+  consents:
+    title: "Historia zgód"
+    lead: "Zgody i akceptacje zapisane na Twoim koncie."
+    withdraw_hint: "Zgodę na newsletter możesz wycofać w sekcji „Dane osobowe” (przełącznik newslettera)."
+    status:
+      active: "Obowiązuje"
+      withdrawn: "Wycofano {date}"
+    type:
+      app_terms: "Regulamin aplikacji"
+      privacy: "Polityka prywatności"
+      classes_terms: "Regulamin zajęć"
+      withdrawal_info_ack: "Informacja o braku prawa odstąpienia"
+      marketing_email: "Zgoda marketingowa (e-mail)"
+      ai_usage: "Korzystanie z asystenta AI"
+      child_data_guardian: "Oświadczenie opiekuna prawnego"
+      content_license: "Licencja na treści"
+      account_deletion: "Żądanie usunięcia konta"
+    source:
+      registration: "Rejestracja"
+      checkout: "Koszyk"
+      booking_modal: "Rezerwacja"
+      profile: "Profil"
+      newsletter_form: "Formularz newslettera"
+      chat_onboarding: "Asystent AI"
+      child_form: "Dodanie dziecka"
+      admin_offline: "Rejestracja osobista"
+      terms_reaccept: "Ponowna akceptacja"
+      account_settings: "Ustawienia konta"
   buy:
     lead: "Kup wejście na nadchodzące zajęcia — jednorazowe, karnet lub abonament."
     participant: "Uczestnik"

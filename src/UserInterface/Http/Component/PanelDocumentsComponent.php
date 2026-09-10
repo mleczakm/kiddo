@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Entity\LegalDocumentType;
 use App\Entity\User;
+use App\Entity\UserConsent;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
+use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,20 +16,21 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 /**
- * Read-only "accepted terms & documents" list for the panel's Moje dane page -
- * the kiddo take on ActiveNow's "Zaakceptowane zgody i dokumenty". Lists the
- * terms-of-use PDF of every workshop the user has booked (deduplicated), plus
- * the club's general training regulations.
+ * Read-only "accepted terms & consents" panel for the Moje dane page - the kiddo
+ * take on ActiveNow's "Zaakceptowane zgody i dokumenty". Lists the current legal
+ * documents plus the terms-of-use file of every workshop the user has booked,
+ * and - once the consent register carries rows - the user's own acceptance
+ * history (what, which version, when, from where, still valid or withdrawn).
+ * Marketing consent is withdrawn from the profile newsletter toggle, not here.
  */
 #[AsLiveComponent]
 final class PanelDocumentsComponent extends AbstractController
 {
     use DefaultActionTrait;
 
-    private const GENERAL_REGULATIONS_PATH = '/docs/Regulamin.pdf';
-
     public function __construct(
         private readonly BookingRepository $bookingRepository,
+        private readonly UserConsentRepository $consentRepository,
         private readonly Security $security,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
@@ -40,11 +44,23 @@ final class PanelDocumentsComponent extends AbstractController
      */
     public function getDocuments(): array
     {
-        $documents = [[
-            'title' => 'panel.documents.general_regulations',
-            'context' => null,
-            'url' => self::GENERAL_REGULATIONS_PATH,
-        ]];
+        $documents = [
+            [
+                'title' => 'panel.documents.app_terms',
+                'context' => null,
+                'url' => $this->urlGenerator->generate('legal_app_terms'),
+            ],
+            [
+                'title' => 'panel.documents.classes_terms',
+                'context' => null,
+                'url' => $this->urlGenerator->generate('legal_classes_terms'),
+            ],
+            [
+                'title' => 'panel.documents.privacy',
+                'context' => null,
+                'url' => $this->urlGenerator->generate('legal_privacy'),
+            ],
+        ];
 
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -77,5 +93,48 @@ final class PanelDocumentsComponent extends AbstractController
         }
 
         return $documents;
+    }
+
+    /**
+     * @return list<array{
+     *     type: string,
+     *     reference: ?string,
+     *     grantedAt: \DateTimeImmutable,
+     *     revokedAt: ?\DateTimeImmutable,
+     *     source: string,
+     *     active: bool,
+     * }>
+     * @throws \UnexpectedValueException
+     */
+    public function getConsentHistory(): array
+    {
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            return [];
+        }
+
+        return array_map(fn(UserConsent $consent): array => [
+            'type' => 'panel.consents.type.' . $consent->getType()->value,
+            'reference' => $this->consentReference($consent),
+            'grantedAt' => $consent->getGrantedAt(),
+            'revokedAt' => $consent->getRevokedAt(),
+            'source' => 'panel.consents.source.' . $consent->getSource()->value,
+            'active' => $consent->isActive(),
+        ], $this->consentRepository->findHistoryForUser($user));
+    }
+
+    private function consentReference(UserConsent $consent): ?string
+    {
+        $version = $consent->getDocumentVersion();
+        if ($version !== null) {
+            return sprintf('%s v%d', $consent->getDocumentType()?->label() ?? '', $version->getVersion());
+        }
+
+        $documentRef = $consent->getDocumentRef();
+        if ($documentRef !== null && str_starts_with($documentRef, 'workshop_file:')) {
+            return LegalDocumentType::CLASSES_TERMS_GENERAL->label();
+        }
+
+        return null;
     }
 }

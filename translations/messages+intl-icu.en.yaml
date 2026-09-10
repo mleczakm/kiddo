@@ -118,6 +118,8 @@ booking:
 profile:
   children:
     years: 'years'
+    guardian_declaration_text: 'I declare that I am the child''s parent or legal guardian and am entitled to provide their data. I have read the information on processing the child''s data in the'
+    guardian_required: 'Confirm the guardian declaration to add a child.'
   phone: Phone number
   phone.empty: Not provided
   phone.placeholder: e.g. 500 600 700

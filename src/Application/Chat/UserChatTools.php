@@ -6,6 +6,7 @@ namespace App\Application\Chat;
 
 use App\Application\Command\AddBooking;
 use App\Application\Command\Notification\SendVerificationCode;
+use App\Application\Consent\ChildConsentManager;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
@@ -16,6 +17,7 @@ use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Service\Waitlist\WaitlistJoinOutcome;
 use App\Application\Service\Waitlist\WaitlistService;
 use App\Entity\Child;
+use App\Entity\ConsentSource;
 use App\Entity\Lesson;
 use App\Entity\User;
 use App\Entity\WaitlistEntry;
@@ -52,6 +54,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         private CacheItemPoolInterface $cache,
         private PaymentCodeGenerator $paymentCodeGenerator,
         private WaitlistService $waitlistService,
+        private ChildConsentManager $childConsentManager,
     ) {}
 
     #[\Override]
@@ -600,9 +603,18 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         if ($args->has('birthday')) {
             $birthday = new \DateTimeImmutable($args->requireString('birthday'));
         }
-        $child = new Child($actor->requireUser(), $name, $birthday);
+
+        $user = $actor->requireUser();
+        if ($this->childConsentManager->isRequired() && !$this->childConsentManager->hasDeclaration($user)) {
+            return ToolResult::failure('Dodanie dziecka wymaga potwierdzenia oświadczenia opiekuna. '
+            . 'Zrób to w panelu, w zakładce „Moje dane”.');
+        }
+
+        $child = new Child($user, $name, $birthday);
         $this->entityManager->persist($child);
         $this->entityManager->flush();
+
+        $this->childConsentManager->recordDeclaration($user, $child, ConsentSource::CHILD_FORM);
 
         return ToolResult::success(sprintf('Dodano dziecko %s.', $name), [
             'child_id' => (string) $child->getId(),
