@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
-use App\Application\Command\RecordConsents;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\LegalDocumentType;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class RegistrationConsentManager
 {
     public function __construct(
-        private MessageBusInterface $commandBus,
+        private ConsentDispatcher $dispatcher,
         private ConsentRequirements $consentRequirements,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
@@ -42,22 +40,26 @@ final readonly class RegistrationConsentManager
         }
 
         try {
-            $acceptanceText = $this->translator->trans('form.register.accept_terms_text');
-            $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
+            $text = $this->translator->trans('form.register.accept_terms_text');
+            $grants = [
                 new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
                     LegalDocumentType::APP_TERMS,
-                    $acceptanceText,
+                    $text,
                 )),
                 new ConsentGrant(ConsentType::PRIVACY, ConsentEvidence::currentDocument(
                     LegalDocumentType::PRIVACY,
-                    $acceptanceText,
+                    $text,
                 )),
-            ]));
-        } catch (\Throwable $exception) {
-            $this->logger->error('Unable to record registration legal consent.', [
+            ];
+        } catch (\InvalidArgumentException $exception) {
+            $this->logger->error('Unable to build registration consent evidence.', [
                 'exception' => $exception,
                 'user_id' => $user->getId(),
             ]);
+
+            return;
         }
+
+        $this->dispatcher->record($user, ConsentSource::REGISTRATION, ...$grants);
     }
 }

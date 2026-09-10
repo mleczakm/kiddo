@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
-use App\Application\Command\RecordConsents;
 use App\Entity\Booking;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
@@ -12,15 +11,12 @@ use App\Entity\LegalDocumentType;
 use App\Entity\Lesson;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class BookingConsentManager
 {
     public function __construct(
-        private MessageBusInterface $commandBus,
+        private ConsentDispatcher $dispatcher,
         private ConsentRequirements $consentRequirements,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
@@ -75,18 +71,18 @@ final readonly class BookingConsentManager
                 $this->translator->trans('booking.withdrawal_ack'),
                 $context,
             ));
-
-            $this->commandBus->dispatch(new Envelope(new RecordConsents(
-                $user,
-                ConsentSource::BOOKING_MODAL,
-                $grants,
-            ))->with(new DispatchAfterCurrentBusStamp()));
         } catch (\Throwable $exception) {
-            $this->logger->error('Unable to prepare booking consent evidence.', [
+            $this->logger->error('Unable to build booking consent evidence.', [
                 'exception' => $exception,
                 'user_id' => $user->getId(),
                 'booking_id' => (string) $booking->getId(),
             ]);
+
+            return;
         }
+
+        // Deferred: recordAfterBooking runs inside PlaceSingleReservation's own
+        // handler, so the consent write gets its own transaction.
+        $this->dispatcher->recordDeferred($user, ConsentSource::BOOKING_MODAL, ...$grants);
     }
 }

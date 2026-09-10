@@ -45,4 +45,14 @@ enum LegalDocumentType: string
             self::CLASSES_TERMS_GENERAL => 'legal_classes_terms',
         };
     }
+
+    /** The consent type recorded when a user accepts this document. */
+    public function consentType(): ConsentType
+    {
+        return match ($this) {
+            self::APP_TERMS => ConsentType::APP_TERMS,
+            self::PRIVACY => ConsentType::PRIVACY,
+            self::CLASSES_TERMS_GENERAL => ConsentType::CLASSES_TERMS,
+        };
+    }
 }

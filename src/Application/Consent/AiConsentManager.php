@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
-use App\Application\Command\RecordConsents;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class AiConsentManager
@@ -18,7 +16,7 @@ final readonly class AiConsentManager
     public const string VERSION = '2026-09-10';
 
     public function __construct(
-        private MessageBusInterface $commandBus,
+        private ConsentDispatcher $dispatcher,
         private ConsentRequirements $consentRequirements,
         private UserConsentRepository $consentRepository,
         private TranslatorInterface $translator,
@@ -45,10 +43,6 @@ final readonly class AiConsentManager
         return $consent?->getContext() === 'ai_consent:' . self::VERSION;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
-     */
     public function allowsSession(?User $user, string $requestBody): bool
     {
         if (!$this->isRequired() || $user !== null && $this->hasCurrent($user)) {
@@ -72,18 +66,20 @@ final readonly class AiConsentManager
         return true;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
-     */
     public function grant(User $user): void
     {
-        $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::CHAT_ONBOARDING, [
-            new ConsentGrant(ConsentType::AI_USAGE, ConsentEvidence::statement(
+        try {
+            $grant = new ConsentGrant(ConsentType::AI_USAGE, ConsentEvidence::statement(
                 $this->text(),
                 'ai_consent:' . self::VERSION,
-            )),
-        ]));
+            ));
+        } catch (\InvalidArgumentException $exception) {
+            $this->logger->error('Unable to build AI consent evidence.', ['exception' => $exception]);
+
+            return;
+        }
+
+        $this->dispatcher->record($user, ConsentSource::CHAT_ONBOARDING, $grant);
     }
 
     private function text(): string

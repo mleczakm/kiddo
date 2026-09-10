@@ -26,7 +26,6 @@ final class ChatSignedUrlAction extends AbstractController
 
     /**
      * @throws \InvalidArgumentException
-     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     #[Route('/api/chat/signed-url', name: 'api_chat_signed_url', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse

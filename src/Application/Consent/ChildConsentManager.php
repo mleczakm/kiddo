@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
-use App\Application\Command\RecordConsents;
 use App\Entity\Child;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -23,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final readonly class ChildConsentManager
 {
     public function __construct(
-        private MessageBusInterface $commandBus,
+        private ConsentDispatcher $dispatcher,
         private ConsentRequirements $consentRequirements,
         private UserConsentRepository $consentRepository,
         private TranslatorInterface $translator,
@@ -55,18 +53,19 @@ final readonly class ChildConsentManager
         }
 
         try {
-            $this->commandBus->dispatch(new RecordConsents($user, $source, [
-                new ConsentGrant(ConsentType::CHILD_DATA_GUARDIAN, ConsentEvidence::statement(
-                    $this->translator->trans('profile.children.guardian_declaration_text'),
-                    sprintf('child:%s', $child->getId()),
-                )),
-            ]));
-        } catch (\Throwable $exception) {
-            $this->logger->error('Unable to record child guardian declaration.', [
+            $grant = new ConsentGrant(ConsentType::CHILD_DATA_GUARDIAN, ConsentEvidence::statement(
+                $this->translator->trans('profile.children.guardian_declaration_text'),
+                sprintf('child:%s', $child->getId()),
+            ));
+        } catch (\InvalidArgumentException $exception) {
+            $this->logger->error('Unable to build child guardian declaration evidence.', [
                 'exception' => $exception,
-                'user_id' => $user->getId(),
                 'child_id' => (string) $child->getId(),
             ]);
+
+            return;
         }
+
+        $this->dispatcher->record($user, $source, $grant);
     }
 }

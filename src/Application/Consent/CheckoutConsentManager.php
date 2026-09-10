@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
-use App\Application\Command\RecordConsents;
 use App\Domain\Commerce\Order\BuyerType;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\ConsentSource;
@@ -12,13 +11,12 @@ use App\Entity\ConsentType;
 use App\Entity\LegalDocumentType;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class CheckoutConsentManager
 {
     public function __construct(
-        private MessageBusInterface $commandBus,
+        private ConsentDispatcher $dispatcher,
         private ConsentRequirements $consentRequirements,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
@@ -75,14 +73,16 @@ final readonly class CheckoutConsentManager
                     $context,
                 ));
             }
-
-            $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::CHECKOUT, $grants));
         } catch (\Throwable $exception) {
-            $this->logger->error('Unable to record checkout consent.', [
+            $this->logger->error('Unable to build checkout consent evidence.', [
                 'exception' => $exception,
                 'user_id' => $user->getId(),
                 'order_id' => (string) $order->getId(),
             ]);
+
+            return;
         }
+
+        $this->dispatcher->record($user, ConsentSource::CHECKOUT, ...$grants);
     }
 }

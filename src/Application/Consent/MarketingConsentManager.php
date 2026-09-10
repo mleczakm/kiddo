@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
-use App\Application\Command\RecordConsents;
-use App\Application\Command\RevokeConsent;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Not final: NewsletterSubscriptionManagerTest doubles this to keep the
+ * newsletter unit tests off the message bus.
+ */
 class MarketingConsentManager
 {
     public const string VERSION = '2026-09-10';
 
     public function __construct(
-        private readonly MessageBusInterface $commandBus,
+        private readonly ConsentDispatcher $dispatcher,
         private readonly ConsentRequirements $consentRequirements,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger,
@@ -57,32 +58,20 @@ class MarketingConsentManager
         }
 
         try {
-            $this->commandBus->dispatch(new RecordConsents($user, $source, [
-                new ConsentGrant(ConsentType::MARKETING_EMAIL, ConsentEvidence::statement($this->text())),
-            ]));
-        } catch (\Throwable $exception) {
-            $this->logger->error('Unable to record marketing consent.', [
-                'exception' => $exception,
-                'user_id' => $user->getId(),
-                'source' => $source->value,
-            ]);
+            $grant = new ConsentGrant(ConsentType::MARKETING_EMAIL, ConsentEvidence::statement($this->text()));
+        } catch (\InvalidArgumentException $exception) {
+            $this->logger->error('Unable to build marketing consent evidence.', ['exception' => $exception]);
+
+            return;
         }
+
+        $this->dispatcher->record($user, $source, $grant);
     }
 
     public function revoke(User $user, ConsentSource $source): void
     {
-        if (!$this->isEnabled()) {
-            return;
-        }
-
-        try {
-            $this->commandBus->dispatch(new RevokeConsent($user, ConsentType::MARKETING_EMAIL, $source));
-        } catch (\Throwable $exception) {
-            $this->logger->error('Unable to revoke marketing consent.', [
-                'exception' => $exception,
-                'user_id' => $user->getId(),
-                'source' => $source->value,
-            ]);
+        if ($this->isEnabled()) {
+            $this->dispatcher->revoke($user, ConsentType::MARKETING_EMAIL, $source);
         }
     }
 }

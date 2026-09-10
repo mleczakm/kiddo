@@ -10,7 +10,7 @@ use App\Entity\User;
 
 final readonly class RecordConsents
 {
-    /** @param list<ConsentGrant> $grants */
+    /** @param array<ConsentGrant> $grants */
     public function __construct(
         public User $user,
         public ConsentSource $source,

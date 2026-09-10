@@ -18,6 +18,12 @@ use Symfony\Component\Clock\Clock;
  */
 final readonly class ConsentStatusReader
 {
+    /**
+     * Account-scoped documents (as opposed to CLASSES_TERMS, which is re-accepted
+     * per booking/checkout rather than via the panel banner).
+     */
+    private const array ACCOUNT_DOCUMENTS = [LegalDocumentType::APP_TERMS, LegalDocumentType::PRIVACY];
+
     public function __construct(
         private UserConsentRepository $consentRepository,
         private LegalDocumentVersionRepository $versionRepository,
@@ -39,7 +45,12 @@ final readonly class ConsentStatusReader
         return $currentVersion !== null && $consent->getDocumentVersion()?->getId()->equals($currentVersion->getId());
     }
 
-    /** @return list<LegalDocumentType> */
+    /**
+     * Every managed document whose current published version the user has not
+     * accepted - used by the change-notification check and the reader's tests.
+     *
+     * @return list<LegalDocumentType>
+     */
     public function outdatedDocuments(User $user): array
     {
         $outdated = [];
@@ -59,36 +70,26 @@ final readonly class ConsentStatusReader
     }
 
     /**
-     * Documents the user accepted at least once before, whose current version
-     * they have not accepted - the case the "we changed the rules" banner is
-     * for. A user who never accepted at all is left to the registration /
-     * checkout flow instead.
+     * Account-level documents the panel banner should ask the user to accept:
+     * the current version of the Terms or Privacy Policy is published and the
+     * user has not accepted it - whether because it changed under them or
+     * because they registered before acceptance was enforced.
      *
      * @return list<LegalDocumentType>
      */
-    public function staleDocuments(User $user): array
+    public function accountDocumentsToAccept(User $user): array
     {
-        $stale = [];
-        foreach ([ConsentType::APP_TERMS, ConsentType::PRIVACY, ConsentType::CLASSES_TERMS] as $type) {
-            $documentType = $type->documentType();
-            if ($documentType === null) {
+        $pending = [];
+        $now = Clock::get()->now();
+        foreach (self::ACCOUNT_DOCUMENTS as $documentType) {
+            if ($this->versionRepository->findCurrent($documentType, $now) === null) {
                 continue;
             }
-
-            $latest = $this->consentRepository->findLatestActive($user, $type, $documentType);
-            if ($latest === null) {
-                continue;
-            }
-
-            $currentVersion = $this->versionRepository->findCurrent($documentType, Clock::get()->now());
-            if (
-                $currentVersion !== null
-                && !$latest->getDocumentVersion()?->getId()->equals($currentVersion->getId())
-            ) {
-                $stale[] = $documentType;
+            if (!$this->hasCurrent($user, $documentType->consentType())) {
+                $pending[] = $documentType;
             }
         }
 
-        return $stale;
+        return $pending;
     }
 }

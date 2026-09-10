@@ -1,5 +1,5 @@
 <div {{ attributes }}>
-    {% set stale = this.getStaleDocuments() %}
+    {% set stale = this.getPendingDocuments() %}
     {% if stale is not empty %}
         <div class="mb-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
             <p class="font-bold">{{ 'legal.reaccept.title'|trans }}</p>

@@ -28,6 +28,21 @@ final class LegalReacceptanceComponentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
+    private const string BANNER = 'Potwierdź akceptację dokumentów';
+
+    public function testNoBannerWhenNothingIsPublished(): void
+    {
+        $client = static::createClient();
+        $client->loginUser($this->persistUser());
+
+        $rendered = $this
+            ->createLiveComponent(name: LegalReacceptanceComponent::class, client: $client)
+            ->render()
+            ->toString();
+
+        static::assertStringNotContainsString(self::BANNER, $rendered);
+    }
+
     public function testBannerAppearsForAStaleAcceptanceAndReacceptRecordsTheCurrentVersion(): void
     {
         $client = static::createClient();
@@ -37,26 +52,31 @@ final class LegalReacceptanceComponentTest extends WebTestCase
         /** @var MessageBusInterface $bus */
         $bus = $container->get(MessageBusInterface::class);
 
-        $user = UserAssembler::new()->withRoles('ROLE_USER')->assemble();
-        $em->persist($user);
-        $publisher = new User('reaccept-publisher@example.test', 'Publisher');
-        $em->persist($publisher);
+        $user = $this->persistUser();
+        $publisher = $this->persistUser('reaccept-publisher@example.test');
 
-        // v1 effective, user accepts it.
         $this->persistVersion($em, $publisher, new \DateTimeImmutable('-30 days'));
+        $this->persistVersion($em, $publisher, new \DateTimeImmutable('-30 days'), LegalDocumentType::PRIVACY);
         $bus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
             new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
                 LegalDocumentType::APP_TERMS,
                 'Akceptuję.',
             )),
+            new ConsentGrant(ConsentType::PRIVACY, ConsentEvidence::currentDocument(
+                LegalDocumentType::PRIVACY,
+                'Akceptuję.',
+            )),
         ]));
 
-        // v2 becomes current; the user's acceptance is now stale.
-        $v2 = $this->persistVersion($em, $publisher, new \DateTimeImmutable('-1 day'));
+        // A newer Terms version supersedes the user's acceptance; Privacy is unchanged.
+        $termsV2 = $this->persistVersion($em, $publisher, new \DateTimeImmutable('-1 day'));
 
         $client->loginUser($user);
         $component = $this->createLiveComponent(name: LegalReacceptanceComponent::class, client: $client);
-        static::assertStringContainsString('Zaktualizowaliśmy nasze dokumenty', $component->render()->toString());
+        $rendered = $component->render()->toString();
+        static::assertStringContainsString(self::BANNER, $rendered);
+        static::assertStringContainsString('Regulamin aplikacji', $rendered);
+        static::assertStringNotContainsString('Polityka prywatności', $rendered);
 
         $component->call('reaccept');
 
@@ -65,30 +85,61 @@ final class LegalReacceptanceComponentTest extends WebTestCase
         $latest = $consents->findLatestActive($user, ConsentType::APP_TERMS, LegalDocumentType::APP_TERMS);
         static::assertNotNull($latest);
         static::assertSame(ConsentSource::TERMS_REACCEPT, $latest->getSource());
-        static::assertTrue($latest->getDocumentVersion()?->getId()->equals($v2->getId()));
+        static::assertTrue($latest->getDocumentVersion()?->getId()->equals($termsV2->getId()));
 
         static::assertStringNotContainsString(
-            'Zaktualizowaliśmy nasze dokumenty',
+            self::BANNER,
             $this->createLiveComponent(name: LegalReacceptanceComponent::class, client: $client)->render()->toString(),
         );
+    }
+
+    public function testBannerAlsoCatchesAUserWhoNeverAccepted(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+
+        $publisher = $this->persistUser('never-accepted-publisher@example.test');
+        $this->persistVersion($em, $publisher, new \DateTimeImmutable('-1 day'));
+
+        $client->loginUser($this->persistUser());
+        $rendered = $this
+            ->createLiveComponent(name: LegalReacceptanceComponent::class, client: $client)
+            ->render()
+            ->toString();
+
+        static::assertStringContainsString(self::BANNER, $rendered);
+    }
+
+    private function persistUser(?string $email = null): User
+    {
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        $user = UserAssembler::new()
+            ->withEmail($email ?? sprintf('reaccept-%s@example.test', bin2hex(random_bytes(4))))
+            ->withRoles('ROLE_USER')
+            ->assemble();
+        $em->persist($user);
+        $em->flush();
+
+        return $user;
     }
 
     private function persistVersion(
         EntityManagerInterface $em,
         User $publisher,
         \DateTimeImmutable $effectiveFrom,
+        LegalDocumentType $type = LegalDocumentType::APP_TERMS,
     ): LegalDocumentVersion {
-        $contents = 'app terms ' . $effectiveFrom->format('U');
+        $contents = $type->value . ' ' . $effectiveFrom->format('U');
         $file = new File(
-            'app_terms.pdf',
+            $type->value . '.pdf',
             'application/pdf',
             \strlen($contents),
             hash('sha256', $contents),
             base64_encode($contents),
         );
-        $document = $em->getRepository(LegalDocument::class)->findOneBy([
-            'type' => LegalDocumentType::APP_TERMS,
-        ]) ?? new LegalDocument(LegalDocumentType::APP_TERMS);
+        $document = $em->getRepository(LegalDocument::class)->findOneBy(['type' => $type]) ?? new LegalDocument($type);
         $version = new LegalDocumentVersion($document, $file, $effectiveFrom, $publisher);
         $em->persist($file);
         $em->persist($document);

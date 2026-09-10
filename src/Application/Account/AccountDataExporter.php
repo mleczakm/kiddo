@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Account;
 
+use App\Application\Repository\ChildRepositoryInterface;
 use App\Entity\Booking;
 use App\Entity\Child;
 use App\Entity\Lesson;
@@ -25,6 +26,7 @@ final readonly class AccountDataExporter
         private BookingRepository $bookingRepository,
         private PaymentRepository $paymentRepository,
         private UserConsentRepository $consentRepository,
+        private ChildRepositoryInterface $childRepository,
     ) {}
 
     /**
@@ -47,7 +49,7 @@ final readonly class AccountDataExporter
             'children' => array_map(static fn(Child $child): array => [
                 'name' => $child->getName(),
                 'birthday' => $child->getBirthday()?->format('Y-m-d'),
-            ], $user->getChildren()->toArray()),
+            ], $this->childRepository->findByOwner($user)),
             'bookings' => array_map($this->exportBooking(...), $this->bookingRepository->findVisibleForUser($user)),
             'payments' => array_map(
                 $this->exportPayment(...),

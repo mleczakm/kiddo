@@ -1312,10 +1312,10 @@ day:
 
 legal:
   reaccept:
-    title: "Zaktualizowaliśmy nasze dokumenty"
-    lead: "Poniższe dokumenty mają nową wersję. Zapoznaj się z nimi. Jeśli się nie zgadzasz, możesz wypowiedzieć umowę w ciągu 10 dni — brak wypowiedzenia oznacza akceptację."
-    accept: "Akceptuję nowe wersje"
-    acceptance_text: "Akceptuję zaktualizowaną wersję dokumentu."
+    title: "Potwierdź akceptację dokumentów"
+    lead: "Zapoznaj się z aktualnymi dokumentami i potwierdź ich akceptację. Jeśli się nie zgadzasz, możesz wypowiedzieć umowę w ciągu 10 dni — brak wypowiedzenia oznacza akceptację."
+    accept: "Akceptuję aktualne wersje"
+    acceptance_text: "Akceptuję aktualną wersję dokumentu."
 
 account:
   status:

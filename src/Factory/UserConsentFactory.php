@@ -43,11 +43,7 @@ final class UserConsentFactory extends PersistentObjectFactory
     public function forDocument(LegalDocumentVersion $version, string $acceptanceText): self
     {
         return $this->with([
-            'type' => match ($version->getDocument()->getType()) {
-                LegalDocumentType::APP_TERMS => ConsentType::APP_TERMS,
-                LegalDocumentType::PRIVACY => ConsentType::PRIVACY,
-                LegalDocumentType::CLASSES_TERMS_GENERAL => ConsentType::CLASSES_TERMS,
-            },
+            'type' => $version->getDocument()->getType()->consentType(),
             'evidence' => ConsentEvidence::versionedDocument($version, $acceptanceText),
         ]);
     }

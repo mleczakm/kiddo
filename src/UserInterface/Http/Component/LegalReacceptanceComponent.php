@@ -9,8 +9,6 @@ use App\Application\Consent\ConsentEvidence;
 use App\Application\Consent\ConsentGrant;
 use App\Application\Consent\ConsentStatusReader;
 use App\Entity\ConsentSource;
-use App\Entity\ConsentType;
-use App\Entity\LegalDocumentType;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -22,10 +20,12 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 /**
- * Soft "we changed the rules" banner shown in the panel to a user whose earlier
- * acceptance of a legal document is now behind its current version. It never
- * blocks the panel: per the Regulamin, not terminating within 10 days already
- * counts as acceptance. The "Akceptuję" button just records that explicitly.
+ * Soft panel banner shown when the current Terms or Privacy Policy is published
+ * and the user has not accepted it - either because it changed under them, or
+ * because they registered before acceptance was enforced. It never blocks the
+ * panel: per the Regulamin, not terminating within 10 days already counts as
+ * acceptance. The "Akceptuję" button just records that explicitly. Per-booking
+ * documents (Regulamin zajęć) are re-accepted at checkout, not here.
  */
 #[AsLiveComponent]
 final class LegalReacceptanceComponent extends AbstractController
@@ -47,7 +47,7 @@ final class LegalReacceptanceComponent extends AbstractController
      * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
      * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
      */
-    public function getStaleDocuments(): array
+    public function getPendingDocuments(): array
     {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -55,7 +55,7 @@ final class LegalReacceptanceComponent extends AbstractController
         }
 
         $documents = [];
-        foreach ($this->statusReader->staleDocuments($user) as $type) {
+        foreach ($this->statusReader->accountDocumentsToAccept($user) as $type) {
             $documents[] = [
                 'label' => $type->label(),
                 'url' => $this->urlGenerator->generate($type->routeName()),
@@ -80,21 +80,12 @@ final class LegalReacceptanceComponent extends AbstractController
 
         $text = $this->translator->trans('legal.reaccept.acceptance_text');
         $grants = [];
-        foreach ($this->statusReader->staleDocuments($user) as $type) {
-            $grants[] = new ConsentGrant(self::consentType($type), ConsentEvidence::currentDocument($type, $text));
+        foreach ($this->statusReader->accountDocumentsToAccept($user) as $type) {
+            $grants[] = new ConsentGrant($type->consentType(), ConsentEvidence::currentDocument($type, $text));
         }
 
         if ($grants !== []) {
             $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::TERMS_REACCEPT, $grants));
         }
-    }
-
-    private static function consentType(LegalDocumentType $type): ConsentType
-    {
-        return match ($type) {
-            LegalDocumentType::APP_TERMS => ConsentType::APP_TERMS,
-            LegalDocumentType::PRIVACY => ConsentType::PRIVACY,
-            LegalDocumentType::CLASSES_TERMS_GENERAL => ConsentType::CLASSES_TERMS,
-        };
     }
 }

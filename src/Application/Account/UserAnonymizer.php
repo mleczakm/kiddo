@@ -44,9 +44,13 @@ final readonly class UserAnonymizer
         $originalEmail = $user->getEmail();
         $now = Clock::get()->now();
 
-        foreach ($user->getChildren() as $child) {
-            $child->anonymize(self::CHILD_PLACEHOLDER);
-        }
+        $this->entityManager
+            ->createQuery(
+                'UPDATE ' . Child::class . ' c SET c.name = :placeholder, c.birthday = NULL WHERE c.owner = :user',
+            )
+            ->setParameter('placeholder', self::CHILD_PLACEHOLDER)
+            ->setParameter('user', $user)
+            ->execute();
 
         $this->entityManager
             ->createQuery('UPDATE ' . Booking::class . ' b SET b.notes = NULL WHERE b.user = :user')
