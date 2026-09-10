@@ -9,22 +9,20 @@ novaway_feature_flag:
           platform_billing_widget: true
           chat_assistant: true
           commerce_order_write: true
-          consents: false
+          consents: true
           dynamic_pricing: true
-          # Built-in help & documentation centre at /admin/pomoc. OFF on prod
-          # until the content is reviewed; on in dev/test via the blocks below.
-          help_center: false
-          legal_documents: false
+          # Built-in help & documentation centre at /admin/pomoc.
+          help_center: true
+          legal_documents: true
           # Admin manual + quick booking form on the bookings screen / dashboard.
           manual_bookings: true
-          pricing_admin: false
+          pricing_admin: true
           # Monthly-subscription ticket type + recurring billing. OFF on prod
           # until operational sign-off; on in dev/test via the blocks below.
           subscriptions: false
-          # Chat-assistant waitlist ("notify me when a spot frees up"). OFF on
-          # prod until sign-off; on in dev/test. A single lesson can still be
-          # opted out via Lesson::waitlistEnabled = false while the flag is on.
-          waitlist: false
+          # Chat-assistant waitlist ("notify me when a spot frees up"). A single
+          # lesson can still be opted out via Lesson::waitlistEnabled = false.
+          waitlist: true
 
 # The "features" map is a raw array and REPLACES the base map (see the test
 # block's comment) - so any environment override must restate every flag.
@@ -43,7 +41,7 @@ when@dev:
             help_center: true
             legal_documents: true
             manual_bookings: true
-            pricing_admin: false
+            pricing_admin: true
             subscriptions: true
             waitlist: true
 
