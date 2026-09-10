@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Api;
 
 use App\Application\Chat\ChatTokenManager;
+use App\Application\Consent\AiConsentManager;
 use App\Entity\User;
 use App\Infrastructure\ElevenLabs\ElevenLabsClient;
 use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
@@ -20,10 +21,15 @@ final class ChatSignedUrlAction extends AbstractController
         private readonly ElevenLabsClient $elevenLabsClient,
         private readonly ChatTokenManager $chatTokenManager,
         private readonly FeatureManager $featureManager,
+        private readonly AiConsentManager $aiConsentManager,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[Route('/api/chat/signed-url', name: 'api_chat_signed_url', methods: ['POST'])]
-    public function __invoke(Request $_request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         if (!$this->featureManager->isEnabled('chat_assistant')) {
             return $this->json([
@@ -37,6 +43,14 @@ final class ChatSignedUrlAction extends AbstractController
         // ROLE_HOST is a workshop instructor; admins inherit it via role_hierarchy.
         $isHost = $isLoggedIn && $this->isGranted('ROLE_HOST');
         $isStaff = $isAdmin || $isHost;
+
+        if (!$this->aiConsentManager->allowsSession($user instanceof User ? $user : null, $request->getContent())) {
+            return $this->json([
+                'error' => 'chat.ai_consent.required',
+                'consent_required' => true,
+                'consent_version' => AiConsentManager::VERSION,
+            ], Response::HTTP_PRECONDITION_REQUIRED);
+        }
 
         if ($isLoggedIn) {
             $chatToken = $this->chatTokenManager->mint($user);

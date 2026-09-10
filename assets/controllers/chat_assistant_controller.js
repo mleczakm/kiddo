@@ -8,6 +8,7 @@ export default class extends Controller {
         signedUrlEndpoint: { type: String, default: '/api/chat/signed-url' },
         hero: { type: Boolean, default: false },
         storageKey: { type: String, default: 'kiddo_chat_history' },
+        aiConsentVersion: { type: String, default: '' },
     };
 
     static targets = [
@@ -22,6 +23,7 @@ export default class extends Controller {
         'toggleIconClose',
         'loginHint',
         'emptyState',
+        'consentDialog',
     ];
 
     connect() {
@@ -36,6 +38,9 @@ export default class extends Controller {
         this.initiated = false;
         this.expectingAgentReply = false;
         this.sessionPromise = null;
+        this.consentRequired = false;
+        this.aiConsentAccepted =
+            localStorage.getItem('kiddo_ai_consent_version') === this.aiConsentVersionValue;
         this.loadHistory();
         this.renderMessages();
         this.updateStatus('idle');
@@ -124,8 +129,18 @@ export default class extends Controller {
                 Accept: 'application/json',
             },
             credentials: 'same-origin',
-            body: '{}',
+            body: JSON.stringify({
+                aiConsent: this.aiConsentAccepted,
+                aiConsentVersion: this.aiConsentAccepted ? this.aiConsentVersionValue : null,
+            }),
         });
+
+        if (response.status === 428) {
+            this.consentRequired = true;
+            this.showConsentDialog();
+            this.updateStatus('idle');
+            return;
+        }
 
         if (response.status === 401 || response.status === 403) {
             this.updateStatus('login_required');
@@ -140,6 +155,8 @@ export default class extends Controller {
         }
 
         const data = await response.json();
+        this.consentRequired = false;
+        this.hideConsentDialog();
         this.chatToken = data.chat_token;
         this.dynamicVariables = data.dynamic_variables || {};
         this.signedUrl = data.signed_url;
@@ -367,6 +384,10 @@ export default class extends Controller {
 
         try {
             const connected = await this.ensureConnected();
+            if (this.consentRequired) {
+                this.showConsentDialog();
+                return;
+            }
             if (!connected) {
                 this.pushUser(text);
                 this.inputTarget.value = '';
@@ -399,6 +420,30 @@ export default class extends Controller {
                 text,
             })
         );
+    }
+
+    acceptConsent() {
+        this.aiConsentAccepted = true;
+        this.consentRequired = false;
+        localStorage.setItem('kiddo_ai_consent_version', this.aiConsentVersionValue);
+        this.hideConsentDialog();
+        this.prefetchSession();
+    }
+
+    showConsentDialog() {
+        if (!this.hasConsentDialogTarget) {
+            return;
+        }
+        this.consentDialogTarget.classList.remove('hidden');
+        this.consentDialogTarget.classList.add('flex');
+    }
+
+    hideConsentDialog() {
+        if (!this.hasConsentDialogTarget) {
+            return;
+        }
+        this.consentDialogTarget.classList.add('hidden');
+        this.consentDialogTarget.classList.remove('flex');
     }
 
     clear() {

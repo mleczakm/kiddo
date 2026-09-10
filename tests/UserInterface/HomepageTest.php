@@ -83,6 +83,18 @@ class HomepageTest extends WebTestCase
         $this->assertResponseStatusCodeSame(200);
     }
 
+    public function testChatDisclosesAiAndProvidesOneTimeAcknowledgement(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/');
+
+        $this->assertResponseIsSuccessful();
+        $html = (string) $client->getResponse()->getContent();
+        static::assertStringContainsString('Odpowiedzi generuje AI', $html);
+        static::assertStringContainsString('data-chat-assistant-target="consentDialog"', $html);
+        static::assertStringContainsString('Rozumiem i akceptuję', $html);
+    }
+
     /**
      * Test parent dashboard with active bookings and child profiles.
      */

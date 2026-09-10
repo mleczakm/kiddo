@@ -478,6 +478,14 @@ newsletter:
     message: "Dziękujemy za zapisanie się na nasz newsletter. Będziesz otrzymywać informacje o nowych warsztatach i ofertach."
     back_home: "Powrót na stronę główną"
 
+chat:
+  ai_notice: "Odpowiedzi generuje AI — mogą zawierać błędy. Zweryfikuj je przed użyciem; nie stanowią porady prawnej, medycznej ani finansowej."
+  ai_consent:
+    title: Zanim skorzystasz z asystenta AI
+    statement: "Rozumiem, że odpowiedzi AI mogą zawierać błędy, wymagają weryfikacji przez człowieka i nie stanowią porady prawnej, medycznej ani finansowej."
+    data_notice: "Treść rozmowy jest przekazywana do ElevenLabs, nie służy do trenowania modeli i może być przechowywana maksymalnie 60 dni. Więcej informacji:"
+    accept: Rozumiem i akceptuję
+
 booking:
   price_changed: 'Cena tej opcji uległa zmianie. Sprawdź aktualną kwotę poniżej i potwierdź ponownie.'
   cancel: Anuluj rezerwację

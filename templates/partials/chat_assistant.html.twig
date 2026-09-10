@@ -23,6 +23,7 @@
             data-controller="chat-assistant"
             data-chat-assistant-hero-value="true"
             data-chat-assistant-storage-key-value="{{ chatStorageKey }}"
+            data-chat-assistant-ai-consent-version-value="{{ constant('App\\Application\\Consent\\AiConsentManager::VERSION') }}"
             class="relative overflow-hidden bg-gradient-to-b from-workshop-blue/10 via-beige to-beige"
         >
             <div class="absolute top-10 left-6 h-20 w-20 rounded-full bg-workshop-pink/20 animate-bounce-slight"></div>
@@ -67,6 +68,10 @@
                             {{ 'homepage.chat_hero.new_conversation'|trans }}
                         </button>
                     </div>
+
+                    <p class="border-b border-amber-100 bg-amber-50 px-4 py-2 text-xs text-amber-900">
+                        {{ 'chat.ai_notice'|trans }}
+                    </p>
 
                     <div
                         data-chat-assistant-target="loginHint"
@@ -149,6 +154,8 @@
                     </div>
                 </div>
 
+                {{ include('partials/_chat_ai_consent_dialog.html.twig') }}
+
                 <div class="mx-auto mt-5 flex max-w-3xl flex-wrap items-center justify-center gap-3 text-sm">
                     <span class="text-muted-foreground">{{ 'homepage.chat_hero.prefer_browsing'|trans }}</span>
                     <a href="{{ path('workshops') }}" class="font-medium text-workshop-red hover:underline">
@@ -168,6 +175,7 @@
             data-controller="chat-assistant"
             data-chat-assistant-hero-value="false"
             data-chat-assistant-storage-key-value="{{ chatStorageKey }}"
+            data-chat-assistant-ai-consent-version-value="{{ constant('App\\Application\\Consent\\AiConsentManager::VERSION') }}"
             class="fixed bottom-4 right-4 z-[90] flex flex-col items-end gap-2"
         >
             <div
@@ -191,6 +199,9 @@
                         <button type="button" class="text-lg leading-none text-workshop-brown" data-action="chat-assistant#toggle" aria-label="{{ 'homepage.chat_hero.close'|trans }}">×</button>
                     </div>
                 </div>
+                <p class="border-b border-amber-100 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                    {{ 'chat.ai_notice'|trans }}
+                </p>
                 <div
                     data-chat-assistant-target="loginHint"
                     class="hidden px-3 py-2 text-xs bg-amber-50 text-amber-900 border-b border-amber-100"
@@ -269,6 +280,7 @@
                     </div>
                 </form>
             </div>
+            {{ include('partials/_chat_ai_consent_dialog.html.twig') }}
             <button
                 type="button"
                 data-chat-assistant-target="toggle"

@@ -1,0 +1,27 @@
+<div
+    data-chat-assistant-target="consentDialog"
+    class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/50 p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="chat-ai-consent-title"
+>
+    <div class="w-full max-w-lg rounded-2xl bg-white p-6 text-left shadow-xl">
+        <h2 id="chat-ai-consent-title" class="font-display text-xl font-bold text-workshop-brown">
+            {{ 'chat.ai_consent.title'|trans }}
+        </h2>
+        <p class="mt-3 text-sm text-muted-foreground">{{ 'chat.ai_consent.statement'|trans }}</p>
+        <p class="mt-3 text-xs text-muted-foreground">
+            {{ 'chat.ai_consent.data_notice'|trans }}
+            <a href="{{ path('legal_app_terms') }}#11" target="_blank" class="text-workshop-red underline">{{ 'cart.app_terms'|trans }}</a>
+            ·
+            <a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a>
+        </p>
+        <button
+            type="button"
+            data-action="chat-assistant#acceptConsent"
+            class="mt-5 inline-flex w-full items-center justify-center rounded-md bg-workshop-red px-4 py-2 text-sm font-semibold text-white hover:bg-workshop-red/90"
+        >
+            {{ 'chat.ai_consent.accept'|trans }}
+        </button>
+    </div>
+</div>
