@@ -147,3 +147,21 @@ legal:
 
       If you do not accept the change, you may terminate the agreement within 10 days
       of receiving this message. Not terminating it means accepting the new version.
+
+account:
+  close:
+    email:
+      pause:
+        subject: "Your account has been paused"
+        body: >-
+          Your Warsztatownia Sensoryczna account has been paused at your request.
+
+          To restore it, just log in again.
+      delete:
+        subject: "Your account will be deleted"
+        body: >-
+          We received a request to permanently delete your account. Your personal
+          data will be anonymised after {grace} days.
+
+          If you change your mind, log in again before then to cancel. Accounting
+          records are kept as required by law.

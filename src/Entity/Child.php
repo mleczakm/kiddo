@@ -68,6 +68,13 @@ class Child
         return $this;
     }
 
+    /** Strips the child's identifying data when the owner account is anonymised. */
+    public function anonymize(string $placeholder): void
+    {
+        $this->name = $placeholder;
+        $this->birthday = null;
+    }
+
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;

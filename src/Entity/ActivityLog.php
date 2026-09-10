@@ -50,6 +50,16 @@ class ActivityLog
         $this->createdAt = new \DateTimeImmutable('now');
     }
 
+    /** Drops the actor link and any free text that could name the anonymised user. */
+    public function redactSubject(string $placeholder): void
+    {
+        $this->subject = null;
+        $this->title = $placeholder;
+        $this->summary = null;
+        $this->context = [];
+        $this->url = null;
+    }
+
     public function getId(): Ulid
     {
         return $this->id;

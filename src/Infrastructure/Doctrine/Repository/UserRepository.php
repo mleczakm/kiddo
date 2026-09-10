@@ -60,6 +60,26 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     }
 
     /**
+     * @return list<User>
+     */
+    #[\Override]
+    public function findPendingDeletionBefore(\DateTimeImmutable $cutoff): array
+    {
+        /** @var list<User> $users */
+        $users = $this
+            ->createQueryBuilder('u')
+            ->andWhere('u.lifecycle.deletionRequestedAt IS NOT NULL')
+            ->andWhere('u.lifecycle.deletionRequestedAt < :cutoff')
+            ->andWhere('u.lifecycle.anonymizedAt IS NULL')
+            ->setParameter('cutoff', $cutoff)
+            ->orderBy('u.lifecycle.deletionRequestedAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $users;
+    }
+
+    /**
      * @return User[]
      */
     #[\Override]

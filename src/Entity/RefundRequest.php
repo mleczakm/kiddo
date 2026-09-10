@@ -142,6 +142,12 @@ class RefundRequest
         return $this->requestMessage;
     }
 
+    /** Clears the free-text reason once the requester's account is anonymised. */
+    public function redactRequestMessage(): void
+    {
+        $this->requestMessage = null;
+    }
+
     public function getStatus(): string
     {
         return $this->status;

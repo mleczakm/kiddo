@@ -262,3 +262,22 @@ legal:
 
       Jeśli nie akceptujesz zmiany, możesz wypowiedzieć umowę w ciągu 10 dni od
       otrzymania tej wiadomości. Brak wypowiedzenia oznacza akceptację nowej wersji.
+
+account:
+  close:
+    email:
+      pause:
+        subject: "Twoje konto zostało zawieszone"
+        body: >-
+          Twoje konto w Warsztatowni Sensorycznej zostało zawieszone na Twoją prośbę.
+
+          Aby je przywrócić, po prostu zaloguj się ponownie.
+      delete:
+        subject: "Twoje konto zostanie usunięte"
+        body: >-
+          Otrzymaliśmy żądanie trwałego usunięcia Twojego konta. Twoje dane osobowe
+          zostaną zanonimizowane po {grace} dniach.
+
+          Jeśli zmienisz zdanie, zaloguj się ponownie przed upływem tego terminu —
+          to anuluje usunięcie. Dokumenty rozliczeniowe są przechowywane zgodnie z
+          obowiązującymi przepisami.

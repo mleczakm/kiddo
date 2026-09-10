@@ -14,6 +14,14 @@ interface UserRepositoryInterface extends RepositoryInterface
     /** @return User[] */
     public function findByRole(string $role): array;
 
+    /**
+     * Accounts whose deletion grace period elapsed before $cutoff and that have
+     * not been anonymised yet.
+     *
+     * @return list<User>
+     */
+    public function findPendingDeletionBefore(\DateTimeImmutable $cutoff): array;
+
     /** @return User[] */
     public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array;
 

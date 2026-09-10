@@ -1316,3 +1316,25 @@ legal:
     lead: "Poniższe dokumenty mają nową wersję. Zapoznaj się z nimi. Jeśli się nie zgadzasz, możesz wypowiedzieć umowę w ciągu 10 dni — brak wypowiedzenia oznacza akceptację."
     accept: "Akceptuję nowe wersje"
     acceptance_text: "Akceptuję zaktualizowaną wersję dokumentu."
+
+account:
+  status:
+    anonymized: "To konto zostało trwale usunięte."
+    deletion_pending: "To konto oczekuje na usunięcie. Zaloguj się ponownie, aby anulować."
+    deactivated: "To konto jest zawieszone. Zaloguj się ponownie, aby je przywrócić."
+  settings:
+    title: "Ustawienia konta"
+    lead: "Pobierz swoje dane, zawieś lub trwale usuń konto."
+    export: "Kopia moich danych (JSON)"
+    export_action: "Pobierz"
+    pause: "Zawieś konto (odwracalne — wystarczy zalogować się ponownie)"
+    pause_action: "Zawieś"
+    delete: "Trwałe usunięcie konta"
+    delete_hint: "Dane osobowe zostaną zanonimizowane po {grace} dniach. Do tego czasu logowanie anuluje usunięcie. Dokumenty rozliczeniowe pozostają zgodnie z przepisami."
+    delete_confirm_label: "Wpisz „{keyword}”, aby potwierdzić:"
+    delete_action: "Usuń konto"
+    delete_pending: "Konto zostanie trwale usunięte w ciągu {grace} dni. Zaloguj się ponownie, aby anulować."
+  close:
+    confirm_required: "Wpisz „USUŃ”, aby potwierdzić trwałe usunięcie konta."
+    done: "Zapisano. Za chwilę zostaniesz wylogowany."
+    delete_statement: "Żądam trwałego usunięcia konta i anonimizacji moich danych osobowych."

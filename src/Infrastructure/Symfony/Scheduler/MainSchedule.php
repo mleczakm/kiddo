@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Scheduler;
 
+use App\Application\Command\AnonymizeExpiredAccounts;
 use App\Application\Command\BackfillLegacyOrders;
 use App\Application\Command\CheckBookingsToMarkPast;
 use App\Application\Command\CheckExpiredBookings;
@@ -60,6 +61,11 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 RecurringMessage::every(60, new TriggerMatchPaymentForTransferForPastTransfers()),
                 RecurringMessage::cron('5 * * * *', new CheckBookingsToMarkPast(), new \DateTimeZone('Europe/Warsaw')),
                 RecurringMessage::cron('15 3 * * *', new PurgeOldNotifications(), new \DateTimeZone('Europe/Warsaw')),
+                RecurringMessage::cron(
+                    '50 3 * * *',
+                    new CallbackMessageProvider(static fn() => [new AnonymizeExpiredAccounts()]),
+                    new \DateTimeZone('Europe/Warsaw'),
+                ),
                 RecurringMessage::cron('35 3 * * *', new BackfillLegacyOrders(100), new \DateTimeZone('Europe/Warsaw')),
                 // Monthly-subscription invoicing. The handler no-ops unless there
                 // are active subscriptions (only created behind the `subscriptions`

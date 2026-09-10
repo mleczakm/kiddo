@@ -31,6 +31,13 @@ final readonly class UserLoginSubscriber
             $this->bus->dispatch(new NewUser($user));
         }
 
+        // Logging in cancels a self-service pause or a pending deletion whose
+        // grace period is still running (anonymised accounts never get here -
+        // AccountLifecycleUserChecker blocks them before this).
+        if ($user->getLifecycle()->isClosed()) {
+            $user->getLifecycle()->reactivate();
+        }
+
         $user->setLastLoginAt(Clock::get()->now());
         $this->entityManager->flush();
     }

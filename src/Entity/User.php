@@ -66,6 +66,10 @@ class User implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastLoginAt = null;
 
+    /** Account closure state (Stage 11); see {@see AccountLifecycle}. */
+    #[ORM\Embedded(class: AccountLifecycle::class, columnPrefix: false)]
+    private AccountLifecycle $lifecycle;
+
     /**
      * Unguessable secret for this user's personal calendar subscription feed
      * (see StaffCalendarFeedAction). Null until the user generates a link;
@@ -91,6 +95,7 @@ class User implements UserInterface
         $this->createdAt = Clock::get()->now();
         $this->bookings = new ArrayCollection();
         $this->children = new ArrayCollection();
+        $this->lifecycle = new AccountLifecycle();
         if ($email !== null) {
             $this->setEmail($email);
         }
@@ -300,6 +305,29 @@ class User implements UserInterface
         $this->lastLoginAt = $lastLoginAt;
 
         return $this;
+    }
+
+    public function getLifecycle(): AccountLifecycle
+    {
+        return $this->lifecycle;
+    }
+
+    /**
+     * Replaces every identifying attribute with a non-personal placeholder and
+     * stamps the lifecycle. The row itself stays for the non-nullable FKs on
+     * bookings and orders.
+     */
+    public function anonymize(\DateTimeImmutable $at): void
+    {
+        $this->lifecycle->markAnonymized($at);
+        $this->name = 'Użytkownik usunięty';
+        $this->email = 'deleted+' . ($this->id ?? 0) . '@kiddo.invalid';
+        $this->phone = null;
+        $this->adminNote = null;
+        $this->calendarFeedToken = null;
+        $this->roles = [];
+        $this->newsletterSubscribed = false;
+        $this->newsletterConsentDate = null;
     }
 
     /**

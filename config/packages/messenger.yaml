@@ -37,6 +37,9 @@ framework:
             'App\Application\Command\SendLoginNotification': sync
             'App\Application\Command\RecordConsents': sync
             'App\Application\Command\RevokeConsent': sync
+            'App\Application\Command\RequestAccountClosure': sync
+            'App\Application\Command\AnonymizeExpiredAccounts': sync
+            'App\Application\Command\AnonymizeUser': sync
             'App\Application\Command\Notification\SendVerificationCode': sync
             'App\Application\Command\SendReservationNotification': sync
             'App\Message\RefundLessonBooking': sync

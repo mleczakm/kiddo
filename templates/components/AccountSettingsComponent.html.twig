@@ -1,0 +1,41 @@
+<div {{ attributes }} class="rounded-xl border border-panel-line bg-panel-surface p-6">
+    <h2 class="text-base font-bold text-panel-ink">{{ 'account.settings.title'|trans }}</h2>
+    <p class="mt-0.5 text-sm text-panel-muted">{{ 'account.settings.lead'|trans }}</p>
+
+    <div class="mt-4 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-panel-line p-3.5">
+            <span class="text-sm text-panel-ink">{{ 'account.settings.export'|trans }}</span>
+            <a href="{{ path('panel_account_data_export') }}"
+               class="inline-flex items-center rounded-lg border border-panel-line px-3 py-1.5 text-xs font-semibold text-panel-ink transition-colors hover:bg-panel-canvas">
+                {{ 'account.settings.export_action'|trans }}
+            </a>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-panel-line p-3.5">
+            <span class="text-sm text-panel-ink">{{ 'account.settings.pause'|trans }}</span>
+            <button type="button" data-action="live#action" data-live-action-param="pause"
+                    class="inline-flex items-center rounded-lg border border-panel-line px-3 py-1.5 text-xs font-semibold text-panel-ink transition-colors hover:bg-panel-canvas">
+                {{ 'account.settings.pause_action'|trans }}
+            </button>
+        </div>
+
+        <div class="rounded-lg border border-red-300 bg-red-50 p-3.5">
+            {% if this.isDeletionRequested() %}
+                <p class="text-sm font-medium text-red-800">{{ 'account.settings.delete_pending'|trans({'grace': this.getGraceDays()}) }}</p>
+            {% else %}
+                <p class="text-sm font-medium text-red-800">{{ 'account.settings.delete'|trans }}</p>
+                <p class="mt-1 text-xs text-red-700">{{ 'account.settings.delete_hint'|trans({'grace': this.getGraceDays()}) }}</p>
+                <label class="mt-2 block text-xs text-red-800">
+                    {{ 'account.settings.delete_confirm_label'|trans({'keyword': constant('App\\UserInterface\\Http\\Component\\AccountSettingsComponent::DELETE_KEYWORD')}) }}
+                    <input type="text" data-model="deleteConfirmation"
+                           class="mt-1 block h-9 w-40 rounded-md border border-red-300 bg-white px-2 py-1 text-sm">
+                </label>
+                <button type="button" data-action="live#action" data-live-action-param="delete"
+                        class="mt-2 inline-flex items-center rounded-lg bg-red-600 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+                        {{ this.deleteConfirmation|upper|trim == constant('App\\UserInterface\\Http\\Component\\AccountSettingsComponent::DELETE_KEYWORD') ? '' : 'disabled' }}>
+                    {{ 'account.settings.delete_action'|trans }}
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
