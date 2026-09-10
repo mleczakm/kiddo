@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Http\Component;
 
 use App\Application\Legal\LegalDocumentPublisher;
+use App\Application\Legal\NewLegalDocumentVersion;
 use App\Entity\LegalDocument;
 use App\Entity\LegalDocumentType;
 use App\Entity\LegalDocumentVersion;
@@ -35,6 +36,9 @@ final class AdminLegalDocumentsComponent extends AbstractController
 
     #[LiveProp(writable: true)]
     public ?string $changeSummary = null;
+
+    #[LiveProp(writable: true)]
+    public bool $notifyUsers = false;
 
     public function __construct(
         private readonly LegalDocumentRepository $documentRepository,
@@ -84,6 +88,7 @@ final class AdminLegalDocumentsComponent extends AbstractController
      * @throws \InvalidArgumentException
      * @throws \LogicException
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     #[LiveAction]
     public function publish(Request $request): void
@@ -106,14 +111,24 @@ final class AdminLegalDocumentsComponent extends AbstractController
         }
 
         try {
-            $version = $this->publisher->publish($type, $upload, $effectiveFrom, $user, $this->changeSummary);
+            $version = $this->publisher->publish(
+                new NewLegalDocumentVersion($type, $upload, $effectiveFrom, $user, $this->changeSummary),
+                $this->notifyUsers,
+            );
         } catch (\InvalidArgumentException $exception) {
             $this->toast($exception->getMessage(), 'error');
             return;
         }
 
+        $notified = $this->notifyUsers;
         $this->changeSummary = null;
-        $this->toast(\sprintf('%s: opublikowano wersję %d.', $type->label(), $version->getVersion()));
+        $this->notifyUsers = false;
+        $this->toast(\sprintf(
+            '%s: opublikowano wersję %d.%s',
+            $type->label(),
+            $version->getVersion(),
+            $notified ? ' Powiadomienie do użytkowników zostało zakolejkowane.' : '',
+        ));
     }
 
     private function parseDate(?string $value): ?\DateTimeImmutable

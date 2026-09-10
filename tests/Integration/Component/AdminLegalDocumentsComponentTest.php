@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
+use App\Application\Command\NotifyLegalDocumentChange;
 use App\Entity\LegalDocumentType;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\LegalDocumentRepository;
@@ -14,11 +15,13 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
+use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
 #[Group('functional')]
 final class AdminLegalDocumentsComponentTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
+    use InteractsWithMessenger;
 
     private KernelBrowser $client;
 
@@ -75,17 +78,60 @@ final class AdminLegalDocumentsComponentTest extends WebTestCase
         }
     }
 
-    public function testNotificationOptionIsPreparedButDisabledUntilItsRolloutStage(): void
+    public function testPublishingWithTheNotifyOptionQueuesTheChangeNotification(): void
     {
-        $admin = new User('legal-ui-admin@example.test', 'Legal UI Admin');
+        $admin = new User('legal-notify-admin@example.test', 'Legal Notify Admin');
         $admin->setRoles(['ROLE_SETTINGS']);
         $this->entityManager->persist($admin);
         $this->entityManager->flush();
         $this->client->loginUser($admin);
 
-        $html = (string) $this->createLiveComponent(name: 'AdminLegalDocuments', client: $this->client)->render();
+        $filePath = tempnam(sys_get_temp_dir(), 'legal-document-');
+        static::assertNotFalse($filePath);
+        file_put_contents($filePath, "%PDF-1.4\nlegal document");
 
-        static::assertStringContainsString('Powiadom użytkowników o zmianie', $html);
-        static::assertMatchesRegularExpression('/<input type="checkbox" disabled/', $html);
+        try {
+            $component = $this->createLiveComponent(name: 'AdminLegalDocuments', client: $this->client);
+            $component->set('documentType', LegalDocumentType::PRIVACY->value);
+            $component->set('effectiveFrom', '2026-09-10');
+            $component->set('notifyUsers', true);
+            $component->call('publish', files: [
+                'legalDocumentFile' => new UploadedFile($filePath, 'polityka.pdf', 'application/pdf', null, true),
+            ]);
+
+            $this->transport('async')->queue()->assertContains(NotifyLegalDocumentChange::class, 1);
+        } finally {
+            if (is_file($filePath)) {
+                unlink($filePath);
+            }
+        }
+    }
+
+    public function testPublishingWithoutTheNotifyOptionQueuesNothing(): void
+    {
+        $admin = new User('legal-silent-admin@example.test', 'Legal Silent Admin');
+        $admin->setRoles(['ROLE_SETTINGS']);
+        $this->entityManager->persist($admin);
+        $this->entityManager->flush();
+        $this->client->loginUser($admin);
+
+        $filePath = tempnam(sys_get_temp_dir(), 'legal-document-');
+        static::assertNotFalse($filePath);
+        file_put_contents($filePath, "%PDF-1.4\nlegal document");
+
+        try {
+            $component = $this->createLiveComponent(name: 'AdminLegalDocuments', client: $this->client);
+            $component->set('documentType', LegalDocumentType::CLASSES_TERMS_GENERAL->value);
+            $component->set('effectiveFrom', '2026-09-10');
+            $component->call('publish', files: [
+                'legalDocumentFile' => new UploadedFile($filePath, 'zajecia.pdf', 'application/pdf', null, true),
+            ]);
+
+            $this->transport('async')->queue()->assertNotContains(NotifyLegalDocumentChange::class);
+        } finally {
+            if (is_file($filePath)) {
+                unlink($filePath);
+            }
+        }
     }
 }

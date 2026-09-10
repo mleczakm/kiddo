@@ -249,3 +249,16 @@ reschedule:
         to: 'Na'
         reason: 'Powód'
       footer: 'Zaloguj się do panelu administracyjnego, aby zweryfikować szczegóły.'
+legal:
+  change_notification:
+    subject: 'Zmiana dokumentu: {document}'
+    no_summary: 'Zaktualizowaliśmy treść dokumentu.'
+    body: >-
+      Informujemy o zmianie dokumentu „{document}”, obowiązującej od {effective}.
+
+      {summary}
+
+      Nową wersję znajdziesz pod adresem: {url}
+
+      Jeśli nie akceptujesz zmiany, możesz wypowiedzieć umowę w ciągu 10 dni od
+      otrzymania tej wiadomości. Brak wypowiedzenia oznacza akceptację nowej wersji.

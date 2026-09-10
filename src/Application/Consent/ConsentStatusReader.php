@@ -57,4 +57,38 @@ final readonly class ConsentStatusReader
 
         return $outdated;
     }
+
+    /**
+     * Documents the user accepted at least once before, whose current version
+     * they have not accepted - the case the "we changed the rules" banner is
+     * for. A user who never accepted at all is left to the registration /
+     * checkout flow instead.
+     *
+     * @return list<LegalDocumentType>
+     */
+    public function staleDocuments(User $user): array
+    {
+        $stale = [];
+        foreach ([ConsentType::APP_TERMS, ConsentType::PRIVACY, ConsentType::CLASSES_TERMS] as $type) {
+            $documentType = $type->documentType();
+            if ($documentType === null) {
+                continue;
+            }
+
+            $latest = $this->consentRepository->findLatestActive($user, $type, $documentType);
+            if ($latest === null) {
+                continue;
+            }
+
+            $currentVersion = $this->versionRepository->findCurrent($documentType, Clock::get()->now());
+            if (
+                $currentVersion !== null
+                && !$latest->getDocumentVersion()?->getId()->equals($currentVersion->getId())
+            ) {
+                $stale[] = $documentType;
+            }
+        }
+
+        return $stale;
+    }
 }

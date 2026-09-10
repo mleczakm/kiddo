@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Legal;
 
+use App\Application\Command\NotifyLegalDocumentChange;
 use App\Application\File\FileStorageInterface;
 use App\Application\File\FileUploadPolicy;
 use App\Entity\LegalDocument;
-use App\Entity\LegalDocumentType;
 use App\Entity\LegalDocumentVersion;
-use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\LegalDocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final readonly class LegalDocumentPublisher
 {
@@ -20,28 +19,41 @@ final readonly class LegalDocumentPublisher
         private EntityManagerInterface $entityManager,
         private FileStorageInterface $fileStorage,
         private LegalDocumentRepository $documentRepository,
+        private MessageBusInterface $commandBus,
     ) {}
 
-    /** @throws \InvalidArgumentException */
-    public function publish(
-        LegalDocumentType $type,
-        UploadedFile $upload,
-        \DateTimeImmutable $effectiveFrom,
-        User $publishedBy,
-        ?string $changeSummary = null,
-    ): LegalDocumentVersion {
-        $changeSummary = $this->normalizeChangeSummary($changeSummary);
-        $file = $this->fileStorage->store($upload, new FileUploadPolicy('legal_document'), $publishedBy);
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
+    public function publish(NewLegalDocumentVersion $request, bool $notifyUsers = false): LegalDocumentVersion
+    {
+        $changeSummary = $this->normalizeChangeSummary($request->changeSummary);
+        $file = $this->fileStorage->store(
+            $request->upload,
+            new FileUploadPolicy('legal_document'),
+            $request->publishedBy,
+        );
 
-        $document = $this->documentRepository->findOneByType($type);
+        $document = $this->documentRepository->findOneByType($request->type);
         if ($document === null) {
-            $document = new LegalDocument($type);
+            $document = new LegalDocument($request->type);
             $this->entityManager->persist($document);
         }
 
-        $version = new LegalDocumentVersion($document, $file, $effectiveFrom, $publishedBy, $changeSummary);
+        $version = new LegalDocumentVersion(
+            $document,
+            $file,
+            $request->effectiveFrom,
+            $request->publishedBy,
+            $changeSummary,
+        );
         $this->entityManager->persist($version);
         $this->entityManager->flush();
+
+        if ($notifyUsers) {
+            $this->commandBus->dispatch(new NotifyLegalDocumentChange($version->getId()));
+        }
 
         return $version;
     }

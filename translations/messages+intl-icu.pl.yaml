@@ -161,6 +161,9 @@ notifications:
       admin:
         title: Harmonogram dnia
         body: 'Na dziś ({date}) zaplanowano <strong>{count}</strong> zajęć.'
+    legal_change:
+      title: 'Zmiana dokumentu: {document}'
+      body: 'Zaktualizowaliśmy dokument. Kliknij, aby zobaczyć nową wersję.'
 
 # Workshop related translations
 workshop:
@@ -1306,3 +1309,10 @@ day:
   Friday: Piątek
   Saturday: Sobota
   Sunday: Niedziela
+
+legal:
+  reaccept:
+    title: "Zaktualizowaliśmy nasze dokumenty"
+    lead: "Poniższe dokumenty mają nową wersję. Zapoznaj się z nimi. Jeśli się nie zgadzasz, możesz wypowiedzieć umowę w ciągu 10 dni — brak wypowiedzenia oznacza akceptację."
+    accept: "Akceptuję nowe wersje"
+    acceptance_text: "Akceptuję zaktualizowaną wersję dokumentu."

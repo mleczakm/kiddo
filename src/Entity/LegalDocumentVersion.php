@@ -46,8 +46,8 @@ final class LegalDocumentVersion
     #[ORM\Column(type: 'string', length: 1000, nullable: true)]
     private ?string $changeSummary;
 
-    #[ORM\Column(type: 'datetime_immutable')]
-    private \DateTimeImmutable $createdAt;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $notifiedAt = null;
 
     /** @throws \InvalidArgumentException */
     public function __construct(
@@ -74,7 +74,6 @@ final class LegalDocumentVersion
         $this->publishedBy = $publishedBy;
         $this->changeSummary = $changeSummary;
         $this->publishedAt = Clock::get()->now();
-        $this->createdAt = $this->publishedAt;
         $this->document->addVersion($this);
     }
 
@@ -123,13 +122,19 @@ final class LegalDocumentVersion
         return $this->changeSummary;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
     public function isEffectiveAt(\DateTimeImmutable $now): bool
     {
         return $this->publishedAt <= $now && $this->effectiveFrom <= $now;
+    }
+
+    public function getNotifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->notifiedAt;
+    }
+
+    /** Marks the change-notification round as done. Idempotent - a second call is a no-op. */
+    public function markNotified(\DateTimeImmutable $at): void
+    {
+        $this->notifiedAt ??= $at;
     }
 }
