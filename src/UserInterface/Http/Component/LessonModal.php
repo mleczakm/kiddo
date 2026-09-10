@@ -8,6 +8,8 @@ use App\Application\Command\AddBooking;
 use App\Application\Consent\BookingConsentManager;
 use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Service\Pricing\PriceQuoter;
+use App\Application\Service\Waitlist\WaitlistJoinOutcome;
+use App\Application\Service\Waitlist\WaitlistService;
 use App\Application\UseCase\Cart\AddCartItem;
 use App\Application\UseCase\Cart\DuplicateCartItemException;
 use App\Application\UseCase\Cart\GetOrCreateCart;
@@ -16,6 +18,7 @@ use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\User;
+use App\Entity\WaitlistEntry;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Infrastructure\Doctrine\Repository\ChildRepository;
 use App\Infrastructure\Doctrine\Repository\PaymentCodeRepository;
@@ -140,6 +143,10 @@ class LessonModal extends AbstractController
     #[LiveProp]
     public ?string $addToCartError = null;
 
+    /** Translation key of the last waitlist action's feedback, if any. */
+    #[LiveProp]
+    public ?string $waitlistNotice = null;
+
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly ChildRepository $childRepository,
@@ -153,6 +160,7 @@ class LessonModal extends AbstractController
         private readonly GetOrCreateCart $getOrCreateCart,
         private readonly AddCartItem $addCartItem,
         private readonly BookingConsentManager $bookingConsentManager,
+        private readonly WaitlistService $waitlistService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -382,6 +390,79 @@ class LessonModal extends AbstractController
 
         $this->addedToCart = true;
         $this->emit('cart:updated');
+    }
+
+    /**
+     * Whether the "join waitlist" affordance should show: a full lesson with the
+     * waitlist enabled. Guests fall through to the login link like booking does.
+     *
+     * @throws \LogicException from getUser() when the security context is missing
+     */
+    public function isWaitlistOffered(): bool
+    {
+        return (
+            $this->lesson !== null
+            && $this->getUser() instanceof User
+            && $this->lesson->getAvailableSpots() <= 0
+            && $this->waitlistService->isAvailableFor($this->lesson)
+        );
+    }
+
+    /**
+     * @throws \LogicException from getUser() when the security context is missing
+     */
+    public function currentWaitlistEntry(): ?WaitlistEntry
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User || $this->lesson === null) {
+            return null;
+        }
+
+        return $this->waitlistService->activeEntryFor($user, $this->lesson);
+    }
+
+    /**
+     * @throws \LogicException from getUser() when the security context is missing
+     */
+    public function isOnWaitlist(): bool
+    {
+        return $this->currentWaitlistEntry() !== null;
+    }
+
+    /**
+     * @throws \LogicException from getUser() when the security context is missing
+     */
+    #[LiveAction]
+    public function joinWaitlist(): void
+    {
+        $user = $this->getUser();
+        $lesson = $this->lesson;
+        if (!$user instanceof User || $lesson === null) {
+            return;
+        }
+
+        $this->waitlistNotice = match ($this->waitlistService->join($user, $lesson)->outcome) {
+            WaitlistJoinOutcome::Joined => 'lesson.waitlist.joined',
+            WaitlistJoinOutcome::AlreadyQueued => 'lesson.waitlist.already',
+            WaitlistJoinOutcome::SeatAvailable => 'lesson.waitlist.seat_available',
+            WaitlistJoinOutcome::Unavailable => 'lesson.waitlist.unavailable',
+        };
+    }
+
+    /**
+     * @throws \LogicException from getUser() when the security context is missing
+     */
+    #[LiveAction]
+    public function leaveWaitlist(): void
+    {
+        $user = $this->getUser();
+        $lesson = $this->lesson;
+        if (!$user instanceof User || $lesson === null) {
+            return;
+        }
+
+        $this->waitlistService->leave($user, $lesson);
+        $this->waitlistNotice = 'lesson.waitlist.left';
     }
 
     #[LiveAction]

@@ -6,16 +6,18 @@ namespace App\Application\Service\Waitlist;
 
 use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Entity\Lesson;
+use App\Entity\User;
 use App\Entity\WaitlistEntry;
 use Doctrine\ORM\EntityManagerInterface;
+use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * Queue mechanics for lesson waitlists: promote waiting entries to held offers
- * when seats are free, and expire stale offers. Notification is delegated to
- * {@see WaitlistOfferMailer}. Feature-flag / per-lesson gating is the caller's
- * responsibility (the message handlers).
+ * Lesson-waitlist queue: join / leave for the caller, and the seat mechanics
+ * (promote waiting entries to held offers when seats free up, expire stale
+ * offers). Notification is delegated to {@see WaitlistOfferMailer}. This is the
+ * single place both the chat tool and the web modal go through.
  */
 final readonly class WaitlistService
 {
@@ -23,7 +25,80 @@ final readonly class WaitlistService
         private WaitlistEntryRepositoryInterface $waitlist,
         private EntityManagerInterface $em,
         private WaitlistOfferMailer $mailer,
+        private FeatureManager $featureManager,
     ) {}
+
+    /** Whether a parent can be offered the waitlist for this lesson at all. */
+    public function isAvailableFor(Lesson $lesson): bool
+    {
+        return $this->featureManager->isEnabled('waitlist') && $lesson->isWaitlistEnabled(true);
+    }
+
+    public function join(User $user, Lesson $lesson): WaitlistJoinResult
+    {
+        if (!$this->isAvailableFor($lesson)) {
+            return new WaitlistJoinResult(WaitlistJoinOutcome::Unavailable);
+        }
+        if ($lesson->getAvailableSpots() > 0) {
+            return new WaitlistJoinResult(WaitlistJoinOutcome::SeatAvailable);
+        }
+
+        $existing = $this->waitlist->findActiveForUserAndLesson($user, $lesson);
+        if ($existing !== null) {
+            return new WaitlistJoinResult(
+                WaitlistJoinOutcome::AlreadyQueued,
+                $existing,
+                $this->positionOf($existing, $lesson),
+            );
+        }
+
+        $entry = new WaitlistEntry($lesson, $user, $user->getEmail(), $user->getName());
+        $this->em->persist($entry);
+        $this->em->flush();
+
+        return new WaitlistJoinResult(WaitlistJoinOutcome::Joined, $entry, $this->positionOf($entry, $lesson));
+    }
+
+    /** @return bool whether an active entry was found and cancelled */
+    public function leave(User $user, Lesson $lesson): bool
+    {
+        $entry = $this->waitlist->findActiveForUserAndLesson($user, $lesson);
+        if ($entry === null) {
+            return false;
+        }
+
+        $entry->cancel(Clock::get()->now());
+        $this->em->flush();
+
+        return true;
+    }
+
+    public function activeEntryFor(User $user, Lesson $lesson): ?WaitlistEntry
+    {
+        return $this->waitlist->findActiveForUserAndLesson($user, $lesson);
+    }
+
+    /**
+     * @return list<WaitlistEntry>
+     */
+    public function activeEntriesFor(User $user): array
+    {
+        return $this->waitlist->findActiveForUser($user);
+    }
+
+    /** 1-based queue position among the lesson's active entries. */
+    public function positionOf(WaitlistEntry $entry, Lesson $lesson): int
+    {
+        $position = 0;
+        foreach ($this->waitlist->findActiveForLesson($lesson) as $candidate) {
+            ++$position;
+            if ($candidate->getId()->equals($entry->getId())) {
+                return $position;
+            }
+        }
+
+        return $position;
+    }
 
     /**
      * Promote up to (free seats − seats already on offer) waiting entries for

@@ -418,6 +418,15 @@ lesson:
   accept_terms_and_close: Zaakceptuj regulamin
   fully_booked: Brak wolnych miejsc
   no_lessons_found: W wybranym okresie brak zajęć spełniających kryteria.
+  waitlist:
+    join: Zapisz się na listę rezerwową
+    leave: Zrezygnuj z listy rezerwowej
+    on_list: Jesteś na liście rezerwowej
+    joined: Dodaliśmy Cię do listy rezerwowej. Powiadomimy Cię e-mailem, gdy zwolni się miejsce.
+    already: Jesteś już na liście rezerwowej dla tych zajęć.
+    left: Usunęliśmy Cię z listy rezerwowej.
+    seat_available: Na te zajęcia są już wolne miejsca — możesz je zarezerwować.
+    unavailable: Lista rezerwowa nie jest dostępna dla tych zajęć.
 
 profile:
   children:

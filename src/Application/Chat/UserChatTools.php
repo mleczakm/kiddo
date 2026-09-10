@@ -12,8 +12,9 @@ use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\NotificationRepositoryInterface;
 use App\Application\Repository\PaymentCodeRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
-use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\Payment\PaymentCodeGenerator;
+use App\Application\Service\Waitlist\WaitlistJoinOutcome;
+use App\Application\Service\Waitlist\WaitlistService;
 use App\Entity\Child;
 use App\Entity\Lesson;
 use App\Entity\User;
@@ -24,7 +25,6 @@ use App\Message\RescheduleLessonBooking;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
-use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -51,8 +51,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         private RateLimiterFactory $authEmailRateLimiter,
         private CacheItemPoolInterface $cache,
         private PaymentCodeGenerator $paymentCodeGenerator,
-        private WaitlistEntryRepositoryInterface $waitlistRepository,
-        private FeatureManager $featureManager,
+        private WaitlistService $waitlistService,
     ) {}
 
     #[\Override]
@@ -1241,49 +1240,37 @@ final readonly class UserChatTools implements ChatToolProviderInterface
      */
     private function joinWaitlist(ChatActor $actor, ToolArguments $args): ToolResult
     {
-        $user = $actor->requireUser();
-
         $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
         if (!$lesson instanceof Lesson) {
             return ToolResult::failure('Lesson not found');
         }
-        if (!$this->waitlistAvailableFor($lesson)) {
-            return ToolResult::failure(
+
+        $result = $this->waitlistService->join($actor->requireUser(), $lesson);
+
+        return match ($result->outcome) {
+            WaitlistJoinOutcome::Unavailable => ToolResult::failure(
                 'Waitlist is not available for this lesson.',
                 'Lista rezerwowa nie jest dostępna dla tych zajęć.',
-            );
-        }
-        if ($lesson->getAvailableSpots() > 0) {
-            return ToolResult::failure(
+            ),
+            WaitlistJoinOutcome::SeatAvailable => ToolResult::failure(
                 'This lesson still has free spots — book it directly with user.create_booking.',
                 'Na te zajęcia są jeszcze wolne miejsca — zarezerwuj je bezpośrednio (user.create_booking).',
-            );
-        }
-
-        $existing = $this->waitlistRepository->findActiveForUserAndLesson($user, $lesson);
-        if ($existing !== null) {
-            return ToolResult::success(
-                'Jesteś już na liście rezerwowej dla tych zajęć.',
-                $this->waitlistRow($existing),
-            );
-        }
-
-        $entry = new WaitlistEntry($lesson, $user, $user->getEmail(), $user->getName());
-        $this->entityManager->persist($entry);
-        $this->entityManager->flush();
-
-        $position = count($this->waitlistRepository->findActiveForLesson($lesson));
-
-        return ToolResult::success(
-            sprintf(
-                'Dodano do listy rezerwowej (pozycja %d). Powiadomimy Cię e-mailem, gdy zwolni się miejsce.',
-                $position,
             ),
-            [
-                ...$this->waitlistRow($entry),
-                'position' => $position,
-            ],
-        );
+            WaitlistJoinOutcome::AlreadyQueued => ToolResult::success(
+                'Jesteś już na liście rezerwowej dla tych zajęć.',
+                $result->entry !== null ? $this->waitlistRow($result->entry) : [],
+            ),
+            WaitlistJoinOutcome::Joined => ToolResult::success(
+                sprintf(
+                    'Dodano do listy rezerwowej (pozycja %d). Powiadomimy Cię e-mailem, gdy zwolni się miejsce.',
+                    $result->position,
+                ),
+                [
+                    ...($result->entry !== null ? $this->waitlistRow($result->entry) : []),
+                    'position' => $result->position,
+                ],
+            ),
+        };
     }
 
     /**
@@ -1296,35 +1283,23 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             return ToolResult::failure('Lesson not found');
         }
 
-        $entry = $this->waitlistRepository->findActiveForUserAndLesson($actor->requireUser(), $lesson);
-        if ($entry === null) {
+        if (!$this->waitlistService->leave($actor->requireUser(), $lesson)) {
             return ToolResult::failure(
                 'Not on the waitlist for this lesson.',
                 'Nie jesteś na liście rezerwowej dla tych zajęć.',
             );
         }
 
-        $entry->cancel(Clock::get()->now());
-        $this->entityManager->flush();
-
         return ToolResult::success('Usunięto z listy rezerwowej.');
     }
 
     private function listWaitlist(ChatActor $actor): ToolResult
     {
-        $entries = array_map(
-            $this->waitlistRow(...),
-            $this->waitlistRepository->findActiveForUser($actor->requireUser()),
-        );
+        $entries = array_map($this->waitlistRow(...), $this->waitlistService->activeEntriesFor($actor->requireUser()));
 
         return ToolResult::success(sprintf('Listy rezerwowe: %d.', count($entries)), [
             'waitlist' => $entries,
         ]);
-    }
-
-    private function waitlistAvailableFor(Lesson $lesson): bool
-    {
-        return $this->featureManager->isEnabled('waitlist') && $lesson->isWaitlistEnabled(true);
     }
 
     /**

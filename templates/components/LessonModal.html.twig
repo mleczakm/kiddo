@@ -332,6 +332,25 @@
                                         class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-10 px-4 py-2 bg-workshop-red text-white [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
                                     {{ 'lesson.book_and_pay'|trans }}
                                 </button>
+                            {% elseif this.isWaitlistOffered %}
+                                {% if this.isOnWaitlist %}
+                                    <span class="inline-flex items-center text-sm text-muted-foreground px-1">
+                                        {{ 'lesson.waitlist.on_list'|trans }}
+                                    </span>
+                                    <button type="button"
+                                            data-action="live#action"
+                                            data-live-action-param="leaveWaitlist"
+                                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                                        {{ 'lesson.waitlist.leave'|trans }}
+                                    </button>
+                                {% else %}
+                                    <button type="button"
+                                            data-action="live#action"
+                                            data-live-action-param="joinWaitlist"
+                                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-10 px-4 py-2 bg-workshop-red text-white [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
+                                        {{ 'lesson.waitlist.join'|trans }}
+                                    </button>
+                                {% endif %}
                             {% else %}
                                 <span class="inline-block" title="{{ 'lesson.fully_booked'|trans }}">
                                     <button type="button"
@@ -343,6 +362,9 @@
                                 </span>
                             {% endif %}
                         </div>
+                        {% if waitlistNotice %}
+                            <p class="mt-2 text-sm text-muted-foreground">{{ waitlistNotice|trans }}</p>
+                        {% endif %}
                     {% else %}
                         <div class="flex flex-col sm:flex-row gap-2">
                             <a href="{{ path('app_login') }}"
