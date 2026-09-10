@@ -178,10 +178,10 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             $qb->setMaxResults($limit);
         }
 
-        /** @var Lesson[] $result */
-        $result = $qb->getQuery()->getResult();
+        /** @var list<Lesson> $lessons */
+        $lessons = $qb->getQuery()->getResult();
 
-        return $result;
+        return array_values($lessons);
     }
 
     /**

@@ -76,7 +76,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
             ->getQuery()
             ->getResult();
 
-        return $users;
+        return array_values($users);
     }
 
     /**

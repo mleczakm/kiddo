@@ -60,7 +60,7 @@ class WaitlistEntryRepository extends ServiceEntityRepository implements Waitlis
             ->getQuery()
             ->getResult();
 
-        return $rows;
+        return array_values($rows);
     }
 
     #[\Override]
@@ -101,7 +101,7 @@ class WaitlistEntryRepository extends ServiceEntityRepository implements Waitlis
             ->getQuery()
             ->getResult();
 
-        return $rows;
+        return array_values($rows);
     }
 
     /**
@@ -123,6 +123,6 @@ class WaitlistEntryRepository extends ServiceEntityRepository implements Waitlis
             ->getQuery()
             ->getResult();
 
-        return $rows;
+        return array_values($rows);
     }
 }
