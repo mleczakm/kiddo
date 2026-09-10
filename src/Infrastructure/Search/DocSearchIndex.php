@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Search;
 
-use App\Application\Help\DocArticle;
+use App\Application\Help\DocArticleMatcher;
 use App\Application\Help\DocRegistry;
 use App\Application\Search\SearchReference;
 use App\Application\Search\SearchType;
@@ -20,6 +20,7 @@ final readonly class DocSearchIndex
 {
     public function __construct(
         private DocRegistry $registry,
+        private DocArticleMatcher $matcher,
         private AuthorizationCheckerInterface $authorizationChecker,
         private LoggerInterface $logger,
     ) {}
@@ -48,7 +49,7 @@ final readonly class DocSearchIndex
                 continue;
             }
 
-            $score = $this->score($article, $query);
+            $score = $this->matcher->score($article, $query);
             if ($score > 0) {
                 $scored[] = new ScoredReference(new SearchReference(SearchType::Doc, $article->slug), $score * 10_000);
             }
@@ -57,37 +58,5 @@ final readonly class DocSearchIndex
         usort($scored, static fn(ScoredReference $a, ScoredReference $b): int => $b->priority <=> $a->priority);
 
         return array_slice($scored, 0, max(1, $limit));
-    }
-
-    private function score(DocArticle $article, string $query): int
-    {
-        $title = mb_strtolower($article->title);
-        $keywords = array_map(mb_strtolower(...), $article->keywords);
-
-        return match (true) {
-            $title === $query => 6,
-            in_array($query, $keywords, true), str_starts_with($title, $query) => 5,
-            str_contains($title, $query) => 4,
-            $this->anyContains($keywords, $query) => 3,
-            str_contains(mb_strtolower($article->summary), $query),
-            str_contains(mb_strtolower($article->section->label()), $query),
-                => 2,
-            str_contains($article->searchHaystack(), $query) => 1,
-            default => 0,
-        };
-    }
-
-    /**
-     * @param list<string> $values
-     */
-    private function anyContains(array $values, string $needle): bool
-    {
-        foreach ($values as $value) {
-            if (str_contains($value, $needle)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

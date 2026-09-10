@@ -28,6 +28,8 @@ final class KiddoMcpServerTest extends KernelTestCase
         static::assertContains('user_list_upcoming_lessons', $names);
         static::assertContains('user_me', $names);
         static::assertContains('admin_list_unmatched_transfers', $names);
+        static::assertContains('staff_search_help', $names);
+        static::assertContains('staff_get_help_article', $names);
         static::assertNotContains('create_lesson', $names);
         static::assertNotContains('admincreate_lesson', $names);
         // One public name per tool — no alias explosion for ElevenLabs.

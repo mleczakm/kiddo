@@ -14,6 +14,7 @@ mcp:
         After user.create_booking, relay the returned BLIK-to-phone instructions (phone, amount, title code, ~24h validity) verbatim.
         Guest asking about an existing reservation and holding a payment code: user.request_booking_access (emails a code), then user.confirm_booking_access with the code they read back — it returns the booking and a chat_token to reuse as a tool argument.
         Lesson full (available_spots = 0) and caller is logged in: offer user.join_waitlist. An offered seat must be booked with user.create_booking within ~60 minutes or it passes to the next person.
+        Staff ("jak zrobić X w panelu", "gdzie ustawię Y", "jak działa Z"): search the knowledge base with staff.search_help, then staff.get_help_article for the full text. Do not guess panel behaviour. Needs a chat token with ROLE_HOST/ROLE_ADMIN and only returns articles that role may see.
         Admin tools require a chat token with ROLE_ADMIN.
     client_transports:
         stdio: true
