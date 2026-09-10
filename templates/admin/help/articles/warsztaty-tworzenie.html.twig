@@ -1,0 +1,36 @@
+{#---
+slug: warsztaty-tworzenie
+title: "Tworzenie i publikowanie warsztatu"
+section: schedule
+role: ROLE_MANAGE_LESSONS
+summary: "Jak dodać warsztat, ustawić kategorię, opis, zdjęcie, pojemność i opublikować go."
+keywords: [warsztat, zajęcia, dodaj, edytor, kategoria, zdjęcie, pojemność, miejsca, publikacja, grafik]
+primary_route: app_admin_schedule
+related: [warsztaty-terminy-i-serie, zajecia-uczestnicy-i-obecnosc, cennik-reguly-i-karnety]
+---#}
+<p>
+    Warsztaty i pojedyncze zajęcia dodaje się w <a href="{{ path('app_admin_schedule') }}">Warsztatach i grafiku</a>.
+    Edytor warsztatu prowadzi przez wszystkie pola potrzebne do publikacji.
+</p>
+
+<h2>Krok po kroku</h2>
+<ol>
+    <li>Wejdź w <a href="{{ path('app_admin_schedule') }}">grafik</a> i wybierz <strong>Dodaj warsztat</strong>.</li>
+    <li>Uzupełnij <strong>tytuł</strong>, <strong>lead</strong> (krótki wstęp) i <strong>opis</strong>.</li>
+    <li>Wybierz <strong>kategorię</strong> i zakres wiekowy — po nich klienci filtrują ofertę.</li>
+    <li>Dodaj <strong>zdjęcie</strong> (miniatura na liście i stronie warsztatu).</li>
+    <li>Ustaw <strong>pojemność</strong> (liczbę miejsc) oraz terminy — patrz
+        <a href="{{ path('app_admin_help_article', {slug: 'warsztaty-terminy-i-serie'}) }}">Terminy i serie zajęć</a>.</li>
+    <li>Zapisz jako szkic, a gdy wszystko się zgadza — <strong>opublikuj</strong>.</li>
+</ol>
+
+<h2>Szkic a publikacja</h2>
+<p>
+    Szkic jest widoczny tylko w panelu. Dopiero publikacja pokazuje warsztat na stronie i otwiera zapisy.
+    Zajęcia można też pojedynczo włączać/wyłączać z grafiku bez usuwania.
+</p>
+
+<div class="help-callout">
+    Cena wynika z <a href="{{ path('app_admin_help_article', {slug: 'cennik-reguly-i-karnety'}) }}">cennika</a>,
+    a nie z samego warsztatu — jeden warsztat może mieć różne ceny (pojedyncze wejście, karnet).
+</div>

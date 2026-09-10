@@ -64,6 +64,9 @@ final class AdminGlobalSearchComponent extends AbstractController
             SearchType::Post => $this->urlGenerator->generate('app_admin_post_edit', [
                 'id' => Ulid::fromString($reference->id)->toBase32(),
             ]),
+            SearchType::Doc => $this->urlGenerator->generate('app_admin_help_article', [
+                'slug' => $reference->id,
+            ]),
         };
     }
 

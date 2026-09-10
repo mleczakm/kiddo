@@ -1,0 +1,28 @@
+{#---
+slug: newsletter
+title: "Newsletter i zgoda marketingowa"
+section: newsletter
+role: ROLE_MANAGE_CONTENT
+summary: "Jak działa zapis do newslettera, potwierdzenie (double opt-in) i zgoda marketingowa."
+keywords: [newsletter, zapis, mailing, marketing, zgoda marketingowa, double opt-in, brevo, potwierdzenie]
+primary_route: app_admin_settings
+related: [zgody-i-dokumenty-prawne, tresci-blog]
+---#}
+<p>
+    Formularz newslettera na stronie głównej zapisuje adres i wymaga potwierdzenia klikiem w e-mailu
+    (double opt-in). Lista jest prowadzona po stronie Brevo.
+</p>
+
+<h2>Przebieg zapisu</h2>
+<ol>
+    <li>Klient podaje e-mail w formularzu i wyraża zgodę marketingową.</li>
+    <li>Dostaje e-mail z linkiem potwierdzającym.</li>
+    <li>Po kliknięciu trafia na stronę <a href="{{ path('newsletter_confirmed.pl') }}">potwierdzenia</a>
+        i jest dodawany do listy.</li>
+</ol>
+
+<h2>Zgoda marketingowa</h2>
+<p>
+    Zgoda jest zapisywana z treścią oświadczenia i powiązana z kontem (jeśli klient jest zalogowany).
+    Wycofanie zgody odnotowuje się w historii zgód w <a href="{{ path('app_admin_users') }}">CRM</a>.
+</p>

@@ -1,0 +1,34 @@
+{#---
+slug: rezerwacje-anulowanie-i-przeniesienie
+title: "Anulowanie i przenoszenie rezerwacji"
+section: bookings
+role: ROLE_MANAGE_BOOKINGS
+summary: "Jak anulować rezerwację, przenieść ją na inny termin i co dzieje się z płatnością."
+keywords: [anulowanie, odwołanie, przeniesienie, zmiana terminu, zwrot, rezerwacja, status]
+primary_route: app_admin_bookings
+related: [rezerwacje-tworzenie, platnosci-zwroty]
+---#}
+<p>
+    Anulowanie i przeniesienie wykonuje się z poziomu rezerwacji w
+    <a href="{{ path('app_admin_bookings') }}">Rezerwacjach</a> (lub z listy uczestników terminu).
+</p>
+
+<h2>Anulowanie</h2>
+<ul>
+    <li>Rezerwacja dostaje status <strong>anulowana</strong> i zwalnia miejsce na zajęciach.</li>
+    <li>Anulowane pozycje nie znikają — są schowane pod rozwijanym „nieaktywne rezerwacje”,
+        żeby zachować historię.</li>
+    <li>Jeśli była opłacona, rozważ zwrot — patrz
+        <a href="{{ path('app_admin_help_article', {slug: 'platnosci-zwroty'}) }}">Zwroty</a>.</li>
+</ul>
+
+<h2>Przeniesienie na inny termin</h2>
+<p>
+    Przeniesienie tworzy nową rezerwację na wskazanym terminie i oznacza starą jako
+    <strong>przeniesioną</strong>, zachowując powiązaną płatność. Miejsce w starym terminie jest zwalniane.
+</p>
+
+<div class="help-callout">
+    Odwołanie całego terminu (w grafiku) nie anuluje automatycznie rezerwacji — trzeba je obsłużyć
+    (zwrot lub przeniesienie), żeby klient dostał jasną informację.
+</div>

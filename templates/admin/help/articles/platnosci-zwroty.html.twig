@@ -1,0 +1,28 @@
+{#---
+slug: platnosci-zwroty
+title: "Zwroty i kolejka zwrotów"
+section: finance
+role: ROLE_MANAGE_PAYMENTS
+summary: "Jak obsłużyć prośbę o zwrot i gdzie znaleźć kolejkę oczekujących zwrotów."
+keywords: [zwrot, refundacja, kolejka zwrotów, prośba o zwrot, reklamacja, płatność]
+primary_route: app_admin_transfers
+related: [platnosci-przelewy-i-dopasowanie, rezerwacje-anulowanie-i-przeniesienie]
+---#}
+<p>
+    Prośby o zwrot (np. po odwołaniu terminu lub rezygnacji klienta) trafiają do kolejki w
+    <a href="{{ path('app_admin_transfers') }}">Płatnościach / Finansach</a>.
+</p>
+
+<h2>Obsługa zwrotu</h2>
+<ol>
+    <li>Otwórz pozycję w kolejce zwrotów — zobaczysz płatność, kwotę i treść prośby.</li>
+    <li>Zweryfikuj podstawę (anulowana/odwołana rezerwacja, termin zgłoszenia).</li>
+    <li>Wykonaj przelew zwrotny w banku, a w panelu oznacz zwrot jako zrealizowany.</li>
+</ol>
+
+<h2>Powiązanie z rezerwacją</h2>
+<p>
+    Zwrot zwykle idzie w parze z anulowaniem lub przeniesieniem rezerwacji — patrz
+    <a href="{{ path('app_admin_help_article', {slug: 'rezerwacje-anulowanie-i-przeniesienie'}) }}">Anulowanie i przenoszenie</a>.
+    Rekord płatności pozostaje w systemie także po zwrocie (retencja księgowa).
+</p>

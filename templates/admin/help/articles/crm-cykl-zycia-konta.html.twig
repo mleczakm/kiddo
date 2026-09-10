@@ -1,0 +1,37 @@
+{#---
+slug: crm-cykl-zycia-konta
+title: "Cykl życia konta: pauza, usunięcie, anonimizacja"
+section: crm
+role: ROLE_MANAGE_USERS
+summary: "Co oznacza wstrzymane, oczekujące na usunięcie i zanonimizowane konto oraz jak to działa."
+keywords: [konto, pauza, wstrzymanie, usunięcie, anonimizacja, rodo, dane osobowe, dezaktywacja, karencja]
+primary_route: app_admin_users
+related: [crm-klienci-i-dzieci, panel-klienta-samoobsluga-konta, zgody-i-dokumenty-prawne]
+---#}
+<p>
+    Konto klienta może być w jednym z kilku stanów. Klient uruchamia je sam w panelu
+    (patrz <a href="{{ path('app_admin_help_article', {slug: 'panel-klienta-samoobsluga-konta'}) }}">Samoobsługa konta</a>),
+    a Ty widzisz stan w <a href="{{ path('app_admin_users') }}">CRM</a>.
+</p>
+
+<h2>Stany konta</h2>
+<ul>
+    <li><strong>Aktywne</strong> — normalne działanie.</li>
+    <li><strong>Wstrzymane (pauza)</strong> — klient nie loguje się, ale dane pozostają.
+        Zalogowanie się cofa pauzę.</li>
+    <li><strong>Oczekujące na usunięcie</strong> — po okresie karencji (14 dni) konto zostaje
+        zanonimizowane automatycznie. Zalogowanie w tym czasie anuluje usunięcie.</li>
+    <li><strong>Zanonimizowane</strong> — dane osobowe trwale usunięte; konto nie loguje się już nigdy.</li>
+</ul>
+
+<h2>Co zostaje po anonimizacji</h2>
+<p>
+    Usuwane są: imię i nazwisko, e-mail, telefon, notatki, imiona i daty urodzenia dzieci,
+    treść notatek do rezerwacji i próśb o zwrot, powiadomienia. <strong>Zostają</strong> rekordy
+    finansowe (płatności, przelewy, zamówienia) — wymaga tego prawo (retencja księgowa).
+</p>
+
+<div class="help-callout">
+    Anonimizacja jest nieodwracalna i uruchamia się też automatycznie raz na dobę dla kont po
+    karencji. Dzienny limit chroni przed masową operacją w razie błędu.
+</div>

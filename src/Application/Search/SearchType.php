@@ -13,4 +13,5 @@ enum SearchType: string
     case Payment = 'payment';
     case Transfer = 'transfer';
     case Post = 'post';
+    case Doc = 'doc';
 }

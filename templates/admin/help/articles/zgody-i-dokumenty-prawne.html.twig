@@ -1,0 +1,44 @@
+{#---
+slug: zgody-i-dokumenty-prawne
+title: "Zgody i dokumenty prawne"
+section: legal
+role: ROLE_SETTINGS
+summary: "Jakie zgody zbiera aplikacja, gdzie są dokumenty i jak działa ponowna akceptacja."
+keywords: [zgody, regulamin, polityka prywatności, rodo, checkbox, odstąpienie, opiekun, akceptacja, openterms]
+primary_route: app_admin_settings
+related: [dokumenty-publikacja-nowej-wersji, crm-cykl-zycia-konta, panel-klienta-samoobsluga-konta]
+---#}
+<p>
+    Aplikacja zbiera zgody w punktach styku z klientem (rejestracja, zapis, zakup, formularz dziecka,
+    newsletter, asystent AI) i wiąże je z konkretną wersją dokumentu. Historię widać w profilu klienta
+    w <a href="{{ path('app_admin_users') }}">CRM</a>.
+</p>
+
+<h2>Publiczne dokumenty</h2>
+<ul>
+    <li><a href="{{ path('legal_app_terms') }}">Regulamin aplikacji</a></li>
+    <li><a href="{{ path('legal_classes_terms') }}">Regulamin zajęć</a></li>
+    <li><a href="{{ path('legal_privacy') }}">Polityka prywatności</a></li>
+</ul>
+
+<h2>Rodzaje zgód</h2>
+<ul>
+    <li><strong>Akceptacja regulaminów i polityki</strong> — przy rejestracji i przy zakupie.</li>
+    <li><strong>Potwierdzenie informacji o odstąpieniu</strong> — dedykowany checkbox przy zakupie
+        zajęć z datą (art. 38 pkt 12 u.p.k.).</li>
+    <li><strong>Oświadczenie opiekuna</strong> — przy dodawaniu danych dziecka.</li>
+    <li><strong>Zgoda marketingowa</strong> — newsletter (double opt-in).</li>
+    <li><strong>Zgoda na asystenta AI</strong> — przed pierwszym użyciem czatu głosowego.</li>
+</ul>
+
+<h2>Ponowna akceptacja</h2>
+<p>
+    Po opublikowaniu nowej wersji regulaminu aplikacji lub polityki prywatności klient przy kolejnej
+    wizycie w panelu zobaczy baner z prośbą o potwierdzenie akceptacji. Regulamin zajęć jest
+    akceptowany ponownie przy zakupie, nie w banerze.
+</p>
+
+<div class="help-callout">
+    Dopóki funkcje <code>consents</code> i <code>legal_documents</code> nie są włączone na produkcji,
+    zbieranie zgód działa „w tle” i nie blokuje żadnych akcji klienta.
+</div>

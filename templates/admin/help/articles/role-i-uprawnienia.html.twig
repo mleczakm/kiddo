@@ -1,0 +1,37 @@
+{#---
+slug: role-i-uprawnienia
+title: "Role i uprawnienia"
+section: getting-started
+role: ROLE_ADMIN
+summary: "Która rola odblokowuje którą sekcję panelu i jak nadać uprawnienia."
+keywords: [role, uprawnienia, dostęp, ROLE_HOST, ROLE_ADMIN, prowadzący, administrator]
+primary_route: app_admin_users
+related: [wprowadzenie, crm-klienci-i-dzieci]
+---#}
+<p>
+    Dostęp do sekcji panelu wynika z ról przypisanych do konta. <strong>ROLE_HOST</strong>
+    (prowadzący) jest podzbiorem <strong>ROLE_ADMIN</strong> — każdy administrator jest też
+    prowadzącym, ale nie odwrotnie.
+</p>
+
+<h2>Role szczegółowe (ROLE_ADMIN zawiera wszystkie)</h2>
+<ul>
+    <li><strong>ROLE_MANAGE_LESSONS / ROLE_MANAGE_SCHEDULE</strong> — warsztaty i grafik</li>
+    <li><strong>ROLE_MANAGE_BOOKINGS</strong> — rezerwacje</li>
+    <li><strong>ROLE_MANAGE_USERS</strong> — baza klientów</li>
+    <li><strong>ROLE_MANAGE_PAYMENTS</strong> — płatności i przelewy</li>
+    <li><strong>ROLE_MANAGE_CONTENT</strong> — treści, blog, linki w menu</li>
+    <li><strong>ROLE_MANAGE_PRICING</strong> — cennik (dodatkowo wymaga włączonej funkcji)</li>
+    <li><strong>ROLE_SETTINGS</strong> — ustawienia systemu i dokumenty prawne</li>
+</ul>
+
+<h2>Jak nadać uprawnienia</h2>
+<p>
+    Role ustawia się na koncie klienta w <a href="{{ path('app_admin_users') }}">Bazie klientów</a> —
+    wejdź w szczegóły osoby i zaznacz odpowiednie role. Zmiana obowiązuje przy kolejnym logowaniu.
+</p>
+
+<div class="help-callout">
+    Podręcznik dostępny jest dla każdego z rolą ROLE_HOST, ale poszczególne artykuły widzą tylko
+    osoby z rolą wymaganą przez opisywaną funkcję.
+</div>

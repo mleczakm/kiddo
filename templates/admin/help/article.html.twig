@@ -1,0 +1,60 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set sub_breadcrumbs = [{ label: article.title }] %}
+
+{% block title %}{{ article.title }} | Pomoc | Kiddo Admin{% endblock %}
+
+{% block body %}
+<article class="mx-auto max-w-3xl space-y-6">
+    <header class="space-y-2">
+        <p class="text-xs font-black uppercase tracking-wider text-slate-400">{{ article.section.label }}</p>
+        <h1 class="text-3xl font-black text-slate-900">{{ article.title }}</h1>
+        <p class="text-sm text-slate-500">{{ article.summary }}</p>
+        {% if article.primaryRoute %}
+            <a href="{{ path(article.primaryRoute) }}"
+               class="mt-2 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700">
+                Przejdź do sekcji
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+        {% endif %}
+    </header>
+
+    <div class="help-prose rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        {{ include(article.template()) }}
+    </div>
+
+    {% if related is not empty %}
+        <section class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <h2 class="mb-3 text-xs font-black uppercase tracking-wider text-slate-400">Powiązane artykuły</h2>
+            <ul class="space-y-2">
+                {% for item in related %}
+                    <li>
+                        <a href="{{ path('app_admin_help_article', {slug: item.slug}) }}"
+                           class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">{{ item.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    <p class="text-xs text-slate-400">Ostatnia aktualizacja: {{ article.updatedAt|format_date(pattern: 'd MMMM yyyy') }}</p>
+</article>
+
+<style>
+    .help-prose { color: rgb(51, 65, 85); font-size: 0.925rem; line-height: 1.65; }
+    .help-prose > *:first-child { margin-top: 0; }
+    .help-prose > *:last-child { margin-bottom: 0; }
+    .help-prose h2 { font-size: 1.15rem; font-weight: 800; color: rgb(15, 23, 42); margin: 1.6rem 0 0.6rem; }
+    .help-prose h3 { font-size: 1rem; font-weight: 700; color: rgb(15, 23, 42); margin: 1.3rem 0 0.4rem; }
+    .help-prose p { margin: 0.6rem 0; }
+    .help-prose ul, .help-prose ol { margin: 0.6rem 0; padding-left: 1.3rem; }
+    .help-prose ul { list-style: disc; }
+    .help-prose ol { list-style: decimal; }
+    .help-prose li { margin: 0.3rem 0; }
+    .help-prose a { color: rgb(79, 70, 229); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+    .help-prose a:hover { color: rgb(67, 56, 202); }
+    .help-prose code { background: rgb(241, 245, 249); border-radius: 6px; padding: 0.1rem 0.35rem; font-size: 0.85em; }
+    .help-prose strong { font-weight: 700; color: rgb(15, 23, 42); }
+    .help-prose .help-callout { border-left: 3px solid rgb(129, 140, 248); background: rgb(238, 242, 255); padding: 0.75rem 1rem; border-radius: 0 12px 12px 0; margin: 1rem 0; }
+</style>
+{% endblock %}

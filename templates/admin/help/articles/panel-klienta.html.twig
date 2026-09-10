@@ -1,0 +1,30 @@
+{#---
+slug: panel-klienta
+title: "Panel klienta — co widzi klient"
+section: customer-panel
+role: ROLE_HOST
+summary: "Przegląd sekcji panelu klienta: grafik, rezerwacje, rozliczenia, zakup, profil."
+keywords: [panel klienta, konto, grafik, rezerwacje, rozliczenia, płatności, zakup, profil, ics]
+primary_route: dashboard.pl
+related: [panel-klienta-samoobsluga-konta, kalendarz-personelu]
+---#}
+<p>
+    Klient po zalogowaniu trafia do <a href="{{ path('dashboard.pl') }}">panelu klienta</a>. Warto znać
+    jego układ, żeby sprawnie pomagać przez telefon.
+</p>
+
+<h2>Sekcje panelu klienta</h2>
+<ul>
+    <li><strong>Przegląd</strong> — najbliższe zajęcia i szybka płatność za zaległości.</li>
+    <li><strong><a href="{{ path('panel_schedule.pl') }}">Grafik</a></strong> — terminy dziecka,
+        z możliwością pobrania pliku kalendarza (.ics).</li>
+    <li><strong><a href="{{ path('panel_bookings.pl') }}">Rezerwacje</a></strong> — historia i status zapisów.</li>
+    <li><strong><a href="{{ path('panel_billing.pl') }}">Rozliczenia</a></strong> — płatności, kwoty, kody.</li>
+    <li><strong><a href="{{ path('panel_buy.pl') }}">Kup</a></strong> — zakup wejść / karnetów.</li>
+    <li><strong><a href="{{ path('profile.pl') }}">Profil</a></strong> — dane kontaktowe, dzieci, ustawienia konta.</li>
+</ul>
+
+<div class="help-callout">
+    Aby zobaczyć panel dokładnie tak jak klient, użyj impersonacji z
+    <a href="{{ path('app_admin_help_article', {slug: 'crm-klienci-i-dzieci'}) }}">CRM</a>.
+</div>

@@ -1,0 +1,32 @@
+{#---
+slug: panel-klienta-samoobsluga-konta
+title: "Samoobsługa konta i eksport danych"
+section: customer-panel
+role: ROLE_HOST
+summary: "Jak klient wstrzymuje lub usuwa konto i pobiera kopię swoich danych."
+keywords: [usuń konto, zamknięcie konta, pauza, wstrzymanie, eksport danych, rodo, moje dane, json, karencja]
+primary_route: panel_account_data_export.pl
+related: [crm-cykl-zycia-konta, zgody-i-dokumenty-prawne]
+---#}
+<p>
+    W ustawieniach konta w <a href="{{ path('profile.pl') }}">profilu</a> klient ma trzy operacje na
+    swoim koncie. Warto je znać, bo klienci pytają o nie przez telefon.
+</p>
+
+<h2>Wstrzymanie konta (pauza)</h2>
+<p>
+    Konto zostaje dezaktywowane, ale dane pozostają. Ponowne zalogowanie automatycznie cofa pauzę.
+</p>
+
+<h2>Usunięcie konta</h2>
+<p>
+    Wymaga wpisania słowa <code>USUŃ</code> dla potwierdzenia. Uruchamia okres karencji (14 dni),
+    po którym konto jest automatycznie anonimizowane. Zalogowanie w trakcie karencji anuluje usunięcie.
+    Szczegóły: <a href="{{ path('app_admin_help_article', {slug: 'crm-cykl-zycia-konta'}) }}">Cykl życia konta</a>.
+</p>
+
+<h2>Eksport danych</h2>
+<p>
+    Klient może pobrać <a href="{{ path('panel_account_data_export.pl') }}">kopię swoich danych</a>
+    w formacie JSON (profil, dzieci, rezerwacje, płatności, historia zgód).
+</p>

@@ -1,0 +1,36 @@
+{#---
+slug: crm-klienci-i-dzieci
+title: "Klienci, dzieci i notatki"
+section: crm
+role: ROLE_MANAGE_USERS
+summary: "Jak przeglądać profile klientów, dodawać konta, prowadzić notatki i widzieć historię."
+keywords: [crm, klient, użytkownik, dziecko, profil, notatka, dodaj konto, historia, zgody]
+primary_route: app_admin_users
+related: [crm-cykl-zycia-konta, role-i-uprawnienia, rezerwacje-tworzenie]
+---#}
+<p>
+    <a href="{{ path('app_admin_users') }}">Baza klientów (CRM)</a> to lista wszystkich kont z
+    wyszukiwaniem po nazwisku, e-mailu, telefonie i dacie rejestracji.
+</p>
+
+<h2>Profil klienta</h2>
+<ul>
+    <li><strong>Dane kontaktowe</strong> i lista <strong>dzieci</strong> z wiekiem.</li>
+    <li><strong>Rezerwacje i płatności</strong> klienta w jednym miejscu.</li>
+    <li><strong>Notatka administracyjna</strong> — wewnętrzna, niewidoczna dla klienta.</li>
+    <li><strong>Role</strong> — nadanie uprawnień do panelu (patrz
+        <a href="{{ path('app_admin_help_article', {slug: 'role-i-uprawnienia'}) }}">Role i uprawnienia</a>).</li>
+    <li><strong>Historia zgód</strong> — kiedy i jakie zgody klient wyraził lub wycofał.</li>
+</ul>
+
+<h2>Dodanie konta</h2>
+<p>
+    Przyciskiem <strong>Dodaj użytkownika</strong> zakładasz konto w imieniu klienta (e-mail, imię i nazwisko,
+    opcjonalnie dziecko). Klient loguje się potem linkiem wysyłanym na e-mail — bez ustawiania hasła.
+</p>
+
+<h2>Podszywanie się (impersonacja)</h2>
+<p>
+    Administrator może „wejść jako klient”, żeby zobaczyć panel jego oczami przy diagnozie problemu.
+    Wyjście z trybu przywraca własne konto.
+</p>

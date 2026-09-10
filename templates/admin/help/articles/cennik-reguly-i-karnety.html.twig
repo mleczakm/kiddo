@@ -1,0 +1,33 @@
+{#---
+slug: cennik-reguly-i-karnety
+title: "Cennik: reguły i karnety"
+section: pricing
+role: ROLE_MANAGE_PRICING
+summary: "Jak działają reguły cenowe i karnety oraz od czego zależy cena widoczna dla klienta."
+keywords: [cennik, cena, reguła cenowa, karnet, pakiet, zniżka, wejście jednorazowe, pricing]
+primary_route: app_admin_pricing
+related: [warsztaty-tworzenie, ustawienia-systemu]
+---#}
+<p>
+    <a href="{{ path('app_admin_pricing') }}">Cennik</a> jest osobny od warsztatu — jeden warsztat
+    może być sprzedawany na kilka sposobów (pojedyncze wejście, karnet na cykl).
+</p>
+
+<div class="help-callout">
+    Sekcja Cennik jest dostępna tylko przy włączonej funkcji <code>pricing_admin</code>. Jeśli link
+    zwraca „nie znaleziono”, funkcja jest wyłączona dla tego środowiska.
+</div>
+
+<h2>Reguły cenowe</h2>
+<ul>
+    <li>Reguła wiąże <strong>typ oferty</strong> (np. karnet, wejście) z <strong>ceną</strong> i
+        warunkami (kategoria, zakres dat, liczba spotkań).</li>
+    <li>Przy kilku pasujących regułach wybierana jest najbardziej szczegółowa.</li>
+    <li>Zmiana reguły wpływa na nowe rezerwacje; już złożone zachowują swoją cenę.</li>
+</ul>
+
+<h2>Karnety</h2>
+<p>
+    Karnet to z góry opłacony pakiet wejść na serię. Wykorzystanie karnetu widać przy rezerwacjach
+    klienta w <a href="{{ path('app_admin_users') }}">CRM</a>.
+</p>

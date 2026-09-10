@@ -1,0 +1,27 @@
+{#---
+slug: menu-linki
+title: "Linki w menu strony"
+section: content
+role: ROLE_MANAGE_CONTENT
+summary: "Jak dodać, uporządkować i usunąć linki w menu strony publicznej."
+keywords: [menu, linki, nawigacja, slot, kolejność, strona, warsztat, artykuł, url]
+primary_route: app_admin_menu_hooks
+related: [tresci-blog]
+---#}
+<p>
+    W <a href="{{ path('app_admin_menu_hooks') }}">Menu — linki</a> dodajesz pozycje pojawiające się
+    w menu strony publicznej.
+</p>
+
+<h2>Dodawanie linku</h2>
+<ol>
+    <li>Wybierz <strong>miejsce w menu</strong> (slot) — decyduje, gdzie link się pojawi.</li>
+    <li>Wybierz <strong>typ</strong>: artykuł, warsztat albo dowolny adres URL.</li>
+    <li>Podaj <strong>cel</strong> (slug artykułu/warsztatu lub pełny URL) i <strong>tekst linku</strong>.</li>
+</ol>
+
+<h2>Kolejność i usuwanie</h2>
+<p>
+    Linki w obrębie slotu są ułożone według pozycji nadawanej przy dodaniu. Zbędny link usuwasz
+    przyciskiem „Usuń” przy pozycji — zmiana jest natychmiastowa i widoczna na stronie.
+</p>

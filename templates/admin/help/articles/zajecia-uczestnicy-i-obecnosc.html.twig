@@ -1,0 +1,28 @@
+{#---
+slug: zajecia-uczestnicy-i-obecnosc
+title: "Uczestnicy i obecność na zajęciach"
+section: schedule
+role: ROLE_MANAGE_LESSONS
+summary: "Gdzie sprawdzić listę zapisanych dzieci na dany termin i stan miejsc."
+keywords: [uczestnicy, lista, obecność, frekwencja, zapisani, miejsca, wolne, termin]
+primary_route: app_admin_schedule
+related: [warsztaty-terminy-i-serie, rezerwacje-tworzenie]
+---#}
+<p>
+    Dla każdego terminu w <a href="{{ path('app_admin_schedule') }}">grafiku</a> dostępna jest lista
+    zapisanych uczestników wraz z danymi opiekuna i statusem rezerwacji.
+</p>
+
+<h2>Co widać na liście</h2>
+<ul>
+    <li>Imię dziecka i opiekun (klient), do którego prowadzi link w CRM.</li>
+    <li>Status rezerwacji: oczekująca, potwierdzona, opłacona, anulowana, przeniesiona.</li>
+    <li>Liczba zajętych i wolnych miejsc względem pojemności warsztatu.</li>
+    <li>Notatka do rezerwacji, jeśli klient lub obsługa ją dodali.</li>
+</ul>
+
+<h2>Nadchodzące zajęcia</h2>
+<p>
+    Widżet nadchodzących zajęć na <a href="{{ path('app_admin_dashboard') }}">pulpicie</a> pokazuje
+    najbliższe terminy z liczbą zapisanych — to najszybszy sposób przygotowania się do dnia.
+</p>

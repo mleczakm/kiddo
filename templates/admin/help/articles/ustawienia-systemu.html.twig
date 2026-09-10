@@ -1,0 +1,31 @@
+{#---
+slug: ustawienia-systemu
+title: "Ustawienia systemu"
+section: settings
+role: ROLE_SETTINGS
+summary: "Co można skonfigurować w ustawieniach: dane organizacji, integracje, progi i funkcje."
+keywords: [ustawienia, konfiguracja, dane organizacji, integracje, facebook, robots.txt, próg, funkcje, flagi]
+primary_route: app_admin_settings
+related: [zgody-i-dokumenty-prawne, newsletter, asystent-ai]
+---#}
+<p>
+    <a href="{{ path('app_admin_settings') }}">Ustawienia systemu</a> zbierają konfigurację całej
+    aplikacji w jednym miejscu.
+</p>
+
+<h2>Najważniejsze bloki</h2>
+<ul>
+    <li><strong>Dane organizacji</strong> — nazwa, NIP, adres, kontakt do reklamacji; używane m.in.
+        w dokumentach i mailach.</li>
+    <li><strong>Kontakty</strong> — adresy administratora, prowadzącego i osoby od finansów.</li>
+    <li><strong>Integracja z Facebookiem</strong> — konfiguracja połączenia dla treści społecznościowych.</li>
+    <li><strong>robots.txt</strong> — treść pliku dla robotów wyszukiwarek.</li>
+    <li><strong>Próg weryfikacji przelewów</strong> — kwota, powyżej której przelew wymaga ręcznego
+        potwierdzenia.</li>
+    <li><strong>Dokumenty prawne</strong> — publikacja regulaminów i polityki prywatności (osobny artykuł).</li>
+</ul>
+
+<div class="help-callout">
+    Część funkcji jest sterowana „flagami” (włącz/wyłącz) na poziomie środowiska — jeśli jakaś sekcja
+    nie jest widoczna mimo uprawnień, prawdopodobnie odpowiednia funkcja jest wyłączona.
+</div>

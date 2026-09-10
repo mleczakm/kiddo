@@ -11,6 +11,9 @@ novaway_feature_flag:
           commerce_order_write: true
           consents: false
           dynamic_pricing: true
+          # Built-in help & documentation centre at /admin/pomoc. OFF on prod
+          # until the content is reviewed; on in dev/test via the blocks below.
+          help_center: false
           legal_documents: false
           pricing_admin: false
           # Monthly-subscription ticket type + recurring billing. OFF on prod
@@ -35,6 +38,7 @@ when@dev:
             commerce_order_write: true
             consents: true
             dynamic_pricing: true
+            help_center: true
             legal_documents: true
             pricing_admin: false
             subscriptions: true
@@ -56,6 +60,7 @@ when@test:
             commerce_order_write: false
             consents: true
             dynamic_pricing: true
+            help_center: true
             legal_documents: true
             pricing_admin: true
             manual_bookings: true

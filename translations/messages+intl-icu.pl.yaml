@@ -1033,6 +1033,7 @@ admin:
     transfers: Płatności
     pricing: Cennik
     settings: Ustawienia
+    help: Pomoc i dokumentacja
     coming_soon: 'Sekcja "{tab}" wkrótce dostępna'
   billing:
     alert_title: 'Zaległe płatności'

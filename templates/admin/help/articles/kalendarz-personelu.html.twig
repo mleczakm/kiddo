@@ -1,0 +1,32 @@
+{#---
+slug: kalendarz-personelu
+title: "Subskrypcja kalendarza personelu"
+section: calendar
+role: ROLE_HOST
+summary: "Jak podłączyć grafik zajęć do własnego kalendarza (Google, Apple) przez link .ics."
+keywords: [kalendarz, ics, subskrypcja, google calendar, apple, grafik, personel, feed, prowadzący]
+primary_route: app_admin_schedule
+related: [zajecia-uczestnicy-i-obecnosc, panel-klienta]
+---#}
+<p>
+    Prowadzący mogą podłączyć grafik zajęć do swojego kalendarza jako subskrypcję (feed .ics).
+    Kalendarz aktualizuje się sam po stronie klienta kalendarza.
+</p>
+
+<h2>Jak podłączyć</h2>
+<ol>
+    <li>Skopiuj swój prywatny link subskrypcji z <a href="{{ path('app_admin_schedule') }}">grafiku</a>
+        (element „dodaj do kalendarza” / feed personelu).</li>
+    <li>W Google Calendar: „Inne kalendarze” → „Z adresu URL” → wklej link.</li>
+    <li>W Apple Calendar: „Plik” → „Nowa subskrypcja kalendarza” → wklej link.</li>
+</ol>
+
+<div class="help-callout">
+    Link zawiera klucz — traktuj go jak hasło. Jeśli wyciekł, wygeneruj nowy; stary przestanie działać.
+</div>
+
+<h2>Pojedyncze zajęcia</h2>
+<p>
+    Pojedynczy termin można też pobrać jako plik .ics z maila potwierdzającego lub z panelu klienta
+    (grafik) — to jednorazowe wydarzenie, nie subskrypcja.
+</p>

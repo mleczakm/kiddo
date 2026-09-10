@@ -1,0 +1,33 @@
+{#---
+slug: tresci-blog
+title: "Treści i blog"
+section: content
+role: ROLE_MANAGE_CONTENT
+summary: "Jak tworzyć i edytować artykuły, wstawiać obrazy, planować publikację i podglądać wersję roboczą."
+keywords: [treści, blog, artykuł, wpis, edytor, obraz, publikacja, harmonogram, szkic, podgląd, slug]
+primary_route: app_admin_posts
+related: [menu-linki, newsletter]
+---#}
+<p>
+    Artykuły na stronę tworzy się w sekcji <a href="{{ path('app_admin_posts') }}">Treści</a>.
+    Nowy wpis dodasz przyciskiem <a href="{{ path('app_admin_post_new') }}">Nowa treść</a>.
+</p>
+
+<h2>Edycja</h2>
+<ul>
+    <li><strong>Tytuł i slug</strong> — slug tworzy adres artykułu; zmieniaj go ostrożnie po publikacji.</li>
+    <li><strong>Eyebrow i zajawka</strong> — krótkie teksty na listach i w zajawkach.</li>
+    <li><strong>Treść</strong> — edytor wizualny; obrazy wstawiasz bezpośrednio w treść.</li>
+</ul>
+
+<h2>Publikacja</h2>
+<ul>
+    <li><strong>Szkic / opublikowany</strong> — przełącznik decyduje o widoczności na stronie.</li>
+    <li><strong>Zaplanuj publikację</strong> — ustaw datę, po której wpis pojawi się sam.</li>
+    <li><strong>Podgląd</strong> — otwiera wersję roboczą bez publikowania.</li>
+</ul>
+
+<div class="help-callout">
+    Aby dodać link do artykułu w menu strony, użyj
+    <a href="{{ path('app_admin_help_article', {slug: 'menu-linki'}) }}">Linków w menu</a>.
+</div>

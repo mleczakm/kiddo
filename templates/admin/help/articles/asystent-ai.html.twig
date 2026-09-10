@@ -1,0 +1,33 @@
+{#---
+slug: asystent-ai
+title: "Asystent AI (czat głosowy)"
+section: ai
+role: ROLE_HOST
+summary: "Jak działa asystent AI, jaka zgoda jest wymagana i czym różni się wariant w panelu."
+keywords: [asystent, ai, czat, głos, elevenlabs, zgoda ai, bot, wsparcie, rozmowa]
+primary_route: app_admin_dashboard
+related: [zgody-i-dokumenty-prawne, ustawienia-systemu]
+---#}
+<p>
+    Asystent AI to czat (również głosowy) oparty o dostawcę ElevenLabs. Pomaga klientom w typowych
+    pytaniach: wyszukanie zajęć, sprawdzenie rezerwacji, dokończenie płatności.
+</p>
+
+<h2>Zgoda klienta</h2>
+<p>
+    Przed pierwszym użyciem klient musi zaakceptować zgodę na korzystanie z asystenta AI. Zgoda jest
+    powiązana z wersją treści dialogu — po jej zmianie klient potwierdza ją ponownie. Rejestr zgód
+    widać w <a href="{{ path('app_admin_users') }}">CRM</a>.
+</p>
+
+<h2>Wariant w panelu</h2>
+<p>
+    W panelu asystent działa w trybie administracyjnym — ma dostęp do szerszego zakresu danych niż
+    wersja dla klienta. Konfiguracja połączenia (klucze, identyfikatory agentów) jest po stronie
+    <a href="{{ path('app_admin_settings') }}">Ustawień</a> / zmiennych środowiskowych.
+</p>
+
+<div class="help-callout">
+    Asystent jest sterowany flagą <code>chat_assistant</code>. Wyłączenie flagi ukrywa czat w całej
+    aplikacji.
+</div>

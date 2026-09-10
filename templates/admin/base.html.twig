@@ -236,6 +236,14 @@
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Menu — linki</span>
                                 </li>
+                            {% elseif current_route starts with 'app_admin_help' %}
+                                <li class="inline-flex items-center gap-1.5">
+                                    {% if current_route == 'app_admin_help_article' %}
+                                        <a href="{{ path('app_admin_help_index') }}" class="text-slate-400 hover:text-indigo-600 transition-colors">Pomoc i dokumentacja</a>
+                                    {% else %}
+                                        <span class="font-bold text-slate-700">Pomoc i dokumentacja</span>
+                                    {% endif %}
+                                </li>
                             {% elseif current_route == 'app_admin_settings' %}
                                 <li class="inline-flex items-center gap-1.5">
                                     <span class="font-bold text-slate-700">Ustawienia Systemu</span>

@@ -1,0 +1,30 @@
+{#---
+slug: api-i-integracje
+title: "API, MCP i llm.txt"
+section: api
+role: ROLE_ADMIN
+summary: "Jakie interfejsy programistyczne udostępnia aplikacja i jak są zabezpieczone."
+keywords: [api, mcp, llm.txt, integracja, narzędzia, tools, autoryzacja, klucz, elevenlabs, endpoint]
+primary_route: app_llm_txt
+related: [asystent-ai]
+---#}
+<p>
+    Aplikacja udostępnia kilka interfejsów maszynowych — głównie na potrzeby asystenta AI i integracji.
+</p>
+
+<h2>Punkty wejścia</h2>
+<ul>
+    <li><strong><code>/api/mcp</code></strong> — serwer MCP (Model Context Protocol) używany przez
+        asystenta; wystawia zestaw narzędzi (tools).</li>
+    <li><strong><code>/api/v1/tools</code></strong> i <code>/api/v1/tools/{name}</code> — lista narzędzi
+        i ich wywołanie.</li>
+    <li><strong><code>/api/auth/*</code></strong> — logowanie kodem jednorazowym dla klientów mobilnych.</li>
+    <li><strong><a href="{{ path('app_llm_txt') }}">/llm.txt</a></strong> — zwięzły opis serwisu dla modeli
+        językowych.</li>
+</ul>
+
+<h2>Zabezpieczenia</h2>
+<p>
+    Dostęp do MCP i wywołań narzędzi jest chroniony kluczem serwisowym i flagą funkcji. Nieznane lub
+    wyłączone narzędzie zwraca ustrukturyzowany błąd zamiast wyjątku.
+</p>

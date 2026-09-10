@@ -19,6 +19,7 @@ final readonly class SearchResultHydrator
         private Connection $connection,
         private TranslatorInterface $translator,
         private MoneyExtension $moneyExtension,
+        private DocResultHydrator $docResultHydrator,
     ) {}
 
     /**
@@ -31,15 +32,53 @@ final readonly class SearchResultHydrator
             return [];
         }
 
+        $byKey = $this->docResultHydrator->hydrate($references);
+
         $values = [];
         $parameters = [];
         foreach ($references as $index => $reference) {
+            if ($reference->type === SearchType::Doc) {
+                continue;
+            }
+
             $values[] = sprintf('(:type%d, :id%d)', $index, $index);
             $parameters['type' . $index] = $reference->type->value;
             $parameters['id' . $index] = $reference->id;
         }
 
-        $sql = sprintf(<<<'SQL'
+        if ($values !== []) {
+            /**
+             * @var list<array{
+             *     type: string, id: string, title: string, part1: ?string, part2: ?string, status: ?string,
+             *     amount_value: ?string, amount_currency: ?string, amount_text: ?string, timestamp_str: ?string,
+             * }> $rows
+             */
+            $rows = $this->connection->fetchAllAssociative($this->databaseSql(implode(', ', $values)), $parameters);
+            foreach ($rows as $row) {
+                $type = SearchType::from($row['type']);
+                $reference = new SearchReference($type, $row['id']);
+                $byKey[$row['type'] . ':' . $row['id']] = new SearchResult(
+                    $reference,
+                    $row['title'],
+                    $this->buildSubtitle($type, $row),
+                );
+            }
+        }
+
+        $results = [];
+        foreach ($references as $reference) {
+            $result = $byKey[$reference->type->value . ':' . $reference->id] ?? null;
+            if ($result !== null) {
+                $results[] = $result;
+            }
+        }
+
+        return $results;
+    }
+
+    private function databaseSql(string $tuples): string
+    {
+        return sprintf(<<<'SQL'
             WITH wanted(entity_type, id) AS (VALUES %s), details AS (
                 SELECT 'client' AS entity_type, u.id::text AS id, u.name AS title,
                        u.email AS part1, u.phone AS part2, NULL::text AS status,
@@ -82,32 +121,7 @@ final readonly class SearchResultHydrator
                    d.amount_value, d.amount_currency, d.amount_text, d.timestamp_str
             FROM wanted w
             JOIN details d USING (entity_type, id)
-            SQL, implode(', ', $values));
-
-        /**
-         * @var list<array{
-         *     type: string, id: string, title: string, part1: ?string, part2: ?string, status: ?string,
-         *     amount_value: ?string, amount_currency: ?string, amount_text: ?string, timestamp_str: ?string,
-         * }> $rows
-         */
-        $rows = $this->connection->fetchAllAssociative($sql, $parameters);
-        $byKey = [];
-        foreach ($rows as $row) {
-            $type = SearchType::from($row['type']);
-            $reference = new SearchReference($type, $row['id']);
-            $subtitle = $this->buildSubtitle($type, $row);
-            $byKey[$row['type'] . ':' . $row['id']] = new SearchResult($reference, $row['title'], $subtitle);
-        }
-
-        $results = [];
-        foreach ($references as $reference) {
-            $result = $byKey[$reference->type->value . ':' . $reference->id] ?? null;
-            if ($result !== null) {
-                $results[] = $result;
-            }
-        }
-
-        return $results;
+            SQL, $tuples);
     }
 
     /**
@@ -153,6 +167,8 @@ final readonly class SearchResultHydrator
                 $row['part2'],
                 $row['timestamp_str'],
             ],
+            // Help articles are hydrated by DocResultHydrator, never here.
+            SearchType::Doc => [],
         };
 
         return implode(' · ', array_filter($parts, static fn(?string $part): bool => $part !== null && $part !== ''));

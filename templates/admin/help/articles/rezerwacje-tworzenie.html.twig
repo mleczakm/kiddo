@@ -1,0 +1,35 @@
+{#---
+slug: rezerwacje-tworzenie
+title: "Tworzenie rezerwacji dla klienta"
+section: bookings
+role: ROLE_MANAGE_BOOKINGS
+summary: "Jak w panelu zapisać klienta na zajęcia i powiązać rezerwację z płatnością."
+keywords: [rezerwacja, zapis, booking, dodaj, klient, dziecko, miejsce, płatność]
+primary_route: app_admin_bookings
+related: [rezerwacje-anulowanie-i-przeniesienie, crm-klienci-i-dzieci, platnosci-przelewy-i-dopasowanie]
+---#}
+<p>
+    Rezerwacje prowadzi się w sekcji <a href="{{ path('app_admin_bookings') }}">Rezerwacje</a>.
+    Można je zakładać w imieniu klienta — np. gdy zapisał się telefonicznie.
+</p>
+
+<h2>Krok po kroku</h2>
+<ol>
+    <li>W <a href="{{ path('app_admin_bookings') }}">Rezerwacjach</a> wybierz <strong>Nowa rezerwacja</strong>.</li>
+    <li>Wskaż <strong>klienta</strong> (lub dodaj nowego) i <strong>dziecko</strong>.</li>
+    <li>Wybierz <strong>termin</strong>; system pilnuje pojemności warsztatu.</li>
+    <li>Dodaj notatkę, jeśli trzeba (np. alergie, prośby organizacyjne).</li>
+    <li>Zapisz — powstaje rezerwacja ze statusem oczekującym i powiązana płatność.</li>
+</ol>
+
+<h2>Powiązanie z płatnością</h2>
+<p>
+    Każda rezerwacja ma płatność z kodem. Po zaksięgowaniu przelewu rezerwacja przechodzi w stan
+    opłaconej — patrz
+    <a href="{{ path('app_admin_help_article', {slug: 'platnosci-przelewy-i-dopasowanie'}) }}">Przelewy i dopasowanie</a>.
+</p>
+
+<div class="help-callout">
+    Przy obłożeniu na styk możliwe jest niewielkie (1–2 miejsca) przekroczenie limitu — to świadomy
+    kompromis. Zawsze sprawdź listę uczestników terminu przed dopisaniem kolejnej osoby.
+</div>

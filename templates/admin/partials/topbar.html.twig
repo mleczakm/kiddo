@@ -24,6 +24,8 @@
             {{ 'admin.tabs.users'|trans }}
         {% elseif app.request.attributes.get('_route') == 'app_admin_settings' %}
             {{ 'admin.tabs.settings'|trans }}
+        {% elseif app.request.attributes.get('_route') starts with 'app_admin_help' %}
+            {{ 'admin.tabs.help'|trans }}
         {% else %}
             {{ page_title|default('Kiddo Admin') }}
         {% endif %}

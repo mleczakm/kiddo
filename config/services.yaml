@@ -52,7 +52,11 @@ services:
       - '../src/Kernel.php'
 
   App\Application\Search\GlobalSearchQuery:
-    alias: App\Infrastructure\Search\PostgresGlobalSearchQuery
+    alias: App\Infrastructure\Search\CompositeGlobalSearchQuery
+
+  App\Application\Help\DocRegistry:
+    arguments:
+      $articlesDir: '%kernel.project_dir%/templates/admin/help/articles'
 
   App\Application\File\FileStorageInterface:
     alias: App\Application\File\DatabaseFileStorage

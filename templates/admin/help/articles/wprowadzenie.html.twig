@@ -1,0 +1,36 @@
+{#---
+slug: wprowadzenie
+title: "Wprowadzenie do panelu"
+section: getting-started
+role: ROLE_HOST
+summary: "Co gdzie się znajduje w panelu, jak działa nawigacja i wyszukiwarka."
+keywords: [start, pomoc, nawigacja, menu, panel, ctrl+k, wyszukiwarka]
+primary_route: app_admin_dashboard
+related: [role-i-uprawnienia, pulpit]
+---#}
+<p>
+    Panel Kiddo służy do prowadzenia zapisów na warsztaty: układania grafiku, obsługi rezerwacji,
+    rozliczeń z klientami oraz treści na stronie. Ta sekcja opisuje wszystkie dostępne funkcje —
+    każdy artykuł ma przycisk <strong>„Przejdź do sekcji”</strong> prowadzący dokładnie tam,
+    gdzie daną rzecz się wykonuje.
+</p>
+
+<h2>Nawigacja</h2>
+<ul>
+    <li><strong>Menu po lewej</strong> — główne obszary (Pulpit, Warsztaty, Rezerwacje, Klienci, Płatności…).
+        Widoczność pozycji zależy od Twoich uprawnień.</li>
+    <li><strong>Okruszki</strong> u góry pokazują, gdzie jesteś, i pozwalają cofnąć się o poziom.</li>
+    <li><strong>Dzwonek powiadomień</strong> w prawym górnym rogu zbiera zdarzenia wymagające reakcji.</li>
+</ul>
+
+<h2>Wyszukiwarka (Ctrl+K)</h2>
+<p>
+    Pole u góry ekranu przeszukuje klientów, dzieci, rezerwacje, zajęcia, płatności, przelewy,
+    artykuły <em>oraz tę dokumentację</em>. Wpisz fragment nazwiska, tytułu, kodu płatności albo daty
+    (np. <code>12.03</code>). Wynik typu „Pomoc” otwiera odpowiedni artykuł.
+</p>
+
+<div class="help-callout">
+    Nie znajdujesz jakiejś funkcji? Sprawdź, czy masz do niej uprawnienia —
+    zobacz <a href="{{ path('app_admin_help_article', {slug: 'role-i-uprawnienia'}) }}">Role i uprawnienia</a>.
+</div>

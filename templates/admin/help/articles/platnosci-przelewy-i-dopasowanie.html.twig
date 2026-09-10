@@ -1,0 +1,36 @@
+{#---
+slug: platnosci-przelewy-i-dopasowanie
+title: "Przelewy i dopasowanie do płatności"
+section: finance
+role: ROLE_MANAGE_PAYMENTS
+summary: "Jak działa import przelewów, dopasowanie do płatności po kodzie i odrzucanie pozycji."
+keywords: [przelew, płatność, dopasowanie, księgowanie, kod płatności, bank, import, zaległości]
+primary_route: app_admin_transfers
+related: [platnosci-zwroty, rezerwacje-tworzenie]
+---#}
+<p>
+    Sekcja <a href="{{ path('app_admin_transfers') }}">Płatności / Finanse</a> zbiera przelewy
+    przychodzące i pozwala łączyć je z konkretnymi płatnościami za rezerwacje.
+</p>
+
+<h2>Jak to działa</h2>
+<ul>
+    <li>Przelewy trafiają na listę automatycznie (import ze skrzynki bankowej).</li>
+    <li>Każda płatność ma <strong>kod</strong>, który klient podaje w tytule przelewu — po nim
+        system proponuje dopasowanie.</li>
+    <li><strong>Przypisz</strong> przelew do płatności, gdy dopasowanie jest poprawne — rezerwacja
+        przechodzi w stan opłaconej.</li>
+    <li><strong>Odrzuć</strong> pozycję, która nie jest wpłatą klienta (np. zwrot z innego tytułu,
+        pomyłka).</li>
+</ul>
+
+<h2>Zaległości i kody</h2>
+<p>
+    Widok zaległych płatności pokazuje rezerwacje bez wpłaty. Wyszukiwarka (Ctrl+K) znajduje
+    płatność po kodzie także wtedy, gdy powiązanie kodu zostało już rozłączone po zaksięgowaniu.
+</p>
+
+<div class="help-callout">
+    Sporadyczne kolizje kodów płatności są akceptowalne przy obecnej skali — jeśli dwie płatności
+    mają ten sam kod, dopasuj ręcznie po kwocie i kliencie.
+</div>

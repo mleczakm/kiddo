@@ -295,6 +295,12 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
+file = "src/Application/Help/DocArticle.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."

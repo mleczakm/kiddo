@@ -1,0 +1,35 @@
+{#---
+slug: warsztaty-terminy-i-serie
+title: "Terminy i serie zajęć"
+section: schedule
+role: ROLE_MANAGE_LESSONS
+summary: "Jak dodawać terminy, edytować pojedyncze wystąpienia i pracować z seriami."
+keywords: [termin, data, godzina, seria, cykl, wystąpienie, przełożenie, grafik, harmonogram]
+primary_route: app_admin_schedule
+related: [warsztaty-tworzenie, rezerwacje-anulowanie-i-przeniesienie]
+---#}
+<p>
+    Warsztat może mieć jeden termin albo całą serię (cykl spotkań). Terminy ustawia się w edytorze
+    warsztatu w <a href="{{ path('app_admin_schedule') }}">grafiku</a>.
+</p>
+
+<h2>Zasady edycji</h2>
+<ul>
+    <li><strong>Data i godzina są edytowane per wystąpienie</strong> — zmiana dotyczy jednego terminu,
+        nie całej serii. Dzięki temu można przesunąć jedno spotkanie bez ruszania pozostałych.</li>
+    <li>Pozostałe pola (tytuł, opis, kategoria, pojemność) są wspólne dla warsztatu.</li>
+    <li>Wyłączenie pojedynczego terminu zdejmuje go z oferty, ale zachowuje powiązane rezerwacje
+        do obsługi (zwrot, przeniesienie).</li>
+</ul>
+
+<h2>Serie</h2>
+<p>
+    W widoku serii widać wszystkie spotkania cyklu i ich obłożenie. Stamtąd przechodzi się do
+    konkretnego terminu, żeby zobaczyć listę uczestników — zobacz
+    <a href="{{ path('app_admin_help_article', {slug: 'zajecia-uczestnicy-i-obecnosc'}) }}">Uczestnicy i obecność</a>.
+</p>
+
+<div class="help-callout">
+    Jeśli edytujesz warsztat i „znika” kategoria lub inne pole — odśwież stronę i sprawdź wartość
+    w edytorze przed zapisaniem. Zapis nadpisuje to, co jest aktualnie w formularzu.
+</div>

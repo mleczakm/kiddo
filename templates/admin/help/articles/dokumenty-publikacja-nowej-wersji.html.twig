@@ -1,0 +1,36 @@
+{#---
+slug: dokumenty-publikacja-nowej-wersji
+title: "Publikacja nowej wersji dokumentu"
+section: legal
+role: ROLE_SETTINGS
+summary: "Jak wgrać nową wersję regulaminu lub polityki i powiadomić o niej użytkowników."
+keywords: [dokument, wersja, publikacja, regulamin, polityka, mailing, powiadomienie, data wejścia w życie]
+primary_route: app_admin_settings
+related: [zgody-i-dokumenty-prawne]
+---#}
+<p>
+    Dokumenty prawne są wersjonowane. Nową wersję wgrywasz w
+    <a href="{{ path('app_admin_settings') }}">Ustawieniach</a>, w bloku dokumentów prawnych.
+</p>
+
+<h2>Krok po kroku</h2>
+<ol>
+    <li>Wybierz <strong>typ dokumentu</strong> (regulamin aplikacji, regulamin zajęć, polityka prywatności).</li>
+    <li>Wgraj <strong>plik</strong> nowej wersji.</li>
+    <li>Ustaw <strong>datę wejścia w życie</strong> i krótkie <strong>podsumowanie zmian</strong>.</li>
+    <li>Zdecyduj, czy zaznaczyć <strong>„Powiadom użytkowników”</strong>.</li>
+    <li>Opublikuj — od tej chwili nowa wersja jest wersją obowiązującą.</li>
+</ol>
+
+<h2>Powiadomienie użytkowników</h2>
+<p>
+    Zaznaczenie „Powiadom użytkowników” wysyła wiadomość e-mail oraz powiadomienie w panelu do
+    klientów. Wysyłka jest jednorazowa dla danej wersji (ponowne opublikowanie tej samej wersji nie
+    wyśle jej drugi raz).
+</p>
+
+<div class="help-callout">
+    Po publikacji nowej wersji regulaminu aplikacji lub polityki prywatności klienci zobaczą w panelu
+    baner ponownej akceptacji — patrz
+    <a href="{{ path('app_admin_help_article', {slug: 'zgody-i-dokumenty-prawne'}) }}">Zgody i dokumenty prawne</a>.
+</div>
