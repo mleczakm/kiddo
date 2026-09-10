@@ -9,7 +9,13 @@ novaway_feature_flag:
           platform_billing_widget: true
           chat_assistant: true
           commerce_order_write: true
-          consents: true
+          # Consent enforcement (registration / panel re-acceptance / checkout).
+          # OFF on prod until the versioned legal documents are published and the
+          # one-off re-acceptance prompt for every existing user is timed
+          # deliberately. `legal_documents` alone only swaps the static /regulamin
+          # pages for the versioned ones (static fallback until a version exists);
+          # enforcement needs BOTH flags — see App\Application\Consent\ConsentRequirements.
+          consents: false
           dynamic_pricing: true
           # Built-in help & documentation centre at /admin/pomoc.
           help_center: true
