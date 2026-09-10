@@ -25,9 +25,9 @@ final class LegalConsentFactoriesTest extends KernelTestCase
             'changeSummary' => 'Initial privacy policy',
         ]);
 
-        self::assertSame(LegalDocumentType::PRIVACY, $version->getDocument()->getType());
-        self::assertSame(1, $version->getVersion());
-        self::assertSame($version->getFile()->getChecksum(), $version->getChecksum());
+        static::assertSame(LegalDocumentType::PRIVACY, $version->getDocument()->getType());
+        static::assertSame(1, $version->getVersion());
+        static::assertSame($version->getFile()->getChecksum(), $version->getChecksum());
     }
 
     public function testUserConsentFactoryCreatesStandaloneAndVersionedEvidence(): void
@@ -38,9 +38,9 @@ final class LegalConsentFactoriesTest extends KernelTestCase
         $version = LegalDocumentVersionFactory::createOne();
         $terms = UserConsentFactory::new()->forDocument($version, 'I accept the terms.')->create();
 
-        self::assertSame(ConsentType::MARKETING_EMAIL, $marketing->getType());
-        self::assertNull($marketing->getDocumentVersion());
-        self::assertSame(ConsentType::APP_TERMS, $terms->getType());
-        self::assertSame($version->getId(), $terms->getDocumentVersion()?->getId());
+        static::assertSame(ConsentType::MARKETING_EMAIL, $marketing->getType());
+        static::assertNull($marketing->getDocumentVersion());
+        static::assertSame(ConsentType::APP_TERMS, $terms->getType());
+        static::assertSame($version->getId(), $terms->getDocumentVersion()?->getId());
     }
 }

@@ -23,7 +23,11 @@ final readonly class ConsentRequirements
 
     public function isRegistrationAcceptanceRequired(): bool
     {
-        if (!$this->isEnabled()) {
+        // Both flags must be on: `consents` turns enforcement on, `legal_documents`
+        // makes the versioned pages the ones actually served. Enforcing acceptance
+        // of a versioned document while /regulamin still shows the static fallback
+        // would be incoherent.
+        if (!$this->isEnabled() || !$this->featureManager->isEnabled('legal_documents')) {
             return false;
         }
 

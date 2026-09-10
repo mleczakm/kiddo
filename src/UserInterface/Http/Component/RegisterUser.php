@@ -93,15 +93,18 @@ class RegisterUser extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            $this->registrationConsentManager->recordLegalAcceptance($user);
-            if ($desiredNewsletter) {
-                $this->registrationConsentManager->recordMarketingAcceptance($user);
-            }
-
             $this->messageBus->dispatch(new SendLoginNotification($user->getEmail()));
 
             $this->newsletterSubscriptionManager->applyTransition($user, false, $desiredNewsletter);
             $this->entityManager->flush();
+
+            // Consent audit rows are written last, through their own bus
+            // transaction. RegistrationConsentManager contains any failure, so a
+            // consent-store hiccup can neither roll back nor block the sign-up.
+            $this->registrationConsentManager->recordLegalAcceptance($user);
+            if ($desiredNewsletter) {
+                $this->registrationConsentManager->recordMarketingAcceptance($user);
+            }
 
             $this->isSuccessful = true;
             $this->isSubmitted = true;

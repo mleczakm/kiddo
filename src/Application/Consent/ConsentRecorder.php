@@ -6,7 +6,6 @@ namespace App\Application\Consent;
 
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
-use App\Entity\LegalDocumentType;
 use App\Entity\User;
 use App\Entity\UserConsent;
 use App\Infrastructure\Doctrine\Repository\LegalDocumentVersionRepository;
@@ -15,6 +14,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\Clock;
 
+/**
+ * Write side of the consent register. Only ever reached from a command handler
+ * (RecordConsentsHandler / RevokeConsentHandler): the message bus wraps the
+ * handler in a Doctrine transaction, so this class only persists - it never
+ * flushes and never swallows failures. A failing acceptance set therefore rolls
+ * back whole, and the dispatching code decides whether that failure may surface.
+ */
 final readonly class ConsentRecorder
 {
     public function __construct(
@@ -26,23 +32,15 @@ final readonly class ConsentRecorder
     ) {}
 
     /**
-     * Consent audit logging must never interrupt the primary user action.
-     * Failures are reported and represented by a null return value.
-     */
-    public function record(
-        User $user,
-        ConsentType $type,
-        ConsentSource $source,
-        ConsentEvidence $evidence,
-    ): ?UserConsent {
-        return $this->recordMany($user, $source, new ConsentGrant($type, $evidence))[0] ?? null;
-    }
-
-    /**
-     * Persists a complete acceptance set in one flush, so a registration or
-     * checkout cannot leave only part of its required evidence behind.
+     * Persists a complete acceptance set, so a registration or checkout cannot
+     * leave only part of its required evidence behind. Returns an empty list
+     * without persisting anything when a referenced legal document has no
+     * current version yet.
      *
      * @return list<UserConsent>
+     * @throws \InvalidArgumentException when evidence is malformed or its
+     *     resolved document type does not match the consent type - a bug that
+     *     must roll the surrounding transaction back rather than persist junk.
      */
     public function recordMany(User $user, ConsentSource $source, ConsentGrant ...$grants): array
     {
@@ -50,103 +48,45 @@ final readonly class ConsentRecorder
             return [];
         }
 
-        try {
-            $resolvedGrants = [];
-            foreach ($grants as $grant) {
-                $evidence = $this->resolveDocumentVersion($grant->evidence);
-                if ($evidence === null) {
-                    return [];
-                }
-
-                $resolvedGrants[] = new ConsentGrant($grant->type, $evidence);
+        $resolvedGrants = [];
+        foreach ($grants as $grant) {
+            $evidence = $this->resolveDocumentVersion($grant->evidence);
+            if ($evidence === null) {
+                return [];
             }
 
-            $consents = [];
-            foreach ($resolvedGrants as $grant) {
-                $consent = new UserConsent($user, $grant->type, $source, $grant->evidence, $this->requestContext);
-                $this->entityManager->persist($consent);
-                $consents[] = $consent;
-            }
-            $this->entityManager->flush();
-
-            return $consents;
-        } catch (\Throwable $exception) {
-            $this->logger->error('Unable to record user consent set.', [
-                'exception' => $exception,
-                'user_id' => $user->getId(),
-                'consent_types' => array_map(static fn(ConsentGrant $grant): string => $grant->type->value, $grants),
-                'consent_source' => $source->value,
-            ]);
-
-            return [];
+            $resolvedGrants[] = new ConsentGrant($grant->type, $evidence);
         }
+
+        $consents = [];
+        foreach ($resolvedGrants as $grant) {
+            $consent = new UserConsent($user, $grant->type, $source, $grant->evidence, $this->requestContext);
+            $this->entityManager->persist($consent);
+            $consents[] = $consent;
+        }
+
+        return $consents;
     }
 
+    /** @throws \UnexpectedValueException */
     public function revoke(User $user, ConsentType $type, ConsentSource $source): bool
     {
-        try {
-            $activeConsents = $this->consentRepository->findActiveByType($user, $type);
-            if ($activeConsents === []) {
-                return false;
-            }
-
-            foreach ($activeConsents as $consent) {
-                $consent->revoke();
-            }
-            $this->entityManager->flush();
-
-            $this->logger->info('User consent revoked.', [
-                'user_id' => $user->getId(),
-                'consent_type' => $type->value,
-                'consent_source' => $source->value,
-            ]);
-
-            return true;
-        } catch (\Throwable $exception) {
-            $this->logger->error('Unable to revoke user consent.', [
-                'exception' => $exception,
-                'user_id' => $user->getId(),
-                'consent_type' => $type->value,
-                'consent_source' => $source->value,
-            ]);
-
+        $activeConsents = $this->consentRepository->findActiveByType($user, $type);
+        if ($activeConsents === []) {
             return false;
         }
-    }
 
-    public function hasCurrent(User $user, ConsentType $type): bool
-    {
-        $documentType = $type->documentType();
-        $consent = $this->consentRepository->findLatestActive($user, $type, $documentType);
-        if ($consent === null) {
-            return false;
-        }
-        if ($documentType === null) {
-            return true;
+        foreach ($activeConsents as $consent) {
+            $consent->revoke();
         }
 
-        $currentVersion = $this->versionRepository->findCurrent($documentType, Clock::get()->now());
+        $this->logger->info('User consent revoked.', [
+            'user_id' => $user->getId(),
+            'consent_type' => $type->value,
+            'consent_source' => $source->value,
+        ]);
 
-        return $currentVersion !== null && $consent->getDocumentVersion()?->getId()->equals($currentVersion->getId());
-    }
-
-    /** @return list<LegalDocumentType> */
-    public function outdatedDocuments(User $user): array
-    {
-        $outdated = [];
-        foreach ([ConsentType::APP_TERMS, ConsentType::PRIVACY, ConsentType::CLASSES_TERMS] as $type) {
-            $documentType = $type->documentType();
-            if ($documentType === null) {
-                continue;
-            }
-
-            $currentVersion = $this->versionRepository->findCurrent($documentType, Clock::get()->now());
-            if ($currentVersion !== null && !$this->hasCurrent($user, $type)) {
-                $outdated[] = $documentType;
-            }
-        }
-
-        return $outdated;
+        return true;
     }
 
     /** @throws \InvalidArgumentException */

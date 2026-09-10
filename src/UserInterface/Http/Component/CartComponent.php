@@ -12,6 +12,7 @@ use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\UseCase\Cart\ApplyPromotionCode;
 use App\Application\UseCase\Cart\CartCheckoutCoordinator;
+use App\Application\UseCase\Cart\CompletedCheckout;
 use App\Application\UseCase\Cart\InvalidPromotionCodeException;
 use App\Application\UseCase\Cart\RemoveCartItem;
 use App\Application\UseCase\Cart\RemovePromotionCode;
@@ -283,7 +284,7 @@ final class CartComponent extends AbstractController
         }
     }
 
-    private function showCompletedCheckout(\App\Application\UseCase\Cart\CompletedCheckout $completed): void
+    private function showCompletedCheckout(CompletedCheckout $completed): void
     {
         $this->confirmedOrderNumber = $completed->order->getOrderNumber();
         $this->confirmedPaymentCode = $completed->paymentCode;

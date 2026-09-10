@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Application\Consent;
 
+use App\Application\Command\RecordConsents;
+use App\Application\Command\RevokeConsent;
 use App\Application\Consent\ConsentEvidence;
 use App\Application\Consent\ConsentGrant;
-use App\Application\Consent\ConsentRecorder;
+use App\Application\Consent\ConsentStatusReader;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\File;
@@ -23,7 +25,13 @@ use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Clock\NativeClock;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * Exercises the consent write path through the command bus - the only way it is
+ * reached in production. The bus wraps each handler in a Doctrine transaction,
+ * so a dispatch that returns has committed its acceptance set.
+ */
 #[Group('functional')]
 final class ConsentRecorderTest extends KernelTestCase
 {
@@ -47,22 +55,29 @@ final class ConsentRecorderTest extends KernelTestCase
             'HTTP_USER_AGENT' => 'Functional Test Browser',
         ]));
         $user = $this->persistUser($entityManager);
-        /** @var ConsentRecorder $recorder */
-        $recorder = $container->get(ConsentRecorder::class);
+        /** @var MessageBusInterface $commandBus */
+        $commandBus = $container->get(MessageBusInterface::class);
+        /** @var ConsentStatusReader $statusReader */
+        $statusReader = $container->get(ConsentStatusReader::class);
+        /** @var UserConsentRepository $repository */
+        $repository = $container->get(UserConsentRepository::class);
 
-        $consent = $recorder->record(
-            $user,
-            ConsentType::MARKETING_EMAIL,
-            ConsentSource::REGISTRATION,
-            ConsentEvidence::statement('Chcę otrzymywać wiadomości marketingowe.', 'register'),
-        );
+        $commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
+            new ConsentGrant(ConsentType::MARKETING_EMAIL, ConsentEvidence::statement(
+                'Chcę otrzymywać wiadomości marketingowe.',
+                'register',
+            )),
+        ]));
 
+        $consent = $repository->findLatestActive($user, ConsentType::MARKETING_EMAIL);
         static::assertNotNull($consent);
         static::assertSame('198.51.100.25', $consent->getIp());
         static::assertSame('Functional Test Browser', $consent->getUserAgent());
-        static::assertTrue($recorder->hasCurrent($user, ConsentType::MARKETING_EMAIL));
-        static::assertTrue($recorder->revoke($user, ConsentType::MARKETING_EMAIL, ConsentSource::PROFILE));
-        static::assertFalse($recorder->hasCurrent($user, ConsentType::MARKETING_EMAIL));
+        static::assertTrue($statusReader->hasCurrent($user, ConsentType::MARKETING_EMAIL));
+
+        $commandBus->dispatch(new RevokeConsent($user, ConsentType::MARKETING_EMAIL, ConsentSource::PROFILE));
+
+        static::assertFalse($statusReader->hasCurrent($user, ConsentType::MARKETING_EMAIL));
         $requestStack->pop();
     }
 
@@ -76,25 +91,30 @@ final class ConsentRecorderTest extends KernelTestCase
         $user = $this->persistUser($entityManager);
         $version = $this->persistLegalVersion($entityManager, $user, LegalDocumentType::APP_TERMS);
         $this->persistLegalVersion($entityManager, $user, LegalDocumentType::PRIVACY);
-        /** @var ConsentRecorder $recorder */
-        $recorder = $container->get(ConsentRecorder::class);
+        /** @var MessageBusInterface $commandBus */
+        $commandBus = $container->get(MessageBusInterface::class);
+        /** @var ConsentStatusReader $statusReader */
+        $statusReader = $container->get(ConsentStatusReader::class);
+        /** @var UserConsentRepository $repository */
+        $repository = $container->get(UserConsentRepository::class);
 
         static::assertEqualsCanonicalizing(
             [LegalDocumentType::APP_TERMS, LegalDocumentType::PRIVACY],
-            $recorder->outdatedDocuments($user),
+            $statusReader->outdatedDocuments($user),
         );
 
-        $consent = $recorder->record(
-            $user,
-            ConsentType::APP_TERMS,
-            ConsentSource::REGISTRATION,
-            ConsentEvidence::currentDocument(LegalDocumentType::APP_TERMS, 'Akceptuję regulamin aplikacji.'),
-        );
+        $commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
+            new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
+                LegalDocumentType::APP_TERMS,
+                'Akceptuję regulamin aplikacji.',
+            )),
+        ]));
 
+        $consent = $repository->findLatestActive($user, ConsentType::APP_TERMS, LegalDocumentType::APP_TERMS);
         static::assertNotNull($consent);
         static::assertTrue($consent->getDocumentVersion()?->getId()->equals($version->getId()));
-        static::assertTrue($recorder->hasCurrent($user, ConsentType::APP_TERMS));
-        static::assertSame([LegalDocumentType::PRIVACY], $recorder->outdatedDocuments($user));
+        static::assertTrue($statusReader->hasCurrent($user, ConsentType::APP_TERMS));
+        static::assertSame([LegalDocumentType::PRIVACY], $statusReader->outdatedDocuments($user));
     }
 
     public function testMissingCurrentDocumentDoesNotCreateConsent(): void
@@ -104,23 +124,22 @@ final class ConsentRecorderTest extends KernelTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get(EntityManagerInterface::class);
         $user = $this->persistUser($entityManager);
-        /** @var ConsentRecorder $recorder */
-        $recorder = $container->get(ConsentRecorder::class);
+        /** @var MessageBusInterface $commandBus */
+        $commandBus = $container->get(MessageBusInterface::class);
 
-        $consent = $recorder->record(
-            $user,
-            ConsentType::PRIVACY,
-            ConsentSource::REGISTRATION,
-            ConsentEvidence::currentDocument(LegalDocumentType::PRIVACY, 'Akceptuję politykę prywatności.'),
-        );
+        $commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
+            new ConsentGrant(ConsentType::PRIVACY, ConsentEvidence::currentDocument(
+                LegalDocumentType::PRIVACY,
+                'Akceptuję politykę prywatności.',
+            )),
+        ]));
 
-        static::assertNull($consent);
         /** @var UserConsentRepository $repository */
         $repository = $container->get(UserConsentRepository::class);
         static::assertSame([], $repository->findHistoryForUser($user));
     }
 
-    public function testRecordsACompleteConsentSetInOneOperation(): void
+    public function testRecordsACompleteConsentSetInOneTransaction(): void
     {
         Clock::set(new MockClock('2026-09-10 12:00:00'));
         self::bootKernel();
@@ -130,12 +149,10 @@ final class ConsentRecorderTest extends KernelTestCase
         $user = $this->persistUser($entityManager);
         $this->persistLegalVersion($entityManager, $user, LegalDocumentType::APP_TERMS);
         $this->persistLegalVersion($entityManager, $user, LegalDocumentType::PRIVACY);
-        /** @var ConsentRecorder $recorder */
-        $recorder = $container->get(ConsentRecorder::class);
+        /** @var MessageBusInterface $commandBus */
+        $commandBus = $container->get(MessageBusInterface::class);
 
-        $consents = $recorder->recordMany(
-            $user,
-            ConsentSource::REGISTRATION,
+        $commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
             new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
                 LegalDocumentType::APP_TERMS,
                 'Akceptuję dokumenty.',
@@ -144,11 +161,16 @@ final class ConsentRecorderTest extends KernelTestCase
                 LegalDocumentType::PRIVACY,
                 'Akceptuję dokumenty.',
             )),
-        );
+        ]));
 
+        /** @var UserConsentRepository $repository */
+        $repository = $container->get(UserConsentRepository::class);
+        $consents = $repository->findHistoryForUser($user);
         static::assertCount(2, $consents);
-        static::assertSame(ConsentType::APP_TERMS, $consents[0]->getType());
-        static::assertSame(ConsentType::PRIVACY, $consents[1]->getType());
+        static::assertEqualsCanonicalizing(
+            [ConsentType::APP_TERMS, ConsentType::PRIVACY],
+            array_map(static fn($consent): ConsentType => $consent->getType(), $consents),
+        );
     }
 
     public function testDoesNotPersistAPartialSetWhenOneDocumentIsMissing(): void
@@ -160,12 +182,10 @@ final class ConsentRecorderTest extends KernelTestCase
         $entityManager = $container->get(EntityManagerInterface::class);
         $user = $this->persistUser($entityManager);
         $this->persistLegalVersion($entityManager, $user, LegalDocumentType::APP_TERMS);
-        /** @var ConsentRecorder $recorder */
-        $recorder = $container->get(ConsentRecorder::class);
+        /** @var MessageBusInterface $commandBus */
+        $commandBus = $container->get(MessageBusInterface::class);
 
-        $consents = $recorder->recordMany(
-            $user,
-            ConsentSource::REGISTRATION,
+        $commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
             new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
                 LegalDocumentType::APP_TERMS,
                 'Akceptuję dokumenty.',
@@ -174,9 +194,8 @@ final class ConsentRecorderTest extends KernelTestCase
                 LegalDocumentType::PRIVACY,
                 'Akceptuję dokumenty.',
             )),
-        );
+        ]));
 
-        static::assertSame([], $consents);
         /** @var UserConsentRepository $repository */
         $repository = $container->get(UserConsentRepository::class);
         static::assertSame([], $repository->findHistoryForUser($user));

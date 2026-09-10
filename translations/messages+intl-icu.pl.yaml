@@ -62,6 +62,11 @@ page:
   contact_us: "Skontaktuj się z nami"
   quick_links: "Szybkie linki"
   follow_us: "Obserwuj nas"
+  legal:
+    heading: "Dokumenty"
+    app_terms: "Regulamin aplikacji"
+    classes_terms: "Regulamin zajęć"
+    privacy: "Polityka prywatności"
   facebook_news: "Facebook – aktualności"
   facebook_cta: "Aktualności i nowości publikujemy na naszym Facebooku – zajrzyj i napisz do nas!"
   description: Miejsce dla Rodzin z małymi dziećmi Tutaj poczujesz się jak w domu, dostaniesz dużo ciepła i wsparcia

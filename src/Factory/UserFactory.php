@@ -16,7 +16,10 @@ final class UserFactory extends PersistentObjectFactory
         return User::class;
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array<string, mixed>
+     * @throws \OverflowException
+     */
     #[\Override]
     protected function defaults(): array
     {

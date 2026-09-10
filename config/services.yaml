@@ -351,6 +351,6 @@ when@test:
       autowire: true
       public: true
 
-    App\Application\Consent\ConsentRecorder:
+    App\Application\Consent\ConsentStatusReader:
       autowire: true
       public: true

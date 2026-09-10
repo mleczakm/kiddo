@@ -33,12 +33,14 @@ final readonly class CartCheckoutCoordinator
         array $workshopTerms,
     ): CompletedCheckout {
         $order = ($this->checkoutCart)($cart->id, $user->getId() ?? 0, buyerDetails: $buyerDetails);
-        $this->consentManager->record($user, $order, $workshopTerms);
         $payment = $this->paymentRepository->findOneBy(['orderId' => $order->getId()]);
+        $paymentCode = $payment instanceof Payment ? $payment->getPaymentCode()?->getCode() : null;
 
-        return new CompletedCheckout(
-            $order,
-            $payment instanceof Payment ? $payment->getPaymentCode()?->getCode() : null,
-        );
+        // Recorded last, after everything the confirmation needs has been read:
+        // consent recording runs in its own bus transaction and CheckoutConsentManager
+        // contains any failure, so it stays off the checkout's critical path.
+        $this->consentManager->record($user, $order, $workshopTerms);
+
+        return new CompletedCheckout($order, $paymentCode);
     }
 }

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
+use App\Application\Command\RecordConsents;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\LegalDocumentType;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class RegistrationConsentManager
 {
     public function __construct(
-        private ConsentRecorder $consentRecorder,
+        private MessageBusInterface $commandBus,
         private ConsentRequirements $consentRequirements,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
@@ -41,9 +43,7 @@ final readonly class RegistrationConsentManager
 
         try {
             $acceptanceText = $this->translator->trans('form.register.accept_terms_text');
-            $this->consentRecorder->recordMany(
-                $user,
-                ConsentSource::REGISTRATION,
+            $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
                 new ConsentGrant(ConsentType::APP_TERMS, ConsentEvidence::currentDocument(
                     LegalDocumentType::APP_TERMS,
                     $acceptanceText,
@@ -52,9 +52,9 @@ final readonly class RegistrationConsentManager
                     LegalDocumentType::PRIVACY,
                     $acceptanceText,
                 )),
-            );
+            ]));
         } catch (\Throwable $exception) {
-            $this->logger->error('Unable to prepare registration legal consent evidence.', [
+            $this->logger->error('Unable to record registration legal consent.', [
                 'exception' => $exception,
                 'user_id' => $user->getId(),
             ]);
@@ -68,14 +68,14 @@ final readonly class RegistrationConsentManager
                 return;
             }
 
-            $this->consentRecorder->record(
-                $user,
-                ConsentType::MARKETING_EMAIL,
-                ConsentSource::REGISTRATION,
-                ConsentEvidence::statement($this->translator->trans('form.register.newsletter')),
-            );
+            $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::REGISTRATION, [
+                new ConsentGrant(
+                    ConsentType::MARKETING_EMAIL,
+                    ConsentEvidence::statement($this->translator->trans('form.register.newsletter')),
+                ),
+            ]));
         } catch (\Throwable $exception) {
-            $this->logger->error('Unable to prepare registration marketing consent evidence.', [
+            $this->logger->error('Unable to record registration marketing consent.', [
                 'exception' => $exception,
                 'user_id' => $user->getId(),
             ]);

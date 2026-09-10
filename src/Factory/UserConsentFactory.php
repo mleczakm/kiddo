@@ -23,7 +23,10 @@ final class UserConsentFactory extends PersistentObjectFactory
         return UserConsent::class;
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array<string, mixed>
+     * @throws \InvalidArgumentException
+     */
     #[\Override]
     protected function defaults(): array
     {
@@ -36,6 +39,7 @@ final class UserConsentFactory extends PersistentObjectFactory
         ];
     }
 
+    /** @throws \InvalidArgumentException */
     public function forDocument(LegalDocumentVersion $version, string $acceptanceText): self
     {
         return $this->with([
