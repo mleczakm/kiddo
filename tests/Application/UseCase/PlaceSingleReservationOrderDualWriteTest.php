@@ -11,8 +11,7 @@ use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\Commerce\OrderPlacementService;
-use App\Application\Service\InAppNotificationService;
-use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\NewBookingNotifier;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\Service\Pricing\ShadowPricingEvaluator;
 use App\Application\UseCase\PlaceSingleReservation;
@@ -29,8 +28,6 @@ use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
 
 /**
@@ -114,14 +111,8 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
         $childRepository = self::getContainer()->get(ChildRepositoryInterface::class);
         /** @var OrderPlacementService $orderPlacementService */
         $orderPlacementService = self::getContainer()->get(OrderPlacementService::class);
-        /** @var InAppNotificationService $inAppNotifications */
-        $inAppNotifications = self::getContainer()->get(InAppNotificationService::class);
-        /** @var LessonInstructorResolver $instructorResolver */
-        $instructorResolver = self::getContainer()->get(LessonInstructorResolver::class);
-        /** @var UrlGeneratorInterface $urlGenerator */
-        $urlGenerator = self::getContainer()->get(UrlGeneratorInterface::class);
-        /** @var TranslatorInterface $translator */
-        $translator = self::getContainer()->get(TranslatorInterface::class);
+        /** @var NewBookingNotifier $newBookingNotifier */
+        $newBookingNotifier = self::getContainer()->get(NewBookingNotifier::class);
         /** @var ShadowPricingEvaluator $shadowPricing */
         $shadowPricing = self::getContainer()->get(ShadowPricingEvaluator::class);
         /** @var PriceQuoter $priceQuoter */
@@ -134,10 +125,7 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
             $userRepository,
             $lessonRepository,
             $childRepository,
-            $inAppNotifications,
-            $instructorResolver,
-            $urlGenerator,
-            $translator,
+            $newBookingNotifier,
             $alwaysEnabled,
             $orderPlacementService,
             $shadowPricing,

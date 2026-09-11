@@ -7,6 +7,7 @@ namespace App\Tests\Application\CommandHandler\Notification;
 use App\Application\Command\Notification\DailyLessonsReminder;
 use App\Application\CommandHandler\Notification\DailyLessonsReminderHandler;
 use App\Entity\Child;
+use App\Entity\FinanceContact;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
@@ -32,6 +33,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($admin);
+        $em->persist(new FinanceContact($admin));
         $em->persist(
             SettingAssembler::new()->asOrganizationDetails(
                 facebookUrl: 'https://www.facebook.com/profile.php?id=61564631314322',
@@ -76,17 +78,26 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-07-09 10:00:00', new \DateTimeZone('UTC'));
         $user = UserAssembler::new()->withEmail('parent@example.com')->withName('Anna Nowak')->assemble();
         $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $host = UserAssembler::new()->withEmail('host@example.com')->withRoles('ROLE_HOST')->assemble();
+        $unrelatedAdmin = UserAssembler::new()
+            ->withEmail('other-admin@example.com')
+            ->withRoles('ROLE_ADMIN')
+            ->assemble();
         $child = new Child($user, 'Zosia', new DateTimeImmutable('2018-03-15'));
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($admin);
+        $em->persist($host);
+        $em->persist($unrelatedAdmin);
+        $em->persist(new FinanceContact($admin));
         $em->persist($child);
 
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Sensoryka')->assemble())
             ->withSchedule($date)
             ->assemble();
+        $lesson->addInstructor($host);
         $em->persist($lesson);
         $booking = BookingAssembler::new()
             ->withUser($user)
@@ -112,5 +123,9 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $userBody = (string) ($userEmail->getHtmlBody() ?? $userEmail->getTextBody());
         static::assertStringContainsString('Sensoryka', $userBody);
         static::assertStringContainsString('Zosia', $userBody);
+
+        $hostEmail = $emails->whereTo('host@example.com')->first();
+        static::assertStringContainsString('Sensoryka', (string) $hostEmail->getHtmlBody());
+        static::assertCount(0, $emails->whereTo('other-admin@example.com'));
     }
 }

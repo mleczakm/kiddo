@@ -6,6 +6,7 @@ namespace App\Tests\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
 use App\Application\CommandHandler\Notification\SendPaymentNotificationHandler;
+use App\Entity\FinanceContact;
 use App\Entity\Notification;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
@@ -14,6 +15,7 @@ use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
@@ -23,22 +25,27 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
 {
     use InteractsWithMailer;
 
-    public function testSendsPaymentNotificationToUserAndAdmins(): void
+    public function testSendsPaymentNotificationToCustomerFinanceContactAndConnectedHostOnly(): void
     {
         $date = new DateTimeImmutable('2025-08-24 10:00:00');
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
-        $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
-        $admin2 = UserAssembler::new()->withEmail('admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $finance = UserAssembler::new()->withEmail('finance@example.com')->assemble();
+        $host = UserAssembler::new()->withEmail('host@example.com')->withRoles('ROLE_HOST')->assemble();
+        $unrelatedAdmin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
-        $em->persist($admin1);
-        $em->persist($admin2);
+        $em->persist($finance);
+        $em->persist($host);
+        $em->persist($unrelatedAdmin);
+        $em->persist(new FinanceContact($finance));
 
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())
             ->withSchedule($date)
             ->assemble();
+        $lesson->addInstructor($host);
         $em->persist($lesson);
 
         $booking = BookingAssembler::new()->withUser($user)->withLessons($lesson)->assemble();
@@ -60,22 +67,23 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         $this->mailer()->assertSentEmailCount(3);
         $emails = $this->mailer()->sentEmails();
         $userEmail = $emails->whereTo($user->getEmail())->first();
-        $adminEmail1 = $emails->whereTo($admin1->getEmail())->first();
-        $adminEmail2 = $emails->whereTo($admin2->getEmail())->first();
+        $financeEmail = $emails->whereTo($finance->getEmail())->first();
+        $hostEmail = $emails->whereTo($host->getEmail())->first();
 
         static::assertStringContainsString('user@example.com', $userEmail->getTo()[0]->getAddress());
-        static::assertStringContainsString('admin1@example.com', $adminEmail1->getTo()[0]->getAddress());
-        static::assertStringContainsString('admin2@example.com', $adminEmail2->getTo()[0]->getAddress());
-        static::assertStringContainsString('user@example.com', (string) $adminEmail2->getHtmlBody());
-        static::assertStringContainsString('user@example.com', (string) $adminEmail1->getHtmlBody());
-        static::assertStringContainsString('<user@example.com>', (string) $adminEmail2->getSubject());
-        static::assertStringContainsString('<user@example.com>', (string) $adminEmail1->getSubject());
+        static::assertStringContainsString('finance@example.com', $financeEmail->getTo()[0]->getAddress());
+        static::assertStringContainsString('host@example.com', $hostEmail->getTo()[0]->getAddress());
+        static::assertStringContainsString('user@example.com', (string) $financeEmail->getHtmlBody());
+        static::assertStringContainsString('user@example.com', (string) $hostEmail->getHtmlBody());
+        static::assertStringContainsString('<user@example.com>', (string) $financeEmail->getSubject());
+        static::assertStringContainsString('<user@example.com>', (string) $hostEmail->getSubject());
+        static::assertCount(0, $emails->whereTo($unrelatedAdmin->getEmail()));
 
         static::assertStringContainsString('123,45', (string) $userEmail->getHtmlBody());
         static::assertStringContainsString('Joga', (string) $userEmail->getHtmlBody());
         static::assertStringContainsString('Joga', (string) $userEmail->getSubject());
-        static::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
-        static::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
+        static::assertStringContainsString('Joga', (string) $financeEmail->getSubject());
+        static::assertStringContainsString('Joga', (string) $hostEmail->getSubject());
         static::assertStringContainsString('niedziela 24 sie', (string) $userEmail->getHtmlBody());
 
         // The confirmation email carries an .ics calendar file and an "add to calendar" link.
@@ -86,12 +94,13 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         static::assertStringContainsString('calendar.google.com/calendar/render', (string) $userEmail->getHtmlBody());
         static::assertStringContainsString('Dodaj do kalendarza', (string) $userEmail->getHtmlBody());
 
-        static::assertSame([], $adminEmail1->getAttachments());
+        static::assertSame([], $financeEmail->getAttachments());
 
         $notifications = $em->getRepository(Notification::class)->findAll();
-        static::assertCount(3, $notifications); // user + 2 admins
+        static::assertCount(3, $notifications); // customer + finance contact + connected host
         $titles = array_map(static fn(Notification $n) => $n->getTitle(), $notifications);
         static::assertContains('Płatność potwierdzona', $titles);
         static::assertContains('Nowa płatność', $titles);
+        static::assertCount(0, $em->getRepository(Notification::class)->findBy(['user' => $unrelatedAdmin]));
     }
 }

@@ -7,8 +7,8 @@ namespace App\Application\UseCase;
 use App\Application\Command\OfferWaitlistSeats;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
-use App\Application\Service\LessonInstructorResolver;
 use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\NotificationSeverity;
 use Psr\Log\LoggerInterface;
@@ -32,7 +32,7 @@ final readonly class CancelBookingOccurrence
         private BookingStateMachineInterface $bookingStateMachine,
         private LoggerInterface $logger,
         private InAppNotificationService $inAppNotifications,
-        private LessonInstructorResolver $instructorResolver,
+        private BookingNotificationRecipients $notificationRecipients,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
         private MessageBusInterface $bus,
@@ -119,7 +119,8 @@ final readonly class CancelBookingOccurrence
         // workflow transition (instead of setting the status directly) so that
         // workflow.booking.transition.cancel fires and the cancellation notification
         // (email + in-app, to both the customer and admins) actually gets sent.
-        if (!$booking->hasActiveBookedLessons()) {
+        $wholeBookingCancelled = !$booking->hasActiveBookedLessons();
+        if ($wholeBookingCancelled) {
             $this->bookingStateMachine->apply($booking, 'cancel');
         }
 
@@ -135,10 +136,10 @@ final readonly class CancelBookingOccurrence
             break;
         }
 
-        if ($cancelledLesson !== null) {
-            $instructors = $this->instructorResolver->resolve([$cancelledLesson], exclude: $cancelledBy);
+        if ($cancelledLesson !== null && !$wholeBookingCancelled) {
+            $recipients = $this->notificationRecipients->forLessons([$cancelledLesson], exclude: $cancelledBy);
             $this->inAppNotifications->notifyUsers(
-                $instructors,
+                $recipients,
                 $this->translator->trans('notifications.in_app.cancellation.instructor.title', [], 'messages'),
                 $this->translator->trans(
                     'notifications.in_app.cancellation.instructor.body',

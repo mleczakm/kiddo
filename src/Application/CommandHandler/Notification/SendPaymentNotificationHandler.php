@@ -8,7 +8,7 @@ use App\Application\Calendar\LessonCalendarFactory;
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
 use App\Application\Notification\EmailAttachment;
 use App\Application\Notification\NotificationSenderInterface;
-use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Templating\TemplateRendererInterface;
 use App\Entity\NotificationSeverity;
@@ -23,7 +23,7 @@ readonly class SendPaymentNotificationHandler
 {
     public function __construct(
         private NotificationSenderInterface $notificationSender,
-        private UserRepositoryInterface $userRepository,
+        private BookingNotificationRecipients $recipients,
         private TemplateRendererInterface $templateRenderer,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
@@ -48,7 +48,8 @@ readonly class SendPaymentNotificationHandler
         // Send notification to user who made the payment
         $user = $booking->getUser();
         $this->sendUserNotification($payment, $user);
-        // Send notification to all admin users
+        // Internal copies go only to finance contacts and the instructors of
+        // lessons connected to this payment.
         $this->sendAdminNotifications($payment);
     }
 
@@ -112,7 +113,6 @@ readonly class SendPaymentNotificationHandler
 
     private function sendAdminNotifications(Payment $payment): void
     {
-        $admins = $this->userRepository->findByRole('ROLE_ADMIN');
         $bookings = $payment->getBookings();
         $firstBooking = $bookings->first() ?: throw new \LogicException('No booking found for payment');
         $lessons = [];
@@ -121,7 +121,8 @@ readonly class SendPaymentNotificationHandler
                 $lessons[] = $lesson;
             }
         }
-        foreach ($admins as $admin) {
+        $recipients = $this->recipients->forLessons($lessons);
+        foreach ($recipients as $recipient) {
             $subject = $this->templateRenderer->render('email/notification/payment-notification-admin-subject.html.twig', [
                 'user' => $firstBooking->getUser(),
                 'payment' => $payment,
@@ -133,12 +134,13 @@ readonly class SendPaymentNotificationHandler
                 'lessons' => $lessons,
                 'bookings' => $bookings,
             ]);
-            $this->notificationSender->send($admin->getEmailString(), $subject, $content);
+            $this->notificationSender->send($recipient->getEmailString(), $subject, $content);
         }
 
         $payer = $firstBooking->getUser();
         $lessonTitle = $lessons === [] ? '' : $lessons[0]->getMetadata()->title;
-        $this->inAppNotifications->notifyAdmins(
+        $this->inAppNotifications->notifyUsers(
+            $recipients,
             $this->translator->trans('notifications.in_app.payment.admin.title', [], 'messages'),
             $this->translator->trans(
                 'notifications.in_app.payment.admin.body',

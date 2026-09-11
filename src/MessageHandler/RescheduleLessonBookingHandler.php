@@ -6,7 +6,6 @@ namespace App\MessageHandler;
 
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\Service\InAppNotificationService;
-use App\Application\Service\LessonInstructorResolver;
 use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\NotificationSeverity;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
@@ -28,7 +27,6 @@ readonly class RescheduleLessonBookingHandler
         private BookingStateMachineInterface $bookingStateMachine,
         private MessageBusInterface $bus,
         private InAppNotificationService $inAppNotifications,
-        private LessonInstructorResolver $instructorResolver,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
     ) {}
@@ -118,7 +116,8 @@ readonly class RescheduleLessonBookingHandler
         // Perform domain reschedule operation on lessons map
         $booking->rescheduleLesson($oldLesson, $newLesson, $command->getRescheduledBy());
 
-        // Notify admins about reschedule
+        // Notify the finance contacts and instructors connected to either
+        // occurrence about the reschedule.
         $this->bus->dispatch(new SendRescheduleAdminNotificationCommand(
             booking: $booking,
             oldLesson: $oldLesson,
@@ -130,8 +129,8 @@ readonly class RescheduleLessonBookingHandler
         $oldTitle = $oldLesson->getMetadata()->title;
         $newTitle = $newLesson->getMetadata()->title;
 
-        // Notify the customer in-app that their booking moved (the admin
-        // notification above covers admins; this one covers the booking owner).
+        // Notify the customer in-app that their booking moved (the internal
+        // notification above covers the responsible staff recipients).
         $this->inAppNotifications->notify(
             $booking->getUser(),
             $this->translator->trans('notifications.in_app.reschedule.user.title', [], 'messages'),
@@ -144,30 +143,6 @@ readonly class RescheduleLessonBookingHandler
                 'messages',
             ),
             $this->urlGenerator->generate('dashboard'),
-            NotificationSeverity::Info,
-        );
-
-        // Instructors of either lesson (old or new) should know a booking
-        // moved — excluding the person who performed the reschedule.
-        $instructors = $this->instructorResolver->resolve(
-            [$oldLesson, $newLesson],
-            exclude: $command->getRescheduledBy(),
-        );
-        $this->inAppNotifications->notifyUsers(
-            $instructors,
-            $this->translator->trans('notifications.in_app.reschedule.instructor.title', [], 'messages'),
-            $this->translator->trans(
-                'notifications.in_app.reschedule.instructor.body',
-                [
-                    'name' => $booking->getUser()->getName(),
-                    'from' => $oldTitle,
-                    'to' => $newTitle,
-                ],
-                'messages',
-            ),
-            $this->urlGenerator->generate('app_admin_lesson_view', [
-                'id' => (string) $newLesson->getId(),
-            ]),
             NotificationSeverity::Info,
         );
     }

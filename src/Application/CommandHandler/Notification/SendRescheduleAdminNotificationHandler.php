@@ -6,7 +6,7 @@ namespace App\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\Notification\NotificationSenderInterface;
-use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Templating\TemplateRendererInterface;
 use App\Entity\NotificationSeverity;
@@ -19,7 +19,7 @@ final readonly class SendRescheduleAdminNotificationHandler
 {
     public function __construct(
         private NotificationSenderInterface $notificationSender,
-        private UserRepositoryInterface $userRepository,
+        private BookingNotificationRecipients $recipients,
         private TemplateRendererInterface $templateRenderer,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
@@ -33,8 +33,8 @@ final readonly class SendRescheduleAdminNotificationHandler
         $oldLesson = $command->oldLesson;
         $newLesson = $command->newLesson;
 
-        $admins = $this->userRepository->findByRole('ROLE_ADMIN');
-        if ($admins === []) {
+        $recipients = $this->recipients->forLessons([$oldLesson, $newLesson], exclude: $command->rescheduledBy);
+        if ($recipients === []) {
             return;
         }
 
@@ -54,11 +54,12 @@ final readonly class SendRescheduleAdminNotificationHandler
             'reason' => $command->reason,
         ]);
 
-        foreach ($admins as $admin) {
-            $this->notificationSender->send($admin->getEmailString(), $subject, $content);
+        foreach ($recipients as $recipient) {
+            $this->notificationSender->send($recipient->getEmailString(), $subject, $content);
         }
 
-        $this->inAppNotifications->notifyAdmins(
+        $this->inAppNotifications->notifyUsers(
+            $recipients,
             $this->translator->trans('notifications.in_app.reschedule.admin.title', [], 'messages'),
             $this->translator->trans(
                 'notifications.in_app.reschedule.admin.body',

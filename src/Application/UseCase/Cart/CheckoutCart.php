@@ -13,6 +13,7 @@ use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\Commerce\OrderItemSelection;
 use App\Application\Service\Commerce\OrderPlacementOptions;
 use App\Application\Service\Commerce\OrderPlacementService;
+use App\Application\Service\NewBookingNotifier;
 use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Domain\Commerce\Cart\Cart;
@@ -48,6 +49,7 @@ final readonly class CheckoutCart
         private PriceQuoter $priceQuoter,
         private PaymentCodeGenerator $paymentCodeGenerator,
         private OrderPlacementService $orderPlacementService,
+        private NewBookingNotifier $newBookingNotifier,
         private EntityManagerInterface $em,
     ) {}
 
@@ -154,6 +156,9 @@ final readonly class CheckoutCart
         $order = $result->order ?? throw new \LogicException(
             'OrderPlacementService did not write an order for a cart checkout.',
         );
+        foreach ($result->bookings as $booking) {
+            $this->newBookingNotifier->notify($booking);
+        }
         $cart->convert($order->getId());
         $this->em->flush();
 

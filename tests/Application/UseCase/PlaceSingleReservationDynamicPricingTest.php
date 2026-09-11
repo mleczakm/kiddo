@@ -11,8 +11,7 @@ use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\Commerce\OrderPlacementService;
-use App\Application\Service\InAppNotificationService;
-use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\NewBookingNotifier;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\Service\Pricing\ShadowPricingEvaluator;
 use App\Application\UseCase\PlaceSingleReservation;
@@ -30,8 +29,6 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Stage 8 of the commerce rollout plan: dynamic_pricing is enabled by
@@ -157,14 +154,8 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
         $childRepository = $container->get(ChildRepositoryInterface::class);
         /** @var OrderPlacementService $orderPlacementService */
         $orderPlacementService = $container->get(OrderPlacementService::class);
-        /** @var InAppNotificationService $inAppNotifications */
-        $inAppNotifications = $container->get(InAppNotificationService::class);
-        /** @var LessonInstructorResolver $instructorResolver */
-        $instructorResolver = $container->get(LessonInstructorResolver::class);
-        /** @var UrlGeneratorInterface $urlGenerator */
-        $urlGenerator = $container->get(UrlGeneratorInterface::class);
-        /** @var TranslatorInterface $translator */
-        $translator = $container->get(TranslatorInterface::class);
+        /** @var NewBookingNotifier $newBookingNotifier */
+        $newBookingNotifier = $container->get(NewBookingNotifier::class);
         /** @var ShadowPricingEvaluator $shadowPricing */
         $shadowPricing = $container->get(ShadowPricingEvaluator::class);
         /** @var PriceQuoter $priceQuoter */
@@ -179,10 +170,7 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
             $userRepository,
             $lessonRepository,
             $childRepository,
-            $inAppNotifications,
-            $instructorResolver,
-            $urlGenerator,
-            $translator,
+            $newBookingNotifier,
             $bothEnabled,
             $orderPlacementService,
             $shadowPricing,

@@ -95,6 +95,9 @@ notifications:
       instructor:
         title: Nowa rezerwacja na Twoich zajęciach
         body: '<strong>{name}</strong> zarezerwował/a miejsce na <em>{lesson}</em> ({date}).'
+      internal:
+        title: Nowa rezerwacja
+        body: '<strong>{name}</strong> zarezerwował/a miejsce na <em>{lesson}</em> ({date}).'
     payment:
       user:
         title: Płatność potwierdzona

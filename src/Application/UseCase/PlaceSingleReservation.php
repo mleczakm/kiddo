@@ -14,12 +14,10 @@ use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\Commerce\OrderItemSelection;
 use App\Application\Service\Commerce\OrderPlacementOptions;
 use App\Application\Service\Commerce\OrderPlacementService;
-use App\Application\Service\InAppNotificationService;
-use App\Application\Service\LessonInstructorResolver;
+use App\Application\Service\NewBookingNotifier;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\Service\Pricing\ShadowPricingEvaluator;
 use App\Domain\Commerce\Order\CustomerOrder;
-use App\Entity\NotificationSeverity;
 use App\Entity\TicketOption;
 use Brick\Money\Money;
 use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
@@ -27,9 +25,7 @@ use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Ulid;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Canonical use case for the fast (single ticket, single booking) reservation
@@ -42,10 +38,7 @@ final readonly class PlaceSingleReservation
         private UserRepositoryInterface $userRepository,
         private LessonRepositoryInterface $lessonRepository,
         private ChildRepositoryInterface $childRepository,
-        private InAppNotificationService $inAppNotifications,
-        private LessonInstructorResolver $instructorResolver,
-        private UrlGeneratorInterface $urlGenerator,
-        private TranslatorInterface $translator,
+        private NewBookingNotifier $newBookingNotifier,
         private FeatureManager $featureManager,
         private OrderPlacementService $orderPlacementService,
         private ShadowPricingEvaluator $shadowPricing,
@@ -116,25 +109,7 @@ final readonly class PlaceSingleReservation
         // offer), close that entry — they took the seat.
         $this->waitlist->findActiveForUserAndLesson($user, $lesson)?->claim(Clock::get()->now());
 
-        foreach ($this->instructorResolver->resolve([$lesson], exclude: $user) as $instructor) {
-            $this->inAppNotifications->notify(
-                $instructor,
-                $this->translator->trans('notifications.in_app.new_booking.instructor.title', [], 'messages'),
-                $this->translator->trans(
-                    'notifications.in_app.new_booking.instructor.body',
-                    [
-                        'name' => $user->getName(),
-                        'lesson' => $lesson->getMetadata()->title,
-                        'date' => $lesson->schedule->format('Y-m-d H:i'),
-                    ],
-                    'messages',
-                ),
-                $this->urlGenerator->generate('app_admin_lesson_view', [
-                    'id' => (string) $lesson->getId(),
-                ]),
-                NotificationSeverity::Info,
-            );
-        }
+        $this->newBookingNotifier->notify($booking);
 
         // After commit: mailer failures must not roll back the booking/payment code.
         $this->bus->dispatch(new Envelope(

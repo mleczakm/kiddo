@@ -6,11 +6,14 @@ namespace App\Tests\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\CommandHandler\Notification\SendRescheduleAdminNotificationHandler;
+use App\Entity\FinanceContact;
+use App\Entity\Notification;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use App\Tests\Assembler\UserAssembler;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
@@ -20,20 +23,26 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
 {
     use InteractsWithMailer;
 
-    public function testSendsRescheduleNotificationToAdmins(): void
+    public function testSendsRescheduleNotificationToFinanceContactAndConnectedHostsOnly(): void
     {
         $fromDate = new DateTimeImmutable('2025-08-24 10:00:00');
         $toDate = new DateTimeImmutable('2025-08-26 12:30:00');
 
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
 
-        $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
-        $admin2 = UserAssembler::new()->withEmail('admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $finance = UserAssembler::new()->withEmail('finance@example.com')->assemble();
+        $oldHost = UserAssembler::new()->withEmail('old-host@example.com')->withRoles('ROLE_HOST')->assemble();
+        $newHost = UserAssembler::new()->withEmail('new-host@example.com')->withRoles('ROLE_HOST')->assemble();
+        $unrelatedAdmin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
-        $em->persist($admin1);
-        $em->persist($admin2);
+        $em->persist($finance);
+        $em->persist($oldHost);
+        $em->persist($newHost);
+        $em->persist($unrelatedAdmin);
+        $em->persist(new FinanceContact($finance));
 
         $oldLesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())
@@ -43,6 +52,8 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Joga')->assemble())
             ->withSchedule($toDate)
             ->assemble();
+        $oldLesson->addInstructor($oldHost);
+        $newLesson->addInstructor($newHost);
         $em->persist($oldLesson);
         $em->persist($newLesson);
 
@@ -60,23 +71,30 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
             reason: 'Urlop',
         ));
 
-        $this->mailer()->assertSentEmailCount(2);
+        $this->mailer()->assertSentEmailCount(3);
 
         $emails = $this->mailer()->sentEmails();
-        $adminEmail1 = $emails->whereTo($admin1->getEmail())->first();
-        $adminEmail2 = $emails->whereTo($admin2->getEmail())->first();
+        $financeEmail = $emails->whereTo($finance->getEmail())->first();
+        $oldHostEmail = $emails->whereTo($oldHost->getEmail())->first();
+        $newHostEmail = $emails->whereTo($newHost->getEmail())->first();
 
         // Subject contains user email and lesson title
-        static::assertStringContainsString('user@example.com', (string) $adminEmail1->getSubject());
-        static::assertStringContainsString('Joga', (string) $adminEmail1->getSubject());
-        static::assertStringContainsString('Joga', (string) $adminEmail2->getSubject());
+        static::assertStringContainsString('user@example.com', (string) $financeEmail->getSubject());
+        static::assertStringContainsString('Joga', (string) $oldHostEmail->getSubject());
+        static::assertStringContainsString('Joga', (string) $newHostEmail->getSubject());
+        static::assertCount(0, $emails->whereTo($unrelatedAdmin->getEmail()));
 
         // Body contains key information
-        $body1 = (string) ($adminEmail1->getHtmlBody() ?? $adminEmail1->getTextBody());
+        $body1 = (string) ($financeEmail->getHtmlBody() ?? $financeEmail->getTextBody());
         static::assertStringContainsString('user@example.com', $body1);
         static::assertStringContainsString('Joga', $body1);
         static::assertStringContainsString('Powód', $body1);
         static::assertStringContainsString('Urlop', $body1);
+
+        static::assertCount(1, $em->getRepository(Notification::class)->findBy(['user' => $finance]));
+        static::assertCount(1, $em->getRepository(Notification::class)->findBy(['user' => $oldHost]));
+        static::assertCount(1, $em->getRepository(Notification::class)->findBy(['user' => $newHost]));
+        static::assertCount(0, $em->getRepository(Notification::class)->findBy(['user' => $unrelatedAdmin]));
     }
 
     public function testDoesNotSendWhenNoAdmins(): void
@@ -84,6 +102,7 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-08-24 10:00:00');
 
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
 

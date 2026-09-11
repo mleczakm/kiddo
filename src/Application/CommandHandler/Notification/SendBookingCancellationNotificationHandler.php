@@ -7,7 +7,7 @@ namespace App\Application\CommandHandler\Notification;
 use App\Application\Command\Notification\SendBookingCancellationNotificationCommand;
 use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\BookingRepositoryInterface;
-use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\Booking;
 use App\Entity\NotificationSeverity;
@@ -24,7 +24,7 @@ final readonly class SendBookingCancellationNotificationHandler
         private TranslatorInterface $translator,
         private InAppNotificationService $inAppNotifications,
         private UrlGeneratorInterface $urlGenerator,
-        private UserRepositoryInterface $userRepository,
+        private BookingNotificationRecipients $recipients,
     ) {}
 
     public function __invoke(SendBookingCancellationNotificationCommand $command): void
@@ -94,10 +94,10 @@ final readonly class SendBookingCancellationNotificationHandler
 
     private function sendAdminNotifications(Booking $booking, string $dayOfWeek, string $lessonTitle): void
     {
-        $admins = $this->userRepository->findByRole('ROLE_ADMIN');
+        $recipients = $this->recipients->forLessons($booking->getLessons());
         $user = $booking->getUser();
 
-        foreach ($admins as $admin) {
+        foreach ($recipients as $recipient) {
             $subject = $this->translator->trans(
                 'booking_cancellation.admin.subject',
                 [
@@ -120,10 +120,11 @@ final readonly class SendBookingCancellationNotificationHandler
                 'emails',
             );
 
-            $this->notificationSender->send($admin->getEmailString(), $subject, $content);
+            $this->notificationSender->send($recipient->getEmailString(), $subject, $content);
         }
 
-        $this->inAppNotifications->notifyAdmins(
+        $this->inAppNotifications->notifyUsers(
+            $recipients,
             $this->translator->trans('notifications.in_app.cancellation_admin.title', [], 'messages'),
             $this->translator->trans(
                 'notifications.in_app.cancellation_admin.body',

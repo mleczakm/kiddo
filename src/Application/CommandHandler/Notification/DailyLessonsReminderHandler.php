@@ -12,6 +12,7 @@ use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\PaymentRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Templating\TemplateRendererInterface;
@@ -33,6 +34,7 @@ readonly class DailyLessonsReminderHandler
     public function __construct(
         private NotificationSenderInterface $notificationSender,
         private UserRepositoryInterface $userRepository,
+        private BookingNotificationRecipients $recipients,
         private BookingRepositoryInterface $bookingRepository,
         private PaymentRepositoryInterface $paymentRepository,
         private LessonInstructorResolver $instructorResolver,
@@ -52,7 +54,7 @@ readonly class DailyLessonsReminderHandler
     {
         $date = $command->date;
         $lessons = $this->todayLessonsQuery->forDate($date);
-        $admins = $this->userRepository->findByRole('ROLE_ADMIN');
+        $financeContacts = $this->recipients->financeContacts();
 
         $yesterday = $date->modify('-1 day');
         $yesterdayStart = $yesterday->setTime(0, 0, 0);
@@ -76,11 +78,12 @@ readonly class DailyLessonsReminderHandler
             'date' => $date,
         ]);
 
-        foreach ($admins as $admin) {
-            $this->notificationSender->send($admin->getEmail(), $subject, $content);
+        foreach ($financeContacts as $financeContact) {
+            $this->notificationSender->send($financeContact->getEmail(), $subject, $content);
         }
 
-        $this->inAppNotifications->notifyAdmins(
+        $this->inAppNotifications->notifyUsers(
+            $financeContacts,
             $this->translator->trans('notifications.in_app.daily_reminder.admin.title', [], 'messages'),
             $this->translator->trans(
                 'notifications.in_app.daily_reminder.admin.body',
@@ -94,16 +97,16 @@ readonly class DailyLessonsReminderHandler
             NotificationSeverity::Info,
         );
 
-        $adminIds = [];
-        foreach ($admins as $admin) {
-            $adminIds[] = $admin->getId();
+        $financeContactIds = [];
+        foreach ($financeContacts as $financeContact) {
+            $financeContactIds[] = $financeContact->getId();
         }
 
         /** @var Map<User, Set<Lesson>> $lessonsByInstructor */
         $lessonsByInstructor = new Map();
         foreach ($lessons as $lesson) {
             foreach ($this->instructorResolver->resolve([$lesson]) as $instructor) {
-                if (in_array($instructor->getId(), $adminIds, true)) {
+                if (in_array($instructor->getId(), $financeContactIds, true)) {
                     continue;
                 }
                 $instructorLessons = $lessonsByInstructor->get($instructor, new Set());

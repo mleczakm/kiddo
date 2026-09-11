@@ -152,7 +152,7 @@ final class LessonModalConsentTest extends WebTestCase
                 base64_encode($contents),
             );
             $document = new LegalDocument($type);
-            new LegalDocumentVersion($document, $file, new \DateTimeImmutable('-1 day'), $publisher);
+            new LegalDocumentVersion($document, $file, Clock::get()->now()->modify('-1 day'), $publisher);
             $entityManager->persist($file);
             $entityManager->persist($document);
         }

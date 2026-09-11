@@ -7,7 +7,7 @@ namespace App\Application\CommandHandler\Notification;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\PaymentRepositoryInterface;
-use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
 use Psr\Cache\CacheItemPoolInterface;
@@ -24,7 +24,7 @@ final readonly class TransferNotMatchedHandler
 
     public function __construct(
         private NotificationSenderInterface $notificationSender,
-        private UserRepositoryInterface $userRepository,
+        private BookingNotificationRecipients $recipients,
         private TranslatorInterface $translator,
         private CacheItemPoolInterface $cache,
         private PaymentRepositoryInterface $paymentRepository,
@@ -55,9 +55,8 @@ final readonly class TransferNotMatchedHandler
                 return;
             }
 
-            // Get all admin users
-            $admins = $this->userRepository->findByRole('ROLE_ADMIN');
-            if (empty($admins)) {
+            $recipients = $this->recipients->financeContacts();
+            if ($recipients === []) {
                 return;
             }
 
@@ -74,12 +73,12 @@ final readonly class TransferNotMatchedHandler
                 'emails',
             );
 
-            // Send it to all admins
-            foreach ($admins as $admin) {
-                $this->notificationSender->send($admin->getEmailString(), $subject, $content);
+            foreach ($recipients as $recipient) {
+                $this->notificationSender->send($recipient->getEmailString(), $subject, $content);
             }
 
-            $this->inAppNotifications->notifyAdmins(
+            $this->inAppNotifications->notifyUsers(
+                $recipients,
                 $this->translator->trans('notifications.in_app.transfer_not_matched.title', [], 'messages'),
                 $this->translator->trans(
                     'notifications.in_app.transfer_not_matched.body',

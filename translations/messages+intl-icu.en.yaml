@@ -165,6 +165,9 @@ notifications:
       instructor:
         title: New booking on your workshop
         body: '<strong>{name}</strong> booked a spot in <em>{lesson}</em> ({date}).'
+      internal:
+        title: New booking
+        body: '<strong>{name}</strong> booked a spot in <em>{lesson}</em> ({date}).'
     payment:
       user:
         title: Payment confirmed

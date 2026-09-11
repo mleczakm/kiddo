@@ -6,11 +6,14 @@ namespace App\Tests\Application\CommandHandler\Notification;
 
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Application\CommandHandler\Notification\TransferNotMatchedHandler;
+use App\Entity\FinanceContact;
+use App\Entity\Notification;
 use App\Entity\Payment;
 use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\TransferAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -39,7 +42,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         $this->cache->clear();
     }
 
-    public function testSendsNotificationToAdminsWhenTransferNotMatched(): void
+    public function testSendsNotificationOnlyToFinanceContactsWhenTransferNotMatched(): void
     {
         // Create test admin users
         $admin1 = UserAssembler::new()
@@ -63,6 +66,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
             ->withTransferredAt($now = Clock::get()->now())
             ->assemble();
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $payment = PaymentAssembler::new()
             ->withUser($admin1)
@@ -73,6 +77,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
 
         $em->persist($admin1);
         $em->persist($admin2);
+        $em->persist(new FinanceContact($admin1));
         $em->persist($transfer);
         $em->flush();
 
@@ -80,15 +85,16 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         $command = new TransferNotMatchedCommand($transfer);
         ($this->handler)($command);
 
-        // Assert emails were sent to all admins
-        $this->assertEmailCount(2);
+        $this->assertEmailCount(1);
 
         $emails = $this->mailer()->sentEmails();
 
         $recipients = array_map(static fn($email) => $email->getTo()[0]->toString(), $emails->all());
 
         static::assertContains('"Admin One" <admin1@example.com>', $recipients);
-        static::assertContains('"Admin Two" <admin2@example.com>', $recipients);
+        static::assertNotContains('"Admin Two" <admin2@example.com>', $recipients);
+        static::assertCount(1, $em->getRepository(Notification::class)->findBy(['user' => $admin1]));
+        static::assertCount(0, $em->getRepository(Notification::class)->findBy(['user' => $admin2]));
 
         // Assert email content
         $email = $emails->first();
@@ -106,7 +112,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         static::assertCount(0, $this->mailer()->sentEmails()->all());
     }
 
-    public function testDoesNotSendNotificationWhenNoAdminsExist(): void
+    public function testDoesNotSendNotificationWhenNoFinanceContactsExist(): void
     {
         // Create a test transfer
         $transfer = TransferAssembler::new()
@@ -117,6 +123,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
             ->withTransferredAt(new \DateTimeImmutable('2025-01-01 12:00:00'))
             ->assemble();
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($transfer);
         $em->flush();
