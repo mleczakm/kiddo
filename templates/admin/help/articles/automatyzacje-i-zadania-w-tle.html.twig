@@ -36,7 +36,7 @@ related: [platnosci-przelewy-i-dopasowanie, powiadomienia-i-komunikacja, kolejka
             <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co 10 minut<br><span class="font-normal text-slate-500">:00, :10, :20…</span></td><td class="border-b border-slate-200 px-3 py-2">Wygasza 60-minutowe oferty miejsc z kolejki rezerwowej i proponuje zwolnione miejsce następnej osobie.</td></tr>
             <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co 60 minut</td><td class="border-b border-slate-200 px-3 py-2">Niezależnie kontroluje oczekujące rezerwacje i anuluje nieopłacone po 24 godzinach roboczych. Zapisuje powód w rezerwacji i zdarzenie w dzienniku aktywności.</td></tr>
             <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Co godzinę o :05</td><td class="border-b border-slate-200 px-3 py-2">Zmienia aktywne rezerwacje na zakończone, gdy wszystkie objęte nimi zajęcia są już w przeszłości.</td></tr>
-            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 08:45</td><td class="border-b border-slate-200 px-3 py-2">Wysyła klientom i prowadzącym przypomnienia o dzisiejszych zajęciach. Klienci dostają również ICS i linki do kalendarza. Administratorzy otrzymują plan dnia oraz podsumowanie poprzedniego dnia: nowych kont, rezerwacji i przychodu.</td></tr>
+            <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 08:45</td><td class="border-b border-slate-200 px-3 py-2">Wysyła klientom i prowadzącym przypomnienia o dzisiejszych zajęciach. Klienci dostają również ICS i linki do kalendarza, a każdy prowadzący tylko swój plan. Kontakty finansowe otrzymują pełny plan dnia oraz podsumowanie poprzedniego dnia: nowych kont, rezerwacji i przychodu.</td></tr>
             <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 03:15</td><td class="border-b border-slate-200 px-3 py-2">Trwale usuwa powiadomienia w panelu starsze niż 2 miesiące. Nie usuwa rezerwacji, płatności ani wpisów dziennika aktywności.</td></tr>
             <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 03:35</td><td class="border-b border-slate-200 px-3 py-2">Uzupełnia dane zamówień dla najstarszych płatności utworzonych przed wdrożeniem systemu zamówień — maksymalnie 100 płatności w jednym przebiegu.</td></tr>
             <tr><td class="border-b border-slate-200 px-3 py-2 font-semibold">Codziennie 03:50</td><td class="border-b border-slate-200 px-3 py-2">Anonimizuje konta, dla których 14-dniowy okres po żądaniu usunięcia już minął. Gdy jednocześnie kwalifikuje się więcej niż 25 kont, zadanie niczego nie usuwa i zgłasza alert do ręcznej kontroli.</td></tr>
@@ -52,12 +52,15 @@ related: [platnosci-przelewy-i-dopasowanie, powiadomienia-i-komunikacja, kolejka
 </p>
 <ul>
     <li>potwierdzenie rozpoznanej płatności i aktywacja albo reaktywacja rezerwacji;</li>
-    <li>e-maile i powiadomienia o płatności dla klienta i administratorów;</li>
+    <li>e-maile i powiadomienia o płatności dla klienta, kontaktów finansowych oraz prowadzących
+        powiązanych zajęć;</li>
     <li>obsługa przeniesienia lub przywrócenia rezerwacji; przy przeniesieniu system informuje klienta,
-        prowadzących i administratorów, a przy przywróceniu zapisuje zmianę w dzienniku aktywności;</li>
+        kontakty finansowe i prowadzących powiązanych terminów, a przy przywróceniu zapisuje zmianę
+        w dzienniku aktywności;</li>
     <li>powiadomienie klienta o decyzji dotyczącej zwrotu;</li>
     <li>oferta miejsca dla pierwszej osoby z kolejki zaraz po anulowaniu pojedynczego terminu rezerwacji;</li>
-    <li>alert o niedopasowanym przelewie albo przelewie przekraczającym próg automatycznej obsługi;</li>
+    <li>alert do kontaktów finansowych o niedopasowanym przelewie albo przelewie przekraczającym próg
+        automatycznej obsługi;</li>
     <li>powiadomienie o nowym użytkowniku przy jego pierwszym logowaniu;</li>
     <li>powiadomienia o nowej wersji dokumentu prawnego, jeżeli podczas publikacji zaznaczono ich wysłanie.</li>
 </ul>

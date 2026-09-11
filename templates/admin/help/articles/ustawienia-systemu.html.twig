@@ -3,10 +3,10 @@ slug: ustawienia-systemu
 title: "Ustawienia systemu"
 section: settings
 role: ROLE_SETTINGS
-summary: "Co można skonfigurować w ustawieniach: dane organizacji, integracje, progi i funkcje."
-keywords: [ustawienia, konfiguracja, dane organizacji, integracje, facebook, robots.txt, próg, funkcje, flagi]
+summary: "Co można skonfigurować w ustawieniach: dane organizacji, kontakty finansowe, integracje, progi i funkcje."
+keywords: [ustawienia, konfiguracja, dane organizacji, kontakt finansowy, odbiorcy powiadomień, integracje, facebook, robots.txt, próg, funkcje, flagi]
 primary_route: app_admin_settings
-related: [zgody-i-dokumenty-prawne, newsletter, asystent-ai]
+related: [platnosci-przelewy-i-dopasowanie, powiadomienia-i-komunikacja, zgody-i-dokumenty-prawne, newsletter, asystent-ai]
 ---#}
 <p>
     <a href="{{ path('app_admin_settings') }}">Ustawienia systemu</a> zbierają konfigurację całej
@@ -17,13 +17,39 @@ related: [zgody-i-dokumenty-prawne, newsletter, asystent-ai]
 <ul>
     <li><strong>Dane organizacji</strong> — nazwa, NIP, adres, kontakt do reklamacji; używane m.in.
         w dokumentach i mailach.</li>
-    <li><strong>Kontakty</strong> — adresy administratora, prowadzącego i osoby od finansów.</li>
+    <li><strong>Użytkownicy i uprawnienia</strong> — administratorzy oraz prowadzący zajęcia.</li>
+    <li><strong>Odbiorcy raportów finansowych</strong> — osoby wyznaczone do otrzymywania informacji
+        finansowych i operacyjnych.</li>
     <li><strong>Integracja z Facebookiem</strong> — konfiguracja połączenia dla treści społecznościowych.</li>
     <li><strong>robots.txt</strong> — treść pliku dla robotów wyszukiwarek.</li>
     <li><strong>Próg weryfikacji przelewów</strong> — kwota, powyżej której przelew wymaga ręcznego
         potwierdzenia.</li>
     <li><strong>Dokumenty prawne</strong> — publikacja regulaminów i polityki prywatności (osobny artykuł).</li>
 </ul>
+
+<h2>Za co odpowiada kontakt finansowy</h2>
+<p>
+    Kontakt finansowy jest odbiorcą wewnętrznych wiadomości, które wymagają kontroli płatności albo
+    zapewniają pełny obraz operacyjny. Otrzymuje e-maile i powiadomienia w panelu dotyczące:
+</p>
+<ul>
+    <li>potwierdzonych płatności oraz anulowania lub przeniesienia rezerwacji;</li>
+    <li>rezerwacji anulowanych automatycznie z powodu braku płatności w terminie;</li>
+    <li>niedopasowanych przelewów i przelewów wymagających ręcznej weryfikacji;</li>
+    <li>dziennego raportu obejmującego plan zajęć oraz podsumowanie nowych kont, rezerwacji i przychodu.</li>
+</ul>
+<p>
+    Przy zdarzeniach powiązanych z konkretnymi zajęciami informację otrzymują również prowadzący
+    przypisani bezpośrednio do terminu albo do jego serii warsztatowej. Alerty dotyczące samych przelewów
+    oraz pełny raport finansowy trafiają wyłącznie do kontaktów finansowych. Klient nadal dostaje własne
+    potwierdzenia i przypomnienia.
+</p>
+
+<div class="help-callout">
+    <strong>Kontakt finansowy nie jest rolą dostępu.</strong> Dodanie osoby do tej listy włącza wysyłkę
+    wiadomości, ale nie nadaje uprawnień do ekranów administracyjnych. Jeżeli ma obsługiwać przelewy
+    w panelu, jej konto musi mieć także <strong>ROLE_MANAGE_PAYMENTS</strong> lub rolę administratora.
+</div>
 
 <div class="help-callout">
     Część funkcji jest sterowana „flagami” (włącz/wyłącz) na poziomie środowiska — jeśli jakaś sekcja

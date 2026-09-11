@@ -67,8 +67,9 @@ related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, 
     <li><strong>Nadpłata</strong> — płatność zostaje opłacona i oznaczona do kontroli.</li>
     <li><strong>Brak poprawnego kodu</strong> — przelew trafia do ręcznej obsługi w
         <a href="{{ path('app_admin_transfers') }}">Płatności / Finanse</a>.</li>
-    <li><strong>Kwota ponad próg bezpieczeństwa</strong> — przelew nie jest automatycznie łączony. Administratorzy
-        dostają alert i muszą go sprawdzić. Domyślny próg to 1000 PLN, ale można go zmienić w ustawieniach.</li>
+    <li><strong>Kwota ponad próg bezpieczeństwa</strong> — przelew nie jest automatycznie łączony. Kontakty
+        finansowe dostają alert i muszą go sprawdzić. Domyślny próg to 1000 PLN, ale można go zmienić
+        w ustawieniach.</li>
 </ul>
 <p>
     Nierozpoznane przelewy z ostatnich 12 godzin są ponownie dopasowywane co minutę. Dzięki temu przelew
@@ -83,12 +84,14 @@ related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, 
     <li>Powiązane zamówienie zostaje oznaczone jako opłacone, a użycia promocji zostają rozliczone.</li>
     <li>Do bieżącego rozliczenia platformy doliczana jest prowizja 2%, a zdarzenie trafia do dziennika aktywności.</li>
     <li>Klient dostaje e-mail i powiadomienie w panelu; wiadomość zawiera również plik kalendarza ICS.
-        Administratorzy dostają potwierdzenie e-mailem i w panelu.</li>
+        Potwierdzenie e-mailem i w panelu otrzymują kontakty finansowe oraz prowadzący powiązanych
+        zajęć lub serii warsztatowej.</li>
     <li>Otwarty ekran płatności sprawdza status co 3 sekundy i po wykryciu wpłaty pokazuje potwierdzenie.</li>
 </ul>
 
 <div class="help-callout">
     Kod jest usuwany z aktywnego powiązania po opłaceniu, ale jego kopia pozostaje przy płatności, dlatego
     można później odnaleźć transakcję w wyszukiwarce. Alert o niedopasowanym lub dużym przelewie jest
-    ograniczony do jednego powiadomienia na dany przelew w ciągu 24 godzin.
+    ograniczony do jednego powiadomienia na dany przelew w ciągu 24 godzin i trafia wyłącznie do kontaktów
+    finansowych skonfigurowanych w <a href="{{ path('app_admin_settings') }}">Ustawieniach systemu</a>.
 </div>

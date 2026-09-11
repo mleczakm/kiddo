@@ -3,10 +3,10 @@ slug: powiadomienia-i-komunikacja
 title: "Powiadomienia i komunikacja z klientem"
 section: dashboard
 role: ROLE_HOST
-summary: "Jak działa dzwonek powiadomień, oznaczanie wiadomości i ręczna wiadomość do klienta."
-keywords: [powiadomienia, dzwonek, wiadomość, komunikacja, nieprzeczytane, email, klient]
+summary: "Jak działa dzwonek powiadomień, dobór odbiorców i ręczna wiadomość do klienta."
+keywords: [powiadomienia, dzwonek, wiadomość, komunikacja, nieprzeczytane, email, klient, kontakt finansowy, prowadzący]
 primary_route: app_admin_dashboard
-related: [pulpit, crm-klienci-i-dzieci]
+related: [pulpit, ustawienia-systemu, platnosci-przelewy-i-dopasowanie, crm-klienci-i-dzieci]
 ---#}
 <p>
     Dzwonek w prawym górnym rogu zbiera powiadomienia związane m.in. z rezerwacjami, płatnościami,
@@ -20,6 +20,20 @@ related: [pulpit, crm-klienci-i-dzieci]
     <li>Krzyżyk usuwa jedną wiadomość, a <strong>Wyczyść wszystkie</strong> porządkuje całą listę.</li>
     <li>Usunięcie powiadomienia nie usuwa zdarzenia ani danych, których dotyczy.</li>
 </ul>
+
+<h2>Kto otrzymuje wiadomości systemowe</h2>
+<ul>
+    <li><strong>Kontakt finansowy</strong> — informacje o płatnościach, anulowaniu i przeniesieniu
+        rezerwacji, alerty o przelewach oraz pełne dzienne podsumowanie.</li>
+    <li><strong>Prowadzący</strong> — wiadomości o rezerwacjach, płatnościach, anulowaniu i przeniesieniu
+        tylko dla zajęć, do których jest przypisany bezpośrednio albo przez serię warsztatową.</li>
+    <li><strong>Klient</strong> — własne potwierdzenia, zmiany i przypomnienia dotyczące jego rezerwacji.</li>
+</ul>
+<p>
+    Sama rola administratora nie dodaje osoby do odbiorców tych wiadomości. Kontakty finansowe wybiera się
+    w <a href="{{ path('app_admin_settings') }}">Ustawieniach systemu</a>, a prowadzących przypisuje do
+    terminu lub serii warsztatowej.
+</p>
 
 <h2>Wiadomość do konkretnego klienta</h2>
 <p>
