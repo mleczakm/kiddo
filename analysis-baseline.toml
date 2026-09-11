@@ -3979,6 +3979,30 @@ message = 'Potentially unhandled exception `Symfony\Component\Form\Exception\Run
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\PlatformBillingComponent::mount`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\PlatformBillingComponent::openModal`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\PlatformBillingComponent::processPayment`.'
+count = 1
+
+[[issues]]
+file = "src/UserInterface/Http/Component/PlatformBillingComponent.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\PlatformBillingComponent::setPastDueAsPaid`.'
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Component/ProfileComponent.php"
 code = "redundant-docblock-type"
 message = "Redundant docblock type for variable `$user`."
@@ -6274,13 +6298,13 @@ count = 1
 file = "tests/UserInterface/Http/Component/PlatformBillingComponentTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
-count = 3
+count = 7
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/PlatformBillingComponentTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 3
+count = 7
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/ProfileComponentTest.php"
