@@ -1,5 +1,9 @@
 target
 
+###> idea ###
+/.idea/
+###< idea ###
+
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
