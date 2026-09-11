@@ -3,15 +3,11 @@
 {% block title %}{{ 'admin.title'|trans }}{% endblock %}
 
 {% block body %}
-    {# Platform Billing Component #}
-    {% if isFeatureEnabled('platform_billing_widget') %}
-        <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+    {# KPI Statistics, plus Platform Billing inlined into the same row when visible #}
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6" data-tour-target="dashboard-kpis">
+        {% if isFeatureEnabled('platform_billing_widget') and is_granted('ROLE_ADMIN') %}
             {{ component('PlatformBillingComponent') }}
-        </div>
-    {% endif %}
-
-    {# KPI Statistics #}
-    <div data-tour-target="dashboard-kpis">
+        {% endif %}
         {{ component('AdminKpiStatsComponent') }}
     </div>
 

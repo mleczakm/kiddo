@@ -43,7 +43,8 @@ class PlatformBillingAlertTest extends WebTestCase
         $client->request('GET', '/admin');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('div', 'Brak zaległości');
+        $this->assertSelectorNotExists('.text-red-400');
+        $this->assertSelectorTextNotContains('body', 'Zaległość');
     }
 
     private function createAdminUser(KernelBrowser $client): User

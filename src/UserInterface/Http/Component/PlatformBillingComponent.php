@@ -35,6 +35,11 @@ class PlatformBillingComponent extends AbstractController
         private readonly PlatformBillingService $platformBillingService,
     ) {}
 
+    public function mount(): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    }
+
     public function getCurrentDue(): float
     {
         return $this->platformBillingService->getCurrentDue()->getAmount()->toFloat();
@@ -53,6 +58,8 @@ class PlatformBillingComponent extends AbstractController
     #[LiveAction]
     public function setPastDueAsPaid(): void
     {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
         try {
             $this->platformBillingService->setPastDueAsPaid();
             $this->successMessage = 'Past due has been marked as paid';
@@ -66,6 +73,8 @@ class PlatformBillingComponent extends AbstractController
     #[LiveAction]
     public function openModal(): void
     {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
         $this->showModal = true;
         $this->successMessage = null;
         $this->errorMessage = null;
@@ -82,6 +91,8 @@ class PlatformBillingComponent extends AbstractController
     #[LiveAction]
     public function processPayment(): void
     {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
         $form = $this->getForm();
 
         if (!$form->isSubmitted()) {

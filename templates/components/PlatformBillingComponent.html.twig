@@ -1,4 +1,4 @@
-<div {{ attributes }} class="from-slate-800 to-slate-900 p-5 rounded-2xl shadow-lg text-white md:col-span-2 relative overflow-hidden">
+<div {{ attributes }} class="rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-sm text-white flex flex-col justify-between min-h-40 md:col-span-2 relative overflow-hidden">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-[-20px] bottom-[-20px] w-32 h-32 opacity-10 text-white" aria-hidden="true">
         <rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect>
         <path d="M9 22v-4h6v4"></path>
@@ -12,37 +12,27 @@
         <path d="M8 10h.01"></path>
         <path d="M8 14h.01"></path>
     </svg>
-    <div class="flex justify-between items-start">
-        <div>
-            <div class="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-300">
-                <span>Opłata systemowa (2% prowizji)</span>
-                {{ include('admin/help/_context_button.html.twig', {slug: 'rozliczenie-platformy', label: 'Opłata systemowa i rozliczenie platformy'}) }}
-            </div>
-            <div class="flex items-baseline gap-2">
-                <span class="text-3xl font-black text-white">{{ this.getCurrentDue()|number_format(2) }} zł</span>
-                <span class="text-xs text-slate-400">Prognoza za bieżący miesiąc</span>
-            </div>
+
+    <div class="flex items-center justify-between gap-2 flex-wrap">
+        <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            <span>Opłata systemowa (2% prowizji)</span>
+            {{ include('admin/help/_context_button.html.twig', {slug: 'rozliczenie-platformy', label: 'Opłata systemowa i rozliczenie platformy'}) }}
         </div>
-        <div class="bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/50 backdrop-blur-sm">
-            <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Zaległość</div>
-            <div class="flex items-center gap-1.5 text-sm font-bold">
-                {% if this.hasPastDue() %}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400">
-                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
-                    </svg>
-                    <span class="text-red-400">Zaległość {{ this.getPastDue()|number_format(2) }} zł</span>
-                {% else %}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
-                    </svg>
-                    <span class="text-green-400">Brak zaległości</span>
-                {% endif %}
+        {% if this.hasPastDue() %}
+            <div class="flex items-center gap-1 text-xs font-bold text-red-400 shrink-0 ml-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+                </svg>
+                <span>Zaległość {{ this.getPastDue()|number_format(2) }} zł</span>
             </div>
-        </div>
+        {% endif %}
     </div>
 
-    {% if this.hasPastDue() %}
-        <div class="mt-4 flex gap-2">
+    <div class="text-4xl font-black text-white tracking-tight mb-2">{{ this.getCurrentDue()|number_format(2) }} zł</div>
+    <div class="text-xs text-slate-400 font-medium">Prognoza za bieżący miesiąc</div>
+
+    {% if this.hasPastDue() and is_granted('ROLE_SUPER_ADMIN') %}
+        <div class="mt-4 flex flex-wrap gap-2">
             <button
                 data-action="live#action"
                 data-live-action-param="setPastDueAsPaid"
