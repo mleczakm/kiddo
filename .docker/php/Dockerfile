@@ -30,6 +30,12 @@ COPY composer.json composer.lock ./
 
 RUN composer install --prefer-dist --no-scripts --no-interaction --no-progress --no-cache --optimize-autoloader
 
+# mago's composer package downloads its (Rust) binary from GitHub on first use rather than
+# via `composer install`. Trigger that download now so it lands in this cached image layer
+# instead of `composer sa` fetching it - with a progress bar that floods CI logs - on every
+# `docker run` of the image.
+RUN vendor/bin/mago --version
+
 COPY assets/ assets/
 COPY bin/ bin/
 COPY config/ config/
