@@ -144,6 +144,15 @@
                     <span class="text-sm font-semibold text-slate-500">{{ 'admin.lesson_show.available'|trans }}</span>
                     <span class="text-sm font-black text-green-600">{{ lesson.getAvailableSpots() }}</span>
                 </div>
+                {% if waitlistEnabled %}
+                    <div data-testid="lesson-waitlist-summary" class="flex items-center justify-between border-t border-slate-100 pt-3">
+                        <span class="flex items-center gap-2 text-sm font-semibold text-slate-500">
+                            {{ 'admin.lesson_show.waitlist'|trans }}
+                            {{ include('admin/help/_context_button.html.twig', {slug: 'kolejka-rezerwowa', label: 'Kolejka rezerwowa na pełne zajęcia'}) }}
+                        </span>
+                        <span class="text-sm font-black text-slate-800">{{ waitlistCount }}</span>
+                    </div>
+                {% endif %}
             </div>
         </aside>
     </div>

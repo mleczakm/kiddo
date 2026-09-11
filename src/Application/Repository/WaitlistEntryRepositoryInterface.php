@@ -26,6 +26,9 @@ interface WaitlistEntryRepositoryInterface extends RepositoryInterface
     /** How many entries currently hold an `offered` seat for a lesson. */
     public function countActiveOffers(Lesson $lesson): int;
 
+    /** How many entries are currently active (waiting or offered) for a lesson. */
+    public function countActiveForLesson(Lesson $lesson): int;
+
     /**
      * `offered` entries whose hold has elapsed at $now.
      *

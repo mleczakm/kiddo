@@ -1194,6 +1194,7 @@ admin:
     capacity: "Pojemność"
     booked: "Zarezerwowane"
     available: "Dostępne"
+    waitlist: "Lista rezerwowa"
   workshop_editor:
     add_button: "Dodaj zajęcia"
     title_create: "Kreator Warsztatów"

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Admin;
 
+use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\HolidayChecker;
+use App\Application\Service\Waitlist\WaitlistService;
 use App\Entity\Lesson;
 use App\Infrastructure\Symfony\Security\Voter\LessonVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,8 +23,12 @@ final class LessonsController extends AbstractController
     #[Route('/admin/zajecia/{id}', name: 'app_admin_lesson_view', requirements: [
         'id' => '[A-Za-z0-9]+',
     ])]
-    public function view(Lesson $lesson, HolidayChecker $holidayChecker): Response
-    {
+    public function view(
+        Lesson $lesson,
+        HolidayChecker $holidayChecker,
+        WaitlistService $waitlistService,
+        WaitlistEntryRepositoryInterface $waitlistEntries,
+    ): Response {
         if (!$this->isGranted(LessonVoter::VIEW, $lesson)) {
             throw $this->createNotFoundException();
         }
@@ -30,12 +36,15 @@ final class LessonsController extends AbstractController
         $series = $lesson->getSeries();
         $prev = $series?->getLessonsLt($lesson);
         $next = $series?->getLessonsGt($lesson);
+        $waitlistEnabled = $waitlistService->isAvailableFor($lesson);
 
         return $this->render('admin/lessons/view.html.twig', [
             'lesson' => $lesson,
             'prevLesson' => $prev,
             'nextLesson' => $next,
             'holidayNames' => $holidayChecker->holidayNamesAt($lesson->schedule),
+            'waitlistEnabled' => $waitlistEnabled,
+            'waitlistCount' => $waitlistEnabled ? $waitlistEntries->countActiveForLesson($lesson) : 0,
         ]);
     }
 

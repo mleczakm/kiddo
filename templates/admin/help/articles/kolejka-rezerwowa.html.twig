@@ -4,9 +4,9 @@ title: "Kolejka rezerwowa na pełne zajęcia"
 section: bookings
 role: ROLE_HOST
 summary: "Jak klient zapisuje się na listę rezerwową i jak system przydziela zwolnione miejsce."
-keywords: [kolejka rezerwowa, lista oczekujących, brak miejsc, zwolnione miejsce, oferta, 60 minut]
+keywords: [kolejka rezerwowa, lista oczekujących, brak miejsc, zwolnione miejsce, oferta, 60 minut, długość kolejki]
 primary_route: app_admin_schedule
-related: [warsztaty-terminy-i-serie, powiadomienia-i-komunikacja, rezerwacje-tworzenie]
+related: [warsztaty-terminy-i-serie, powiadomienia-i-komunikacja, rezerwacje-tworzenie, zajecia-uczestnicy-i-obecnosc]
 ---#}
 <p>
     Gdy termin jest pełny, zalogowany klient może dołączyć do kolejki rezerwowej z okna szczegółów
@@ -31,3 +31,10 @@ related: [warsztaty-terminy-i-serie, powiadomienia-i-komunikacja, rezerwacje-two
     Samo dołączenie do kolejki nie jest rezerwacją i nie gwarantuje miejsca. Rezerwacja powstaje
     dopiero wtedy, gdy klient skorzysta z oferty i dokończy zapis.
 </div>
+
+<h2>Podgląd długości kolejki w panelu</h2>
+<p>
+    Na stronie szczegółów zajęć, w panelu „Podsumowanie", widoczna jest liczba osób aktualnie
+    oczekujących na miejsce (wliczając te, którym już zaoferowano miejsce). Wiersz ten pojawia się
+    tylko wtedy, gdy kolejka rezerwowa jest włączona dla danego terminu.
+</p>

@@ -81,6 +81,24 @@ class WaitlistEntryRepository extends ServiceEntityRepository implements Waitlis
         }
     }
 
+    #[\Override]
+    public function countActiveForLesson(Lesson $lesson): int
+    {
+        try {
+            return (int) $this
+                ->createQueryBuilder('w')
+                ->select('COUNT(w.id)')
+                ->andWhere('w.lesson = :lesson')
+                ->andWhere('w.status IN (:active)')
+                ->setParameter('lesson', $lesson->getId(), 'ulid')
+                ->setParameter('active', WaitlistEntry::ACTIVE_STATUSES)
+                ->getQuery()
+                ->getSingleScalarResult();
+        } catch (NoResultException|NonUniqueResultException) {
+            return 0;
+        }
+    }
+
     /**
      * @return list<WaitlistEntry>
      */

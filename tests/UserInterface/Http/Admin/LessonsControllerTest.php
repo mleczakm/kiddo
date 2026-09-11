@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Admin;
 
+use App\Entity\WaitlistEntry;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\UserAssembler;
@@ -189,6 +190,35 @@ final class LessonsControllerTest extends WebTestCase
         );
         // ...and their rows are struck through and hidden until expanded.
         $this->assertSelectorExists('tr[data-disclosure-target="content"][hidden] .line-through');
+    }
+
+    public function testAdminSeesWaitlistLengthInSummary(): void
+    {
+        $client = static::createClient();
+        $em = $this->entityManager();
+
+        $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
+        $em->persist($admin);
+
+        $lesson = LessonAssembler::new()->assemble();
+        $em->persist($lesson);
+
+        foreach ([UserAssembler::new()->assemble(), UserAssembler::new()->assemble()] as $waiter) {
+            $em->persist($waiter);
+            $em->persist(new WaitlistEntry($lesson, $waiter, $waiter->getEmail(), $waiter->getName()));
+        }
+
+        $em->flush();
+
+        $client->loginUser($admin);
+        $client->request('GET', '/admin/zajecia/' . (string) $lesson->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('[data-testid="lesson-waitlist-summary"]', 'Lista rezerwowa');
+        $this->assertSelectorTextContains('[data-testid="lesson-waitlist-summary"]', '2');
+        $this->assertSelectorExists(
+            '[data-testid="lesson-waitlist-summary"] [data-help-dialog-url-param]',
+        );
     }
 
     private function entityManager(): EntityManagerInterface
