@@ -73,14 +73,14 @@ final class HelpChatToolsTest extends KernelTestCase
     public function testSearchHidesArticlesTheRoleMayNotSee(): void
     {
         // "mailing" only appears in dokumenty-publikacja-nowej-wersji (ROLE_SETTINGS).
-        static::assertNotContains(
-            'dokumenty-publikacja-nowej-wersji',
-            array_column($this->searchArticles($this->actor('ROLE_HOST'), 'mailing'), 'slug'),
-        );
-        static::assertContains(
-            'dokumenty-publikacja-nowej-wersji',
-            array_column($this->searchArticles($this->actor('ROLE_ADMIN'), 'mailing'), 'slug'),
-        );
+        static::assertNotContains('dokumenty-publikacja-nowej-wersji', array_column(
+            $this->searchArticles($this->actor('ROLE_HOST'), 'mailing'),
+            'slug',
+        ));
+        static::assertContains('dokumenty-publikacja-nowej-wersji', array_column(
+            $this->searchArticles($this->actor('ROLE_ADMIN'), 'mailing'),
+            'slug',
+        ));
     }
 
     public function testGetArticleIsGatedByRoleAndReturnsPlainText(): void

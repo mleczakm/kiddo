@@ -13,7 +13,6 @@ use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\Exception\RuntimeException;

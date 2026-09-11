@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http\Panel;
 
-use App\Entity\User;
 use App\Tests\Assembler\UserAssembler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;

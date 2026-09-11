@@ -8,7 +8,6 @@ use App\Application\Consent\ConsentEvidence;
 use App\Application\Consent\RequestContext;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
-use App\Entity\LegalDocumentType;
 use App\Entity\LegalDocumentVersion;
 use App\Entity\UserConsent;
 use Symfony\Component\HttpFoundation\RequestStack;
