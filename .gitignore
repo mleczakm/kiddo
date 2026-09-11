@@ -1,7 +1,15 @@
 target
 
 ###> idea ###
-/.idea/
+/.idea/*
+!/.idea/.gitignore
+!/.idea/modules.xml
+!/.idea/*.iml
+!/.idea/vcs.xml
+!/.idea/symfony2.xml
+!/.idea/webResources.xml
+!/.idea/dictionaries/
+!/.idea/dictionaries/project.xml
 ###< idea ###
 
 ###> symfony/framework-bundle ###
