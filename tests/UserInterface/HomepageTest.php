@@ -95,6 +95,38 @@ class HomepageTest extends WebTestCase
         static::assertStringContainsString('Rozumiem i akceptuję', $html);
     }
 
+    #[DataProvider('chatPagesDataProvider')]
+    public function testChatLimitsConsentDialogToChatWindow(string $path): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', $path);
+
+        $this->assertResponseIsSuccessful();
+
+        $dialog = $crawler->filter('[data-chat-assistant-target="consentDialog"]');
+        static::assertCount(1, $dialog);
+        static::assertStringContainsString('absolute inset-0', (string) $dialog->attr('class'));
+        static::assertStringNotContainsString('fixed', (string) $dialog->attr('class'));
+        $dialogNode = $dialog->getNode(0);
+        static::assertInstanceOf(\DOMElement::class, $dialogNode);
+        static::assertFalse($dialogNode->hasAttribute('aria-modal'));
+
+        $chatWindow = $dialogNode->parentNode;
+        static::assertInstanceOf(\DOMElement::class, $chatWindow);
+        static::assertMatchesRegularExpression('/(?:^|\\s)relative(?:\\s|$)/', $chatWindow->getAttribute('class'));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function chatPagesDataProvider(): array
+    {
+        return [
+            'Hero chat' => ['/'],
+            'Floating chat' => ['/workshops'],
+        ];
+    }
+
     /**
      * Test parent dashboard with active bookings and child profiles.
      */

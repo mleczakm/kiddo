@@ -49,7 +49,7 @@
                     </p>
                 </div>
 
-                <div class="mx-auto max-w-3xl rounded-3xl border border-muted bg-white shadow-lg overflow-hidden flex flex-col h-[min(70vh,32rem)] md:h-[26rem]">
+                <div class="relative mx-auto max-w-3xl rounded-3xl border border-muted bg-white shadow-lg overflow-hidden flex flex-col h-[min(70vh,32rem)] md:h-[26rem]">
                     <div class="flex items-center justify-between border-b border-muted px-4 py-3 shrink-0">
                         <div class="flex items-center gap-2">
                             <span class="h-2 w-2 rounded-full bg-workshop-green" data-chat-assistant-target="statusDot"></span>
@@ -152,9 +152,9 @@
                             </div>
                         </form>
                     </div>
-                </div>
 
-                {{ include('partials/_chat_ai_consent_dialog.html.twig') }}
+                    {{ include('partials/_chat_ai_consent_dialog.html.twig') }}
+                </div>
 
                 <div class="mx-auto mt-5 flex max-w-3xl flex-wrap items-center justify-center gap-3 text-sm">
                     <span class="text-muted-foreground">{{ 'homepage.chat_hero.prefer_browsing'|trans }}</span>
@@ -180,7 +180,7 @@
         >
             <div
                 data-chat-assistant-target="panel"
-                class="hidden w-[min(100vw-2rem,24rem)] h-[min(70vh,32rem)] flex flex-col rounded-3xl border border-muted bg-white shadow-lg overflow-hidden"
+                class="relative hidden w-[min(100vw-2rem,24rem)] h-[min(70vh,32rem)] flex flex-col rounded-3xl border border-muted bg-white shadow-lg overflow-hidden"
             >
                 <div class="flex items-center justify-between border-b border-muted px-4 py-3 bg-white">
                     <div class="flex items-center gap-2">
@@ -282,8 +282,9 @@
                         </div>
                     </div>
                 </form>
+
+                {{ include('partials/_chat_ai_consent_dialog.html.twig') }}
             </div>
-            {{ include('partials/_chat_ai_consent_dialog.html.twig') }}
             <button
                 type="button"
                 data-chat-assistant-target="toggle"
