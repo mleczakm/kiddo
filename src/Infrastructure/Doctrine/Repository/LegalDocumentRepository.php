@@ -18,6 +18,7 @@ final class LegalDocumentRepository extends ServiceEntityRepository implements L
         parent::__construct($registry, LegalDocument::class);
     }
 
+    #[\Override]
     public function findOneByType(LegalDocumentType $type): ?LegalDocument
     {
         return $this->findOneBy(['type' => $type]);

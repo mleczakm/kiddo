@@ -20,6 +20,7 @@ final class UserConsentRepository extends ServiceEntityRepository implements Use
         parent::__construct($registry, UserConsent::class);
     }
 
+    #[\Override]
     public function findLatestActive(
         User $user,
         ConsentType $type,
@@ -53,6 +54,7 @@ final class UserConsentRepository extends ServiceEntityRepository implements Use
      * @return list<UserConsent>
      * @throws \UnexpectedValueException
      */
+    #[\Override]
     public function findActiveByType(User $user, ConsentType $type): array
     {
         return $this->findBy([
@@ -66,6 +68,7 @@ final class UserConsentRepository extends ServiceEntityRepository implements Use
      * @return list<UserConsent>
      * @throws \UnexpectedValueException
      */
+    #[\Override]
     public function findHistoryForUser(User $user): array
     {
         return $this->findBy(['user' => $user], ['grantedAt' => 'DESC', 'id' => 'DESC']);

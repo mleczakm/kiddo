@@ -21,6 +21,7 @@ final class LegalDocumentVersionRepository extends ServiceEntityRepository imple
         parent::__construct($registry, LegalDocumentVersion::class);
     }
 
+    #[\Override]
     public function findCurrent(LegalDocumentType $type, \DateTimeImmutable $now): ?LegalDocumentVersion
     {
         /** @var list<LegalDocumentVersion> $versions */
@@ -35,6 +36,7 @@ final class LegalDocumentVersionRepository extends ServiceEntityRepository imple
         return $versions[0] ?? null;
     }
 
+    #[\Override]
     public function findPublicVersion(LegalDocumentType $type, Ulid $id, \DateTimeImmutable $now): ?LegalDocumentVersion
     {
         /** @var list<LegalDocumentVersion> $versions */
@@ -50,6 +52,7 @@ final class LegalDocumentVersionRepository extends ServiceEntityRepository imple
     }
 
     /** @return list<LegalDocumentVersion> */
+    #[\Override]
     public function findPublicVersions(LegalDocumentType $type, \DateTimeImmutable $now): array
     {
         /** @var list<LegalDocumentVersion> */
@@ -65,6 +68,7 @@ final class LegalDocumentVersionRepository extends ServiceEntityRepository imple
      * @return list<LegalDocumentVersion>
      * @throws \UnexpectedValueException
      */
+    #[\Override]
     public function findAllForDocument(LegalDocument $document): array
     {
         return $this->findBy(['document' => $document], ['version' => 'DESC']);
