@@ -83,8 +83,8 @@ final class ActivityLoggerTest extends KernelTestCase
      */
     public function testFailedFlushFromAnUnrelatedDanglingEntityDoesNotPropagate(): void
     {
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
-        static::assertInstanceOf(EntityManagerInterface::class, $em);
 
         $user = UserAssembler::new()->withName('Ola Nowak')->assemble();
         $em->persist($user);

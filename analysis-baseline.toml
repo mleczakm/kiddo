@@ -224,12 +224,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Chat/LessonPresenter.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/LessonPresenter.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
@@ -238,12 +232,6 @@ count = 2
 file = "src/Application/Chat/LessonPresenter.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\Chat\LessonPresenter::paymentInstructions`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/LessonPresenter.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\Application\Chat\LessonPresenter::paymentSetting`.'
 count = 1
 
 [[issues]]
@@ -496,6 +484,12 @@ count = 1
 file = "src/Application/Command/UpdateBookingLessonMapsCommand.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Console\Exception\LogicException` in `App\Application\Command\UpdateBookingLessonMapsCommand::__construct`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/AnonymizeExpiredAccountsHandler.php"
+code = "unused-parameter"
+message = "Parameter `$command` is never used."
 count = 1
 
 [[issues]]
@@ -825,7 +819,25 @@ count = 1
 [[issues]]
 file = "src/Application/CommandHandler/SaveTransferHandler.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/SaveTransferHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/SaveTransferHandler.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/SaveTransferHandler.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\CommandHandler\SaveTransferHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -838,12 +850,6 @@ count = 1
 file = "src/Application/CommandHandler/SendLoginNotificationHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\SendLoginNotificationHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/SendReservationNotificationHandler.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
 
 [[issues]]
@@ -911,6 +917,12 @@ file = "src/Application/File/OrphanFileCleanupService.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
+
+[[issues]]
+file = "src/Application/Help/DocFrontmatter.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 5
 
 [[issues]]
 file = "src/Application/Newsletter/NewsletterSubscriptionManager.php"
@@ -1267,24 +1279,6 @@ message = "Assigning `nonnull` type to a variable may lead to unexpected behavio
 count = 2
 
 [[issues]]
-file = "src/Application/Service/TransferMoneyParser.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Application\Service\TransferMoneyParser::transferMoneyStringToMoneyObject`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/TransferMoneyParser.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Application\Service\TransferMoneyParser::transferMoneyStringToMoneyObject`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/TransferMoneyParser.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Application\Service\TransferMoneyParser::transferMoneyStringToMoneyObject`.'
-count = 1
-
-[[issues]]
 file = "src/Application/Service/WorkshopFileManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `DomainException` in `App\Application\Service\WorkshopFileManager::attachUploads`.'
@@ -1378,12 +1372,6 @@ count = 1
 file = "src/Application/UseCase/CancelBookingOccurrence.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/CancelBookingOccurrence.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
 count = 1
 
 [[issues]]
@@ -1611,24 +1599,6 @@ count = 1
 [[issues]]
 file = "src/Application/UseCase/PlaceSingleReservation.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/PlaceSingleReservation.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/PlaceSingleReservation.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/PlaceSingleReservation.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\UseCase\PlaceSingleReservation::__invoke`.'
 count = 1
 
@@ -1839,6 +1809,30 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `App\Entity\Payment::amountMatch`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `{closure:src/Entity/Payment.php:405:38}`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `App\Entity\Payment::amountMatch`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `{closure:src/Entity/Payment.php:405:38}`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `App\Entity\Payment::amountMatch`.'
 count = 1
 
@@ -1852,6 +1846,18 @@ count = 1
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:406:13}`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `App\Entity\Payment::amountMatch`.'
+count = 1
+
+[[issues]]
+file = "src/Entity/Payment.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `{closure:src/Entity/Payment.php:405:38}`.'
 count = 1
 
 [[issues]]
@@ -1924,6 +1930,24 @@ count = 1
 file = "src/Entity/Subscription.php"
 code = "unused-property"
 message = "Property `$version` is never used."
+count = 1
+
+[[issues]]
+file = "src/Entity/WaitlistEntry.php"
+code = "unused-property"
+message = "Property `$version` is never used."
+count = 1
+
+[[issues]]
+file = "src/Entity/WaitlistEntry.php"
+code = "write-only-property"
+message = "Property `$closedAt` is written to but never read."
+count = 1
+
+[[issues]]
+file = "src/Entity/WaitlistEntry.php"
+code = "write-only-property"
+message = "Property `$offeredAt` is written to but never read."
 count = 1
 
 [[issues]]
@@ -2559,12 +2583,6 @@ count = 1
 [[issues]]
 file = "src/Infrastructure/Mcp/KiddoMcpToolInvoker.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Mcp\KiddoMcpToolInvoker::resolveChatToken`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Mcp/KiddoMcpToolInvoker.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `RuntimeException` in `App\Infrastructure\Mcp\KiddoMcpToolInvoker::invoke`.'
 count = 1
 
@@ -2696,8 +2714,8 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Messenger/SwooleTaskWorkerContext.php"
-code = "invalid-property-access"
-message = 'Attempting to access a property on a non-object type (`unknown-ref(Swoole\Http\Server)`).'
+code = "mixed-operand"
+message = "Casting `mixed` to `bool`."
 count = 1
 
 [[issues]]
@@ -2752,42 +2770,6 @@ count = 1
 file = "src/Infrastructure/Search/SearchResultHydrator.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ValueError` in `App\Infrastructure\Search\SearchResultHydrator::hydrate`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Sentry/MetricsRecorder.php"
-code = "deprecated-function"
-message = 'Call to deprecated function: `Sentry\trace_metrics`.'
-count = 4
-
-[[issues]]
-file = "src/Infrastructure/Swoole/ExceptionLoggingTaskHandler.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `Swoole\Server\Task`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/ExceptionLoggingTaskHandler.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `Swoole\Server`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/HttpServerSwooleServerProvider.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `Swoole\Http\Server`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/TaskWorkerConnectionEnsuringHandler.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `Swoole\Server\Task`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Swoole/TaskWorkerConnectionEnsuringHandler.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `Swoole\Server`.'
 count = 1
 
 [[issues]]
@@ -2968,12 +2950,6 @@ count = 1
 file = "src/MessageHandler/CancelLessonBookingHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\MessageHandler\CancelLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/ReactivateBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\MessageHandler\ReactivateBookingHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -3379,6 +3355,12 @@ message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchE
 count = 1
 
 [[issues]]
+file = "src/UserInterface/Http/Component/AdminLegalDocumentsComponent.php"
+code = "possibly-undefined-variable"
+message = "Variable `$notified` might be undefined here because its assignment occurs within a `try` block."
+count = 1
+
+[[issues]]
 file = "src/UserInterface/Http/Component/AdminPaymentComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `UnexpectedValueException` in `App\UserInterface\Http\Component\AdminPaymentComponent::getTransfers`.'
@@ -3556,18 +3538,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\UserInterface\Http\Component\AdminSettingsComponent::mount`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminSettingsComponent::saveRobotsTxt`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminSettingsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\AdminSettingsComponent::saveTransferReviewThreshold`.'
 count = 1
 
 [[issues]]
@@ -3779,12 +3749,6 @@ file = "src/UserInterface/Http/Component/ChildrenManager.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\Component\ChildrenManager::reload`.'
 count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 2
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
@@ -4543,12 +4507,6 @@ message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/NewsletterController.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/SecurityController.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `LogicException` in `App\UserInterface\Http\SecurityController::check`.'
@@ -4612,6 +4570,24 @@ count = 1
 file = "src/UserInterface/Http/WorkshopsAction.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\HttpFoundation\Exception\BadRequestException` in `App\UserInterface\Http\WorkshopsAction::resolveBrowsedWeek`.'
+count = 1
+
+[[issues]]
+file = "tests/Application/Chat/UserChatToolsBookingAccessTest.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "tests/Application/Chat/UserChatToolsBookingAccessTest.php"
+code = "redundant-cast"
+message = "Redundant cast to `(string)`: the expression already has this type."
+count = 1
+
+[[issues]]
+file = "tests/Application/Chat/UserChatToolsBookingAccessTest.php"
+code = "reference-to-undefined-variable"
+message = "Reference created from a previously undefined variable `$m`."
 count = 1
 
 [[issues]]
@@ -4730,18 +4706,6 @@ count = 2
 
 [[issues]]
 file = "tests/Application/CommandHandler/Notification/DailyLessonsReminderHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/DailyLessonsReminderHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 11
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/DailyLessonsReminderHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
@@ -4820,36 +4784,6 @@ count = 1
 
 [[issues]]
 file = "tests/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertStringContainsString`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandlerTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 6
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 15
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendBookingCancellationNotificationHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -4871,30 +4805,6 @@ file = "tests/Application/CommandHandler/Notification/SendPaymentNotificationHan
 code = "invalid-callable"
 message = "Expression of type `object` cannot be called as a function or method."
 count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendPaymentNotificationHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendPaymentNotificationHandlerTest.php"
-code = "mixed-argument"
-message = '''Invalid argument type for argument #2 of `array_map`: expected `array<('K.array_map() extends array-key), App\Entity\Notification>`, but found `mixed`.'''
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendPaymentNotificationHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendPaymentNotificationHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 9
 
 [[issues]]
 file = "tests/Application/CommandHandler/Notification/SendPaymentNotificationHandlerTest.php"
@@ -4922,18 +4832,6 @@ count = 2
 
 [[issues]]
 file = "tests/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 12
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
@@ -4943,18 +4841,6 @@ file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerT
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
 count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 7
 
 [[issues]]
 file = "tests/Application/CommandHandler/Notification/TransferNotMatchedHandlerTest.php"
@@ -5098,7 +4984,7 @@ count = 1
 file = "tests/Application/Service/ActivityLoggerTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
-count = 2
+count = 3
 
 [[issues]]
 file = "tests/Application/Service/ActivityLoggerTest.php"
@@ -5128,7 +5014,7 @@ count = 5
 file = "tests/Application/Service/ActivityLoggerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 2
+count = 3
 
 [[issues]]
 file = "tests/Application/Service/ActivityLoggerTest.php"
@@ -5308,6 +5194,12 @@ count = 2
 file = "tests/Functional/Application/CommandHandler/TriggerMatchPaymentForTransferForPastTransfersHandlerTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$entityManager` (Doctrine\ORM\EntityManagerInterface).'
+count = 1
+
+[[issues]]
+file = "tests/Functional/Application/Help/DocRegistryTest.php"
+code = "possibly-undefined-variable"
+message = "Variable `$matches` might not have been defined on all execution paths leading to this point."
 count = 1
 
 [[issues]]
@@ -5566,25 +5458,25 @@ count = 1
 file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
-count = 2
+count = 1
 
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
+count = 1
 
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 4
+count = 2
 
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 2
+count = 1
 
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Component/BookingPreviewComponentTest.php"
@@ -5908,18 +5800,6 @@ count = 1
 file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`nonnull`)."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/SwooleTaskWorkerContextTest.php"
-code = "non-existent-class-like"
-message = 'Class, interface, enum, or trait `Swoole\Http\Server` not found.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/SwooleTaskWorkerContextTest.php"
-code = "non-existent-property"
-message = 'Property `$taskworker` does not exist on interface `PHPUnit\Framework\MockObject\MockObject`.'
 count = 1
 
 [[issues]]
@@ -6247,6 +6127,12 @@ message = "Attempting to call a method on `null`."
 count = 29
 
 [[issues]]
+file = "tests/UserInterface/Http/Component/ChildrenManagerConsentTest.php"
+code = "implicit-to-string-cast"
+message = 'Implicit conversion to `string` for right operand via `Symfony\Component\Uid\Ulid::__toString()`.'
+count = 1
+
+[[issues]]
 file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
@@ -6287,6 +6173,12 @@ file = "tests/UserInterface/Http/Component/LessonModalUrlSyncTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 6
+
+[[issues]]
+file = "tests/UserInterface/Http/Component/LessonModalWaitlistTest.php"
+code = "ambiguous-object-property-access"
+message = "Cannot statically verify property access on a generic `object` type."
+count = 2
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/PaymentsListComponentTest.php"
@@ -6413,6 +6305,12 @@ file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 12
+
+[[issues]]
+file = "tests/UserInterface/Http/NewsletterConsentControllerTest.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
 
 [[issues]]
 file = "tests/UserInterface/Http/NewsletterControllerTest.php"
