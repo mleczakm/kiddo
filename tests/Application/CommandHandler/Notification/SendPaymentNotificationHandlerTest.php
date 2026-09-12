@@ -62,7 +62,7 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(SendPaymentNotificationHandler::class);
-        $handler(new SendPaymentNotificationCommand($payment));
+        $handler(new SendPaymentNotificationCommand($payment->getId()));
 
         $this->mailer()->assertSentEmailCount(3);
         $emails = $this->mailer()->sentEmails();

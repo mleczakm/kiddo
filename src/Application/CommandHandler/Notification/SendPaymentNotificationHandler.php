@@ -8,12 +8,14 @@ use App\Application\Calendar\LessonCalendarFactory;
 use App\Application\Command\Notification\SendPaymentNotificationCommand;
 use App\Application\Notification\EmailAttachment;
 use App\Application\Notification\NotificationSenderInterface;
+use App\Application\Repository\PaymentRepositoryInterface;
 use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Templating\TemplateRendererInterface;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
 use App\Entity\User;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,6 +24,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 readonly class SendPaymentNotificationHandler
 {
     public function __construct(
+        private PaymentRepositoryInterface $paymentRepository,
         private NotificationSenderInterface $notificationSender,
         private BookingNotificationRecipients $recipients,
         private TemplateRendererInterface $templateRenderer,
@@ -29,6 +32,7 @@ readonly class SendPaymentNotificationHandler
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
         private LessonCalendarFactory $calendarFactory,
+        private LoggerInterface $logger,
     ) {}
 
     /**
@@ -37,7 +41,10 @@ readonly class SendPaymentNotificationHandler
      */
     public function __invoke(SendPaymentNotificationCommand $command): void
     {
-        $payment = $command->payment;
+        $payment = $this->findPayment($command);
+        if ($payment === null) {
+            return;
+        }
 
         $booking = $payment->getBookings()->first();
 
@@ -51,6 +58,20 @@ readonly class SendPaymentNotificationHandler
         // Internal copies go only to finance contacts and the instructors of
         // lessons connected to this payment.
         $this->sendAdminNotifications($payment);
+    }
+
+    private function findPayment(SendPaymentNotificationCommand $command): ?Payment
+    {
+        $payment = $this->paymentRepository->find($command->paymentId);
+        if ($payment instanceof Payment) {
+            return $payment;
+        }
+
+        $this->logger->error('Payment not found for payment notification', [
+            'paymentId' => (string) $command->paymentId,
+        ]);
+
+        return null;
     }
 
     /**

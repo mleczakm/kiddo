@@ -33,6 +33,6 @@ readonly class PaymentWorkflowSubscriber implements EventSubscriberInterface
         }
 
         // Dispatch message with payment ID to handle notifications asynchronously
-        $this->messageBus->dispatch(new SendPaymentNotificationCommand($payment));
+        $this->messageBus->dispatch(new SendPaymentNotificationCommand($payment->getId()));
     }
 }

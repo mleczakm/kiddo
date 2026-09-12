@@ -242,6 +242,12 @@ count = 1
 
 [[issues]]
 file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
 code = "no-shorthand-ternary"
 message = "Use of the shorthand ternary operator."
 count = 2
