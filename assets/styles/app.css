@@ -27,6 +27,60 @@ details#notif-details:not([open]) #notif-tray {
     outline-offset: 2px;
 }
 
+/* Panel pomocy (help_dialog_controller.js): płynne rozwijanie/zwijanie modala */
+dialog[data-help-dialog-target='dialog'] {
+    opacity: 0;
+    transform: scale(.95) translateY(12px);
+    transition: opacity .2s ease-out, transform .2s ease-out, overlay .2s ease-out allow-discrete, display .2s ease-out allow-discrete;
+}
+
+dialog[data-help-dialog-target='dialog'][open] {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+@starting-style {
+    dialog[data-help-dialog-target='dialog'][open] {
+        opacity: 0;
+        transform: scale(.95) translateY(12px);
+    }
+}
+
+dialog[data-help-dialog-target='dialog']::backdrop {
+    transition: background-color .2s ease-out, overlay .2s ease-out allow-discrete, display .2s ease-out allow-discrete;
+}
+
+@starting-style {
+    dialog[data-help-dialog-target='dialog'][open]::backdrop {
+        background-color: transparent;
+    }
+}
+
+/* Panel pomocy: łagodne wypełnianie treścią (crossfade ładowanie/treść/błąd) */
+[data-help-dialog-target='loading'],
+[data-help-dialog-target='content'],
+[data-help-dialog-target='error'] {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity .18s ease-out, transform .18s ease-out, display .18s ease-out allow-discrete;
+}
+
+[data-help-dialog-target='loading'].hidden,
+[data-help-dialog-target='content'].hidden,
+[data-help-dialog-target='error'].hidden {
+    opacity: 0;
+    transform: translateY(6px);
+}
+
+@starting-style {
+    [data-help-dialog-target='loading']:not(.hidden),
+    [data-help-dialog-target='content']:not(.hidden),
+    [data-help-dialog-target='error']:not(.hidden) {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
 :root {
     --background: 44 86% 93%;
     --foreground: 30 76% 18%;

@@ -6,7 +6,7 @@ role: ROLE_MANAGE_PAYMENTS
 summary: "Pełna droga płatności: od wygenerowania kodu, przez przelew klienta i e-mail Aliora, po automatyczne zaksięgowanie."
 keywords: [blik na telefon, przelew, płatność, kod płatności, Alior, e-mail bankowy, IMAP, dopasowanie, księgowanie, niedopłata, nadpłata]
 primary_route: app_admin_transfers
-related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, rozliczenie-platformy, platnosci-zwroty]
+related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, rozliczenie-platformy, platnosci-zwroty, platnosci-reczne-dopasowanie-przelewu]
 ---#}
 <div class="help-callout">
     <strong>Kiddo nie jest operatorem płatności i nie pobiera pieniędzy z konta klienta.</strong>
@@ -65,8 +65,8 @@ related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, 
     <li><strong>Pełna kwota lub suma kilku przelewów</strong> — gdy pokrywa należność, płatność zostaje opłacona.</li>
     <li><strong>Niedopłata</strong> — przelew pozostaje przypisany, ale płatność nadal oczekuje na brakującą kwotę.</li>
     <li><strong>Nadpłata</strong> — płatność zostaje opłacona i oznaczona do kontroli.</li>
-    <li><strong>Brak poprawnego kodu</strong> — przelew trafia do ręcznej obsługi w
-        <a href="{{ path('app_admin_transfers') }}">Płatności / Finanse</a>.</li>
+    <li><strong>Brak poprawnego kodu</strong> — przelew trafia do ręcznej obsługi, zobacz
+        <a href="{{ path('app_admin_help_article', {slug: 'platnosci-reczne-dopasowanie-przelewu'}) }}">Ręczne dopasowanie i odrzucenie przelewu</a>.</li>
     <li><strong>Kwota ponad próg bezpieczeństwa</strong> — przelew nie jest automatycznie łączony. Kontakty
         finansowe dostają alert i muszą go sprawdzić. Domyślny próg to 1000 PLN, ale można go zmienić
         w ustawieniach.</li>

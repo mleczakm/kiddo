@@ -1,0 +1,56 @@
+{#---
+slug: platnosci-reczne-dopasowanie-przelewu
+title: "Ręczne dopasowanie i odrzucenie przelewu"
+section: finance
+role: ROLE_MANAGE_PAYMENTS
+summary: "Co zrobić z przelewem, którego system nie rozpoznał automatycznie: ręczne dopasowanie do płatności albo odrzucenie."
+keywords: [przelew, dopasowanie, ręczne, odrzucenie, nieprzypisany przelew, płatność, nadpłata, niedopłata, waluta, próg bezpieczeństwa]
+primary_route: app_admin_transfers
+related: [platnosci-przelewy-i-dopasowanie, platnosci-zwroty, rozliczenie-platformy]
+---#}
+<p>
+    Większość przelewów system dopasowuje sam po kodzie płatności — zobacz
+    <a href="{{ path('app_admin_help_article', {slug: 'platnosci-przelewy-i-dopasowanie'}) }}">Szybką płatność BLIK i dopasowanie przelewu</a>.
+    Ten artykuł opisuje, co zrobić z przelewem, który tam trafić nie mógł: bez poprawnego kodu, albo powyżej progu
+    bezpieczeństwa i czekający na sprawdzenie przez kontakty finansowe.
+</p>
+
+<h2>1. Gdzie szukać nieprzypisanych przelewów</h2>
+<p>
+    W <a href="{{ path('app_admin_transfers') }}">Płatności / Finanse</a>, w sekcji „Oczekujące przelewy”, widać
+    każdy przelew bez przypisanej płatności: nadawcę, tytuł, kwotę i datę wpływu. Lista jest tym samym miejscem,
+    do którego automat kieruje przelewy bez rozpoznanego kodu.
+</p>
+
+<h2>2. Dopasuj ręcznie</h2>
+<ol>
+    <li>Przy przelewie kliknij <strong>„Dopasuj”</strong> — otwiera się okno ze szczegółami przelewu (nadawca,
+        numer rachunku, tytuł, kwota, data) i wyszukiwarką oczekujących płatności.</li>
+    <li>Wpisz fragment nazwiska, e-maila albo kodu, żeby zawęzić listę. Płatność, której kwota dokładnie zgadza
+        się z przelewem, jest oznaczona etykietą „kwota zgodna” — to zwykle właściwy kandydat.</li>
+    <li>Wybierz płatność z listy i potwierdź przyciskiem <strong>„Potwierdź i połącz”</strong>.</li>
+</ol>
+
+<h2>3. Co dzieje się po zatwierdzeniu</h2>
+<ul>
+    <li>Przelew zostaje trwale dopięty do wybranej płatności — dokładnie tak samo, jak przy automatycznym
+        dopasowaniu po kodzie.</li>
+    <li>Jeżeli suma dopiętych przelewów pokrywa należność (lub ją przekracza), płatność od razu zmienia status na
+        <strong>opłaconą</strong>, a powiązana rezerwacja staje się aktywna.</li>
+    <li>Nadpłata dodatkowo oznacza płatność do kontroli — tak jak przy nadpłacie rozpoznanej automatycznie.</li>
+    <li>Przy niedopłacie przelew zostaje przypisany, ale płatność nadal czeka na resztę kwoty — możesz później
+        dopiąć kolejny przelew do tej samej płatności.</li>
+</ul>
+
+<div class="help-callout">
+    Dopasowanie nie powiedzie się po cichu (przelew po prostu zniknie z listy bez efektu), gdy w międzyczasie: ktoś
+    inny już przypisał ten przelew albo odrzucił go w drugiej karcie, wybrana płatność przestała być „oczekująca”,
+    albo waluta przelewu i płatności się różnią. Odśwież listę i sprawdź stan jeszcze raz.
+</div>
+
+<h2>4. Odrzuć przelew</h2>
+<p>
+    Przycisk <strong>„Odrzuć”</strong> trwale usuwa przelew z systemu — użyj go dla wpłat, które nie dotyczą żadnej
+    rezerwacji (pomyłka nadawcy, inny tytuł przelewu niekojarzony z Kiddo). Operacja jest nieodwracalna i
+    zablokowana, gdy przelew jest już przypisany do jakiejś płatności — najpierw trzeba by je rozdzielić inaczej.
+</p>

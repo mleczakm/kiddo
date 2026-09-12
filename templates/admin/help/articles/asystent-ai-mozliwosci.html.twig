@@ -1,0 +1,64 @@
+{#---
+slug: asystent-ai-mozliwosci
+title: "Co potrafi zrobić asystent AI (akcje, nie tylko odpowiedzi)"
+section: ai
+role: ROLE_HOST
+summary: "Pełna lista akcji, jakie asystent AI może wykonać w rozmowie z klientem i z personelem — nie tylko wyszukiwanie informacji."
+keywords: [asystent, ai, narzędzia, akcje, tool, chat, głos, rezerwacja, płatność, waitlist, potwierdzenie, confirm, uprawnienia]
+primary_route: app_admin_dashboard
+related: [asystent-ai, rezerwacje-tworzenie, platnosci-reczne-dopasowanie-przelewu, kolejka-rezerwowa]
+---#}
+<p>
+    Asystent AI (zobacz <a href="{{ path('app_admin_help_article', {slug: 'asystent-ai'}) }}">Asystent AI (czat głosowy)</a>
+    dla zgody i konfiguracji) nie tylko odpowiada na pytania — może też realnie wykonać operację w systemie, po
+    stronie klienta i po stronie personelu. Zestaw dostępnych akcji zależy od tego, kto rozmawia.
+</p>
+
+<h2>1. Wariant klienta</h2>
+<p>Zalogowany rodzic (albo gość, zanim się zaloguje) może przez czat:</p>
+<ul>
+    <li>przeglądać ofertę nadchodzących zajęć i sprawdzić szczegóły jednych zajęć (bez logowania),</li>
+    <li>zarządzać swoim kontem: dane profilu, lista dzieci, dodanie lub usunięcie dziecka,</li>
+    <li>zarezerwować zajęcia — asystent od razu zwraca instrukcję płatności BLIK (numer, kwotę, kod w tytule),</li>
+    <li>przejrzeć swoje rezerwacje i karnety, przełożyć lub odwołać zajęcia, poprosić o zwrot,</li>
+    <li>zapisać się na listę rezerwową pełnych zajęć albo się z niej wypisać,</li>
+    <li>przejrzeć powiadomienia w aplikacji i oznaczyć je jako przeczytane,</li>
+    <li>założyć konto i zalogować się kodem z e-maila,</li>
+    <li>jako gość — odzyskać dostęp do rezerwacji po kodzie płatności z potwierdzenia (system wysyła weryfikacyjny
+        kod na powiązany e-mail, dopiero po nim ujawnia dane rezerwacji).</li>
+</ul>
+
+<h2>2. Wariant personelu (w panelu)</h2>
+<p>
+    Instruktor (rola HOST) może przez czat wyszukać swoje zajęcia po nazwie i sprawdzić listę uczestników
+    (np. „ile osób jest na następnych bobasach”), a także przeszukać ten podręcznik pomocy — zobacz
+    <a href="{{ path('app_admin_help_article', {slug: 'asystent-ai'}) }}">wariant w panelu</a>. Widzi przy tym
+    tylko artykuły dostępne dla swojej roli — dokładnie jak w przeglądarce.
+</p>
+<p>Administrator i osoby z odpowiednimi uprawnieniami mają dodatkowo dostęp do operacji na cudzych danych:</p>
+<ul>
+    <li><strong>Grafik</strong> — włączanie/odwoływanie zajęć, zmiana pojemności, sterowanie listą rezerwową dla
+        konkretnych zajęć, sklonowanie terminu z istniejącego szablonu, podmiana cennika (opcji biletowych) całej
+        serii.</li>
+    <li><strong>Rezerwacje</strong> — utworzenie rezerwacji dla klienta z wyborem sposobu zapłaty (opłacona od
+        razu, kod BLIK do przesłania, płatność na miejscu), oznaczenie płatności jako opłaconej, odwołanie,
+        zwrot i przełożenie dowolnej rezerwacji.</li>
+    <li><strong>Płatności i przelewy</strong> — lista oczekujących płatności, lista nieprzypisanych przelewów,
+        ręczne dopasowanie przelewu do płatności albo jego odrzucenie (zobacz
+        <a href="{{ path('app_admin_help_article', {slug: 'platnosci-reczne-dopasowanie-przelewu'}) }}">Ręczne dopasowanie i odrzucenie przelewu</a>),
+        wymuszenie sprawdzenia skrzynki bankowej poza harmonogramem.</li>
+    <li><strong>Klienci</strong> — wyszukiwanie użytkowników, podgląd profilu z dziećmi i historią rezerwacji,
+        wysłanie powiadomienia w aplikacji.</li>
+</ul>
+
+<div class="help-callout">
+    Każda akcja, która coś zmienia (nie tylko odczyt), wymaga jawnego potwierdzenia — asystent musi zapytać
+    „czy na pewno” i dopiero po „tak” wykonać krok. Samo zapytanie o coś nigdy nie zmienia danych.
+</div>
+
+<h2>3. Czego nie robi</h2>
+<p>
+    Asystent nie ma dostępu do ustawień systemu, treści strony ani zgód prawnych — to zostaje w panelu. Nie
+    obchodzi też ograniczeń roli: instruktor bez uprawnień do płatności nie dostanie przez czat niczego więcej,
+    niż mógłby zobaczyć w panelu.
+</p>
