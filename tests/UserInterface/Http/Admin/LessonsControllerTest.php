@@ -216,9 +216,7 @@ final class LessonsControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('[data-testid="lesson-waitlist-summary"]', 'Lista rezerwowa');
         $this->assertSelectorTextContains('[data-testid="lesson-waitlist-summary"]', '2');
-        $this->assertSelectorExists(
-            '[data-testid="lesson-waitlist-summary"] [data-help-dialog-url-param]',
-        );
+        $this->assertSelectorExists('[data-testid="lesson-waitlist-summary"] [data-help-dialog-url-param]');
     }
 
     private function entityManager(): EntityManagerInterface

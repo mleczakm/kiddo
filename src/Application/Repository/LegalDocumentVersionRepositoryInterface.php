@@ -16,7 +16,11 @@ interface LegalDocumentVersionRepositoryInterface extends RepositoryInterface
 {
     public function findCurrent(LegalDocumentType $type, \DateTimeImmutable $now): ?LegalDocumentVersion;
 
-    public function findPublicVersion(LegalDocumentType $type, Ulid $id, \DateTimeImmutable $now): ?LegalDocumentVersion;
+    public function findPublicVersion(
+        LegalDocumentType $type,
+        Ulid $id,
+        \DateTimeImmutable $now,
+    ): ?LegalDocumentVersion;
 
     /** @return list<LegalDocumentVersion> */
     public function findPublicVersions(LegalDocumentType $type, \DateTimeImmutable $now): array;
