@@ -7,9 +7,9 @@ namespace App\Application\Legal;
 use App\Application\Command\NotifyLegalDocumentChange;
 use App\Application\File\FileStorageInterface;
 use App\Application\File\FileUploadPolicy;
+use App\Application\Repository\LegalDocumentRepositoryInterface;
 use App\Entity\LegalDocument;
 use App\Entity\LegalDocumentVersion;
-use App\Infrastructure\Doctrine\Repository\LegalDocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -18,7 +18,7 @@ final readonly class LegalDocumentPublisher
     public function __construct(
         private EntityManagerInterface $entityManager,
         private FileStorageInterface $fileStorage,
-        private LegalDocumentRepository $documentRepository,
+        private LegalDocumentRepositoryInterface $documentRepository,
         private MessageBusInterface $commandBus,
     ) {}
 

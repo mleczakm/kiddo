@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
+use App\Application\Repository\LegalDocumentVersionRepositoryInterface;
 use App\Entity\LegalDocumentType;
-use App\Infrastructure\Doctrine\Repository\LegalDocumentVersionRepository;
 use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
 use Symfony\Component\Clock\Clock;
 
@@ -13,7 +13,7 @@ final readonly class ConsentRequirements
 {
     public function __construct(
         private FeatureManager $featureManager,
-        private LegalDocumentVersionRepository $versionRepository,
+        private LegalDocumentVersionRepositoryInterface $versionRepository,
     ) {}
 
     public function isEnabled(): bool

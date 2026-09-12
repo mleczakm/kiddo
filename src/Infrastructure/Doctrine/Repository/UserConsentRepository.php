@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Doctrine\Repository;
 
+use App\Application\Repository\UserConsentRepositoryInterface;
 use App\Entity\ConsentType;
 use App\Entity\LegalDocumentType;
 use App\Entity\User;
@@ -12,7 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /** @extends ServiceEntityRepository<UserConsent> */
-final class UserConsentRepository extends ServiceEntityRepository
+final class UserConsentRepository extends ServiceEntityRepository implements UserConsentRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

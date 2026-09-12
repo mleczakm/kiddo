@@ -6,8 +6,8 @@ namespace App\Application\CommandHandler;
 
 use App\Application\Command\NotifyLegalDocumentChange;
 use App\Application\Legal\LegalChangeAnnouncer;
+use App\Application\Repository\LegalDocumentVersionRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
-use App\Infrastructure\Doctrine\Repository\LegalDocumentVersionRepository;
 use Symfony\Component\Clock\Clock;
 
 /**
@@ -19,7 +19,7 @@ use Symfony\Component\Clock\Clock;
 final readonly class NotifyLegalDocumentChangeHandler
 {
     public function __construct(
-        private LegalDocumentVersionRepository $versionRepository,
+        private LegalDocumentVersionRepositoryInterface $versionRepository,
         private UserRepositoryInterface $userRepository,
         private LegalChangeAnnouncer $announcer,
     ) {}

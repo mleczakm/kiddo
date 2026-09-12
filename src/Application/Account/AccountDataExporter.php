@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Application\Account;
 
+use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\ChildRepositoryInterface;
+use App\Application\Repository\PaymentRepositoryInterface;
+use App\Application\Repository\UserConsentRepositoryInterface;
 use App\Entity\Booking;
 use App\Entity\Child;
 use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\User;
 use App\Entity\UserConsent;
-use App\Infrastructure\Doctrine\Repository\BookingRepository;
-use App\Infrastructure\Doctrine\Repository\PaymentRepository;
-use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 
 /**
  * Builds the "download my data" payload (RODO art. 15/20). Plain nested arrays,
@@ -23,9 +23,9 @@ use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 final readonly class AccountDataExporter
 {
     public function __construct(
-        private BookingRepository $bookingRepository,
-        private PaymentRepository $paymentRepository,
-        private UserConsentRepository $consentRepository,
+        private BookingRepositoryInterface $bookingRepository,
+        private PaymentRepositoryInterface $paymentRepository,
+        private UserConsentRepositoryInterface $consentRepository,
         private ChildRepositoryInterface $childRepository,
     ) {}
 

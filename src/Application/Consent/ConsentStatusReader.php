@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
+use App\Application\Repository\LegalDocumentVersionRepositoryInterface;
+use App\Application\Repository\UserConsentRepositoryInterface;
 use App\Entity\ConsentType;
 use App\Entity\LegalDocumentType;
 use App\Entity\User;
-use App\Infrastructure\Doctrine\Repository\LegalDocumentVersionRepository;
-use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use Symfony\Component\Clock\Clock;
 
 /**
@@ -25,8 +25,8 @@ final readonly class ConsentStatusReader
     private const array ACCOUNT_DOCUMENTS = [LegalDocumentType::APP_TERMS, LegalDocumentType::PRIVACY];
 
     public function __construct(
-        private UserConsentRepository $consentRepository,
-        private LegalDocumentVersionRepository $versionRepository,
+        private UserConsentRepositoryInterface $consentRepository,
+        private LegalDocumentVersionRepositoryInterface $versionRepository,
     ) {}
 
     public function hasCurrent(User $user, ConsentType $type): bool

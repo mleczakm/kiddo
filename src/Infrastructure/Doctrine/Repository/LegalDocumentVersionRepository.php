@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Doctrine\Repository;
 
+use App\Application\Repository\LegalDocumentVersionRepositoryInterface;
 use App\Entity\LegalDocument;
 use App\Entity\LegalDocumentType;
 use App\Entity\LegalDocumentVersion;
@@ -12,7 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Ulid;
 
 /** @extends ServiceEntityRepository<LegalDocumentVersion> */
-final class LegalDocumentVersionRepository extends ServiceEntityRepository
+final class LegalDocumentVersionRepository extends ServiceEntityRepository implements
+    LegalDocumentVersionRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

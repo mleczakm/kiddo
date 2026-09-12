@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
+use App\Application\Repository\UserConsentRepositoryInterface;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\User;
-use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -18,7 +18,7 @@ final readonly class AiConsentManager
     public function __construct(
         private ConsentDispatcher $dispatcher,
         private ConsentRequirements $consentRequirements,
-        private UserConsentRepository $consentRepository,
+        private UserConsentRepositoryInterface $consentRepository,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
     ) {}

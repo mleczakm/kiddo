@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Consent;
 
+use App\Application\Repository\LegalDocumentVersionRepositoryInterface;
+use App\Application\Repository\UserConsentRepositoryInterface;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
 use App\Entity\User;
 use App\Entity\UserConsent;
-use App\Infrastructure\Doctrine\Repository\LegalDocumentVersionRepository;
-use App\Infrastructure\Doctrine\Repository\UserConsentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\Clock;
@@ -25,8 +25,8 @@ final readonly class ConsentRecorder
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserConsentRepository $consentRepository,
-        private LegalDocumentVersionRepository $versionRepository,
+        private UserConsentRepositoryInterface $consentRepository,
+        private LegalDocumentVersionRepositoryInterface $versionRepository,
         private RequestContext $requestContext,
         private LoggerInterface $logger,
     ) {}
