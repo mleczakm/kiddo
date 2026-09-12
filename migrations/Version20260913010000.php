@@ -78,16 +78,22 @@ final class Version20260913010000 extends AbstractMigration
                 $row['lesson'],
             );
 
+            // Guarded with WHERE EXISTS: these user ids only exist on
+            // production, where this already ran. On any other database
+            // (CI's fresh test schema, a new dev environment) this is a
+            // harmless no-op instead of a foreign key violation.
             $this->addSql(<<<'SQL'
                 INSERT INTO notification (id, user_id, created_at, severity, title, body, url)
-                VALUES (?, ?, ?, 'success', ?, ?, '/panel')
+                SELECT ?, ?, ?, 'success', ?, ?, '/panel'
+                WHERE EXISTS (SELECT 1 FROM "user" WHERE id = ?)
                 SQL, [
                 $row['id'],
                 $row['user_id'],
                 $row['created_at'],
                 $title,
                 $body,
-            ], ['string', 'integer', 'string', 'string', 'string']);
+                $row['user_id'],
+            ], ['string', 'integer', 'string', 'string', 'string', 'integer']);
         }
     }
 
