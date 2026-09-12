@@ -7,7 +7,7 @@ namespace App\Infrastructure\Search;
 use App\Application\Search\SearchReference;
 use App\Application\Search\SearchResult;
 use App\Application\Search\SearchType;
-use App\Application\Service\TransferMoneyParser;
+use App\Domain\TransferMoneyParser;
 use App\Infrastructure\Twig\MoneyExtension;
 use Brick\Money\Money;
 use Doctrine\DBAL\Connection;

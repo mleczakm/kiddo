@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Application\Service\TransferMoneyParser;
+use App\Domain\TransferMoneyParser;
 use App\Infrastructure\Doctrine\Repository\PaymentRepository;
 use Brick\Money\Money;
 use Doctrine\Common\Collections\ArrayCollection;

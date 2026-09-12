@@ -8,7 +8,7 @@ use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\Notification\TransferRequiresReviewCommand;
 use App\Application\Command\SaveTransfer;
 use App\Application\Service\Payment\TransferReviewThresholdProvider;
-use App\Application\Service\TransferMoneyParser;
+use App\Domain\TransferMoneyParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
