@@ -1,0 +1,6 @@
+# LOGDASH_API_KEY committed to .env in 2025-07 and removed in commit b760b82.
+# Logdash was already dropped from the codebase by then, so the key was dead
+# by the time it was found; keeping the two historical commits allowlisted
+# rather than rewriting published history over a non-issue.
+cece373732338ffdc87e2e53773958129438bfd1:.env:generic-api-key:56
+1372b649717249463aa0fb1a01e89188fcfd9309:.env:generic-api-key:56
