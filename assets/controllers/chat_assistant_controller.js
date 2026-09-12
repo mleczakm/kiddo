@@ -39,8 +39,7 @@ export default class extends Controller {
         this.expectingAgentReply = false;
         this.sessionPromise = null;
         this.consentRequired = false;
-        this.aiConsentAccepted =
-            localStorage.getItem('kiddo_ai_consent_version') === this.aiConsentVersionValue;
+        this.aiConsentAccepted = localStorage.getItem('kiddo_ai_consent_version') === this.aiConsentVersionValue;
         this.loadHistory();
         this.renderMessages();
         this.updateStatus('idle');
@@ -223,7 +222,7 @@ export default class extends Controller {
                     },
                 },
                 dynamic_variables: this.dynamicVariables,
-            })
+            }),
         );
         this.initiated = true;
     }
@@ -232,8 +231,7 @@ export default class extends Controller {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
             return;
         }
-        const isGuest =
-            this.isGuest || this.dynamicVariables.kiddo_is_guest === 'true';
+        const isGuest = this.isGuest || this.dynamicVariables.kiddo_is_guest === 'true';
         if (isGuest) {
             this.ws.send(
                 JSON.stringify({
@@ -242,7 +240,7 @@ export default class extends Controller {
                         'Gość (niezalogowany) w Kiddo.\n' +
                         'Możesz od razu pokazać ofertę: user.list_upcoming_lessons.\n' +
                         'Nie wywołuj user.me / rezerwacji / admin.* — poproś o zalogowanie (/login) i odświeżenie czatu.',
-                })
+                }),
             );
             return;
         }
@@ -272,7 +270,7 @@ export default class extends Controller {
                         'Mutacje admin (toggle_lesson, update_lesson_capacity, create_booking, mark_booking_paid, cancel_lesson, refund_lesson, reschedule_lesson, assign_transfer, reject_transfer, notify_user) wymagają confirm=true po wyraźnej zgodzie użytkownika — ale wywołania odczytu (list/get) wykonuj od razu, bez pytania o zgodę.\n' +
                         'admin.create_booking: ZAWSZE zapytaj, jak rezerwacja jest opłacana i podaj payment= "paid" (już zapłacone), "send_code" (zapłaci przelewem/BLIK — przekaż zwróconą instrukcję payment.instruction_pl) albo "on_site" (zapłaci na miejscu). Podaj też ticket_type; price_override tylko dla nietypowej kwoty.\n' +
                         'Listy uczestników / wyszukiwanie zajęć po nazwie → staff.find_lessons oraz staff.lesson_participants (np. query="bobas", when="next").',
-                })
+                }),
             );
             return;
         }
@@ -292,7 +290,7 @@ export default class extends Controller {
                         '(np. „ile osób na następnych bobasach” → query="bobas", when="next").\n' +
                         'Katalog oferty i szczegóły terminu (tylko odczyt) → user.list_upcoming_lessons / user.get_lesson.\n' +
                         'Możesz sprawdzić dowolne zajęcia po nazwie. Operacje admin.* (rezerwacje, płatności, przelewy, powiadomienia) wymagają administratora — jeśli o nie poprosi, wyjaśnij, że to poza Twoimi uprawnieniami.',
-                })
+                }),
             );
             return;
         }
@@ -307,7 +305,7 @@ export default class extends Controller {
                     'NIE pytaj o imię/e-mail/telefon — są w koncie. Przed rezerwacją: user.me + user.list_children.\n' +
                     'Rezerwacja: user.create_booking (confirm=true) → przekaż instrukcję BLIK z odpowiedzi toola (telefon, kwota, kod, ~24h).\n' +
                     'Nie używaj tooli admin.* — wymagają ROLE_ADMIN.',
-            })
+            }),
         );
     }
 
@@ -323,7 +321,7 @@ export default class extends Controller {
             JSON.stringify({
                 type: 'contextual_update',
                 text: 'Previous conversation context:\n' + contextText,
-            })
+            }),
         );
     }
 
@@ -342,8 +340,7 @@ export default class extends Controller {
         }
 
         if (data.type === 'agent_response') {
-            const content =
-                data.agent_response_event?.text || data.content || data.text || data.message;
+            const content = data.agent_response_event?.text || data.content || data.text || data.message;
             if (content) {
                 this.pushAgent(content);
             }
@@ -393,7 +390,7 @@ export default class extends Controller {
                 this.inputTarget.value = '';
                 if (this.chatToken && !this.configured) {
                     this.pushAgent(
-                        'Brak połączenia WebSocket z ElevenLabs. Token czatu jest gotowy — skonfiguruj ELEVENLABS_* w .env.'
+                        'Brak połączenia WebSocket z ElevenLabs. Token czatu jest gotowy — skonfiguruj ELEVENLABS_* w .env.',
                     );
                 } else if (!this.chatToken) {
                     this.pushAgent('Nie udało się połączyć z asystentem. Spróbuj ponownie za chwilę.');
@@ -418,7 +415,7 @@ export default class extends Controller {
             JSON.stringify({
                 type: 'user_message',
                 text,
-            })
+            }),
         );
     }
 
@@ -499,14 +496,14 @@ export default class extends Controller {
             this.emptyStateTarget.classList.toggle('hidden', !isEmpty);
         }
 
-        this.messagesTarget.querySelectorAll('[data-chat-message]').forEach((el) => el.remove());
+        this.messagesTarget.querySelectorAll('[data-chat-message]').forEach((el) => {
+            el.remove();
+        });
 
         const appendBubble = (role, text, extraClass = '') => {
             const align = role === 'user' ? 'items-end' : 'items-start';
             const bubble =
-                role === 'user'
-                    ? 'bg-workshop-red text-white'
-                    : 'bg-beige text-workshop-brown border border-muted';
+                role === 'user' ? 'bg-workshop-red text-white' : 'bg-beige text-workshop-brown border border-muted';
             const wrapper = document.createElement('div');
             wrapper.setAttribute('data-chat-message', '1');
             wrapper.className = 'flex flex-col ' + align + ' mb-2';
@@ -521,7 +518,9 @@ export default class extends Controller {
             this.messagesTarget.appendChild(wrapper);
         };
 
-        this.messages.forEach((m) => appendBubble(m.role, m.text));
+        this.messages.forEach((m) => {
+            appendBubble(m.role, m.text);
+        });
         if (streamingText !== '') {
             appendBubble('agent', streamingText, 'opacity-80');
         }
@@ -535,7 +534,7 @@ export default class extends Controller {
             if (saved) {
                 this.messages = JSON.parse(saved);
             }
-        } catch (e) {
+        } catch {
             this.messages = [];
         }
     }
@@ -568,8 +567,7 @@ export default class extends Controller {
                 login_required: 'bg-workshop-yellow',
                 unconfigured: 'bg-workshop-yellow',
             };
-            this.statusDotTarget.className =
-                'h-2 w-2 rounded-full ' + (colors[status] || 'bg-workshop-green');
+            this.statusDotTarget.className = 'h-2 w-2 rounded-full ' + (colors[status] || 'bg-workshop-green');
         }
     }
 

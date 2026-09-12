@@ -1,15 +1,15 @@
 import { Controller } from '@hotwired/stimulus';
 import { Editor } from '@tiptap/core';
-import { StarterKit } from '@tiptap/starter-kit';
 import { Image } from '@tiptap/extension-image';
 import { Table } from '@tiptap/extension-table';
-import { TableRow } from '@tiptap/extension-table-row';
-import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableRow } from '@tiptap/extension-table-row';
 import { Typography } from '@tiptap/extension-typography';
-import { optimizeImageToWebp } from '../utils/image_optimizer.js';
-import { Callout } from '../tiptap/callout.js';
+import { StarterKit } from '@tiptap/starter-kit';
 import { ArticleFigure } from '../tiptap/article-figure.js';
+import { Callout } from '../tiptap/callout.js';
+import { optimizeImageToWebp } from '../utils/image_optimizer.js';
 
 /**
  * Tiptap editor for article content: prose, headings (H2/H3), lists, tables,
@@ -169,10 +169,14 @@ export default class extends Controller {
     }
 
     insertCallout() {
-        this.editor.chain().focus().insertContent({
-            type: 'callout',
-            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wpisz treść…' }] }],
-        }).run();
+        this.editor
+            .chain()
+            .focus()
+            .insertContent({
+                type: 'callout',
+                content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wpisz treść…' }] }],
+            })
+            .run();
     }
 
     undo() {
@@ -191,7 +195,7 @@ export default class extends Controller {
         try {
             const { file } = await optimizeImageToWebp(source);
             uploadFile = file;
-        } catch (error) {
+        } catch {
             // Fall back to the original file — server-side MIME sniffing
             // and the upload policy remain the real validation boundary.
         }
@@ -205,7 +209,8 @@ export default class extends Controller {
 
             const data = await response.json();
             if (data.url) {
-                this.editor.chain()
+                this.editor
+                    .chain()
                     .focus()
                     .setArticleFigure({ src: data.url, alt: data.alt || '' })
                     .run();

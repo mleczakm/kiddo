@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { optimizeImageToWebp, formatBytes } from '../utils/image_optimizer.js';
+import { formatBytes, optimizeImageToWebp } from '../utils/image_optimizer.js';
 
 const MAX_VIDEO_BYTES = 20 * 1024 * 1024;
 // video/quicktime (MOV) is deliberately not accepted — most non-Safari
@@ -120,5 +120,4 @@ export default class extends Controller {
             this.objectUrl = null;
         }
     }
-
 }

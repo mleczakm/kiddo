@@ -30,7 +30,9 @@ export default class extends Controller {
     }
 
     start() {
-        this.#activeSteps = this.stepsValue.filter((step) => document.querySelector(`[data-tour-target="${step.target}"]`));
+        this.#activeSteps = this.stepsValue.filter((step) =>
+            document.querySelector(`[data-tour-target="${step.target}"]`),
+        );
         if (this.#activeSteps.length === 0) {
             return;
         }
@@ -70,11 +72,13 @@ export default class extends Controller {
         this.#backdrop.className = 'fixed inset-0 bg-slate-900/60 z-[9999]';
 
         this.#highlight = document.createElement('div');
-        this.#highlight.className = 'fixed z-[10000] rounded-xl ring-4 ring-indigo-500 pointer-events-none transition-all duration-200';
+        this.#highlight.className =
+            'fixed z-[10000] rounded-xl ring-4 ring-indigo-500 pointer-events-none transition-all duration-200';
         this.#highlight.style.boxShadow = '0 0 0 9999px rgba(15, 23, 42, 0.6)';
 
         this.#tooltip = document.createElement('div');
-        this.#tooltip.className = 'fixed z-[10001] w-80 max-w-[90vw] bg-white rounded-2xl shadow-2xl border border-slate-200 p-5';
+        this.#tooltip.className =
+            'fixed z-[10001] w-80 max-w-[90vw] bg-white rounded-2xl shadow-2xl border border-slate-200 p-5';
 
         document.body.append(this.#backdrop, this.#highlight, this.#tooltip);
         document.body.classList.add('overflow-hidden');

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73045e46e20c0ebaa8ce13ef6e0136d0",
+    "content-hash": "aeb4cd33d20c9dcdc60e36e7230c167b",
     "packages": [
         {
             "name": "aeon-php/business-hours",
@@ -13816,6 +13816,61 @@
                 "source": "https://github.com/FakerPHP/Faker/tree/v1.24.1"
             },
             "time": "2024-11-21T13:46:39+00:00"
+        },
+        {
+            "name": "kocal/biome-js-bundle",
+            "version": "v2.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Kocal/BiomeJsBundle.git",
+                "reference": "3303fd5d74827cb99d203641383f333dbe0bff30"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Kocal/BiomeJsBundle/zipball/3303fd5d74827cb99d203641383f333dbe0bff30",
+                "reference": "3303fd5d74827cb99d203641383f333dbe0bff30",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/console": "^6.4|^7.0|^8.0",
+                "symfony/filesystem": "^6.4|^7.0|^8.0",
+                "symfony/http-client": "^6.4|^7.0|^8.0",
+                "symfony/process": "^6.4|^7.0|^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1.21",
+                "symfony/framework-bundle": "^6.4|^7.0|^8.0",
+                "symplify/easy-coding-standard": "12.5.22"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Kocal\\BiomeJsBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hugo Alliaume",
+                    "email": "hugo@alliau.me"
+                }
+            ],
+            "description": "A Symfony Bundle to easily download and use Biome.js in your Symfony applications, to lint your front assets without needing Node.js.",
+            "keywords": [
+                "biome",
+                "biome.js",
+                "bundle",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/Kocal/BiomeJsBundle/issues",
+                "source": "https://github.com/Kocal/BiomeJsBundle/tree/v2.1.2"
+            },
+            "time": "2025-12-02T13:43:17+00:00"
         },
         {
             "name": "kodus/mock-cache",

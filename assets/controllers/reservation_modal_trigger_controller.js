@@ -9,7 +9,10 @@ export default class extends Controller {
     };
 
     async open(event) {
-        if (event.target.closest('a, button, input, select, textarea') && event.currentTarget !== event.target.closest('button')) {
+        if (
+            event.target.closest('a, button, input, select, textarea') &&
+            event.currentTarget !== event.target.closest('button')
+        ) {
             return;
         }
 

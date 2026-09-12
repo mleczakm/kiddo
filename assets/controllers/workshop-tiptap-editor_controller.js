@@ -1,8 +1,8 @@
 import { Controller } from '@hotwired/stimulus';
 import { Editor } from '@tiptap/core';
-import { StarterKit } from '@tiptap/starter-kit';
-import { Underline } from '@tiptap/extension-underline';
 import { Link } from '@tiptap/extension-link';
+import { Underline } from '@tiptap/extension-underline';
+import { StarterKit } from '@tiptap/starter-kit';
 
 /**
  * Minimal tiptap editor for the workshop description field: bold, italic,

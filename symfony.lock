@@ -68,6 +68,19 @@
             "ref": "c2ab78f625df0c89af5908d50a28602ff8c4919f"
         }
     },
+    "kocal/biome-js-bundle": {
+        "version": "2.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "e748fc31eee6e9d9ceaf5ec4f51a371f9f619723"
+        },
+        "files": [
+            "config/packages/kocal_biome_js.yaml",
+            "biome.json"
+        ]
+    },
     "macpaw/symfony-health-check-bundle": {
         "version": "1.7",
         "recipe": {

@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from '@tiptap/core';
+import { mergeAttributes, Node } from '@tiptap/core';
 
 /**
  * Inline image + caption as one editable unit, matching the sanitizer's

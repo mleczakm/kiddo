@@ -178,6 +178,7 @@
       "Security audit": "@composer audit",
       "lint:twig": "bin/console lint:twig src templates --env=test",
       "Twig CS Fixer": "twig-cs-fixer lint",
+      "Biome": "bin/biome check assets",
       "Mago lint": "mago lint",
       "Mago analyze": "mago analyze",
       "Mago format": "mago format --check"
@@ -207,6 +208,7 @@
     "sa:fix": {
       "Disable timeout": "Composer\\Config::disableProcessTimeout",
       "Twig CS Fixer": "twig-cs-fixer fix",
+      "Biome": "bin/biome check assets --write",
       "Mago lint fix": "mago lint --fix",
       "Mago format": "mago format"
     }
@@ -326,6 +328,7 @@
   "require-dev": {
     "carthage-software/mago": "^1.47.4",
     "dama/doctrine-test-bundle": "^8.6.0",
+    "kocal/biome-js-bundle": "^2.1",
     "kodus/mock-cache": "^2.1",
     "phpunit/phpunit": "^11.5.56",
     "roave/security-advisories": "dev-latest",

@@ -85,13 +85,11 @@ function lock(button) {
         }, 0),
     );
 
-    button.dataset.submitLockSafety = String(
-        window.setTimeout(() => unlock(button), SAFETY_TIMEOUT_MS),
-    );
+    button.dataset.submitLockSafety = String(window.setTimeout(() => unlock(button), SAFETY_TIMEOUT_MS));
 }
 
 function unlock(button) {
-    if (!button || !button.hasAttribute(LOCKED_ATTR)) {
+    if (!button?.hasAttribute(LOCKED_ATTR)) {
         return;
     }
 

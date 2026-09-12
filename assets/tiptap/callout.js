@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from '@tiptap/core';
+import { mergeAttributes, Node } from '@tiptap/core';
 
 const CALLOUT_TITLE = 'Warto wiedzieć';
 
@@ -20,7 +20,9 @@ export const Callout = Node.create({
                 tag: 'div.callout',
                 contentElement: (dom) => {
                     const wrapper = document.createElement('div');
-                    dom.querySelectorAll('p').forEach((p) => wrapper.appendChild(p.cloneNode(true)));
+                    dom.querySelectorAll('p').forEach((p) => {
+                        wrapper.appendChild(p.cloneNode(true));
+                    });
                     return wrapper;
                 },
             },

@@ -69,7 +69,9 @@ export default class extends Controller {
         }
 
         this.element.setAttribute('data-live-ignore', '');
-        elements.forEach((el) => el.setAttribute('data-state', 'closed'));
+        elements.forEach((el) => {
+            el.setAttribute('data-state', 'closed');
+        });
 
         window.setTimeout(() => {
             this.element.remove();

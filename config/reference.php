@@ -1850,6 +1850,9 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     },
  * }
+ * @psalm-type KocalBiomeJsConfig = array{
+ *     binary_version?: scalar|Param|null, // Biome.js CLI version to download.
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1906,6 +1909,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         novaway_feature_flag?: NovawayFeatureFlagConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         mcp?: McpConfig,
+ *         kocal_biome_js?: KocalBiomeJsConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,

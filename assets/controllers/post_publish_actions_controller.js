@@ -14,7 +14,8 @@ export default class extends Controller {
 
     checkFutureDate() {
         const value = this.scheduleInputTarget.value;
-        const isFuture = value !== '' && !Number.isNaN(new Date(value).getTime()) && new Date(value).getTime() > Date.now();
+        const isFuture =
+            value !== '' && !Number.isNaN(new Date(value).getTime()) && new Date(value).getTime() > Date.now();
 
         if (this.hasPublishButtonTarget) {
             const { labelPublish, labelSchedule } = this.publishButtonTarget.dataset;

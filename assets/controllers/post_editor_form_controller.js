@@ -27,7 +27,9 @@ export default class extends Controller {
 
     onChange() {
         this.dirty = true;
-        this.warningTargets.forEach((el) => el.classList.remove('hidden'));
+        this.warningTargets.forEach((el) => {
+            el.classList.remove('hidden');
+        });
     }
 
     onSubmit() {

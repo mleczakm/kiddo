@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { optimizeImageToWebp, formatBytes } from '../utils/image_optimizer.js';
+import { formatBytes, optimizeImageToWebp } from '../utils/image_optimizer.js';
 
 /**
  * Generic drag-and-drop wrapper around a plain <input type="file">.
@@ -56,7 +56,9 @@ export default class extends Controller {
         const processed = await Promise.all(files.map((file) => this.processFile(file)));
 
         const transfer = new DataTransfer();
-        processed.forEach((file) => transfer.items.add(file));
+        processed.forEach((file) => {
+            transfer.items.add(file);
+        });
         this.inputTarget.files = transfer.files;
 
         this.renderFileList(processed);
@@ -70,7 +72,7 @@ export default class extends Controller {
         try {
             const { file: optimized } = await optimizeImageToWebp(file);
             return optimized;
-        } catch (error) {
+        } catch {
             // Fall back to the original file — server-side MIME sniffing
             // and the upload policy remain the real validation boundary.
             return file;
@@ -81,7 +83,10 @@ export default class extends Controller {
         if (!this.hasFileListTarget) return;
 
         this.fileListTarget.innerHTML = files
-            .map((file) => `<li class="text-xs text-slate-600">${this.escapeHtml(file.name)} (${formatBytes(file.size)})</li>`)
+            .map(
+                (file) =>
+                    `<li class="text-xs text-slate-600">${this.escapeHtml(file.name)} (${formatBytes(file.size)})</li>`,
+            )
             .join('');
     }
 

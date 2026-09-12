@@ -8,8 +8,24 @@ import { Controller } from '@hotwired/stimulus';
  * so this preview is informational, not a field that gets submitted.
  */
 const POLISH_TRANSLITERATION = {
-    ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z',
-    Ą: 'a', Ć: 'c', Ę: 'e', Ł: 'l', Ń: 'n', Ó: 'o', Ś: 's', Ź: 'z', Ż: 'z',
+    ą: 'a',
+    ć: 'c',
+    ę: 'e',
+    ł: 'l',
+    ń: 'n',
+    ó: 'o',
+    ś: 's',
+    ź: 'z',
+    ż: 'z',
+    Ą: 'a',
+    Ć: 'c',
+    Ę: 'e',
+    Ł: 'l',
+    Ń: 'n',
+    Ó: 'o',
+    Ś: 's',
+    Ź: 'z',
+    Ż: 'z',
 };
 
 function slugify(text) {

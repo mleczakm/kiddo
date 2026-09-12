@@ -23,12 +23,10 @@ export default class extends Controller {
         };
         document.addEventListener('toast', this.handler);
 
-        this.element
-            .querySelectorAll('[data-toast-message]')
-            .forEach((node) => {
-                this.render(node.getAttribute('data-toast-message'), node.getAttribute('data-toast-level') || 'info');
-                node.remove();
-            });
+        this.element.querySelectorAll('[data-toast-message]').forEach((node) => {
+            this.render(node.getAttribute('data-toast-message'), node.getAttribute('data-toast-level') || 'info');
+            node.remove();
+        });
     }
 
     disconnect() {
