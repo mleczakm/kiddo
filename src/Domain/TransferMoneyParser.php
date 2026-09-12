@@ -8,6 +8,11 @@ use Brick\Money\Money;
 
 class TransferMoneyParser
 {
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public static function transferMoneyStringToMoneyObject(string $amount): Money
     {
         // Verify if it is not a default format like 5.00, 100.00, etc.
