@@ -226,6 +226,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/azuyalabs/yasumi" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mleczakm/aeon-school-holidays" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mleczakm/swoole-bundle-observability" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/kocal/biome-js-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/shipmonk/composer-dependency-analyser" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/vincentlanglet/twig-cs-fixer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
