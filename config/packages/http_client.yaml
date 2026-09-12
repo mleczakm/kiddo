@@ -1,0 +1,14 @@
+framework:
+    http_client:
+        default_options:
+            # Bound how long an outbound call (Brevo mailer/newsletter API, etc.)
+            # can block. Several of these calls happen synchronously inside a
+            # Doctrine transaction (mailer/notifier messages are routed to the
+            # 'sync' transport - see messenger.yaml); without a ceiling here, a
+            # slow or hanging third-party endpoint (observed: a Brevo/Cloudflare
+            # outage, WARSZTATOWNIA-C9) keeps that transaction open long enough
+            # for Postgres to kill the connection with "idle-in-transaction
+            # timeout" (WARSZTATOWNIA-AH), which is unrelated to whatever the
+            # transaction was actually meant to commit.
+            timeout: 5
+            max_duration: 15
