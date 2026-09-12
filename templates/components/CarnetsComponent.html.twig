@@ -71,8 +71,8 @@
                             </div>
                             <p class="text-xs text-right text-muted-foreground">
                                 {{ 'dashboard.sessions_remaining'|trans({
-                                    'count': booking.lessonsMap.active.count(),
-                                    '%count%': booking.lessonsMap.active.count()
+                                    count: booking.lessonsMap.active.count(),
+                                    '%count%': booking.lessonsMap.active.count(),
                                 }) }}
                             </p>
 
@@ -82,8 +82,8 @@
                                     {% set upcomingSessions = [] %}
                                     {% for lesson in booking.lessons|filter(l => l.schedule > now())|sort((a, b) => a.schedule <=> b.schedule) %}
                                         {% set upcomingSessions = upcomingSessions|merge([{
-                                            'lesson': lesson,
-                                            'booking': booking
+                                            lesson: lesson,
+                                            booking: booking,
                                         }]) %}
                                     {% endfor %}
 

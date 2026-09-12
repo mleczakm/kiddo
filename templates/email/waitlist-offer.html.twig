@@ -5,10 +5,10 @@
         {{ 'waitlist_offer.heading'|trans }}
     </div>
     <div style="color: #374151; font-size: 0.95rem; margin-bottom: 0.75rem;">
-        {{ 'waitlist_offer.body'|trans({'name': name, 'lessonTitle': lessonTitle, 'lessonDate': lessonDate}) }}
+        {{ 'waitlist_offer.body'|trans({name: name, lessonTitle: lessonTitle, lessonDate: lessonDate}) }}
     </div>
     <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1.25rem;">
-        {{ 'waitlist_offer.deadline'|trans({'holdMinutes': holdMinutes, 'offerExpiresAt': offerExpiresAt}) }}
+        {{ 'waitlist_offer.deadline'|trans({holdMinutes: holdMinutes, offerExpiresAt: offerExpiresAt}) }}
     </div>
     <a href="{{ url }}" style="display: inline-block; background-color: #e85030; color: white; font-weight: 600; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem;">
         {{ 'waitlist_offer.cta'|trans }}

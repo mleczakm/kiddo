@@ -1,18 +1,18 @@
 {% set current_route = app.request.attributes.get('_route') %}
 
 {% set admin_tour_step_targets = [
-    { target: 'nav-dashboard', key: 'nav_dashboard' },
-    { target: 'dashboard-kpis', key: 'dashboard_kpis' },
-    { target: 'global-search', key: 'global_search' },
-    { target: 'nav-workshops', key: 'nav_workshops' },
-    { target: 'add-workshop', key: 'add_workshop' },
-    { target: 'nav-posts', key: 'nav_posts' },
-    { target: 'nav-bookings', key: 'nav_bookings' },
-    { target: 'booking-actions', key: 'booking_actions' },
-    { target: 'nav-users', key: 'nav_users' },
-    { target: 'nav-transfers', key: 'nav_transfers' },
-    { target: 'notif-bell', key: 'notif_bell' },
-    { target: 'settings-link', key: 'settings_link' },
+    {target: 'nav-dashboard', key: 'nav_dashboard'},
+    {target: 'dashboard-kpis', key: 'dashboard_kpis'},
+    {target: 'global-search', key: 'global_search'},
+    {target: 'nav-workshops', key: 'nav_workshops'},
+    {target: 'add-workshop', key: 'add_workshop'},
+    {target: 'nav-posts', key: 'nav_posts'},
+    {target: 'nav-bookings', key: 'nav_bookings'},
+    {target: 'booking-actions', key: 'booking_actions'},
+    {target: 'nav-users', key: 'nav_users'},
+    {target: 'nav-transfers', key: 'nav_transfers'},
+    {target: 'notif-bell', key: 'notif_bell'},
+    {target: 'settings-link', key: 'settings_link'},
 ] %}
 {% set admin_tour_steps = [] %}
 {% for step in admin_tour_step_targets %}
@@ -27,7 +27,7 @@
    an "active" subset at runtime — the "Krok X z Y" counter must be computed
    from that filtered count, not this full list, hence the __CURRENT__/__TOTAL__
    placeholder tokens filled in client-side rather than a baked-in count. #}
-{% set admin_tour_step_counter_format = 'admin.tour.step_counter'|trans({'current': '__CURRENT__', 'total': '__TOTAL__'}) %}
+{% set admin_tour_step_counter_format = 'admin.tour.step_counter'|trans({current: '__CURRENT__', total: '__TOTAL__'}) %}
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -39,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     {% block stylesheets %}
         <style>
             /* Redefine the shadcn/Tailwind color tokens for everything under #root.
@@ -73,17 +73,17 @@
             }
 
             /* Force professional Inter font family for all elements in the admin CRM, overriding kids style */
-            #root, #root h1, #root h2, #root h3, #root h4, #root h5, #root h6, 
+            #root, #root h1, #root h2, #root h3, #root h4, #root h5, #root h6,
             #root p, #root span, #root a, #root button, #root div, #root input, #root select, #root textarea,
             .modal-content, [role="dialog"], [role="tabpanel"], .modal, .modal-open {
                 font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
             }
-            
+
             /* Force light-grey background on html and body, removing any cream tint */
             html, body, body.bg-slate-50, #root {
                 background-color: rgb(248, 250, 252) !important; /* #F8FAFC */
             }
-            
+
             /* Force pure white background for all input boxes, selects, and textareas inside admin */
             #root input, #root select, #root textarea,
             .modal-content input, .modal-content select, .modal-content textarea,
@@ -96,7 +96,7 @@
                 padding-bottom: 0.75rem !important;
                 font-size: 0.875rem !important;
             }
-            
+
             /* Modern indigo focus rings for all input fields */
             #root input:focus, #root select:focus, #root textarea:focus,
             .modal-content input:focus, [role="dialog"] input:focus {
@@ -104,13 +104,13 @@
                 box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
                 outline: none !important;
             }
-            
+
             /* Clean up any playful/cream backgrounds to professional white/slate inside admin */
             #root .bg-beige, .modal-open .bg-beige, [role="dialog"], #root dialog, .modal-content, .bg-card, [role="tabpanel"], .workshop-card {
                 background-color: #ffffff !important;
                 border-color: rgb(226, 232, 240) !important; /* border-slate-200 */
             }
-            
+
             #root .bg-stone-50, #root .bg-stone-100, #root .bg-slate-50/50, .bg-muted, .bg-muted/50 {
                 background-color: rgb(248, 250, 252) !important; /* bg-slate-50 */
             }
@@ -269,7 +269,7 @@
                                     <span class="font-bold text-slate-700">{{ page_title|default('Kiddo') }}</span>
                                 </li>
                             {% endif %}
-                            
+
                             {# Sub-breadcrumbs for detailed views (passed as variable) #}
                             {% for sub in sub_breadcrumbs|default([]) %}
                                 <li class="inline-flex items-center gap-1.5">
@@ -288,7 +288,7 @@
             </main>
         </div>
         {{ component('ReservationDetailsModal') }}
-        {{ include('partials/chat_assistant.html.twig', { variant: 'floating', admin_chat: true }) }}
+        {{ include('partials/chat_assistant.html.twig', {variant: 'floating', admin_chat: true}) }}
         {% if isFeatureEnabled('help_center') %}
             {{ include('admin/help/_dialog.html.twig') }}
         {% endif %}

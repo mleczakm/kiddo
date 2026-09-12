@@ -13,7 +13,7 @@
         data-reservation-modal-trigger-lesson-id-value="{{ lesson.id }}">
         <td class="px-6 py-4">
             <div class="{{ inactive ? 'line-through text-slate-400' : '' }}">
-                {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                {{ include('partials/booking_attendee.html.twig', {booking: booking, show_parent: true}) }}
             </div>
         </td>
         <td class="px-6 py-4">

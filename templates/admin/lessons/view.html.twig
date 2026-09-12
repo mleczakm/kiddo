@@ -4,8 +4,8 @@
 
 {% block body %}
     {% set sub_breadcrumbs = [
-        { label: lesson.title|default('Lesson') }
+        {label: lesson.title|default('Lesson')},
     ] %}
-    
+
     {{ include('admin/lesson_show.html.twig') }}
 {% endblock %}

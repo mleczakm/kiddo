@@ -177,6 +177,7 @@
       "Validate composer.json": "@composer validate",
       "Security audit": "@composer audit",
       "lint:twig": "bin/console lint:twig src templates --env=test",
+      "Twig CS Fixer": "twig-cs-fixer lint",
       "Mago lint": "mago lint",
       "Mago analyze": "mago analyze",
       "Mago format": "mago format --check"
@@ -205,6 +206,7 @@
     ],
     "sa:fix": {
       "Disable timeout": "Composer\\Config::disableProcessTimeout",
+      "Twig CS Fixer": "twig-cs-fixer fix",
       "Mago lint fix": "mago lint --fix",
       "Mago format": "mago format"
     }
@@ -336,6 +338,7 @@
     "symfony/phpunit-bridge": "^8.1.5",
     "symfony/stopwatch": "8.0.*",
     "symfony/web-profiler-bundle": "8.1.*",
+    "vincentlanglet/twig-cs-fixer": "^4.1",
     "zenstruck/foundry": "^2.12.1",
     "zenstruck/mailer-test": "^1.5.0",
     "zenstruck/messenger-test": "^1.15"

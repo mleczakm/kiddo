@@ -60,7 +60,7 @@
 </style>
 
 <div class="report-wrapper">
-    <div class="section-title">{{ 'daily_lessons_schedule.yesterday.heading'|trans({'date': yesterday|format_datetime(pattern='EEEE, dd.MM')}) }}</div>
+    <div class="section-title">{{ 'daily_lessons_schedule.yesterday.heading'|trans({date: yesterday|format_datetime(pattern: 'EEEE, dd.MM')}) }}</div>
 
     <table class="stats-table" role="presentation">
         <tr>
@@ -99,11 +99,11 @@
         <p class="empty-note">{{ 'daily_lessons_schedule.yesterday.new_reservations.none'|trans }}</p>
     {% endif %}
 
-    <div class="section-title">{{ 'daily_lessons_schedule.today.heading'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</div>
+    <div class="section-title">{{ 'daily_lessons_schedule.today.heading'|trans({date: date|format_datetime(pattern: 'EEEE, dd.MM')}) }}</div>
 
     {% if lessons is empty %}
-        <p class="empty-note">{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+        <p class="empty-note">{{ 'daily_lessons_schedule.no_lessons'|trans({date: date|format_datetime(pattern: 'EEEE, dd.MM')}) }}</p>
     {% endif %}
 
-    {% include 'email/notification/_lesson_schedule_cards.html.twig' with {'lessons': lessons} %}
+    {{ include('email/notification/_lesson_schedule_cards.html.twig', {lessons: lessons}) }}
 </div>

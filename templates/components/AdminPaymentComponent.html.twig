@@ -52,7 +52,7 @@
                             </td>
                             <td class="p-4 align-middle text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    {{ component('AssignPaymentModalComponent', { transfer: transfer }) }}
+                                    {{ component('AssignPaymentModalComponent', {transfer: transfer}) }}
                                     <button
                                         data-action="live#action"
                                         data-live-action-param="reject"
@@ -87,7 +87,7 @@
                         <div class="flex items-center justify-between mt-3">
                             <span class="text-xs text-slate-500">{{ transfer.transferredAt|date('Y-m-d H:i') }}</span>
                             <div class="flex items-center gap-2">
-                                {{ component('AssignPaymentModalComponent', { transfer: transfer }) }}
+                                {{ component('AssignPaymentModalComponent', {transfer: transfer}) }}
                                 <button
                                     data-action="live#action"
                                     data-live-action-param="reject"

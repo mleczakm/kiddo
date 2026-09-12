@@ -6,7 +6,6 @@ Displays a badge showing the current capacity status of a lesson/workshop.
 @param string size The size of the badge (sm, md, lg)
 #}
 
-
 {% if available > 4 %}
     {% set badgeClass = 'text-green-700' %}
 {% elseif available > 2 %}
@@ -16,12 +15,12 @@ Displays a badge showing the current capacity status of a lesson/workshop.
 {% endif %}
 
 {% set sizeClasses = {
-    'sm': 'px-2 py-0.5 text-xs',
-    'md': 'px-2.5 py-1 text-sm',
-    'lg': 'px-3 py-1.5 text-base'
+    sm: 'px-2 py-0.5 text-xs',
+    md: 'px-2.5 py-1 text-sm',
+    lg: 'px-3 py-1.5 text-base',
 } %}
 
 <span class="spot-badge items-center rounded-full font-bold {{ badgeClass }} {{ sizeClasses[size|default('md')] }}"
-      title="{{ 'lesson.spots_available'|trans({spots: available }) }}">
-    {{ 'lesson.spots_available'|trans({spots: available }) }}
+      title="{{ 'lesson.spots_available'|trans({spots: available}) }}">
+    {{ 'lesson.spots_available'|trans({spots: available}) }}
 </span>

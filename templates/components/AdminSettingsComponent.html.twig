@@ -4,30 +4,30 @@
             <!-- Sidebar Ustawień -->
             <div class="w-full md:w-72 bg-slate-50 border-r border-slate-200 flex flex-col p-4 gap-2 shrink-0">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-4 mt-2">Zarządzanie Zespołem</div>
-                <button 
-                    data-action="live#update" 
-                    data-model="settingsTab" 
+                <button
+                    data-action="live#update"
+                    data-model="settingsTab"
                     data-value="roles"
                     class="text-left px-4 py-3 rounded-xl text-sm font-bold transition {{ settingsTab == 'roles' ? 'bg-white shadow-sm text-indigo-600 border border-slate-200' : 'text-slate-600 hover:bg-slate-200/50' }}"
                 >
                     Użytkownicy i Uprawnienia
                 </button>
-                
+
                 <div class="mb-2 mt-4 flex items-center justify-between px-4 text-xs font-bold uppercase tracking-wider text-slate-400">
                     <span>System i Księgowość</span>
                     {{ include('admin/help/_context_button.html.twig', {slug: 'automatyzacje-i-zadania-w-tle', label: 'Automatyzacje i zadania działające w tle'}) }}
                 </div>
-                <button 
-                    data-action="live#update" 
-                    data-model="settingsTab" 
+                <button
+                    data-action="live#update"
+                    data-model="settingsTab"
                     data-value="billing"
                     class="text-left px-4 py-3 rounded-xl text-sm font-bold transition {{ settingsTab == 'billing' ? 'bg-white shadow-sm text-indigo-600 border border-slate-200' : 'text-slate-600 hover:bg-slate-200/50' }}"
                 >
                     Odbiorcy raportów fin.
                 </button>
-                <button 
-                    data-action="live#update" 
-                    data-model="settingsTab" 
+                <button
+                    data-action="live#update"
+                    data-model="settingsTab"
                     data-value="seo"
                     class="text-left px-4 py-3 rounded-xl text-sm font-bold transition {{ settingsTab == 'seo' ? 'bg-white shadow-sm text-indigo-600 border border-slate-200' : 'text-slate-600 hover:bg-slate-200/50' }}"
                 >
@@ -63,7 +63,7 @@
 
             <!-- Kontent Ustawień -->
             <div class="flex-1 p-8 overflow-y-auto">
-                
+
                 {% if settingsTab == 'roles' %}
                     <div class="space-y-6 animate-in fade-in">
                         <div>
@@ -269,9 +269,9 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
                                 robots.txt
                             </label>
-                            <textarea 
+                            <textarea
                                 data-model="robotsTxtContent"
-                                rows="4" 
+                                rows="4"
                                 class="w-full bg-slate-900 text-green-400 font-mono text-sm p-4 rounded-xl outline-none"
                             >{{ robotsTxtContent }}</textarea>
                         </div>
@@ -333,15 +333,15 @@
                         </div>
 
                         {% set org_fields = [
-                            { key: 'name', label: 'Nazwa', full: true },
-                            { key: 'street', label: 'Ulica i numer', full: true },
-                            { key: 'postal_code', label: 'Kod pocztowy' },
-                            { key: 'city', label: 'Miejscowość' },
-                            { key: 'email', label: 'E-mail' },
-                            { key: 'phone', label: 'Telefon' },
-                            { key: 'bank_account', label: 'Numer konta bankowego', full: true },
-                            { key: 'blik_phone', label: 'Telefon BLIK' },
-                            { key: 'facebook_url', label: 'Facebook (adres profilu / strony)', full: true },
+                            {key: 'name', label: 'Nazwa', full: true},
+                            {key: 'street', label: 'Ulica i numer', full: true},
+                            {key: 'postal_code', label: 'Kod pocztowy'},
+                            {key: 'city', label: 'Miejscowość'},
+                            {key: 'email', label: 'E-mail'},
+                            {key: 'phone', label: 'Telefon'},
+                            {key: 'bank_account', label: 'Numer konta bankowego', full: true},
+                            {key: 'blik_phone', label: 'Telefon BLIK'},
+                            {key: 'facebook_url', label: 'Facebook (adres profilu / strony)', full: true},
                         ] %}
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {% for field in org_fields %}

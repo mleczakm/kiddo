@@ -192,7 +192,7 @@
                                 <tr class="hover:bg-indigo-50/40 transition cursor-pointer {{ booking.isCancelled() ? 'opacity-60' : '' }}" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}">
                                     <td class="p-4 align-middle">
                                         <div class="{{ booking.isCancelled() ? 'line-through text-slate-400' : '' }}">
-                                            {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                                            {{ include('partials/booking_attendee.html.twig', {booking: booking, show_parent: true}) }}
                                             {# Hidden extra text to satisfy repeated td text assertions #}
                                             {% if booking.lessons.count > 0 %}
                                                 {% set __firstLesson = booking.lessons.first %}
@@ -321,7 +321,7 @@
                                 data-live-event-param="openReservationDetails"
                                 data-live-booking-id-param="{{ bookingId }}">
                             <div class="min-w-0 {{ booking.isCancelled() ? 'line-through text-slate-400' : '' }}">
-                                {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                                {{ include('partials/booking_attendee.html.twig', {booking: booking, show_parent: true}) }}
                                 {% if booking.lessons.count > 0 %}
                                     {% set firstLesson = booking.lessons.first %}
                                     <p class="text-sm font-bold text-slate-800 mt-2 truncate">

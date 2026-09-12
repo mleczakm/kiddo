@@ -24,7 +24,7 @@
             {% if this.confirmedOrderNumber is not empty %}
                 <div class="p-4 space-y-3">
                     <p class="font-medium text-workshop-brown">{{ 'cart.checkout_success_title'|trans }}</p>
-                    <p class="text-sm">{{ 'cart.order_number'|trans({'number': this.confirmedOrderNumber}) }}</p>
+                    <p class="text-sm">{{ 'cart.order_number'|trans({number: this.confirmedOrderNumber}) }}</p>
                     {% if this.confirmedPaymentCode is not empty %}
                         <div class="rounded-md border border-workshop-yellow bg-workshop-yellow/10 px-3 py-2 text-sm">
                             <p class="mb-1">{{ 'cart.checkout_payment_code_hint'|trans }}</p>
@@ -71,7 +71,7 @@
                 <div class="border-t px-3 py-2">
                     {% if this.getPromotionCode is not empty %}
                         <div class="flex items-center justify-between text-sm mb-2">
-                            <span>{{ 'cart.promotion_code.applied'|trans({'code': this.getPromotionCode}) }}</span>
+                            <span>{{ 'cart.promotion_code.applied'|trans({code: this.getPromotionCode}) }}</span>
                             <button type="button" class="text-workshop-red hover:underline" data-action="live#action" data-live-action-param="removeCode">
                                 {{ 'cart.promotion_code.remove'|trans }}
                             </button>
@@ -103,9 +103,9 @@
 
                     <div class="rounded-md border border-slate-200 bg-slate-50 p-2 text-xs mb-2 space-y-1">
                         <p class="font-medium">{{ 'cart.precontract.title'|trans }}</p>
-                        <p>{{ 'cart.precontract.price'|trans({'amount': this.getTotal|money}) }}</p>
+                        <p>{{ 'cart.precontract.price'|trans({amount: this.getTotal|money}) }}</p>
                         <p>{{ 'cart.precontract.payment'|trans }}</p>
-                        <p>{{ 'cart.precontract.schedule'|trans({'venue': organization().addressLine}) }}</p>
+                        <p>{{ 'cart.precontract.schedule'|trans({venue: organization().addressLine}) }}</p>
                         <p>
                             {{ 'cart.precontract.returns'|trans }}:
                             {% for terms in workshopTerms %}

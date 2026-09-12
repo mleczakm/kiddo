@@ -18,22 +18,22 @@
     {% endif %}
     {% if childName %}
         <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
-            {{ 'reservation.child'|trans({'childName': childName}) }}
+            {{ 'reservation.child'|trans({childName: childName}) }}
         </div>
     {% else %}
         <div style="margin-bottom: 1rem;"></div>
     {% endif %}
     <div style="font-size: 1.5rem; font-weight: bold; color: #583818; margin-bottom: 1rem;">
-        {{ 'reservation.blik_transfer'|trans({'blikPhoneNumber': blikPhoneNumber})|raw }}
+        {{ 'reservation.blik_transfer'|trans({blikPhoneNumber: blikPhoneNumber})|raw }}
     </div>
     <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">
-        {{ 'reservation.amount_to_pay'|trans({'paymentAmount': paymentAmount|money})|raw }}. {{ 'reservation.payment_title'|trans }}
+        {{ 'reservation.amount_to_pay'|trans({paymentAmount: paymentAmount|money})|raw }}. {{ 'reservation.payment_title'|trans }}
     </div>
     <div style="font-size: 1.5rem; font-family: monospace; background-color: #f3f4f6; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; user-select: all; letter-spacing: 0.1em; color: #e85030;">{{ paymentCode }}</div>
     <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
         {{ 'reservation.confirmation_after_payment'|trans }}
     </div>
     <div style="color: #6b7280; font-size: 0.875rem; border-top: 1px solid #e5e7eb; padding-top: 1rem; margin-top: 1rem;">
-        {{ 'reservation.bank_transfer_option'|trans({'bankAccountNumber': bankAccountNumber})|raw }}
+        {{ 'reservation.bank_transfer_option'|trans({bankAccountNumber: bankAccountNumber})|raw }}
     </div>
 </div>

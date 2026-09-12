@@ -23,7 +23,7 @@
         <div class="space-y-6">
             {% for date, rows in days %}
                 {% set day = date|date('Y-m-d') %}
-                {% set is_today = day == "now"|date('Y-m-d') %}
+                {% set is_today = day == 'now'|date('Y-m-d') %}
                 <section>
                     <p class="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider {{ is_today ? 'text-panel-accent' : 'text-panel-muted' }}">
                         {{ date|format_datetime(pattern: 'EEEE, d MMMM')|capitalize }}

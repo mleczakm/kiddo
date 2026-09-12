@@ -9,7 +9,7 @@
         })).defaults(
             paymentStatus == 'awaiting_payment' and paymentCode
                 ? {'data-poll': 'delay(3000)|refreshPaymentStatus'}
-                : {}
+                : {},
         ) }}
 >
 
@@ -111,7 +111,7 @@
                         <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
                         <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
                         <div class="text-muted-foreground text-sm border-t pt-4 mt-4">
-                            {{ 'blik.alt_transfer'|trans({'title': paymentCode,'account': '<span class="text-workshop-red whitespace-nowrap">' ~ organization().bankAccount ~ '</span>'})|raw }}
+                            {{ 'blik.alt_transfer'|trans({title: paymentCode, account: '<span class="text-workshop-red whitespace-nowrap">' ~ organization().bankAccount ~ '</span>'})|raw }}
                         </div>
                         {% if lesson %}
                             <a href="{{ lesson_google_calendar_url(lesson) }}" target="_blank" rel="noopener"
@@ -164,9 +164,9 @@
                                 <p class="font-medium">{{ 'lesson.schedule'|trans }}</p>
                                 <p class="text-muted-foreground">
                                     {{ 'lesson.once'|trans({
-                                        'day': lesson.schedule|date('l'),
-                                        'date': lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
-                                        'hour': lesson.schedule|date('H:i')
+                                        day: lesson.schedule|date('l'),
+                                        date: lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
+                                        hour: lesson.schedule|date('H:i'),
                                     }) }}
                                 </p>
                                 {% if lesson.series.type.value == 'weekly' %}
@@ -449,10 +449,10 @@
                         </button>
                     </div>
                 </div>
-                {#                    <div class="flex items-center justify-between"> #}
-                {#                        <span class="font-medium">{{ 'lesson.title'|trans }}</span> #}
-                {#                        <span>{{ lesson.metadata.title }}</span> #}
-                {#                    </div> #}
+                {# <div class="flex items-center justify-between"> #}
+                {# <span class="font-medium">{{ 'lesson.title'|trans }}</span> #}
+                {# <span>{{ lesson.metadata.title }}</span> #}
+                {# </div> #}
                 {% if isFeatureEnabled('location') %}
                     <div class="flex items-center justify-between">
                         <span class="font-medium">Location:</span>
@@ -553,11 +553,11 @@
         </div>
         <div class="space-y-3 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs">
             <p class="font-medium">{{ 'booking.precontract.title'|trans }}</p>
-            <p>{{ 'booking.precontract.price'|trans({'amount': (this.quotedPrice ?? activeTicketOption.price)|money}) }}</p>
+            <p>{{ 'booking.precontract.price'|trans({amount: (this.quotedPrice ?? activeTicketOption.price)|money}) }}</p>
             <p>{{ 'booking.precontract.payment'|trans }}</p>
             <p>{{ 'booking.precontract.schedule'|trans({
-                'date': lesson.schedule|format_datetime(pattern: 'd MMMM yyyy, HH:mm'),
-                'venue': organization().addressLine
+                date: lesson.schedule|format_datetime(pattern: 'd MMMM yyyy, HH:mm'),
+                venue: organization().addressLine,
             }) }}</p>
             <p><a href="{{ this.getTermsUrl() }}" target="_blank" class="text-workshop-red underline">{{ 'booking.precontract.returns'|trans }}</a></p>
         </div>

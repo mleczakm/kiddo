@@ -21,12 +21,12 @@
 
         <div class="rounded-lg border border-red-300 bg-red-50 p-3.5">
             {% if this.isDeletionRequested() %}
-                <p class="text-sm font-medium text-red-800">{{ 'account.settings.delete_pending'|trans({'grace': this.getGraceDays()}) }}</p>
+                <p class="text-sm font-medium text-red-800">{{ 'account.settings.delete_pending'|trans({grace: this.getGraceDays()}) }}</p>
             {% else %}
                 <p class="text-sm font-medium text-red-800">{{ 'account.settings.delete'|trans }}</p>
-                <p class="mt-1 text-xs text-red-700">{{ 'account.settings.delete_hint'|trans({'grace': this.getGraceDays()}) }}</p>
+                <p class="mt-1 text-xs text-red-700">{{ 'account.settings.delete_hint'|trans({grace: this.getGraceDays()}) }}</p>
                 <label class="mt-2 block text-xs text-red-800">
-                    {{ 'account.settings.delete_confirm_label'|trans({'keyword': constant('App\\UserInterface\\Http\\Component\\AccountSettingsComponent::DELETE_KEYWORD')}) }}
+                    {{ 'account.settings.delete_confirm_label'|trans({keyword: constant('App\\UserInterface\\Http\\Component\\AccountSettingsComponent::DELETE_KEYWORD')}) }}
                     <input type="text" data-model="deleteConfirmation"
                            class="mt-1 block h-9 w-40 rounded-md border border-red-300 bg-white px-2 py-1 text-sm">
                 </label>

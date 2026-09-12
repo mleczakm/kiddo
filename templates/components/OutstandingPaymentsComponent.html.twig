@@ -2,7 +2,7 @@
 <div {{ attributes.defaults(
     awaitingPayment and paymentCode
         ? {'data-poll': 'delay(3000)|refreshPaymentStatus'}
-        : {}
+        : {},
 ) }}>
     {% if awaitingPayment and paymentCode %}
         {% set watched = this.getWatchedPayment() %}

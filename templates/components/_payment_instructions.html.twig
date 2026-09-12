@@ -28,8 +28,8 @@
     <p class="text-xs text-panel-muted">{{ 'blik.info'|trans }}</p>
     <p class="mt-4 border-t border-panel-line pt-4 text-xs text-panel-muted">
         {{ 'blik.alt_transfer'|trans({
-            'title': payment_code,
-            'account': '<span class="whitespace-nowrap font-semibold text-panel-ink">' ~ org.bankAccount ~ '</span>',
+            title: payment_code,
+            account: '<span class="whitespace-nowrap font-semibold text-panel-ink">' ~ org.bankAccount ~ '</span>',
         })|raw }}
     </p>
     {% if bookings|default([]) is not empty %}

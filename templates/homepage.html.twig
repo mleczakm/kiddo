@@ -4,7 +4,7 @@
     <main class="flex-grow">
         <div>
             {% if isFeatureEnabled('chat_assistant') %}
-                {{ include('partials/chat_assistant.html.twig', { variant: 'hero' }) }}
+                {{ include('partials/chat_assistant.html.twig', {variant: 'hero'}) }}
             {% else %}
             <section class="relative py-16 md:py-24 overflow-hidden">
                 <div class="absolute top-10 left-10 w-24 h-24 rounded-full bg-workshop-blue/20 animate-bounce-slight"
@@ -209,17 +209,17 @@
             <script>
                 document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
                     e.preventDefault();
-                    
+
                     const form = this;
                     const emailInput = document.getElementById('newsletter-email');
                     const consentInput = document.getElementById('newsletter-consent');
                     const submitBtn = document.getElementById('newsletter-submit');
                     const messageDiv = document.getElementById('newsletter-message');
-                    
+
                     submitBtn.disabled = true;
                     submitBtn.textContent = '{{ 'homepage.newsletter.sending'|trans }}';
                     messageDiv.classList.add('hidden');
-                    
+
                     try {
                         const response = await fetch('{{ path('newsletter_subscribe') }}', {
                             method: 'POST',
@@ -233,11 +233,11 @@
                                 website: form.querySelector('input[name="website"]').value
                             })
                         });
-                        
+
                         const data = await response.json();
-                        
+
                         messageDiv.classList.remove('hidden');
-                        
+
                         if (response.ok) {
                             messageDiv.textContent = '{{ 'homepage.newsletter.confirmation_sent'|trans }}';
                             messageDiv.classList.add('text-green-600');

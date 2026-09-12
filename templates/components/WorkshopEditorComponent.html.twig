@@ -37,21 +37,21 @@
                             <input type="radio" name="editScope" data-model="editScope" value="occurrence" class="mt-0.5 w-4 h-4 text-indigo-600" />
                             <span>
                                 <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.scope.occurrence'|trans }}</span>
-                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.occurrence_hint'|trans({ date: occurrenceDate, time: occurrenceTime }) }}</span>
+                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.occurrence_hint'|trans({date: occurrenceDate, time: occurrenceTime}) }}</span>
                             </span>
                         </label>
                         <label class="flex items-start gap-2 p-3 rounded-xl border-2 cursor-pointer transition {{ editScope == 'following' ? 'border-indigo-600 bg-white' : 'border-transparent bg-white/60 hover:bg-white' }}">
                             <input type="radio" name="editScope" data-model="editScope" value="following" class="mt-0.5 w-4 h-4 text-indigo-600" />
                             <span>
                                 <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.scope.following'|trans }}</span>
-                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.following_hint'|trans({ count: this.getFollowingSeriesLessonsCount() }) }}</span>
+                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.following_hint'|trans({count: this.getFollowingSeriesLessonsCount()}) }}</span>
                             </span>
                         </label>
                         <label class="flex items-start gap-2 p-3 rounded-xl border-2 cursor-pointer transition {{ editScope == 'series' ? 'border-indigo-600 bg-white' : 'border-transparent bg-white/60 hover:bg-white' }}">
                             <input type="radio" name="editScope" data-model="editScope" value="series" class="mt-0.5 w-4 h-4 text-indigo-600" />
                             <span>
                                 <span class="block text-sm font-bold text-slate-800">{{ 'admin.workshop_editor.scope.series'|trans }}</span>
-                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.series_hint'|trans({ count: this.getUpcomingSeriesLessonsCount() }) }}</span>
+                                <span class="block text-xs text-slate-500">{{ 'admin.workshop_editor.scope.series_hint'|trans({count: this.getUpcomingSeriesLessonsCount()}) }}</span>
                             </span>
                         </label>
                     </div>
@@ -675,13 +675,13 @@
             {% set impact = this.getSaveImpact() %}
             <div class="px-4 sm:px-6 pt-3 border-t border-slate-100 bg-indigo-50/70 text-xs text-indigo-900 shrink-0">
                 <span class="font-bold">{{ 'admin.workshop_editor.impact.label'|trans({
-                    action: editingLessonId ? ('admin.workshop_editor.save_edit'|trans) : ('admin.workshop_editor.save_create'|trans)
+                    action: editingLessonId ? ('admin.workshop_editor.save_edit'|trans) : ('admin.workshop_editor.save_create'|trans),
                 }) }}</span>
                 {{ 'admin.workshop_editor.impact.summary'|trans({
                     create: impact.create,
                     update: impact.update,
                     hide: impact.hide,
-                    delete: impact.delete
+                    delete: impact.delete,
                 }) }}
                 <span class="block mt-1 text-slate-500">{{ 'admin.workshop_editor.impact.reservation_safety'|trans }}</span>
             </div>

@@ -49,7 +49,7 @@
                                         <p class="mt-1 flex items-center gap-1.5 font-bold text-slate-800">
                                             {{ booking.user.name }}
                                             {% if is_granted('ROLE_MANAGE_USERS') %}
-                                                <a href="{{ path('app_admin_user_view', { id: booking.user.id }) }}"
+                                                <a href="{{ path('app_admin_user_view', {id: booking.user.id}) }}"
                                                    class="text-slate-400 transition hover:text-indigo-600"
                                                    title="Zobacz profil użytkownika"
                                                    aria-label="Zobacz profil użytkownika">
@@ -75,7 +75,7 @@
                                     <span class="text-xs font-semibold text-slate-500">{{ booking.lessons.count }} {{ booking.lessons.count == 1 ? 'termin' : 'terminy' }}</span>
                                 </div>
                                 <div class="space-y-2">
-                                    {% for bookedLesson in booking.lessons|sort((a,b) => a.schedule <=> b.schedule) %}
+                                    {% for bookedLesson in booking.lessons|sort((a, b) => a.schedule <=> b.schedule) %}
                                         {% set mapped = booking.getBookedLesson(bookedLesson.id) %}
                                         {% set selected = lesson and lesson.id == bookedLesson.id %}
                                         <button type="button"

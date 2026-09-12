@@ -1,13 +1,13 @@
 {% extends 'admin/base.html.twig' %}
 
 {% set sub_breadcrumbs = [
-    { label: user.name }
+    {label: user.name},
 ] %}
 
 {% block title %}{{ 'admin.title'|trans }} — {{ user.name }}{% endblock %}
 
 {% block topbar %}
-    {{ include('admin/partials/topbar.html.twig', { activeTab: 'users', back_url: path('app_admin_users') }) }}
+    {{ include('admin/partials/topbar.html.twig', {activeTab: 'users', back_url: path('app_admin_users')}) }}
 {% endblock %}
 
 {% block body %}

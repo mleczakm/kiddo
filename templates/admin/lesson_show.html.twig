@@ -3,11 +3,10 @@
 {# Seats actually held on this occurrence — excludes bookings cancelled or rescheduled away (mirrors Lesson::getAvailableSpots()). #}
 {% set takenSpots = lesson.bookings|filter(b => b.occupiesSeat() and b.lessonsMap.active.hasKey(lesson.id))|length %}
 {% set sub_breadcrumbs = [
-    {'label': lesson.metadata.title},
-    {'label': lesson.schedule|date('Y-m-d H:i')}
+    {label: lesson.metadata.title},
+    {label: lesson.schedule|date('Y-m-d H:i')},
 ] %}
     {# Breadcrumbs #}
-    
 
     {# Header #}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
@@ -20,18 +19,18 @@
                 </span>
             </h1>
             <p class="text-slate-500 mt-1">
-                {{ lesson.schedule|format_datetime('medium', 'short') }} · {{ 'lesson.minutes'|trans({'minutes': lesson.metadata.duration}) }} · {{ takenSpots }}/{{ lesson.metadata.capacity }}
+                {{ lesson.schedule|format_datetime('medium', 'short') }} · {{ 'lesson.minutes'|trans({minutes: lesson.metadata.duration}) }} · {{ takenSpots }}/{{ lesson.metadata.capacity }}
             </p>
         </div>
         <div class="flex items-center gap-2">
-            <form method="post" action="{{ path('app_admin_lesson_toggle', { id: lesson.id }) }}">
+            <form method="post" action="{{ path('app_admin_lesson_toggle', {id: lesson.id}) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('toggle_lesson_' ~ lesson.id) }}">
                 <button type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 transition-colors {{ lesson.status == 'active' ? 'border-red-600 text-red-600 hover:bg-red-50' : 'border-green-600 text-green-600 hover:bg-green-50' }}">
                     {{ lesson.status == 'active' ? ('admin.lessons.actions.deactivate'|trans) : ('admin.lessons.actions.activate'|trans) }}
                 </button>
             </form>
             {% if is_granted('LESSON_MANAGE', lesson) %}
-                {{ component('WorkshopEditor', { lessonId: lesson.id, startOpen: false }) }}
+                {{ component('WorkshopEditor', {lessonId: lesson.id, startOpen: false}) }}
             {% endif %}
             {% set emails = lesson.attendants|map(u => u.email)|join(',') %}
             <a href="mailto:?bcc={{ emails|url_encode }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 border-amber-600 text-amber-700 hover:bg-amber-50 transition-colors">
@@ -47,7 +46,7 @@
             </svg>
             <div>
                 <p class="font-bold">{{ 'admin.lesson_show.holiday.title'|trans }}</p>
-                <p class="mt-0.5 text-sm">{{ 'admin.lesson_show.holiday.message'|trans({ holidays: holidayNames|join(', ') }) }}</p>
+                <p class="mt-0.5 text-sm">{{ 'admin.lesson_show.holiday.message'|trans({holidays: holidayNames|join(', ')}) }}</p>
             </div>
         </div>
     {% endif %}
@@ -57,14 +56,14 @@
         <div class="flex items-center justify-between mb-6">
             <div>
                 {% if prevLesson %}
-                    <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', { id: prevLesson.id }) }}">
+                    <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', {id: prevLesson.id}) }}">
                         ← {{ 'admin.lesson_show.previous_lesson'|trans }} ({{ prevLesson.schedule|date('Y-m-d H:i') }})
                     </a>
                 {% endif %}
             </div>
             <div>
                 {% if nextLesson %}
-                    <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', { id: nextLesson.id }) }}">
+                    <a class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1" href="{{ path('app_admin_lesson_view', {id: nextLesson.id}) }}">
                         {{ 'admin.lesson_show.next_lesson'|trans }} ({{ nextLesson.schedule|date('Y-m-d H:i') }}) →
                     </a>
                 {% endif %}

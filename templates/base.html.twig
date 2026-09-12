@@ -25,10 +25,10 @@
         {% block body %}
         {% endblock %}
         {{ include('partials/footer.html.twig') }}
-        
+
         {# Mobile Bottom Navigation #}
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 px-4 py-3 flex justify-around items-center shadow-[0_-8px_30px_rgba(0,0,0,0.05)]">
-            <a href="{{ path('workshops') }}" 
+            <a href="{{ path('workshops') }}"
                class="flex flex-col items-center gap-1 {{ current_route == 'workshops' ? 'text-workshop-red font-bold' : 'text-workshop-brown hover:text-workshop-red' }} transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 <span class="text-[10px] font-bold tracking-tight">{{ 'page.workshops'|trans }}</span>
@@ -38,7 +38,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ticket"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
                 <span class="text-[10px] font-bold tracking-tight">{{ 'mobile_nav.tickets'|trans }}</span>
             </a>
-            <a href="{{ path('profile') }}" 
+            <a href="{{ path('profile') }}"
                class="flex flex-col items-center gap-1 {{ current_route == 'profile' ? 'text-workshop-red font-bold' : 'text-workshop-brown hover:text-workshop-red' }} transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span class="text-[10px] font-bold tracking-tight">{{ 'mobile_nav.account'|trans }}</span>
@@ -47,7 +47,7 @@
     </div>
 </div>
 {% if app.request.attributes.get('_route') != 'homepage' %}
-    {{ include('partials/chat_assistant.html.twig', { variant: 'floating' }) }}
+    {{ include('partials/chat_assistant.html.twig', {variant: 'floating'}) }}
 {% endif %}
 </body>
 </html>

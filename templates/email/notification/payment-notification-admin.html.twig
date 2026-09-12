@@ -1,9 +1,9 @@
 {% trans_default_domain 'emails' %}
 
 <p>{{ 'payment.notification.admin.info'|trans({
-        'amount': payment.amount|money,
-        'date': payment.createdAt|format_datetime(pattern='dd.MM, HH:mm'),
-        'user': user.emailString
+        amount: payment.amount|money,
+        date: payment.createdAt|format_datetime(pattern: 'dd.MM, HH:mm'),
+        user: user.emailString,
     })|raw }}</p>
 
 <ul>
@@ -11,7 +11,7 @@
         {% set booking = bookings|filter(b => b.lessons.contains(lesson))|first %}
         <li>
             <strong>{{ lesson.metadata.title }}</strong>
-            ({{ lesson.schedule|format_datetime(pattern='dd MMM, HH:mm') }})
+            ({{ lesson.schedule|format_datetime(pattern: 'dd MMM, HH:mm') }})
             {% if booking and booking.child %}
                 - {{ booking.child.name }}{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}
             {% endif %}

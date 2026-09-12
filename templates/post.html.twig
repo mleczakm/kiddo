@@ -29,11 +29,11 @@
             description: metaDescription,
             datePublished: post.publishedAt|date('c'),
             dateModified: post.updatedAt|date('c'),
-            author: { '@type': 'Person', name: post.author.name },
-            mainEntityOfPage: { '@type': 'WebPage', '@id': post.seo.canonicalUrl|default(url('post_by_slug', {slug: post.slug})) },
+            author: {'@type': 'Person', name: post.author.name},
+            mainEntityOfPage: {'@type': 'WebPage', '@id': post.seo.canonicalUrl|default(url('post_by_slug', {slug: post.slug}))},
         } %}
         {% if cover %}
-            {% set jsonLd = jsonLd|merge({ image: [url('stored_file', {id: cover.file.id, safeName: cover.file.originalName})] }) %}
+            {% set jsonLd = jsonLd|merge({image: [url('stored_file', {id: cover.file.id, safeName: cover.file.originalName})]}) %}
         {% endif %}
         <script type="application/ld+json">{{ jsonLd|json_encode|raw }}</script>
     {% endif %}
@@ -94,7 +94,7 @@
                 url: path('stored_file', {id: a.file.id, safeName: a.downloadName|default(a.file.originalName)}),
                 meta: (a.file.originalName|split('.')|last|upper) ~ ' · ' ~ (a.file.size|format_bytes),
             }) %}
-            {% include 'partials/attachment-downloads.html.twig' with { title: 'Do pobrania', downloads: downloads } only %}
+            {{ include('partials/attachment-downloads.html.twig', {title: 'Do pobrania', downloads: downloads}, false) }}
 
             <div class="article-cta">
                 <div class="article-cta__inner">

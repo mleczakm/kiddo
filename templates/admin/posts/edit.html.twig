@@ -1,7 +1,7 @@
 {% extends 'admin/base.html.twig' %}
 
 {% set sub_breadcrumbs = [
-    { label: isNew ? 'Nowy artykuł' : post.body.title }
+    {label: isNew ? 'Nowy artykuł' : post.body.title},
 ] %}
 
 {% block title %}{{ isNew ? 'Nowy artykuł' : 'Edycja artykułu' }} | Kiddo Admin{% endblock %}

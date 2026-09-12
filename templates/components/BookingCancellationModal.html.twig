@@ -1,8 +1,8 @@
 <div {{ attributes }}
         {% if modalOpened %}data-modal-state="open" {% else %}data-modal-state="closed"{% endif %}
         {{ stimulus_controller('live', {
-            url: path('ux_live_component', { _live_component: 'App\\UserInterface\\Http\\Component\\BookingCancellationModal' })
-        }) | stimulus_controller('modal-transition', { mode: 'toggle' }) }}
+            url: path('ux_live_component', {_live_component: 'App\\UserInterface\\Http\\Component\\BookingCancellationModal'}),
+        })|stimulus_controller('modal-transition', {mode: 'toggle'}) }}
         data-action="live:action:success->live#update">
 
     <button data-action="live#action"
@@ -157,7 +157,7 @@
                                                         <path d="M3 10h18"></path>
                                                     </svg>
                                                     <span class="text-sm font-medium">
-                                                        {{ availableLesson.schedule|format_datetime(pattern='EEEE, d MMMM', locale=app.request.locale) }}
+                                                        {{ availableLesson.schedule|format_datetime(pattern: 'EEEE, d MMMM', locale: app.request.locale) }}
                                                     </span>
                                                 </div>
                                                 <div class="flex items-center">

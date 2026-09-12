@@ -112,8 +112,8 @@
                       data-live-series-id-param="{{ series.id }}"
                       class="inline-flex items-center justify-center whitespace-nowrap text-xs font-bold border h-9 rounded-md px-3 {{ series.visible ? 'border-slate-400 text-slate-700 hover:bg-slate-100' : 'border-green-600 text-green-700 hover:bg-green-50' }}">
                 {{ series.visible
-                  ? 'admin.lessons.actions.hide_count'|trans({ count: series.lessons|length })
-                  : 'admin.lessons.actions.show_count'|trans({ count: series.lessons|length }) }}
+                  ? 'admin.lessons.actions.hide_count'|trans({count: series.lessons|length})
+                  : 'admin.lessons.actions.show_count'|trans({count: series.lessons|length}) }}
               </button>
               <button data-action="click->live#action:stop"
                       data-live-action-param="startEdit"
@@ -130,7 +130,7 @@
           <div class="border-t border-slate-100 bg-slate-50 divide-y divide-slate-100">
             {% for lesson in group.lessons %}
               <div class="px-4 py-2.5 flex items-center justify-between gap-3 {{ lesson.status == 'cancelled' ? 'opacity-60' : '' }}">
-                <a class="text-sm hover:underline {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : 'text-slate-700' }}" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">
+                <a class="text-sm hover:underline {{ lesson.status == 'cancelled' ? 'line-through text-red-600' : 'text-slate-700' }}" href="{{ path('app_admin_lesson_view', {id: lesson.id}) }}">
                   {{ lesson.schedule|date('d.m.Y H:i') }}
                 </a>
                 <div class="flex items-center gap-3">
@@ -164,7 +164,7 @@
         {% else %}
           {% set lesson = group.lessons[0] %}
           <div class="border-t border-slate-100 bg-slate-50 px-4 py-2.5 flex items-center justify-end gap-3">
-            <a class="text-sm text-slate-500 hover:underline mr-auto" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">{{ 'admin.lessons.open'|trans }}</a>
+            <a class="text-sm text-slate-500 hover:underline mr-auto" href="{{ path('app_admin_lesson_view', {id: lesson.id}) }}">{{ 'admin.lessons.open'|trans }}</a>
             <span class="text-xs font-medium text-slate-500">{{ lesson.bookings|length }}/{{ lesson.metadata.capacity }}</span>
             {% if is_granted('LESSON_MANAGE', lesson) %}
               <button type="button"
@@ -193,7 +193,7 @@
   {% if this.showAddModal %}
     {{ component('WorkshopEditor') }}
   {% elseif this.editSeriesId %}
-    {{ component('WorkshopEditor', { seriesId: this.editSeriesId, endToday: this.endingSeries }) }}
+    {{ component('WorkshopEditor', {seriesId: this.editSeriesId, endToday: this.endingSeries}) }}
   {% elseif this.previewSeriesId %}
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50">
       <div class="bg-slate-50 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto">
@@ -208,7 +208,7 @@
           </div>
         </div>
         <div class="p-4">
-          {{ component('SeriesDetails', { seriesId: this.previewSeriesId }) }}
+          {{ component('SeriesDetails', {seriesId: this.previewSeriesId}) }}
         </div>
       </div>
     </div>

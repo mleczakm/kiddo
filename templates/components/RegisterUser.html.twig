@@ -3,28 +3,28 @@
         <div class="rounded-lg border bg-card text-card-foreground shadow-sm mb-8">
             <div class="p-6">
                 {{ form_start(form, {
-                    'attr': {
-                        'class': 'space-y-4',
+                    attr: {
+                        class: 'space-y-4',
                         'data-action': 'live#action:prevent',
-                        'data-live-action-param': 'save'
-                    }
+                        'data-live-action-param': 'save',
+                    },
                 }) }}
                 <div>
-                    {{ form_label(form.name, 'form.register.name', {'label_attr': {'class': 'block text-sm font-medium mb-1'}}) }}
-                    {{ form_widget(form.name, {'attr': {'class': 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm input-styled'}}) }}
+                    {{ form_label(form.name, 'form.register.name', {label_attr: {class: 'block text-sm font-medium mb-1'}}) }}
+                    {{ form_widget(form.name, {attr: {class: 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm input-styled'}}) }}
                     {{ form_errors(form.name) }}
                 </div>
 
                 <div>
-                    {{ form_label(form.email, 'form.register.email', {'label_attr': {'class': 'block text-sm font-medium mb-1'}}) }}
-                    {{ form_widget(form.email, {'attr': {'class': 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm input-styled'}}) }}
+                    {{ form_label(form.email, 'form.register.email', {label_attr: {class: 'block text-sm font-medium mb-1'}}) }}
+                    {{ form_widget(form.email, {attr: {class: 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm input-styled'}}) }}
                     <div class="">
                         {{ form_errors(form.email) }}
                     </div>
                 </div>
 
                 <div class="flex items-start space-x-2">
-                    {{ form_widget(form.newsletterSubscribed, {'attr': {'class': 'mt-0.5 h-4 w-4 rounded border-gray-300 text-workshop-red focus:ring-workshop-red'}}) }}
+                    {{ form_widget(form.newsletterSubscribed, {attr: {class: 'mt-0.5 h-4 w-4 rounded border-gray-300 text-workshop-red focus:ring-workshop-red'}}) }}
                     <div class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         {{ form_label(form.newsletterSubscribed) }}
                         <a href="{{ path('legal_privacy') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.privacy'|trans }}</a>.
@@ -35,7 +35,7 @@
                 {% if form.acceptTerms is defined %}
                     <div>
                         <div class="flex items-start space-x-2">
-                            {{ form_widget(form.acceptTerms, {'attr': {'class': 'mt-1 h-4 w-4 rounded border-gray-300 text-workshop-red focus:ring-workshop-red'}}) }}
+                            {{ form_widget(form.acceptTerms, {attr: {class: 'mt-1 h-4 w-4 rounded border-gray-300 text-workshop-red focus:ring-workshop-red'}}) }}
                             <label for="{{ form.acceptTerms.vars.id }}" class="text-sm leading-5">
                                 {{ 'form.register.accept_terms_prefix'|trans }}
                                 <a href="{{ path('legal_app_terms') }}" target="_blank" class="font-medium text-workshop-red underline">{{ 'form.register.app_terms'|trans }}</a>
@@ -48,7 +48,7 @@
                 {% endif %}
 
                 <div>
-                    {{ form_widget(form.submit, {'label': 'form.register.submit', 'attr': {'class': 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90'}}) }}
+                    {{ form_widget(form.submit, {label: 'form.register.submit', attr: {class: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full bg-workshop-red text-white hover:bg-workshop-red/90'}}) }}
                 </div>
                 {{ form_end(form) }}
             </div>

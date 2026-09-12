@@ -139,7 +139,7 @@
             </div>
             <div class="grid grid-flow-col auto-cols-[190px] gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-4 pb-3">
                 {% for dayData in this.getWorkshopsByDay() %}
-                    {% set isToday = dayData.date|date('Y-m-d') == "now"|date('Y-m-d') %}
+                    {% set isToday = dayData.date|date('Y-m-d') == 'now'|date('Y-m-d') %}
                     <div class="day-column snap-start rounded-2xl border overflow-hidden shadow-sm flex flex-col {{ isToday ? 'border-workshop-red/40 ring-1 ring-workshop-red/20' : 'border-muted' }}">
                         <div class="p-3 text-center font-medium {{ isToday ? 'bg-workshop-red text-white' : 'bg-muted text-foreground' }}">
                             <div>{{ ('day.' ~ dayData.weekday)|trans }}</div>
@@ -196,7 +196,7 @@
                                             week: this.week,
                                             closeUrl: this.showSearch
                                                 ? path('workshops', {week: this.week})
-                                                : path('homepage')
+                                                : path('homepage'),
                                         }) }}
                                     {% endfor %}
                                 </div>
@@ -269,14 +269,14 @@
                                 </svg>
                                 {% if lesson.series and lesson.series.type.value == 'weekly' %}
                                     {{ 'lesson.every'|trans({
-                                        'day': lesson.schedule|date('l'),
-                                        'hour': lesson.schedule|date('H:i')
+                                        day: lesson.schedule|date('l'),
+                                        hour: lesson.schedule|date('H:i'),
                                     }) }}
                                 {% else %}
                                     {{ 'lesson.once'|trans({
-                                        'day': lesson.schedule|date('l'),
-                                        'date': lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
-                                        'hour': lesson.schedule|date('H:i')
+                                        day: lesson.schedule|date('l'),
+                                        date: lesson.schedule|date('d.m.Y')|format_datetime(pattern: 'd MMMM'),
+                                        hour: lesson.schedule|date('H:i'),
                                     }) }}
                                 {% endif %}
                             </span>
@@ -315,7 +315,7 @@
                         week: this.week,
                         closeUrl: this.showSearch
                             ? path('workshops', {week: this.week})
-                            : path('homepage')
+                            : path('homepage'),
                     }) }}
                 </div>
             </div>

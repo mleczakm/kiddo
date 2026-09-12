@@ -124,7 +124,7 @@
                                     {% set progress_percentage = (lesson_index / total_lessons) * 100 %}
                                     <div class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 p-3 transition hover:border-indigo-300 hover:bg-indigo-50/50" style="background: linear-gradient(90deg, #eaf6ff {{ progress_percentage }}%, white {{ progress_percentage }}%);" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
                                         <div>
-                                            {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                                            {{ include('partials/booking_attendee.html.twig', {booking: booking, show_parent: true}) }}
                                             <p class="text-xs text-muted-foreground">(Karnet: {{ lesson_index }}/{{ total_lessons }})</p>
                                             {% if booking.notes %}
                                                 <p class="text-xs mt-1 italic text-workshop-brown">Notatka: {{ booking.notes }}</p>
@@ -148,7 +148,7 @@
                                 {% for booking in groupedBookings.single %}
                                     <div class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-3 transition hover:border-indigo-300 hover:bg-indigo-50/50" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
                                         <div>
-                                            {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                                            {{ include('partials/booking_attendee.html.twig', {booking: booking, show_parent: true}) }}
                                             {% if booking.notes %}
                                                 <p class="text-xs mt-1 italic text-workshop-brown">Notatka: {{ booking.notes }}</p>
                                             {% endif %}
@@ -175,7 +175,7 @@
                                     {% set rescheduled = booking.isLessonRescheduled(lesson) %}
                                     <div class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-slate-50/60 p-3 opacity-70 transition hover:border-indigo-300 hover:bg-indigo-50/40" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ booking.id }}" data-live-lesson-id-param="{{ lesson.id }}" role="button" tabindex="0">
                                         <div class="line-through text-muted-foreground">
-                                            {% include 'partials/booking_attendee.html.twig' with { booking: booking, show_parent: true } %}
+                                            {{ include('partials/booking_attendee.html.twig', {booking: booking, show_parent: true}) }}
                                         </div>
                                         {{ res.inactive_badge(rescheduled) }}
                                     </div>
@@ -339,7 +339,7 @@
                     <div class="text-2xl font-mono bg-slate-50 border border-slate-200 rounded-xl p-4 my-4 select-all tracking-widest text-indigo-600">{{ this.paymentCode }}</div>
                     <p class="text-slate-500 text-sm">{{ 'blik.info'|trans }}</p>
                     <div class="text-slate-500 text-sm border-t border-slate-100 pt-4 mt-4">
-                        {{ 'blik.alt_transfer'|trans({'title': this.paymentCode,'account': '<span class="font-bold text-indigo-600 whitespace-nowrap">' ~ organization().bankAccount ~ '</span>'})|raw }}
+                        {{ 'blik.alt_transfer'|trans({title: this.paymentCode, account: '<span class="font-bold text-indigo-600 whitespace-nowrap">' ~ organization().bankAccount ~ '</span>'})|raw }}
                     </div>
                 </div>
             {% else %}

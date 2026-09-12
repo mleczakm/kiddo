@@ -1,24 +1,24 @@
 <div {{ attributes }} class="rounded-xl border border-panel-line bg-panel-surface p-6">
-    <h2 class="text-base font-bold text-panel-ink">{{ 'profile.children.title'|trans({'default':'Children'}) }}</h2>
-    <p class="mt-0.5 text-sm text-panel-muted">{{ 'profile.children.lead'|trans({'default':'Add your child details to attach them to bookings.'}) }}</p>
+    <h2 class="text-base font-bold text-panel-ink">{{ 'profile.children.title'|trans({default: 'Children'}) }}</h2>
+    <p class="mt-0.5 text-sm text-panel-muted">{{ 'profile.children.lead'|trans({default: 'Add your child details to attach them to bookings.'}) }}</p>
 
     <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
         <div class="space-y-1.5">
-            <label class="text-sm font-medium text-panel-ink" for="childName">{{ 'profile.children.name'|trans({'default':'Child name'}) }}</label>
+            <label class="text-sm font-medium text-panel-ink" for="childName">{{ 'profile.children.name'|trans({default: 'Child name'}) }}</label>
             <input id="childName" type="text" data-model="childName"
                    class="flex h-10 w-full rounded-lg border border-panel-line bg-panel-surface px-3 py-2 text-sm text-panel-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-panel-accent">
         </div>
         <div class="space-y-1.5">
             <label class="text-sm font-medium text-panel-ink" for="childBirthday">
-                {{ 'profile.children.birthday'|trans({'default':'Birthday'}) }}
-                <span class="text-panel-muted">({{ 'common.optional'|trans({'default':'optional'}) }})</span>
+                {{ 'profile.children.birthday'|trans({default: 'Birthday'}) }}
+                <span class="text-panel-muted">({{ 'common.optional'|trans({default: 'optional'}) }})</span>
             </label>
             <input id="childBirthday" type="date" data-model="childBirthday"
                    class="flex h-10 w-full rounded-lg border border-panel-line bg-panel-surface px-3 py-2 text-sm text-panel-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-panel-accent">
         </div>
         <button data-action="live#action" data-live-action-param="addChild"
                 class="inline-flex h-10 items-center justify-center rounded-lg bg-panel-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-panel-accent/90">
-            {{ 'profile.children.add'|trans({'default':'Add child'}) }}
+            {{ 'profile.children.add'|trans({default: 'Add child'}) }}
         </button>
     </div>
 
@@ -33,9 +33,9 @@
     {% endif %}
 
     <div class="mt-5">
-        <p class="text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'profile.children.list'|trans({'default':'Your children'}) }}</p>
+        <p class="text-[11px] font-semibold uppercase tracking-wider text-panel-muted">{{ 'profile.children.list'|trans({default: 'Your children'}) }}</p>
         {% if this.children is empty %}
-            <p class="mt-2 text-sm text-panel-muted">{{ 'profile.children.empty'|trans({'default':'No children added yet.'}) }}</p>
+            <p class="mt-2 text-sm text-panel-muted">{{ 'profile.children.empty'|trans({default: 'No children added yet.'}) }}</p>
         {% else %}
             <ul class="mt-2 divide-y divide-panel-line rounded-lg border border-panel-line">
                 {% for c in this.children %}
@@ -52,7 +52,7 @@
                         </div>
                         <button data-action="live#action" data-live-action-param="deleteChild" data-live-id-param="{{ c.id }}"
                                 class="inline-flex items-center rounded-lg border border-panel-line px-3 py-1.5 text-xs font-semibold text-panel-ink transition-colors hover:bg-panel-canvas">
-                            {{ 'profile.children.delete'|trans({'default':'Remove'}) }}
+                            {{ 'profile.children.delete'|trans({default: 'Remove'}) }}
                         </button>
                     </li>
                 {% endfor %}

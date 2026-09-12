@@ -51,7 +51,7 @@
 
 {% for lesson in lessons %}
     <div class="lesson-card">
-        <h2>{{ lesson.metadata.title }} ({{ lesson.schedule|format_datetime(pattern='HH:mm') }})</h2>
+        <h2>{{ lesson.metadata.title }} ({{ lesson.schedule|format_datetime(pattern: 'HH:mm') }})</h2>
 
         {% if lesson.bookings is not empty and lesson.bookings.count > 0 %}
             <table class="lesson-table">
@@ -87,7 +87,7 @@
                             <td>{{ booking.user.email }}</td>
                             <td>
                                 {% if isCarnet %}
-                                    {{ 'daily_lessons_schedule.table.body.progress'|trans({'index': booking.getLessonIndex(lesson), 'total': booking.getTotalLessons()}) }}
+                                    {{ 'daily_lessons_schedule.table.body.progress'|trans({index: booking.getLessonIndex(lesson), total: booking.getTotalLessons()}) }}
                                 {% else %}
                                     {{ 'daily_lessons_schedule.table.body.single_entry'|trans }}
                                 {% endif %}

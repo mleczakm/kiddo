@@ -1,5 +1,5 @@
 {# Renders round profile button with initials and unread badge #}
-{% set initials = (app.user and app.user.name is defined and app.user.name ? app.user.name : app.user.email)|split(' ')|map(v => v|first)|join('')|slice(0,2)|upper %}
+{% set initials = (app.user and app.user.name is defined and app.user.name ? app.user.name : app.user.email)|split(' ')|map(v => v|first)|join('')|slice(0, 2)|upper %}
 <details id="notif-details" class="relative">
   <summary id="notif-btn" class="list-none cursor-pointer">
     <div class="relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground">
@@ -63,7 +63,7 @@
         {# Impersonation controls #}
         {% if is_granted('IS_IMPERSONATOR') %}
             <a class="flex items-center gap-2 px-2 py-2 rounded hover:bg-green-50 text-green-700"
-               href="{{ path('homepage', {'_switch_user': '_exit'}) }}" data-turbo="false">
+               href="{{ path('homepage', {_switch_user: '_exit'}) }}" data-turbo="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 3 21 3 21 9"/>

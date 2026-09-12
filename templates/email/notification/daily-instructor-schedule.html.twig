@@ -39,8 +39,8 @@
 </style>
 
 <div class="report-wrapper">
-    <p>{{ 'daily_lessons_schedule.instructor_greeting'|trans({'name': instructor.name}) }}</p>
-    <p>{{ 'daily_lessons_schedule.instructor_reminder'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+    <p>{{ 'daily_lessons_schedule.instructor_greeting'|trans({name: instructor.name}) }}</p>
+    <p>{{ 'daily_lessons_schedule.instructor_reminder'|trans({date: date|format_datetime(pattern: 'EEEE, dd.MM')}) }}</p>
 
     {% set totalAttendees = 0 %}
     {% for lesson in lessons %}
@@ -61,10 +61,10 @@
     </table>
 
     {% if lessons is empty %}
-        <p class="empty-note">{{ 'daily_lessons_schedule.no_lessons'|trans({'date': date|format_datetime(pattern='EEEE, dd.MM')}) }}</p>
+        <p class="empty-note">{{ 'daily_lessons_schedule.no_lessons'|trans({date: date|format_datetime(pattern: 'EEEE, dd.MM')}) }}</p>
     {% endif %}
 
-    {% include 'email/notification/_lesson_schedule_cards.html.twig' with {'lessons': lessons} %}
+    {{ include('email/notification/_lesson_schedule_cards.html.twig', {lessons: lessons}) }}
 
     <p>{{ 'daily_lessons_schedule.instructor_footer'|trans }}</p>
 </div>

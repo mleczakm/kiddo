@@ -51,10 +51,10 @@
                     <div class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
                         <div class="flex-1 min-w-0 pr-4">
                             <h4 class="font-bold text-slate-800 truncate">
-                                <a class="hover:underline" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">{{ lesson.metadata.title }}</a>
+                                <a class="hover:underline" href="{{ path('app_admin_lesson_view', {id: lesson.id}) }}">{{ lesson.metadata.title }}</a>
                             </h4>
                             <p class="text-xs text-slate-400 font-medium mt-1">
-                                <a class="hover:underline flex items-center gap-1.5" href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}">
+                                <a class="hover:underline flex items-center gap-1.5" href="{{ path('app_admin_lesson_view', {id: lesson.id}) }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                     {{ lesson.schedule|format_datetime('medium', 'short') }}
                                 </a>
@@ -79,7 +79,7 @@
                             <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold border-indigo-100 bg-indigo-50 text-indigo-700">
                                 {{ takenSpots }}/{{ lesson.metadata.capacity }}
                             </span>
-                            <a href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold border h-9 rounded-xl px-3 border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors">
+                            <a href="{{ path('app_admin_lesson_view', {id: lesson.id}) }}" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-bold border h-9 rounded-xl px-3 border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors">
                                 {{ 'Zarządzaj'|trans }}
                             </a>
                         </div>
@@ -90,7 +90,7 @@
                     {% for lesson in cancelledLessons %}
                         <div class="flex items-center justify-between gap-3 rounded-2xl border border-red-100 bg-red-50/40 px-4 py-3">
                             <div class="min-w-0">
-                                <a href="{{ path('app_admin_lesson_view', { id: lesson.id }) }}" class="block truncate font-bold text-sm text-red-700 line-through hover:underline">{{ lesson.metadata.title }}</a>
+                                <a href="{{ path('app_admin_lesson_view', {id: lesson.id}) }}" class="block truncate font-bold text-sm text-red-700 line-through hover:underline">{{ lesson.metadata.title }}</a>
                                 <p class="text-xs text-slate-400 font-medium mt-0.5">{{ lesson.schedule|format_datetime('medium', 'short') }}</p>
                             </div>
                             {{ res.inactive_badge(false) }}

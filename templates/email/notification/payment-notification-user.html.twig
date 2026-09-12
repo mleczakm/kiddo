@@ -1,5 +1,5 @@
 {% trans_default_domain 'emails' %}
-<p>{{ 'payment.notification.user.info'|trans({'amount': payment.amount|money, 'date': payment.createdAt|format_datetime(pattern='EEEE HH:mm')}) }}</p>
+<p>{{ 'payment.notification.user.info'|trans({amount: payment.amount|money, date: payment.createdAt|format_datetime(pattern: 'EEEE HH:mm')}) }}</p>
 
 <ul>
     {% for lesson in lessons %}
@@ -7,7 +7,7 @@
         {% set calendarLink = calendarLinks[loop.index0] ?? null %}
         <li>
             <strong>{{ lesson.metadata.title }}</strong>
-            ({{ lesson.schedule|format_datetime(pattern='EEEE, HH:mm, dd MMM') }})
+            ({{ lesson.schedule|format_datetime(pattern: 'EEEE, HH:mm, dd MMM') }})
             {% if booking and booking.child %}
                 - {{ booking.child.name }}{% if booking.child.ageYears %} ({{ 'profile.children.years'|trans({count: booking.child.ageYears}, 'messages') }}){% endif %}
             {% endif %}

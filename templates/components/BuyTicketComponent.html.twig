@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="mt-4 pt-1">
-                        {{ component('LessonModal', { key: lesson.id, lesson: lesson, week: lesson.schedule|date('Y-m-d'), closeUrl: path('panel_buy') }) }}
+                        {{ component('LessonModal', {key: lesson.id, lesson: lesson, week: lesson.schedule|date('Y-m-d'), closeUrl: path('panel_buy')}) }}
                     </div>
                 </div>
             {% endfor %}
