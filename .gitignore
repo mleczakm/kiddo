@@ -40,3 +40,11 @@ target
 ###> kocal/biome-js-bundle ###
 /bin/biome
 ###< kocal/biome-js-bundle ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
+
+###> deptrac/deptrac ###
+/.deptrac.cache
+###< deptrac/deptrac ###

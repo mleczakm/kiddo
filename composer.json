@@ -206,6 +206,7 @@
       "Twig CS Fixer": "twig-cs-fixer lint",
       "Biome": "bin/biome check assets",
       "Composer dependencies": "composer-dependency-analyser",
+      "Architecture boundaries": "deptrac analyse --no-progress",
       "Mago lint": "mago lint",
       "Mago analyze": "mago analyze",
       "Mago format": "mago format --check"
@@ -356,6 +357,7 @@
     "ext-dom": "*",
     "carthage-software/mago": "^1.47.4",
     "dama/doctrine-test-bundle": "^8.6.0",
+    "deptrac/deptrac": "^4.7",
     "kocal/biome-js-bundle": "^2.1",
     "kodus/mock-cache": "^2.1",
     "monolog/monolog": "^3.12",

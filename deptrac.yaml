@@ -1,0 +1,113 @@
+deptrac:
+    paths:
+        - ./src
+    exclude_files:
+        - '#/Kernel\.php#'
+    layers:
+        - name: Domain
+          collectors:
+              - type: directory
+                value: src/Domain/.*
+        - name: Entity
+          collectors:
+              - type: directory
+                value: src/Entity/.*
+        - name: Message
+          collectors:
+              - type: directory
+                value: src/Message/.*
+        - name: Application
+          collectors:
+              - type: directory
+                value: src/Application/.*
+        - name: MessageHandler
+          collectors:
+              - type: directory
+                value: src/MessageHandler/.*
+        - name: Factory
+          collectors:
+              - type: directory
+                value: src/Factory/.*
+        - name: Infrastructure
+          collectors:
+              - type: directory
+                value: src/Infrastructure/.*
+        - name: UserInterface
+          collectors:
+              - type: directory
+                value: src/UserInterface/.*
+    ruleset:
+        # The innermost layer: no dependencies on anything else in src/.
+        Domain: []
+        # Entities may use Domain value objects (e.g. money, dates). Infrastructure
+        # is allowed only for Doctrine's `#[ORM\Entity(repositoryClass: ...)]`
+        # attribute, which references the repository by class-string, not a real
+        # runtime dependency.
+        Entity:
+            - Domain
+            - Infrastructure
+        # Message DTOs carry domain/entity data across the bus.
+        Message:
+            - Domain
+            - Entity
+        # Use cases, application services, and ports (repository interfaces).
+        Application:
+            - Domain
+            - Entity
+            - Message
+        # Consumes commands/queries and calls into Application; may need
+        # Infrastructure for things Application doesn't abstract yet.
+        MessageHandler:
+            - Domain
+            - Entity
+            - Message
+            - Application
+            - Infrastructure
+        # Foundry test-fixture factories that live in src/ instead of tests/;
+        # they build entities and nothing should depend on them.
+        Factory:
+            - Domain
+            - Entity
+        # Adapters implementing Application's ports (Doctrine, Brevo, ElevenLabs,
+        # Messenger transports, ...). Must not reach into UserInterface.
+        Infrastructure:
+            - Domain
+            - Entity
+            - Message
+            - Application
+        # Controllers, Twig/Live components, forms. The entry point, so it may
+        # need Infrastructure directly for things not yet behind an
+        # Application port.
+        UserInterface:
+            - Domain
+            - Entity
+            - Message
+            - Application
+            - Infrastructure
+    skip_violations:
+        # Consent evidence-recording currently reaches back into Application
+        # helpers (RequestContext wraps the HTTP request, ConsentEvidence
+        # builds the audit payload) instead of Application handing the entity
+        # plain values. Real fix needs a deliberate look at the consent/legal
+        # compliance flow, not a blind mechanical move.
+        App\Entity\ConsentAuditEvidence:
+            - App\Application\Consent\ConsentEvidence
+            - App\Application\Consent\RequestContext
+        App\Entity\UserConsent:
+            - App\Application\Consent\ConsentEvidence
+            - App\Application\Consent\RequestContext
+        App\Factory\UserConsentFactory:
+            - App\Application\Consent\ConsentEvidence
+            - App\Application\Consent\RequestContext
+        # Both reach a concrete Infrastructure adapter with no interface of its
+        # own yet: Brevo's newsletter API client, and a constructor default
+        # (`Holidays $publicHolidays = new PolishPublicHolidays()`) that doubles
+        # as this service's real DI wiring, since no explicit
+        # Aeon\Calendar\Holidays alias exists in config/services.yaml. Worth
+        # a real port/interface each, not a blind swap.
+        App\Application\Account\UserAnonymizer:
+            - App\Infrastructure\Brevo\BrevoNewsletterService
+        App\Application\Newsletter\NewsletterSubscriptionManager:
+            - App\Infrastructure\Brevo\BrevoNewsletterService
+        App\Application\Service\WorkingDaysDeadlineCalculator:
+            - App\Infrastructure\Calendar\PolishPublicHolidays

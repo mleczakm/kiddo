@@ -45,7 +45,7 @@ COPY src/ src/
 COPY templates/ templates/
 COPY tests/ tests/
 COPY translations/ translations/
-COPY .env .env.test .twig-cs-fixer.php analysis-baseline.toml biome.json composer-dependency-analyser.php importmap.php lint-baseline.toml mago.toml phpunit.xml.dist ./
+COPY .env .env.test .twig-cs-fixer.php analysis-baseline.toml biome.json composer-dependency-analyser.php deptrac.yaml importmap.php lint-baseline.toml mago.toml phpunit.xml.dist ./
 
 # Same idea as mago above: kocal/biome-js-bundle downloads the Biome.js binary on demand
 # rather than via `composer install`, so trigger it now to bake it into this image layer.
