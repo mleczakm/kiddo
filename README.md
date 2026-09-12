@@ -141,6 +141,7 @@ docker compose up -d db
 | Filtered test | `docker compose run --rm php bin/phpunit --filter ClassNameOrMethod` |
 | Apply automated fixes | `docker compose run --rm php composer qa:fix` |
 | Full quality gate | `docker compose run --rm php composer qa` |
+| Lint GitHub Actions workflows | `docker run --rm -v "$PWD:/repo" --workdir /repo rhysd/actionlint:latest -color` |
 
 After code changes, run `composer qa:fix`, review its diff, then run `composer qa`.
 
