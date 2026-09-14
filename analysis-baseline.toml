@@ -6314,18 +6314,24 @@ count = 2
 
 [[issues]]
 file = "tests/UserInterface/Http/NewsletterControllerTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 4
-
-[[issues]]
-file = "tests/UserInterface/Http/NewsletterControllerTest.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\Tests\UserInterface\Http\NewsletterControllerTest::decode`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
-file = "tests/UserInterface/Http/NewsletterControllerTest.php"
+file = "tests/UserInterface/Http/NewsletterSubscriptionBrevoTest.php"
+code = "ambiguous-object-method-access"
+message = "Cannot statically verify method call on a generic `object` type."
+count = 4
+
+[[issues]]
+file = "tests/UserInterface/Http/NewsletterSubscriptionBrevoTest.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `App\Tests\UserInterface\Http\NewsletterSubscriptionBrevoTest::decode`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "tests/UserInterface/Http/NewsletterSubscriptionBrevoTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 4

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\UserInterface\Http;
 
-use App\Application\Consent\MarketingConsentManager;
 use App\Infrastructure\Brevo\BrevoNewsletterService;
-use App\Tests\Assembler\UserAssembler;
-use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -17,63 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 #[Group('functional')]
 final class NewsletterControllerTest extends WebTestCase
 {
-    public function testExistingSubscribedUserSkipsDoi(): void
-    {
-        $client = static::createClient();
-        $brevo = $this->replaceBrevoService($client);
-
-        $brevo->expects(self::never())->method('sendDoubleOptInConfirmation');
-
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        $user = UserAssembler::new()->withEmail('subscribed@example.com')->withNewsletterSubscribed(true)->assemble();
-        $em->persist($user);
-        $em->flush();
-
-        $client->request(
-            'POST',
-            '/api/newsletter/subscribe',
-            server: [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            content: json_encode($this->subscriptionPayload('subscribed@example.com'), JSON_THROW_ON_ERROR),
-        );
-
-        self::assertResponseStatusCodeSame(JsonResponse::HTTP_OK);
-        $payload = $this->decode($client);
-        static::assertSame('newsletter.already_subscribed', $payload['message'] ?? null);
-    }
-
-    public function testExistingUnsubscribedUserStillGoesThroughDoi(): void
-    {
-        $client = static::createClient();
-        $brevo = $this->replaceBrevoService($client);
-
-        $brevo->method('isDoubleOptInConfigured')->willReturn(true);
-        $brevo
-            ->expects(self::once())
-            ->method('sendDoubleOptInConfirmation')
-            ->with('unsubscribed@example.com', static::callback('is_array'));
-
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        $user = UserAssembler::new()
-            ->withEmail('unsubscribed@example.com')
-            ->withNewsletterSubscribed(false)
-            ->assemble();
-        $em->persist($user);
-        $em->flush();
-
-        $client->request(
-            'POST',
-            '/api/newsletter/subscribe',
-            server: [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            content: json_encode($this->subscriptionPayload('unsubscribed@example.com'), JSON_THROW_ON_ERROR),
-        );
-
-        self::assertResponseStatusCodeSame(JsonResponse::HTTP_OK);
-    }
-
     public function testInvalidEmailReturnsBadRequest(): void
     {
         $client = static::createClient();
@@ -96,7 +37,22 @@ final class NewsletterControllerTest extends WebTestCase
         static::assertSame('newsletter.email_invalid', $payload['error'] ?? null);
     }
 
-    public function testMissingEmailReturnsBadRequest(): void
+    /**
+     * @return array<string, array{?string, array<string, mixed>|null}>
+     */
+    public static function malformedRequestProvider(): array
+    {
+        return [
+            'missing email' => ['application/json', []],
+            'empty body' => [null, null],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed>|null $payload
+     */
+    #[DataProvider('malformedRequestProvider')]
+    public function testMalformedRequestReturnsBadRequest(?string $contentType, ?array $payload): void
     {
         $client = static::createClient();
         $this->replaceBrevoService($client);
@@ -104,21 +60,13 @@ final class NewsletterControllerTest extends WebTestCase
         $client->request(
             'POST',
             '/api/newsletter/subscribe',
-            server: [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            content: json_encode([], JSON_THROW_ON_ERROR),
+            server: $contentType === null
+                ? []
+                : [
+                    'CONTENT_TYPE' => $contentType,
+                ],
+            content: $payload === null ? null : json_encode($payload, JSON_THROW_ON_ERROR),
         );
-
-        self::assertResponseStatusCodeSame(JsonResponse::HTTP_BAD_REQUEST);
-    }
-
-    public function testEmptyBodyReturnsBadRequest(): void
-    {
-        $client = static::createClient();
-        $this->replaceBrevoService($client);
-
-        $client->request('POST', '/api/newsletter/subscribe');
 
         self::assertResponseStatusCodeSame(JsonResponse::HTTP_BAD_REQUEST);
     }
@@ -146,48 +94,6 @@ final class NewsletterControllerTest extends WebTestCase
         static::assertTrue($payload['success'] ?? false);
     }
 
-    public function testBrevoFailureReturnsServerError(): void
-    {
-        $client = static::createClient();
-        $brevo = $this->replaceBrevoService($client);
-        $brevo->method('isDoubleOptInConfigured')->willReturn(true);
-        $brevo->method('sendDoubleOptInConfirmation')->willThrowException(new \RuntimeException('Brevo down'));
-
-        $client->request(
-            'POST',
-            '/api/newsletter/subscribe',
-            server: [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            content: json_encode($this->subscriptionPayload('ok@example.com'), JSON_THROW_ON_ERROR),
-        );
-
-        self::assertResponseStatusCodeSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        $payload = $this->decode($client);
-        static::assertSame('newsletter.service_error', $payload['error'] ?? null);
-    }
-
-    public function testDoubleOptInNotConfiguredReturnsServiceUnavailableWithoutCallingBrevo(): void
-    {
-        $client = static::createClient();
-        $brevo = $this->replaceBrevoService($client);
-        $brevo->method('isDoubleOptInConfigured')->willReturn(false);
-        $brevo->expects(self::never())->method('sendDoubleOptInConfirmation');
-
-        $client->request(
-            'POST',
-            '/api/newsletter/subscribe',
-            server: [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            content: json_encode($this->subscriptionPayload('ok@example.com'), JSON_THROW_ON_ERROR),
-        );
-
-        self::assertResponseStatusCodeSame(JsonResponse::HTTP_SERVICE_UNAVAILABLE);
-        $payload = $this->decode($client);
-        static::assertSame('newsletter.service_unavailable', $payload['error'] ?? null);
-    }
-
     private function replaceBrevoService(KernelBrowser $_client): BrevoNewsletterService&MockObject
     {
         $mock = $this->createMock(BrevoNewsletterService::class);
@@ -203,15 +109,5 @@ final class NewsletterControllerTest extends WebTestCase
     {
         /** @var array<string, mixed> $data */
         return json_decode((string) $client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
-    }
-
-    /** @return array{email: string, consent: true, consentVersion: string} */
-    private function subscriptionPayload(string $email): array
-    {
-        return [
-            'email' => $email,
-            'consent' => true,
-            'consentVersion' => MarketingConsentManager::VERSION,
-        ];
     }
 }

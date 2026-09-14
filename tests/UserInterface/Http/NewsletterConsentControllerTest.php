@@ -24,6 +24,7 @@ final class NewsletterConsentControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $brevo = $this->replaceBrevoService();
+        $brevo->method('isDoubleOptInConfigured')->willReturn(true);
         $brevo
             ->expects(self::once())
             ->method('sendDoubleOptInConfirmation')
@@ -62,6 +63,7 @@ final class NewsletterConsentControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $brevo = $this->replaceBrevoService();
+        $brevo->method('isDoubleOptInConfigured')->willReturn(true);
         $brevo->expects(self::once())->method('sendDoubleOptInConfirmation');
 
         /** @var EntityManagerInterface $entityManager */
