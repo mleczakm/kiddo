@@ -48,6 +48,7 @@ final class NewsletterControllerTest extends WebTestCase
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
 
+        $brevo->method('isDoubleOptInConfigured')->willReturn(true);
         $brevo
             ->expects(self::once())
             ->method('sendDoubleOptInConfirmation')
@@ -149,6 +150,7 @@ final class NewsletterControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $brevo = $this->replaceBrevoService($client);
+        $brevo->method('isDoubleOptInConfigured')->willReturn(true);
         $brevo->method('sendDoubleOptInConfirmation')->willThrowException(new \RuntimeException('Brevo down'));
 
         $client->request(
@@ -163,6 +165,27 @@ final class NewsletterControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         $payload = $this->decode($client);
         static::assertSame('newsletter.service_error', $payload['error'] ?? null);
+    }
+
+    public function testDoubleOptInNotConfiguredReturnsServiceUnavailableWithoutCallingBrevo(): void
+    {
+        $client = static::createClient();
+        $brevo = $this->replaceBrevoService($client);
+        $brevo->method('isDoubleOptInConfigured')->willReturn(false);
+        $brevo->expects(self::never())->method('sendDoubleOptInConfirmation');
+
+        $client->request(
+            'POST',
+            '/api/newsletter/subscribe',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode($this->subscriptionPayload('ok@example.com'), JSON_THROW_ON_ERROR),
+        );
+
+        self::assertResponseStatusCodeSame(JsonResponse::HTTP_SERVICE_UNAVAILABLE);
+        $payload = $this->decode($client);
+        static::assertSame('newsletter.service_unavailable', $payload['error'] ?? null);
     }
 
     private function replaceBrevoService(KernelBrowser $_client): BrevoNewsletterService&MockObject

@@ -73,6 +73,20 @@ final class NewsletterController extends AbstractController
             ], JsonResponse::HTTP_OK);
         }
 
+        if (!$brevoNewsletterService->isDoubleOptInConfigured()) {
+            // Known, standing misconfiguration (DOI template/redirect env vars not set for
+            // this environment) rather than a transient failure — log below the Sentry
+            // "error" threshold so it doesn't page anyone, and tell the guest plainly
+            // instead of a bare 500.
+            $this->logger->warning('Newsletter double opt-in is not configured; rejecting guest signup', [
+                'email' => $email,
+            ]);
+
+            return new JsonResponse([
+                'error' => 'newsletter.service_unavailable',
+            ], JsonResponse::HTTP_SERVICE_UNAVAILABLE);
+        }
+
         try {
             $brevoNewsletterService->sendDoubleOptInConfirmation($email, [
                 'CONSENT_VERSION' => MarketingConsentManager::VERSION,

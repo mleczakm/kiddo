@@ -42,6 +42,12 @@ framework:
             'App\Application\Command\AnonymizeUser': sync
             'App\Application\Command\Notification\SendVerificationCode': sync
             'App\Application\Command\SendReservationNotification': sync
+            # Loops over finance contacts/instructors/users sending mail (with ICS
+            # attachments) synchronously per recipient. On async it ran inside the task
+            # worker's open Doctrine transaction (messenger.middleware.doctrine_transaction),
+            # and the blocking SMTP round-trips idled the connection long enough to hit
+            # Postgres's idle_in_transaction_session_timeout (WARSZTATOWNIA-AH).
+            'App\Application\Command\Notification\DailyLessonsReminder': sync
             'App\Message\RefundLessonBooking': sync
             'App\Message\CancelLessonBooking': sync
             # Waitlist: dispatched from the (sync) cancel path with DispatchAfterCurrentBusStamp

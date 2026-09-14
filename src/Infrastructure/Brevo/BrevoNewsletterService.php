@@ -28,6 +28,11 @@ readonly class BrevoNewsletterService
         return $this->apiKey !== '' && $this->newsletterListId > 0;
     }
 
+    public function isDoubleOptInConfigured(): bool
+    {
+        return $this->isConfigured() && $this->doiTemplateId > 0 && $this->doiRedirectionUrl !== '';
+    }
+
     /**
      * Add or update a contact in Brevo (for logged-in users, no DOI required).
      *
