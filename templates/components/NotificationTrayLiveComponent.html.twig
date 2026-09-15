@@ -1,4 +1,4 @@
-<div {{ attributes.defaults({'data-poll': '15000ms'}) }}>
+<div {{ attributes.defaults({'data-poll': 'delay(15000)|$render'}) }}>
     {% set initials = (app.user and app.user.name is defined and app.user.name ? app.user.name : app.user.email)|split(' ')|map(v => v|first)|join('')|slice(0, 2)|upper %}
     <details id="notif-details" class="relative" data-controller="details-dropdown">
         <summary id="notif-btn" class="list-none cursor-pointer">
