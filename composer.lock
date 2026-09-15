@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd223b219ec13806a3c939d514fe3b9f",
+    "content-hash": "e39390dff92fad10ac619e361f932229",
     "packages": [
         {
             "name": "aeon-php/business-hours",
@@ -3572,6 +3572,78 @@
                 "source": "https://github.com/mleczakm/aeon-school-holidays/tree/v1.0.0"
             },
             "time": "2026-08-26T23:23:14+00:00"
+        },
+        {
+            "name": "mleczakm/monolog-context-bundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mleczakm/monolog-context-bundle.git",
+                "reference": "983895d071d63cda9c97bbfe6e9eab79815a8869"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mleczakm/monolog-context-bundle/zipball/983895d071d63cda9c97bbfe6e9eab79815a8869",
+                "reference": "983895d071d63cda9c97bbfe6e9eab79815a8869",
+                "shasum": ""
+            },
+            "require": {
+                "monolog/monolog": "^3.0",
+                "php": "^8.2",
+                "symfony/config": "^6.4 || ^7.0 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.0 || ^8.0",
+                "symfony/http-foundation": "^6.4 || ^7.0 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.0 || ^8.0",
+                "symfony/security-core": "^6.4 || ^7.0 || ^8.0",
+                "symfony/uid": "^6.4 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "donatj/phpuseragentparser": "^1.7",
+                "friendsofphp/php-cs-fixer": "^3.59",
+                "geoip2/geoip2": "^3.0",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^11.0",
+                "psr/simple-cache": "^3.0",
+                "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0"
+            },
+            "suggest": {
+                "donatj/phpuseragentparser": "To parse the User-Agent header with the \"phpuseragent\" browser parser",
+                "geoip2/geoip2": "To resolve request IPs to a country/city with the built-in MaxMind geo-location resolver",
+                "psr/simple-cache": "To cache parsed User-Agent headers",
+                "symfony/security-bundle": "To append the authenticated user's identifier, email and roles to logs"
+            },
+            "default-branch": true,
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Mleczakm\\MonologContextBundle\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Mleczakm\\MonologContextBundle\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michał Mleczko",
+                    "email": "do@mleczki.pl"
+                }
+            ],
+            "description": "Adds user, request, browser and geo-location context to Monolog log records.",
+            "keywords": [
+                "bundle",
+                "context",
+                "logger",
+                "logging",
+                "monolog",
+                "symfony",
+                "user-context"
+            ],
+            "time": "2026-09-15T15:14:21+00:00"
         },
         {
             "name": "mleczakm/swoole-bundle-observability",
@@ -18836,6 +18908,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "mleczakm/monolog-context-bundle": 20,
         "novaway/feature-flag-bundle": 20,
         "roave/security-advisories": 20,
         "swoole-bundle/swoole-bundle": 20,

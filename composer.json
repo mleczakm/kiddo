@@ -33,6 +33,11 @@
       "type": "vcs",
       "url": "https://github.com/mleczakm/swoole-bundle-observability.git",
       "no-api": true
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/mleczakm/monolog-context-bundle.git",
+      "no-api": true
     }
   ],
   "require": {
@@ -70,6 +75,7 @@
     "mcp/sdk": "^0.7.1",
     "minishlink/web-push": "^11.0",
     "mleczakm/aeon-school-holidays": "^1.0",
+    "mleczakm/monolog-context-bundle": "dev-master",
     "mleczakm/swoole-bundle-observability": "^0.1.2",
     "mleczakm/swoole-bundle-scheduler": "^0.1.0",
     "mleczakm/twig-now": "^0.1.0",

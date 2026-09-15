@@ -1853,6 +1853,25 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * @psalm-type KocalBiomeJsConfig = array{
  *     binary_version?: scalar|Param|null, // Biome.js CLI version to download.
  * }
+ * @psalm-type MonologContextConfig = array{
+ *     user?: bool|array{ // Appends the authenticated user (identifier, roles, email) from Symfony Security
+ *         enabled?: bool|Param, // Default: true
+ *     },
+ *     request?: bool|array{ // Appends request id, method, URI, route and client IP
+ *         enabled?: bool|Param, // Default: true
+ *     },
+ *     browser?: bool|array{ // Parses the User-Agent header into browser name/version/platform
+ *         enabled?: bool|Param, // Default: false
+ *         parser?: scalar|Param|null, // "native", "phpuseragent" or a service id implementing ParserInterface // Default: "phpuseragent"
+ *         cache?: scalar|Param|null, // Service id implementing Psr\SimpleCache\CacheInterface, used to cache parsed user agents // Default: null
+ *     },
+ *     geo_location?: bool|array{ // Resolves the client IP to a country/city
+ *         enabled?: bool|Param, // Default: false
+ *         resolver?: scalar|Param|null, // Service id implementing GeoLocationResolverInterface; defaults to the built-in MaxMind resolver // Default: null
+ *         database_path?: scalar|Param|null, // Path to a MaxMind GeoLite2/GeoIP2 .mmdb database, required when using the default resolver // Default: null
+ *     },
+ *     tags?: list<scalar|Param|null>,
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1879,6 +1898,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     novaway_feature_flag?: NovawayFeatureFlagConfig,
  *     doctrine_migrations?: DoctrineMigrationsConfig,
  *     mcp?: McpConfig,
+ *     monolog_context?: MonologContextConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1910,6 +1930,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         mcp?: McpConfig,
  *         kocal_biome_js?: KocalBiomeJsConfig,
+ *         monolog_context?: MonologContextConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1938,6 +1959,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         novaway_feature_flag?: NovawayFeatureFlagConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         mcp?: McpConfig,
+ *         monolog_context?: MonologContextConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1968,6 +1990,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         novaway_feature_flag?: NovawayFeatureFlagConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         mcp?: McpConfig,
+ *         monolog_context?: MonologContextConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

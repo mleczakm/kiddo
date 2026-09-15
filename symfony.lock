@@ -106,6 +106,9 @@
             "config/routes/symfony_health_check.yaml"
         ]
     },
+    "mleczakm/monolog-context-bundle": {
+        "version": "dev-master"
+    },
     "mleczakm/swoole-bundle-observability": {
         "version": "v0.1.2"
     },
