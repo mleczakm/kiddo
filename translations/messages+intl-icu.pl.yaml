@@ -87,6 +87,15 @@ notifications:
   impersonate: Podszyj się
   impersonate_placeholder: Email użytkownika
   stop_impersonation: Powrót do mojego konta
+  push:
+    section_title: Powiadomienia push
+    description: Otrzymuj powiadomienia w przeglądarce nawet przy zamkniętej karcie.
+    label_unsupported: Twoja przeglądarka nie obsługuje powiadomień push.
+    label_denied: Powiadomienia zablokowane w ustawieniach przeglądarki.
+    label_enabled: Powiadomienia push są włączone.
+    label_disabled: Powiadomienia push są wyłączone.
+    enable: Włącz powiadomienia
+    disable: Wyłącz powiadomienia
   in_app:
     reservation:
       title: Rezerwacja utworzona

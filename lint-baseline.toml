@@ -373,6 +373,18 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
+file = "src/Application/Service/InAppNotificationService.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Application/Service/InAppNotificationService.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
 file = "src/Application/Service/InlineAttachmentReconciler.php"
 code = "no-isset"
 message = "Use of the `isset` construct."

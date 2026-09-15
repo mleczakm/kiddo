@@ -5,6 +5,8 @@ twig:
       - 'partials/form_layout.html.twig'
     paths:
       '%kernel.project_dir%/templates/email': 'email' #forces @email to be inside '%kernel.project_dir%/templates/email
+    globals:
+        vapid_public_key: '%env(VAPID_PUBLIC_KEY)%'
 
 when@test:
     twig:

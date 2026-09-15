@@ -229,6 +229,15 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/kocal/biome-js-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/shipmonk/composer-dependency-analyser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/vincentlanglet/twig-cs-fixer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/deptrac/deptrac" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpdocumentor/graphviz" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpstan" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/minishlink/web-push" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/httplug" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/promise" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spomky-labs/base64url" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spomky-labs/pki-framework" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/web-token/jwt-library" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
