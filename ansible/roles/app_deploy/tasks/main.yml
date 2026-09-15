@@ -94,12 +94,10 @@
     alpine:3.20
     sh -c 'set -e;
     if [ -f /data/GeoLite2-City.mmdb ] && [ -z "$(find /data/GeoLite2-City.mmdb -mtime +7)" ]; then
-      echo "GeoLite2-City.mmdb is fresh, skipping download"; exit 0;
+    echo "GeoLite2-City.mmdb is fresh, skipping download"; exit 0;
     fi;
     apk add --no-cache curl >/dev/null;
-    curl -fsSL -u "$MAXMIND_ACCOUNT_ID:$MAXMIND_LICENSE_KEY"
-      "https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz"
-      -o /tmp/geolite2-city.tar.gz;
+    curl -fsSL -u "$MAXMIND_ACCOUNT_ID:$MAXMIND_LICENSE_KEY" "https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz" -o /tmp/geolite2-city.tar.gz;
     tar -xzf /tmp/geolite2-city.tar.gz -C /tmp;
     mv /tmp/GeoLite2-City_*/GeoLite2-City.mmdb /data/GeoLite2-City.mmdb.new;
     mv /data/GeoLite2-City.mmdb.new /data/GeoLite2-City.mmdb;
@@ -110,7 +108,10 @@
     - app.geoip_volume is defined
     - (maxmind_account_id | default('')) | length > 0
     - (maxmind_license_key | default('')) | length > 0
-  no_log: true
+  # Deliberately not no_log:true - the docker invocation uses --env-file, so the
+  # command line itself (which a failure would print) never contains the secret
+  # values, only the credentials file's path. Hiding output here would hide the
+  # actual curl/tar error too.
 
 - name: Remove temporary MaxMind credentials file
   ansible.builtin.file:
