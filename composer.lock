@@ -3825,12 +3825,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mleczakm/monolog-context-bundle.git",
-                "reference": "37f4141c257b5a8d777106004a90e1917c1a497c"
+                "reference": "2c511f172aa2481356e2884c7776e34ef73f3bb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mleczakm/monolog-context-bundle/zipball/37f4141c257b5a8d777106004a90e1917c1a497c",
-                "reference": "37f4141c257b5a8d777106004a90e1917c1a497c",
+                "url": "https://api.github.com/repos/mleczakm/monolog-context-bundle/zipball/2c511f172aa2481356e2884c7776e34ef73f3bb4",
+                "reference": "2c511f172aa2481356e2884c7776e34ef73f3bb4",
                 "shasum": ""
             },
             "require": {
@@ -3889,7 +3889,7 @@
                 "symfony",
                 "user-context"
             ],
-            "time": "2026-09-15T18:18:09+00:00"
+            "time": "2026-09-15T19:02:53+00:00"
         },
         {
             "name": "mleczakm/swoole-bundle-observability",
