@@ -94,7 +94,7 @@
     "symfony/console": "8.0.*",
     "symfony/contracts": "^3.7.3",
     "symfony/dependency-injection": "8.1.*",
-    "symfony/doctrine-bridge": "8.0.*",
+    "symfony/doctrine-bridge": "^8.1.4",
     "symfony/doctrine-messenger": "8.0.*",
     "symfony/dotenv": "8.0.*",
     "symfony/event-dispatcher": "8.0.*",
