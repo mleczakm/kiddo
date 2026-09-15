@@ -1,0 +1,10 @@
+# user (identifier/roles/email) and request (id/method/uri/route/ip) context
+# are enabled by default already - see mleczakm/monolog-context-bundle.
+when@prod:
+    monolog_context:
+        geo_location:
+            enabled: true
+            # Populated by the "kiddo_geoip" Docker volume (see
+            # ansible/roles/app_deploy/tasks/main.yml), mounted at /app/var/geoip
+            # by the deploy - not baked into the image, and not present in dev/test.
+            database_path: '%kernel.project_dir%/var/geoip/GeoLite2-City.mmdb'

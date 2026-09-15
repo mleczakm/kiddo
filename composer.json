@@ -69,6 +69,7 @@
     "dragonmantank/cron-expression": "^3.6",
     "dunglas/doctrine-json-odm": "^1.5.0",
     "gedmo/doctrine-extensions": "^3.22.1",
+    "geoip2/geoip2": "^3.4",
     "giggsey/libphonenumber-for-php": "^9.0.39",
     "macpaw/symfony-health-check-bundle": "^2.0",
     "martin-georgiev/postgresql-for-doctrine": "^3.7.0",

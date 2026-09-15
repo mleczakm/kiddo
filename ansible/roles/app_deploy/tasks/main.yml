@@ -48,6 +48,76 @@
   when: initial_volume_inspect.rc != 0
   changed_when: true
 
+- name: Inspect geoip volume
+  ansible.builtin.command: "docker volume inspect {{ app.geoip_volume }}"
+  register: initial_geoip_volume_inspect
+  failed_when: false
+  changed_when: false
+  when: app.geoip_volume is defined
+
+- name: Create geoip volume
+  ansible.builtin.command: >-
+    docker volume create
+    --label pl.mleczki.kiddo.persistent=true
+    --label pl.mleczki.kiddo.purpose=geoip
+    {{ app.geoip_volume }}
+  when: app.geoip_volume is defined and initial_geoip_volume_inspect.rc != 0
+  changed_when: true
+
+- name: Create temporary MaxMind credentials file
+  ansible.builtin.copy:
+    content: |
+      MAXMIND_ACCOUNT_ID={{ maxmind_account_id }}
+      MAXMIND_LICENSE_KEY={{ maxmind_license_key }}
+    dest: "/tmp/{{ app.name }}-maxmind.env"
+    mode: '0600'
+  when:
+    - app.geoip_volume is defined
+    - (maxmind_account_id | default('')) | length > 0
+    - (maxmind_license_key | default('')) | length > 0
+  no_log: true
+
+# MaxMind's free GeoLite2 license key is capped at 30 downloads per 24h across
+# the whole account. Deploys can happen many times a day (every push to master
+# tags a release - see production-build-and-deploy.yml), so downloading on
+# every deploy would blow through that quota fast. Keeping the database in its
+# own persistent volume and only refreshing it here when it's missing or more
+# than 7 days old decouples the download rate from the deploy rate - roughly
+# one download a week, regardless of how many times the app deploys. MaxMind
+# ships new GeoLite2-City builds about weekly anyway, so refreshing more often
+# wouldn't get fresher data.
+- name: Refresh GeoLite2 City database if missing or stale
+  ansible.builtin.command: >-
+    docker run --rm
+    -v {{ app.geoip_volume }}:/data
+    --env-file /tmp/{{ app.name }}-maxmind.env
+    alpine:3.20
+    sh -c 'set -e;
+    if [ -f /data/GeoLite2-City.mmdb ] && [ -z "$(find /data/GeoLite2-City.mmdb -mtime +7)" ]; then
+      echo "GeoLite2-City.mmdb is fresh, skipping download"; exit 0;
+    fi;
+    apk add --no-cache curl >/dev/null;
+    curl -fsSL -u "$MAXMIND_ACCOUNT_ID:$MAXMIND_LICENSE_KEY"
+      "https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz"
+      -o /tmp/geolite2-city.tar.gz;
+    tar -xzf /tmp/geolite2-city.tar.gz -C /tmp;
+    mv /tmp/GeoLite2-City_*/GeoLite2-City.mmdb /data/GeoLite2-City.mmdb.new;
+    mv /data/GeoLite2-City.mmdb.new /data/GeoLite2-City.mmdb;
+    echo "Downloaded fresh GeoLite2-City.mmdb"'
+  register: geoip_refresh_result
+  changed_when: "'Downloaded fresh' in geoip_refresh_result.stdout"
+  when:
+    - app.geoip_volume is defined
+    - (maxmind_account_id | default('')) | length > 0
+    - (maxmind_license_key | default('')) | length > 0
+  no_log: true
+
+- name: Remove temporary MaxMind credentials file
+  ansible.builtin.file:
+    path: "/tmp/{{ app.name }}-maxmind.env"
+    state: absent
+  when: app.geoip_volume is defined
+
 - name: Read production environment
   ansible.builtin.slurp:
     src: "{{ env_file_path }}"
@@ -157,6 +227,7 @@
     -p [{{ app.ipv6 }}]:{{ app.port }}:9501
     --env-file /tmp/{{ app.name }}.env
     --mount type=volume,src={{ app.cache_volume }},dst=/var/cache/prod/pools/app
+    {{ '--mount type=volume,src=' ~ app.geoip_volume ~ ',dst=/app/var/geoip' if app.geoip_volume is defined else '' }}
     {{ app.image }}
   changed_when: true
 
