@@ -38,7 +38,13 @@ $config->ignoreErrorsOnPackages(
         'doctrine/doctrine-migrations-bundle',
         'dragonmantank/cron-expression',
         'dunglas/doctrine-json-odm',
+        // Only used internally by mleczakm/monolog-context-bundle's own src, not by
+        // kiddo's application code directly.
+        'geoip2/geoip2',
         'martin-georgiev/postgresql-for-doctrine',
+        // Registered as a bundle in config/bundles.php; its processors are wired
+        // by config/packages/monolog_context.yaml, not `use`-imported by kiddo.
+        'mleczakm/monolog-context-bundle',
         'mleczakm/swoole-bundle-scheduler',
         'mleczakm/twig-now',
         'mleczakm/zip-bomb-honeypot',
