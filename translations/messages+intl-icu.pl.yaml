@@ -1239,7 +1239,19 @@ admin:
 
 
 ROLE_USER: Użytkownik
+ROLE_HOST: Prowadzący
 ROLE_ADMIN: Administrator
+ROLE_SUPER_ADMIN: Administrator systemu
+ROLE_MANAGE_SCHEDULE: Zarządzanie grafikiem
+ROLE_MANAGE_BOOKINGS: Zarządzanie rezerwacjami
+ROLE_MANAGE_LESSONS: Zarządzanie zajęciami
+ROLE_MANAGE_PAYMENTS: Zarządzanie płatnościami
+ROLE_MANAGE_USERS: Zarządzanie użytkownikami
+ROLE_MANAGE_CONTENT: Zarządzanie treścią
+ROLE_MANAGE_PRICING: Zarządzanie cennikiem
+ROLE_SETTINGS: Ustawienia systemu
+ROLE_ALLOWED_TO_SWITCH: Przełączanie konta użytkownika
+ROLE_PREVIOUS_ADMIN: Powrót do konta administratora
 
 # Bare Booking::STATUS_* values, translated directly via {{ status|trans }}
 pending: Oczekująca

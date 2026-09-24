@@ -82,9 +82,11 @@
                             {{ include('admin/help/_context_button.html.twig', {slug: 'role-i-uprawnienia', label: 'Role i uprawnienia'}) }}
                         {% endif %}
                     </div>
-                    <p class="text-sm font-bold text-slate-800 mt-1">
-                        {{ user.roles|map(role => '<span class="px-2 py-0.5 bg-slate-100 rounded text-xs text-slate-600 font-semibold">' ~ role ~ '</span>')|join(' ')|raw }}
-                    </p>
+                    <div class="mt-1 flex flex-wrap gap-1.5">
+                        {% for role in user.roles %}
+                            <span class="rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ role|trans }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="col-span-1 md:col-span-2">
                     <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Notatka administracyjna</label>

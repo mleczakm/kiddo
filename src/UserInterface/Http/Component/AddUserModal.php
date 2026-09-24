@@ -38,15 +38,15 @@ final class AddUserModal extends AbstractController
      * @var array<string, string>
      */
     private const array ASSIGNABLE_ROLES = [
-        'ROLE_HOST' => 'Instruktor',
-        'ROLE_ADMIN' => 'Administrator',
-        'ROLE_MANAGE_SCHEDULE' => 'Zarządzanie grafikiem',
-        'ROLE_MANAGE_BOOKINGS' => 'Zarządzanie rezerwacjami',
-        'ROLE_MANAGE_LESSONS' => 'Zarządzanie zajęciami',
-        'ROLE_MANAGE_PAYMENTS' => 'Zarządzanie płatnościami',
-        'ROLE_MANAGE_USERS' => 'Zarządzanie użytkownikami',
-        'ROLE_SETTINGS' => 'Ustawienia',
-        'ROLE_SUPER_ADMIN' => 'Super Administrator',
+        'ROLE_HOST' => 'ROLE_HOST',
+        'ROLE_ADMIN' => 'ROLE_ADMIN',
+        'ROLE_MANAGE_SCHEDULE' => 'ROLE_MANAGE_SCHEDULE',
+        'ROLE_MANAGE_BOOKINGS' => 'ROLE_MANAGE_BOOKINGS',
+        'ROLE_MANAGE_LESSONS' => 'ROLE_MANAGE_LESSONS',
+        'ROLE_MANAGE_PAYMENTS' => 'ROLE_MANAGE_PAYMENTS',
+        'ROLE_MANAGE_USERS' => 'ROLE_MANAGE_USERS',
+        'ROLE_SETTINGS' => 'ROLE_SETTINGS',
+        'ROLE_SUPER_ADMIN' => 'ROLE_SUPER_ADMIN',
     ];
 
     #[LiveProp(writable: true)]

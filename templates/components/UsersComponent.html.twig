@@ -54,7 +54,7 @@
                                     {% endif %}
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ user.roles|join(', ') }}</span>
+                                    <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-slate-100 text-slate-600">{{ user.roles|map(role => role|trans)|join(', ') }}</span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700">{{ 'admin_users.status.active'|trans }}</span>
@@ -103,7 +103,7 @@
                             {% endif %}
                         </p>
                         <div class="flex flex-wrap gap-1.5 mt-2">
-                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">{{ user.roles|join(', ') }}</span>
+                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">{{ user.roles|map(role => role|trans)|join(', ') }}</span>
                             <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700">{{ 'admin_users.status.active'|trans }}</span>
                         </div>
                     </div>
