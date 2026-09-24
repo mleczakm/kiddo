@@ -12,7 +12,7 @@ CMD bin/console swoole:server:run
 ENV IPE_SWOOLE_WITHOUT_IOURING=1
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-    install-php-extensions apcu curl ds-^1 ffi intl pcntl pdo_pgsql sysvsem swoole-6.2.2 xsl zip
+    install-php-extensions apcu curl ds-^1 ffi intl pcntl pdo_pgsql sysvsem swoole-6.2.3 xsl zip
 
 COPY .docker/php/ini/zz-php.ini /usr/local/etc/php/conf.d/zz-php.ini
 

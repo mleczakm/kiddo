@@ -1078,7 +1078,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             limiter?: scalar|Param|null, // A service id implementing "Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface".
  *             max_attempts?: int|Param, // Default: 5
  *             interval?: scalar|Param|null, // Default: "1 minute"
- *             lock_factory?: scalar|Param|null, // The service ID of the lock factory used by the login rate limiter (or null to disable locking). // Default: null
+ *             lock_factory?: scalar|Param|null, // The service ID of the lock factory used by the login rate limiter ("auto" to use the default one when the Lock component is configured, or null to disable locking). // Default: "auto"
  *             cache_pool?: string|Param, // The cache pool to use for storing the limiter state // Default: "cache.rate_limiter"
  *             storage_service?: string|Param, // The service ID of a custom storage implementation, this precedes any configured "cache_pool" // Default: null
  *         },
@@ -1268,9 +1268,9 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             lifetime?: int|Param, // Default: 31536000
  *             path?: scalar|Param|null, // Default: "/"
  *             domain?: scalar|Param|null, // Default: null
- *             secure?: true|false|"auto"|Param, // Default: false
+ *             secure?: true|false|"auto"|Param, // Default: "auto"
  *             httponly?: bool|Param, // Default: true
- *             samesite?: null|"lax"|"strict"|"none"|Param, // Default: null
+ *             samesite?: null|"lax"|"strict"|"none"|Param, // Default: "lax"
  *             always_remember_me?: bool|Param, // Default: false
  *             remember_me_parameter?: scalar|Param|null, // Default: "_remember_me"
  *         },
@@ -1292,6 +1292,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * }
  * @psalm-type MonologConfig = array{
  *     use_microseconds?: scalar|Param|null, // Default: true
+ *     timezone?: string|Param, // The timezone used for the timestamp of every log record (e.g. "UTC" or "Europe/Paris"). Defaults to the PHP default timezone. // Default: null
  *     channels?: list<scalar|Param|null>,
  *     handlers?: array<string, array{ // Default: []
  *         type?: scalar|Param|null,
@@ -1303,6 +1304,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         interactive_only?: bool|Param, // Default: false
  *         app_name?: scalar|Param|null, // Default: null
  *         include_stacktraces?: bool|Param, // Default: false
+ *         base_path?: scalar|Param|null, // Default: null
  *         process_psr_3_messages?: array{
  *             enabled?: bool|Param|null, // Default: null
  *             date_format?: scalar|Param|null,
@@ -1313,7 +1315,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         use_locking?: bool|Param, // Default: false
  *         filename_format?: scalar|Param|null, // Default: "{filename}-{date}"
  *         date_format?: scalar|Param|null, // Default: "Y-m-d"
- *         ident?: scalar|Param|null, // Default: false
+ *         ident?: scalar|Param|null, // Default: "php"
  *         logopts?: scalar|Param|null, // Default: 1
  *         facility?: scalar|Param|null, // Default: "user"
  *         max_files?: scalar|Param|null, // Default: 0
@@ -1350,6 +1352,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         title?: scalar|Param|null, // Default: null
  *         host?: scalar|Param|null, // Default: null
  *         port?: scalar|Param|null, // Default: 514
+ *         rfc?: scalar|Param|null, // Default: 1
  *         config?: list<scalar|Param|null>,
  *         members?: list<scalar|Param|null>,
  *         connection_string?: scalar|Param|null,
@@ -1360,6 +1363,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         connection_timeout?: scalar|Param|null,
  *         persistent?: bool|Param,
  *         message_type?: scalar|Param|null, // Default: 0
+ *         expand_newlines?: bool|Param, // Default: false
  *         parse_mode?: scalar|Param|null, // Default: null
  *         disable_webpage_preview?: bool|Param|null, // Default: null
  *         disable_notification?: bool|Param|null, // Default: null
@@ -1406,7 +1410,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             database?: scalar|Param|null, // Default: 0
  *             key_name?: scalar|Param|null, // Default: "monolog_redis"
  *         },
- *         predis?: Param|string|array{
+ *         predis?: Param|string|array{ // Deprecated: The "predis" option is deprecated and ignored, use the "redis" option to configure the Predis client.
  *             id?: scalar|Param|null,
  *             host?: scalar|Param|null,
  *         },
@@ -1415,6 +1419,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         subject?: scalar|Param|null,
  *         content_type?: scalar|Param|null, // Default: null
  *         headers?: list<scalar|Param|null>,
+ *         parameters?: list<scalar|Param|null>,
  *         mailer?: scalar|Param|null, // Default: null
  *         email_prototype?: Param|string|array{
  *             id?: scalar|Param|null,
@@ -1505,6 +1510,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             worker_max_request?: scalar|Param|null, // Default: 0
  *             worker_max_request_grace?: scalar|Param|null, // Default: null
  *             worker_max_wait_time?: scalar|Param|null, // Default: null
+ *             dispatch_mode?: null|"round_robin"|"fixed"|"preemptive"|"ip"|"uid"|Param, // Default: null
  *             upload_tmp_dir?: scalar|Param|null, // Default: "/tmp"
  *             user?: scalar|Param|null,
  *             group?: scalar|Param|null,
@@ -1519,10 +1525,20 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         settings?: array{
  *             worker_count?: scalar|Param|null, // Default: null
  *         },
+ *         commands?: list<Param|string|list<scalar|Param|null>>,
  *     },
  *     platform?: array{
+ *         logging?: array{
+ *             worker_context?: bool|Param, // Adds worker, cid and command to the extra of every monolog record, so a line of a log every worker and every coroutine writes to says which of them wrote it. Off by default, because it changes what every log line looks like. // Default: false
+ *         },
  *         fiber_context?: array{
  *             enabled?: "auto"|"off"|"on"|Param, // Default: "auto"
+ *         },
+ *         xdebug?: array{ // EXPERIMENTAL. Opens step-debugging sessions from PHP, which is the only way to debug a swoole server: xdebug decides once per worker process, at fork time, so its own start_with_request and the XDEBUG_SESSION cookie it looks for can never see a request.
+ *             enabled?: bool|Param, // Registers the attach handlers. They cost one function_exists call where the extension is not loaded, and are guarded at runtime rather than at compile time on purpose - a container compiled without xdebug is reused by a process that has it, which is what switching the debugger on by recreating a container does. // Default: true
+ *             requests?: "off"|"trigger"|"always"|Param, // When an http request attaches its worker. trigger: only when the request carries XDEBUG_SESSION or XDEBUG_TRIGGER as a cookie or query parameter, which is what a browser debugging extension sets. // Default: "trigger"
+ *             workers?: bool|Param, // Attach every worker, http and task alike, as it starts. The only way to reach code that no request runs - message handlers, projections, long running commands, boot itself. Unconditional, so each worker pays a connection attempt. // Default: false
+ *             tasks?: bool|Param, // Attach a task worker when a task arrives. Reaches message handlers running over the task transport, and unlike workers costs nothing while the queue is empty. // Default: false
  *         },
  *         coroutines?: array{
  *             enabled?: bool|Param, // Default: false
@@ -1651,7 +1667,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         reset?: array{
  *             connections?: list<scalar|Param|null>,
  *             entity_managers?: list<scalar|Param|null>,
- *             mode?: \Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::SCHEMA|\Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::MIGRATE|Param, // Reset mode to use with ResetDatabase trait // Default: "schema"
+ *             mode?: \Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::SCHEMA|\Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::MIGRATE|"schema"|"migrate"|Param, // Reset mode to use with ResetDatabase trait // Default: "schema"
  *             migrations?: array{
  *                 configurations?: list<scalar|Param|null>,
  *             },
