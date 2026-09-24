@@ -24,7 +24,7 @@
         </thead>
         <tbody class="[&_tr:last-child]:border-0">
           {% for request in this.pendingRequests %}
-            <tr class="cursor-pointer border-b transition-colors hover:bg-amber-50/50" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ request.booking.id }}" role="button" tabindex="0">
+            <tr class="cursor-pointer border-b transition-colors hover:bg-amber-50/50" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ request.booking.id }}"{% if request.lesson %} data-live-lesson-id-param="{{ request.lesson.id }}"{% endif %} data-live-refund-request-id-param="{{ request.id }}" role="button" tabindex="0">
               <td class="p-4 align-middle whitespace-nowrap">{{ request.requestedAt|date('Y-m-d H:i') }}</td>
               <td class="p-4 align-middle">
                 <div class="font-medium">{{ request.booking.user.name }}</div>
@@ -46,7 +46,7 @@
     {# Mobile cards (below md) #}
     <div class="md:hidden space-y-3">
       {% for request in this.pendingRequests %}
-        <div class="cursor-pointer border border-slate-200 rounded-xl p-4 transition hover:border-amber-300 hover:bg-amber-50/50" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ request.booking.id }}" role="button" tabindex="0">
+        <div class="cursor-pointer border border-slate-200 rounded-xl p-4 transition hover:border-amber-300 hover:bg-amber-50/50" data-action="click->live#emit" data-live-event-param="openReservationDetails" data-live-booking-id-param="{{ request.booking.id }}"{% if request.lesson %} data-live-lesson-id-param="{{ request.lesson.id }}"{% endif %} data-live-refund-request-id-param="{{ request.id }}" role="button" tabindex="0">
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
               <div class="font-medium text-slate-800 truncate">{{ request.booking.user.name }}</div>

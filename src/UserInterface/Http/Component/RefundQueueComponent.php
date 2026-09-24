@@ -8,6 +8,9 @@ use App\Application\Repository\RefundRequestRepositoryInterface;
 use App\Entity\RefundRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 /**
@@ -20,6 +23,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 final class RefundQueueComponent extends AbstractController
 {
     use DefaultActionTrait;
+    use ComponentToolsTrait;
 
     public function __construct(
         private readonly RefundRequestRepositoryInterface $refundRequestRepository,
@@ -37,4 +41,9 @@ final class RefundQueueComponent extends AbstractController
     {
         return $this->refundRequestRepository->countPending();
     }
+
+    /** Re-renders the queue after a refund request is decided in its details modal. */
+    #[LiveAction]
+    #[LiveListener('refund:updated')]
+    public function refresh(): void {}
 }

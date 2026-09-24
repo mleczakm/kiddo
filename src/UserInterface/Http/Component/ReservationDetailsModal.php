@@ -13,6 +13,7 @@ use App\Entity\Booking;
 use App\Entity\DTO\RescheduledLesson;
 use App\Entity\Lesson;
 use App\Entity\Payment;
+use App\Entity\RefundRequest;
 use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\ActivityLogRepository;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
@@ -34,12 +35,14 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent]
 final class ReservationDetailsModal extends AbstractController
 {
     use DefaultActionTrait;
+    use ComponentToolsTrait;
 
     #[LiveProp(writable: true)]
     public bool $modalOpened = false;
@@ -49,6 +52,9 @@ final class ReservationDetailsModal extends AbstractController
 
     #[LiveProp(writable: true)]
     public ?string $lessonId = null;
+
+    #[LiveProp(writable: true)]
+    public ?string $refundRequestId = null;
 
     #[LiveProp(writable: true)]
     public string $note = '';
@@ -89,7 +95,11 @@ final class ReservationDetailsModal extends AbstractController
 
     #[LiveAction]
     #[LiveListener('openReservationDetails')]
-    public function open(#[LiveArg] string $bookingId, #[LiveArg] ?string $lessonId = null): void
+    public function open(
+        #[LiveArg] string $bookingId,
+        #[LiveArg] ?string $lessonId = null,
+        #[LiveArg] ?string $refundRequestId = null,
+    ): void
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->findBooking($bookingId);
@@ -99,6 +109,7 @@ final class ReservationDetailsModal extends AbstractController
 
         $this->bookingId = $bookingId;
         $this->lessonId = $lessonId ?? $this->firstRelevantLessonId($booking);
+        $this->refundRequestId = $refundRequestId;
         $this->note = $booking->getNotes() ?? '';
         $this->paymentNote = '';
         $this->modalOpened = true;
@@ -109,6 +120,7 @@ final class ReservationDetailsModal extends AbstractController
     public function close(): void
     {
         $this->modalOpened = false;
+        $this->refundRequestId = null;
         $this->resetAction();
     }
 
@@ -182,7 +194,8 @@ final class ReservationDetailsModal extends AbstractController
     public function changePaymentStatus(#[LiveArg] string $transition): void
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
-        $payment = $this->getBooking()?->getPayment();
+        $booking = $this->getBooking();
+        $payment = $booking?->getPayment();
         $actor = $this->getUser();
         if (!$payment instanceof Payment || !$actor instanceof User) {
             $this->errorMessage = 'Nie udało się odnaleźć płatności.';
@@ -216,8 +229,16 @@ final class ReservationDetailsModal extends AbstractController
                 return;
             }
 
-            $refundRequest = $this->refundRequestRepository->findPendingForPayment($payment);
-            if ($refundRequest === null) {
+            $refundRequest = $this->refundRequestId !== null
+                ? $this->refundRequestRepository->find(Ulid::fromString($this->refundRequestId))
+                : $this->refundRequestRepository->findPendingForPayment($payment);
+            if (
+                !$refundRequest instanceof RefundRequest
+                || !$refundRequest->isPending()
+                || !$booking instanceof Booking
+                || !$refundRequest->getBooking()->getId()->equals($booking->getId())
+                || !$refundRequest->getPayment()->getId()->equals($payment->getId())
+            ) {
                 throw new \RuntimeException('Nie znaleziono oczekującego wniosku o zwrot dla tej płatności.');
             }
 
@@ -240,6 +261,10 @@ final class ReservationDetailsModal extends AbstractController
         $this->errorMessage = null;
         $this->paymentNote = '';
         $this->approvedRefundAmount = '';
+        $this->refundRequestId = null;
+        if (in_array($transition, [Payment::TRANSITION_REFUND, Payment::TRANSITION_DECLINE_REFUND], true)) {
+            $this->emit('refund:updated');
+        }
     }
 
     public function canChangePaymentStatus(string $transition): bool
