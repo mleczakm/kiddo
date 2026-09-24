@@ -44,4 +44,21 @@ final class LegalDocumentActionTest extends WebTestCase
         static::assertCount(1, $crawler->filter('footer a[href="/regulamin-zajec"]'));
         static::assertCount(1, $crawler->filter('footer a[href="/polityka-prywatnosci"]'));
     }
+
+    public function testFooterCreditsDeveloperAndBlikPaymentService(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/');
+
+        static::assertResponseIsSuccessful();
+        static::assertCount(1, $crawler->filter('footer a[href="https://mleczakm.github.io/platnosci-blik/"]'));
+        static::assertSame(
+            'Michał Mleczko',
+            $crawler->filter('footer a[href="https://mleczakm.github.io/platnosci-blik/"]')->text(),
+        );
+        static::assertSelectorTextContains(
+            'footer',
+            'Stronę wykonał Michał Mleczko — szybkie płatności BLIK bez umowy z operatorem i bez abonamentu.',
+        );
+    }
 }
