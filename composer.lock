@@ -6496,16 +6496,16 @@
         },
         {
             "name": "swoole-bundle/z-engine",
-            "version": "8.5.1",
+            "version": "dev-fix/get-raw-class-alias-ptr",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mleczakm/z-engine.git",
-                "reference": "5b4d883085686733c0a010301ac6dd98856e0171"
+                "reference": "707487f2f9b9611d3099cc35e8d74e5c8ea05a88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mleczakm/z-engine/zipball/5b4d883085686733c0a010301ac6dd98856e0171",
-                "reference": "5b4d883085686733c0a010301ac6dd98856e0171",
+                "url": "https://api.github.com/repos/mleczakm/z-engine/zipball/707487f2f9b9611d3099cc35e8d74e5c8ea05a88",
+                "reference": "707487f2f9b9611d3099cc35e8d74e5c8ea05a88",
                 "shasum": ""
             },
             "require": {
@@ -6536,7 +6536,7 @@
                 }
             ],
             "description": "Library that provides direct access to native PHP structures",
-            "time": "2025-11-30T11:14:54+00:00"
+            "time": "2026-08-08T13:59:31+00:00"
         },
         {
             "name": "symfony/asset",
@@ -18916,6 +18916,12 @@
             "version": "dev-fix/nonshared-service-pool-leak",
             "alias": "v0.32.0",
             "alias_normalized": "0.32.0.0"
+        },
+        {
+            "package": "swoole-bundle/z-engine",
+            "version": "dev-fix/get-raw-class-alias-ptr",
+            "alias": "8.5.1",
+            "alias_normalized": "8.5.1.0"
         }
     ],
     "minimum-stability": "stable",
@@ -18923,7 +18929,8 @@
         "mleczakm/monolog-context-bundle": 20,
         "novaway/feature-flag-bundle": 20,
         "roave/security-advisories": 20,
-        "swoole-bundle/swoole-bundle": 20
+        "swoole-bundle/swoole-bundle": 20,
+        "swoole-bundle/z-engine": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
