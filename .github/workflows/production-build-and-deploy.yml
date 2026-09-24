@@ -60,7 +60,7 @@ jobs:
         with:
           repository: mleczakm/infrastructure-mikrus
           path: infrastructure-mikrus
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5

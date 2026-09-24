@@ -89,7 +89,12 @@ final class BrevoNewsletterServiceTest extends TestCase
 
     public function testAddOrUpdateContactPostsExpectedPayload(): void
     {
-        $captured = [];
+        $captured = [
+            'method' => '',
+            'url' => '',
+            'headers' => [],
+            'body' => null,
+        ];
         $httpClient = new MockHttpClient(static function (string $method, string $url, array $options) use (
             &$captured,
         ): MockResponse {
@@ -110,8 +115,9 @@ final class BrevoNewsletterServiceTest extends TestCase
 
         static::assertSame('POST', $captured['method']);
         static::assertSame('https://api.brevo.com/v3/contacts', $captured['url']);
-        static::assertContains('api-key: ' . self::API_KEY, $captured['headers']);
-        static::assertContains('Content-Type: application/json', $captured['headers']);
+        $headers = is_iterable($captured['headers']) ? $captured['headers'] : [];
+        static::assertContains('api-key: ' . self::API_KEY, $headers);
+        static::assertContains('Content-Type: application/json', $headers);
 
         /** @var array<string, mixed> $payload */
         $payload = json_decode((string) $captured['body'], true, flags: JSON_THROW_ON_ERROR);
@@ -128,7 +134,9 @@ final class BrevoNewsletterServiceTest extends TestCase
 
     public function testAddOrUpdateContactWithoutName(): void
     {
-        $captured = [];
+        $captured = [
+            'body' => null,
+        ];
         $httpClient = new MockHttpClient(static function (string $_method, string $_url, array $options) use (
             &$captured,
         ): MockResponse {
@@ -163,7 +171,11 @@ final class BrevoNewsletterServiceTest extends TestCase
 
     public function testRemoveContactFromList(): void
     {
-        $captured = [];
+        $captured = [
+            'method' => '',
+            'url' => '',
+            'body' => null,
+        ];
         $httpClient = new MockHttpClient(static function (string $method, string $url, array $options) use (
             &$captured,
         ): MockResponse {
@@ -203,7 +215,11 @@ final class BrevoNewsletterServiceTest extends TestCase
 
     public function testSendDoubleOptInConfirmationPostsExpectedPayload(): void
     {
-        $captured = [];
+        $captured = [
+            'method' => '',
+            'url' => '',
+            'body' => null,
+        ];
         $httpClient = new MockHttpClient(static function (string $method, string $url, array $options) use (
             &$captured,
         ): MockResponse {

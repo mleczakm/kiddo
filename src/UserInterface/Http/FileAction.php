@@ -123,7 +123,7 @@ final class FileAction extends AbstractController
     private function sanitizeFilename(string $filename): string
     {
         $filename = trim(basename($filename));
-        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
-        return preg_replace('/_+/', '_', $filename);
+        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename) ?? '';
+        return preg_replace('/_+/', '_', $filename) ?? '';
     }
 }

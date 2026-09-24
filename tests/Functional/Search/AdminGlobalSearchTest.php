@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Search;
 
 use App\Application\Search\GlobalSearchQuery;
 use App\Application\Search\SearchReference;
+use App\Application\Search\SearchResult;
 use App\Application\Search\SearchType;
 use App\Entity\AgeRange;
 use App\Entity\Booking;
@@ -64,6 +65,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         static::assertSame((string) $client->getId(), $references[0]->id);
         static::assertTrue(static::contains($references, SearchType::Lesson, $lesson->getId()->toRfc4122()));
 
+        /** @var list<SearchResult> $results */
         $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
         $resultTypes = array_map(static fn($result): SearchType => $result->reference->type, $results);
         static::assertContains(SearchType::Lesson, $resultTypes);
