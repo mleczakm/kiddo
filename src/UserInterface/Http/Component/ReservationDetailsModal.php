@@ -96,11 +96,13 @@ final class ReservationDetailsModal extends AbstractController
     #[LiveAction]
     #[LiveListener('openReservationDetails')]
     public function open(
-        #[LiveArg] string $bookingId,
-        #[LiveArg] ?string $lessonId = null,
-        #[LiveArg] ?string $refundRequestId = null,
-    ): void
-    {
+        #[LiveArg]
+        string $bookingId,
+        #[LiveArg]
+        ?string $lessonId = null,
+        #[LiveArg]
+        ?string $refundRequestId = null,
+    ): void {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_BOOKINGS');
         $booking = $this->findBooking($bookingId);
         if (!$booking instanceof Booking) {

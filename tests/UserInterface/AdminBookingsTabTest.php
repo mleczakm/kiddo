@@ -339,7 +339,7 @@ class AdminBookingsTabTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         // Check if lesson selection shows available lessons
-        $this->assertSelectorExists('input[type="checkbox"]', 'Lesson selection checkboxes should be present');
-        $this->assertSelectorTextContains('label', 'Available Workshop');
+        $this->assertSelectorExists('button[aria-pressed]', 'Lesson selection toggle buttons should be present');
+        $this->assertSelectorTextContains('button[aria-pressed]', 'Available Workshop');
     }
 }
