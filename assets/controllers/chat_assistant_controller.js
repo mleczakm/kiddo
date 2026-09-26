@@ -1,7 +1,8 @@
 import { Controller } from '@hotwired/stimulus';
+import { ElevenLabsTextChatClient } from '@mleczakm/elevenlabs-text-chat';
 
 /**
- * On-page ElevenLabs ConvAI chat (eduacademy-style custom WebSocket client).
+ * On-page ElevenLabs ConvAI chat (transport: @mleczakm/elevenlabs-text-chat).
  */
 export default class extends Controller {
     static values = {
@@ -27,7 +28,16 @@ export default class extends Controller {
     ];
 
     connect() {
-        this.ws = null;
+        this.client = new ElevenLabsTextChatClient({
+            sessionProvider: async () => null, // sessions come from prefetchSession()
+            onStatusChange: (status) => {
+                // prefetchSession() reports its own "connecting"; the socket only reports the outcome.
+                if (status !== 'connecting') {
+                    this.updateStatus(status);
+                }
+            },
+            onEvent: (event) => this.onClientEvent(event),
+        });
         this.messages = [];
         this.currentAgentMessage = '';
         this.chatToken = null;
@@ -35,7 +45,6 @@ export default class extends Controller {
         this.signedUrl = null;
         this.configured = false;
         this.isGuest = false;
-        this.initiated = false;
         this.expectingAgentReply = false;
         this.sessionPromise = null;
         this.consentRequired = false;
@@ -178,69 +187,22 @@ export default class extends Controller {
         if (!this.configured || !this.signedUrl) {
             return false;
         }
-        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        if (this.client.connected) {
             return true;
         }
-        await this.connectSocket(this.signedUrl);
-        return Boolean(this.ws && this.ws.readyState === WebSocket.OPEN);
-    }
-
-    connectSocket(url) {
-        return new Promise((resolve, reject) => {
-            this.closeSocket();
-            this.ws = new WebSocket(url);
-            this.ws.onopen = () => {
-                this.initiated = false;
-                this.sendInit();
-                // Identity / history only after the first user turn — avoids an automatic greeting.
-                this.updateStatus('connected');
-                resolve();
-            };
-            this.ws.onmessage = (event) => this.onSocketMessage(event);
-            this.ws.onerror = (error) => {
-                this.updateStatus('error');
-                reject(error);
-            };
-            this.ws.onclose = () => {
-                this.updateStatus('disconnected');
-                this.ws = null;
-                this.initiated = false;
-            };
-        });
-    }
-
-    sendInit() {
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN || this.initiated) {
-            return;
-        }
-        this.ws.send(
-            JSON.stringify({
-                type: 'conversation_initiation_client_data',
-                conversation_config_override: {
-                    conversation: {
-                        text_only: true,
-                    },
-                },
-                dynamic_variables: this.dynamicVariables,
-            }),
-        );
-        this.initiated = true;
+        return this.client.connect({ signed_url: this.signedUrl, dynamic_variables: this.dynamicVariables });
     }
 
     sendIdentityContext() {
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+        if (!this.client.connected) {
             return;
         }
         const isGuest = this.isGuest || this.dynamicVariables.kiddo_is_guest === 'true';
         if (isGuest) {
-            this.ws.send(
-                JSON.stringify({
-                    type: 'contextual_update',
-                    text:
-                        'Gość (niezalogowany) w Kiddo.\n' +
-                        'Możesz od razu pokazać ofertę: user.list_upcoming_lessons.\n' +
-                        'Nie wywołuj user.me / rezerwacji / admin.* — poproś o zalogowanie (/login) i odświeżenie czatu.',
-                }),
+            this.client.sendContext(
+                'Gość (niezalogowany) w Kiddo.\n' +
+                    'Możesz od razu pokazać ofertę: user.list_upcoming_lessons.\n' +
+                    'Nie wywołuj user.me / rezerwacji / admin.* — poproś o zalogowanie (/login) i odświeżenie czatu.',
             );
             return;
         }
@@ -253,121 +215,81 @@ export default class extends Controller {
             return;
         }
         if (isAdmin) {
-            this.ws.send(
-                JSON.stringify({
-                    type: 'contextual_update',
-                    text:
-                        'Zalogowany administrator w Kiddo:\n' +
-                        `- imię: ${name || '(brak)'}\n` +
-                        `- e-mail: ${email || '(brak)'}\n` +
-                        `- user_id: ${userId || '(brak)'}\n` +
-                        'Masz pełny dostęp do narzędzi admin.* — używaj ich bezpośrednio, nie odmawiaj i nie proś o dodatkowe uprawnienia.\n' +
-                        'LISTA dostępnych zajęć (katalog publiczny) → user.list_upcoming_lessons.\n' +
-                        'Szczegóły terminu → user.get_lesson. Dzisiejszy grafik (admin) → admin.today_schedule. Zajęcia w tygodniu (admin) → admin.list_lessons.\n' +
-                        'Rezerwacje → admin.list_bookings. Oczekujące/niepotwierdzone płatności → admin.list_payments. Nieprzypisane przelewy → admin.list_unmatched_transfers.\n' +
-                        'Użytkownicy → admin.search_users / admin.get_user.\n' +
-                        'Nowe wystąpienie w grafiku → admin.clone_template_lesson (nie do listowania oferty).\n' +
-                        'Mutacje admin (toggle_lesson, update_lesson_capacity, create_booking, mark_booking_paid, cancel_lesson, refund_lesson, reschedule_lesson, assign_transfer, reject_transfer, notify_user) wymagają confirm=true po wyraźnej zgodzie użytkownika — ale wywołania odczytu (list/get) wykonuj od razu, bez pytania o zgodę.\n' +
-                        'admin.create_booking: ZAWSZE zapytaj, jak rezerwacja jest opłacana i podaj payment= "paid" (już zapłacone), "send_code" (zapłaci przelewem/BLIK — przekaż zwróconą instrukcję payment.instruction_pl) albo "on_site" (zapłaci na miejscu). Podaj też ticket_type; price_override tylko dla nietypowej kwoty.\n' +
-                        'Listy uczestników / wyszukiwanie zajęć po nazwie → staff.find_lessons oraz staff.lesson_participants (np. query="bobas", when="next").',
-                }),
+            this.client.sendContext(
+                'Zalogowany administrator w Kiddo:\n' +
+                    `- imię: ${name || '(brak)'}\n` +
+                    `- e-mail: ${email || '(brak)'}\n` +
+                    `- user_id: ${userId || '(brak)'}\n` +
+                    'Masz pełny dostęp do narzędzi admin.* — używaj ich bezpośrednio, nie odmawiaj i nie proś o dodatkowe uprawnienia.\n' +
+                    'LISTA dostępnych zajęć (katalog publiczny) → user.list_upcoming_lessons.\n' +
+                    'Szczegóły terminu → user.get_lesson. Dzisiejszy grafik (admin) → admin.today_schedule. Zajęcia w tygodniu (admin) → admin.list_lessons.\n' +
+                    'Rezerwacje → admin.list_bookings. Oczekujące/niepotwierdzone płatności → admin.list_payments. Nieprzypisane przelewy → admin.list_unmatched_transfers.\n' +
+                    'Użytkownicy → admin.search_users / admin.get_user.\n' +
+                    'Nowe wystąpienie w grafiku → admin.clone_template_lesson (nie do listowania oferty).\n' +
+                    'Mutacje admin (toggle_lesson, update_lesson_capacity, create_booking, mark_booking_paid, cancel_lesson, refund_lesson, reschedule_lesson, assign_transfer, reject_transfer, notify_user) wymagają confirm=true po wyraźnej zgodzie użytkownika — ale wywołania odczytu (list/get) wykonuj od razu, bez pytania o zgodę.\n' +
+                    'admin.create_booking: ZAWSZE zapytaj, jak rezerwacja jest opłacana i podaj payment= "paid" (już zapłacone), "send_code" (zapłaci przelewem/BLIK — przekaż zwróconą instrukcję payment.instruction_pl) albo "on_site" (zapłaci na miejscu). Podaj też ticket_type; price_override tylko dla nietypowej kwoty.\n' +
+                    'Listy uczestników / wyszukiwanie zajęć po nazwie → staff.find_lessons oraz staff.lesson_participants (np. query="bobas", when="next").',
             );
             return;
         }
         if (isHost) {
-            this.ws.send(
-                JSON.stringify({
-                    type: 'contextual_update',
-                    text:
-                        'Zalogowany prowadzący zajęcia (instruktor) w Kiddo:\n' +
-                        `- imię: ${name || '(brak)'}\n` +
-                        `- e-mail: ${email || '(brak)'}\n` +
-                        `- user_id: ${userId || '(brak)'}\n` +
-                        'Masz dostęp do narzędzi staff.* — używaj ich od razu, nie odmawiaj i nie proś o dodatkowe uprawnienia.\n' +
-                        'Wyszukanie zajęć po nazwie (rozmyte, "bobas" → "Senso bobasy") → staff.find_lessons.\n' +
-                        'Twoje najbliższe zajęcia → staff.find_lessons ze scope="mine", when="next" (lub when="upcoming").\n' +
-                        'Lista uczestników zajęć → staff.lesson_participants: podaj lesson_id ze staff.find_lessons albo od razu query + when="next" ' +
-                        '(np. „ile osób na następnych bobasach” → query="bobas", when="next").\n' +
-                        'Katalog oferty i szczegóły terminu (tylko odczyt) → user.list_upcoming_lessons / user.get_lesson.\n' +
-                        'Możesz sprawdzić dowolne zajęcia po nazwie. Operacje admin.* (rezerwacje, płatności, przelewy, powiadomienia) wymagają administratora — jeśli o nie poprosi, wyjaśnij, że to poza Twoimi uprawnieniami.',
-                }),
-            );
-            return;
-        }
-        this.ws.send(
-            JSON.stringify({
-                type: 'contextual_update',
-                text:
-                    'Zalogowany rodzic w Kiddo:\n' +
+            this.client.sendContext(
+                'Zalogowany prowadzący zajęcia (instruktor) w Kiddo:\n' +
                     `- imię: ${name || '(brak)'}\n` +
                     `- e-mail: ${email || '(brak)'}\n` +
                     `- user_id: ${userId || '(brak)'}\n` +
-                    'NIE pytaj o imię/e-mail/telefon — są w koncie. Przed rezerwacją: user.me + user.list_children.\n' +
-                    'Rezerwacja: user.create_booking (confirm=true) → przekaż instrukcję BLIK z odpowiedzi toola (telefon, kwota, kod, ~24h).\n' +
-                    'Nie używaj tooli admin.* — wymagają ROLE_ADMIN.',
-            }),
+                    'Masz dostęp do narzędzi staff.* — używaj ich od razu, nie odmawiaj i nie proś o dodatkowe uprawnienia.\n' +
+                    'Wyszukanie zajęć po nazwie (rozmyte, "bobas" → "Senso bobasy") → staff.find_lessons.\n' +
+                    'Twoje najbliższe zajęcia → staff.find_lessons ze scope="mine", when="next" (lub when="upcoming").\n' +
+                    'Lista uczestników zajęć → staff.lesson_participants: podaj lesson_id ze staff.find_lessons albo od razu query + when="next" ' +
+                    '(np. „ile osób na następnych bobasach” → query="bobas", when="next").\n' +
+                    'Katalog oferty i szczegóły terminu (tylko odczyt) → user.list_upcoming_lessons / user.get_lesson.\n' +
+                    'Możesz sprawdzić dowolne zajęcia po nazwie. Operacje admin.* (rezerwacje, płatności, przelewy, powiadomienia) wymagają administratora — jeśli o nie poprosi, wyjaśnij, że to poza Twoimi uprawnieniami.',
+            );
+            return;
+        }
+        this.client.sendContext(
+            'Zalogowany rodzic w Kiddo:\n' +
+                `- imię: ${name || '(brak)'}\n` +
+                `- e-mail: ${email || '(brak)'}\n` +
+                `- user_id: ${userId || '(brak)'}\n` +
+                'NIE pytaj o imię/e-mail/telefon — są w koncie. Przed rezerwacją: user.me + user.list_children.\n' +
+                'Rezerwacja: user.create_booking (confirm=true) → przekaż instrukcję BLIK z odpowiedzi toola (telefon, kwota, kod, ~24h).\n' +
+                'Nie używaj tooli admin.* — wymagają ROLE_ADMIN.',
         );
     }
 
     sendContextualUpdate() {
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN || this.messages.length === 0) {
+        if (!this.client.connected || this.messages.length === 0) {
             return;
         }
         const contextText = this.messages
             .slice(-12)
             .map((m) => (m.role === 'user' ? 'User: ' : 'Assistant: ') + m.text)
             .join('\n');
-        this.ws.send(
-            JSON.stringify({
-                type: 'contextual_update',
-                text: 'Previous conversation context:\n' + contextText,
-            }),
-        );
+        this.client.sendContext('Previous conversation context:\n' + contextText);
     }
 
-    onSocketMessage(event) {
-        let data;
-        try {
-            data = JSON.parse(event.data);
-        } catch (e) {
-            console.error('Failed to parse chat message', e);
-            return;
-        }
-
+    onClientEvent(event) {
         // Keep suggestion chips until the user has actually sent something.
         if (!this.expectingAgentReply) {
             return;
         }
 
-        if (data.type === 'agent_response') {
-            const content = data.agent_response_event?.text || data.content || data.text || data.message;
-            if (content) {
-                this.pushAgent(content);
-            }
-            return;
-        }
-
-        if (data.type === 'agent_chat_response_part') {
-            const part = data.text_response_part;
-            if (!part) {
-                return;
-            }
-            if (part.type === 'start') {
+        if (event.type === 'response') {
+            this.pushAgent(event.text);
+        } else if (event.type === 'response_start') {
+            this.currentAgentMessage = '';
+        } else if (event.type === 'response_delta') {
+            this.currentAgentMessage += event.text;
+            this.renderStreaming();
+        } else if (event.type === 'response_complete') {
+            if (this.currentAgentMessage) {
+                this.pushAgent(this.currentAgentMessage);
                 this.currentAgentMessage = '';
-            } else if (part.type === 'delta' && part.text) {
-                this.currentAgentMessage += part.text;
-                this.renderStreaming();
-            } else if (part.type === 'stop') {
-                if (this.currentAgentMessage) {
-                    this.pushAgent(this.currentAgentMessage);
-                    this.currentAgentMessage = '';
-                }
             }
-            return;
-        }
-
-        if (data.type === 'error') {
-            console.error('ElevenLabs error', data);
+        } else if (event.type === 'agent_error') {
+            console.error('ElevenLabs error', event.error);
             this.pushAgent('Wystąpił błąd asystenta.');
         }
     }
@@ -407,16 +329,10 @@ export default class extends Controller {
 
         this.pushUser(text);
         this.inputTarget.value = '';
-        this.sendInit();
         this.sendIdentityContext();
         this.sendContextualUpdate();
         this.expectingAgentReply = true;
-        this.ws.send(
-            JSON.stringify({
-                type: 'user_message',
-                text,
-            }),
-        );
+        this.client.send(text);
     }
 
     acceptConsent() {
@@ -457,11 +373,9 @@ export default class extends Controller {
     }
 
     closeSocket() {
-        if (this.ws) {
-            this.ws.close();
-            this.ws = null;
+        if (this.client.ws) {
+            this.client.close();
         }
-        this.initiated = false;
     }
 
     pushUser(text) {
