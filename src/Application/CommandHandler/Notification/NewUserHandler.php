@@ -83,6 +83,10 @@ readonly class NewUserHandler
         );
 
         foreach ($admins as $admin) {
+            if ($admin->hasRole('ROLE_SUPER_ADMIN')) {
+                continue;
+            }
+
             $this->notificationSender->send($admin->getEmail(), $subject, $content);
         }
 

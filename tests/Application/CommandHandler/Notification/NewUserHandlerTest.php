@@ -9,6 +9,7 @@ use App\Application\CommandHandler\Notification\NewUserHandler;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\NotificationAssertionsTrait;
@@ -70,6 +71,38 @@ class NewUserHandlerTest extends KernelTestCase
 
         $notifications = $em->getRepository(Notification::class)->findAll();
         static::assertCount(3, $notifications);
+    }
+
+    public function testDoesNotEmailSuperAdmins(): void
+    {
+        // Arrange
+        $user = UserAssembler::new()->withEmail('user@example.com')->withRoles('ROLE_USER')->assemble();
+        $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $superAdmin = UserAssembler::new()
+            ->withEmail('super@example.com')
+            ->withRoles('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')
+            ->assemble();
+
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($user);
+        $em->persist($admin);
+        $em->persist($superAdmin);
+        $em->flush();
+
+        /** @var NewUserHandler $handler */
+        $handler = self::getContainer()->get(NewUserHandler::class);
+
+        // Act
+        $handler(new NewUser($user));
+
+        // Assert
+        $recipients = array_map(
+            static fn(TestEmail $email) => $email->getTo()[0]->getAddress(),
+            $this->mailer()->sentEmails()->all(),
+        );
+        static::assertContains('admin@example.com', $recipients);
+        static::assertNotContains('super@example.com', $recipients);
     }
 
     public function testDoesNotSendEmailsIfUserAlreadyConfirmed(): void
