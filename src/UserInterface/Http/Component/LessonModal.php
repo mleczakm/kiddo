@@ -379,7 +379,7 @@ class LessonModal extends AbstractController
                 $cart->id,
                 (string) $this->lesson->getId(),
                 $selectedTicketType,
-                $this->selectedChildId,
+                $this->normalizedChildId(),
                 $userId,
             );
         } catch (DuplicateCartItemException) {
@@ -591,7 +591,7 @@ class LessonModal extends AbstractController
                     userId: $userId,
                     lessonId: (string) $lesson->getId(),
                     ticketType: $selectedTicketType,
-                    childId: $this->selectedChildId,
+                    childId: $this->normalizedChildId(),
                     paymentCode: $paymentCode,
                     expectedQuoteHash: $this->expectedQuoteHash,
                     legalAcceptanceConfirmed: $this->termsAccepted,
@@ -678,6 +678,11 @@ class LessonModal extends AbstractController
         $user = $this->getUser();
 
         return $user instanceof User && $user->getPhone() === null;
+    }
+
+    private function normalizedChildId(): ?string
+    {
+        return $this->selectedChildId === '' ? null : $this->selectedChildId;
     }
 
     private function ensurePhoneOnAccount(User $user): bool

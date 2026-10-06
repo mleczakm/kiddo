@@ -50,7 +50,7 @@ final readonly class AddCartItem
         $ticketOption = $lesson->getMatchingTicketOption($ticketType);
 
         $participant = null;
-        if ($participantId !== null) {
+        if ($participantId !== null && $participantId !== '') {
             $participant = $this->childRepository->find(Ulid::fromString($participantId));
             if ($participant === null || $participant->getOwner()->getId() !== $requestingUserId) {
                 throw new \InvalidArgumentException(sprintf(

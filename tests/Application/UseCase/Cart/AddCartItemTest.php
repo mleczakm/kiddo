@@ -46,6 +46,31 @@ final class AddCartItemTest extends KernelTestCase
         static::assertNotNull($item->pricingQuoteHash);
     }
 
+    public function testAnEmptyParticipantIdIsTreatedAsNoParticipant(): void
+    {
+        self::bootKernel();
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        /** @var AddCartItem $useCase */
+        $useCase = self::getContainer()->get(AddCartItem::class);
+
+        $user = UserAssembler::new()->assemble();
+        $lesson = LessonAssembler::new()->assemble();
+        $em->persist($user);
+        $em->persist($lesson);
+        $em->flush();
+        $userId = $user->getId();
+        static::assertNotNull($userId);
+
+        $cart = new Cart(id: new Ulid(), customerId: $userId, currency: 'PLN');
+        $em->persist($cart);
+        $em->flush();
+
+        $item = $useCase($cart->id, (string) $lesson->getId(), TicketType::ONE_TIME->value, '', $userId);
+
+        static::assertNull($item->participantId);
+    }
+
     public function testAddingTheSameSelectionTwiceIsRejectedExplicitly(): void
     {
         self::bootKernel();

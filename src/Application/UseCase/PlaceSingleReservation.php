@@ -83,7 +83,7 @@ final readonly class PlaceSingleReservation
         }
 
         $child = null;
-        if ($command->childId !== null) {
+        if ($command->childId !== null && $command->childId !== '') {
             $candidate = $this->childRepository->find(Ulid::fromString($command->childId));
             if ($candidate !== null && $candidate->getOwner()->getId() === $user->getId()) {
                 $child = $candidate;
