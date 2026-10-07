@@ -3,7 +3,6 @@ import PostalMime from "postal-mime";
 const encoder = new TextEncoder();
 const maxRawSize = 1024 * 1024;
 const maxQueuePayloadSize = 96 * 1024;
-const mailIdHeader = "X-Kiddo-Bank-Mail-ID";
 
 function normalizedAddress(value) {
   return String(value || "").trim().toLowerCase();
@@ -60,12 +59,16 @@ export async function acceptEmail(message, env) {
     return;
   }
 
-  // Forwarding makes Cloudflare apply its inbound SPF/DKIM checks. Only queue
-  // after that authentication gate succeeds. The shared ID deduplicates a
-  // Gmail poll that happens before the API queue is consumed.
-  const headers = new Headers({ [mailIdHeader]: id });
-  await message.forward(env.BANK_MAIL_FORWARD_TO, headers);
-  await env.BANK_MAIL_QUEUE.send(payload);
+  // No copy is kept in a mailbox: the queue is the only store. Cloudflare has
+  // already required SPF or DKIM to pass for inbound mail, and the queue retries
+  // delivery to the application until it confirms, then dead-letters. If it
+  // cannot be queued, reject so the sender sees the failure instead of losing it.
+  try {
+    await env.BANK_MAIL_QUEUE.send(payload);
+  } catch (error) {
+    console.error("Bank notification could not be queued", id, String(error));
+    message.setReject("Temporary processing failure");
+  }
 }
 
 async function signature(secret, timestamp, body) {

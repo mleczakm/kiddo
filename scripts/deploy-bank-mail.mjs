@@ -24,7 +24,6 @@ const appEnv = parseEnv(await readFile(envPath, "utf8"));
 const address = appEnv.BANK_MAIL_ADDRESS;
 const secret = appEnv.BANK_MAIL_WEBHOOK_SECRET;
 const from = process.env.BANK_MAIL_FROM || appEnv.BANK_MAIL_FROM || "powiadomienia@alior.pl";
-const forwardTo = process.env.BANK_MAIL_FORWARD_TO || appEnv.BANK_MAIL_FORWARD_TO || "warsztatownia.sensoryczna@gmail.com";
 const zoneId = process.env.CLOUDFLARE_ZONE_ID;
 const token = process.env.CLOUDFLARE_WORKER_TOKEN;
 
@@ -32,7 +31,7 @@ if (!/^[a-f0-9]{32}@warsztatowniasensoryczna\.pl$/.test(address || "")) {
   fail("BANK_MAIL_ADDRESS must be a generated 32-hex address at warsztatowniasensoryczna.pl");
 }
 if (!/^[a-f0-9]{64}$/.test(secret || "")) fail("BANK_MAIL_WEBHOOK_SECRET must be a generated 64-hex key");
-if (!from || !forwardTo || !zoneId || !token) fail("Bank sender, forwarding address, Cloudflare zone and Worker token are required");
+if (!from || !zoneId || !token) fail("Bank sender, Cloudflare zone and Worker token are required");
 
 async function api(method, endpoint, body, allowMissing = false) {
   const response = await fetch(`https://api.cloudflare.com/client/v4${endpoint}`, {
@@ -87,7 +86,6 @@ config.vars = {
   APP_URL: "https://warsztatowniasensoryczna.pl",
   BANK_MAIL_ADDRESS: address,
   BANK_MAIL_FROM: from,
-  BANK_MAIL_FORWARD_TO: forwardTo,
 };
 config.addresses = [address];
 try {

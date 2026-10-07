@@ -6,8 +6,7 @@ const address = "0123456789abcdef0123456789abcdef@warsztatowniasensoryczna.pl";
 const sender = "powiadomienia@alior.pl";
 const rawMail = `From: ${sender}\r\nTo: ${address}\r\nSubject: Uznanie rachunku test\r\nMessage-ID: <bank-1@alior.pl>\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<html><body>Nadawca: Test<br/>Tytuł zlecenia: KIDDO<br/>kwotą 50,00 PLN</body></html>`;
 
-function incoming({ from = sender, to = address, mime = rawMail, rawSize = Buffer.byteLength(mime), headers, forwardError } = {}) {
-  const forwards = [];
+function incoming({ from = sender, to = address, mime = rawMail, rawSize = Buffer.byteLength(mime), headers } = {}) {
   const order = [];
   const rejected = [];
   const sent = [];
@@ -17,25 +16,24 @@ function incoming({ from = sender, to = address, mime = rawMail, rawSize = Buffe
     rawSize,
     headers: headers || new Headers({ "message-id": "<bank-1@alior.pl>" }),
     raw: new ReadableStream({ start(controller) { controller.enqueue(new TextEncoder().encode(mime)); controller.close(); } }),
-    async forward(recipient, headers) {
-      order.push("forward");
-      forwards.push({ recipient, headers });
-      if (forwardError) throw forwardError;
-    },
     setReject(reason) { rejected.push(reason); },
-    forwards,
     rejected,
     sent,
     order,
   };
 }
 
-function environment(sent = [], order = []) {
+function environment(sent = [], order = [], queueError) {
   return {
     BANK_MAIL_ADDRESS: address,
     BANK_MAIL_FROM: sender,
-    BANK_MAIL_FORWARD_TO: "warsztatownia.sensoryczna@gmail.com",
-    BANK_MAIL_QUEUE: { async send(payload) { order.push("queue"); sent.push(payload); } },
+    BANK_MAIL_QUEUE: {
+      async send(payload) {
+        order.push("queue");
+        if (queueError) throw queueError;
+        sent.push(payload);
+      },
+    },
     sent,
     order,
   };
@@ -48,10 +46,8 @@ test("accepts only the configured recipient and both bank sender representations
 
   assert.equal(env.sent.length, 1);
   assert.equal(env.sent[0].id, "bank-1@alior.pl");
-  assert.equal(valid.forwards.length, 1);
-  assert.equal(valid.forwards[0].recipient, "warsztatownia.sensoryczna@gmail.com");
-  assert.equal(valid.forwards[0].headers.get("X-Kiddo-Bank-Mail-ID"), "bank-1@alior.pl");
-  assert.deepEqual(valid.order, ["forward", "queue"]);
+  assert.deepEqual(valid.order, ["queue"]);
+  assert.deepEqual(valid.rejected, []);
 
   const wrongRecipient = incoming({ to: "other@warsztatowniasensoryczna.pl" });
   await acceptEmail(wrongRecipient, environment());
@@ -68,13 +64,15 @@ test("accepts only the configured recipient and both bank sender representations
   assert.deepEqual(spoofedHeader.rejected, ["Unexpected sender"]);
 });
 
-test("does not enqueue a message when Cloudflare rejects the authenticated forward", async () => {
-  const message = incoming({ forwardError: new Error("Sender authentication failed") });
-  const env = environment([], message.order);
+test("rejects the mail when it cannot be queued so the sender sees the failure", async () => {
+  const message = incoming();
+  const env = environment([], message.order, new Error("Queue unavailable"));
 
-  await assert.rejects(acceptEmail(message, env), /Sender authentication failed/);
+  await acceptEmail(message, env);
+
   assert.deepEqual(env.sent, []);
-  assert.deepEqual(message.order, ["forward"]);
+  assert.deepEqual(message.order, ["queue"]);
+  assert.deepEqual(message.rejected, ["Temporary processing failure"]);
 });
 
 test("rejects mail and queue payloads above the configured size limits", async () => {
@@ -102,7 +100,6 @@ test("uses a stable hash when Message-ID is absent or unsafe", async () => {
 
   assert.match(firstEnv.sent[0].id, /^sha256:[a-f0-9]{64}$/);
   assert.equal(firstEnv.sent[0].id, secondEnv.sent[0].id);
-  assert.equal(one.forwards[0].headers.get("X-Kiddo-Bank-Mail-ID"), firstEnv.sent[0].id);
 });
 
 test("acknowledges successful API delivery and retries failures with backoff", async (t) => {

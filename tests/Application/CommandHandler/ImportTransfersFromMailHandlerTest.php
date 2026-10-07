@@ -50,29 +50,6 @@ class ImportTransfersFromMailHandlerTest extends TestCase
         static::assertTrue($query->message?->isSeen(), 'Gmail is acknowledged after the importer returns');
     }
 
-    public function testForwardsCloudflareMailIdHeaderToTheSharedImporter(): void
-    {
-        $query = new FakeQuery(customId: 'sha256:' . str_repeat('a', 64));
-        $importer = $this->createMock(IncomingBankMailImporterInterface::class);
-        $importer
-            ->expects($this->once())
-            ->method('import')
-            ->with(
-                'sha256:' . str_repeat('a', 64),
-                static::stringStartsWith('Uznanie rachunku'),
-                static::stringContains('Tytuł zlecenia: X2el'),
-                static::isInstanceOf(\DateTimeImmutable::class),
-            )
-            ->willReturn(false);
-
-        $this->makeHandler(
-            new MessengerFake(),
-            $query,
-            $this->createMock(TransferRepositoryInterface::class),
-            $importer,
-        )(new ImportTransfersFromMail());
-    }
-
     public function testDoesNotMarkEmailSeenWhenSharedImportFails(): void
     {
         $query = new FakeQuery();
@@ -157,10 +134,6 @@ class FakeQuery implements IncomingNotificationMailQuery
 {
     public ?FakeMessage $message = null;
 
-    public function __construct(
-        private readonly ?string $customId = null,
-    ) {}
-
     #[\Override]
     public function __invoke(): iterable
     {
@@ -205,14 +178,6 @@ class FakeQuery implements IncomingNotificationMailQuery
             <br/>
             </html>
             EMAIL;
-
-        if ($this->customId !== null) {
-            $emailContent = str_replace(
-                'Message-ID: <test-uznanie-1@alior.pl>',
-                'Message-ID: <test-uznanie-1@alior.pl>' . "\n" . 'X-Kiddo-Bank-Mail-ID: ' . $this->customId,
-                $emailContent,
-            );
-        }
 
         /** @var FakeFolder $inbox */
         $inbox = $mailbox->inbox();

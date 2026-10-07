@@ -11,7 +11,6 @@ parameters:
   env(BANK_MAIL_ADDRESS): ''
   env(BANK_MAIL_WEBHOOK_SECRET): ''
   env(BANK_MAIL_FROM): 'powiadomienia@alior.pl'
-  env(BANK_MAIL_FORWARD_TO): 'warsztatownia.sensoryczna@gmail.com'
   env(VAPID_PUBLIC_KEY): ''
   env(VAPID_PRIVATE_KEY): ''
   env(VAPID_SUBJECT): ''

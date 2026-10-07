@@ -43,10 +43,7 @@ readonly class ImportTransfersFromMailHandler
         foreach (($this->incomingNotificationMailQuery)() as $incomingNotification) {
             $subject = $incomingNotification->subject() ?? '';
             $content = $incomingNotification->html() ?? $incomingNotification->text() ?? '';
-            $id = trim($incomingNotification->header('X-Kiddo-Bank-Mail-ID')?->getValue() ?? '');
-            if ($id === '') {
-                $id = trim($incomingNotification->messageId() ?? '');
-            }
+            $id = trim($incomingNotification->messageId() ?? '');
             if ($id === '') {
                 $id = 'sha256:' . hash('sha256', $subject . "\n" . $content);
             }

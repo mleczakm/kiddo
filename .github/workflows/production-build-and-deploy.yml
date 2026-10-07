@@ -115,16 +115,14 @@ jobs:
           BANK_MAIL_ADDRESS: ${{ secrets.BANK_MAIL_ADDRESS }}
           BANK_MAIL_WEBHOOK_SECRET: ${{ secrets.BANK_MAIL_WEBHOOK_SECRET }}
           BANK_MAIL_FROM: ${{ vars.BANK_MAIL_FROM || 'powiadomienia@alior.pl' }}
-          BANK_MAIL_FORWARD_TO: ${{ vars.BANK_MAIL_FORWARD_TO || 'warsztatownia.sensoryczna@gmail.com' }}
         run: |
           umask 077
           if [[ "${{ steps.bank_mail.outputs.enabled }}" == "true" ]]; then
-            printf '%s\n' "$DOTENV_CONTENT" | grep -vE '^(BANK_MAIL_ADDRESS|BANK_MAIL_WEBHOOK_SECRET|BANK_MAIL_FROM|BANK_MAIL_FORWARD_TO)=' > .env.production || true
+            printf '%s\n' "$DOTENV_CONTENT" | grep -vE '^(BANK_MAIL_ADDRESS|BANK_MAIL_WEBHOOK_SECRET|BANK_MAIL_FROM)=' > .env.production || true
             {
               printf 'BANK_MAIL_ADDRESS=%s\n' "$BANK_MAIL_ADDRESS"
               printf 'BANK_MAIL_WEBHOOK_SECRET=%s\n' "$BANK_MAIL_WEBHOOK_SECRET"
               printf 'BANK_MAIL_FROM=%s\n' "$BANK_MAIL_FROM"
-              printf 'BANK_MAIL_FORWARD_TO=%s\n' "$BANK_MAIL_FORWARD_TO"
             } >> .env.production
           else
             printf '%s\n' "$DOTENV_CONTENT" > .env.production

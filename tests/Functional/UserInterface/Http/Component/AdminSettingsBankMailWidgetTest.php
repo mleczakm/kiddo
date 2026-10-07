@@ -55,7 +55,7 @@ final class AdminSettingsBankMailWidgetTest extends WebTestCase
 
         static::assertResponseIsSuccessful();
         static::assertSelectorTextContains('article', 'Ustawienia → Przelewy i płatności');
-        static::assertSelectorTextContains('article', 'Gmail pozostaje włączony przez okres migracji');
+        static::assertSelectorTextContains('article', 'Gmail jest nadal sprawdzany przez okres migracji');
     }
 
     /** @param array<string, mixed> $environment */
