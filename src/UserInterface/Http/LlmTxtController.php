@@ -90,6 +90,8 @@ final class LlmTxtController extends AbstractController
             - `admin_list_unmatched_transfers`: List bank transfers not yet assigned to a payment
             - `admin_assign_transfer`: Assign an unmatched transfer to a pending payment and mark paid (requires confirm=true)
             - `admin_reject_transfer`: Reject/delete an unmatched transfer (requires confirm=true)
+            - `admin_assign_series_instructor`: Assign a user (user_id or email) as instructor of a whole series (requires confirm=true)
+            - `admin_grant_host_role`: Promote a user (user_id or email) to ROLE_HOST, keeping existing roles (requires confirm=true)
 
             ### MCP Client Configuration Example
 

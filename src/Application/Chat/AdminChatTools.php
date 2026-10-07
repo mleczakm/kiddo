@@ -506,6 +506,48 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
             ),
             new ToolDefinition(
+                'admin.assign_series_instructor',
+                'Assign a user as instructor (host) of a whole workshop series, so every occurrence of the series lists them. Identify the user by user_id or email. Does not change roles — use admin.grant_host_role so the instructor can also see the staff schedule.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'series_id' => [
+                            'type' => 'string',
+                            'description' => 'Series ULID (see admin.list_series)',
+                        ],
+                        'user_id' => [
+                            'type' => 'integer',
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'series_id'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
+                'admin.grant_host_role',
+                'Promote a user to ROLE_HOST (workshop instructor access). Existing roles are kept. Identify the user by user_id or email.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'user_id' => [
+                            'type' => 'integer',
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
                 'admin.notify_user',
                 'Send an in-app notification to a user.',
                 [
@@ -579,6 +621,8 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'admin.search_users' => $this->searchUsers($args),
                 'admin.get_user' => $this->getUser($args),
                 'admin.notify_user' => $this->notifyUser($args),
+                'admin.assign_series_instructor' => $this->assignSeriesInstructor($args),
+                'admin.grant_host_role' => $this->grantHostRole($args),
                 default => ToolResult::failure(sprintf('Unknown admin tool: %s', $name)),
             };
         } catch (\InvalidArgumentException $e) {
@@ -1147,14 +1191,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
     private function notifyUser(ToolArguments $args): ToolResult
     {
-        $user = null;
-        if ($args->has('user_id')) {
-            $user = $this->userRepository->find($args->requireInt('user_id'));
-        } elseif ($args->has('email')) {
-            $user = $this->userRepository->findOneBy([
-                'email' => strtolower($args->requireString('email')),
-            ]);
-        }
+        $user = $this->resolveUser($args);
         if (!$user instanceof User) {
             return ToolResult::failure('User not found (provide user_id or email)');
         }
@@ -1176,5 +1213,78 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             'notification_id' => (string) $notification->getId(),
             'user_id' => $user->getId(),
         ]);
+    }
+
+    private function assignSeriesInstructor(ToolArguments $args): ToolResult
+    {
+        try {
+            $series = $this->seriesRepository->find(Ulid::fromString($args->requireString('series_id')));
+        } catch (\InvalidArgumentException) {
+            $series = null;
+        }
+        if (!$series instanceof Series) {
+            return ToolResult::failure('Series not found');
+        }
+        $user = $this->resolveUser($args);
+        if (!$user instanceof User) {
+            return ToolResult::failure('User not found (provide user_id or email)');
+        }
+
+        $alreadyInstructor = $series->getInstructors()->contains($user);
+        if (!$alreadyInstructor) {
+            $series->addInstructor($user);
+            $this->entityManager->flush();
+        }
+
+        return ToolResult::success(
+            $alreadyInstructor
+                ? sprintf('%s już prowadzi serię %s.', $user->getEmail(), (string) $series->getId())
+                : sprintf('%s przypisano jako prowadzącego serię %s.', $user->getEmail(), (string) $series->getId()),
+            [
+                'series_id' => (string) $series->getId(),
+                'user_id' => $user->getId(),
+                'already_instructor' => $alreadyInstructor,
+                'has_host_role' => $user->hasRole('ROLE_HOST'),
+            ],
+        );
+    }
+
+    private function grantHostRole(ToolArguments $args): ToolResult
+    {
+        $user = $this->resolveUser($args);
+        if (!$user instanceof User) {
+            return ToolResult::failure('User not found (provide user_id or email)');
+        }
+
+        $alreadyHost = $user->hasRole('ROLE_HOST');
+        if (!$alreadyHost) {
+            $user->setRoles([...$user->getRoles(), 'ROLE_HOST']);
+            $this->entityManager->flush();
+        }
+
+        return ToolResult::success(
+            $alreadyHost
+                ? sprintf('%s ma już rolę ROLE_HOST.', $user->getEmail())
+                : sprintf('Nadano rolę ROLE_HOST użytkownikowi %s.', $user->getEmail()),
+            [
+                'user_id' => $user->getId(),
+                'already_host' => $alreadyHost,
+                'roles' => $user->getRoles(),
+            ],
+        );
+    }
+
+    private function resolveUser(ToolArguments $args): ?User
+    {
+        if ($args->has('user_id')) {
+            return $this->userRepository->find($args->requireInt('user_id'));
+        }
+        if ($args->has('email')) {
+            return $this->userRepository->findOneBy([
+                'email' => strtolower($args->requireString('email')),
+            ]);
+        }
+
+        return null;
     }
 }
