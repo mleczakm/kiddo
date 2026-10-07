@@ -6,7 +6,7 @@ role: ROLE_MANAGE_PAYMENTS
 summary: "Pełna droga płatności: od wygenerowania kodu, przez przelew klienta i e-mail Aliora, po automatyczne zaksięgowanie."
 keywords: [blik na telefon, przelew, płatność, kod płatności, Alior, e-mail bankowy, IMAP, dopasowanie, księgowanie, niedopłata, nadpłata]
 primary_route: app_admin_transfers
-related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, rozliczenie-platformy, platnosci-zwroty, platnosci-reczne-dopasowanie-przelewu]
+related: [powiadomienia-e-mail-o-przelewach, automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, rozliczenie-platformy, platnosci-zwroty, platnosci-reczne-dopasowanie-przelewu]
 ---#}
 <div class="help-callout">
     <strong>Kiddo nie jest operatorem płatności i nie pobiera pieniędzy z konta klienta.</strong>
@@ -42,6 +42,8 @@ related: [automatyzacje-i-zadania-w-tle, rezerwacje-statusy-i-termin-platnosci, 
     <code>powiadomienia@alior.pl</code>. System przyjmuje nieprzeczytane wiadomości, których temat
     zaczyna się od <code>Uznanie rachunku</code>. Z tematu i treści odczytuje rachunek odbiorcy, kwotę,
     nadawcę oraz tytuł przelewu.
+    Adres skrzynki ustawisz w bankowych powiadomieniach — zobacz instrukcję
+    <a href="{{ path('app_admin_help_article', {slug: 'powiadomienia-e-mail-o-przelewach'}) }}">powiadomień e-mail o przelewach</a>.
 </p>
 
 <h2>4. Skrzynka jest sprawdzana co 30 sekund</h2>

@@ -60,6 +60,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node for bank mail Worker tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test bank mail Worker
+        run: |
+          npm ci --prefix cloudflare/bank-mail
+          npm test --prefix cloudflare/bank-mail
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

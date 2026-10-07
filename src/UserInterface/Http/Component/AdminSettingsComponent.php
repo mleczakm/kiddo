@@ -58,6 +58,7 @@ class AdminSettingsComponent extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TransferReviewThresholdProvider $transferReviewThreshold,
         private readonly OrganizationDetailsProvider $organizationDetails,
+        private readonly string $bankMailAddress,
     ) {}
 
     public function mount(): void
@@ -116,6 +117,11 @@ class AdminSettingsComponent extends AbstractController
     public function getFinanceContactUsers(): array
     {
         return array_map(static fn(FinanceContact $fc) => $fc->getUser(), $this->financeContactRepository->findAll());
+    }
+
+    public function getBankMailAddress(): string
+    {
+        return $this->bankMailAddress;
     }
 
     /**

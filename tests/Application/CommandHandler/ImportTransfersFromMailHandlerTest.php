@@ -6,18 +6,15 @@ namespace App\Tests\Application\CommandHandler;
 
 use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Command\MatchPaymentForTransfer;
-use App\Application\Command\SaveTransfer;
 use App\Application\CommandHandler\ImportTransfersFromMailHandler;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
-use App\Application\Repository\SettingRepositoryInterface;
 use App\Application\Repository\TransferRepositoryInterface;
-use App\Application\Service\AliorMailParser;
+use App\Application\Service\IncomingBankMailImporterInterface;
 use App\Entity\Transfer;
 use App\Tests\Util\MessengerFake;
 use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
 use DirectoryTree\ImapEngine\Testing\FakeMessage;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -27,52 +24,89 @@ class ImportTransfersFromMailHandlerTest extends TestCase
 {
     public function testFetchProperlyEmailsFromMailbox(): void
     {
-        $transferRepository = $this->createMock(TransferRepositoryInterface::class);
+        $query = new FakeQuery();
+        $importer = $this->createMock(IncomingBankMailImporterInterface::class);
+        $importer
+            ->expects($this->once())
+            ->method('import')
+            ->willReturnCallback(static function (
+                string $id,
+                string $subject,
+                string $content,
+                \DateTimeImmutable $receivedAt,
+            ): bool {
+                static::assertSame('test-uznanie-1@alior.pl', $id);
+                static::assertStringStartsWith('Uznanie rachunku', $subject);
+                static::assertStringContainsString('Tytuł zlecenia: X2el', $content);
+                static::assertInstanceOf(\DateTimeImmutable::class, $receivedAt);
 
+                return true;
+            });
         $messengerFake = new MessengerFake();
-        $this->makeHandler($messengerFake, new FakeQuery(), $transferRepository)(new ImportTransfersFromMail());
-
-        static::assertNotEmpty($messengerFake->dispatched);
-        $saveTransfer = $messengerFake->dispatched[0]->getMessage();
-        static::assertInstanceOf(SaveTransfer::class, $saveTransfer);
-        static::assertStringContainsString(
-            'test-uznanie-1@alior.pl',
-            $saveTransfer->transfer->getMessageId() ?? '',
-            'The originating e-mail Message-ID is carried onto the Transfer',
+        $this->makeHandler($messengerFake, $query, $this->createMock(TransferRepositoryInterface::class), $importer)(
+            new ImportTransfersFromMail(),
         );
+        static::assertEmpty($messengerFake->dispatched);
+        static::assertTrue($query->message?->isSeen(), 'Gmail is acknowledged after the importer returns');
     }
 
-    public function testDoesNotReimportAnEmailWhoseMessageIdIsAlreadyStored(): void
+    public function testForwardsCloudflareMailIdHeaderToTheSharedImporter(): void
     {
-        $transferRepository = $this->createMock(TransferRepositoryInterface::class);
-        $transferRepository
+        $query = new FakeQuery(customId: 'sha256:' . str_repeat('a', 64));
+        $importer = $this->createMock(IncomingBankMailImporterInterface::class);
+        $importer
             ->expects($this->once())
-            ->method('findOneBy')
-            ->willReturnCallback(static function (array $criteria): Transfer {
-                static::assertSame(['messageId'], array_keys($criteria));
-                static::assertIsString($criteria['messageId']);
-                static::assertStringContainsString('test-uznanie-1@alior.pl', $criteria['messageId']);
+            ->method('import')
+            ->with(
+                'sha256:' . str_repeat('a', 64),
+                static::stringStartsWith('Uznanie rachunku'),
+                static::stringContains('Tytuł zlecenia: X2el'),
+                static::isInstanceOf(\DateTimeImmutable::class),
+            )
+            ->willReturn(false);
 
-                return new Transfer('123', 'Sender', 'WW5J', '60.00', new \DateTimeImmutable());
-            });
+        $this->makeHandler(
+            new MessengerFake(),
+            $query,
+            $this->createMock(TransferRepositoryInterface::class),
+            $importer,
+        )(new ImportTransfersFromMail());
+    }
 
-        $messengerFake = new MessengerFake();
-        $this->makeHandler($messengerFake, new FakeQuery(), $transferRepository)(new ImportTransfersFromMail());
+    public function testDoesNotMarkEmailSeenWhenSharedImportFails(): void
+    {
+        $query = new FakeQuery();
+        $importer = $this->createMock(IncomingBankMailImporterInterface::class);
+        $importer
+            ->expects($this->once())
+            ->method('import')
+            ->willThrowException(new \RuntimeException('DB unavailable'));
 
-        static::assertEmpty($messengerFake->dispatched, 'An already-imported e-mail is never dispatched again');
+        try {
+            $this->makeHandler(
+                new MessengerFake(),
+                $query,
+                $this->createMock(TransferRepositoryInterface::class),
+                $importer,
+            )(new ImportTransfersFromMail());
+            static::fail('The import failure should be propagated so the scheduler retries it');
+        } catch (\RuntimeException $exception) {
+            static::assertSame('DB unavailable', $exception->getMessage());
+        }
+
+        static::assertFalse($query->message?->isSeen(), 'A failed import remains unread in Gmail');
     }
 
     private function makeHandler(
         MessengerFake $messengerFake,
         IncomingNotificationMailQuery $incomingQuery,
         TransferRepositoryInterface $transferRepository,
+        IncomingBankMailImporterInterface $importer,
     ): ImportTransfersFromMailHandler {
         return new ImportTransfersFromMailHandler(
-            new AliorMailParser(),
+            $importer,
             $messengerFake,
             $incomingQuery,
-            $this->createMock(SettingRepositoryInterface::class),
-            $this->createMock(EntityManagerInterface::class),
             $transferRepository,
             $this->createMock(LoggerInterface::class),
             mailboxUsername: 'user@example.com',
@@ -103,11 +137,9 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             ->with('Mailbox credentials missing/invalid: skipping IMAP read, rematching unmatched transfers instead');
 
         (new ImportTransfersFromMailHandler(
-            new AliorMailParser(),
+            $this->createMock(IncomingBankMailImporterInterface::class),
             $messengerFake = new MessengerFake(),
             $incomingQuery,
-            $this->createMock(SettingRepositoryInterface::class),
-            $this->createMock(EntityManagerInterface::class),
             $transferRepository,
             $logger,
             mailboxUsername: '',
@@ -123,6 +155,12 @@ class ImportTransfersFromMailHandlerTest extends TestCase
 
 class FakeQuery implements IncomingNotificationMailQuery
 {
+    public ?FakeMessage $message = null;
+
+    public function __construct(
+        private readonly ?string $customId = null,
+    ) {}
+
     #[\Override]
     public function __invoke(): iterable
     {
@@ -168,9 +206,19 @@ class FakeQuery implements IncomingNotificationMailQuery
             </html>
             EMAIL;
 
+        if ($this->customId !== null) {
+            $emailContent = str_replace(
+                'Message-ID: <test-uznanie-1@alior.pl>',
+                'Message-ID: <test-uznanie-1@alior.pl>' . "\n" . 'X-Kiddo-Bank-Mail-ID: ' . $this->customId,
+                $emailContent,
+            );
+        }
+
         /** @var FakeFolder $inbox */
         $inbox = $mailbox->inbox();
-        $inbox->addMessage(new FakeMessage(uid: 1, flags: [], contents: $emailContent));
+        $email = new FakeMessage(uid: 1, flags: [], contents: $emailContent);
+        $this->message = $email;
+        $inbox->addMessage($email);
 
         yield from $inbox->messages()->get();
     }

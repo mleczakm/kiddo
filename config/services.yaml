@@ -8,6 +8,10 @@ parameters:
   env(ELEVENLABS_AGENT_ID): ''
   env(ELEVENLABS_ADMIN_AGENT_ID): ''
   env(KIDDO_MCP_SERVICE_KEY): ''
+  env(BANK_MAIL_ADDRESS): ''
+  env(BANK_MAIL_WEBHOOK_SECRET): ''
+  env(BANK_MAIL_FROM): 'powiadomienia@alior.pl'
+  env(BANK_MAIL_FORWARD_TO): 'warsztatownia.sensoryczna@gmail.com'
   env(VAPID_PUBLIC_KEY): ''
   env(VAPID_PRIVATE_KEY): ''
   env(VAPID_SUBJECT): ''
@@ -208,6 +212,20 @@ services:
     arguments:
       $mailboxUsername: '%env(MAILBOX_USERNAME)%'
       $mailboxPassword: '%env(MAILBOX_PASSWORD)%'
+
+  App\Application\Service\IncomingBankMailImporter:
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+
+  App\UserInterface\Http\Api\BankMailWebhookController:
+    arguments:
+      $bankMailAddress: '%env(BANK_MAIL_ADDRESS)%'
+      $bankMailWebhookSecret: '%env(BANK_MAIL_WEBHOOK_SECRET)%'
+      $bankMailFrom: '%env(BANK_MAIL_FROM)%'
+
+  App\UserInterface\Http\Component\AdminSettingsComponent:
+    arguments:
+      $bankMailAddress: '%env(BANK_MAIL_ADDRESS)%'
 
   Symfony\Component\Cache\Psr16Cache:
 

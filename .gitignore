@@ -1,4 +1,7 @@
 target
+/.cloudflare/
+/cloudflare/bank-mail/node_modules/
+/cloudflare/bank-mail/wrangler.generated.jsonc
 
 ###> idea ###
 /.idea/*

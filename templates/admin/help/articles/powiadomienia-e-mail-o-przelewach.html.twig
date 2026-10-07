@@ -1,0 +1,28 @@
+{#---
+slug: powiadomienia-e-mail-o-przelewach
+title: "Powiadomienia e-mail o przelewach"
+section: finance
+role: ROLE_MANAGE_PAYMENTS
+summary: "Adres e-mail Aliora potrzebny do automatycznego odczytu potwierdzeń wpłat."
+keywords: [Alior, e-mail, powiadomienia bankowe, przelew, wpływ, Cloudflare, Gmail, potwierdzenie płatności]
+primary_route: app_admin_settings
+related: [platnosci-przelewy-i-dopasowanie]
+---#}
+<p>
+    Kiddo odczytuje e-maile Aliora o uznaniu rachunku i na ich podstawie rejestruje przelewy oraz dopasowuje
+    je do płatności. Wiadomości powinny pochodzić z adresu <code>powiadomienia@alior.pl</code> i mieć temat
+    zaczynający się od <code>Uznanie rachunku</code>.
+</p>
+
+<h2>Konfiguracja w banku</h2>
+<ol>
+    <li>Otwórz ustawienia powiadomień e-mail w bankowości Alior.</li>
+    <li>Wklej adres widoczny w panelu Kiddo: <strong>Ustawienia → Przelewy i płatności</strong>.</li>
+    <li>Włącz powiadomienia o wpływach na rachunek i zapisz zmiany w banku.</li>
+</ol>
+
+<div class="help-callout">
+    Gmail pozostaje włączony przez okres migracji, więc powiadomienia są nadal sprawdzane także dotychczasową
+    drogą. Po otrzymaniu testowego przelewu sprawdź, czy w Kiddo powstał jeden przelew; oba kanały korzystają
+    ze wspólnego zabezpieczenia przed duplikatami.
+</div>

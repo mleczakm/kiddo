@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "kiddo-bank-mail",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-03",
+  "workers_dev": false,
+  "addresses": [],
+  "queues": {
+    "producers": [
+      { "binding": "BANK_MAIL_QUEUE", "queue": "kiddo-bank-mail" }
+    ],
+    "consumers": [
+      {
+        "queue": "kiddo-bank-mail",
+        "max_batch_size": 1,
+        "max_retries": 20,
+        "dead_letter_queue": "kiddo-bank-mail-dlq",
+        "max_concurrency": 1
+      }
+    ]
+  }
+}

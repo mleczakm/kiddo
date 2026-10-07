@@ -28,6 +28,44 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # The direct Cloudflare Worker -> /api/bank-mail path is opt-in per
+      # environment: with none of its secrets set the deploy proceeds without it
+      # (a warning is emitted); a partial or malformed setup fails the deploy.
+      - name: Check bank mail deployment secrets
+        id: bank_mail
+        env:
+          BANK_MAIL_ADDRESS: ${{ secrets.BANK_MAIL_ADDRESS }}
+          BANK_MAIL_WEBHOOK_SECRET: ${{ secrets.BANK_MAIL_WEBHOOK_SECRET }}
+          CLOUDFLARE_WORKER_TOKEN: ${{ secrets.CLOUDFLARE_WORKER_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          configured=0
+          for name in BANK_MAIL_ADDRESS BANK_MAIL_WEBHOOK_SECRET CLOUDFLARE_WORKER_TOKEN; do
+            if [[ -n "${!name}" ]]; then
+              configured=$((configured + 1))
+            fi
+          done
+          if [[ "$configured" -eq 0 ]]; then
+            echo "::warning::Bank mail secrets are not set in the production environment; skipping the Cloudflare Worker deployment (run scripts/setup-bank-mail-secrets.sh and add CLOUDFLARE_WORKER_TOKEN)"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          for name in BANK_MAIL_ADDRESS BANK_MAIL_WEBHOOK_SECRET CLOUDFLARE_WORKER_TOKEN CLOUDFLARE_ZONE_ID; do
+            if [[ -z "${!name}" ]]; then
+              echo "Missing $name in the production GitHub environment" >&2
+              exit 1
+            fi
+          done
+          if [[ ! "$BANK_MAIL_ADDRESS" =~ ^[a-f0-9]{32}@warsztatowniasensoryczna\.pl$ ]]; then
+            echo "BANK_MAIL_ADDRESS has an invalid format" >&2
+            exit 1
+          fi
+          if [[ ! "$BANK_MAIL_WEBHOOK_SECRET" =~ ^[a-f0-9]{64}$ ]]; then
+            echo "BANK_MAIL_WEBHOOK_SECRET must be 64 lowercase hexadecimal characters" >&2
+            exit 1
+          fi
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -74,9 +112,23 @@ jobs:
       - name: Create .env file
         env:
           DOTENV_CONTENT: ${{ secrets.DOTENV }}
+          BANK_MAIL_ADDRESS: ${{ secrets.BANK_MAIL_ADDRESS }}
+          BANK_MAIL_WEBHOOK_SECRET: ${{ secrets.BANK_MAIL_WEBHOOK_SECRET }}
+          BANK_MAIL_FROM: ${{ vars.BANK_MAIL_FROM || 'powiadomienia@alior.pl' }}
+          BANK_MAIL_FORWARD_TO: ${{ vars.BANK_MAIL_FORWARD_TO || 'warsztatownia.sensoryczna@gmail.com' }}
         run: |
           umask 077
-          printf '%s\n' "$DOTENV_CONTENT" > .env.production
+          if [[ "${{ steps.bank_mail.outputs.enabled }}" == "true" ]]; then
+            printf '%s\n' "$DOTENV_CONTENT" | grep -vE '^(BANK_MAIL_ADDRESS|BANK_MAIL_WEBHOOK_SECRET|BANK_MAIL_FROM|BANK_MAIL_FORWARD_TO)=' > .env.production || true
+            {
+              printf 'BANK_MAIL_ADDRESS=%s\n' "$BANK_MAIL_ADDRESS"
+              printf 'BANK_MAIL_WEBHOOK_SECRET=%s\n' "$BANK_MAIL_WEBHOOK_SECRET"
+              printf 'BANK_MAIL_FROM=%s\n' "$BANK_MAIL_FROM"
+              printf 'BANK_MAIL_FORWARD_TO=%s\n' "$BANK_MAIL_FORWARD_TO"
+            } >> .env.production
+          else
+            printf '%s\n' "$DOTENV_CONTENT" > .env.production
+          fi
           echo "ENV_FILE_PATH=$(pwd)/.env.production" >> "$GITHUB_ENV"
 
       - name: Deploy to Mikrus
@@ -93,3 +145,19 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
           ANSIBLE_ROLES_PATH: ./ansible/roles
+
+      - name: Set up Node for bank mail Worker
+        if: steps.bank_mail.outputs.enabled == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Deploy bank mail Worker and routing
+        if: steps.bank_mail.outputs.enabled == 'true'
+        run: |
+          npm ci --prefix cloudflare/bank-mail
+          node scripts/deploy-bank-mail.mjs
+        env:
+          CLOUDFLARE_WORKER_TOKEN: ${{ secrets.CLOUDFLARE_WORKER_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          ENV_FILE_PATH: ${{ env.ENV_FILE_PATH }}
