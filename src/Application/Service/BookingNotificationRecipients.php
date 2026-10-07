@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service;
 
 use App\Application\Repository\FinanceContactRepositoryInterface;
+use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\FinanceContact;
 use App\Entity\Lesson;
 use App\Entity\User;
@@ -12,25 +13,34 @@ use App\Entity\User;
 /**
  * Resolves the internal audience for booking and payment information.
  *
- * Financial contacts receive the financial/operational copy, while lesson
- * instructors receive information only for occurrences they are assigned to
- * directly or through the workshop series.
+ * Financial contacts and every ROLE_ADMIN user (unless opted out) receive the
+ * financial/operational copy, while lesson instructors receive information
+ * only for occurrences they are assigned to directly or through the workshop
+ * series.
  */
 final readonly class BookingNotificationRecipients
 {
     public function __construct(
         private FinanceContactRepositoryInterface $financeContacts,
+        private UserRepositoryInterface $userRepository,
         private LessonInstructorResolver $instructorResolver,
     ) {}
 
     /**
+     * The operational/financial audience: finance contacts plus every
+     * ROLE_ADMIN user, minus anyone who opted out of operational emails.
+     *
      * @return list<User>
      */
-    public function financeContacts(?User $exclude = null): array
+    public function operational(?User $exclude = null): array
     {
-        $users = array_map(
+        $contacts = array_map(
             static fn(FinanceContact $contact): User => $contact->getUser(),
             $this->financeContacts->findAll(),
+        );
+        $users = array_filter(
+            [...$contacts, ...$this->userRepository->findByRole('ROLE_ADMIN')],
+            static fn(User $user): bool => $user->receivesOperationalEmails(),
         );
 
         return $this->deduplicate($users, $exclude);
@@ -45,7 +55,7 @@ final readonly class BookingNotificationRecipients
         $lessonList = is_array($lessons) ? $lessons : iterator_to_array($lessons, false);
 
         return $this->deduplicate([
-            ...$this->financeContacts(),
+            ...$this->operational(),
             ...$this->instructorResolver->resolve($lessonList),
         ], $exclude);
     }

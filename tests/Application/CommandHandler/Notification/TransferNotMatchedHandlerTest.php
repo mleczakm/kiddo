@@ -55,7 +55,8 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
             ->withEmail('admin2@example.com')
             ->withName('Admin Two')
             ->withRoles('ROLE_ADMIN')
-            ->assemble();
+            ->assemble()
+            ->setOperationalEmails(false);
 
         // Create a test transfer
         $transfer = TransferAssembler::new()

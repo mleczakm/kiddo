@@ -33,7 +33,11 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $finance = UserAssembler::new()->withEmail('finance@example.com')->assemble();
         $oldHost = UserAssembler::new()->withEmail('old-host@example.com')->withRoles('ROLE_HOST')->assemble();
         $newHost = UserAssembler::new()->withEmail('new-host@example.com')->withRoles('ROLE_HOST')->assemble();
-        $unrelatedAdmin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $unrelatedAdmin = UserAssembler::new()
+            ->withEmail('admin@example.com')
+            ->withRoles('ROLE_ADMIN')
+            ->assemble()
+            ->setOperationalEmails(false);
 
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();

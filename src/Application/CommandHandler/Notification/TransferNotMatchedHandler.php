@@ -55,7 +55,7 @@ final readonly class TransferNotMatchedHandler
                 return;
             }
 
-            $recipients = $this->recipients->financeContacts();
+            $recipients = $this->recipients->operational();
             if ($recipients === []) {
                 return;
             }

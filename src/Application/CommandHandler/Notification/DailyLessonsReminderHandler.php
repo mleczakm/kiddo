@@ -54,7 +54,7 @@ readonly class DailyLessonsReminderHandler
     {
         $date = $command->date;
         $lessons = $this->todayLessonsQuery->forDate($date);
-        $financeContacts = $this->recipients->financeContacts();
+        $financeContacts = $this->recipients->operational();
 
         $yesterday = $date->modify('-1 day');
         $yesterdayStart = $yesterday->setTime(0, 0, 0);

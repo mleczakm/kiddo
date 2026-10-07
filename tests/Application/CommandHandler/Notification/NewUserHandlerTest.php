@@ -73,7 +73,7 @@ class NewUserHandlerTest extends KernelTestCase
         static::assertCount(3, $notifications);
     }
 
-    public function testDoesNotEmailSuperAdmins(): void
+    public function testDoesNotEmailAdminsWhoOptedOutOfOperationalEmails(): void
     {
         // Arrange
         $user = UserAssembler::new()->withEmail('user@example.com')->withRoles('ROLE_USER')->assemble();
@@ -81,7 +81,8 @@ class NewUserHandlerTest extends KernelTestCase
         $superAdmin = UserAssembler::new()
             ->withEmail('super@example.com')
             ->withRoles('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')
-            ->assemble();
+            ->assemble()
+            ->setOperationalEmails(false);
 
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
@@ -103,6 +104,11 @@ class NewUserHandlerTest extends KernelTestCase
         );
         static::assertContains('admin@example.com', $recipients);
         static::assertNotContains('super@example.com', $recipients);
+        static::assertCount(
+            0,
+            $em->getRepository(Notification::class)->findBy(['user' => $superAdmin]),
+            'opted-out admin gets no in-app notification either',
+        );
     }
 
     public function testDoesNotSendEmailsIfUserAlreadyConfirmed(): void

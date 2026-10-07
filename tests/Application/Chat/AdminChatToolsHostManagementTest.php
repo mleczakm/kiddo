@@ -146,6 +146,54 @@ final class AdminChatToolsHostManagementTest extends KernelTestCase
         static::assertFalse($unknownUser->ok);
     }
 
+    public function testSetOperationalEmailsOptsUserOutAndIn(): void
+    {
+        $optOut = $this->registry->call('admin.set_operational_emails', $this->actor, [
+            'confirm' => true,
+            'email' => 'host@example.com',
+            'enabled' => false,
+        ]);
+
+        static::assertTrue($optOut->ok);
+        static::assertFalse($optOut->data['operational_emails']);
+        $this->em->clear();
+        $reloaded = $this->em->find(User::class, $this->candidate->getId());
+        static::assertInstanceOf(User::class, $reloaded);
+        static::assertFalse($reloaded->receivesOperationalEmails());
+
+        $optIn = $this->registry->call('admin.set_operational_emails', $this->actor, [
+            'confirm' => true,
+            'user_id' => $this->candidate->getId(),
+            'enabled' => true,
+        ]);
+
+        static::assertTrue($optIn->ok);
+        $this->em->clear();
+        $reloaded = $this->em->find(User::class, $this->candidate->getId());
+        static::assertInstanceOf(User::class, $reloaded);
+        static::assertTrue($reloaded->receivesOperationalEmails());
+    }
+
+    public function testSetOperationalEmailsRequiresConfirmationAndKnownUser(): void
+    {
+        $unconfirmed = $this->registry->call('admin.set_operational_emails', $this->actor, [
+            'user_id' => $this->candidate->getId(),
+            'enabled' => false,
+        ]);
+        $unknown = $this->registry->call('admin.set_operational_emails', $this->actor, [
+            'confirm' => true,
+            'email' => 'nobody@example.com',
+            'enabled' => false,
+        ]);
+
+        static::assertFalse($unconfirmed->ok);
+        static::assertFalse($unknown->ok);
+        $this->em->clear();
+        $reloaded = $this->em->find(User::class, $this->candidate->getId());
+        static::assertInstanceOf(User::class, $reloaded);
+        static::assertTrue($reloaded->receivesOperationalEmails());
+    }
+
     public function testToolsAreAdminOnly(): void
     {
         $host = UserAssembler::new()->withRoles('ROLE_HOST')->assemble();

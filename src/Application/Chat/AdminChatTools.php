@@ -548,6 +548,29 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresConfirm: true,
             ),
             new ToolDefinition(
+                'admin.set_operational_emails',
+                'Opt a user in or out of operational admin emails (daily summary, new users, bookings, payments, transfers). Every ROLE_ADMIN receives them by default. Identify the user by user_id or email.',
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        ...$confirm,
+                        'enabled' => [
+                            'type' => 'boolean',
+                            'description' => 'true = receive operational emails, false = opt out',
+                        ],
+                        'user_id' => [
+                            'type' => 'integer',
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'required' => ['confirm', 'enabled'],
+                ],
+                requiresAdmin: true,
+                requiresConfirm: true,
+            ),
+            new ToolDefinition(
                 'admin.notify_user',
                 'Send an in-app notification to a user.',
                 [
@@ -623,6 +646,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'admin.notify_user' => $this->notifyUser($args),
                 'admin.assign_series_instructor' => $this->assignSeriesInstructor($args),
                 'admin.grant_host_role' => $this->grantHostRole($args),
+                'admin.set_operational_emails' => $this->setOperationalEmails($args),
                 default => ToolResult::failure(sprintf('Unknown admin tool: %s', $name)),
             };
         } catch (\InvalidArgumentException $e) {
@@ -1270,6 +1294,28 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'user_id' => $user->getId(),
                 'already_host' => $alreadyHost,
                 'roles' => $user->getRoles(),
+            ],
+        );
+    }
+
+    private function setOperationalEmails(ToolArguments $args): ToolResult
+    {
+        $user = $this->resolveUser($args);
+        if (!$user instanceof User) {
+            return ToolResult::failure('User not found (provide user_id or email)');
+        }
+
+        $enabled = $args->bool('enabled');
+        $user->setOperationalEmails($enabled);
+        $this->entityManager->flush();
+
+        return ToolResult::success(
+            $enabled
+                ? sprintf('%s otrzymuje e-maile operacyjne.', $user->getEmail())
+                : sprintf('%s nie będzie otrzymywać e-maili operacyjnych.', $user->getEmail()),
+            [
+                'user_id' => $user->getId(),
+                'operational_emails' => $enabled,
             ],
         );
     }

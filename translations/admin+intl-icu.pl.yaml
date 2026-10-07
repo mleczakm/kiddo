@@ -45,3 +45,9 @@ admin_dashboard:
       select_date_and_time: 'Proszę wybrać datę i godzinę.'
       invalid_datetime_format: 'Nieprawidłowy format daty lub godziny.'
       invalid_action: 'Nieprawidłowa akcja.'
+
+notification_preferences:
+  title: 'Powiadomienia e-mail'
+  intro: 'Jako administrator domyślnie dostajesz e-maile operacyjne: dzienne podsumowanie, nowych użytkowników, rezerwacje, płatności i przelewy.'
+  label: 'Wysyłaj mi e-maile operacyjne'
+  note: 'Wyłączenie nie wpływa na wiadomości o zajęciach, które prowadzisz.'

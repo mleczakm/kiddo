@@ -51,7 +51,8 @@ class TransferRequiresReviewHandlerTest extends KernelTestCase
         $unrelatedAdmin = UserAssembler::new()
             ->withEmail('other-admin@example.com')
             ->withRoles('ROLE_ADMIN')
-            ->assemble();
+            ->assemble()
+            ->setOperationalEmails(false);
 
         $transfer = TransferAssembler::new()
             ->withSender('Big Spender')

@@ -48,7 +48,7 @@ final readonly class TransferRequiresReviewHandler
                 return;
             }
 
-            $recipients = $this->recipients->financeContacts();
+            $recipients = $this->recipients->operational();
             if ($recipients === []) {
                 return;
             }

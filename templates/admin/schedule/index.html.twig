@@ -8,5 +8,10 @@
             {{ component('StaffCalendarSubscription') }}
         </div>
     {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="mb-6">
+            {{ component('StaffNotificationPreferences') }}
+        </div>
+    {% endif %}
     {{ component('AdminScheduleComponent') }}
 {% endblock %}

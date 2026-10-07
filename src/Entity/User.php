@@ -66,6 +66,16 @@ class User implements UserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastLoginAt = null;
 
+    /**
+     * Opt-out from the operational/financial email audience (daily summary,
+     * new users, bookings, payments, transfers) that every ROLE_ADMIN is in by
+     * default. Lesson-scoped instructor emails are not affected.
+     */
+    #[ORM\Column(options: [
+        'default' => true,
+    ])]
+    private bool $operationalEmails = true;
+
     /** Account closure state (Stage 11); see {@see AccountLifecycle}. */
     #[ORM\Embedded(class: AccountLifecycle::class, columnPrefix: false)]
     private AccountLifecycle $lifecycle;
@@ -107,6 +117,18 @@ class User implements UserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function receivesOperationalEmails(): bool
+    {
+        return $this->operationalEmails;
+    }
+
+    public function setOperationalEmails(bool $operationalEmails): static
+    {
+        $this->operationalEmails = $operationalEmails;
+
+        return $this;
     }
 
     public function getCalendarFeedToken(): ?string

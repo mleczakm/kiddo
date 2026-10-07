@@ -31,7 +31,11 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
 
         $finance = UserAssembler::new()->withEmail('finance@example.com')->assemble();
         $host = UserAssembler::new()->withEmail('host@example.com')->withRoles('ROLE_HOST')->assemble();
-        $unrelatedAdmin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $unrelatedAdmin = UserAssembler::new()
+            ->withEmail('admin@example.com')
+            ->withRoles('ROLE_ADMIN')
+            ->assemble()
+            ->setOperationalEmails(false);
 
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();

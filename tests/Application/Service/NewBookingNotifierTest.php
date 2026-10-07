@@ -24,7 +24,11 @@ final class NewBookingNotifierTest extends KernelTestCase
         $finance = UserAssembler::new()->withEmail('finance@example.com')->assemble();
         $lessonHost = UserAssembler::new()->withEmail('lesson-host@example.com')->withRoles('ROLE_HOST')->assemble();
         $seriesHost = UserAssembler::new()->withEmail('series-host@example.com')->withRoles('ROLE_HOST')->assemble();
-        $unrelatedAdmin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
+        $unrelatedAdmin = UserAssembler::new()
+            ->withEmail('admin@example.com')
+            ->withRoles('ROLE_ADMIN')
+            ->assemble()
+            ->setOperationalEmails(false);
 
         $series = SeriesAssembler::new()->assemble();
         $series->addInstructor($seriesHost);

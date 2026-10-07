@@ -82,7 +82,8 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $unrelatedAdmin = UserAssembler::new()
             ->withEmail('other-admin@example.com')
             ->withRoles('ROLE_ADMIN')
-            ->assemble();
+            ->assemble()
+            ->setOperationalEmails(false);
         $child = new Child($user, 'Zosia', new DateTimeImmutable('2018-03-15'));
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
