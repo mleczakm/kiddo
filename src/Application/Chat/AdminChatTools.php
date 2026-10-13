@@ -61,13 +61,26 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
     #[\Override]
     public function definitions(): array
     {
-        $confirm = [
-            'confirm' => [
-                'type' => 'boolean',
-                'description' => 'Must be true to execute the mutation',
-            ],
+        return [
+            ...$this->scheduleDefinitions(),
+            ...$this->lessonSettingsDefinitions(),
+            ...$this->seriesDefinitions(),
+            ...$this->bookingSearchDefinitions(),
+            ...$this->bookingLessonDefinitions(),
+            ...$this->paymentDefinitions(),
+            ...$this->userLookupDefinitions(),
+            ...$this->staffRoleDefinitions(),
+            ...$this->userMessagingDefinitions(),
         ];
+    }
 
+    /**
+     * Read-only lesson schedule inspection.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function scheduleDefinitions(): array
+    {
         return [
             new ToolDefinition(
                 'admin.today_schedule',
@@ -120,6 +133,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 ],
                 requiresAdmin: true,
             ),
+        ];
+    }
+
+    /**
+     * Per-lesson toggles and capacity/waitlist settings.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function lessonSettingsDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'admin.toggle_lesson',
                 'Toggle lesson status between active and cancelled.',
@@ -177,6 +203,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * Series listing and editing.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function seriesDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'admin.list_series',
                 'List series in a date range.',
@@ -260,6 +299,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * Booking search, creation and payment confirmation.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function bookingSearchDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'admin.list_bookings',
                 'Search bookings by status or user email fragment.',
@@ -338,6 +390,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * Lesson-level booking mutations (cancel, refund, reschedule).
+     *
+     * @return list<ToolDefinition>
+     */
+    private function bookingLessonDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'admin.cancel_lesson',
                 'Cancel a lesson on any booking (admin).',
@@ -407,6 +472,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * Payments and bank transfers.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function paymentDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'admin.list_payments',
                 'List pending payments, optional search.',
@@ -475,6 +553,17 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * User lookup.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function userLookupDefinitions(): array
+    {
+        return [
             new ToolDefinition(
                 'admin.search_users',
                 'Search users by name or email.',
@@ -505,6 +594,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 ],
                 requiresAdmin: true,
             ),
+        ];
+    }
+
+    /**
+     * Staff role assignment.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function staffRoleDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'admin.assign_series_instructor',
                 'Assign a user as instructor (host) of a whole workshop series, so every occurrence of the series lists them. Identify the user by user_id or email. Does not change roles — use admin.grant_host_role so the instructor can also see the staff schedule.',
@@ -547,6 +649,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * Operational email opt-in and in-app user notifications.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function userMessagingDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'admin.set_operational_emails',
                 'Opt a user in or out of operational admin emails (daily summary, new users, bookings, payments, transfers). Every ROLE_ADMIN receives them by default. Identify the user by user_id or email.',
@@ -605,6 +720,19 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 requiresAdmin: true,
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * @return array{confirm: array{type: string, description: string}}
+     */
+    private static function confirmProperty(): array
+    {
+        return [
+            'confirm' => [
+                'type' => 'boolean',
+                'description' => 'Must be true to execute the mutation',
+            ],
         ];
     }
 

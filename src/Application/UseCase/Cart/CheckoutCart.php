@@ -6,10 +6,9 @@ namespace App\Application\UseCase\Cart;
 
 use App\Application\Repository\CartItemRepositoryInterface;
 use App\Application\Repository\CartRepositoryInterface;
-use App\Application\Repository\ChildRepositoryInterface;
 use App\Application\Repository\CustomerOrderRepositoryInterface;
-use App\Application\Repository\LessonRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
+use App\Application\Service\Commerce\CartItemLookup;
 use App\Application\Service\Commerce\OrderItemSelection;
 use App\Application\Service\Commerce\OrderPlacementOptions;
 use App\Application\Service\Commerce\OrderPlacementService;
@@ -43,8 +42,7 @@ final readonly class CheckoutCart
         private CartRepositoryInterface $cartRepository,
         private CartItemRepositoryInterface $cartItemRepository,
         private CustomerOrderRepositoryInterface $orderRepository,
-        private LessonRepositoryInterface $lessonRepository,
-        private ChildRepositoryInterface $childRepository,
+        private CartItemLookup $itemLookup,
         private UserRepositoryInterface $userRepository,
         private PriceQuoter $priceQuoter,
         private PaymentCodeGenerator $paymentCodeGenerator,
@@ -105,9 +103,12 @@ final readonly class CheckoutCart
             throw new \LogicException(sprintf('Customer %d for cart %s no longer exists.', $cart->customerId, $cartId));
         }
 
+        $lessons = $this->itemLookup->lessons($cartItems);
+        $participants = $this->itemLookup->participants($cartItems);
+
         $items = [];
         foreach ($cartItems as $cartItem) {
-            $lesson = $this->lessonRepository->find($cartItem->lessonId);
+            $lesson = $lessons[(string) $cartItem->lessonId] ?? null;
             if ($lesson === null) {
                 throw new \InvalidArgumentException(sprintf(
                     'Lesson %s in cart %s no longer exists.',
@@ -116,10 +117,7 @@ final readonly class CheckoutCart
                 ));
             }
 
-            $participant = null;
-            if ($cartItem->participantId !== null) {
-                $participant = $this->childRepository->find($cartItem->participantId);
-            }
+            $participant = $participants[(string) $cartItem->participantId] ?? null;
 
             $baseTicketOption = $lesson->getMatchingTicketOption($cartItem->ticketType);
             $quote = $this->priceQuoter->quote(

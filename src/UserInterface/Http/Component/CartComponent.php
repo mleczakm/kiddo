@@ -8,8 +8,7 @@ use App\Application\Consent\WorkshopTermsCollector;
 use App\Application\Consent\WorkshopTermsEvidence;
 use App\Application\Repository\CartItemRepositoryInterface;
 use App\Application\Repository\CartRepositoryInterface;
-use App\Application\Repository\ChildRepositoryInterface;
-use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Service\Commerce\CartItemLookup;
 use App\Application\UseCase\Cart\ApplyPromotionCode;
 use App\Application\UseCase\Cart\CartCheckoutCoordinator;
 use App\Application\UseCase\Cart\CompletedCheckout;
@@ -86,8 +85,7 @@ final class CartComponent extends AbstractController
     public function __construct(
         private readonly CartRepositoryInterface $cartRepository,
         private readonly CartItemRepositoryInterface $cartItemRepository,
-        private readonly LessonRepositoryInterface $lessonRepository,
-        private readonly ChildRepositoryInterface $childRepository,
+        private readonly CartItemLookup $itemLookup,
         private readonly RemoveCartItem $removeCartItem,
         private readonly ApplyPromotionCode $applyPromotionCode,
         private readonly RemovePromotionCode $removePromotionCode,
@@ -114,10 +112,14 @@ final class CartComponent extends AbstractController
             return [];
         }
 
+        $cartItems = $this->cartItemRepository->findByCart($cart->id);
+        $lessons = $this->itemLookup->lessons($cartItems);
+        $participants = $this->itemLookup->participants($cartItems);
+
         $items = [];
-        foreach ($this->cartItemRepository->findByCart($cart->id) as $item) {
-            $lesson = $this->lessonRepository->find($item->lessonId);
-            $participant = $item->participantId !== null ? $this->childRepository->find($item->participantId) : null;
+        foreach ($cartItems as $item) {
+            $lesson = $lessons[(string) $item->lessonId] ?? null;
+            $participant = $participants[(string) $item->participantId] ?? null;
 
             $items[] = [
                 'id' => (string) $item->id,

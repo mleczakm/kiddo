@@ -286,39 +286,7 @@ final class SeedDemoDataCommand extends Command
         array $weekly,
         array $oneTime,
     ): array {
-        $paidOnline = $this->payment($parents[0], '79', PaymentMethod::ONLINE, Payment::STATUS_PAID);
-        $transfer = new Transfer(
-            '46 2490 0005 0000 4000 1897 5420',
-            'Anna Kowalska',
-            'DEMO Zosia Sensoplastyka',
-            '79.00',
-            $now->modify('-4 days 3 hours'),
-        );
-        $paidOnline->addTransfer($transfer);
-        $this->entityManager->persist($transfer);
-        $singlePaid = $this->booking(
-            $parents[0],
-            $children[0],
-            $paidOnline,
-            Booking::STATUS_ACTIVE,
-            $now->modify('-5 days'),
-            'Alergia na orzechy — proszę uważać na materiały.',
-            $weekly[1],
-        );
-
-        $carnetPayment = $this->payment($parents[1], '279', PaymentMethod::ONLINE, Payment::STATUS_PAID);
-        $carnet = $this->booking(
-            $parents[1],
-            $children[2],
-            $carnetPayment,
-            Booking::STATUS_ACTIVE,
-            $now->modify('-12 days'),
-            'Karnet 4 wejścia; Maja potrzebuje chwili na adaptację.',
-            $weekly[1],
-            $weekly[2],
-            $weekly[3],
-            $weekly[4],
-        );
+        [$singlePaid, $carnet] = $this->createPaidBookings($now, $parents, $children, $weekly);
 
         $pendingPayment = $this->payment($parents[2], '95', PaymentMethod::ONLINE, Payment::STATUS_PENDING);
         $pending = $this->booking(
@@ -342,29 +310,7 @@ final class SeedDemoDataCommand extends Command
             $oneTime[1],
         );
 
-        $cancelledPayment = $this->payment($parents[0], '95', PaymentMethod::ONLINE, Payment::STATUS_PAID);
-        $cancelled = $this->booking(
-            $parents[0],
-            $children[1],
-            $cancelledPayment,
-            Booking::STATUS_ACTIVE,
-            $now->modify('-10 days'),
-            'Anulowano z powodu choroby dziecka.',
-            $oneTime[1],
-        );
-        $cancelled->cancel($admin, 'Choroba dziecka');
-
-        $refundedPayment = $this->payment($parents[2], '95', PaymentMethod::ONLINE, Payment::STATUS_REFUNDED);
-        $refunded = $this->booking(
-            $parents[2],
-            $children[3],
-            $refundedPayment,
-            Booking::STATUS_ACTIVE,
-            $now->modify('-14 days'),
-            'Zwrot wykonany na rachunek klienta.',
-            $oneTime[2],
-        );
-        $refunded->cancel($admin, 'Anulowanie ze zwrotem');
+        [$cancelled, $refunded] = $this->createCancelledBookings($now, $admin, $parents, $children, $oneTime);
 
         $rescheduledPayment = $this->payment($parents[3], '79', PaymentMethod::ONLINE, Payment::STATUS_PAID);
         $rescheduled = $this->booking(
@@ -484,6 +430,91 @@ final class SeedDemoDataCommand extends Command
         $bookings[] = $rescheduledAway;
 
         return $bookings;
+    }
+
+    /**
+     * @param list<User> $parents
+     * @param list<Child> $children
+     * @param list<Lesson> $oneTime
+     * @return array{Booking, Booking}
+     */
+    private function createCancelledBookings(
+        \DateTimeImmutable $now,
+        User $admin,
+        array $parents,
+        array $children,
+        array $oneTime,
+    ): array {
+        $cancelledPayment = $this->payment($parents[0], '95', PaymentMethod::ONLINE, Payment::STATUS_PAID);
+        $cancelled = $this->booking(
+            $parents[0],
+            $children[1],
+            $cancelledPayment,
+            Booking::STATUS_ACTIVE,
+            $now->modify('-10 days'),
+            'Anulowano z powodu choroby dziecka.',
+            $oneTime[1],
+        );
+        $cancelled->cancel($admin, 'Choroba dziecka');
+
+        $refundedPayment = $this->payment($parents[2], '95', PaymentMethod::ONLINE, Payment::STATUS_REFUNDED);
+        $refunded = $this->booking(
+            $parents[2],
+            $children[3],
+            $refundedPayment,
+            Booking::STATUS_ACTIVE,
+            $now->modify('-14 days'),
+            'Zwrot wykonany na rachunek klienta.',
+            $oneTime[2],
+        );
+        $refunded->cancel($admin, 'Anulowanie ze zwrotem');
+
+        return [$cancelled, $refunded];
+    }
+
+    /**
+     * @param list<User> $parents
+     * @param list<Child> $children
+     * @param list<Lesson> $weekly
+     * @return array{Booking, Booking}
+     */
+    private function createPaidBookings(\DateTimeImmutable $now, array $parents, array $children, array $weekly): array
+    {
+        $paidOnline = $this->payment($parents[0], '79', PaymentMethod::ONLINE, Payment::STATUS_PAID);
+        $transfer = new Transfer(
+            '46 2490 0005 0000 4000 1897 5420',
+            'Anna Kowalska',
+            'DEMO Zosia Sensoplastyka',
+            '79.00',
+            $now->modify('-4 days 3 hours'),
+        );
+        $paidOnline->addTransfer($transfer);
+        $this->entityManager->persist($transfer);
+        $singlePaid = $this->booking(
+            $parents[0],
+            $children[0],
+            $paidOnline,
+            Booking::STATUS_ACTIVE,
+            $now->modify('-5 days'),
+            'Alergia na orzechy — proszę uważać na materiały.',
+            $weekly[1],
+        );
+
+        $carnetPayment = $this->payment($parents[1], '279', PaymentMethod::ONLINE, Payment::STATUS_PAID);
+        $carnet = $this->booking(
+            $parents[1],
+            $children[2],
+            $carnetPayment,
+            Booking::STATUS_ACTIVE,
+            $now->modify('-12 days'),
+            'Karnet 4 wejścia; Maja potrzebuje chwili na adaptację.',
+            $weekly[1],
+            $weekly[2],
+            $weekly[3],
+            $weekly[4],
+        );
+
+        return [$singlePaid, $carnet];
     }
 
     /**
@@ -613,10 +644,8 @@ final class SeedDemoDataCommand extends Command
                 }
                 $this->entityManager->remove($payment);
             }
-            foreach ($users as $user) {
-                foreach ($this->childRepository->findByOwner($user) as $child) {
-                    $this->entityManager->remove($child);
-                }
+            foreach ($this->childRepository->findBy(['owner' => $users]) as $child) {
+                $this->entityManager->remove($child);
             }
             $this->entityManager->flush();
         }

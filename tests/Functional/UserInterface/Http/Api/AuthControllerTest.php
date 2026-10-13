@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\UserInterface\Http\Api;
 
+use App\Entity\User;
 use App\Infrastructure\Doctrine\Repository\UserRepository;
 use App\UserInterface\Http\Api\AuthController;
 use PHPUnit\Framework\Attributes\Group;
@@ -199,7 +200,7 @@ final class AuthControllerTest extends WebTestCase
 
         for ($i = 0; $i < 20; ++$i) {
             $response = $this->login([
-                'email' => $email,
+                'email' => $i . '-' . $email,
                 'code' => '123456',
             ]);
             static::assertSame(
@@ -212,10 +213,205 @@ final class AuthControllerTest extends WebTestCase
         static::assertSame(
             429,
             $this->login([
-                'email' => $email,
+                'email' => $i . '-' . $email,
                 'code' => '123456',
             ])->getStatusCode(),
         );
+    }
+
+    public function testRegisterRejectsInvalidPayloads(): void
+    {
+        $invalid = [
+            'malformed email' => [
+                'email' => 'not-an-email',
+                'name' => 'Valid Name',
+            ],
+            'blank email' => [
+                'email' => '',
+                'name' => 'Valid Name',
+            ],
+            'too short name' => [
+                'email' => 'auth-short-name@example.com',
+                'name' => 'A',
+            ],
+            'missing name' => [
+                'email' => 'auth-missing-name@example.com',
+            ],
+            'unexpected field' => [
+                'email' => 'auth-extra-field@example.com',
+                'name' => 'Valid Name',
+                'role' => 'ROLE_ADMIN',
+            ],
+        ];
+
+        foreach ($invalid as $label => $payload) {
+            $response = $this->register($payload);
+
+            static::assertSame(400, $response->getStatusCode(), $label);
+            static::assertSame('Validation failed', $this->decode($response)['error'], $label);
+        }
+
+        $this->assertEmailCount(0);
+    }
+
+    public function testRegisterRejectsAnUnparsablePhoneNumberWithoutCreatingTheUser(): void
+    {
+        $email = 'auth-bad-phone@example.com';
+
+        $response = $this->register([
+            'email' => $email,
+            'name' => 'Bad Phone',
+            'phone' => 'definitely not a number',
+        ]);
+
+        static::assertSame(400, $response->getStatusCode());
+        static::assertSame('Invalid phone number', $this->decode($response)['error']);
+        static::assertNull($this->findUser($email));
+        $this->assertEmailCount(0);
+    }
+
+    public function testRegisterStoresAPolishPhoneNumberWhenProvided(): void
+    {
+        $email = 'auth-phone@example.com';
+
+        $response = $this->register([
+            'email' => $email,
+            'name' => 'With Phone',
+            'phone' => '501 234 567',
+        ]);
+
+        static::assertSame(201, $response->getStatusCode());
+        $user = $this->findUser($email);
+        static::assertNotNull($user);
+        static::assertSame(48, $user->getPhone()?->getCountryCode());
+        static::assertSame(['ROLE_USER'], $user->getRoles());
+    }
+
+    public function testVerifyAndLoginRejectMalformedRequests(): void
+    {
+        $malformedBody = Request::create(
+            uri: '/api/auth/_test',
+            method: 'POST',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: '{invalid',
+        );
+
+        foreach (['verify', 'login'] as $action) {
+            $response = $this->controller->{$action}($malformedBody, $this->validator);
+            static::assertSame(400, $response->getStatusCode(), $action);
+            static::assertSame('Invalid JSON', $this->decode($response)['error'], $action);
+        }
+
+        $invalid = [
+            'malformed email' => [
+                'email' => 'nope',
+                'code' => '123456',
+            ],
+            'five digit code' => [
+                'email' => 'auth-short-code@example.com',
+                'code' => '12345',
+            ],
+            'seven digit code' => [
+                'email' => 'auth-long-code@example.com',
+                'code' => '1234567',
+            ],
+            'missing code' => [
+                'email' => 'auth-no-code@example.com',
+            ],
+            'numeric code instead of a string' => [
+                'email' => 'auth-int-code@example.com',
+                'code' => 123_456,
+            ],
+        ];
+        foreach ($invalid as $label => $payload) {
+            static::assertSame(400, $this->verify($payload)->getStatusCode(), 'verify: ' . $label);
+            static::assertSame(400, $this->login($payload)->getStatusCode(), 'login: ' . $label);
+        }
+    }
+
+    public function testVerifyAndLoginRejectACodeForAnEmailThatNeverRequestedOne(): void
+    {
+        $payload = [
+            'email' => 'auth-never-asked@example.com',
+            'code' => '123456',
+        ];
+
+        $verify = $this->verify($payload);
+        $login = $this->login($payload);
+
+        static::assertSame(400, $verify->getStatusCode());
+        static::assertSame('Invalid or expired code', $this->decode($verify)['error']);
+        static::assertSame(400, $login->getStatusCode());
+        static::assertSame('Invalid or expired code', $this->decode($login)['error']);
+        static::assertArrayNotHasKey('chat_token', $this->decode($login));
+    }
+
+    public function testLoginWithAWrongCodeDoesNotRecordALoginOrBurnTheRealCode(): void
+    {
+        $email = 'auth-login-wrong@example.com';
+        static::assertSame(
+            201,
+            $this->register([
+                'email' => $email,
+                'name' => 'Wrong Login',
+            ])->getStatusCode(),
+        );
+        $sentEmail = $this->mailer()->sentEmails()->first();
+        $code = $this->extractCode((string) $sentEmail->getTextBody() . (string) $sentEmail->getHtmlBody());
+        $wrong = $code === '000000' ? '111111' : '000000';
+
+        static::assertSame(
+            400,
+            $this->login([
+                'email' => $email,
+                'code' => $wrong,
+            ])->getStatusCode(),
+        );
+        static::assertNull($this->findUser($email)?->getLastLoginAt());
+
+        $response = $this->login([
+            'email' => $email,
+            'code' => $code,
+        ]);
+        static::assertSame(200, $response->getStatusCode());
+        /** @var array{user: array{email: string, name: string}} $payload */
+        $payload = $this->decode($response);
+        static::assertSame($email, $payload['user']['email']);
+        static::assertSame('Wrong Login', $payload['user']['name']);
+    }
+
+    public function testRegisterIsRateLimitedPerIp(): void
+    {
+        for ($i = 0; $i < 20; ++$i) {
+            static::assertSame(
+                400,
+                $this->register([
+                    'email' => 'invalid',
+                    'name' => 'Spammer',
+                ])->getStatusCode(),
+                "attempt {$i} should be a plain validation rejection",
+            );
+        }
+
+        static::assertSame(
+            429,
+            $this->register([
+                'email' => 'invalid',
+                'name' => 'Spammer',
+            ])->getStatusCode(),
+        );
+    }
+
+    private function findUser(string $email): ?User
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        return $userRepository->findOneBy([
+            'email' => $email,
+        ]);
     }
 
     /**

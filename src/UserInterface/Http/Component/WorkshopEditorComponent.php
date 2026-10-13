@@ -693,6 +693,7 @@ class WorkshopEditorComponent extends AbstractController
      */
     private const array SUPPORTED_VIDEO_MIME_TYPES = ['video/mp4', 'video/webm'];
 
+    /** @throws \UnexpectedValueException */
     #[LiveAction]
     public function save(Request $request): void
     {
@@ -771,6 +772,7 @@ class WorkshopEditorComponent extends AbstractController
      *
      * @throws \DomainException
      * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     private function saveExistingLesson(array $ticketOptions): void
     {
@@ -857,6 +859,7 @@ class WorkshopEditorComponent extends AbstractController
     /**
      * @param list<Lesson> $affectedLessons
      * @param list<TicketOption> $ticketOptions
+     * @throws \UnexpectedValueException
      */
     private function applyEditScope(Lesson $lesson, string $scope, array $affectedLessons, array $ticketOptions): void
     {
@@ -904,6 +907,7 @@ class WorkshopEditorComponent extends AbstractController
      *
      * @throws \DomainException
      * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     private function saveNewSeries(array $ticketOptions): void
     {
@@ -1207,12 +1211,24 @@ class WorkshopEditorComponent extends AbstractController
 
     /**
      * @return User[]
+     * @throws \UnexpectedValueException
      */
     private function resolveSelectedInstructors(): array
     {
+        if ($this->instructorIds === []) {
+            return [];
+        }
+
+        $byId = [];
+        foreach ($this->userRepository->findBy(['id' => $this->instructorIds]) as $user) {
+            $id = $user->getId();
+            if ($id !== null) {
+                $byId[$id] = $user;
+            }
+        }
         $users = [];
         foreach ($this->instructorIds as $userId) {
-            $user = $this->userRepository->find((int) $userId);
+            $user = $byId[(int) $userId] ?? null;
             if ($user !== null) {
                 $users[] = $user;
             }

@@ -60,12 +60,26 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     #[\Override]
     public function definitions(): array
     {
-        $confirm = [
-            'confirm' => [
-                'type' => 'boolean',
-                'description' => 'Must be true to execute the mutation',
-            ],
+        return [
+            ...$this->profileDefinitions(),
+            ...$this->catalogDefinitions(),
+            ...$this->bookingDefinitions(),
+            ...$this->bookingChangeDefinitions(),
+            ...$this->notificationDefinitions(),
+            ...$this->loginDefinitions(),
+            ...$this->bookingAccessDefinitions(),
+            ...$this->waitlistDefinitions(),
         ];
+    }
+
+    /**
+     * Parent profile and children.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function profileDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
 
         return [
             new ToolDefinition(
@@ -140,6 +154,17 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * Public workshop catalog.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function catalogDefinitions(): array
+    {
+        return [
             new ToolDefinition(
                 'user.list_upcoming_lessons',
                 'List available workshops/lessons for browsing or booking. Searches upcoming '
@@ -191,6 +216,19 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresAuth: false,
             ),
+        ];
+    }
+
+    /**
+     * Booking creation, payment instructions and lookup.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function bookingDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'user.create_booking',
                 'Book a workshop for the logged-in parent. Uses account data from the chat token — do NOT ask for name/email/phone. Pass lesson_id + ticket_type (one_time|carnet_4) + confirm=true. Optional child_id from user.list_children. Returns BLIK payment instructions (phone, amount, title code, ~24h validity). Guests must log in first.',
@@ -252,6 +290,19 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 'type' => 'object',
                 'properties' => new \stdClass(),
             ]),
+        ];
+    }
+
+    /**
+     * Rescheduling, cancellation and refunds.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function bookingChangeDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition(
                 'user.booking_reschedule_options',
                 'List alternative dates when rescheduling an EXISTING booking. Requires real booking_id and lesson_id ULIDs. Not for browsing the workshop catalog — use user.list_upcoming_lessons instead.',
@@ -336,6 +387,19 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * In-app notifications.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function notificationDefinitions(): array
+    {
+        $confirm = self::confirmProperty();
+
+        return [
             new ToolDefinition('user.list_notifications', 'List recent in-app notifications for the parent.', [
                 'type' => 'object',
                 'properties' => [
@@ -368,6 +432,17 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresConfirm: true,
             ),
+        ];
+    }
+
+    /**
+     * Registration and passwordless login codes.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function loginDefinitions(): array
+    {
+        return [
             new ToolDefinition(
                 'user.register',
                 'Register a new user account. A 6-digit verification code is emailed to the user; ask them to read it back, then call user.login_with_code.',
@@ -425,6 +500,17 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresAuth: false,
             ),
+        ];
+    }
+
+    /**
+     * Guest booking access via payment code.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function bookingAccessDefinitions(): array
+    {
+        return [
             new ToolDefinition(
                 'user.request_booking_access',
                 'Guest lookup of an existing reservation by its payment/reservation code (e.g. "0NQ7"). '
@@ -462,6 +548,17 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                 ],
                 requiresAuth: false,
             ),
+        ];
+    }
+
+    /**
+     * Waitlist.
+     *
+     * @return list<ToolDefinition>
+     */
+    private function waitlistDefinitions(): array
+    {
+        return [
             new ToolDefinition(
                 'user.join_waitlist',
                 'Join the waitlist for a FULL lesson so the parent is emailed when a seat frees up. '
@@ -497,6 +594,19 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     'properties' => new \stdClass(),
                 ],
             ),
+        ];
+    }
+
+    /**
+     * @return array{confirm: array{type: string, description: string}}
+     */
+    private static function confirmProperty(): array
+    {
+        return [
+            'confirm' => [
+                'type' => 'boolean',
+                'description' => 'Must be true to execute the mutation',
+            ],
         ];
     }
 

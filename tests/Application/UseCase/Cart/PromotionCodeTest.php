@@ -22,6 +22,8 @@ use Symfony\Component\Uid\Ulid;
 #[Group('functional')]
 final class PromotionCodeTest extends KernelTestCase
 {
+    use CartScenario;
+
     public function testApplyingAValidCodeNormalizesItAndRepricesTheItems(): void
     {
         self::bootKernel();
@@ -119,5 +121,96 @@ final class PromotionCodeTest extends KernelTestCase
 
         static::assertNull($updated->promotionCode);
         static::assertSame(5000, $item->finalPriceMinor);
+    }
+
+    public function testApplyingACodeToAnotherCustomersCartIsRejected(): void
+    {
+        $em = $this->entityManager();
+        /** @var ApplyPromotionCode $applyPromotionCode */
+        $applyPromotionCode = self::getContainer()->get(ApplyPromotionCode::class);
+        $owner = $this->persistCustomer($em);
+        $intruder = $this->persistCustomer($em);
+        $em->persist(new PricingRule(
+            id: new Ulid(),
+            name: 'Foreign cart promo',
+            adjustmentType: AdjustmentType::FIXED_AMOUNT_OFF,
+            adjustmentValue: 1_000,
+            promotionCode: 'FOREIGNCART',
+        ));
+        $cart = $this->persistCart($em, $owner);
+
+        try {
+            $applyPromotionCode($cart->id, 'FOREIGNCART', $this->idOf($intruder));
+            static::fail("Expected another customer's cart to be rejected.");
+        } catch (\InvalidArgumentException $exception) {
+            static::assertStringContainsString('not found for this customer', $exception->getMessage());
+        }
+
+        static::assertNull($cart->promotionCode);
+    }
+
+    public function testApplyingACodeToAConvertedCartIsRejected(): void
+    {
+        $em = $this->entityManager();
+        /** @var ApplyPromotionCode $applyPromotionCode */
+        $applyPromotionCode = self::getContainer()->get(ApplyPromotionCode::class);
+        $user = $this->persistCustomer($em);
+        $em->persist(new PricingRule(
+            id: new Ulid(),
+            name: 'Converted cart promo',
+            adjustmentType: AdjustmentType::FIXED_AMOUNT_OFF,
+            adjustmentValue: 1_000,
+            promotionCode: 'CONVERTEDCART',
+        ));
+        $cart = $this->persistCart($em, $user, Cart::STATUS_CONVERTED);
+
+        try {
+            $applyPromotionCode($cart->id, 'CONVERTEDCART', $this->idOf($user));
+            static::fail('Expected a converted cart to be immutable.');
+        } catch (\LogicException $exception) {
+            static::assertStringContainsString('not open', $exception->getMessage());
+        }
+
+        static::assertNull($cart->promotionCode);
+    }
+
+    public function testAnUnknownCodeLeavesAnAlreadyAppliedCodeAndPricesInPlace(): void
+    {
+        $em = $this->entityManager();
+        /** @var AddCartItem $addCartItem */
+        $addCartItem = self::getContainer()->get(AddCartItem::class);
+        /** @var ApplyPromotionCode $applyPromotionCode */
+        $applyPromotionCode = self::getContainer()->get(ApplyPromotionCode::class);
+        $user = $this->persistCustomer($em);
+        $lesson = $this->persistLesson($em);
+        $em->persist(new PricingRule(
+            id: new Ulid(),
+            name: 'Keep promo',
+            adjustmentType: AdjustmentType::FIXED_AMOUNT_OFF,
+            adjustmentValue: 1_000,
+            promotionCode: 'KEEPME',
+        ));
+        $cart = $this->persistCart($em, $user);
+        $item = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            null,
+            $this->idOf($user),
+        );
+        $applyPromotionCode($cart->id, 'KEEPME', $this->idOf($user));
+        static::assertSame(4000, $item->finalPriceMinor);
+
+        $rejected = false;
+        try {
+            $applyPromotionCode($cart->id, 'TYPO', $this->idOf($user));
+        } catch (InvalidPromotionCodeException) {
+            $rejected = true;
+        }
+
+        static::assertTrue($rejected, 'Expected an unknown code to be rejected.');
+
+        static::assertSame('KEEPME', $cart->promotionCode);
+        static::assertSame(4000, $item->finalPriceMinor);
     }
 }

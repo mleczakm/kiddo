@@ -7,6 +7,8 @@ namespace App\MessageHandler;
 use App\Application\Command\Notification\SendRescheduleAdminNotificationCommand;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Workflow\BookingStateMachineInterface;
+use App\Entity\Booking;
+use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
 use App\Infrastructure\Doctrine\Repository\BookingRepository;
 use App\Infrastructure\Doctrine\Repository\LessonRepository;
@@ -42,29 +44,8 @@ readonly class RescheduleLessonBookingHandler
             return;
         }
 
-        $oldLesson = $this->lessonRepository->find($command->getOldLessonId());
-        if (!$oldLesson || !$booking->getLessons()->contains($oldLesson)) {
-            $this->logger->error('Old lesson not found in booking', [
-                'bookingId' => $booking->getId(),
-                'oldLessonId' => $command->getOldLessonId(),
-                'rescheduledById' => $command->getRescheduledBy()->getId(),
-            ]);
-            return;
-        }
-
-        // Rescheduling is only allowed for active lessons
-        if (
-            !(
-                $booking->findOccurrence($oldLesson->getId())?->isActive() ?? $booking->getLessonsMap()->isActiveLesson(
-                    $oldLesson->getId(),
-                )
-            )
-        ) {
-            $this->logger->warning('Attempt to reschedule a non-active lesson ignored', [
-                'bookingId' => $booking->getId(),
-                'oldLessonId' => $command->getOldLessonId(),
-                'status' => $booking->getStatus(),
-            ]);
+        $oldLesson = $this->findReschedulableLesson($booking, $command);
+        if ($oldLesson === null) {
             return;
         }
 
@@ -77,6 +58,75 @@ readonly class RescheduleLessonBookingHandler
             return;
         }
 
+        $this->assertRescheduleAllowed($booking, $oldLesson, $newLesson, $command);
+
+        // Apply workflow transition with context
+        $this->bookingStateMachine->apply($booking, 'reschedule', [
+            'oldLessonId' => $command->getOldLessonId(),
+            'newLessonId' => $command->getNewLessonId(),
+            'reason' => $command->getReason(),
+            'by' => $command->getRescheduledBy()->getId(),
+        ]);
+
+        // Perform domain reschedule operation on lessons map
+        $booking->rescheduleLesson($oldLesson, $newLesson, $command->getRescheduledBy());
+
+        // Notify the finance contacts and instructors connected to either
+        // occurrence about the reschedule.
+        $this->bus->dispatch(new SendRescheduleAdminNotificationCommand(
+            booking: $booking,
+            oldLesson: $oldLesson,
+            newLesson: $newLesson,
+            rescheduledBy: $command->getRescheduledBy(),
+            reason: $command->getReason(),
+        ));
+
+        $this->notifyCustomer($booking, $oldLesson, $newLesson);
+    }
+
+    /**
+     * The booked lesson the command wants to move, or null (after logging
+     * why) when it is unknown, not part of the booking, or no longer active -
+     * rescheduling is only allowed for active lessons.
+     */
+    private function findReschedulableLesson(Booking $booking, RescheduleLessonBooking $command): ?Lesson
+    {
+        $oldLesson = $this->lessonRepository->find($command->getOldLessonId());
+        if (!$oldLesson || !$booking->getLessons()->contains($oldLesson)) {
+            $this->logger->error('Old lesson not found in booking', [
+                'bookingId' => $booking->getId(),
+                'oldLessonId' => $command->getOldLessonId(),
+                'rescheduledById' => $command->getRescheduledBy()->getId(),
+            ]);
+            return null;
+        }
+
+        $isActive = $booking->findOccurrence($oldLesson->getId())?->isActive() ?? $booking
+            ->getLessonsMap()
+            ->isActiveLesson($oldLesson->getId());
+        if (!$isActive) {
+            $this->logger->warning('Attempt to reschedule a non-active lesson ignored', [
+                'bookingId' => $booking->getId(),
+                'oldLessonId' => $command->getOldLessonId(),
+                'status' => $booking->getStatus(),
+            ]);
+            return null;
+        }
+
+        return $oldLesson;
+    }
+
+    /**
+     * @throws \RuntimeException when the ticket policy / 24h rule, the target
+     *                           lesson's capacity or the booking's workflow
+     *                           state forbids the reschedule
+     */
+    private function assertRescheduleAllowed(
+        Booking $booking,
+        Lesson $oldLesson,
+        Lesson $newLesson,
+        RescheduleLessonBooking $command,
+    ): void {
         $isAdmin = in_array('ROLE_ADMIN', $command->getRescheduledBy()->getRoles(), true);
         if (!$isAdmin && !$booking->canRescheduleLesson($oldLesson)) {
             $this->logger->warning('Reschedule blocked by ticket policy or 24h rule', [
@@ -104,41 +154,25 @@ readonly class RescheduleLessonBookingHandler
             ]);
             throw new \RuntimeException('Cannot reschedule this booking in its current state');
         }
+    }
 
-        // Apply workflow transition with context
-        $this->bookingStateMachine->apply($booking, 'reschedule', [
-            'oldLessonId' => $command->getOldLessonId(),
-            'newLessonId' => $command->getNewLessonId(),
-            'reason' => $command->getReason(),
-            'by' => $command->getRescheduledBy()->getId(),
-        ]);
-
-        // Perform domain reschedule operation on lessons map
-        $booking->rescheduleLesson($oldLesson, $newLesson, $command->getRescheduledBy());
-
-        // Notify the finance contacts and instructors connected to either
-        // occurrence about the reschedule.
-        $this->bus->dispatch(new SendRescheduleAdminNotificationCommand(
-            booking: $booking,
-            oldLesson: $oldLesson,
-            newLesson: $newLesson,
-            rescheduledBy: $command->getRescheduledBy(),
-            reason: $command->getReason(),
-        ));
-
-        $oldTitle = $oldLesson->getMetadata()->title;
-        $newTitle = $newLesson->getMetadata()->title;
-
-        // Notify the customer in-app that their booking moved (the internal
-        // notification above covers the responsible staff recipients).
+    /**
+     * Notify the customer in-app that their booking moved (the internal
+     * notification dispatched by the handler covers the responsible staff
+     * recipients).
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function notifyCustomer(Booking $booking, Lesson $oldLesson, Lesson $newLesson): void
+    {
         $this->inAppNotifications->notify(
             $booking->getUser(),
             $this->translator->trans('notifications.in_app.reschedule.user.title', [], 'messages'),
             $this->translator->trans(
                 'notifications.in_app.reschedule.user.body',
                 [
-                    'from' => $oldTitle,
-                    'to' => $newTitle,
+                    'from' => $oldLesson->getMetadata()->title,
+                    'to' => $newLesson->getMetadata()->title,
                 ],
                 'messages',
             ),

@@ -14,14 +14,20 @@ use App\Infrastructure\Doctrine\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 final class NewsletterController extends AbstractController
 {
     public function __construct(
+        #[Autowire(service: 'limiter.newsletter_ip_limiter')]
+        private readonly RateLimiterFactory $ipRateLimiter,
+        #[Autowire(service: 'limiter.newsletter_email_limiter')]
+        private readonly RateLimiterFactory $emailRateLimiter,
         private readonly LoggerInterface $logger = new NullLogger(),
     ) {}
 
@@ -49,6 +55,25 @@ final class NewsletterController extends AbstractController
         }
 
         $email = $input->email;
+
+        foreach ([
+            $this->ipRateLimiter->create($request->getClientIp()),
+            $this->emailRateLimiter->create(hash('sha256', mb_strtolower(trim($email)))),
+        ] as $limiter) {
+            $limit = $limiter->consume(1);
+            if (!$limit->isAccepted()) {
+                $retryAfter = max(1, $limit->getRetryAfter()->getTimestamp() - time());
+
+                return new JsonResponse(
+                    [
+                        'error' => 'newsletter.too_many_requests',
+                        'retry_after' => $retryAfter,
+                    ],
+                    JsonResponse::HTTP_TOO_MANY_REQUESTS,
+                    ['Retry-After' => (string) $retryAfter],
+                );
+            }
+        }
 
         $authenticatedUser = $this->getUser();
         $consentingUser =

@@ -20,6 +20,8 @@ use Symfony\Component\Uid\Ulid;
 #[Group('functional')]
 final class ChangeCartParticipantTest extends KernelTestCase
 {
+    use CartScenario;
+
     public function testChangesTheParticipantOnTheItem(): void
     {
         self::bootKernel();
@@ -122,5 +124,131 @@ final class ChangeCartParticipantTest extends KernelTestCase
 
         $this->expectException(DuplicateCartItemException::class);
         $changeParticipant($selfItem->id, (string) $child->getId(), $userId);
+    }
+
+    public function testChangingAnItemThatDoesNotExistIsRejected(): void
+    {
+        $em = $this->entityManager();
+        /** @var ChangeCartParticipant $changeParticipant */
+        $changeParticipant = self::getContainer()->get(ChangeCartParticipant::class);
+        $user = $this->persistCustomer($em);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('not found');
+        $changeParticipant(new Ulid(), null, $this->idOf($user));
+    }
+
+    public function testCannotChangeAnotherCustomersItem(): void
+    {
+        $em = $this->entityManager();
+        /** @var AddCartItem $addCartItem */
+        $addCartItem = self::getContainer()->get(AddCartItem::class);
+        /** @var ChangeCartParticipant $changeParticipant */
+        $changeParticipant = self::getContainer()->get(ChangeCartParticipant::class);
+        $owner = $this->persistCustomer($em);
+        $intruder = $this->persistCustomer($em);
+        $child = $this->persistChild($em, $intruder);
+        $lesson = $this->persistLesson($em);
+        $cart = $this->persistCart($em, $owner);
+        $item = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            null,
+            $this->idOf($owner),
+        );
+
+        try {
+            $changeParticipant($item->id, (string) $child->getId(), $this->idOf($intruder));
+            static::fail("Expected another customer's item to be rejected.");
+        } catch (\InvalidArgumentException $exception) {
+            static::assertStringContainsString('not found for this customer', $exception->getMessage());
+        }
+
+        static::assertNull($item->participantId);
+    }
+
+    public function testAParticipantThatDoesNotExistIsRejected(): void
+    {
+        $em = $this->entityManager();
+        /** @var AddCartItem $addCartItem */
+        $addCartItem = self::getContainer()->get(AddCartItem::class);
+        /** @var ChangeCartParticipant $changeParticipant */
+        $changeParticipant = self::getContainer()->get(ChangeCartParticipant::class);
+        $user = $this->persistCustomer($em);
+        $lesson = $this->persistLesson($em);
+        $cart = $this->persistCart($em, $user);
+        $item = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            null,
+            $this->idOf($user),
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Participant');
+        $changeParticipant($item->id, (string) new Ulid(), $this->idOf($user));
+    }
+
+    public function testAnotherCustomersChildCannotBecomeTheParticipant(): void
+    {
+        $em = $this->entityManager();
+        /** @var AddCartItem $addCartItem */
+        $addCartItem = self::getContainer()->get(AddCartItem::class);
+        /** @var ChangeCartParticipant $changeParticipant */
+        $changeParticipant = self::getContainer()->get(ChangeCartParticipant::class);
+        $user = $this->persistCustomer($em);
+        $stranger = $this->persistCustomer($em);
+        $strangersChild = $this->persistChild($em, $stranger);
+        $lesson = $this->persistLesson($em);
+        $cart = $this->persistCart($em, $user);
+        $item = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            null,
+            $this->idOf($user),
+        );
+
+        try {
+            $changeParticipant($item->id, (string) $strangersChild->getId(), $this->idOf($user));
+            static::fail('Expected a participant owned by someone else to be rejected.');
+        } catch (\InvalidArgumentException $exception) {
+            static::assertStringContainsString('not found for this customer', $exception->getMessage());
+        }
+
+        static::assertNull($item->participantId);
+    }
+
+    public function testCannotChangeTheParticipantOnAConvertedCart(): void
+    {
+        $em = $this->entityManager();
+        /** @var AddCartItem $addCartItem */
+        $addCartItem = self::getContainer()->get(AddCartItem::class);
+        /** @var ChangeCartParticipant $changeParticipant */
+        $changeParticipant = self::getContainer()->get(ChangeCartParticipant::class);
+        $user = $this->persistCustomer($em);
+        $child = $this->persistChild($em, $user);
+        $lesson = $this->persistLesson($em);
+        $cart = $this->persistCart($em, $user);
+        $item = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            null,
+            $this->idOf($user),
+        );
+        $cart->convert(new Ulid());
+        $em->flush();
+
+        try {
+            $changeParticipant($item->id, (string) $child->getId(), $this->idOf($user));
+            static::fail('Expected a converted cart to be immutable.');
+        } catch (\LogicException $exception) {
+            static::assertStringContainsString('not open', $exception->getMessage());
+        }
+
+        static::assertNull($item->participantId);
     }
 }

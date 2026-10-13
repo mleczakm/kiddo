@@ -8,6 +8,7 @@ use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Command\Notification\TransferNotMatchedCommand;
 use App\Application\Repository\PaymentCodeRepositoryInterface;
 use App\Application\Workflow\PaymentStateMachineInterface;
+use App\Entity\PaymentCode;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final readonly class MatchPaymentForTransferHandler
@@ -31,8 +32,12 @@ final readonly class MatchPaymentForTransferHandler
 
         $title = $command->transfer->title;
 
-        foreach ($this->tokenizeTitle($title) as $word) {
-            $paymentCode = $this->paymentCodeRepository->findOneByCode($word);
+        $words = array_values(array_unique(iterator_to_array($this->tokenizeTitle($title), false)));
+        $matches = $words === [] ? [] : $this->paymentCodeRepository->findBy(['code' => $words]);
+        $codes = array_combine(array_map(static fn(PaymentCode $code): string => $code->getCode(), $matches), $matches);
+
+        foreach ($words as $word) {
+            $paymentCode = $codes[$word] ?? null;
 
             if ($paymentCode) {
                 $payment = $paymentCode->getPayment();

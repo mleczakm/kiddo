@@ -6,7 +6,7 @@ namespace App\Application\UseCase\Cart;
 
 use App\Application\Repository\CartItemRepositoryInterface;
 use App\Application\Repository\CartRepositoryInterface;
-use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Service\Commerce\CartItemLookup;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Domain\Commerce\Cart\Cart;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +26,7 @@ final readonly class RepriceCart
     public function __construct(
         private CartRepositoryInterface $cartRepository,
         private CartItemRepositoryInterface $cartItemRepository,
-        private LessonRepositoryInterface $lessonRepository,
+        private CartItemLookup $itemLookup,
         private PriceQuoter $priceQuoter,
         private EntityManagerInterface $em,
     ) {}
@@ -47,8 +47,11 @@ final readonly class RepriceCart
 
     public function reprice(Cart $cart): void
     {
-        foreach ($this->cartItemRepository->findByCart($cart->id) as $item) {
-            $lesson = $this->lessonRepository->find($item->lessonId);
+        $items = $this->cartItemRepository->findByCart($cart->id);
+        $lessons = $this->itemLookup->lessons($items);
+
+        foreach ($items as $item) {
+            $lesson = $lessons[(string) $item->lessonId] ?? null;
             if ($lesson === null) {
                 // The lesson this item pointed at is gone - leave its last known
                 // quote in place rather than failing the whole reprice; RemoveCartItem

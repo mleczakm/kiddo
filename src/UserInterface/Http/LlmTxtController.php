@@ -16,7 +16,27 @@ final class LlmTxtController extends AbstractController
     {
         $mcpUrl = $urlGenerator->generate('_mcp_endpoint', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $content = <<<EOF
+        $content = implode("\n\n", [
+            $this->overview($mcpUrl),
+            $this->userTools(),
+            $this->adminTools(),
+            $this->clientConfiguration($mcpUrl),
+            $this->domainKnowledge(),
+            $this->agentGuidelines(),
+        ]);
+
+        return new Response($content, 200, [
+            'Content-Type' => 'text/plain; charset=utf-8',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
+    }
+
+    /**
+     * Studio description, contact details and MCP connection details.
+     */
+    private function overview(string $mcpUrl): string
+    {
+        return <<<EOF
             # Warsztatownia Sensoryczna - Kiddo
 
             > Creative sensory workshop studio for children in Radzymin, Poland. We organize educational, creative, and engaging activities (sensory play, sensoplasty) that stimulate sensory development in young children.
@@ -39,7 +59,15 @@ final class LlmTxtController extends AbstractController
               - Rate limited: 100 requests per hour per IP
               - User identity via `X-Kiddo-Chat-Token: <chat-token>` header (for authenticated operations)
               - Guests obtain a chat token by calling `user_register` (or `user_request_login_code` for an existing account) followed by `user_login_with_code` with the 6-digit code emailed to them — no password involved
+            EOF;
+    }
 
+    /**
+     * Capabilities header plus the parent-facing tool list.
+     */
+    private function userTools(): string
+    {
+        return <<<EOF
             ### Capabilities
 
             The server exposes the following MCP capabilities:
@@ -70,7 +98,15 @@ final class LlmTxtController extends AbstractController
             - `user_list_notifications`: List recent in-app notifications for the parent
             - `user_mark_notification_read`: Mark a notification as read
             - `user_delete_notification`: Soft-delete a notification (requires confirm=true)
+            EOF;
+    }
 
+    /**
+     * The admin-facing tool list.
+     */
+    private function adminTools(): string
+    {
+        return <<<EOF
             **Admin Tools (admin-facing):**
             - `admin_today_schedule`: List today's lessons with attendee counts
             - `admin_list_lessons`: List lessons for a week (admin ops)
@@ -93,7 +129,15 @@ final class LlmTxtController extends AbstractController
             - `admin_assign_series_instructor`: Assign a user (user_id or email) as instructor of a whole series (requires confirm=true)
             - `admin_grant_host_role`: Promote a user (user_id or email) to ROLE_HOST, keeping existing roles (requires confirm=true)
             - `admin_set_operational_emails`: Opt a user (user_id or email) in/out of operational admin emails with enabled=true|false (requires confirm=true)
+            EOF;
+    }
 
+    /**
+     * Example MCP client configuration.
+     */
+    private function clientConfiguration(string $mcpUrl): string
+    {
+        return <<<EOF
             ### MCP Client Configuration Example
 
             ```json
@@ -108,7 +152,15 @@ final class LlmTxtController extends AbstractController
               }
             }
             ```
+            EOF;
+    }
 
+    /**
+     * Key concepts of the booking domain.
+     */
+    private function domainKnowledge(): string
+    {
+        return <<<EOF
             ### Domain Knowledge
 
             Key concepts for understanding the system:
@@ -119,7 +171,15 @@ final class LlmTxtController extends AbstractController
             4. **Payment**: BLIK-based payment system with ~24h validity for pending bookings
             5. **Carnet**: Multi-lesson pass (e.g., carnet_4 for 4 entries) with rescheduling flexibility
             6. **Child Profile**: Each child must be registered on the parent account before booking
+            EOF;
+    }
 
+    /**
+     * How an AI agent should behave when assisting parents.
+     */
+    private function agentGuidelines(): string
+    {
+        return <<<EOF
             ### AI Agent Behavior Guidelines
 
             When assisting users:
@@ -131,10 +191,5 @@ final class LlmTxtController extends AbstractController
             - Use `user_me` instead of asking for personal data already stored on the account
             - Never repeat a verification code back to the user — it is only valid because it was delivered to their own inbox; just ask them to read it to you
             EOF;
-
-        return new Response($content, 200, [
-            'Content-Type' => 'text/plain; charset=utf-8',
-            'Cache-Control' => 'public, max-age=3600',
-        ]);
     }
 }

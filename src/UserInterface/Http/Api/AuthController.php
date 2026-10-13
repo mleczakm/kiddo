@@ -32,6 +32,8 @@ final class AuthController extends AbstractController
         private readonly RateLimiterFactory $authEmailRateLimiter,
         #[Autowire(service: 'limiter.auth_ip_limiter')]
         private readonly RateLimiterFactory $authIpRateLimiter,
+        #[Autowire(service: 'limiter.auth_verification_limiter')]
+        private readonly RateLimiterFactory $authVerificationRateLimiter,
         private readonly AuthVerificationService $verification,
     ) {}
 
@@ -155,6 +157,11 @@ final class AuthController extends AbstractController
             ], 400);
         }
 
+        $emailLimitResponse = $this->checkVerificationLimit($email);
+        if ($emailLimitResponse !== null) {
+            return $emailLimitResponse;
+        }
+
         $user = $this->verification->consume($email, $code);
         if ($user === null) {
             return $this->json([
@@ -179,6 +186,11 @@ final class AuthController extends AbstractController
     #[Route('/send-code', name: 'api_auth_send_code', methods: ['POST'])]
     public function sendCode(Request $request, ValidatorInterface $validator): JsonResponse
     {
+        $ipLimitResponse = $this->checkIpLimit($request);
+        if ($ipLimitResponse !== null) {
+            return $ipLimitResponse;
+        }
+
         $data = json_decode($request->getContent(), true);
         if (!is_array($data)) {
             return $this->json([
@@ -261,6 +273,11 @@ final class AuthController extends AbstractController
             ], 400);
         }
 
+        $emailLimitResponse = $this->checkVerificationLimit($email);
+        if ($emailLimitResponse !== null) {
+            return $emailLimitResponse;
+        }
+
         $user = $this->verification->consume($email, $code);
         if ($user === null) {
             return $this->json([
@@ -282,12 +299,25 @@ final class AuthController extends AbstractController
 
     private function checkEmailLimit(string $email): ?JsonResponse
     {
-        $limiter = $this->authEmailRateLimiter->create($email);
+        $limiter = $this->authEmailRateLimiter->create(hash('sha256', mb_strtolower(trim($email))));
         $limit = $limiter->consume(1);
         if (!$limit->isAccepted()) {
             return $this->json([
                 'error' => 'Too many code requests. Please try again later.',
                 'retry_after' => $limit->getRetryAfter()->getTimestamp() - time(),
+            ], 429);
+        }
+
+        return null;
+    }
+
+    private function checkVerificationLimit(string $email): ?JsonResponse
+    {
+        $limit = $this->authVerificationRateLimiter->create(hash('sha256', mb_strtolower(trim($email))))->consume(1);
+        if (!$limit->isAccepted()) {
+            return $this->json([
+                'error' => 'Too many verification attempts. Please try again later.',
+                'retry_after' => max(1, $limit->getRetryAfter()->getTimestamp() - time()),
             ], 429);
         }
 

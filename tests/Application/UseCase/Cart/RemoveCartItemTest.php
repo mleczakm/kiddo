@@ -19,6 +19,8 @@ use Symfony\Component\Uid\Ulid;
 #[Group('functional')]
 final class RemoveCartItemTest extends KernelTestCase
 {
+    use CartScenario;
+
     public function testRemovingAnItemDeletesIt(): void
     {
         self::bootKernel();
@@ -77,5 +79,80 @@ final class RemoveCartItemTest extends KernelTestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $removeCartItem($item->id, $intruderId);
+    }
+
+    public function testRemovingAnItemThatDoesNotExistIsRejected(): void
+    {
+        $em = $this->entityManager();
+        /** @var RemoveCartItem $removeCartItem */
+        $removeCartItem = self::getContainer()->get(RemoveCartItem::class);
+        $user = $this->persistCustomer($em);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('not found');
+        $removeCartItem(new Ulid(), $this->idOf($user));
+    }
+
+    public function testRemovingOneItemKeepsTheOthersInTheCart(): void
+    {
+        $em = $this->entityManager();
+        /** @var AddCartItem $addCartItem */
+        $addCartItem = self::getContainer()->get(AddCartItem::class);
+        /** @var RemoveCartItem $removeCartItem */
+        $removeCartItem = self::getContainer()->get(RemoveCartItem::class);
+        $user = $this->persistCustomer($em);
+        $child = $this->persistChild($em, $user);
+        $lesson = $this->persistLesson($em);
+        $cart = $this->persistCart($em, $user);
+        $own = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            null,
+            $this->idOf($user),
+        );
+        $forChild = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            (string) $child->getId(),
+            $this->idOf($user),
+        );
+
+        $removeCartItem($own->id, $this->idOf($user));
+
+        $remaining = $em->getRepository(CartItem::class)->findAll();
+        static::assertCount(1, $remaining);
+        static::assertTrue($remaining[0]->id->equals($forChild->id));
+    }
+
+    public function testCannotRemoveAnItemFromAConvertedCart(): void
+    {
+        $em = $this->entityManager();
+        /** @var AddCartItem $addCartItem */
+        $addCartItem = self::getContainer()->get(AddCartItem::class);
+        /** @var RemoveCartItem $removeCartItem */
+        $removeCartItem = self::getContainer()->get(RemoveCartItem::class);
+        $user = $this->persistCustomer($em);
+        $lesson = $this->persistLesson($em);
+        $cart = $this->persistCart($em, $user);
+        $item = $addCartItem(
+            $cart->id,
+            (string) $lesson->getId(),
+            TicketType::ONE_TIME->value,
+            null,
+            $this->idOf($user),
+        );
+        $cart->convert(new Ulid());
+        $em->flush();
+
+        try {
+            $removeCartItem($item->id, $this->idOf($user));
+            static::fail('Expected a converted cart to be immutable.');
+        } catch (\LogicException $exception) {
+            static::assertStringContainsString('not open', $exception->getMessage());
+        }
+
+        static::assertCount(1, $em->getRepository(CartItem::class)->findAll());
     }
 }

@@ -82,6 +82,19 @@ readonly class DailyLessonsReminderHandler
             $this->notificationSender->send($financeContact->getEmail(), $subject, $content);
         }
 
+        $this->notifyAdminsInApp($financeContacts, $lessons, $date);
+        $this->sendInstructorSchedules($lessons, $financeContacts, $date);
+        $this->sendCustomerReminders($lessons, $date);
+    }
+
+    /**
+     * @param list<User> $financeContacts
+     * @param Lesson[] $lessons
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function notifyAdminsInApp(array $financeContacts, array $lessons, \DateTimeImmutable $date): void
+    {
         $this->inAppNotifications->notifyUsers(
             $financeContacts,
             $this->translator->trans('notifications.in_app.daily_reminder.admin.title', [], 'messages'),
@@ -96,7 +109,19 @@ readonly class DailyLessonsReminderHandler
             $this->urlGenerator->generate('app_admin_schedule'),
             NotificationSeverity::Info,
         );
+    }
 
+    /**
+     * Instructors who are not already finance contacts get their own schedule
+     * (finance contacts receive the full report instead).
+     *
+     * @param Lesson[] $lessons
+     * @param list<User> $financeContacts
+     *
+     * @throws \OutOfBoundsException
+     */
+    private function sendInstructorSchedules(array $lessons, array $financeContacts, \DateTimeImmutable $date): void
+    {
         $financeContactIds = [];
         foreach ($financeContacts as $financeContact) {
             $financeContactIds[] = $financeContact->getId();
@@ -125,7 +150,21 @@ readonly class DailyLessonsReminderHandler
             ]);
             $this->notificationSender->send($instructor->getEmail(), $instructorSubject, $instructorContent);
         }
+    }
 
+    /**
+     * One email (with an .ics attachment) plus one in-app notification per
+     * customer with a booking on any of today's lessons.
+     *
+     * @param Lesson[] $lessons
+     *
+     * @throws \OutOfBoundsException
+     * @throws \InvalidArgumentException
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
+     */
+    private function sendCustomerReminders(array $lessons, \DateTimeImmutable $date): void
+    {
         /** @var Map<User, Set<Lesson>> $usersWithLessons */
         $usersWithLessons = new Map();
         foreach ($lessons as $lesson) {
@@ -137,47 +176,53 @@ readonly class DailyLessonsReminderHandler
             }
         }
         foreach ($usersWithLessons as $user => $userLessons) {
-            $calendarLinks = [];
-            foreach ($userLessons as $lesson) {
-                $calendarLinks[] = $this->calendarFactory->googleCalendarUrl($lesson);
-            }
-
-            $userContent = $this->templateRenderer->render('email/notification/daily-user-reminder.html.twig', [
-                'lessons' => $userLessons,
-                'date' => $date,
-                'user' => $user,
-                'calendarLinks' => $calendarLinks,
-            ]);
-            $userSubject = $this->templateRenderer->render('email/notification/daily-user-reminder-subject.html.twig', [
-                'date' => $date,
-            ]);
-            $this->notificationSender->send($user->getEmail(), $userSubject, $userContent, [
-                new EmailAttachment(
-                    'kalendarz.ics',
-                    $this->calendarFactory->icsForLessons($userLessons),
-                    'text/calendar',
-                ),
-            ]);
-
-            $titles = [];
-            foreach ($userLessons as $lesson) {
-                $titles[] = $lesson->getMetadata()->title;
-            }
-            $this->inAppNotifications->notify(
-                $user,
-                $this->translator->trans('notifications.in_app.daily_reminder.user.title', [], 'messages'),
-                $this->translator->trans(
-                    'notifications.in_app.daily_reminder.user.body',
-                    [
-                        'lessons' => implode(', ', $titles),
-                        'date' => $date->format('d.m.Y'),
-                    ],
-                    'messages',
-                ),
-                $this->urlGenerator->generate('dashboard'),
-                NotificationSeverity::Info,
-            );
+            $this->sendCustomerReminder($user, $userLessons, $date);
         }
+    }
+
+    /**
+     * @param Set<Lesson> $userLessons
+     *
+     * @throws \InvalidArgumentException
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
+     */
+    private function sendCustomerReminder(User $user, Set $userLessons, \DateTimeImmutable $date): void
+    {
+        $calendarLinks = [];
+        $titles = [];
+        foreach ($userLessons as $lesson) {
+            $calendarLinks[] = $this->calendarFactory->googleCalendarUrl($lesson);
+            $titles[] = $lesson->getMetadata()->title;
+        }
+
+        $userContent = $this->templateRenderer->render('email/notification/daily-user-reminder.html.twig', [
+            'lessons' => $userLessons,
+            'date' => $date,
+            'user' => $user,
+            'calendarLinks' => $calendarLinks,
+        ]);
+        $userSubject = $this->templateRenderer->render('email/notification/daily-user-reminder-subject.html.twig', [
+            'date' => $date,
+        ]);
+        $this->notificationSender->send($user->getEmail(), $userSubject, $userContent, [
+            new EmailAttachment('kalendarz.ics', $this->calendarFactory->icsForLessons($userLessons), 'text/calendar'),
+        ]);
+
+        $this->inAppNotifications->notify(
+            $user,
+            $this->translator->trans('notifications.in_app.daily_reminder.user.title', [], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.daily_reminder.user.body',
+                [
+                    'lessons' => implode(', ', $titles),
+                    'date' => $date->format('d.m.Y'),
+                ],
+                'messages',
+            ),
+            $this->urlGenerator->generate('dashboard'),
+            NotificationSeverity::Info,
+        );
     }
 
     /**

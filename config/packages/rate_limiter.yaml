@@ -1,5 +1,18 @@
 framework:
     rate_limiter:
+        newsletter_ip_limiter:
+            policy: 'sliding_window'
+            limit: 10
+            interval: '1 hour'
+        newsletter_email_limiter:
+            policy: 'sliding_window'
+            limit: 3
+            interval: '1 hour'
+        auth_verification_limiter:
+            # Shared across login/verify and IPs to protect each account's code.
+            policy: 'sliding_window'
+            limit: 10
+            interval: '15 minutes'
         mcp_ip_limiter:
             # 100 requests per hour per IP
             policy: 'sliding_window'

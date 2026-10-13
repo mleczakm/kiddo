@@ -356,6 +356,7 @@ final class ReservationDetailsModal extends AbstractController
 
     /**
      * @return list<array{from: ?Lesson, to: ?Lesson, at: ?\DateTimeImmutable}>
+     * @throws \UnexpectedValueException
      */
     public function getRescheduleHistory(): array
     {
@@ -364,14 +365,31 @@ final class ReservationDetailsModal extends AbstractController
             return [];
         }
 
+        $entries = $booking->getLessonsMap()->getRescheduled();
+        $ids = [];
+        foreach ($entries as $entry) {
+            if (!$entry instanceof RescheduledLesson) {
+                continue;
+            }
+
+            $ids[] = $entry->rescheduledFrom;
+            $ids[] = $entry->lessonId;
+        }
+        $lessons = [];
+        if ($ids !== []) {
+            foreach ($this->lessonRepository->findBy(['id' => $ids]) as $lesson) {
+                $lessons[(string) $lesson->getId()] = $lesson;
+            }
+        }
+
         $history = [];
-        foreach ($booking->getLessonsMap()->getRescheduled() as $entry) {
+        foreach ($entries as $entry) {
             if (!$entry instanceof RescheduledLesson) {
                 continue;
             }
             $history[] = [
-                'from' => $this->lessonRepository->find($entry->rescheduledFrom),
-                'to' => $this->lessonRepository->find($entry->lessonId),
+                'from' => $lessons[(string) $entry->rescheduledFrom] ?? null,
+                'to' => $lessons[(string) $entry->lessonId] ?? null,
                 'at' => $entry->rescheduledAt,
             ];
         }

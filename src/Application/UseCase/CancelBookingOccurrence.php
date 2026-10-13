@@ -10,7 +10,10 @@ use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Workflow\BookingStateMachineInterface;
+use App\Entity\Booking;
+use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
+use App\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -71,31 +74,7 @@ final readonly class CancelBookingOccurrence
             return;
         }
 
-        // Always use plain cancel here; refund is handled by a separate use case
-        $transition = 'cancel';
-
-        // A cancel request for a booking that is already cancelled (a retried
-        // message, a double-submit, a stale modal, or a concurrent cancel that
-        // won the race) is a no-op, not an error: the desired end state is
-        // already in place. Anything else that blocks the transition is
-        // unexpected and worth a warning, but still must not blow up a
-        // fire-and-forget message with a fatal HandlerFailedException.
-        if (!$this->bookingStateMachine->can($booking, $transition)) {
-            $context = [
-                'bookingId' => $booking->getId()->toRfc4122(),
-                'lessonId' => $lessonId->toRfc4122(),
-                'status' => $booking->getStatus(),
-                'transition' => $transition,
-            ];
-
-            if ($booking->isCancelled()) {
-                $this->logger->info('Skipping booking cancel — booking already cancelled', $context);
-
-                return;
-            }
-
-            $this->logger->warning('Skipping booking cancel — transition not applicable', $context);
-
+        if (!$this->canCancel($booking, $lessonId)) {
             return;
         }
 
@@ -124,37 +103,9 @@ final readonly class CancelBookingOccurrence
             $this->bookingStateMachine->apply($booking, 'cancel');
         }
 
-        $lessonTitle = '';
-        $cancelledLesson = null;
-        foreach ($booking->getLessons() as $lesson) {
-            if (!$lesson->getId()->equals($lessonId)) {
-                continue;
-            }
-
-            $lessonTitle = $lesson->getMetadata()->title;
-            $cancelledLesson = $lesson;
-            break;
-        }
-
+        $cancelledLesson = $this->findBookedLesson($booking, $lessonId);
         if ($cancelledLesson !== null && !$wholeBookingCancelled) {
-            $recipients = $this->notificationRecipients->forLessons([$cancelledLesson], exclude: $cancelledBy);
-            $this->inAppNotifications->notifyUsers(
-                $recipients,
-                $this->translator->trans('notifications.in_app.cancellation.instructor.title', [], 'messages'),
-                $this->translator->trans(
-                    'notifications.in_app.cancellation.instructor.body',
-                    [
-                        'name' => $booking->getUser()->getName(),
-                        'lesson' => $lessonTitle,
-                        'date' => $cancelledLesson->schedule->format('Y-m-d H:i'),
-                    ],
-                    'messages',
-                ),
-                $this->urlGenerator->generate('app_admin_lesson_view', [
-                    'id' => (string) $cancelledLesson->getId(),
-                ]),
-                NotificationSeverity::Info,
-            );
+            $this->notifyStaffOfPartialCancellation($booking, $cancelledLesson, $cancelledBy);
         }
 
         $this->logger->info('Lesson cancelled within booking', [
@@ -164,5 +115,74 @@ final readonly class CancelBookingOccurrence
             'reason' => $reason,
             'bookingStatus' => $booking->getStatus(),
         ]);
+    }
+
+    /**
+     * A cancel request for a booking that is already cancelled (a retried
+     * message, a double-submit, a stale modal, or a concurrent cancel that
+     * won the race) is a no-op, not an error: the desired end state is
+     * already in place. Anything else that blocks the transition is
+     * unexpected and worth a warning, but still must not blow up a
+     * fire-and-forget message with a fatal HandlerFailedException.
+     */
+    private function canCancel(Booking $booking, Ulid $lessonId): bool
+    {
+        // Always use plain cancel here; refund is handled by a separate use case
+        $transition = 'cancel';
+        if ($this->bookingStateMachine->can($booking, $transition)) {
+            return true;
+        }
+
+        $context = [
+            'bookingId' => $booking->getId()->toRfc4122(),
+            'lessonId' => $lessonId->toRfc4122(),
+            'status' => $booking->getStatus(),
+            'transition' => $transition,
+        ];
+
+        if ($booking->isCancelled()) {
+            $this->logger->info('Skipping booking cancel — booking already cancelled', $context);
+
+            return false;
+        }
+
+        $this->logger->warning('Skipping booking cancel — transition not applicable', $context);
+
+        return false;
+    }
+
+    private function findBookedLesson(Booking $booking, Ulid $lessonId): ?Lesson
+    {
+        foreach ($booking->getLessons() as $lesson) {
+            if ($lesson->getId()->equals($lessonId)) {
+                return $lesson;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    private function notifyStaffOfPartialCancellation(Booking $booking, Lesson $lesson, User $cancelledBy): void
+    {
+        $this->inAppNotifications->notifyUsers(
+            $this->notificationRecipients->forLessons([$lesson], exclude: $cancelledBy),
+            $this->translator->trans('notifications.in_app.cancellation.instructor.title', [], 'messages'),
+            $this->translator->trans(
+                'notifications.in_app.cancellation.instructor.body',
+                [
+                    'name' => $booking->getUser()->getName(),
+                    'lesson' => $lesson->getMetadata()->title,
+                    'date' => $lesson->schedule->format('Y-m-d H:i'),
+                ],
+                'messages',
+            ),
+            $this->urlGenerator->generate('app_admin_lesson_view', [
+                'id' => (string) $lesson->getId(),
+            ]),
+            NotificationSeverity::Info,
+        );
     }
 }
