@@ -238,6 +238,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/spomky-labs/base64url" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spomky-labs/pki-framework" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/web-token/jwt-library" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mleczakm/monolog-context-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
