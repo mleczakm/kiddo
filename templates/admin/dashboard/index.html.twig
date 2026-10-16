@@ -2,13 +2,34 @@
 
 {% block title %}{{ 'admin.title'|trans }}{% endblock %}
 
+{% block breadcrumb_actions %}
+    <div class="flex items-center gap-2 text-sm" data-testid="month-nav">
+        <a href="{{ path('app_admin_dashboard', {miesiac: previous_month}) }}"
+           class="rounded-full border border-slate-200 bg-white px-3 py-1 font-semibold text-slate-600 hover:bg-slate-50"
+           aria-label="Poprzedni miesiąc" rel="prev">&larr;</a>
+        <span class="min-w-32 text-center font-bold text-slate-700">{{ month_label }} {{ month_start|date('Y') }}</span>
+        <a href="{{ path('app_admin_dashboard', {miesiac: next_month}) }}"
+           class="rounded-full border border-slate-200 bg-white px-3 py-1 font-semibold text-slate-600 hover:bg-slate-50"
+           aria-label="Następny miesiąc" rel="next">&rarr;</a>
+        {% if not is_current_month %}
+            <a href="{{ path('app_admin_dashboard') }}" class="text-xs font-semibold text-slate-500 underline">Bieżący miesiąc</a>
+        {% endif %}
+        {% if is_granted('ACCOUNTING_REPORT_VIEW') %}
+            <a href="{{ path('app_admin_accounting_report', {month: month_key}) }}" target="_blank" rel="noopener"
+               class="ml-2 rounded-full bg-slate-800 px-4 py-1 text-xs font-bold text-white hover:bg-slate-700">
+                Zestawienie do druku
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
+
 {% block body %}
     {# KPI Statistics, plus Platform Billing inlined into the same row when visible #}
     <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6" data-tour-target="dashboard-kpis">
         {% if isFeatureEnabled('platform_billing_widget') and is_granted('ROLE_ADMIN') %}
-            {{ component('PlatformBillingComponent') }}
+            {{ component('PlatformBillingComponent', {month: month_key}) }}
         {% endif %}
-        {{ component('AdminKpiStatsComponent') }}
+        {{ component('AdminKpiStatsComponent', {month: month_key}) }}
     </div>
 
     {# Dashboard Widgets Grid #}

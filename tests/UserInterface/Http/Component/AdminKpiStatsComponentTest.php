@@ -122,7 +122,7 @@ final class AdminKpiStatsComponentTest extends WebTestCase
         static::assertSame('Marzec', $kpi['monthLabel']);
     }
 
-    public function testNavigatingToThePreviousMonthShowsThatMonthsStats(): void
+    public function testKpiStatsFollowTheRequestedMonth(): void
     {
         Clock::set(new MockClock('2025-03-15 12:00:00'));
 
@@ -141,19 +141,18 @@ final class AdminKpiStatsComponentTest extends WebTestCase
         );
         $em->flush();
 
-        $component = $this->createLiveComponent(name: AdminKpiStatsComponent::class, client: $client);
-        $component->call('previousMonth');
+        $component = $this->createLiveComponent(
+            name: AdminKpiStatsComponent::class,
+            data: [
+                'month' => '2025-02',
+            ],
+            client: $client,
+        );
         /** @var AdminKpiStatsComponent $adminKpiStatsComponent */
         $adminKpiStatsComponent = $component->component();
         $kpi = $adminKpiStatsComponent->getKpiStats();
 
-        static::assertSame('2025-02', $adminKpiStatsComponent->getMonthKey());
         static::assertSame('Luty', $kpi['monthLabel']);
         static::assertTrue($kpi['revenue']->isEqualTo(Money::of(999, 'PLN')));
-
-        $component->call('nextMonth')->call('nextMonth');
-        /** @var AdminKpiStatsComponent $afterNavigation */
-        $afterNavigation = $component->component();
-        static::assertSame('2025-04', $afterNavigation->getMonthKey());
     }
 }

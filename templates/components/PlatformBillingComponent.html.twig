@@ -29,7 +29,9 @@
     </div>
 
     <div class="text-4xl font-black text-white tracking-tight mb-2">{{ this.getCurrentDue()|number_format(2) }} zł</div>
-    <div class="text-xs text-slate-400 font-medium">Prognoza za bieżący miesiąc</div>
+    <div class="text-xs text-slate-400 font-medium">
+        {% if this.isCurrentMonth() %}Prognoza za bieżący miesiąc{% else %}Kwota za {{ this.monthLabel|lower }}{% endif %}
+    </div>
 
     {% if this.hasPastDue() and is_granted('ROLE_SUPER_ADMIN') %}
         <div class="mt-4 flex flex-wrap gap-2">

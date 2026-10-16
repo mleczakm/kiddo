@@ -204,7 +204,8 @@
             <main class="flex-1 overflow-auto bg-slate-50/50 p-6">
                 <div class="max-w-7xl mx-auto space-y-6">
                     {# Unified Breadcrumb Navigator #}
-                    <nav aria-label="breadcrumb" class="mb-6 shrink-0">
+                    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+                    <nav aria-label="breadcrumb" class="shrink-0">
                         <ol class="flex flex-wrap items-center gap-1.5 break-words text-xs font-semibold text-slate-400 sm:gap-2.5">
                             <li class="inline-flex items-center gap-1.5">
                                 <a href="{{ path('app_admin_dashboard') }}" class="cursor-pointer hover:text-indigo-600 transition-colors">{{ 'admin.breadcrumb.root'|trans }}</a>
@@ -281,6 +282,9 @@
                             {% endfor %}
                         </ol>
                     </nav>
+                    {# Page-level actions aligned with the breadcrumbs, e.g. the dashboard's month switcher #}
+                    {% block breadcrumb_actions %}{% endblock %}
+                    </div>
 
                     {% block body %}
                     {% endblock %}

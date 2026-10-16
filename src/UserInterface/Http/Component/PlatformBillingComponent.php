@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\Accounting\ReportingMonth;
 use App\Application\Service\MoneyInputParser;
 use App\Application\Service\PlatformBillingService;
 use App\UserInterface\Form\PlatformBillingPaymentType;
 use Brick\Money\Money;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -31,6 +33,10 @@ class PlatformBillingComponent extends AbstractController
     #[LiveProp]
     public ?string $errorMessage = null;
 
+    /** Displayed month as `Y-m`; empty means the current month. */
+    #[LiveProp]
+    public string $month = '';
+
     public function __construct(
         private readonly PlatformBillingService $platformBillingService,
     ) {}
@@ -40,8 +46,33 @@ class PlatformBillingComponent extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
     }
 
+    private function monthStart(): \DateTimeImmutable
+    {
+        return ReportingMonth::start($this->month, Clock::get()->now());
+    }
+
+    /** The stored balance and its settlement actions only make sense for the running month. */
+    public function isCurrentMonth(): bool
+    {
+        return ReportingMonth::isCurrent($this->monthStart(), Clock::get()->now());
+    }
+
+    public function getMonthLabel(): string
+    {
+        return ReportingMonth::label($this->monthStart());
+    }
+
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \InvalidArgumentException
+     */
     public function getCurrentDue(): float
     {
+        if (!$this->isCurrentMonth()) {
+            return $this->platformBillingService->getFeeForMonth($this->monthStart())->getAmount()->toFloat();
+        }
+
         return $this->platformBillingService->getCurrentDue()->getAmount()->toFloat();
     }
 
@@ -52,7 +83,7 @@ class PlatformBillingComponent extends AbstractController
 
     public function hasPastDue(): bool
     {
-        return $this->platformBillingService->hasPastDue();
+        return $this->isCurrentMonth() && $this->platformBillingService->hasPastDue();
     }
 
     #[LiveAction]
