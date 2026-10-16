@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Zestawienie miesięczne – {{ monthLabel }}</title>
+    <style>
+        body { font-family: Georgia, 'Times New Roman', serif; color: #111; max-width: 900px; margin: 2rem auto; padding: 0 1rem; line-height: 1.4; }
+        h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+        .meta { color: #555; font-size: .85rem; margin-bottom: 1.5rem; }
+        table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+        th, td { padding: .4rem .5rem; border-bottom: 1px solid #ccc; text-align: left; }
+        th { border-bottom: 2px solid #111; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }
+        .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        tfoot td { border-top: 2px solid #111; border-bottom: 0; font-weight: bold; }
+        .nav { margin-bottom: 1rem; font-size: .9rem; }
+        .nav a, .nav button { margin-right: 1rem; color: #111; }
+        .note { margin-top: 1.5rem; font-size: .8rem; color: #555; }
+        tr { break-inside: avoid; }
+        @media print { .nav { display: none; } body { margin: 0; max-width: none; } }
+    </style>
+</head>
+<body>
+    {% set prev = report.month.modify('-1 month')|date('Y-m') %}
+    {% set next = report.month.modify('+1 month')|date('Y-m') %}
+    <div class="nav">
+        <a href="{{ path('app_admin_accounting_report', {month: prev}) }}">&larr; Poprzedni miesiąc</a>
+        <a href="{{ path('app_admin_accounting_report', {month: next}) }}">Następny miesiąc &rarr;</a>
+        <a href="{{ path('app_admin_dashboard') }}">Pulpit</a>
+        <button type="button" onclick="window.print()">Drukuj</button>
+    </div>
+
+    <h1>Zestawienie miesięczne: {{ monthLabel }}</h1>
+    <div class="meta">
+        Opłacone płatności w okresie {{ report.month|date('d.m.Y') }} – {{ report.month.modify('last day of this month')|date('d.m.Y') }}.
+        Wygenerowano {{ 'now'|date('d.m.Y H:i') }}.
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Zajęcia</th>
+                <th>Termin</th>
+                <th class="num">Płatności</th>
+                <th class="num">Kwota</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in report.rows %}
+                <tr>
+                    <td>{{ row.lesson.metadata.title }}</td>
+                    <td>{{ row.lesson.schedule|date('d.m.Y H:i') }}</td>
+                    <td class="num">{{ row.paymentsCount }}</td>
+                    <td class="num">{{ row.amount|money }}</td>
+                </tr>
+            {% endfor %}
+            {% if report.unassigned.paymentsCount > 0 %}
+                <tr>
+                    <td colspan="2">Płatności niepowiązane z zajęciami</td>
+                    <td class="num">{{ report.unassigned.paymentsCount }}</td>
+                    <td class="num">{{ report.unassigned.amount|money }}</td>
+                </tr>
+            {% endif %}
+            {% if report.rows is empty and report.unassigned.paymentsCount == 0 %}
+                <tr><td colspan="4">Brak opłaconych płatności w tym miesiącu.</td></tr>
+            {% endif %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">Razem</td>
+                <td class="num">{{ report.total.paymentsCount }}</td>
+                <td class="num">{{ report.total.amount|money }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <p class="note">
+        Płatność obejmująca kilka zajęć jest rozdzielana między nie po równo, dlatego liczba płatności
+        w wierszach może przewyższać liczbę płatności w sumie. Suma zajęć i płatności niepowiązanych równa się kwocie „Razem”.
+    </p>
+</body>
+</html>

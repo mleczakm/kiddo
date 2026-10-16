@@ -6,6 +6,7 @@ namespace App\Infrastructure\Doctrine\Repository;
 
 use App\Application\Repository\FinanceContactRepositoryInterface;
 use App\Entity\FinanceContact;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -27,5 +28,13 @@ class FinanceContactRepository extends ServiceEntityRepository implements Financ
     {
         /** @var list<FinanceContact> $contacts */
         return $this->createQueryBuilder('fc')->orderBy('fc.createdAt', 'ASC')->getQuery()->getResult();
+    }
+
+    #[\Override]
+    public function existsForUser(User $user): bool
+    {
+        return $this->count([
+            'user' => $user,
+        ]) > 0;
     }
 }

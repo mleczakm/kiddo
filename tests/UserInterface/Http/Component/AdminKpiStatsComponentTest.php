@@ -121,4 +121,39 @@ final class AdminKpiStatsComponentTest extends WebTestCase
         static::assertSame('30%', $kpi['occupancyRate']);
         static::assertSame('Marzec', $kpi['monthLabel']);
     }
+
+    public function testNavigatingToThePreviousMonthShowsThatMonthsStats(): void
+    {
+        Clock::set(new MockClock('2025-03-15 12:00:00'));
+
+        $client = static::createClient();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $customer = UserAssembler::new()->assemble();
+        $em->persist($customer);
+        $em->persist(
+            PaymentAssembler::new()
+                ->withUser($customer)
+                ->withAmount(Money::of(999, 'PLN'))
+                ->withStatus(Payment::STATUS_PAID)
+                ->withCreatedAt(new \DateTimeImmutable('2025-02-05'))
+                ->assemble(),
+        );
+        $em->flush();
+
+        $component = $this->createLiveComponent(name: AdminKpiStatsComponent::class, client: $client);
+        $component->call('previousMonth');
+        /** @var AdminKpiStatsComponent $adminKpiStatsComponent */
+        $adminKpiStatsComponent = $component->component();
+        $kpi = $adminKpiStatsComponent->getKpiStats();
+
+        static::assertSame('2025-02', $adminKpiStatsComponent->getMonthKey());
+        static::assertSame('Luty', $kpi['monthLabel']);
+        static::assertTrue($kpi['revenue']->isEqualTo(Money::of(999, 'PLN')));
+
+        $component->call('nextMonth')->call('nextMonth');
+        /** @var AdminKpiStatsComponent $afterNavigation */
+        $afterNavigation = $component->component();
+        static::assertSame('2025-04', $afterNavigation->getMonthKey());
+    }
 }
