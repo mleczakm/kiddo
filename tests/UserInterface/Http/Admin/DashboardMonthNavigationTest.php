@@ -51,7 +51,7 @@ final class DashboardMonthNavigationTest extends WebTestCase
         $nav = $crawler->filter('[data-testid="month-nav"]')->text();
         static::assertStringContainsString('Luty 2025', $nav);
         static::assertStringContainsString('Bieżący miesiąc', $nav);
-        static::assertStringNotContainsString('Zestawienie do druku', $nav);
+        static::assertCount(0, $crawler->filter('a[href^="/admin/raport-miesieczny"]'));
         $page = $crawler->text();
         static::assertStringContainsString('Kwota za luty', $page);
         static::assertStringContainsString('20.00 zł', $page);
@@ -76,5 +76,25 @@ final class DashboardMonthNavigationTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         static::assertStringContainsString('Marzec 2025', $crawler->filter('[data-testid="month-nav"]')->text());
         static::assertStringContainsString('Prognoza za bieżący miesiąc', $crawler->text());
+    }
+
+    public function testSuperAdminSeesPrinterIconLinkingToTheDisplayedMonthsReport(): void
+    {
+        Clock::set(new MockClock('2025-03-15 12:00:00'));
+        $client = static::createClient();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $super = UserAssembler::new()->withEmail('super@test.com')->withRoles('ROLE_SUPER_ADMIN')->assemble();
+        $em->persist($super);
+        $em->flush();
+        $client->loginUser($super);
+
+        $crawler = $client->request('GET', '/admin?miesiac=2025-02');
+
+        $link = $crawler->filter('[data-testid="month-nav"] a[href^="/admin/raport-miesieczny"]');
+        static::assertCount(1, $link);
+        static::assertSame('/admin/raport-miesieczny/2025-02', $link->attr('href'));
+        static::assertSame('Zestawienie miesięczne do druku', $link->attr('aria-label'));
+        static::assertCount(1, $link->filter('svg'));
     }
 }
