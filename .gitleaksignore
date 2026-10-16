@@ -4,3 +4,7 @@
 # rather than rewriting published history over a non-issue.
 cece373732338ffdc87e2e53773958129438bfd1:.env:generic-api-key:56
 1372b649717249463aa0fb1a01e89188fcfd9309:.env:generic-api-key:56
+
+# 'Zm9v.forged-signature' in ToolInvokeActionTest is a deliberately forged bearer token the
+# test expects to be rejected with 401; it is not a credential.
+a125b1b92fbd7cb75bee1d88ddda34027788af1d:tests/Functional/UserInterface/Http/Api/ToolInvokeActionTest.php:generic-api-key:41
