@@ -39,7 +39,7 @@ jobs:
   build-and-qa:
     services:
       db:
-        image: postgres:15
+        image: postgres:18
         env:
           POSTGRES_DB: app_test
           POSTGRES_USER: app
@@ -122,7 +122,7 @@ jobs:
               --coverage-cobertura target/coverage/cobertura.xml \
               --coverage-html target/coverage/html'
         env:
-          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
+          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=18&charset=utf8"
 
       - name: Publish test coverage summary
         id: coverage
@@ -147,7 +147,7 @@ jobs:
       - name: Run smoke tests
         run: docker run --rm --network "$NETWORK_NAME" ${{ steps.meta.outputs.tags }} composer tests:smoke
         env:
-          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=15&charset=utf8"
+          DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app_test?serverVersion=18&charset=utf8"
 
       - name: Extract production metadata
         if: success()
