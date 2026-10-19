@@ -42,16 +42,20 @@ final class NotificationTrayLiveComponent extends AbstractController
      */
     public function getItems(): array
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        $user = $this->currentUser();
+        if ($user === null) {
+            return [];
+        }
 
         return $this->notifications->findRecentForUser($user, 30);
     }
 
     public function getUnreadCount(): int
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        $user = $this->currentUser();
+        if ($user === null) {
+            return 0;
+        }
 
         return $this->notifications->countUnreadForUser($user);
     }
@@ -93,8 +97,10 @@ final class NotificationTrayLiveComponent extends AbstractController
     #[LiveAction]
     public function clearAll(): void
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        $user = $this->currentUser();
+        if ($user === null) {
+            return;
+        }
 
         $this->notifications->softDeleteAllForUser($user);
     }
@@ -121,10 +127,24 @@ final class NotificationTrayLiveComponent extends AbstractController
         ], $results));
     }
 
+    /**
+     * The tray polls itself, so it can be rendered after the session or remember-me cookie
+     * is gone (logout in another tab, expiry); that must degrade to an empty tray, not a 500.
+     */
+    private function currentUser(): ?User
+    {
+        $user = $this->getUser();
+
+        return $user instanceof User ? $user : null;
+    }
+
     private function findOwnedNotification(string $id): ?Notification
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        $user = $this->currentUser();
+        if ($user === null) {
+            return null;
+        }
+
         /** @var Notification|null $notification */
         $notification = $this->em->getRepository(Notification::class)->find($id);
         if ($notification === null || $notification->getUser()->getId() !== $user->getId()) {
