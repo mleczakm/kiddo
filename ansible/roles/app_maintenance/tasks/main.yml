@@ -1,0 +1,103 @@
+---
+- name: Validate maintenance settings
+  ansible.builtin.assert:
+    that:
+      - (app.maintenance_image | default('')) | length > 0
+      - app.name is match('^[a-zA-Z0-9][a-zA-Z0-9_.-]+$')
+    fail_msg: "app.maintenance_image and a safe app.name are required."
+
+# Same guard as a regular deploy: without these the placeholder would run but never
+# receive traffic.
+- name: Verify routing secrets are present before touching the running container
+  ansible.builtin.include_role:
+    name: app_deploy
+    tasks_from: routing_secrets
+
+- name: Inspect maintenance image
+  ansible.builtin.command: "docker image inspect {{ app.maintenance_image }}"
+  register: maintenance_image_inspect
+  failed_when: false
+  changed_when: false
+
+# Only reach out to the registry when the image is genuinely missing.
+- name: Pull maintenance image (not cached on this host yet)
+  ansible.builtin.command: "docker pull {{ app.maintenance_image }}"
+  when: maintenance_image_inspect.rc != 0
+  changed_when: true
+
+- name: Create maintenance site directory
+  ansible.builtin.file:
+    path: "{{ maintenance_dir }}/site"
+    state: directory
+    mode: '0755'
+
+- name: Render maintenance page
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../../maintenance/index.html.j2"
+    dest: "{{ maintenance_dir }}/site/index.html"
+    mode: '0644'
+
+- name: Copy maintenance assets
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ maintenance_dir }}/site/{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { src: "{{ playbook_dir }}/../../assets/images/logo-header.webp", dest: logo.webp }
+    - { src: "{{ playbook_dir }}/../../assets/images/favicon.ico", dest: favicon.ico }
+
+- name: Copy nginx configuration
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../maintenance/nginx.conf"
+    dest: "{{ maintenance_dir }}/nginx.conf"
+    mode: '0644'
+
+- name: Stop existing container
+  ansible.builtin.command: "docker stop {{ app.name }}"
+  register: stop_result
+  failed_when: stop_result.rc not in [0, 1]
+  changed_when: stop_result.rc == 0
+
+- name: Remove existing container
+  ansible.builtin.command: "docker rm {{ app.name }}"
+  register: remove_result
+  failed_when: remove_result.rc not in [0, 1]
+  changed_when: remove_result.rc == 0
+
+# Same container name and published address as the application, so a regular deploy
+# replaces this placeholder with no special casing. No autoheal labels on purpose:
+# nothing should restart or "fix" the placeholder.
+- name: Run maintenance container
+  ansible.builtin.command: >-
+    docker run -d
+    --name {{ app.name }}
+    --restart always
+    --label pl.mleczki.kiddo.maintenance=true
+    -p [{{ app.ipv6 }}]:{{ app.port }}:80
+    -v {{ maintenance_dir }}/site:/usr/share/nginx/html:ro
+    -v {{ maintenance_dir }}/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    {{ app.maintenance_image }}
+  changed_when: true
+
+- name: Wait for the maintenance container to accept connections
+  ansible.builtin.wait_for:
+    host: "{{ app.ipv6 }}"
+    port: "{{ app.port }}"
+    timeout: 30
+
+- name: Verify the maintenance page is served
+  ansible.builtin.uri:
+    url: "http://[{{ app.ipv6 }}]:{{ app.port }}/"
+    status_code: 503
+    return_content: true
+  register: maintenance_probe
+  retries: 5
+  delay: 2
+  until: maintenance_probe.status == 503 and 'Przerwa techniczna' in maintenance_probe.content
+
+# Cloudflare DNS record and Cytrus domain: without them nothing, the placeholder
+# included, is reachable from the internet. Same tasks as a regular deploy.
+- name: Configure Cloudflare and Cytrus routing
+  ansible.builtin.include_role:
+    name: app_deploy
+    tasks_from: routing

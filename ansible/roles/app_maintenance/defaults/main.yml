@@ -1,0 +1,3 @@
+---
+# Host directory holding the rendered page and nginx config bind-mounted into the placeholder.
+maintenance_dir: "/opt/{{ app.name }}-maintenance"

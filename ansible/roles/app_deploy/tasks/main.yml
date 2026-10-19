@@ -1,18 +1,6 @@
 ---
 - name: Verify routing secrets are present before touching the running container
-  ansible.builtin.assert:
-    that:
-      - (cloudflare_api_token | default('')) | length > 0
-      - (cloudflare_zone_id | default('')) | length > 0
-      - (cytrus_api_token | default('')) | length > 0
-      - (app.cytrus_host | default('')) | length > 0
-    fail_msg: >-
-      Missing or empty routing secret(s) for {{ app.name }}: cloudflare_api_token,
-      cloudflare_zone_id, cytrus_api_token, and app.cytrus_host (CYTRUS_IPV4) must
-      all be set, otherwise the container deploys but never receives traffic.
-      Check the CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID, CYTRUS_API_TOKEN and
-      CYTRUS_IPV4 secrets in the GitHub 'production' environment.
-  when: app.proxied | default(false)
+  ansible.builtin.include_tasks: routing_secrets.yml
 
 - name: Log in to GHCR
   ansible.builtin.command: "docker login ghcr.io -u {{ github_actor }} --password-stdin"
@@ -24,6 +12,15 @@
 - name: Pull application image
   ansible.builtin.command: "docker pull {{ app.image }}"
   changed_when: true
+
+# Keeps the maintenance placeholder image cached on the host so that enabling
+# maintenance mode later (playbooks/maintenance.yml) does not need the registry.
+# Best effort: a registry hiccup must not fail an otherwise healthy release.
+- name: Cache maintenance image
+  ansible.builtin.command: "docker pull {{ app.maintenance_image }}"
+  when: (app.maintenance_image | default('')) | length > 0
+  failed_when: false
+  changed_when: false
 
 - name: Validate cache volume name
   ansible.builtin.assert:
@@ -193,78 +190,7 @@
   delay: 3
   until: health_result.status == 200
 
-- name: Get Cloudflare DNS records
-  ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_id }}/dns_records"
-    method: GET
-    headers:
-      Authorization: "Bearer {{ cloudflare_api_token }}"
-      Content-Type: application/json
-  register: cf_records
-  delegate_to: localhost
-  when: cloudflare_api_token is defined and cloudflare_zone_id is defined
-
-- name: Find existing Cloudflare A record
-  ansible.builtin.set_fact:
-    existing_a_record: "{{ cf_records.json.result | selectattr('name', 'equalto', app.domain) | selectattr('type', 'equalto', 'A') | first | default(None) }}"
-    existing_cname_record: "{{ cf_records.json.result | selectattr('name', 'equalto', app.domain) | selectattr('type', 'equalto', 'CNAME') | first | default(None) }}"
-  when: cloudflare_api_token is defined and cf_records.json.result is defined
-
-- name: Select Cloudflare record to upsert
-  ansible.builtin.set_fact:
-    existing_record: "{{ existing_a_record if existing_a_record is not none else existing_cname_record }}"
-  when: cloudflare_api_token is defined and cf_records.json.result is defined
-
-- name: Create Cloudflare A record
-  ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_id }}/dns_records"
-    method: POST
-    headers:
-      Authorization: "Bearer {{ cloudflare_api_token }}"
-      Content-Type: application/json
-    body_format: json
-    body:
-      type: A
-      name: "{{ app.domain }}"
-      content: "{{ app.cytrus_host }}"
-      ttl: 1
-      proxied: true
-  delegate_to: localhost
-  when: cloudflare_api_token is defined and existing_record is none
-
-- name: Update Cloudflare A record
-  ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_id }}/dns_records/{{ existing_record.id }}"
-    method: PUT
-    headers:
-      Authorization: "Bearer {{ cloudflare_api_token }}"
-      Content-Type: application/json
-    body_format: json
-    body:
-      type: A
-      name: "{{ app.domain }}"
-      content: "{{ app.cytrus_host }}"
-      ttl: 1
-      proxied: true
-  delegate_to: localhost
-  when: cloudflare_api_token is defined and existing_record is not none
-
-- name: Verify Cytrus domain
-  ansible.builtin.uri:
-    url: https://api.mikr.us/domain
-    method: POST
-    body_format: form-urlencoded
-    body:
-      srv: "{{ ansible_host | regex_replace('\\..*', '') }}"
-      key: "{{ cytrus_api_token }}"
-    status_code: 200
-  register: cytrus_domains
-  delegate_to: localhost
-  when: app.proxied | default(false)
-
-- name: Check that the domain is configured in Cytrus
-  ansible.builtin.assert:
-    that:
-      - app.domain in (cytrus_domains.json | map(attribute='name') | list)
-    fail_msg: "Domain {{ app.domain }} is not configured in Cytrus."
-  when: app.proxied | default(false)
+# Cloudflare DNS record + Cytrus domain check. Shared with the app_maintenance role so
+# a maintenance placeholder is routed exactly like the application.
+- name: Configure Cloudflare and Cytrus routing
+  ansible.builtin.include_tasks: routing.yml

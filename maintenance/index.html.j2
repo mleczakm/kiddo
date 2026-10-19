@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Przerwa techniczna – Warsztatownia Sensoryczna</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    {# Fonts are cosmetic: when Google Fonts is unreachable the system stack below takes over. #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --beige: #f9f1de;
+            --brown: #583818;
+            --red: #e85030;
+            --yellow: #f8c028;
+            --blue: #80b8d0;
+            --green: #b0a838;
+            --pink: #e8c0d8;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { margin: 0; min-height: 100%; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            font-family: Quicksand, ui-rounded, "Segoe UI", system-ui, -apple-system, sans-serif;
+            color: var(--brown);
+            background-color: var(--beige);
+            background-image:
+                radial-gradient(at 12% 8%, hsl(318 53% 86% / 0.42) 0, transparent 45%),
+                radial-gradient(at 88% 12%, hsl(197 56% 65% / 0.32) 0, transparent 40%),
+                radial-gradient(at 78% 88%, hsl(84 54% 60% / 0.25) 0, transparent 45%),
+                radial-gradient(at 18% 82%, hsl(43 90% 65% / 0.34) 0, transparent 40%);
+            background-attachment: fixed;
+            background-size: 160% 160%;
+            animation: drift 22s ease-in-out infinite;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        main {
+            width: 100%;
+            max-width: 560px;
+            text-align: center;
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px 28px 36px;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+        }
+
+        .logo {
+            display: block;
+            width: min(100%, 360px);
+            height: auto;
+            margin: 0 auto 28px;
+        }
+
+        .dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dots span {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+
+        .dots span:nth-child(1) { background: var(--red); }
+        .dots span:nth-child(2) { background: var(--yellow); animation-delay: 0.15s; }
+        .dots span:nth-child(3) { background: var(--blue); animation-delay: 0.3s; }
+        .dots span:nth-child(4) { background: var(--green); animation-delay: 0.45s; }
+        .dots span:nth-child(5) { background: var(--pink); animation-delay: 0.6s; }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            line-height: 1.2;
+            color: var(--red);
+        }
+
+        p {
+            margin: 0 0 12px;
+            font-size: 1.05rem;
+            line-height: 1.55;
+        }
+
+        .eta {
+            display: inline-block;
+            margin: 8px 0 4px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgb(248 192 40 / 0.3);
+            font-weight: 700;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+        }
+
+        @keyframes drift {
+            0%, 100% { background-position: 0% 50%, 100% 50%, 100% 100%, 0% 100%; }
+            50% { background-position: 100% 50%, 0% 50%, 0% 0%, 100% 0%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body, .dots span { animation: none; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <img class="logo" src="/logo.webp" alt="Warsztatownia Sensoryczna" width="1380" height="400">
+    <div class="dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    <h1>Przerwa techniczna</h1>
+    <p>Pracujemy nad ulepszeniem naszego serwisu, dlatego chwilowo nie można z niego korzystać.</p>
+{% if maintenance_eta | default('') | length > 0 %}
+    <p class="eta">Wracamy: {{ maintenance_eta }}</p>
+{% endif %}
+    <p class="note">Twoje rezerwacje i płatności są bezpieczne. Zapraszamy za chwilę!</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,26 @@
+---
+# Swaps the running application container for a static "technical break" page.
+#
+# Deliberately independent of everything in a regular release that can break on its own: no
+# GHCR login or pull, no .env file, no migrations / installation check, so it needs no
+# database and no application image. It does do the same Cloudflare DNS upsert and Cytrus
+# domain check as a regular deploy, because without them the placeholder would not be
+# reachable from the internet either. The only other network dependency is the nginx
+# image, and only when the host has never cached it (every regular deploy pre-pulls it,
+# see app_deploy).
+#
+# Leaving maintenance mode = running a regular deploy (re-run the latest
+# "Production Build & Deploy" workflow run): it stops and removes whatever container is
+# named after the app, including this placeholder.
+- name: Enable maintenance page for Kiddo
+  hosts: mikrus
+  become: yes
+  vars_files:
+    - config.yml
+  tasks:
+    - name: Enable maintenance page
+      include_role:
+        name: app_maintenance
+      loop: "{{ apps }}"
+      loop_control:
+        loop_var: app

@@ -1,0 +1,60 @@
+name: Enable Maintenance Mode
+
+# Manual only. Replaces the running production container with a static "technical break"
+# page. Needs the SSH key, host details and the Cloudflare/Cytrus routing secrets (the same
+# DNS/domain step as a regular deploy), but no image build or registry login, no .env and
+# no database. To leave maintenance mode, re-run the latest "Production Build & Deploy" workflow
+# run (a regular deploy replaces the placeholder). Do not merge to master meanwhile: every
+# merge deploys the application again.
+on:
+  workflow_dispatch:
+    inputs:
+      eta:
+        description: 'Optional "back at" text shown on the page, e.g. "środa 21.10, ok. 6:30"'
+        required: false
+        default: ''
+        type: string
+
+# Same group as the production deploy: never race against a release touching the container.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  enable-maintenance:
+    environment: production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ansible-core ships on GitHub's ubuntu runners; only fall back to pip when it is missing.
+      - name: Ensure Ansible is available
+        run: command -v ansible-playbook >/dev/null || python3 -m pip install --upgrade ansible-core
+
+      - name: Setup SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Enable maintenance page
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
+          ANSIBLE_ROLES_PATH: ./ansible/roles
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          MIKRUS_IPV6: ${{ secrets.MIKRUS_IPV6 }}
+          CYTRUS_IPV4: ${{ secrets.CYTRUS_IPV4 }}
+          CYTRUS_API_TOKEN: ${{ secrets.CYTRUS_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          MAINTENANCE_ETA: ${{ inputs.eta }}
+        run: |
+          ansible-playbook -i ansible/inventory.ini ansible/playbooks/maintenance.yml \
+            --extra-vars "ansible_host=$SSH_HOST ansible_port=$SSH_PORT mikrus_ipv6=$MIKRUS_IPV6 cytrus_host=$CYTRUS_IPV4" \
+            --extra-vars "cloudflare_api_token=$CLOUDFLARE_API_TOKEN cloudflare_zone_id=$CLOUDFLARE_ZONE_ID cytrus_api_token=$CYTRUS_API_TOKEN" \
+            --extra-vars "{\"maintenance_eta\": $(jq -Rn --arg v "$MAINTENANCE_ETA" '$v')}"

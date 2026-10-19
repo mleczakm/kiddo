@@ -9,6 +9,9 @@ apps:
     port: 9502
     image: "ghcr.io/mleczakm/kiddo:{{ app_version | default('latest') }}"
     cache_volume: kiddo_cache
+    # Static placeholder used by playbooks/maintenance.yml (and pre-pulled by every regular
+    # deploy, so enabling maintenance mode never depends on Docker Hub being reachable).
+    maintenance_image: nginx:1.29-alpine
     # Shared external network the docker-autoheal container (and Traefik) live on.
     shared_network: mikrus
     env:

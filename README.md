@@ -59,7 +59,7 @@ Kiddo is a bilingual workshop-booking platform for families and a day-to-day ope
 ## Technology
 
 - PHP 8.5, Symfony 8, Twig, Symfony UX Live Components, Turbo, Stimulus, and Tailwind CSS
-- PostgreSQL 16 with Doctrine ORM and migrations
+- PostgreSQL 18 with Doctrine ORM and migrations
 - Swoole application server
 - Symfony Messenger, Scheduler, Workflow, Mailer, and MCP Bundle
 - Docker Compose for local development
@@ -167,6 +167,7 @@ docker compose run --rm php bin/console app:booking:update-lesson-maps
 assets/          Stimulus controllers, styles, and browser assets
 config/          Symfony services, routes, workflows, and package configuration
 docs/            Integration and assistant documentation
+maintenance/     Static "technical break" page and nginx config (see Maintenance mode)
 migrations/      Doctrine database migrations
 src/Application Business use cases, commands, workflows, and chat tools
 src/Entity       Domain entities, value objects, and DTOs
@@ -175,6 +176,23 @@ src/UserInterface HTTP actions and Symfony UX Live Components
 templates/       Public, account, admin, component, and email templates
 tests/           Unit, smoke, functional, repository, and domain tests
 ```
+
+## Maintenance mode
+
+Before planned work on the database or other infrastructure, replace the application with a static
+technical-break page in the site's look. Run the **Enable Maintenance Mode** workflow (Actions tab,
+optionally filling in the "back at" text). It swaps the `kiddo` container for an nginx placeholder on the
+same address and port, answering every request with `503` and `Retry-After`.
+
+It needs no image build or registry login, no `.env` and no database migrations. It does run the same
+Cloudflare DNS upsert and Cytrus domain check as a regular deploy (the page is unreachable without them),
+so it needs the same routing secrets. Every regular deploy pre-caches the nginx image on the host, so
+Docker Hub is not needed either.
+
+To leave maintenance mode, re-run the latest **Production Build & Deploy** workflow run; a regular
+deploy replaces the placeholder. Do not merge to `master` during maintenance, since every merge deploys
+the application again. Locally: `ansible-playbook -i ansible/inventory.ini ansible/playbooks/maintenance.yml`
+with the routing and host `--extra-vars` from the deploy workflow (no `app_version`, GitHub token or env file).
 
 ## License
 
