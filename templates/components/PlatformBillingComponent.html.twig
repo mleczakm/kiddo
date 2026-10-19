@@ -1,4 +1,5 @@
 <div {{ attributes }} class="rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-sm text-white flex flex-col justify-between min-h-40 md:col-span-2 relative overflow-hidden">
+    {% set summary = this.summary %}
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-[-20px] bottom-[-20px] w-32 h-32 opacity-10 text-white" aria-hidden="true">
         <rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect>
         <path d="M9 22v-4h6v4"></path>
@@ -18,22 +19,22 @@
             <span>Opłata systemowa (2% prowizji)</span>
             {{ include('admin/help/_context_button.html.twig', {slug: 'rozliczenie-platformy', label: 'Opłata systemowa i rozliczenie platformy'}) }}
         </div>
-        {% if this.hasPastDue() %}
+        {% if summary.hasPastDue %}
             <div class="flex items-center gap-1 text-xs font-bold text-red-400 shrink-0 ml-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400">
                     <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
                 </svg>
-                <span>Zaległość {{ this.getPastDue()|number_format(2) }} zł</span>
+                <span>Zaległość {{ summary.pastDue|number_format(2) }} zł</span>
             </div>
         {% endif %}
     </div>
 
-    <div class="text-4xl font-black text-white tracking-tight mb-2">{{ this.getCurrentDue()|number_format(2) }} zł</div>
+    <div class="text-4xl font-black text-white tracking-tight mb-2">{{ summary.currentDue|number_format(2) }} zł</div>
     <div class="text-xs text-slate-400 font-medium">
-        {% if this.isCurrentMonth() %}Prognoza za bieżący miesiąc{% else %}Kwota za {{ this.monthLabel|lower }}{% endif %}
+        {% if summary.isCurrentMonth %}Prognoza za bieżący miesiąc{% else %}Kwota za {{ summary.monthLabel|lower }}{% endif %}
     </div>
 
-    {% if this.hasPastDue() and is_granted('ROLE_SUPER_ADMIN') %}
+    {% if summary.hasPastDue and is_granted('ROLE_SUPER_ADMIN') %}
         <div class="mt-4 flex flex-wrap gap-2">
             <button
                 data-action="live#action"
@@ -89,7 +90,7 @@
                                     {{ form_errors(form.amount) }}
                                 </div>
                             {% endif %}
-                            <p class="text-xs text-slate-500 mt-1">Aktualna zaległość: {{ this.getPastDue()|number_format(2) }} zł</p>
+                            <p class="text-xs text-slate-500 mt-1">Aktualna zaległość: {{ summary.pastDue|number_format(2) }} zł</p>
                         </div>
 
                         <div class="flex gap-2">

@@ -130,6 +130,8 @@ final class NotificationTrayLiveComponent extends AbstractController
     /**
      * The tray polls itself, so it can be rendered after the session or remember-me cookie
      * is gone (logout in another tab, expiry); that must degrade to an empty tray, not a 500.
+     *
+     * @throws \LogicException
      */
     private function currentUser(): ?User
     {
