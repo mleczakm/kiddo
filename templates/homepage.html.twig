@@ -124,39 +124,7 @@
                     </div>
                 </div>
             </section>
-            <section class="py-16">
-                <div class="container mx-auto px-4">
-                    <div class="text-center mb-12">
-                        <h2 class="section-title">{{ 'homepage.testimonials.title'|trans }}</h2>
-                        <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
-                            {{ 'homepage.testimonials.subtitle'|trans }}
-                        </p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="bg-workshop-blue/10 border-workshop-blue/30 p-6 rounded-2xl border shadow-sm">
-                            <p class="mb-6 text-lg italic">{{ 'homepage.testimonials.testimonial1.quote'|trans }}</p>
-                            <div>
-                                <p class="font-bold">{{ 'homepage.testimonials.testimonial1.author'|trans }}</p>
-                                <p class="text-sm text-muted-foreground">{{ 'homepage.testimonials.testimonial1.role'|trans }}</p>
-                            </div>
-                        </div>
-                        <div class="bg-workshop-pink/10 border-workshop-pink/30 p-6 rounded-2xl border shadow-sm">
-                            <p class="mb-6 text-lg italic">{{ 'homepage.testimonials.testimonial2.quote'|trans }}</p>
-                            <div>
-                                <p class="font-bold">{{ 'homepage.testimonials.testimonial2.author'|trans }}</p>
-                                <p class="text-sm text-muted-foreground">{{ 'homepage.testimonials.testimonial2.role'|trans }}</p>
-                            </div>
-                        </div>
-                        <div class="bg-workshop-yellow/10 border-workshop-yellow/30 p-6 rounded-2xl border shadow-sm">
-                            <p class="mb-6 text-lg italic">{{ 'homepage.testimonials.testimonial3.quote'|trans }}</p>
-                            <div>
-                                <p class="font-bold">{{ 'homepage.testimonials.testimonial3.author'|trans }}</p>
-                                <p class="text-sm text-muted-foreground">{{ 'homepage.testimonials.testimonial3.role'|trans }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {{ include('partials/recommendations.html.twig') }}
             <section class="py-16 bg-gradient-to-b from-workshop-blue/5 to-white">
                 <div class="container mx-auto px-4 max-w-4xl">
                     <div class="bg-white rounded-2xl p-8 md:p-12 shadow-lg">

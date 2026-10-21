@@ -49,6 +49,14 @@
                 >
                     Dane firmy i kontakt
                 </button>
+                <button
+                    data-action="live#update"
+                    data-model="settingsTab"
+                    data-value="recommendations"
+                    class="text-left px-4 py-3 rounded-xl text-sm font-bold transition {{ settingsTab == 'recommendations' ? 'bg-white shadow-sm text-indigo-600 border border-slate-200' : 'text-slate-600 hover:bg-slate-200/50' }}"
+                >
+                    Opinie rodziców
+                </button>
                 {% if isFeatureEnabled('legal_documents') %}
                     <button
                         data-action="live#update"
@@ -63,6 +71,10 @@
 
             <!-- Kontent Ustawień -->
             <div class="flex-1 p-8 overflow-y-auto">
+
+                {% if settingsTab == 'recommendations' %}
+                    {{ component('RecommendationSettings') }}
+                {% endif %}
 
                 {% if settingsTab == 'roles' %}
                     <div class="space-y-6 animate-in fade-in">

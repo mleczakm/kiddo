@@ -249,18 +249,12 @@ homepage:
   testimonials:
     title: 'Opinie rodziców'
     subtitle: 'Zobacz, co mówią o nas rodzice, którzy uczestniczyli w naszych warsztatach.'
-    testimonial1:
-      quote: 'Moja córka uwielbia te warsztaty! Zawsze wraca szczęśliwa i pełna nowych pomysłów.'
-      author: 'Anna Kowalska'
-      role: 'Mama 5-letniej Zosi'
-    testimonial2:
-      quote: 'Fantastyczne miejsce! Zajęcia są bardzo dobrze zorganizowane, a prowadzący są cierpliwi i kreatywni.'
-      author: 'Piotr Nowak'
-      role: 'Tata 7-letniego Jakuba'
-    testimonial3:
-      quote: 'Najlepsze warsztaty sensoryczne w okolicy. Polecam każdemu rodzicowi!'
-      author: 'Magda Wiśniewska'
-      role: 'Mama 4-letniej Mai'
+    carousel: 'Karuzela opinii'
+    slide: 'Opinia {number} z {total}'
+    previous: 'Poprzednia opinia'
+    next: 'Następna opinia'
+    read_more: 'Przeczytaj całą opinię'
+    read_less: 'Zwiń opinię'
   newsletter:
     title: "Bądź na bieżąco"
     subtitle: "Zapisz się na newsletter, aby otrzymywać informacje o nowych warsztatach i ofertach."

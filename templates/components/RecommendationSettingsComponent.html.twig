@@ -1,0 +1,41 @@
+<div {{ attributes }} class="space-y-6">
+    <div>
+        <h2 class="text-xl font-black text-slate-800">Opinie rodziców</h2>
+        <p class="text-sm text-slate-500 mt-1">Prawdziwe opinie wyświetlane na stronie głównej. Karuzela zaczyna od losowej opinii. Zmiany, w tym usuwanie, opublikujesz przyciskiem „Zapisz opinie”.</p>
+    </div>
+    {% if error %}
+        <p role="alert" class="rounded-xl bg-red-50 p-4 text-sm text-red-700">{{ error }}</p>
+    {% endif %}
+    {% for review in reviews %}
+        <fieldset class="rounded-2xl border border-slate-200 p-5 space-y-4">
+            <legend class="px-2 font-bold text-slate-700">Opinia {{ loop.index }}</legend>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <label class="block text-sm font-bold text-slate-700">Autor
+                    <input type="text" data-model="norender|reviews.{{ loop.index0 }}.author" value="{{ review.author }}" maxlength="200" required class="mt-1 w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5">
+                </label>
+                <label class="block text-sm font-bold text-slate-700">Źródło
+                    <select data-model="norender|reviews.{{ loop.index0 }}.source" class="mt-1 w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5">
+                        <option value="google" {{ review.source == 'google' ? 'selected' : '' }}>Google</option>
+                        <option value="facebook" {{ review.source == 'facebook' ? 'selected' : '' }}>Facebook</option>
+                    </select>
+                </label>
+            </div>
+            <label class="block text-sm font-bold text-slate-700">Treść opinii
+                <textarea data-model="norender|reviews.{{ loop.index0 }}.text" rows="5" maxlength="10000" required class="mt-1 w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 font-normal">{{ review.text }}</textarea>
+            </label>
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                    <input type="checkbox" data-model="norender|reviews.{{ loop.index0 }}.enabled" {{ review.enabled ? 'checked' : '' }} class="rounded border-slate-300">
+                    Widoczna na stronie
+                </label>
+                <button type="button" data-action="live#action" data-live-action-param="remove" data-live-index-param="{{ loop.index0 }}" class="text-sm font-bold text-red-600 hover:underline">Usuń opinię</button>
+            </div>
+        </fieldset>
+    {% else %}
+        <p class="text-sm text-slate-500">Brak opinii. Dodaj pierwszą opinię, aby pokazać sekcję na stronie głównej.</p>
+    {% endfor %}
+    <div class="sticky bottom-0 flex flex-wrap gap-3 bg-white py-4">
+        <button type="button" data-action="live#action" data-live-action-param="add" class="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50">Dodaj opinię</button>
+        <button type="button" data-action="live#action" data-live-action-param="save" data-loading="addAttribute(disabled)" class="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 disabled:opacity-50">Zapisz opinie</button>
+    </div>
+</div>
