@@ -19,12 +19,16 @@ final readonly class CompositeGlobalSearchQuery implements GlobalSearchQuery
         private PostgresGlobalSearchQuery $database,
         private DocSearchIndex $docs,
         private FeatureManager $featureManager,
+        private RecommendationSearchIndex $recommendations,
     ) {}
 
     #[\Override]
     public function search(string $query, int $limit = 15): PriorityQueue
     {
         $queue = $this->database->search($query, $limit);
+        foreach ($this->recommendations->search($query, $limit) as $scored) {
+            $queue->push($scored->reference, $scored->priority);
+        }
 
         if (!$this->featureManager->isEnabled('help_center')) {
             return $queue;

@@ -3,5 +3,5 @@
 {% block title %}{{ 'admin.tabs.settings'|trans }}{% endblock %}
 
 {% block body %}
-    {{ component('AdminSettings') }}
+    {{ component('AdminSettings', {settingsTab: settingsTab}) }}
 {% endblock %}

@@ -251,10 +251,7 @@ homepage:
     subtitle: 'Zobacz, co mówią o nas rodzice, którzy uczestniczyli w naszych warsztatach.'
     carousel: 'Karuzela opinii'
     slide: 'Opinia {number} z {total}'
-    previous: 'Poprzednia opinia'
-    next: 'Następna opinia'
-    read_more: 'Przeczytaj całą opinię'
-    read_less: 'Zwiń opinię'
+    read: 'Przeczytaj opinię: {author}'
   newsletter:
     title: "Bądź na bieżąco"
     subtitle: "Zapisz się na newsletter, aby otrzymywać informacje o nowych warsztatach i ofertach."

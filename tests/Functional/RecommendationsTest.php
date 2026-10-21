@@ -50,7 +50,7 @@ final class RecommendationsTest extends WebTestCase
         static::assertStringContainsString('Zapisz opinie', (string) $settings->render());
 
         $component = $this->createLiveComponent(name: 'RecommendationSettings', client: $client);
-        $component->set('reviews', [
+        $component->set('reviews', RecommendationProvider::validate([
             [
                 'author' => '  Prawdziwy rodzic  ',
                 'text' => '<script>alert(1)</script> Świetne zajęcia!',
@@ -58,7 +58,7 @@ final class RecommendationsTest extends WebTestCase
                 'enabled' => true,
             ],
             ['author' => 'Ukryta opinia', 'text' => 'Niewidoczna treść', 'source' => 'google', 'enabled' => false],
-        ]);
+        ]));
         $component->call('add');
         $component->call('remove', ['index' => 2]);
         $component->call('save');
@@ -100,7 +100,14 @@ final class RecommendationsTest extends WebTestCase
         $client->loginUser($admin);
 
         $component = $this->createLiveComponent(name: 'RecommendationSettings', client: $client);
-        $component->set('reviews', [['author' => '', 'text' => '', 'source' => 'google', 'enabled' => true]]);
+        $component->set('reviews', [[
+            'id' => 'invalid',
+            'status' => 'published',
+            'author' => '',
+            'text' => '',
+            'source' => 'google',
+            'enabled' => true,
+        ]]);
         $component->call('save');
         static::assertStringContainsString('Opinia 1:', (string) $component->render());
         /** @var RecommendationProvider $provider */

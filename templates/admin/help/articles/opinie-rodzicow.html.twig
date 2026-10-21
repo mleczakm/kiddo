@@ -1,0 +1,39 @@
+{#---
+slug: opinie-rodzicow
+title: "Opinie rodziców: edycja, moderacja i publikacja"
+section: settings
+role: ROLE_SETTINGS
+summary: "Gdzie edytować rekomendacje, jak zatwierdzać szkice użytkowników, jak działa karuzela i narzędzia MCP."
+keywords: [opinie, opinia, rodzice, rekomendacje, recenzje, draft, szkic, zatwierdzanie, moderacja, karuzela, MCP, Google, Facebook]
+primary_route: app_admin_settings
+related: [ustawienia-systemu, asystent-ai]
+---#}
+<h2>Gdzie edytować opinie</h2>
+<p>Otwórz <a href="{{ path('app_admin_settings', {tab: 'recommendations'}) }}">Ustawienia systemu → Opinie rodziców</a>.
+    Możesz dodawać, edytować, ukrywać i usuwać opinie. Każda ma autora, pełną treść, źródło oraz status.
+    Zmiany publikuje przycisk <strong>Zapisz opinie</strong>. Opinie z dostarczonych zrzutów Google i Facebooka są już zatwierdzone.</p>
+<h2>Opinia przesłana przez użytkownika</h2>
+<p>Zalogowany użytkownik dodaje opinię w <a href="{{ path('profile') }}">Moje dane → Twoja opinia</a>.
+    Taka opinia zawsze otrzymuje status <strong>Szkic — oczekuje na zatwierdzenie</strong> i nie jest publiczna.
+    Administratorzy otrzymują powiadomienie prowadzące prosto do zakładki opinii.
+    Jeden użytkownik może przesłać jedną opinię; po usunięciu jej przez administratora może przesłać kolejną.</p>
+<p>Sprawdź treść i podpis, w razie potrzeby popraw je, a następnie wybierz <strong>Zatwierdź i zapisz opinie</strong>.
+    Samo zaznaczenie widoczności szkicu nie publikuje go. Aby ukryć zatwierdzoną opinię, odznacz widoczność i zapisz.
+    Aby odrzucić opinię, usuń ją i zapisz. Zapis jest chroniony przed nadpisaniem nowszych zgłoszeń — komunikat o zmianie danych wymaga odświeżenia edytora.</p>
+<h2>Wyszukiwanie</h2>
+<p>Wyszukiwarka panelu (Ctrl+K) znajduje zakładkę po słowie „opinie”, a konkretne opinie po autorze lub fragmencie treści,
+    także szkice. Wyniki są dostępne osobom z uprawnieniami do ustawień. Artykuł jest też dostępny w wyszukiwaniu pomocy.</p>
+<h2>Karuzela na stronie głównej</h2>
+<p>Pełna szerokość strony, oryginalne pastelowe karty, losowa pierwsza opinia i ciągła pętla bez przycisków sterujących.
+    Kliknięcie karty zatrzymuje ruch i powiększa kartę, tekst oraz pełną treść.
+    Po czasie oszacowanym na przeczytanie opinii (około 180 słów na minutę) karta wraca do zwykłego rozmiaru i karuzela rusza dalej.
+    Klawisz Escape pozwala wcześniej zakończyć czytanie. Ustawienie ograniczenia animacji w systemie wyłącza automatyczny ruch.</p>
+<h2>Obsługa przez MCP / asystenta administratora</h2>
+<ul>
+    <li><code>admin_list_recommendations</code> — wyszukiwanie po autorze i treści, filtrowanie <code>status=draft</code> lub <code>published</code>; wynik zawiera identyfikatory.</li>
+    <li><code>admin_save_recommendation</code> — dodanie albo edycja (<code>id</code>) autora, treści, źródła, statusu i widoczności.</li>
+    <li><code>admin_approve_recommendation</code> — zatwierdzenie i publikacja opinii wskazanej przez <code>id</code>.</li>
+    <li><code>admin_delete_recommendation</code> — usunięcie opinii wskazanej przez <code>id</code>.</li>
+</ul>
+<p>Narzędzia wymagają administratora. Każda operacja zmieniająca dane wymaga dodatkowo <code>confirm=true</code> po potwierdzeniu zamiaru przez administratora.
+    Przykład: „Pokaż szkice opinii”, a po sprawdzeniu treści: „Zatwierdź opinię o wskazanym identyfikatorze”.</p>

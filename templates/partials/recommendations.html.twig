@@ -10,26 +10,14 @@
         <div class="recommendations-viewport" data-recommendations-target="viewport" tabindex="0" role="group" aria-label="{{ 'homepage.testimonials.carousel'|trans }}">
             <div class="recommendations-track" data-recommendations-target="track">
                 {% for review in recommendations %}
-                    <div class="recommendations-card {{ colors[loop.index0 % 3] }} p-6 rounded-2xl border shadow-sm" data-recommendations-target="slide" role="group" aria-label="{{ 'homepage.testimonials.slide'|trans({number: loop.index, total: recommendations|length}) }}">
+                    <div class="recommendations-card {{ colors[loop.index0 % 3] }} p-6 rounded-2xl border shadow-sm" data-recommendations-target="slide" role="button" tabindex="0" aria-expanded="false" aria-label="{{ 'homepage.testimonials.read'|trans({author: review.author}) }}" data-action="click->recommendations#read keydown.enter->recommendations#read keydown.space->recommendations#read">
                         <blockquote class="mb-6 text-lg italic">
-                            {% if review.text|length > 250 %}
-                                <details class="group">
-                                    <summary class="cursor-pointer list-none">
-                                        <span class="group-open:hidden whitespace-pre-line">{{ review.text|slice(0, 250) }}…</span>
-                                        <span class="mt-3 block text-sm not-italic text-muted-foreground underline underline-offset-4">
-                                            <span class="group-open:hidden">{{ 'homepage.testimonials.read_more'|trans }}</span>
-                                            <span class="hidden group-open:inline">{{ 'homepage.testimonials.read_less'|trans }}</span>
-                                        </span>
-                                    </summary>
-                                    <p class="mt-3 whitespace-pre-line">{{ review.text }}</p>
-                                </details>
-                            {% else %}
-                                <p class="whitespace-pre-line">{{ review.text }}</p>
-                            {% endif %}
+                            <p class="recommendations-excerpt whitespace-pre-line">{{ review.text|length > 250 ? review.text|slice(0, 250) ~ '…' : review.text }}</p>
+                            <p class="recommendations-full whitespace-pre-line">{{ review.text }}</p>
                         </blockquote>
                         <div>
                             <p class="font-bold">{{ review.author }}</p>
-                            <p class="text-sm text-muted-foreground">{{ review.source == 'google' ? 'Google' : 'Facebook' }}</p>
+                            <p class="text-sm text-muted-foreground">{{ review.source == 'google' ? 'Google' : (review.source == 'facebook' ? 'Facebook' : 'Kiddo') }}</p>
                         </div>
                     </div>
                 {% endfor %}

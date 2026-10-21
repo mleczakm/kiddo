@@ -464,10 +464,7 @@ homepage:
     subtitle: 'Feedback from families who have joined our workshops'
     carousel: 'Review carousel'
     slide: 'Review {number} of {total}'
-    previous: 'Previous review'
-    next: 'Next review'
-    read_more: 'Read full review'
-    read_less: 'Show less'
+    read: 'Read the review by {author}'
   newsletter:
     title: "Stay up to date"
     subtitle: "Subscribe to our newsletter to receive information about new workshops and offers."

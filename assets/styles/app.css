@@ -33,10 +33,49 @@
     will-change: transform;
 }
 
-.recommendations-viewport:hover .recommendations-track,
-.recommendations-viewport:focus-within .recommendations-track,
-.recommendations-viewport:active .recommendations-track {
+.recommendations-track[data-reading="true"] {
     animation-play-state: paused;
+}
+
+.recommendations-card {
+    cursor: pointer;
+}
+
+.recommendations-full,
+.recommendations-reader .recommendations-excerpt {
+    display: none;
+}
+
+.recommendations-reader .recommendations-full {
+    display: block;
+}
+
+.recommendations-card[data-reading-source] {
+    opacity: 0;
+}
+
+.recommendations-reader {
+    position: fixed;
+    z-index: 1000;
+    margin: 0;
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+    overscroll-behavior: contain;
+    cursor: auto;
+    box-shadow: 0 1rem 3rem rgb(83 48 20 / 0.18);
+    transition:
+        width 0.24s ease,
+        height 0.24s ease,
+        left 0.24s ease,
+        top 0.24s ease;
+}
+
+.recommendations-reader blockquote {
+    transition: font-size 0.24s ease;
+}
+
+.recommendations-reader[data-expanded="true"] blockquote {
+    font-size: 1.25rem;
 }
 
 @keyframes recommendations-scroll {
@@ -52,6 +91,11 @@
 
     .recommendations-track[data-looping="true"] {
         animation: none;
+    }
+
+    .recommendations-reader,
+    .recommendations-reader blockquote {
+        transition: none;
     }
 }
 

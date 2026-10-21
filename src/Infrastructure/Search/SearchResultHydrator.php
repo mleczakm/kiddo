@@ -20,6 +20,7 @@ final readonly class SearchResultHydrator
         private TranslatorInterface $translator,
         private MoneyExtension $moneyExtension,
         private DocResultHydrator $docResultHydrator,
+        private RecommendationSearchIndex $recommendations,
     ) {}
 
     /**
@@ -32,12 +33,12 @@ final readonly class SearchResultHydrator
             return [];
         }
 
-        $byKey = $this->docResultHydrator->hydrate($references);
+        $byKey = [...$this->docResultHydrator->hydrate($references), ...$this->recommendations->hydrate($references)];
 
         $values = [];
         $parameters = [];
         foreach ($references as $index => $reference) {
-            if ($reference->type === SearchType::Doc) {
+            if (in_array($reference->type, [SearchType::Doc, SearchType::Recommendation], true)) {
                 continue;
             }
 
@@ -168,7 +169,7 @@ final readonly class SearchResultHydrator
                 $row['timestamp_str'],
             ],
             // Help articles are hydrated by DocResultHydrator, never here.
-            SearchType::Doc => [],
+            SearchType::Doc, SearchType::Recommendation => [],
         };
 
         return implode(' · ', array_filter($parts, static fn(?string $part): bool => $part !== null && $part !== ''));

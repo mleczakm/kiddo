@@ -14,7 +14,7 @@ final readonly class RecommendationProvider
         private SettingRepositoryInterface $settings,
     ) {}
 
-    /** @return list<array{author: string, text: string, source: string, enabled: bool}> */
+    /** @return list<array{id: string, author: string, text: string, source: string, enabled: bool, status: string}> */
     public function getAll(): array
     {
         $content = $this->settings->findOneByKey(self::SETTING_KEY)?->getContent();
@@ -26,14 +26,17 @@ final readonly class RecommendationProvider
         }
     }
 
-    /** @return list<array{author: string, text: string, source: string, enabled: bool}> */
+    /** @return list<array{id: string, author: string, text: string, source: string, enabled: bool, status: string}> */
     public function getPublished(): array
     {
-        return array_values(array_filter($this->getAll(), static fn(array $review): bool => $review['enabled']));
+        return array_values(array_filter(
+            $this->getAll(),
+            static fn(array $review): bool => $review['enabled'] && $review['status'] === 'published',
+        ));
     }
 
     /**
-     * @return list<array{author: string, text: string, source: string, enabled: bool}>
+     * @return list<array{id: string, author: string, text: string, source: string, enabled: bool, status: string}>
      * @throws \InvalidArgumentException
      */
     public static function validate(mixed $reviews): array
@@ -41,40 +44,37 @@ final readonly class RecommendationProvider
         if (!is_array($reviews) || !array_is_list($reviews)) {
             throw new \InvalidArgumentException('Opinie muszą być listą.');
         }
-
         $validated = [];
         foreach ($reviews as $index => $review) {
-            if (
-                !is_array($review)
-                || !in_array($review['source'] ?? null, ['google', 'facebook'], true)
-                || !is_bool($review['enabled'] ?? null)
-            ) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Opinia %d: podaj autora (do 200 znaków), treść (do 10 000 znaków) i źródło Google lub Facebook.',
-                    $index + 1,
-                ));
-            }
-
-            $text = [];
-            foreach (['author' => 200, 'text' => 10_000] as $field => $limit) {
-                $value = $review[$field] ?? null;
-                if (!is_string($value) || trim($value) === '' || mb_strlen($value) > $limit) {
-                    throw new \InvalidArgumentException(sprintf(
-                        'Opinia %d: podaj autora (do 200 znaków) i treść (do 10 000 znaków).',
-                        $index + 1,
-                    ));
-                }
-                $text[$field] = trim($value);
-            }
-
-            $validated[] = [
-                'author' => $text['author'],
-                'text' => $text['text'],
-                'source' => $review['source'],
-                'enabled' => $review['enabled'],
-            ];
+            $validated[] = RecommendationValidator::normalize($review, $index + 1);
         }
-
+        if (count(array_unique(array_column($validated, 'id'))) !== count($validated)) {
+            throw new \InvalidArgumentException('Każda opinia musi mieć inny identyfikator.');
+        }
         return $validated;
+    }
+
+    /** @return list<array{id: string, author: string, text: string, source: string, enabled: bool, status: string}> */
+    public function search(string $query = '', ?string $status = null): array
+    {
+        $query = mb_strtolower(trim($query));
+        return array_values(array_filter(
+            $this->getAll(),
+            static fn(array $row): bool => (
+                ($status === null || $row['status'] === $status)
+                && ($query === '' || str_contains(mb_strtolower($row['author'] . ' ' . $row['text']), $query))
+            ),
+        ));
+    }
+
+    public function revision(): string
+    {
+        return self::revisionOf($this->getAll());
+    }
+
+    /** @param list<array{id: string, author: string, text: string, source: string, enabled: bool, status: string}> $reviews */
+    public static function revisionOf(array $reviews): string
+    {
+        return hash('sha256', serialize($reviews));
     }
 }

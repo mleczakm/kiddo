@@ -1,0 +1,17 @@
+<section {{ attributes }} class="rounded-2xl border border-panel-border bg-white p-6 shadow-sm">
+    <h2 class="text-lg font-bold text-panel-ink">Twoja opinia</h2>
+    {% set submission = this.submission %}
+    {% if submission %}
+        <p class="mt-2 text-sm text-panel-muted">{{ submission.status == 'published' ? 'Dziękujemy! Administrator zatwierdził Twoją opinię.' : 'Dziękujemy! Twoja opinia czeka na zatwierdzenie przez administratora i nie jest jeszcze publiczna.' }}</p>
+        <p class="mt-4 whitespace-pre-line text-sm text-panel-ink">{{ submission.text }}</p>
+    {% else %}
+        <p class="mt-2 text-sm text-panel-muted">Podziel się wrażeniami z Warsztatowni. Opinia z podpisem „{{ app.user.name }}” będzie mogła pojawić się na stronie głównej dopiero po sprawdzeniu i zatwierdzeniu przez administratora.</p>
+        <form data-action="live#action:prevent" data-live-action-param="submit" class="mt-4 space-y-3">
+            <label class="block text-sm font-semibold text-panel-ink">Treść opinii
+                <textarea data-model="norender|text" rows="5" maxlength="10000" required class="mt-2 w-full rounded-xl border border-panel-border p-3 font-normal">{{ text }}</textarea>
+            </label>
+            {% if error %}<p role="alert" class="text-sm text-red-700">{{ error }}</p>{% endif %}
+            <button type="submit" data-loading="addAttribute(disabled)" class="rounded-xl bg-panel-accent px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50">Wyślij opinię do zatwierdzenia</button>
+        </form>
+    {% endif %}
+</section>
