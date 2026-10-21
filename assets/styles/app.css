@@ -8,6 +8,53 @@
 @source "vendor/tales-from-a-dev/flowbite-bundle/templates/**/*.html.twig";
 @source "vendor/symfony/twig-bridge/Resources/views/Form/*.html.twig";
 
+/* Full-width recommendations retain the original pastel card styling. */
+.recommendations-viewport {
+    overflow: hidden;
+    padding: 0.5rem 0;
+}
+
+.recommendations-track {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 2rem;
+    width: max-content;
+    padding: 0 1rem;
+}
+
+.recommendations-card {
+    flex: 0 0 clamp(18rem, 80vw, 24rem);
+    width: clamp(18rem, 80vw, 24rem);
+}
+
+.recommendations-track[data-looping="true"] {
+    animation: recommendations-scroll var(--recommendations-duration) linear infinite;
+    will-change: transform;
+}
+
+.recommendations-viewport:hover .recommendations-track,
+.recommendations-viewport:focus-within .recommendations-track,
+.recommendations-viewport:active .recommendations-track {
+    animation-play-state: paused;
+}
+
+@keyframes recommendations-scroll {
+    to {
+        transform: translateX(calc(-1 * var(--recommendations-distance)));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .recommendations-viewport {
+        overflow-x: auto;
+    }
+
+    .recommendations-track[data-looping="true"] {
+        animation: none;
+    }
+}
+
 /* Notification tray via <details>/<summary> */
 details#notif-details > summary {
     list-style: none;

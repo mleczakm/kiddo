@@ -75,8 +75,8 @@ final class RecommendationsTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('#recommendations-title', 'Opinie rodziców');
         self::assertSelectorCount(1, '[data-recommendations-target="slide"]');
-        self::assertSelectorTextContains('figcaption', 'Prawdziwy rodzic');
-        self::assertSelectorTextContains('figcaption', 'Facebook');
+        self::assertSelectorTextContains('[data-recommendations-target="slide"]', 'Prawdziwy rodzic');
+        self::assertSelectorTextContains('[data-recommendations-target="slide"]', 'Facebook');
         self::assertSelectorNotExists('[data-recommendations-target="controls"]');
         $html = (string) $client->getResponse()->getContent();
         static::assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;', $html);

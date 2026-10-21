@@ -1,44 +1,39 @@
 {% if recommendations|length > 0 %}
-    <section class="py-16" aria-labelledby="recommendations-title" aria-roledescription="{{ 'homepage.testimonials.carousel'|trans }}" data-controller="recommendations" data-action="keydown.left->recommendations#previous keydown.right->recommendations#next">
-        <div class="container mx-auto px-4 max-w-4xl">
-            <div class="text-center mb-10">
+    <section class="py-16" aria-labelledby="recommendations-title" aria-roledescription="{{ 'homepage.testimonials.carousel'|trans }}" data-controller="recommendations">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
                 <h2 id="recommendations-title" class="section-title">{{ 'homepage.testimonials.title'|trans }}</h2>
-                <p class="text-lg text-muted-foreground">{{ 'homepage.testimonials.subtitle'|trans }}</p>
+                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">{{ 'homepage.testimonials.subtitle'|trans }}</p>
             </div>
-            <div aria-live="polite" aria-atomic="true">
+            {% set colors = ['bg-workshop-blue/10 border-workshop-blue/30', 'bg-workshop-pink/10 border-workshop-pink/30', 'bg-workshop-yellow/10 border-workshop-yellow/30'] %}
+        </div>
+        <div class="recommendations-viewport" data-recommendations-target="viewport" tabindex="0" role="group" aria-label="{{ 'homepage.testimonials.carousel'|trans }}">
+            <div class="recommendations-track" data-recommendations-target="track">
                 {% for review in recommendations %}
-                    <figure class="mb-6 rounded-3xl border border-workshop-blue/30 bg-workshop-blue/10 p-6 md:p-10 shadow-workshop" data-recommendations-target="slide" role="group" aria-label="{{ 'homepage.testimonials.slide'|trans({number: loop.index, total: recommendations|length}) }}">
-                        <span aria-hidden="true" class="block text-5xl font-display text-workshop-blue">“</span>
-                        <blockquote class="text-lg md:text-xl leading-relaxed text-workshop-brown">
-                            {% if review.text|length > 360 %}
+                    <div class="recommendations-card {{ colors[loop.index0 % 3] }} p-6 rounded-2xl border shadow-sm" data-recommendations-target="slide" role="group" aria-label="{{ 'homepage.testimonials.slide'|trans({number: loop.index, total: recommendations|length}) }}">
+                        <blockquote class="mb-6 text-lg italic">
+                            {% if review.text|length > 250 %}
                                 <details class="group">
                                     <summary class="cursor-pointer list-none">
-                                        <span class="group-open:hidden whitespace-pre-line">{{ review.text|slice(0, 360) }}…</span>
-                                        <span class="mt-4 block text-sm font-bold text-workshop-brown underline underline-offset-4">
+                                        <span class="group-open:hidden whitespace-pre-line">{{ review.text|slice(0, 250) }}…</span>
+                                        <span class="mt-3 block text-sm not-italic text-muted-foreground underline underline-offset-4">
                                             <span class="group-open:hidden">{{ 'homepage.testimonials.read_more'|trans }}</span>
                                             <span class="hidden group-open:inline">{{ 'homepage.testimonials.read_less'|trans }}</span>
                                         </span>
                                     </summary>
-                                    <p class="mt-4 whitespace-pre-line">{{ review.text }}</p>
+                                    <p class="mt-3 whitespace-pre-line">{{ review.text }}</p>
                                 </details>
                             {% else %}
                                 <p class="whitespace-pre-line">{{ review.text }}</p>
                             {% endif %}
                         </blockquote>
-                        <figcaption class="mt-8 border-t border-workshop-blue/20 pt-5">
-                            <p class="font-bold text-workshop-brown">{{ review.author }}</p>
-                            <p class="mt-1 text-sm text-muted-foreground">{{ review.source == 'google' ? 'Google' : 'Facebook' }}</p>
-                        </figcaption>
-                    </figure>
+                        <div>
+                            <p class="font-bold">{{ review.author }}</p>
+                            <p class="text-sm text-muted-foreground">{{ review.source == 'google' ? 'Google' : 'Facebook' }}</p>
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
-            {% if recommendations|length > 1 %}
-                <div hidden data-recommendations-target="controls" class="flex items-center justify-center gap-6">
-                    <button type="button" data-action="recommendations#previous" class="btn-outline" aria-label="{{ 'homepage.testimonials.previous'|trans }}"><span aria-hidden="true">←</span></button>
-                    <span data-recommendations-target="position" class="text-sm tabular-nums text-muted-foreground"></span>
-                    <button type="button" data-action="recommendations#next" class="btn-outline" aria-label="{{ 'homepage.testimonials.next'|trans }}"><span aria-hidden="true">→</span></button>
-                </div>
-            {% endif %}
         </div>
     </section>
 {% endif %}
