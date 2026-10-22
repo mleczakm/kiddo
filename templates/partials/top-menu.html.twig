@@ -105,10 +105,11 @@
         <a href="{{ path('workshops') }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ 'page.workshops'|trans }}</a>
         {% if app.user %}
             <a href="{{ path('dashboard') }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ 'page.my_bookings'|trans }}</a>
-            {% for link in main_nav_extra_links %}
-                <a href="{{ link.url }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ link.label }}</a>
-            {% endfor %}
-        {% else %}
+        {% endif %}
+        {% for link in main_nav_extra_links %}
+            <a href="{{ link.url }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ link.label }}</a>
+        {% endfor %}
+        {% if not app.user %}
             {% for link in main_nav_before_auth_links %}
                 <a href="{{ link.url }}" class="font-medium text-workshop-brown hover:text-workshop-red transition-colors py-3 border-b border-beige">{{ link.label }}</a>
             {% endfor %}
