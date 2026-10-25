@@ -1815,7 +1815,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:406:13}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/Entity/Payment.php:416:13}`.'
 count = 1
 
 [[issues]]
@@ -1827,7 +1827,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `{closure:src/Entity/Payment.php:405:38}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\NumberFormatException` in `{closure:src/Entity/Payment.php:415:38}`.'
 count = 1
 
 [[issues]]
@@ -1839,7 +1839,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `{closure:src/Entity/Payment.php:405:38}`.'
+message = 'Potentially unhandled exception `Brick\Math\Exception\RoundingNecessaryException` in `{closure:src/Entity/Payment.php:415:38}`.'
 count = 1
 
 [[issues]]
@@ -1857,7 +1857,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:406:13}`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/Entity/Payment.php:416:13}`.'
 count = 1
 
 [[issues]]
@@ -1869,7 +1869,7 @@ count = 1
 [[issues]]
 file = "src/Entity/Payment.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `{closure:src/Entity/Payment.php:405:38}`.'
+message = 'Potentially unhandled exception `Brick\Money\Exception\UnknownCurrencyException` in `{closure:src/Entity/Payment.php:415:38}`.'
 count = 1
 
 [[issues]]
