@@ -1,0 +1,24 @@
+{#
+  Countdown to the payment deadline (Payment::VALIDITY_MINUTES from creation).
+
+  Params:
+    - expires_at  \DateTimeImmutable  Payment::getExpiresAt()
+
+  The remaining time is computed server-side and handed to the Stimulus
+  controller as seconds, so a wrong clock on the visitor's device can't skew
+  it; every Live Component re-render (they poll) re-syncs it.
+#}
+{% set remaining = max(0, expires_at.timestamp - 'now'|date('U')) %}
+<div class="my-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900"
+     role="timer"
+     data-controller="payment-countdown"
+     data-payment-countdown-remaining-value="{{ remaining }}">
+    <div data-payment-countdown-target="running"{{ remaining == 0 ? ' hidden' }}>
+        <p class="text-sm font-semibold">
+            {{ 'payment.countdown.label'|trans }}
+            <span class="ml-1 font-mono text-xl tabular-nums" data-live-ignore data-payment-countdown-target="display">{{ '%02d:%02d'|format(remaining // 60, remaining % 60) }}</span>
+        </p>
+        <p class="mt-1 text-xs">{{ 'payment.countdown.hint'|trans }}</p>
+    </div>
+    <p class="text-sm font-semibold" data-payment-countdown-target="expired"{{ remaining > 0 ? ' hidden' }}>{{ 'payment.countdown.expired'|trans }}</p>
+</div>

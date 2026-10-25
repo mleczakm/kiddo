@@ -4,64 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "116171850870d286aa50e86a77b4ffa6",
+    "content-hash": "2b1776eccda9132fa11eddc322ed136f",
     "packages": [
-        {
-            "name": "aeon-php/business-hours",
-            "version": "1.0.12",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/aeon-php/business-hours.git",
-                "reference": "17a391e1400d81f458edeab654be4c46df522b6a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/aeon-php/business-hours/zipball/17a391e1400d81f458edeab654be4c46df522b6a",
-                "reference": "17a391e1400d81f458edeab654be4c46df522b6a",
-                "shasum": ""
-            },
-            "require": {
-                "aeon-php/calendar": "~1.0",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
-            },
-            "require-dev": {
-                "aeon-php/calendar-holidays": "~1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Aeon\\": [
-                        "src/Aeon"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Abstraction allowing to define and check against business hours",
-            "keywords": [
-                "business hours",
-                "calendar",
-                "holidays",
-                "immutable"
-            ],
-            "support": {
-                "issues": "https://github.com/aeon-php/business-hours/issues",
-                "source": "https://github.com/aeon-php/business-hours/tree/1.0.12"
-            },
-            "funding": [
-                {
-                    "url": "https://flow-php.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/norberttech",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-12-04T13:02:42+00:00"
-        },
         {
             "name": "aeon-php/calendar",
             "version": "1.0.12",

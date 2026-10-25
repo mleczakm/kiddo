@@ -847,6 +847,15 @@ class LessonModal extends AbstractController
         }
     }
 
+    /**
+     * Deadline of the payment shown in the awaiting-payment view, for the
+     * countdown. Null when the payment can't be resolved.
+     */
+    public function getPaymentExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->resolveWatchedPayment()?->getExpiresAt();
+    }
+
     private function resolveWatchedPayment(): ?Payment
     {
         if ($this->watchedPaymentId !== null && $this->watchedPaymentId !== '') {

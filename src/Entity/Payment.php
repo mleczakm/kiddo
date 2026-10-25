@@ -30,6 +30,11 @@ class Payment
 
     public const STATUS_EXPIRED = 'expired';
 
+    // How long a pending BLIK / express-transfer payment stays valid. Wall-clock
+    // minutes (weekends and holidays included): an express transfer settles
+    // within seconds at any hour, so there is no reason to pause the clock.
+    public const int VALIDITY_MINUTES = 30;
+
     // Transitions
     public const TRANSITION_PAY = 'pay';
 
@@ -224,6 +229,11 @@ class Payment
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function getExpiresAt(): \DateTimeImmutable
+    {
+        return $this->createdAt->modify(sprintf('+%d minutes', self::VALIDITY_MINUTES));
     }
 
     public function getPaidAt(): ?\DateTimeImmutable

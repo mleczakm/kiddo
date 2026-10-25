@@ -627,9 +627,12 @@ blik:
     instruction: "W tytule przelewu wpisz:"
   info: "Po zaksięgowaniu płatności Twoja rezerwacja zostanie potwierdzona."
   alt_transfer: >-
-    Możesz też wykonać klasyczny przelew na numer konta: {account}     
-    
-    o tym samym tytule "{title}"
+    Możesz też zapłacić przelewem na numer konta: {account}
+
+    o tym samym tytule "{title}".
+
+    <strong>Koniecznie wykonaj przelew ekspresowy</strong> — zwykły przelew nie zaksięguje się
+    w ciągu 30 minut i rezerwacja wygaśnie.
 
   amount: "Kwota do zapłaty: {amount}"
   instruction_3: "W tytule przelewu wpisz:"
@@ -1291,6 +1294,10 @@ common:
 
 # Payment system
 payment:
+  countdown:
+    label: "Czas na płatność:"
+    hint: "Zapłać w ciągu 30 minut, inaczej rezerwacja wygaśnie."
+    expired: "Czas na płatność minął. Jeśli już zapłacono, poczekaj na zaksięgowanie — w przeciwnym razie rezerwacja wygaśnie i trzeba ją utworzyć ponownie."
   pending_transfers: "Oczekujące przelewy"
   no_transfers: "Brak przelewów"
   sender: "Nadawca"
@@ -1315,7 +1322,7 @@ payment:
   paid_message: "Dziękujemy za płatność. Twoja rezerwacja została potwierdzona."
   awaiting: "Oczekiwanie na zaksięgowanie płatności..."
   add_to_calendar: "Dodaj do kalendarza"
-  blik_instruction: "Wykonaj przelew BLIK na telefon {blik_phone} na kwotę {amount} {currency}. W tytule przelewu wpisz dokładnie kod: {code}. Kod jest ważny ok. {valid_hours} godzin (do {expires_at}). Alternatywnie: klasyczny przelew na konto {bank_account} z tym samym tytułem. Po zaksięgowaniu rezerwacja zostanie potwierdzona automatycznie."
+  blik_instruction: "Wykonaj przelew BLIK na telefon {blik_phone} na kwotę {amount} {currency}. W tytule przelewu wpisz dokładnie kod: {code}. Płatność trzeba wykonać w ciągu {valid_minutes} minut (do {expires_at}) — po tym czasie rezerwacja wygasa. Alternatywnie: przelew na konto {bank_account} z tym samym tytułem, koniecznie jako przelew ekspresowy (zwykły przelew nie zaksięguje się na czas). Po zaksięgowaniu rezerwacja zostanie potwierdzona automatycznie."
 
 
 action:

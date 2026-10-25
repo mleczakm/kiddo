@@ -336,7 +336,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                 'Create a booking for a user. ALWAYS ask the admin how it is paid and pass "payment": '
                 . '"paid" = money already received (booking active, payment recorded as paid); '
                 . '"send_code" = will be paid by BLIK/transfer (booking stays pending with a payment code — '
-                . 'relay the returned BLIK instruction; auto-cancels if unpaid in ~24h); '
+                . 'relay the returned BLIK instruction; auto-cancels if unpaid within 30 minutes; bank transfers must be express transfers); '
                 . '"on_site" = will be paid in person (booking active, payment stays pending, method pay-on-place). '
                 . 'price_override sets a custom amount (comp/discount); omit to charge the ticket option price.',
                 [
@@ -1021,7 +1021,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
 
         return sprintf(
             'Utworzono rezerwację dla %s ze statusem "oczekująca". Przekaż instrukcję płatności BLIK z pola '
-            . 'payment.instruction_pl; rezerwacja anuluje się automatycznie, jeśli nie zostanie opłacona w ~24h.',
+            . 'payment.instruction_pl; rezerwacja anuluje się automatycznie, jeśli nie zostanie opłacona w ciągu 30 minut (przelew na konto musi być ekspresowy).',
             $email,
         );
     }

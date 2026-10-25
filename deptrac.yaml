@@ -109,5 +109,3 @@ deptrac:
             - App\Infrastructure\Brevo\BrevoNewsletterService
         App\Application\Newsletter\NewsletterSubscriptionManager:
             - App\Infrastructure\Brevo\BrevoNewsletterService
-        App\Application\Service\WorkingDaysDeadlineCalculator:
-            - App\Infrastructure\Calendar\PolishPublicHolidays

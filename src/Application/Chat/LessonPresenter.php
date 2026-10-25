@@ -14,13 +14,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class LessonPresenter
 {
-    /**
-     * Matches CheckExpiredPaymentsHandler::EXPIRATION_WORKING_HOURS - the code
-     * is valid for 24 working hours, so this wall-clock figure is a lower bound
-     * (the copy that uses it already hedges with "~").
-     */
-    public const int PAYMENT_CODE_VALID_HOURS = 24;
-
     public function __construct(
         private OrganizationDetailsProvider $organizationDetails,
         private TranslatorInterface $translator,
@@ -175,7 +168,7 @@ final readonly class LessonPresenter
      *     blik_phone: string,
      *     bank_account: string,
      *     expires_at: string,
-     *     valid_hours: int,
+     *     valid_minutes: int,
      *     instruction_pl: string
      * }
      */
@@ -185,7 +178,7 @@ final readonly class LessonPresenter
         $org = $this->organizationDetails->get();
         $blikPhone = $org->blikPhone;
         $bankAccount = $org->bankAccount;
-        $expiresAt = $payment->getCreatedAt()->modify(sprintf('+%d hours', self::PAYMENT_CODE_VALID_HOURS));
+        $expiresAt = $payment->getExpiresAt();
         $code = $base['code'] ?? '—';
         $amount = $base['amount'];
         $currency = $base['currency'];
@@ -197,7 +190,7 @@ final readonly class LessonPresenter
                 'amount' => $amount,
                 'currency' => $currency,
                 'code' => $code,
-                'valid_hours' => self::PAYMENT_CODE_VALID_HOURS,
+                'valid_minutes' => Payment::VALIDITY_MINUTES,
                 'expires_at' => $expiresAt->format('d.m.Y H:i'),
                 'bank_account' => $bankAccount,
             ],
@@ -210,7 +203,7 @@ final readonly class LessonPresenter
             'blik_phone' => $blikPhone,
             'bank_account' => $bankAccount,
             'expires_at' => $expiresAt->format(\DateTimeInterface::ATOM),
-            'valid_hours' => self::PAYMENT_CODE_VALID_HOURS,
+            'valid_minutes' => Payment::VALIDITY_MINUTES,
             'instruction_pl' => $instruction,
         ];
     }

@@ -33,11 +33,10 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
         $activityLogRepository = self::getContainer()->get(ActivityLogRepository::class);
 
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
-        // Comfortably past the 24-working-hour window regardless of which
-        // weekday "now" happens to be in the test run.
-        $longAgo = $now->modify('-4 days');
-        // Within the 24-working-hour window even across a weekend.
-        $recently = $now->modify('-2 hours');
+        // Well past the 30-minute payment window.
+        $longAgo = $now->modify('-4 hours');
+        // Still within the 30-minute payment window.
+        $recently = $now->modify('-5 minutes');
 
         $user = UserAssembler::new()->assemble();
 
@@ -80,7 +79,7 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
         $em->persist($bookingB);
 
         // Booking C: pending, unpaid, but created too recently to have
-        // accrued 24 working hours yet -> must remain untouched.
+        // used up the 30-minute payment window -> must remain untouched.
         $lessonC = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->assemble())
             ->withSchedule($now->modify('+1 day'))
@@ -134,7 +133,7 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
         static::assertSame(
             Booking::STATUS_PENDING,
             $savedC->getStatus(),
-            'Booking created recently must not be auto-cancelled before 24 working hours have passed',
+            'Booking created recently must not be auto-cancelled before the 30-minute payment window has passed',
         );
     }
 }

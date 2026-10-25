@@ -4,7 +4,7 @@ title: "Statusy rezerwacji i termin płatności"
 section: bookings
 role: ROLE_MANAGE_BOOKINGS
 summary: "Co oznaczają statusy rezerwacji i płatności oraz kiedy nieopłacony zapis jest anulowany."
-keywords: [status rezerwacji, status płatności, oczekująca, aktywna, anulowana, wygasła, termin płatności, 24 godziny robocze, święta]
+keywords: [status rezerwacji, status płatności, oczekująca, aktywna, anulowana, wygasła, termin płatności, 30 minut, przelew ekspresowy, BLIK]
 primary_route: app_admin_bookings
 related: [rezerwacje-tworzenie, rezerwacje-anulowanie-i-przeniesienie, platnosci-przelewy-i-dopasowanie]
 ---#}
@@ -30,9 +30,14 @@ related: [rezerwacje-tworzenie, rezerwacje-anulowanie-i-przeniesienie, platnosci
 
 <h2>Automatyczny termin</h2>
 <p>
-    Nieopłacona rezerwacja i płatność wygasają po <strong>24 godzinach roboczych</strong>. Sobota,
-    niedziela i polskie święta ustawowe nie zużywają tego czasu. Przykładowo zapis z piątku wieczorem
-    nie wygaśnie w sobotę wieczorem — licznik ruszy dalej w następny dzień roboczy.
+    Nieopłacona rezerwacja i płatność wygasają po <strong>30 minutach</strong> od utworzenia
+    (sprawdzanie co 5 minut, więc w praktyce do ok. 35 minut). Czas liczy się bez przerw — także w weekendy
+    i święta. Klient widzi w panelu i w oknie rezerwacji odliczanie tych 30 minut.
+</p>
+<p>
+    Płatność BLIK na telefon jest natychmiastowa. Przelew na konto musi być <strong>przelewem ekspresowym</strong>
+    (np. Express Elixir) — zwykły przelew księguje się po godzinach lub następnego dnia roboczego,
+    więc rezerwacja zdąży wygasnąć. Informujemy o tym klienta przy instrukcji płatności.
 </p>
 
 <div class="help-callout">

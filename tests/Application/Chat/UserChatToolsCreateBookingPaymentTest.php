@@ -59,7 +59,7 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
         static::assertArrayHasKey('blik_phone', $payment);
         static::assertIsString($payment['blik_phone']);
         static::assertArrayHasKey('bank_account', $payment);
-        static::assertSame(24, $payment['valid_hours'] ?? null);
+        static::assertSame(30, $payment['valid_minutes'] ?? null);
         static::assertStringContainsString($paymentCode, $result->summary);
         static::assertStringContainsString('BLIK', $result->summary);
         static::assertStringContainsString($payment['blik_phone'], $result->summary);

@@ -168,7 +168,7 @@ final class LlmTxtController extends AbstractController
             1. **Lesson/Workshop**: Specific scheduled activity with date, time, capacity, and ticket options
             2. **Series**: A collection of related lessons (e.g., a multi-week course)
             3. **Booking**: Reservation tying a user to a lesson with a specific ticket type (one_time or carnet_4)
-            4. **Payment**: BLIK-based payment system with ~24h validity for pending bookings
+            4. **Payment**: BLIK-based payment system with 30-minute validity for pending bookings (bank transfers must be express transfers)
             5. **Carnet**: Multi-lesson pass (e.g., carnet_4 for 4 entries) with rescheduling flexibility
             6. **Child Profile**: Each child must be registered on the parent account before booking
             EOF;

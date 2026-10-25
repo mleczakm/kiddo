@@ -40,7 +40,14 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->processOnlyLastMissedRun(true)
             ->add(
                 RecurringMessage::every('5 minutes', new CallbackMessageProvider(static fn() => [new CheckExpiredPayments()])),
-                RecurringMessage::every('60 minutes', new CallbackMessageProvider(static fn() => [new CheckExpiredBookings()])),
+                // Cron rather than a second every('5 minutes'): the scheduler derives a message's id
+                // from its trigger and provider, so two identical triggers collide ("Duplicated
+                // schedule message"). Backstop for CheckExpiredPayments, so cadence matches it.
+                RecurringMessage::cron(
+                    '*/5 * * * *',
+                    new CallbackMessageProvider(static fn() => [new CheckExpiredBookings()]),
+                    new \DateTimeZone('Europe/Warsaw'),
+                ),
                 // Cron (not every()) so it doesn't collide with the 5-minute CheckExpiredPayments
                 // trigger; a fresh referenceTime each run needs the callback provider.
                 RecurringMessage::cron(

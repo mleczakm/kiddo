@@ -46,7 +46,6 @@
     "ext-mbstring": "*",
     "ext-swoole": "*",
     "ext-zlib": "*",
-    "aeon-php/business-hours": "^1.0",
     "aeon-php/calendar": "^1.0",
     "aeon-php/calendar-holidays": "^1.0",
     "azuyalabs/yasumi": "^2.11",

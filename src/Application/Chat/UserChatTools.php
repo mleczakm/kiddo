@@ -231,7 +231,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return [
             new ToolDefinition(
                 'user.create_booking',
-                'Book a workshop for the logged-in parent. Uses account data from the chat token — do NOT ask for name/email/phone. Pass lesson_id + ticket_type (one_time|carnet_4) + confirm=true. Optional child_id from user.list_children. Returns BLIK payment instructions (phone, amount, title code, ~24h validity). Guests must log in first.',
+                'Book a workshop for the logged-in parent. Uses account data from the chat token — do NOT ask for name/email/phone. Pass lesson_id + ticket_type (one_time|carnet_4) + confirm=true. Optional child_id from user.list_children. Returns BLIK payment instructions (phone, amount, title code, 30-minute validity; bank transfer must be an EXPRESS transfer). Guests must log in first.',
                 [
                     'type' => 'object',
                     'properties' => [
@@ -255,7 +255,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
             ),
             new ToolDefinition(
                 'user.get_payment_instructions',
-                'BLIK-to-phone payment details for a pending booking: phone number, amount, payment title code, validity (~24h), optional bank account. Prefer booking_id or payment_code from user.create_booking. Logged-in parent only.',
+                'BLIK-to-phone payment details for a pending booking: phone number, amount, payment title code, validity (30 minutes, see expires_at), optional bank account (a bank transfer must be an EXPRESS transfer to settle in time). Prefer booking_id or payment_code from user.create_booking. Logged-in parent only.',
                 [
                     'type' => 'object',
                     'properties' => [

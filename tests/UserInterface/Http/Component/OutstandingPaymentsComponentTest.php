@@ -127,6 +127,8 @@ final class OutstandingPaymentsComponentTest extends WebTestCase
         $html = (string) $rendered->render();
 
         static::assertStringContainsString('data-poll', $html);
+        static::assertStringContainsString('data-controller="payment-countdown"', $html);
+        static::assertStringContainsString('przelew ekspresowy', $html);
         static::assertStringContainsString('https://calendar.google.com/calendar/render', $html);
         static::assertStringContainsString('Zajecia do oplacenia', $html);
 

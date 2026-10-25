@@ -24,9 +24,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Characterizes the fixed behavior of the booking/payment expiry race: the
- * booking-expiry window is now 24 *working* hours (weekends don't count,
- * since bank transfers can't settle until the next business day), matching
- * the payment-expiry window's 24h. A transfer can still legitimately arrive
+ * booking-expiry window is the same 30 wall-clock minutes as the payment's
+ * (Payment::VALIDITY_MINUTES). A transfer can still legitimately arrive
  * after a booking has already been auto-cancelled for lack of payment - this
  * test asserts that BookingConfirmationSubscriber now reactivates that
  * booking instead of leaving money received against a cancelled booking.
@@ -44,9 +43,8 @@ final class ExpiryWindowInteractionTest extends KernelTestCase
         $messageBus = $container->get(MessageBusInterface::class);
 
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
-        // Comfortably past the 24-working-hour booking-expiry window,
-        // regardless of which weekday "now" happens to be in the test run.
-        $createdAt = $now->modify('-4 days');
+        // Well past the 30-minute booking-expiry window.
+        $createdAt = $now->modify('-4 hours');
 
         $user = UserAssembler::new()->assemble();
         $em->persist($user);
@@ -95,8 +93,8 @@ final class ExpiryWindowInteractionTest extends KernelTestCase
         static::assertInstanceOf(Payment::class, $pendingPayment);
         static::assertSame(Payment::STATUS_PENDING, $pendingPayment->getStatus());
 
-        // A transfer for the exact amount then arrives, still inside the 24h
-        // payment window, and matches by code.
+        // A transfer for the exact amount then arrives, after the booking
+        // was auto-cancelled, and matches by code.
         $transfer = TransferAssembler::new()->withTitle('Payment LATE for order')->withAmount('100.00')->assemble();
         $em->persist($transfer);
         $em->flush();

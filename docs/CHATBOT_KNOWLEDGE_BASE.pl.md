@@ -104,7 +104,14 @@ Musi sprawdzić aktualne opcje wybranego terminu.
 - W tytule płatności należy wpisać dokładnie podany, unikalny kod.
 - Kwoty, numeru telefonu, kodu oraz czasu ważności nie wolno agentowi zmieniać
   ani uzupełniać z pamięci.
-- Płatność oczekująca jest ważna około 24 godzin.
+- Płatność oczekująca jest ważna **30 minut** od utworzenia rezerwacji (czas
+  liczony bez przerw, także w weekendy i święta). Agent zawsze przypomina o tym
+  terminie oraz o tym, że po 30 minutach rezerwacja wygasa.
+- Przelew BLIK na telefon jest natychmiastowy. Przelew na konto bankowe musi być
+  wykonany jako **przelew ekspresowy** — zwykły przelew nie zaksięguje się na
+  czas, a rezerwacja wygaśnie. Agent zawsze to zaznacza, gdy podaje numer konta.
+- W aplikacji widok oczekiwania na płatność pokazuje odliczanie pozostałych
+  30 minut.
 - Po zaksięgowaniu wpłaty rezerwacja zostaje potwierdzona.
 - Brak wpłaty w wymaganym czasie powoduje wygaśnięcie płatności i automatyczne
   anulowanie rezerwacji.
@@ -281,8 +288,9 @@ Późniejsze anulowanie jest możliwe bez zwrotu. Zgłoszenie prośby nie oznacz
 
 Po utworzeniu rezerwacji aplikacja podaje dokładną kwotę, numer telefonu do
 płatności BLIK na telefon oraz unikalny kod do wpisania w tytule. Płatność
-należy wykonać zgodnie z tą instrukcją w ciągu około 24 godzin. Po zaksięgowaniu
-wpłaty rezerwacja zostanie potwierdzona.
+należy wykonać zgodnie z tą instrukcją w ciągu 30 minut. Przelew na konto musi
+być przelewem ekspresowym; zwykły przelew nie zaksięguje się na czas. Po
+zaksięgowaniu wpłaty rezerwacja zostanie potwierdzona.
 
 ### Co się stanie, jeśli nie zapłacę?
 

@@ -110,6 +110,9 @@
                         </div>
                         <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
                         <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
+                        {% if this.paymentExpiresAt %}
+                            {{ include('components/_payment_countdown.html.twig', {expires_at: this.paymentExpiresAt}) }}
+                        {% endif %}
                         <div class="text-muted-foreground text-sm border-t pt-4 mt-4">
                             {{ 'blik.alt_transfer'|trans({title: paymentCode, account: '<span class="text-workshop-red whitespace-nowrap">' ~ organization().bankAccount ~ '</span>'})|raw }}
                         </div>

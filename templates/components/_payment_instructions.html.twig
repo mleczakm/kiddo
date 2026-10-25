@@ -5,6 +5,7 @@
     - amount        Brick\Money\Money  amount still owed
     - payment_code  string             the 4-char transfer title / BLIK reference
     - awaiting      bool (optional)    show the "awaiting payment" hint
+    - expires_at    \DateTimeImmutable (optional)  show the payment-deadline countdown
     - bookings      iterable<Booking> (optional)  render an "add to calendar" link per booked lesson
 
   Extracted from LessonModal / UpcomingAttendeesComponent so the customer panel
@@ -25,6 +26,9 @@
         {{ 'blik.instruction_3'|trans }}
     </p>
     <div class="my-4 select-all rounded-lg bg-panel-canvas px-4 py-3 font-mono text-2xl tracking-[0.3em] text-panel-accent-ink">{{ payment_code }}</div>
+    {% if expires_at|default(null) %}
+        {{ include('components/_payment_countdown.html.twig', {expires_at: expires_at}) }}
+    {% endif %}
     <p class="text-xs text-panel-muted">{{ 'blik.info'|trans }}</p>
     <p class="mt-4 border-t border-panel-line pt-4 text-xs text-panel-muted">
         {{ 'blik.alt_transfer'|trans({

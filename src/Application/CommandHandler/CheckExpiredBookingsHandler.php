@@ -4,57 +4,34 @@ declare(strict_types=1);
 
 namespace App\Application\CommandHandler;
 
-use Aeon\Calendar\TimeUnit;
 use App\Application\Command\CheckExpiredBookings;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Service\ActivityLogger;
-use App\Application\Service\WorkingDaysDeadlineCalculator;
 use App\Application\Workflow\BookingStateMachineInterface;
 use App\Entity\ActivityType;
+use App\Entity\Payment;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CheckExpiredBookingsHandler
 {
     private const string CANCELLATION_REASON = 'Rezerwacja anulowana automatycznie — brak płatności w wymaganym terminie';
 
-    /**
-     * Bookings get 24 working hours (Monday-Friday) to be paid before being
-     * auto-cancelled - weekend time doesn't count, since bank transfers
-     * can't settle until the next business day.
-     */
-    private const int EXPIRATION_WORKING_HOURS = 24;
-
     public function __construct(
         private readonly BookingRepositoryInterface $bookingRepository,
         private readonly BookingStateMachineInterface $bookingStateMachine,
         private readonly ActivityLogger $activityLogger,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly WorkingDaysDeadlineCalculator $workingDaysDeadlineCalculator,
     ) {}
 
-    /**
-     * @throws \Aeon\Calendar\Exception\InvalidArgumentException
-     */
     public function __invoke(CheckExpiredBookings $command): void
     {
-        // A necessary (not sufficient) pre-filter: a booking can only have
-        // accrued EXPIRATION_WORKING_HOURS of working time if at least that
-        // many real hours have passed, since weekends only pause the clock,
-        // never speed it up. The exact per-booking deadline is checked below.
-        $naiveCutoff = $command->referenceTime->modify(sprintf('-%d hours', self::EXPIRATION_WORKING_HOURS));
-        $candidates = $this->bookingRepository->findExpiredPendingBookings($naiveCutoff);
+        // Backstop for bookings whose payment was never expired (the payment
+        // sweep, CheckExpiredPaymentsHandler, normally cancels them first).
+        $cutoff = $command->referenceTime->modify(sprintf('-%d minutes', Payment::VALIDITY_MINUTES));
+        $candidates = $this->bookingRepository->findExpiredPendingBookings($cutoff);
 
         foreach ($candidates as $booking) {
             if ($booking->hasPaidPayment()) {
-                continue;
-            }
-
-            $deadline = $this->workingDaysDeadlineCalculator->addWorkingTime(
-                $booking->getCreatedAt(),
-                TimeUnit::hours(self::EXPIRATION_WORKING_HOURS),
-            );
-
-            if ($deadline > $command->referenceTime) {
                 continue;
             }
 
