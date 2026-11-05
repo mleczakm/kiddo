@@ -357,8 +357,8 @@
   },
   "require-dev": {
     "ext-dom": "*",
-    "carthage-software/mago": "~1.50.0",
-    "dama/doctrine-test-bundle": "~8.6.0",
+    "carthage-software/mago": "~1.57.0",
+    "dama/doctrine-test-bundle": "^8.7.0",
     "deptrac/deptrac": "^4.7.2",
     "kocal/biome-js-bundle": "^2.1",
     "kodus/mock-cache": "^2.1",

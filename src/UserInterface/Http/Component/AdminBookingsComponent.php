@@ -16,6 +16,7 @@ use App\Message\CancelLessonBooking;
 use App\Message\ReactivateBooking;
 use App\Message\RefundLessonBooking;
 use App\Message\RescheduleLessonBooking;
+use Brick\Math\Exception\MathException;
 use Brick\Math\RoundingMode;
 use Brick\Money\Money;
 use Doctrine\ORM\EntityManagerInterface;
@@ -664,6 +665,8 @@ class AdminBookingsComponent extends AbstractController
 
     /**
      * Calculate amount per lesson for a booking
+     *
+     * @throws MathException
      */
     public function getAmountPerLesson(Booking $booking): ?Money
     {

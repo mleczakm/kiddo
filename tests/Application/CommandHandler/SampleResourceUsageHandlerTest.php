@@ -44,7 +44,7 @@ final class SampleResourceUsageHandlerTest extends TestCase
                 ),
             );
 
-        (new SampleResourceUsageHandler(new ProcResourceUsageProbe(), $metrics, $logger))(new SampleResourceUsage());
+        new SampleResourceUsageHandler(new ProcResourceUsageProbe(), $metrics, $logger)(new SampleResourceUsage());
 
         static::assertArrayHasKey('runtime.memory.rss_total', $recorded);
         static::assertArrayHasKey('runtime.memory.rss_max_process', $recorded);

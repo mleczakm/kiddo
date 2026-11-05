@@ -39,8 +39,6 @@ class PlatformBillingSubscriberTest extends KernelTestCase
 
     public function testOnPaymentPaidAddsCommission(): void
     {
-        $this->entityManager->getConnection()->beginTransaction();
-
         // Set up initial billing data
         $setting = new Setting();
         $setting->setKey('platform_billing');
@@ -72,8 +70,6 @@ class PlatformBillingSubscriberTest extends KernelTestCase
 
     public function testOnPaymentPaidDoesNothingWhenSubjectIsNotPayment(): void
     {
-        $this->entityManager->getConnection()->beginTransaction();
-
         // Set up initial billing data
         $setting = new Setting();
         $setting->setKey('platform_billing');

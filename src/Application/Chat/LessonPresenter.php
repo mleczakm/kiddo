@@ -60,7 +60,7 @@ final readonly class LessonPresenter
             'category' => $meta->category,
             'slug' => $meta->slug,
             'lead' => $meta->lead,
-            'ticket_options' => array_map($this->ticketOption(...), $lesson->getTicketOptions()),
+            'ticket_options' => array_values(array_map($this->ticketOption(...), $lesson->getTicketOptions())),
             'series_id' => $lesson->getSeries() ? (string) $lesson->getSeries()->getId() : null,
         ];
     }

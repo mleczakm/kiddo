@@ -113,7 +113,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             ->method('info')
             ->with('Mailbox credentials missing/invalid: skipping IMAP read, rematching unmatched transfers instead');
 
-        (new ImportTransfersFromMailHandler(
+        new ImportTransfersFromMailHandler(
             $this->createMock(IncomingBankMailImporterInterface::class),
             $messengerFake = new MessengerFake(),
             $incomingQuery,
@@ -121,7 +121,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             $logger,
             mailboxUsername: '',
             mailboxPassword: '',
-        ))(new ImportTransfersFromMail());
+        )(new ImportTransfersFromMail());
 
         static::assertCount(1, $messengerFake->dispatched);
         $message = $messengerFake->dispatched[0]->getMessage();
