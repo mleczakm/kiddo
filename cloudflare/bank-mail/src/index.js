@@ -1,4 +1,6 @@
 import PostalMime from "postal-mime";
+import { mailForMimeParsing } from "../shared/mime.js";
+import { readBankMail, postSignedBankMail } from "../shared/transport.js";
 
 const encoder = new TextEncoder();
 const maxRawSize = 1024 * 1024;
@@ -34,8 +36,9 @@ export async function acceptEmail(message, env) {
     return;
   }
 
-  const raw = await new Response(message.raw).arrayBuffer();
-  const parsed = await PostalMime.parse(raw);
+  const raw = await readBankMail(message, { maxSize: maxRawSize, sizeReason: "Bank notification too large" });
+  if (!raw) return;
+  const parsed = await PostalMime.parse(mailForMimeParsing(raw));
   const expectedSender = normalizedAddress(env.BANK_MAIL_FROM);
   if (!expectedSender || normalizedAddress(message.from) !== expectedSender ||
       normalizedAddress(parsed.from?.address) !== expectedSender) {
@@ -71,31 +74,12 @@ export async function acceptEmail(message, env) {
   }
 }
 
-async function signature(secret, timestamp, body) {
-  const key = await crypto.subtle.importKey(
-    "raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
-  );
-  const digest = await crypto.subtle.sign("HMAC", key, encoder.encode(`${timestamp}\n${body}`));
-  const hex = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-  return `v1=${hex}`;
-}
-
 export async function deliverQueue(batch, env) {
   for (const message of batch.messages) {
     const body = JSON.stringify(message.body);
     const timestamp = Math.floor(Date.now() / 1000).toString();
     try {
-      const response = await fetch(`${env.APP_URL}/api/bank-mail`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Kiddo-Bank-Timestamp": timestamp,
-          "X-Kiddo-Bank-Signature": await signature(env.BANK_MAIL_WEBHOOK_SECRET, timestamp, body),
-        },
-        body,
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!response.ok) throw new Error(`Application returned HTTP ${response.status}`);
+      await postSignedBankMail({ url: `${env.APP_URL}/api/bank-mail`, secret: env.BANK_MAIL_WEBHOOK_SECRET, body, contentType: "application/json", timestamp, timestampHeader: "X-Kiddo-Bank-Timestamp", signatureHeader: "X-Kiddo-Bank-Signature", signaturePrefix: "v1=" });
       message.ack();
     } catch (error) {
       console.error("Bank notification delivery failed", message.body.id, String(error));

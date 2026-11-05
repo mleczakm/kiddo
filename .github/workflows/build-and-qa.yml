@@ -63,7 +63,7 @@ jobs:
       - name: Set up Node for bank mail Worker tests
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Test bank mail Worker
         run: |

@@ -3,13 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test src/*.test.js",
+    "test": "node --test --test-timeout=20000 src/*.test.js shared/*.test.js",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
     "postal-mime": "^2.4.3"
   },
   "devDependencies": {
+    "esbuild": "0.28.1",
+    "miniflare": "5.20261023.2-beta",
     "wrangler": "^4.147.0"
   }
 }
