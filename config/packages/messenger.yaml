@@ -22,8 +22,12 @@ framework:
                 middleware:
                     - messenger.middleware.router_context
                     - App\Infrastructure\Messenger\PreventAsyncDispatchInTaskWorkerMiddleware
-                    - messenger.middleware.doctrine_transaction
+                    # Must stay OUTSIDE the transaction (Symfony's documented order): for a message
+                    # consumed by a worker it closes the connection after handling. Placed inside the
+                    # transaction it dropped the connection mid-transaction, before the COMMIT.
                     - messenger.middleware.doctrine_close_connection
+                    # doctrine_transaction, except for RunsOutsideTransaction messages
+                    - App\Infrastructure\Messenger\OptionalDoctrineTransactionMiddleware
                     - App\Infrastructure\Messenger\ActivityLogMiddleware
                     - messenger.middleware.validation
 
