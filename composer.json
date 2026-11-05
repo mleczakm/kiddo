@@ -138,7 +138,6 @@
     "symfony/ux-dropzone": "^3.7.0",
     "symfony/ux-live-component": "^2.36.0",
     "symfony/ux-turbo": "^2.36.0",
-    "symfony/ux-twig-component": "~3.6.0",
     "symfony/validator": "8.1.*",
     "symfony/var-dumper": "8.1.*",
     "symfony/var-exporter": "8.1.*",

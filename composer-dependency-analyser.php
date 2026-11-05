@@ -24,11 +24,6 @@ $config->ignoreErrorsOnPackages(
         // `framework.http_client` config; production code only type-hints against
         // HttpClientInterface (from the separate http-client-contracts package).
         'symfony/http-client',
-        // Renders every Twig/Live component in production (a transitive dependency of
-        // symfony/ux-live-component), pinned to ~3.6.0 in composer.json because 3.7 empties
-        // the shared ComponentStack on reset() and breaks concurrent Swoole renders
-        // (WARSZTATOWNIA-CY). Only the guarding ComponentRenderResetTest references it directly.
-        'symfony/ux-twig-component',
     ],
     [ErrorType::PROD_DEPENDENCY_ONLY_IN_DEV],
 );

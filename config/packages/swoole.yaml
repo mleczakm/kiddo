@@ -76,6 +76,13 @@ swoole:
         - security.token_storage
         - security.untracked_token_storage
         - form.registry
+        # The stack of components currently being rendered. It is not tagged kernel.reset, so
+        # the bundle left one instance behind every pooled ComponentRenderer: concurrent renders
+        # (which yield on DB I/O) pushed and popped each other's components, and since
+        # symfony/ux-twig-component 3.7 ComponentRenderer::reset() - run after every request -
+        # empties it, which made an in-flight render pop null (WARSZTATOWNIA-CY).
+        # LiveComponentStack only decorates this one, so it follows.
+        - ux.twig_component.component_stack
         - Sentry\SentryBundle\Tracing\HttpClient\TraceableHttpClient.inner
         # DirectoryTree's Mailbox owns a mutable IMAP stream. Giving each coroutine its
         # own instance prevents reconnect() in one import from closing another import's
