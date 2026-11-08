@@ -42,6 +42,11 @@ services:
       APP_DEBUG: "0"
       DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app?serverVersion=18&charset=utf8"
       MAILER_DSN: "smtp://mailer:1025"
+      # Bank-notification webhook (POST /api/bank-mail): the e2e container signs fake payment
+      # confirmations with this throw-away secret. Never reuse it anywhere real.
+      BANK_MAIL_ADDRESS: "e2e-inbox@bank-mail.e2e.test"
+      BANK_MAIL_WEBHOOK_SECRET: "e2e-only-webhook-secret-not-for-production-use-0123456789"
+      BANK_MAIL_FROM: "powiadomienia@alior.pl"
       XDEBUG_MODE: "off"
       SWOOLE_ALLOW_XDEBUG: "1"
     depends_on:
@@ -76,6 +81,9 @@ services:
       E2E_IN_CONTAINER: "1"
       E2E_BASE_URL: http://php:9501
       E2E_MAILPIT_URL: http://mailer:8025
+      E2E_BANK_MAIL_ADDRESS: "e2e-inbox@bank-mail.e2e.test"
+      E2E_BANK_MAIL_WEBHOOK_SECRET: "e2e-only-webhook-secret-not-for-production-use-0123456789"
+      E2E_BANK_MAIL_FROM: "powiadomienia@alior.pl"
     volumes:
       - ./e2e:/e2e
     command: sh -c "npm ci --no-audit --no-fund && npx playwright test"

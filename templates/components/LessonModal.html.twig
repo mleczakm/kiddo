@@ -83,7 +83,7 @@
             {% elseif paymentStatus == 'paid' %}
                 <div class="flex flex-col items-center justify-center min-h-[300px]">
                     <div class="bg-white border border-green-200 rounded-lg shadow-md p-8 max-w-lg w-full text-center">
-                        <div class="text-2xl font-bold text-green-700 mb-4">
+                        <div data-testid="payment-paid" class="text-2xl font-bold text-green-700 mb-4">
                             {{ 'payment.paid_success'|trans }}
                         </div>
                         <div class="text-muted-foreground mb-4">{{ 'payment.paid_message'|trans }}</div>
@@ -106,9 +106,9 @@
                                     class="text-workshop-red whitespace-nowrap"> {{ organization().blikPhone }}</span>
                         </div>
                         <div class="text-lg mb-2">{{ 'blik.instruction_2'|trans }} <span
-                                    class="text-workshop-red whitespace-nowrap">{{ this.paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
+                                    data-testid="payment-amount" class="text-workshop-red whitespace-nowrap">{{ this.paymentAmount|money }}</span>. {{ 'blik.instruction_3'|trans }}
                         </div>
-                        <div class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
+                        <div data-testid="payment-code" class="text-2xl font-mono bg-gray-100 rounded p-4 mb-4 select-all tracking-widest text-workshop-red">{{ paymentCode }}</div>
                         <div class="text-muted-foreground text-sm mb-4">{{ 'blik.info'|trans }}</div>
                         {% if this.paymentExpiresAt %}
                             {{ include('components/_payment_countdown.html.twig', {expires_at: this.paymentExpiresAt}) }}
@@ -330,6 +330,7 @@
                                 </span>
                             {% elseif lesson.canBeBooked() %}
                                 <button type="button"
+                                        data-testid="book-and-pay"
                                         data-action="live#action"
                                         data-live-action-param="openPaymentModal"
                                         class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-workshop-red/90 h-10 px-4 py-2 bg-workshop-red text-white [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
@@ -566,7 +567,7 @@
         </div>
 
         <label class="flex items-start gap-2 text-xs">
-            <input type="checkbox" data-model="termsAccepted" class="mt-0.5">
+            <input type="checkbox" data-testid="payment-terms" data-model="termsAccepted" class="mt-0.5">
             <span>
                 {{ 'booking.legal_acceptance_prefix'|trans }}
                 <a href="{{ path('legal_app_terms') }}" target="_blank" class="text-workshop-red underline">{{ 'cart.app_terms'|trans }}</a>,
@@ -579,7 +580,7 @@
 
         {% if this.isBookingConsentRequired %}
             <label class="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-xs">
-                <input type="checkbox" data-model="withdrawalAcknowledged" class="mt-0.5">
+                <input type="checkbox" data-testid="payment-withdrawal" data-model="withdrawalAcknowledged" class="mt-0.5">
                 <span>{{ 'booking.withdrawal_ack'|trans }}</span>
             </label>
             {% if paymentStatus == 'error' and not withdrawalAcknowledged %}
@@ -621,6 +622,7 @@
                             {% endif %}
 
                             <button
+                                    data-testid="confirm-booking"
                                     data-action="live#action"
                                     data-live-action-param="processPayment"
                                     {{ lesson.canBeBooked and lesson.future and termsAccepted and (not this.isBookingConsentRequired or withdrawalAcknowledged) ? '' : 'disabled pointer-events-none' }}

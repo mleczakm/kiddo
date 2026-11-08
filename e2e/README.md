@@ -2,7 +2,7 @@
 
 [Playwright](https://playwright.dev) tests that drive the real application in a browser:
 login through the e-mailed magic link, the public catalogue, the admin lesson lifecycle,
-reservations. They run **entirely in containers** (`compose.e2e.yaml`) - nothing to install on the
+reservations, and the full order flow (book -> payment code -> signed bank webhook -> confirmed). They run **entirely in containers** (`compose.e2e.yaml`) - nothing to install on the
 host, no port to free, and your dev database is never touched (the stack has its own in-memory
 PostgreSQL, its own Mailpit and a freshly seeded demo dataset).
 
@@ -31,6 +31,9 @@ artifact. Add the `E2E` check to the branch protection rules if it should block 
 
 - Log in with `loginAs(page, DEMO.admin | DEMO.parent | DEMO.instructor)` from `support/auth.ts`; it
   reads the magic link from Mailpit like a real user.
+- Fake a bank payment with `sendBankTransfer()` from `support/bank.ts`: it POSTs an HMAC-signed
+  "Uznanie rachunku" notification to `/api/bank-mail`, as the production mail Worker does
+  (the throw-away secret lives in `compose.e2e.yaml`). See `tests/order-flow.spec.ts`.
 - Seeded data comes from `bin/console app:dev:seed-demo`; titles are prefixed `[DEMO]`.
 - Prefer `data-testid` (see `templates/admin/lesson_show.html.twig`) over translated text.
 - Tests share one database and run serially: restore what you change (see `lesson-lifecycle.spec.ts`).
