@@ -1,0 +1,71 @@
+name: E2E
+
+# Browser end-to-end tests (Playwright) against the real application: Swoole server,
+# PostgreSQL, Mailpit and the demo dataset, all in containers - see compose.e2e.yaml and e2e/README.md.
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Same image name docker compose would build for the `php` service of compose.e2e.yaml
+      # (project "kiddo-e2e"), so `compose up` below reuses it instead of rebuilding.
+      - name: Build application image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .docker/php/Dockerfile
+          target: dev
+          tags: kiddo-e2e-php:latest
+          load: true
+          cache-from: type=gha,scope=e2e-php
+          cache-to: type=gha,scope=e2e-php,mode=max
+
+      - name: Start application stack
+        run: docker compose -f compose.e2e.yaml up -d --wait php
+
+      - name: Run Playwright tests
+        env:
+          CI: "true"
+        run: |
+          E2E_UID="$(id -u)" E2E_GID="$(id -g)" \
+            docker compose -f compose.e2e.yaml run --rm e2e
+
+      - name: Show application logs on failure
+        if: failure()
+        run: docker compose -f compose.e2e.yaml logs --no-color php | tail -n 300
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Tear down
+        if: ${{ !cancelled() }}
+        run: docker compose -f compose.e2e.yaml down -v

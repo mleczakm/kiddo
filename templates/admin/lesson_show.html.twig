@@ -14,7 +14,7 @@
         <div class="pl-2">
             <h1 class="text-3xl font-black text-slate-800 flex items-center gap-3">
                 {{ lesson.metadata.title }}
-                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.status == 'active' ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
+                <span data-testid="lesson-status" data-status="{{ lesson.status }}" class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors {{ lesson.active ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white' }}">
                     {{ lesson.status == 'active' ? ('admin.lessons.status.active'|trans) : ('admin.lessons.status.cancelled'|trans) }}
                 </span>
             </h1>
@@ -25,7 +25,7 @@
         <div class="flex items-center gap-2">
             <form method="post" action="{{ path('app_admin_lesson_toggle', {id: lesson.id}) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('toggle_lesson_' ~ lesson.id) }}">
-                <button type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 transition-colors {{ lesson.status == 'active' ? 'border-red-600 text-red-600 hover:bg-red-50' : 'border-green-600 text-green-600 hover:bg-green-50' }}">
+                <button type="submit" data-testid="lesson-toggle" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold border h-10 rounded-xl px-4 transition-colors {{ lesson.status == 'active' ? 'border-red-600 text-red-600 hover:bg-red-50' : 'border-green-600 text-green-600 hover:bg-green-50' }}">
                     {{ lesson.status == 'active' ? ('admin.lessons.actions.deactivate'|trans) : ('admin.lessons.actions.activate'|trans) }}
                 </button>
             </form>

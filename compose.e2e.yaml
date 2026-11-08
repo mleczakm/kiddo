@@ -1,0 +1,81 @@
+# Self-contained stack for the browser end-to-end tests (see e2e/README.md).
+#
+#   docker compose -f compose.e2e.yaml up --build --abort-on-container-exit --exit-code-from e2e
+#
+# Everything here is throw-away and isolated from the dev stack: its own database (in
+# memory), its own Mailpit, and the application is the baked `dev` image rather than your
+# working tree - so it neither touches your dev data nor needs any port on the host.
+# The Playwright image tag MUST match the @playwright/test version in e2e/package.json.
+name: kiddo-e2e
+
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: "!ChangeMe!"
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  mailer:
+    image: axllent/mailpit
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  php:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+      target: dev
+      args:
+        APP_VERSION: "e2e"
+        APP_REVISION: "e2e"
+    environment:
+      APP_ENV: dev
+      APP_DEBUG: "0"
+      DATABASE_URL: "postgresql://app:!ChangeMe!@db:5432/app?serverVersion=18&charset=utf8"
+      MAILER_DSN: "smtp://mailer:1025"
+      XDEBUG_MODE: "off"
+      SWOOLE_ALLOW_XDEBUG: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+      mailer:
+        condition: service_started
+    # Migrate and seed BEFORE the server starts (a running server creates `cache_items`,
+    # which breaks the first migration).
+    command: >
+      sh -c "bin/console doctrine:migrations:migrate --no-interaction
+      && bin/console app:dev:seed-demo --replace
+      && exec bin/console swoole:server:run"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9501/login"]
+      interval: 3s
+      timeout: 5s
+      retries: 60
+
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.56.0-noble
+    working_dir: /e2e
+    # Run as the host user so node_modules/ and reports are not root-owned.
+    user: "${E2E_UID:-1000}:${E2E_GID:-1000}"
+    init: true
+    depends_on:
+      php:
+        condition: service_healthy
+    environment:
+      HOME: /tmp
+      CI: "${CI:-}"
+      E2E_IN_CONTAINER: "1"
+      E2E_BASE_URL: http://php:9501
+      E2E_MAILPIT_URL: http://mailer:8025
+    volumes:
+      - ./e2e:/e2e
+    command: sh -c "npm ci --no-audit --no-fund && npx playwright test"

@@ -51,3 +51,15 @@ Runs unit → smoke → functional (with test DB create + schema update).
 2. Review auto-applied changes
 3. `docker compose run --rm php composer qa`
 4. Fix any remaining issues, then re-run `composer qa`
+
+## State machines
+
+Every status lifecycle is a Symfony Workflow in `config/packages/workflow.yaml` (diagrams + usage rules in
+[docs/STATE_MACHINES.md](docs/STATE_MACHINES.md)). Drive transitions through `StateMachinesInterface`
+(`can` / `apply` / `applyIfPossible`); do not compare `->status` to string literals or call `setStatus()` hooks directly.
+
+## End-to-end tests
+
+Playwright browser tests live in `e2e/` and run fully containerised (own DB, Mailpit, seeded demo data) via
+`compose.e2e.yaml`; CI runs them in `.github/workflows/e2e.yml`. Commands and conventions: [e2e/README.md](e2e/README.md).
+
