@@ -20,6 +20,7 @@ class Kernel extends BaseKernel implements WarmableInterface
         CoroutinesSupportingKernel::initializeContainer insteadof MicroKernelTrait;
     }
 
+    #[\Override]
     protected function build(ContainerBuilder $container): void
     {
         parent::build($container);

@@ -165,6 +165,9 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
         /** @var BookingConsentManager $bookingConsentManager */
         $bookingConsentManager = $container->get(BookingConsentManager::class);
 
+        /** @var \App\Application\Workflow\StateMachinesInterface $stateMachines */
+        $stateMachines = $container->get(\App\Application\Workflow\StateMachinesInterface::class);
+
         $placeSingleReservation = new PlaceSingleReservation(
             $bus,
             $userRepository,
@@ -177,7 +180,7 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
             $priceQuoter,
             $this->createMock(WaitlistEntryRepositoryInterface::class),
             $bookingConsentManager,
-            $container->get(\App\Application\Workflow\StateMachinesInterface::class),
+            $stateMachines,
         );
 
         $placeSingleReservation(new AddBooking(

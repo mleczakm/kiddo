@@ -16,10 +16,12 @@ final class KeepTwigProfilerExtensionsUnpooledPassTest extends TestCase
     public function testItDropsTheResetTagOnlyFromTheProfilerExtensions(): void
     {
         $container = new ContainerBuilder();
-        $container->setDefinition('twig.extension.webprofiler', (new Definition(\stdClass::class))
+        $container->setDefinition('twig.extension.webprofiler', new Definition(\stdClass::class)
             ->addTag('twig.extension')
             ->addTag('kernel.reset', ['method' => 'reset']));
-        $container->setDefinition('other.service', (new Definition(\stdClass::class))->addTag('kernel.reset', ['method' => 'reset']));
+        $container->setDefinition('other.service', new Definition(\stdClass::class)->addTag('kernel.reset', [
+            'method' => 'reset',
+        ]));
 
         new KeepTwigProfilerExtensionsUnpooledPass()->process($container);
 

@@ -79,7 +79,10 @@ final class PwaInstallabilityTest extends WebTestCase
         $client = static::createClient();
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
-        $user = UserAssembler::new()->withEmail('pwa-' . md5($path) . '@example.test')->withRoles('ROLE_USER')->assemble();
+        $user = UserAssembler::new()
+            ->withEmail('pwa-' . md5($path) . '@example.test')
+            ->withRoles('ROLE_USER')
+            ->assemble();
         $em->persist($user);
         $em->flush();
         $client->loginUser($user);
@@ -91,7 +94,10 @@ final class PwaInstallabilityTest extends WebTestCase
         static::assertCount(1, $crawler->filter('meta[name="theme-color"]'));
         static::assertSame('yes', $crawler->filter('meta[name="apple-mobile-web-app-capable"]')->attr('content'));
         static::assertCount(1, $crawler->filter('link[rel="apple-touch-icon"]'));
-        static::assertStringContainsString('width=device-width', (string) $crawler->filter('meta[name="viewport"]')->attr('content'));
+        static::assertStringContainsString(
+            'width=device-width',
+            (string) $crawler->filter('meta[name="viewport"]')->attr('content'),
+        );
     }
 
     /**

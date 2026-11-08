@@ -183,6 +183,7 @@ final class ApproveRefundTest extends KernelTestCase
         // Admin 2's in-memory copy is now stale (it still thinks version 1);
         // declining it must fail loudly via Doctrine's optimistic lock check
         // rather than silently overwriting admin 1's decision.
+        /** @var \App\Application\Workflow\StateMachinesInterface $stateMachines */
         $stateMachines = self::getContainer()->get(\App\Application\Workflow\StateMachinesInterface::class);
         $stateMachines->apply($copyForAdmin2, 'decline');
         $copyForAdmin2->recordDecision($admin2, 'Admin 2 declines');

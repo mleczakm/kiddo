@@ -19,6 +19,9 @@ final class KeepTwigProfilerExtensionsUnpooledPass implements CompilerPassInterf
 {
     private const array EXTENSION_IDS = ['twig.extension.webprofiler', 'twig.extension.profiler'];
 
+    /**
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
+     */
     #[\Override]
     public function process(ContainerBuilder $container): void
     {
