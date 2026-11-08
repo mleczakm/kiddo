@@ -5,7 +5,11 @@ swoole:
     max_data_bytes: 16384
     max_active_sessions: 4096
   http_server:
-    static: advanced
+    static:
+      strategy: advanced
+      mime_types:
+        # Not in Swoole's built-in map; served as octet-stream otherwise.
+        webmanifest: application/manifest+json
     exception_handler:
       # coroutines mode always fetches "swoole_bundle.error_handler.symfony_error_handler",
       # which only gets registered when the exception handler type is "symfony"

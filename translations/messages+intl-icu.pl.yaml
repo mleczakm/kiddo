@@ -94,6 +94,7 @@ notifications:
     label_denied: Powiadomienia zablokowane w ustawieniach przeglądarki.
     label_enabled: Powiadomienia push są włączone.
     label_disabled: Powiadomienia push są wyłączone.
+    label_ios_install: 'Na iPhonie i iPadzie powiadomienia działają po dodaniu Kiddo do ekranu głównego: Udostępnij → Dodaj do ekranu początkowego, a potem otwórz aplikację z ikony.'
     enable: Włącz powiadomienia
     disable: Wyłącz powiadomienia
   in_app:

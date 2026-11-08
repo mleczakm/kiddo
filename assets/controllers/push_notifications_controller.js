@@ -11,6 +11,14 @@ export default class extends Controller {
     static values = { vapidKey: String };
 
     async connect() {
+        // iOS/iPadOS only exposes Web Push to a site launched from the Home
+        // Screen, so in a plain Safari tab explain how to install instead of
+        // claiming the browser is unsupported.
+        if (this.isIos() && !this.isStandalone()) {
+            this.setState('ios-install');
+            return;
+        }
+
         if (!('serviceWorker' in navigator) || !('PushManager' in window) || !this.vapidKeyValue) {
             this.setState('unsupported');
             return;
@@ -24,6 +32,10 @@ export default class extends Controller {
         try {
             const registration = await navigator.serviceWorker.register('/sw.js');
             const subscription = await registration.pushManager.getSubscription();
+            if (subscription) {
+                // Re-register on every launch: push endpoints can rotate (notably on iOS).
+                await this.register(subscription);
+            }
             this.setState(subscription ? 'enabled' : 'disabled');
         } catch {
             this.setState('unsupported');
@@ -60,8 +72,19 @@ export default class extends Controller {
             return;
         }
 
+        if (!(await this.register(subscription))) {
+            // Don't keep a browser-side subscription the server doesn't know about.
+            await subscription.unsubscribe();
+            this.setState('disabled');
+            return;
+        }
+
+        this.setState('enabled');
+    }
+
+    async register(subscription) {
         const keys = subscription.toJSON().keys;
-        await fetch('/api/push/subscribe', {
+        const response = await fetch('/api/push/subscribe', {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
@@ -71,7 +94,15 @@ export default class extends Controller {
             }),
         });
 
-        this.setState('enabled');
+        return response.ok;
+    }
+
+    isIos() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }
+
+    isStandalone() {
+        return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
     }
 
     async unsubscribe(subscription) {
@@ -96,12 +127,13 @@ export default class extends Controller {
                 denied: this.statusTarget.dataset.labelDenied,
                 enabled: this.statusTarget.dataset.labelEnabled,
                 disabled: this.statusTarget.dataset.labelDisabled,
+                'ios-install': this.statusTarget.dataset.labelIosInstall,
             };
             this.statusTarget.textContent = labels[state] ?? '';
         }
 
         if (this.hasButtonTarget) {
-            this.buttonTarget.hidden = state === 'unsupported' || state === 'denied';
+            this.buttonTarget.hidden = state === 'unsupported' || state === 'denied' || state === 'ios-install';
             this.buttonTarget.textContent =
                 state === 'enabled' ? this.buttonTarget.dataset.labelDisable : this.buttonTarget.dataset.labelEnable;
         }

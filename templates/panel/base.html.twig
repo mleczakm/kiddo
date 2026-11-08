@@ -17,6 +17,7 @@
     <title>{% block title %}{{ 'panel.title'|trans }}{% endblock %} · Warsztatownia Sensoryczna</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    {{ include('partials/_pwa_meta.html.twig') }}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

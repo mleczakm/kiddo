@@ -2,7 +2,16 @@
 
 Symfony PHP app. Run all PHP/Composer commands from the project root via Docker Compose.
 
-**Prefix:** `docker compose run --rm php <command>`
+**Prefix:** `docker compose run --rm php <command>` (the `php` service is also the Swoole web container on :9501; the host has no PHP/Swoole, so never run `php`/`composer` outside it).
+
+**After pulling** (when `composer.lock`, `.docker/php/Dockerfile` or the PHP/Swoole pin changed) rebuild the image first, otherwise Composer fails on `ext-swoole`/PHP version and the Kernel fatals on a stale `vendor/`:
+
+```bash
+docker compose build php && docker compose up -d --force-recreate db php
+docker compose run --rm php composer install
+```
+
+Port 9501 must be free (stop any other project's container holding it, e.g. `classy-cash-php-1`). A fresh DB volume needs `docker compose stop php`, then `docker compose run --rm php bin/console doctrine:migrations:migrate`, then `docker compose up -d php` (the running server auto-creates `cache_items` and breaks the migration).
 
 Start the database before DB-backed work (functional/smoke tests, Doctrine):
 
