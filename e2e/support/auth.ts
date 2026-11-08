@@ -23,7 +23,7 @@ export async function loginAs(page: Page, email: string): Promise<void> {
   await page.locator('#form_email').fill(email);
   await page.locator('#form_submit').click();
 
-  const text = await latestMailText(page.request, email, requestedAt);
+  const text = await latestMailText(page.request, email, requestedAt, /\/login_check\?/);
   const link = text.match(/https?:\/\/\S*\/login_check\?\S+/)?.[0];
   expect(link, 'login mail contains a /login_check link').toBeTruthy();
 

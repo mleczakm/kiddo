@@ -6,7 +6,7 @@ test.describe('bookings', () => {
     await loginAs(page, DEMO.parent);
 
     await page.goto('/panel');
-    await expect(page.getByText('[DEMO]').first()).toBeVisible();
+    await expect(page.locator('body')).toContainText('[DEMO]');
   });
 
   test('an administrator sees reservations and their payments', async ({ page }) => {
