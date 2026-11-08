@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\EventSubscriber;
 
 use App\Application\Service\Commerce\PromotionRedemptionService;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\Payment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,7 @@ class OrderPaymentPropagationSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly PromotionRedemptionService $promotionRedemptions,
+        private readonly StateMachinesInterface $stateMachines,
     ) {}
 
     #[\Override]
@@ -61,7 +63,7 @@ class OrderPaymentPropagationSubscriber implements EventSubscriberInterface
         // assignment modal, ...) already flushes once after applying the
         // transition - matching BookingConfirmationSubscriber's precedent for
         // the same event, rather than flushing again here mid-transition.
-        $order->markPaid();
+        $this->stateMachines->applyIfPossible($order, 'pay');
         $this->promotionRedemptions->consumeForOrder($orderId);
     }
 }

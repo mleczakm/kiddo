@@ -132,6 +132,7 @@ final class PlaceSingleReservationOrderDualWriteTest extends KernelTestCase
             $priceQuoter,
             $this->createMock(WaitlistEntryRepositoryInterface::class),
             $bookingConsentManager,
+            self::getContainer()->get(\App\Application\Workflow\StateMachinesInterface::class),
         );
 
         $userId = $user->getId();

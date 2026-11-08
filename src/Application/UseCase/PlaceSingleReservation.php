@@ -17,11 +17,11 @@ use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\NewBookingNotifier;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Application\Service\Pricing\ShadowPricingEvaluator;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\TicketOption;
 use Brick\Money\Money;
 use Novaway\Bundle\FeatureFlagBundle\Manager\FeatureManager;
-use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
@@ -45,6 +45,7 @@ final readonly class PlaceSingleReservation
         private PriceQuoter $priceQuoter,
         private WaitlistEntryRepositoryInterface $waitlist,
         private BookingConsentManager $bookingConsentManager,
+        private StateMachinesInterface $stateMachines,
     ) {}
 
     public function __invoke(AddBooking $command): void
@@ -107,7 +108,10 @@ final readonly class PlaceSingleReservation
 
         // If this parent was on the lesson's waitlist (waiting or holding an
         // offer), close that entry — they took the seat.
-        $this->waitlist->findActiveForUserAndLesson($user, $lesson)?->claim(Clock::get()->now());
+        $waitlistEntry = $this->waitlist->findActiveForUserAndLesson($user, $lesson);
+        if ($waitlistEntry !== null) {
+            $this->stateMachines->applyIfPossible($waitlistEntry, 'claim');
+        }
 
         $this->newBookingNotifier->notify($booking);
 

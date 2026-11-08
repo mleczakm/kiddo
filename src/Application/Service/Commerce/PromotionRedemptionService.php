@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Commerce;
 
+use App\Application\Workflow\StateMachinesInterface;
 use App\Domain\Commerce\Order\OrderLine;
 use App\Domain\Commerce\Pricing\PricingRule;
 use App\Domain\Commerce\Pricing\PromotionRedemption;
@@ -15,6 +16,7 @@ final readonly class PromotionRedemptionService
     public function __construct(
         private EntityManagerInterface $em,
         private PromotionRedemptionBatch $batch,
+        private StateMachinesInterface $stateMachines,
     ) {}
 
     /** @param list<OrderLine> $lines */
@@ -55,14 +57,14 @@ final readonly class PromotionRedemptionService
     public function consumeForOrder(Ulid $orderId): void
     {
         foreach ($this->findForOrder($orderId) as $redemption) {
-            $redemption->consume();
+            $this->stateMachines->applyIfPossible($redemption, 'consume');
         }
     }
 
     public function releaseForOrder(Ulid $orderId): void
     {
         foreach ($this->findForOrder($orderId) as $redemption) {
-            $redemption->release();
+            $this->stateMachines->applyIfPossible($redemption, 'release');
         }
     }
 

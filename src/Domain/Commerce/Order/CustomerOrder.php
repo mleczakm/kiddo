@@ -128,15 +128,12 @@ final class CustomerOrder
         return $this->version;
     }
 
-    public function markPaid(): void
+    /**
+     * Marking-store hook for the `customer_order` state machine - do not call
+     * directly, apply `pay` / `expire` through StateMachinesInterface instead.
+     */
+    public function setStatus(string $status): void
     {
-        $this->status = self::STATUS_PAID;
-    }
-
-    public function markExpired(): void
-    {
-        if ($this->status !== self::STATUS_PAID) {
-            $this->status = self::STATUS_EXPIRED;
-        }
+        $this->status = $status;
     }
 }

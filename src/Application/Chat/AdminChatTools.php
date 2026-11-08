@@ -15,6 +15,7 @@ use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\BookingFactory;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\Payment\PaymentCodeGenerator;
+use App\Application\UseCase\ToggleLessonCancellation;
 use App\Application\Workflow\PaymentStateMachineInterface;
 use App\Entity\Booking;
 use App\Entity\Lesson;
@@ -52,6 +53,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         private SeriesRepositoryInterface $seriesRepository,
         private TodayLessonsQuery $todayLessonsQuery,
         private PaymentStateMachineInterface $paymentStateMachine,
+        private ToggleLessonCancellation $toggleLessonCancellation,
         private LessonPresenter $presenter,
         private InAppNotificationService $inAppNotificationService,
         private BookingFactory $bookingFactory,
@@ -859,7 +861,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         if ($lesson === null) {
             return ToolResult::failure('Lesson not found');
         }
-        $lesson->status = $lesson->status === 'active' ? 'cancelled' : 'active';
+        ($this->toggleLessonCancellation)($lesson);
         $this->entityManager->flush();
 
         return ToolResult::success(

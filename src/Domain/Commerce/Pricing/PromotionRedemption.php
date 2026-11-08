@@ -24,23 +24,17 @@ final class PromotionRedemption
         public ?\DateTimeImmutable $releasedAt = null,
     ) {}
 
-    public function consume(): void
+    /**
+     * Marking-store hook for the `promotion_redemption` state machine - do not call
+     * directly, apply `consume` / `release` through StateMachinesInterface instead.
+     */
+    public function setStatus(string $status): void
     {
-        if ($this->status !== self::STATUS_RESERVED) {
-            return;
-        }
-
-        $this->status = self::STATUS_CONSUMED;
-        $this->consumedAt = new \DateTimeImmutable();
-    }
-
-    public function release(): void
-    {
-        if ($this->status !== self::STATUS_RESERVED) {
-            return;
-        }
-
-        $this->status = self::STATUS_RELEASED;
-        $this->releasedAt = new \DateTimeImmutable();
+        $this->status = $status;
+        match ($status) {
+            self::STATUS_CONSUMED => $this->consumedAt = new \DateTimeImmutable(),
+            self::STATUS_RELEASED => $this->releasedAt = new \DateTimeImmutable(),
+            default => null,
+        };
     }
 }

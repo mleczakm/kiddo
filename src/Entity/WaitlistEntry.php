@@ -143,49 +143,28 @@ class WaitlistEntry
         );
     }
 
-    /** No-op unless currently `waiting`. */
-    public function offer(\DateTimeImmutable $now): void
-    {
-        if ($this->status !== self::STATUS_WAITING) {
-            return;
-        }
-        $this->status = self::STATUS_OFFERED;
-        $this->offeredAt = $now;
-        $this->offerExpiresAt = $now->modify(sprintf('+%d minutes', self::OFFER_TTL_MINUTES));
-    }
-
     public function markNotified(\DateTimeImmutable $now): void
     {
         $this->notifiedAt = $now;
     }
 
-    /** Close the entry because the parent took the seat. No-op if already closed. */
-    public function claim(\DateTimeImmutable $now): void
+    /**
+     * Marking-store hook for the `waitlist_entry` state machine - do not call directly,
+     * apply a transition through StateMachinesInterface instead. Stamps the per-state
+     * bookkeeping; pass `['now' => $clock]` as workflow context to pin the time.
+     *
+     * @param array<string, mixed> $context
+     */
+    public function setStatus(string $status, array $context = []): void
     {
-        if (!$this->isActive()) {
-            return;
-        }
-        $this->status = self::STATUS_CLAIMED;
-        $this->closedAt = $now;
-    }
+        $now = ($context['now'] ?? null) instanceof \DateTimeImmutable ? $context['now'] : Clock::get()->now();
 
-    /** No-op unless currently holding an `offered` seat. */
-    public function expire(\DateTimeImmutable $now): void
-    {
-        if ($this->status !== self::STATUS_OFFERED) {
-            return;
+        $this->status = $status;
+        if ($status === self::STATUS_OFFERED) {
+            $this->offeredAt = $now;
+            $this->offerExpiresAt = $now->modify(sprintf('+%d minutes', self::OFFER_TTL_MINUTES));
+        } elseif (!$this->isActive()) {
+            $this->closedAt = $now;
         }
-        $this->status = self::STATUS_EXPIRED;
-        $this->closedAt = $now;
-    }
-
-    /** Parent left the queue. No-op if already closed. */
-    public function cancel(\DateTimeImmutable $now): void
-    {
-        if (!$this->isActive()) {
-            return;
-        }
-        $this->status = self::STATUS_CANCELED;
-        $this->closedAt = $now;
     }
 }

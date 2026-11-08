@@ -85,3 +85,204 @@ framework:
                 expire:
                     from: pending
                     to: expired
+
+        lesson:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Lesson
+            initial_marking: active
+            places:
+                - active
+                - cancelled
+            transitions:
+                cancel:
+                    from: active
+                    to: cancelled
+                reactivate:
+                    from: cancelled
+                    to: active
+
+        booking_occurrence:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\BookingOccurrence
+            initial_marking: reserved
+            places:
+                - reserved
+                - confirmed
+                - attended
+                - cancelled
+                - rescheduled
+            transitions:
+                confirm:
+                    from: reserved
+                    to: confirmed
+                attend:
+                    from: [reserved, confirmed]
+                    to: attended
+                cancel:
+                    from: [reserved, confirmed]
+                    to: cancelled
+                reschedule:
+                    from: [reserved, confirmed]
+                    to: rescheduled
+                reactivate:
+                    from: [cancelled, rescheduled]
+                    to: reserved
+
+        waitlist_entry:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\WaitlistEntry
+            initial_marking: waiting
+            places:
+                - waiting
+                - offered
+                - claimed
+                - expired
+                - canceled
+            transitions:
+                offer:
+                    from: waiting
+                    to: offered
+                claim:
+                    from: [waiting, offered]
+                    to: claimed
+                expire:
+                    from: offered
+                    to: expired
+                cancel:
+                    from: [waiting, offered]
+                    to: canceled
+
+        subscription:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Subscription
+            initial_marking: active
+            places:
+                - active
+                - paused
+                - ended
+            transitions:
+                pause:
+                    from: active
+                    to: paused
+                resume:
+                    from: paused
+                    to: active
+                end:
+                    from: [active, paused]
+                    to: ended
+
+        refund_request:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\RefundRequest
+            initial_marking: pending
+            places:
+                - pending
+                - approved
+                - declined
+            transitions:
+                approve:
+                    from: pending
+                    to: approved
+                decline:
+                    from: pending
+                    to: declined
+
+        customer_order:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Domain\Commerce\Order\CustomerOrder
+            initial_marking: placed
+            places:
+                - pending
+                - placed
+                - paid
+                - cancelled
+                - expired
+            transitions:
+                # A late transfer still pays an order that already expired or was cancelled.
+                pay:
+                    from: [pending, placed, cancelled, expired]
+                    to: paid
+                # Never overrides `paid`.
+                expire:
+                    from: [pending, placed, cancelled]
+                    to: expired
+
+        cart:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Domain\Commerce\Cart\Cart
+            initial_marking: open
+            places:
+                - open
+                - converted
+                - abandoned # stored vocabulary; nothing transitions into it yet
+            transitions:
+                convert:
+                    from: open
+                    to: converted
+
+        promotion_redemption:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Domain\Commerce\Pricing\PromotionRedemption
+            initial_marking: reserved
+            places:
+                - reserved
+                - consumed
+                - released
+            transitions:
+                consume:
+                    from: reserved
+                    to: consumed
+                release:
+                    from: reserved
+                    to: released
+
+        pricing_rule:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Domain\Commerce\Pricing\PricingRule
+            initial_marking: active
+            places:
+                - active
+                - disabled
+            transitions:
+                disable:
+                    from: active
+                    to: disabled
+                enable:
+                    from: disabled
+                    to: active

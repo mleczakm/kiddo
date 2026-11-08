@@ -54,12 +54,22 @@ final class Cart
         }
     }
 
-    public function convert(Ulid $orderId): void
+    /**
+     * Marking-store hook for the `cart` state machine - do not call directly,
+     * apply `convert` through StateMachinesInterface instead.
+     */
+    public function setStatus(string $status): void
     {
-        $this->assertOpen();
-        $this->status = self::STATUS_CONVERTED;
-        $this->convertedOrderId = $orderId;
+        $this->status = $status;
         $this->touch();
+    }
+
+    /**
+     * Link the order a cart was converted into. Call after the `convert` transition.
+     */
+    public function recordConversion(Ulid $orderId): void
+    {
+        $this->convertedOrderId = $orderId;
     }
 
     public function touch(): void

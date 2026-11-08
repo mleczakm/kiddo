@@ -15,6 +15,7 @@ use App\Application\Service\Commerce\OrderPlacementService;
 use App\Application\Service\NewBookingNotifier;
 use App\Application\Service\Payment\PaymentCodeGenerator;
 use App\Application\Service\Pricing\PriceQuoter;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Domain\Commerce\Cart\Cart;
 use App\Domain\Commerce\Order\BuyerDetails;
 use App\Domain\Commerce\Order\CustomerOrder;
@@ -49,6 +50,7 @@ final readonly class CheckoutCart
         private OrderPlacementService $orderPlacementService,
         private NewBookingNotifier $newBookingNotifier,
         private EntityManagerInterface $em,
+        private StateMachinesInterface $stateMachines,
     ) {}
 
     public function __invoke(
@@ -157,7 +159,9 @@ final readonly class CheckoutCart
         foreach ($result->bookings as $booking) {
             $this->newBookingNotifier->notify($booking);
         }
-        $cart->convert($order->getId());
+        $cart->assertOpen();
+        $this->stateMachines->apply($cart, 'convert');
+        $cart->recordConversion($order->getId());
         $this->em->flush();
 
         return $order;

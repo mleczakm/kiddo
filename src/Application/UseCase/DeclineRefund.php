@@ -9,6 +9,7 @@ use App\Application\Repository\RefundRequestRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\ActivityLogger;
 use App\Application\Workflow\PaymentStateMachineInterface;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Entity\ActivityType;
 use App\Entity\Payment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,6 +39,7 @@ final readonly class DeclineRefund
         private MessageBusInterface $bus,
         private UrlGeneratorInterface $urlGenerator,
         private EntityManagerInterface $em,
+        private StateMachinesInterface $stateMachines,
     ) {}
 
     public function __invoke(Ulid $refundRequestId, int $declinedByUserId, ?string $note): void
@@ -57,7 +59,7 @@ final readonly class DeclineRefund
             throw new \InvalidArgumentException(sprintf('Refund request %s not found', $refundRequestId));
         }
 
-        if (!$refundRequest->isPending()) {
+        if (!$this->stateMachines->can($refundRequest, 'decline')) {
             throw new \RuntimeException('This refund request has already been decided');
         }
 
@@ -68,7 +70,8 @@ final readonly class DeclineRefund
 
         $this->paymentStateMachine->apply($payment, Payment::TRANSITION_DECLINE_REFUND);
         $payment->recordStatusDecision($declinedBy, $note);
-        $refundRequest->decline($declinedBy, $note);
+        $this->stateMachines->apply($refundRequest, 'decline');
+        $refundRequest->recordDecision($declinedBy, $note);
 
         $user = $refundRequest->getBooking()->getUser();
         $userId = $user->getId();

@@ -239,7 +239,7 @@ final class ChangeCartParticipantTest extends KernelTestCase
             null,
             $this->idOf($user),
         );
-        $cart->convert(new Ulid());
+        $cart->setStatus(Cart::STATUS_CONVERTED);
         $em->flush();
 
         try {

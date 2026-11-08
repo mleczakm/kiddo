@@ -7,6 +7,7 @@ namespace App\UserInterface\Http\Admin;
 use App\Application\Repository\WaitlistEntryRepositoryInterface;
 use App\Application\Service\HolidayChecker;
 use App\Application\Service\Waitlist\WaitlistService;
+use App\Application\UseCase\ToggleLessonCancellation;
 use App\Entity\Lesson;
 use App\Infrastructure\Symfony\Security\Voter\LessonVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,8 +58,12 @@ final class LessonsController extends AbstractController
             'id' => '[A-Za-z0-9]+',
         ],
     )]
-    public function toggle(Lesson $lesson, Request $request, EntityManagerInterface $entityManager): RedirectResponse
-    {
+    public function toggle(
+        Lesson $lesson,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ToggleLessonCancellation $toggleLessonCancellation,
+    ): RedirectResponse {
         if (!$this->isGranted(LessonVoter::MANAGE, $lesson)) {
             throw $this->createNotFoundException();
         }
@@ -71,9 +76,9 @@ final class LessonsController extends AbstractController
             ]);
         }
 
-        $lesson->status = $lesson->status === 'active' ? 'cancelled' : 'active';
+        $toggleLessonCancellation($lesson);
         $entityManager->flush();
-        $this->addFlash('success', $lesson->status === 'active' ? 'Lesson activated.' : 'Lesson cancelled.');
+        $this->addFlash('success', $lesson->isActive() ? 'Lesson activated.' : 'Lesson cancelled.');
 
         return $this->redirectToRoute('app_admin_lesson_view', [
             'id' => (string) $lesson->getId(),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http\Component;
 
+use App\Application\UseCase\ToggleLessonCancellation;
 use App\Entity\Lesson;
 use App\Entity\Series;
 use App\Entity\User;
@@ -36,6 +37,7 @@ final class AdminScheduleComponent extends AbstractController
     public function __construct(
         private readonly LessonRepository $lessonRepository,
         private readonly EntityManagerInterface $em,
+        private readonly ToggleLessonCancellation $toggleLessonCancellation,
     ) {}
 
     #[LiveProp(writable: true, url: true)]
@@ -213,7 +215,7 @@ final class AdminScheduleComponent extends AbstractController
             return;
         }
 
-        $lesson->status = $lesson->status === 'active' ? 'cancelled' : 'active';
+        ($this->toggleLessonCancellation)($lesson);
         $this->em->flush();
     }
 

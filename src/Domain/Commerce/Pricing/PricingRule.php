@@ -57,11 +57,6 @@ final class PricingRule
         return $this->status === self::STATUS_ACTIVE;
     }
 
-    public function disable(): void
-    {
-        $this->status = self::STATUS_DISABLED;
-    }
-
     /**
      * How narrowly this rule is targeted - used to pick between multiple
      * applicable SET_PRICE rules (the most specific one wins). Each

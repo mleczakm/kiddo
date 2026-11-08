@@ -156,23 +156,15 @@ class Subscription
         $this->lastChargedPeriod = $period->format('Y-m');
     }
 
-    public function pause(): void
+    /**
+     * Marking-store hook for the `subscription` state machine - do not call directly,
+     * apply `pause` / `resume` / `end` through StateMachinesInterface instead.
+     */
+    public function setStatus(string $status): void
     {
-        if ($this->status === self::STATUS_ACTIVE) {
-            $this->status = self::STATUS_PAUSED;
+        $this->status = $status;
+        if ($status === self::STATUS_ENDED) {
+            $this->endsAt = Clock::get()->now();
         }
-    }
-
-    public function resume(): void
-    {
-        if ($this->status === self::STATUS_PAUSED) {
-            $this->status = self::STATUS_ACTIVE;
-        }
-    }
-
-    public function end(): void
-    {
-        $this->status = self::STATUS_ENDED;
-        $this->endsAt = Clock::get()->now();
     }
 }

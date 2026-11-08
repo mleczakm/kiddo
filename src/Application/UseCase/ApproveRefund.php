@@ -10,6 +10,7 @@ use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\ActivityLogger;
 use App\Application\Service\RefundBalanceCalculator;
 use App\Application\Workflow\PaymentStateMachineInterface;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Entity\ActivityType;
 use App\Entity\Payment;
 use Brick\Money\Money;
@@ -40,6 +41,7 @@ final readonly class ApproveRefund
         private UrlGeneratorInterface $urlGenerator,
         private EntityManagerInterface $em,
         private RefundBalanceCalculator $refundBalance,
+        private StateMachinesInterface $stateMachines,
     ) {}
 
     public function __invoke(
@@ -63,7 +65,7 @@ final readonly class ApproveRefund
             throw new \InvalidArgumentException(sprintf('Refund request %s not found', $refundRequestId));
         }
 
-        if (!$refundRequest->isPending()) {
+        if (!$this->stateMachines->can($refundRequest, 'approve')) {
             throw new \RuntimeException('This refund request has already been decided');
         }
 
@@ -91,7 +93,8 @@ final readonly class ApproveRefund
 
         $this->paymentStateMachine->apply($payment, $transition);
         $payment->recordStatusDecision($approvedBy, $note);
-        $refundRequest->approve(
+        $this->stateMachines->apply($refundRequest, 'approve');
+        $refundRequest->recordApproval(
             $approvedBy,
             $note,
             Money::ofMinor($approvedAmountMinor, $refundRequest->getCurrency()),

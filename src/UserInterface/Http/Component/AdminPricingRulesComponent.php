@@ -10,6 +10,7 @@ use App\Application\Repository\PricingRuleRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\ActivityLogger;
 use App\Application\Service\Pricing\PriceQuoter;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Domain\Commerce\Pricing\AdjustmentType;
 use App\Domain\Commerce\Pricing\PriceQuote;
 use App\Domain\Commerce\Pricing\PricingRule;
@@ -120,6 +121,7 @@ class AdminPricingRulesComponent extends AbstractController
         private readonly UserRepositoryInterface $userRepository,
         private readonly LessonRepositoryInterface $lessonRepository,
         private readonly PriceQuoter $priceQuoter,
+        private readonly StateMachinesInterface $stateMachines,
     ) {}
 
     /**
@@ -295,34 +297,24 @@ class AdminPricingRulesComponent extends AbstractController
     public function disable(#[LiveArg] string $id): void
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_PRICING');
-        $this->setStatus(
-            $id,
-            PricingRule::STATUS_DISABLED,
-            ActivityType::PRICING_RULE_DISABLED,
-            'Wyłączono regułę cenową „%s”.',
-        );
+        $this->setStatus($id, 'disable', ActivityType::PRICING_RULE_DISABLED, 'Wyłączono regułę cenową „%s”.');
     }
 
     #[LiveAction]
     public function enable(#[LiveArg] string $id): void
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_PRICING');
-        $this->setStatus(
-            $id,
-            PricingRule::STATUS_ACTIVE,
-            ActivityType::PRICING_RULE_UPDATED,
-            'Włączono regułę cenową „%s”.',
-        );
+        $this->setStatus($id, 'enable', ActivityType::PRICING_RULE_UPDATED, 'Włączono regułę cenową „%s”.');
     }
 
-    private function setStatus(string $id, string $status, ActivityType $activityType, string $titleFormat): void
+    private function setStatus(string $id, string $transition, ActivityType $activityType, string $titleFormat): void
     {
         $rule = $this->pricingRuleRepository->find(Ulid::fromString($id));
-        if (!$rule instanceof PricingRule || $rule->status === $status) {
+        // Already in the requested state: the transition is not enabled, nothing to do.
+        if (!$rule instanceof PricingRule || !$this->stateMachines->applyIfPossible($rule, $transition)) {
             return;
         }
 
-        $rule->status = $status;
         $this->entityManager->flush();
 
         /** @var ?User $actor */

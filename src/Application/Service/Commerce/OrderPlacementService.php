@@ -271,7 +271,7 @@ final class OrderPlacementService
             }
             if (
                 !$lesson->future()
-                || $lesson->status !== 'active'
+                || !$lesson->isActive()
                 || !$lesson->isPubliclyVisible()
                 || ($lesson->getMetadata()->capacity - (int) ($occupied[$lesson->getId()->toRfc4122()] ?? 0))
                     < $requirement['required']

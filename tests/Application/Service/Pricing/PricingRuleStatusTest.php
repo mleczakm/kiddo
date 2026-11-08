@@ -31,16 +31,6 @@ final class PricingRuleStatusTest extends TestCase
         static::assertSame(PricingRule::STATUS_ACTIVE, $rule->status);
     }
 
-    public function testDisableSetsStatusToDisabled(): void
-    {
-        $rule = $this->rule();
-
-        $rule->disable();
-
-        static::assertFalse($rule->isActive());
-        static::assertSame(PricingRule::STATUS_DISABLED, $rule->status);
-    }
-
     public function testFieldsAreDirectlyMutableForAdminEditing(): void
     {
         $rule = $this->rule();

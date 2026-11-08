@@ -151,7 +151,7 @@ final readonly class LessonCalendarFactory
                     $organization->phone,
                     $organization->email,
                 )),
-            'STATUS:' . ($lesson->status === 'cancelled' ? 'CANCELLED' : 'CONFIRMED'),
+            'STATUS:' . ($lesson->isCancelled() ? 'CANCELLED' : 'CONFIRMED'),
         ];
 
         if ($metadata->slug !== null && $metadata->slug !== '') {

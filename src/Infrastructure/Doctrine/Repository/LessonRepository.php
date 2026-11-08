@@ -53,7 +53,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->andWhere('visibilitySeries.id IS NULL OR visibilitySeries.visible = true')
             ->andWhere('l.series = :series')
             ->setParameter('afterDate', $afterDate)
-            ->setParameter('status', 'active')
+            ->setParameter('status', Lesson::STATUS_ACTIVE)
             ->setParameter('series', $series->getId(), 'ulid')
             ->orderBy('l.schedule', 'ASC')
             ->setMaxResults($maxResults)
@@ -83,7 +83,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->andWhere('l.status = :status')
             ->andWhere('l.visible = true')
             ->andWhere('visibilitySeries.id IS NULL OR visibilitySeries.visible = true')
-            ->setParameter('status', 'active')
+            ->setParameter('status', Lesson::STATUS_ACTIVE)
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->getQuery()
@@ -161,7 +161,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->andWhere('l.status = :status')
             ->andWhere('l.visible = true')
             ->andWhere('visibilitySeries.id IS NULL OR visibilitySeries.visible = true')
-            ->setParameter('status', 'active')
+            ->setParameter('status', Lesson::STATUS_ACTIVE)
             ->orderBy('l.schedule', 'ASC');
 
         if ($query !== null) {
@@ -217,7 +217,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->addSelect('b, c, u')
             ->andWhere('l.schedule > :since')
             ->andWhere('l.status = :status')
-            ->setParameter('status', 'active')
+            ->setParameter('status', Lesson::STATUS_ACTIVE)
             ->setParameter('since', $since)
             ->orderBy('l.schedule', 'ASC')
             ->setMaxResults($limit)
@@ -251,7 +251,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
         if (!$showCancelled) {
             $qb
                 ->andWhere('l.status = :status')
-                ->setParameter('status', 'active')
+                ->setParameter('status', Lesson::STATUS_ACTIVE)
                 ->setParameter('bookingStatus', [Booking::STATUS_PENDING, Booking::STATUS_ACTIVE]);
         } else {
             $qb->setParameter('bookingStatus', [
@@ -283,7 +283,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->orderBy('l.schedule', 'ASC');
 
         if (!$showCancelled) {
-            $qb->andWhere('l.status = :status')->setParameter('status', 'active');
+            $qb->andWhere('l.status = :status')->setParameter('status', Lesson::STATUS_ACTIVE);
         }
 
         /** @var Lesson[] $lessons */
@@ -317,7 +317,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->orderBy('l.schedule', 'ASC');
 
         if (!$showCancelled) {
-            $qb->andWhere('l.status = :status')->setParameter('status', 'active');
+            $qb->andWhere('l.status = :status')->setParameter('status', Lesson::STATUS_ACTIVE);
         }
 
         /** @var Lesson[] $lessons */
@@ -335,7 +335,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->createQueryBuilder('l')
             ->andWhere('l.status = :status')
             ->andWhere('l.schedule BETWEEN :start AND :end')
-            ->setParameter('status', 'cancelled')
+            ->setParameter('status', Lesson::STATUS_CANCELLED)
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->orderBy('l.schedule', 'ASC')
@@ -375,7 +375,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ->join('l.metadata', 'm')
             ->leftJoin('l.series', 's')
             ->andWhere('l.status = :status')
-            ->setParameter('status', 'active')
+            ->setParameter('status', Lesson::STATUS_ACTIVE)
             ->orderBy('l.schedule', 'ASC')
             ->setMaxResults($limit);
 

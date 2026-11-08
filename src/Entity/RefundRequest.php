@@ -208,37 +208,34 @@ class RefundRequest
         return $this->currency ?? $this->requestedAmount->getCurrency()->getCurrencyCode();
     }
 
-    public function approve(User $decidedBy, ?string $note, ?Money $approvedAmount = null): void
+    /**
+     * Marking-store hook for the `refund_request` state machine - do not call directly,
+     * apply the `approve`/`decline` transition through StateMachinesInterface instead.
+     */
+    public function setStatus(string $status): void
     {
-        if (!$this->isPending()) {
-            throw new \RuntimeException(sprintf(
-                'Refund request %s was already %s and cannot be decided again.',
-                $this->id,
-                $this->status,
-            ));
-        }
-
-        $this->status = self::STATUS_APPROVED;
-        $this->decidedBy = $decidedBy;
-        $this->decidedAt = new \DateTimeImmutable();
-        $this->decisionNote = $note !== null && trim($note) !== '' ? trim($note) : null;
-        $this->approvedAmount = $approvedAmount ?? $this->requestedAmount;
-        $this->approvedAmountMinor = $this->approvedAmount->getMinorAmount()->toInt();
+        $this->status = $status;
     }
 
-    public function decline(User $decidedBy, ?string $note): void
+    /**
+     * Record who declined and why. Call after the `decline` transition was applied.
+     */
+    public function recordDecision(User $decidedBy, ?string $note): void
     {
-        if (!$this->isPending()) {
-            throw new \RuntimeException(sprintf(
-                'Refund request %s was already %s and cannot be decided again.',
-                $this->id,
-                $this->status,
-            ));
-        }
-
-        $this->status = self::STATUS_DECLINED;
         $this->decidedBy = $decidedBy;
         $this->decidedAt = new \DateTimeImmutable();
         $this->decisionNote = $note !== null && trim($note) !== '' ? trim($note) : null;
+    }
+
+    /**
+     * Record who approved, why and for how much. Call after the `approve` transition was applied.
+     *
+     * @throws \Brick\Math\Exception\MathException
+     */
+    public function recordApproval(User $decidedBy, ?string $note, ?Money $approvedAmount = null): void
+    {
+        $this->recordDecision($decidedBy, $note);
+        $this->approvedAmount = $approvedAmount ?? $this->requestedAmount;
+        $this->approvedAmountMinor = $this->approvedAmount->getMinorAmount()->toInt();
     }
 }

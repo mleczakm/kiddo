@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service\Waitlist;
 
 use App\Application\Repository\WaitlistEntryRepositoryInterface;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Entity\Lesson;
 use App\Entity\User;
 use App\Entity\WaitlistEntry;
@@ -26,6 +27,7 @@ final readonly class WaitlistService
         private EntityManagerInterface $em,
         private WaitlistOfferMailer $mailer,
         private FeatureManager $featureManager,
+        private StateMachinesInterface $stateMachines,
     ) {}
 
     /** Whether a parent can be offered the waitlist for this lesson at all. */
@@ -59,7 +61,8 @@ final readonly class WaitlistService
         return new WaitlistJoinResult(WaitlistJoinOutcome::Joined, $entry, $this->positionOf($entry, $lesson));
     }
 
-    /** @return bool whether an active entry was found and cancelled */
+    /** @return bool whether an active entry was found and cancelled
+     */
     public function leave(User $user, Lesson $lesson): bool
     {
         $entry = $this->waitlist->findActiveForUserAndLesson($user, $lesson);
@@ -67,7 +70,7 @@ final readonly class WaitlistService
             return false;
         }
 
-        $entry->cancel(Clock::get()->now());
+        $this->stateMachines->apply($entry, 'cancel');
         $this->em->flush();
 
         return true;
@@ -122,11 +125,13 @@ final readonly class WaitlistService
             if ($offered >= $slots) {
                 break;
             }
-            if ($entry->getStatus() !== WaitlistEntry::STATUS_WAITING) {
+            if (!$this->stateMachines->can($entry, 'offer')) {
                 continue;
             }
 
-            $entry->offer($now);
+            $this->stateMachines->apply($entry, 'offer', [
+                'now' => $now,
+            ]);
             $this->mailer->notifyOffer($entry);
             $entry->markNotified($now);
             ++$offered;
@@ -154,7 +159,9 @@ final readonly class WaitlistService
         /** @var array<string, Ulid> $lessonIds */
         $lessonIds = [];
         foreach ($expired as $entry) {
-            $entry->expire($now);
+            $this->stateMachines->applyIfPossible($entry, 'expire', [
+                'now' => $now,
+            ]);
             $lessonId = $entry->getLesson()->getId();
             $lessonIds[$lessonId->toRfc4122()] = $lessonId;
         }

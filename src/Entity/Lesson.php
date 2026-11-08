@@ -14,13 +14,18 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity(repositoryClass: LessonRepository::class)]
 class Lesson
 {
+    // Lifecycle: the `lesson` state machine in config/packages/workflow.yaml.
+    public const string STATUS_ACTIVE = 'active';
+
+    public const string STATUS_CANCELLED = 'cancelled';
+
     #[ORM\Column(type: 'boolean', options: [
         'default' => true,
     ])]
     public bool $visible;
 
     #[ORM\Column(type: 'string', nullable: false, options: [
-        'default' => 'active',
+        'default' => self::STATUS_ACTIVE,
     ])]
     public string $status;
 
@@ -72,10 +77,20 @@ class Lesson
         private array $ticketOptions = [],
     ) {
         $this->id = new Ulid();
-        $this->status = 'active';
+        $this->status = self::STATUS_ACTIVE;
         $this->visible = true;
         $this->bookings = new ArrayCollection();
         $this->instructors = new ArrayCollection();
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === self::STATUS_CANCELLED;
     }
 
     public function getId(): Ulid
@@ -202,7 +217,7 @@ class Lesson
             false,
             [
                 $this->isPubliclyVisible(),
-                $this->status === 'active',
+                $this->isActive(),
                 $this->getAvailableSpots() > 0,
             ],
             true,
@@ -232,7 +247,7 @@ class Lesson
 
     public function cancellationAvailable(): bool
     {
-        return $this->status === 'active' && $this->schedule >= Clock::get()->now()->modify('+24 hours');
+        return $this->isActive() && $this->schedule >= Clock::get()->now()->modify('+24 hours');
     }
 
     public function setTicketOptions(TicketOption ...$options): void

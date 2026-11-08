@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\EventSubscriber;
 
 use App\Application\Service\Commerce\PromotionRedemptionService;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Entity\Payment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,6 +17,7 @@ final readonly class OrderPaymentExpirySubscriber implements EventSubscriberInte
     public function __construct(
         private EntityManagerInterface $em,
         private PromotionRedemptionService $promotionRedemptions,
+        private StateMachinesInterface $stateMachines,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -35,7 +37,7 @@ final readonly class OrderPaymentExpirySubscriber implements EventSubscriberInte
             return;
         }
 
-        $order->markExpired();
+        $this->stateMachines->applyIfPossible($order, 'expire');
         $this->promotionRedemptions->releaseForOrder($order->getId());
     }
 }
