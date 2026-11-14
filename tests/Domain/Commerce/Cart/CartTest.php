@@ -33,13 +33,9 @@ final class CartTest extends TestCase
 
     public function testTouchAdvancesUpdatedAt(): void
     {
-        $cart = new Cart(
-            id: new Ulid(),
-            customerId: 1,
-            currency: 'PLN',
-            updatedAt: new \DateTimeImmutable('2020-01-01'),
-        );
+        $cart = new Cart(id: new Ulid(), customerId: 1, currency: 'PLN');
 
+        $cart->updatedAt = new \DateTimeImmutable('2020-01-01');
         $cart->touch();
 
         static::assertGreaterThan(new \DateTimeImmutable('2020-01-01'), $cart->updatedAt);

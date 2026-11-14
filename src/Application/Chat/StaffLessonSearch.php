@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Chat;
 
-use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\LessonSearchInterface;
 use App\Entity\User;
 use Symfony\Component\Clock\Clock;
 
@@ -13,7 +13,7 @@ final readonly class StaffLessonSearch
     private const int DEFAULT_LIMIT = 20;
 
     public function __construct(
-        private LessonRepositoryInterface $lessonRepository,
+        private LessonSearchInterface $lessonSearch,
         private StaffLessonPresenter $staffPresenter,
     ) {}
 
@@ -35,7 +35,7 @@ final readonly class StaffLessonSearch
             'past' => 100,
             default => $limit,
         };
-        $lessons = $this->lessonRepository->findForStaff(
+        $lessons = $this->lessonSearch->findForStaff(
             $query,
             $from,
             $to,

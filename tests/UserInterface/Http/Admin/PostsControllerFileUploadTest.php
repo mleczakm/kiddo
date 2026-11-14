@@ -161,7 +161,8 @@ final class PostsControllerFileUploadTest extends WebTestCase
      */
     private function createUploadedJpeg(string $filename): UploadedFile
     {
-        $tempFile = tempnam(sys_get_temp_dir(), 'test_') . '.jpg';
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_');
+        static::assertIsString($tempFile);
         file_put_contents($tempFile, base64_decode(self::MINIMAL_JPEG_BASE64, true));
 
         return new UploadedFile($tempFile, $filename, 'image/jpeg', null, true);

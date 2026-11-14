@@ -8,6 +8,7 @@ use App\Application\Command\ImportTransfersFromMail;
 use App\Application\Query\Lesson\TodayLessonsQuery;
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\LessonSearchInterface;
 use App\Application\Repository\PaymentRepositoryInterface;
 use App\Application\Repository\SeriesRepositoryInterface;
 use App\Application\Repository\TransferRepositoryInterface;
@@ -46,6 +47,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $bus,
         private LessonRepositoryInterface $lessonRepository,
+        private LessonSearchInterface $lessonQueries,
         private BookingRepositoryInterface $bookingRepository,
         private PaymentRepositoryInterface $paymentRepository,
         private TransferRepositoryInterface $transferRepository,
@@ -96,7 +98,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.list_lessons',
@@ -119,7 +121,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.get_lesson',
@@ -133,7 +135,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['lesson_id'],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
         ];
     }
@@ -161,8 +163,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'lesson_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.update_lesson_capacity',
@@ -181,8 +182,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'lesson_id', 'capacity'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.set_lesson_waitlist',
@@ -202,8 +202,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'lesson_id', 'mode'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }
@@ -233,7 +232,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.update_series',
@@ -274,8 +273,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'series_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.clone_template_lesson',
@@ -298,8 +296,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'template_lesson_id', 'schedule'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }
@@ -331,7 +328,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.create_booking',
@@ -373,8 +370,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'lesson_id', 'email', 'ticket_type', 'payment'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.mark_booking_paid',
@@ -389,8 +385,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'booking_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }
@@ -424,8 +419,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'booking_id', 'lesson_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.refund_lesson',
@@ -446,8 +440,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'booking_id', 'lesson_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.reschedule_lesson',
@@ -471,8 +464,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'booking_id', 'lesson_id', 'new_lesson_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }
@@ -498,7 +490,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.list_unmatched_transfers',
@@ -507,7 +499,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     'type' => 'object',
                     'properties' => new \stdClass(),
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.assign_transfer',
@@ -525,8 +517,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'transfer_id', 'payment_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.reject_transfer',
@@ -541,8 +532,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'transfer_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.trigger_import_transfers',
@@ -552,8 +542,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     'properties' => [...$confirm],
                     'required' => ['confirm'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }
@@ -578,7 +567,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['query'],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.get_user',
@@ -594,7 +583,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
         ];
     }
@@ -629,8 +618,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'series_id'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.grant_host_role',
@@ -648,8 +636,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }
@@ -684,8 +671,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'enabled'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.notify_user',
@@ -719,8 +705,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'title'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }
@@ -827,7 +812,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
             // findByFilters only returns active; load cancelled in the same week window separately
             $weekStart = new \DateTimeImmutable($week);
             $weekEnd = $weekStart->modify('+7 days 23:59:59');
-            $cancelled = $this->lessonRepository->findCancelledInRange($weekStart, $weekEnd);
+            $cancelled = $this->lessonQueries->findCancelledInRange($weekStart, $weekEnd);
             $lessons = array_merge($lessons, $cancelled);
         }
 
@@ -1350,14 +1335,21 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         $ticketOptionsInput = $args->array('ticket_options');
         if ($ticketOptionsInput !== null) {
             $ticketOptions = [];
-            foreach ($ticketOptionsInput as $row) {
+            foreach (array_keys($ticketOptionsInput) as $index) {
+                /** @var mixed $row */
+                $row = $ticketOptionsInput[$index];
                 if (!is_array($row)) {
                     return ToolResult::failure('Each ticket_options item must be an object');
                 }
+                /** @var mixed $typeRaw */
                 $typeRaw = $row['type'] ?? null;
+                /** @var mixed $amountRaw */
                 $amountRaw = $row['amount'] ?? '0.00';
+                /** @var mixed $currencyRaw */
                 $currencyRaw = $row['currency'] ?? 'PLN';
+                /** @var mixed $descriptionRaw */
                 $descriptionRaw = $row['description'] ?? '';
+                /** @var mixed $policyRaw */
                 $policyRaw = $row['reschedule_policy'] ?? TicketReschedulePolicy::ONETIME_24H_BEFORE->value;
                 if (!is_string($typeRaw) && !is_int($typeRaw)) {
                     return ToolResult::failure('ticket_options.type must be a string');

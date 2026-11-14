@@ -56,6 +56,7 @@ final class SentryHubServiceWiringTest extends TestCase
 
     public function testSentryHandlerRejectsRecordsBelowErrorLevel(): void
     {
+        /** @var mixed $definition */
         $definition = $this->block(null)[SentryHandler::class] ?? null;
         static::assertIsArray($definition);
         static::assertSame(Level::Error->value, $definition['arguments']['$level'] ?? null);

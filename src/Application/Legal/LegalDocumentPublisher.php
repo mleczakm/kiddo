@@ -26,7 +26,7 @@ final readonly class LegalDocumentPublisher
      * @throws \InvalidArgumentException
      * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
-    public function publish(NewLegalDocumentVersion $request, bool $notifyUsers = false): LegalDocumentVersion
+    public function publish(NewLegalDocumentVersion $request): LegalDocumentVersion
     {
         $changeSummary = $this->normalizeChangeSummary($request->changeSummary);
         $file = $this->fileStorage->store(
@@ -51,9 +51,17 @@ final readonly class LegalDocumentPublisher
         $this->entityManager->persist($version);
         $this->entityManager->flush();
 
-        if ($notifyUsers) {
-            $this->commandBus->dispatch(new NotifyLegalDocumentChange($version->getId()));
-        }
+        return $version;
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
+    public function publishAndNotify(NewLegalDocumentVersion $request): LegalDocumentVersion
+    {
+        $version = $this->publish($request);
+        $this->commandBus->dispatch(new NotifyLegalDocumentChange($version->getId()));
 
         return $version;
     }

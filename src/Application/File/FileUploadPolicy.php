@@ -32,44 +32,36 @@ final readonly class FileUploadPolicy
         ?int $maxFileCount = null,
         ?int $aggregateSizeLimit = null,
     ) {
-        $this->fileSizeLimit = $fileSizeLimit ?? match ($usage) {
-            'article_image' => 8 * 1024 * 1024, // 8 MB per image
-            'article_video' => 50 * 1024 * 1024, // 50 MB per video
-            'article_document', 'legal_document' => 20 * 1024 * 1024, // 20 MB per document
-            default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
-        };
-
-        $this->maxFileCount = $maxFileCount ?? match ($usage) {
-            'article_image' => 10,
-            'article_video' => 5,
-            'article_document' => 10,
-            'legal_document' => 1,
-            default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
-        };
-
-        $this->aggregateSizeLimit = $aggregateSizeLimit ?? match ($usage) {
-            'article_image' => 50 * 1024 * 1024, // 50 MB total images
-            'article_video' => 100 * 1024 * 1024, // 100 MB total videos
-            'article_document' => 100 * 1024 * 1024, // 100 MB total documents
-            'legal_document' => 20 * 1024 * 1024,
-            default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
-        };
-
-        $this->allowedMimeTypes = match ($usage) {
-            'article_image' => ['image/jpeg', 'image/png', 'image/webp', 'image/avif'],
-            'article_video' => ['video/mp4', 'video/webm', 'video/ogg'],
+        [$size, $count, $total, $types] = match ($usage) {
+            'article_image' => [8, 10, 50, ['image/jpeg', 'image/png', 'image/webp', 'image/avif']],
+            'article_video' => [50, 5, 100, ['video/mp4', 'video/webm', 'video/ogg']],
             'article_document' => [
-                'application/pdf',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                20,
+                10,
+                100,
+                [
+                    'application/pdf',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                ],
             ],
             'legal_document' => [
-                'application/pdf',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                20,
+                1,
+                20,
+                [
+                    'application/pdf',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                ],
             ],
             default => throw new InvalidArgumentException("Unknown usage: {$usage}"),
         };
+
+        $this->fileSizeLimit = $fileSizeLimit ?? ($size * 1024 * 1024);
+        $this->maxFileCount = $maxFileCount ?? $count;
+        $this->aggregateSizeLimit = $aggregateSizeLimit ?? ($total * 1024 * 1024);
+        $this->allowedMimeTypes = $types;
     }
 
     /** @throws InvalidArgumentException */

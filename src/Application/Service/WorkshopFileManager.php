@@ -25,7 +25,6 @@ final readonly class WorkshopFileManager
      * @param list<string> $removedFileIds
      * @throws \DomainException
      * @throws \InvalidArgumentException
-     * @throws \ValueError
      */
     public function reconcile(LessonMetadata $metadata, array $roles, array $captions, array $removedFileIds): void
     {
@@ -39,7 +38,10 @@ final readonly class WorkshopFileManager
         $position = 0;
         foreach ($metadata->files as $workshopFile) {
             $fileId = (string) $workshopFile->getFile()->getId();
-            $workshopFile->setRole(WorkshopFileRole::from($roles[$fileId] ?? $workshopFile->getRole()->value));
+            $role = WorkshopFileRole::tryFrom(
+                $roles[$fileId] ?? $workshopFile->getRole()->value,
+            ) ?? throw new \InvalidArgumentException('Nieprawidłowa rola załącznika.');
+            $workshopFile->setRole($role);
             $workshopFile->setCaption($captions[$fileId] ?? $workshopFile->getCaption());
             $workshopFile->setPosition($position++);
         }

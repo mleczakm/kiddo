@@ -52,9 +52,6 @@ interface LessonRepositoryInterface extends RepositoryInterface
     public function findUpcoming(\DateTimeImmutable $since, int $limit): array;
 
     /** @return array<int, Lesson> */
-    public function findUpcomingWithBookings(\DateTimeImmutable $since, int $limit): array;
-
-    /** @return array<int, Lesson> */
     public function findUpcomingWithBookingsInRange(
         \DateTimeImmutable $startDate,
         \DateTimeImmutable $endDate,
@@ -74,29 +71,5 @@ interface LessonRepositoryInterface extends RepositoryInterface
         \DateTimeImmutable $endDate,
         bool $showCancelled,
         User $instructor,
-    ): array;
-
-    /** @return list<Lesson> */
-    public function findCancelledInRange(\DateTimeImmutable $start, \DateTimeImmutable $end): array;
-
-    /** @return list<Lesson> */
-    public function findByMetadataTitlePrefix(string $prefix): array;
-
-    /**
-     * Staff lesson search for the chat assistant: active lessons with a
-     * fuzzy title match (ILIKE %query%), an optional [$from, $to] schedule
-     * window, optionally scoped to lessons $instructor is assigned to
-     * (directly or via the series — mirrors Lesson::getAllInstructors()).
-     * Ordered by schedule ASC. Ignores public visibility so staff also see
-     * hidden lessons.
-     *
-     * @return list<Lesson>
-     */
-    public function findForStaff(
-        ?string $titleQuery,
-        ?\DateTimeImmutable $from,
-        ?\DateTimeImmutable $to,
-        ?User $instructor,
-        int $limit,
     ): array;
 }

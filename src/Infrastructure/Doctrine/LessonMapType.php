@@ -29,6 +29,7 @@ class LessonMapType extends JsonType
             return null;
         }
 
+        /** @var mixed $data */
         $data = parent::convertToPHPValue($value, $platform);
 
         if (!is_array($data)) {
@@ -52,9 +53,14 @@ class LessonMapType extends JsonType
             return null;
         }
 
+        /** @param Map<Ulid, BookedLesson> $map */
         $serializeMap = function (Map $map): array {
             $result = [];
-            foreach ($map as $key => $val) {
+            foreach ($map->pairs()->toArray() as $pair) {
+                /** @var mixed $key */
+                $key = $pair->key;
+                /** @var mixed $val */
+                $val = $pair->value;
                 if (!$key instanceof Ulid || !$val instanceof BookedLesson) {
                     continue;
                 }

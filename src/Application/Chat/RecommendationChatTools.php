@@ -33,7 +33,7 @@ final readonly class RecommendationChatTools implements ChatToolProviderInterfac
                         'limit' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
                     ],
                 ],
-                requiresAdmin: true,
+                permissions: new ToolPermissions(requiresAdmin: true),
             ),
             new ToolDefinition(
                 'admin.save_recommendation',
@@ -55,8 +55,7 @@ final readonly class RecommendationChatTools implements ChatToolProviderInterfac
                     ],
                     'required' => ['author', 'text', 'confirm'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.approve_recommendation',
@@ -66,8 +65,7 @@ final readonly class RecommendationChatTools implements ChatToolProviderInterfac
                     'properties' => [...$id, ...$confirmation],
                     'required' => ['id', 'confirm'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
             new ToolDefinition(
                 'admin.delete_recommendation',
@@ -77,8 +75,7 @@ final readonly class RecommendationChatTools implements ChatToolProviderInterfac
                     'properties' => [...$id, ...$confirmation],
                     'required' => ['id', 'confirm'],
                 ],
-                requiresAdmin: true,
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
             ),
         ];
     }

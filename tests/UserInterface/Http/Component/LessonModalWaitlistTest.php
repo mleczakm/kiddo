@@ -73,11 +73,15 @@ final class LessonModalWaitlistTest extends WebTestCase
         );
 
         $component->call('joinWaitlist');
-        static::assertSame('lesson.waitlist.joined', $component->component()->waitlistNotice);
+        $modal = $component->component();
+        static::assertInstanceOf(LessonModal::class, $modal);
+        static::assertSame('lesson.waitlist.joined', $modal->waitlistNotice);
         static::assertCount(1, $waitlist->findActiveForUser($user));
 
         $component->call('leaveWaitlist');
-        static::assertSame('lesson.waitlist.left', $component->component()->waitlistNotice);
+        $modal = $component->component();
+        static::assertInstanceOf(LessonModal::class, $modal);
+        static::assertSame('lesson.waitlist.left', $modal->waitlistNotice);
         static::assertCount(0, $waitlist->findActiveForUser($user));
     }
 

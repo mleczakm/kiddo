@@ -42,6 +42,7 @@ final readonly class SentryHttpMetricsSubscriber
         $this->metrics->count('responses.total', 1);
         $this->metrics->count('responses.' . intdiv($statusCode, 100) . 'xx', 1);
 
+        /** @var mixed $requestTime */
         $requestTime = $event->getRequest()->server->get('REQUEST_TIME_FLOAT');
         if (is_numeric($requestTime)) {
             $this->metrics->distribution(

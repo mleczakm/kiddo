@@ -21,6 +21,7 @@ readonly class TriggerMatchPaymentForTransferForPastTransfersHandler
     /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     public function __invoke(TriggerMatchPaymentForTransferForPastTransfers $_command): void
     {
+        /** @var mixed $transfers */
         $transfers = $this->entityManager
             ->createQuery('
             SELECT t

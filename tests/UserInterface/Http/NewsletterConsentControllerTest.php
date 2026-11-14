@@ -112,17 +112,14 @@ final class NewsletterConsentControllerTest extends WebTestCase
      */
     private function decode(KernelBrowser $client): array
     {
+        /** @var mixed $data */
         $data = json_decode((string) $client->getResponse()->getContent(), flags: JSON_THROW_ON_ERROR);
         if (!$data instanceof \stdClass) {
             throw new \UnexpectedValueException('The newsletter endpoint did not return a JSON object.');
         }
 
-        $result = [];
-        foreach (get_object_vars($data) as $key => $value) {
-            $result[(string) $key] = $value;
-        }
-
-        return $result;
+        /** @var array<string, mixed> */
+        return get_object_vars($data);
     }
 
     /** @return array{email: string, consent: true, consentVersion: string} */

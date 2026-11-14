@@ -206,29 +206,6 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
      * @return array<int, Lesson>
      */
     #[\Override]
-    public function findUpcomingWithBookings(\DateTimeImmutable $since, int $limit): array
-    {
-        /** @var list<Lesson> */
-        return $this
-            ->createQueryBuilder('l')
-            ->leftJoin('l.bookings', 'b')
-            ->leftJoin('b.child', 'c')
-            ->leftJoin('b.user', 'u')
-            ->addSelect('b, c, u')
-            ->andWhere('l.schedule > :since')
-            ->andWhere('l.status = :status')
-            ->setParameter('status', Lesson::STATUS_ACTIVE)
-            ->setParameter('since', $since)
-            ->orderBy('l.schedule', 'ASC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return array<int, Lesson>
-     */
-    #[\Override]
     public function findUpcomingWithBookingsInRange(
         \DateTimeImmutable $startDate,
         \DateTimeImmutable $endDate,
@@ -318,84 +295,6 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
 
         if (!$showCancelled) {
             $qb->andWhere('l.status = :status')->setParameter('status', Lesson::STATUS_ACTIVE);
-        }
-
-        /** @var list<Lesson> */
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @return list<Lesson>
-     */
-    #[\Override]
-    public function findCancelledInRange(\DateTimeImmutable $start, \DateTimeImmutable $end): array
-    {
-        /** @var list<Lesson> */
-        return $this
-            ->createQueryBuilder('l')
-            ->andWhere('l.status = :status')
-            ->andWhere('l.schedule BETWEEN :start AND :end')
-            ->setParameter('status', Lesson::STATUS_CANCELLED)
-            ->setParameter('start', $start)
-            ->setParameter('end', $end)
-            ->orderBy('l.schedule', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return list<Lesson>
-     */
-    #[\Override]
-    public function findByMetadataTitlePrefix(string $prefix): array
-    {
-        /** @var list<Lesson> */
-        return $this
-            ->createQueryBuilder('l')
-            ->join('l.metadata', 'm')
-            ->where('m.title LIKE :prefix')
-            ->setParameter('prefix', $prefix . '%')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return list<Lesson>
-     */
-    #[\Override]
-    public function findForStaff(
-        ?string $titleQuery,
-        ?\DateTimeImmutable $from,
-        ?\DateTimeImmutable $to,
-        ?User $instructor,
-        int $limit,
-    ): array {
-        $qb = $this
-            ->createQueryBuilder('l')
-            ->join('l.metadata', 'm')
-            ->leftJoin('l.series', 's')
-            ->andWhere('l.status = :status')
-            ->setParameter('status', Lesson::STATUS_ACTIVE)
-            ->orderBy('l.schedule', 'ASC')
-            ->setMaxResults($limit);
-
-        if ($titleQuery !== null && trim($titleQuery) !== '') {
-            $qb->andWhere('ILIKE(m.title, :query) = TRUE')->setParameter('query', '%' . trim($titleQuery) . '%');
-        }
-
-        if ($from !== null) {
-            $qb->andWhere('l.schedule >= :from')->setParameter('from', $from);
-        }
-
-        if ($to !== null) {
-            $qb->andWhere('l.schedule <= :to')->setParameter('to', $to);
-        }
-
-        if ($instructor !== null) {
-            $qb->andWhere(':instructor MEMBER OF l.instructors OR :instructor MEMBER OF s.instructors')->setParameter(
-                'instructor',
-                $instructor,
-            );
         }
 
         /** @var list<Lesson> */

@@ -241,4 +241,9 @@ class RefundRequest
         $this->approvedAmount = $approvedAmount ?? $this->requestedAmount;
         $this->approvedAmountMinor = $this->approvedAmount->getMinorAmount()->toInt();
     }
+
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
 }

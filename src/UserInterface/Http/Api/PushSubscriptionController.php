@@ -33,6 +33,7 @@ final class PushSubscriptionController extends AbstractController
             return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
+        /** @var mixed $data */
         $data = json_decode($request->getContent(), true);
         if (!is_array($data) || count($validator->validate($data, $this->subscribeConstraints())) > 0) {
             return $this->json(['error' => 'Invalid subscription'], Response::HTTP_BAD_REQUEST);
@@ -66,6 +67,7 @@ final class PushSubscriptionController extends AbstractController
             return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
+        /** @var mixed $data */
         $data = json_decode($request->getContent(), true);
         $constraints = new Assert\Collection(['endpoint' => [new Assert\NotBlank()]]);
         if (!is_array($data) || count($validator->validate($data, $constraints)) > 0) {

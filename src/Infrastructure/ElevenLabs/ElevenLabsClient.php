@@ -58,6 +58,7 @@ final readonly class ElevenLabsClient
         );
 
         $data = $response->toArray(false);
+        /** @var mixed $signedUrl */
         $signedUrl = $data['signed_url'] ?? null;
         if (!is_string($signedUrl) || $signedUrl === '') {
             throw new \RuntimeException('ElevenLabs did not return a signed_url');

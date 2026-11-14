@@ -75,6 +75,7 @@ final class DocRegistryTest extends KernelTestCase
             $html = $twig->render($article->template());
             static::assertNotSame('', trim($html), 'Empty body: ' . $article->slug);
 
+            $matches = [];
             preg_match_all('#/admin/pomoc/([a-z0-9-]+)#', $html, $matches);
             foreach (array_unique($matches[1]) as $linkedSlug) {
                 static::assertNotNull(

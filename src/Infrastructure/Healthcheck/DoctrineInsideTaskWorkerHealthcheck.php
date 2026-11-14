@@ -27,11 +27,15 @@ class DoctrineInsideTaskWorkerHealthcheck implements CheckInterface
 
             $this->bus->dispatch(new DoctrineInsideTaskWorkerCheck('doctrine_inside_task_worker'));
 
-            while (($result = $this->cache->get('doctrine_inside_task_worker')) === null) {
+            /** @var bool|null $result */
+            $result = $this->cache->get('doctrine_inside_task_worker');
+            while ($result === null) {
                 $retry++;
 
                 if ($retry <= 5) {
                     usleep(100_000); // 100ms
+                    /** @var bool|null $result */
+                    $result = $this->cache->get('doctrine_inside_task_worker');
                     continue;
                 }
 

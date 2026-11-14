@@ -59,7 +59,7 @@ final readonly class HelpChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['query'],
                 ],
-                requiresHost: true,
+                permissions: new ToolPermissions(requiresHost: true),
             ),
             new ToolDefinition(
                 'staff.get_help_article',
@@ -76,7 +76,7 @@ final readonly class HelpChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['slug'],
                 ],
-                requiresHost: true,
+                permissions: new ToolPermissions(requiresHost: true),
             ),
         ];
     }

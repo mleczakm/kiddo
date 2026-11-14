@@ -78,6 +78,7 @@ final class UserChatToolsBookingAccessTest extends KernelTestCase
             (string) $this->mailer()->sentEmails()->first()->getTextBody()
             . "\n"
             . (string) $this->mailer()->sentEmails()->first()->getHtmlBody();
+        $m = [];
         static::assertSame(1, preg_match('/weryfikacyjny to:\s*(?:<[^>]+>\s*)*(\d{6})/i', $body, $m), $body);
         $verificationCode = $m[1];
 
@@ -116,6 +117,7 @@ final class UserChatToolsBookingAccessTest extends KernelTestCase
      */
     private function lessonIds(array $data): array
     {
+        /** @var mixed $lessons */
         $lessons = $data['lessons'] ?? [];
         static::assertIsArray($lessons);
         /** @var list<array{id?: string}> $lessons */

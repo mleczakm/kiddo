@@ -8,6 +8,7 @@ use App\Application\Chat\ChatActor;
 use App\Application\Chat\ChatToolProviderInterface;
 use App\Application\Chat\ChatToolRegistry;
 use App\Application\Chat\ToolDefinition;
+use App\Application\Chat\ToolPermissions;
 use App\Application\Chat\ToolResult;
 use App\Tests\Assembler\UserAssembler;
 use PHPUnit\Framework\Attributes\Group;
@@ -30,7 +31,7 @@ final class ChatToolRegistryTest extends TestCase
                             'type' => 'object',
                             'properties' => new \stdClass(),
                         ],
-                        requiresConfirm: true,
+                        permissions: new ToolPermissions(requiresConfirm: true),
                     ),
                 ];
             }
@@ -79,7 +80,7 @@ final class ChatToolRegistryTest extends TestCase
                             'type' => 'object',
                             'properties' => new \stdClass(),
                         ],
-                        requiresAdmin: true,
+                        permissions: new ToolPermissions(requiresAdmin: true),
                     ),
                 ];
             }
@@ -120,7 +121,7 @@ final class ChatToolRegistryTest extends TestCase
                             'type' => 'object',
                             'properties' => new \stdClass(),
                         ],
-                        requiresHost: true,
+                        permissions: new ToolPermissions(requiresHost: true),
                     ),
                 ];
             }
@@ -189,7 +190,7 @@ final class ChatToolRegistryTest extends TestCase
                             'type' => 'object',
                             'properties' => new \stdClass(),
                         ],
-                        requiresAuth: false,
+                        permissions: new ToolPermissions(requiresAuth: false),
                     ),
                 ];
             }
@@ -232,7 +233,7 @@ final class ChatToolRegistryTest extends TestCase
                             'type' => 'object',
                             'properties' => new \stdClass(),
                         ],
-                        requiresAuth: false,
+                        permissions: new ToolPermissions(requiresAuth: false),
                     ),
                     new ToolDefinition(
                         'admin.create_booking',
@@ -241,8 +242,7 @@ final class ChatToolRegistryTest extends TestCase
                             'type' => 'object',
                             'properties' => new \stdClass(),
                         ],
-                        requiresAdmin: true,
-                        requiresConfirm: true,
+                        permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
                     ),
                 ];
             }
@@ -277,7 +277,7 @@ final class ChatToolRegistryTest extends TestCase
                 'type' => 'object',
                 'properties' => new \stdClass(),
             ],
-            requiresAuth: false,
+            permissions: new ToolPermissions(requiresAuth: false),
         );
         static::assertSame(['user_list_upcoming_lessons'], $registry->mcpNamesFor($catalog));
         static::assertSame('user_list_upcoming_lessons', $registry->mcpPublicName($catalog));
@@ -289,8 +289,7 @@ final class ChatToolRegistryTest extends TestCase
                 'type' => 'object',
                 'properties' => new \stdClass(),
             ],
-            requiresAdmin: true,
-            requiresConfirm: true,
+            permissions: new ToolPermissions(requiresAdmin: true, requiresConfirm: true),
         );
         static::assertSame(['admin_create_booking'], $registry->mcpNamesFor($booking));
         static::assertNull($registry->resolveCanonicalName('create_lesson'));

@@ -8,32 +8,32 @@ final class ChatToolAccess
 {
     public function isVisible(ToolDefinition $definition, ?ChatActor $actor): bool
     {
-        if ($definition->requiresAdmin && $actor?->isAdmin() !== true) {
+        if ($definition->permissions->requiresAdmin && $actor?->isAdmin() !== true) {
             return false;
         }
 
-        return !$definition->requiresHost || $actor?->isHost() === true;
+        return !$definition->permissions->requiresHost || $actor?->isHost() === true;
     }
 
     /** @param array<string, mixed> $arguments */
     public function denial(ToolDefinition $definition, ChatActor $actor, array $arguments): ?ToolResult
     {
-        if ($definition->requiresAdmin && !$actor->isAdmin()) {
+        if ($definition->permissions->requiresAdmin && !$actor->isAdmin()) {
             return ToolResult::failure('This tool requires ROLE_ADMIN');
         }
-        if ($definition->requiresHost && !$actor->isHost()) {
+        if ($definition->permissions->requiresHost && !$actor->isHost()) {
             return ToolResult::failure(
                 'This tool requires ROLE_HOST or ROLE_ADMIN',
                 'Ta akcja jest dostępna tylko dla prowadzących zajęcia i administratorów.',
             );
         }
-        if ($definition->requiresAuth && $actor->isGuest()) {
+        if ($definition->permissions->requiresAuth && $actor->isGuest()) {
             return ToolResult::failure(
                 'Authentication required. Ask the user to log in, then refresh the chat.',
                 'Aby zobaczyć te dane lub wykonać tę akcję, musisz się zalogować. Otwórz /login, a po zalogowaniu odśwież czat.',
             );
         }
-        if ($definition->requiresConfirm && ($arguments['confirm'] ?? false) !== true) {
+        if ($definition->permissions->requiresConfirm && ($arguments['confirm'] ?? false) !== true) {
             return ToolResult::failure(
                 'Mutation not confirmed. Call again with confirm=true after user approval.',
                 'Potrzebne potwierdzenie użytkownika (confirm=true).',

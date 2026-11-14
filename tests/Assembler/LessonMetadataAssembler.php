@@ -9,29 +9,23 @@ use App\Entity\LessonMetadata;
 
 class LessonMetadataAssembler
 {
-    public function __construct(
-        private string $title,
-        private string $lead,
-        private string $visualTheme,
-        private string $description,
-        private int $capacity,
-        private int $duration,
-        private AgeRange $ageRange,
-        private string $category = 'Category',
-    ) {}
+    private string $title = 'Default Title';
+    private string $lead = 'Default Lead';
+    private string $visualTheme = 'Default Visual Theme';
+    private string $description = 'Default Description';
+    private int $capacity = 30;
+    private int $duration = 60;
+    private string $category = 'Default Category';
+    private AgeRange $ageRange;
+
+    private function __construct()
+    {
+        $this->ageRange = AgeRangeAssembler::new()->assemble();
+    }
 
     public static function new(): self
     {
-        return new self(
-            title: 'Default Title',
-            lead: 'Default Lead',
-            visualTheme: 'Default Visual Theme',
-            description: 'Default Description',
-            capacity: 30,
-            duration: 60,
-            ageRange: AgeRangeAssembler::new()->assemble(),
-            category: 'Default Category',
-        );
+        return new self();
     }
 
     public function withTitle(string $title): self

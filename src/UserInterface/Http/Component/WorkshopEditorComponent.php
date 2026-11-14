@@ -353,9 +353,7 @@ class WorkshopEditorComponent extends AbstractController
                 $this->carnet4Price = (string) $option->price->getAmount();
                 continue;
             }
-            if ($option->type === TicketType::MONTHLY) {
-                $this->monthlyPrice = (string) $option->price->getAmount();
-            }
+            $this->monthlyPrice = (string) $option->price->getAmount();
         }
     }
 
@@ -774,6 +772,7 @@ class WorkshopEditorComponent extends AbstractController
     #[LiveAction]
     public function save(Request $request): void
     {
+        /** @var mixed $imageFile */
         $imageFile = $request->files->get('imageFile');
         $this->uploadedImage = $imageFile instanceof UploadedFile ? $imageFile : null;
         $attachmentFiles = $request->files->all('attachmentFiles');
@@ -839,7 +838,7 @@ class WorkshopEditorComponent extends AbstractController
             } else {
                 $this->saveNewSeries($ticketOptions);
             }
-        } catch (\DomainException|\InvalidArgumentException|\ValueError $e) {
+        } catch (\DomainException|\InvalidArgumentException $e) {
             $this->addFlash('error', $e->getMessage());
         }
     }
@@ -854,7 +853,6 @@ class WorkshopEditorComponent extends AbstractController
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\TransactionRequiredException
      * @throws \LogicException
-     * @throws \ValueError
      * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function saveExistingLesson(array $ticketOptions): void
@@ -992,7 +990,6 @@ class WorkshopEditorComponent extends AbstractController
      * @throws \InvalidArgumentException
      * @throws \UnexpectedValueException
      * @throws \LogicException
-     * @throws \ValueError
      */
     private function saveNewSeries(array $ticketOptions): void
     {
@@ -1076,7 +1073,6 @@ class WorkshopEditorComponent extends AbstractController
      * @throws \DomainException
      * @throws \InvalidArgumentException
      * @throws \LogicException
-     * @throws \ValueError
      */
     private function reconcileWorkshopFiles(LessonMetadata $metadata): void
     {
@@ -1087,7 +1083,9 @@ class WorkshopEditorComponent extends AbstractController
             $this->removedAttachmentIds,
         );
 
-        $role = WorkshopFileRole::from($this->newAttachmentRole);
+        $role = WorkshopFileRole::tryFrom($this->newAttachmentRole) ?? throw new \InvalidArgumentException(
+            'Nieprawidłowa rola załącznika.',
+        );
 
         if ($this->uploadedAttachments !== []) {
             $user = $this->getUser();

@@ -112,7 +112,7 @@ final class AdminGlobalSearchTest extends WebTestCase
 
         static::assertStringContainsString('Client</span>', $html);
         static::assertStringContainsString('<mark class="bg-amber-200', $html);
-        static::assertStringContainsString('/admin/uzytkownicy/' . $customer->getId(), $html);
+        static::assertStringContainsString('/admin/uzytkownicy/' . (string) $customer->getId(), $html);
         static::assertStringContainsString('data-search-result-icon="client"', $html);
         static::assertStringContainsString('bg-sky-100 text-sky-700', $html);
     }

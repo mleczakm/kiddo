@@ -6,6 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Application\Repository\ActivityLogRepositoryInterface;
 use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\LessonSearchInterface;
 use App\Application\Repository\PricingRuleRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\ActivityLogger;
@@ -121,6 +122,7 @@ class AdminPricingRulesComponent extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepositoryInterface $userRepository,
         private readonly LessonRepositoryInterface $lessonRepository,
+        private readonly LessonSearchInterface $lessonQueries,
         private readonly PriceQuoter $priceQuoter,
         private readonly StateMachinesInterface $stateMachines,
     ) {}
@@ -417,7 +419,7 @@ class AdminPricingRulesComponent extends AbstractController
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, string|int|null>
      */
     private function snapshotFields(PricingRule $rule): array
     {
@@ -538,7 +540,7 @@ class AdminPricingRulesComponent extends AbstractController
         return array_map(static fn(Lesson $l): array => [
             'id' => (string) $l->getId(),
             'title' => $l->getMetadata()->title,
-        ], $this->lessonRepository->findByMetadataTitlePrefix($this->previewLessonSearch));
+        ], $this->lessonQueries->findByMetadataTitlePrefix($this->previewLessonSearch));
     }
 
     #[LiveAction]

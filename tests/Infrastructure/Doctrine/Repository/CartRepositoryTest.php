@@ -6,6 +6,8 @@ namespace App\Tests\Infrastructure\Doctrine\Repository;
 
 use App\Domain\Commerce\Cart\Cart;
 use App\Domain\Commerce\Cart\CartItem;
+use App\Domain\Commerce\Cart\CartItemDetails;
+use App\Domain\Commerce\Cart\CartItemPrice;
 use App\Infrastructure\Doctrine\Repository\CartItemRepository;
 use App\Infrastructure\Doctrine\Repository\CartRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,26 +68,29 @@ final class CartRepositoryTest extends KernelTestCase
             cartId: $cart->id,
             lessonId: new Ulid(),
             ticketType: 'one_time',
-            participantId: null,
-            basePriceMinor: 5000,
-            finalPriceMinor: 4500,
-            currency: 'PLN',
-            pricingQuoteHash: 'hash-1',
-            quotedAt: new \DateTimeImmutable('2026-08-21 10:00:00'),
-            addedAt: new \DateTimeImmutable('2026-08-21 10:00:00'),
+            details: new CartItemDetails(
+                participantId: null,
+                currency: 'PLN',
+                price: new CartItemPrice(
+                    baseMinor: 5000,
+                    finalMinor: 4500,
+                    quoteHash: 'hash-1',
+                    quotedAt: new \DateTimeImmutable('2026-08-21 10:00:00'),
+                ),
+                addedAt: new \DateTimeImmutable('2026-08-21 10:00:00'),
+            ),
         );
         $second = new CartItem(
             id: new Ulid(),
             cartId: $cart->id,
             lessonId: new Ulid(),
             ticketType: 'carnet_4',
-            participantId: new Ulid(),
-            basePriceMinor: 18_000,
-            finalPriceMinor: 18_000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: null,
-            addedAt: new \DateTimeImmutable('2026-08-21 10:05:00'),
+            details: new CartItemDetails(
+                participantId: new Ulid(),
+                currency: 'PLN',
+                price: new CartItemPrice(baseMinor: 18_000, finalMinor: 18_000, quoteHash: null, quotedAt: null),
+                addedAt: new \DateTimeImmutable('2026-08-21 10:05:00'),
+            ),
         );
         $em->persist($first);
         $em->persist($second);

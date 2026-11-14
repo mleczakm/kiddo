@@ -45,13 +45,16 @@ final class UserChatToolsCreateBookingPaymentTest extends KernelTestCase
         ]);
 
         static::assertTrue($result->ok, $result->error ?? $result->summary);
+        /** @var mixed $paymentCode */
         $paymentCode = $result->data['payment_code'] ?? null;
+        /** @var mixed $bookingId */
         $bookingId = $result->data['booking_id'] ?? null;
         static::assertIsString($paymentCode);
         static::assertNotSame('', $paymentCode);
         static::assertIsString($bookingId);
         static::assertNotSame('', $bookingId);
 
+        /** @var mixed $payment */
         $payment = $result->data['payment'] ?? [];
         static::assertIsArray($payment);
         static::assertSame($paymentCode, $payment['code'] ?? null);

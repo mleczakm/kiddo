@@ -64,9 +64,7 @@ final class OrderPlacementService
              * @throws \Doctrine\DBAL\Exception
              * @throws \Random\RandomException
              */
-            function () use ($user, $source, $paymentCode, $items, $options): OrderPlacementResult {
-                return $this->placeTransactionally($user, $source, $paymentCode, $items, $options);
-            };
+            fn() => $this->placeTransactionally($user, $source, $paymentCode, $items, $options);
 
         if ($this->em->getConnection()->isTransactionActive()) {
             return $place();

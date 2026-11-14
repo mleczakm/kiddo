@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\UseCase\Cart;
 
 use App\Application\Repository\CartItemRepositoryInterface;
-use App\Application\Repository\CartRepositoryInterface;
 use App\Application\Repository\CustomerOrderRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Application\Service\Commerce\CartItemLookup;
@@ -40,7 +39,6 @@ use Symfony\Component\Uid\Ulid;
 final readonly class CheckoutCart
 {
     public function __construct(
-        private CartRepositoryInterface $cartRepository,
         private CartItemRepositoryInterface $cartItemRepository,
         private CustomerOrderRepositoryInterface $orderRepository,
         private CartItemLookup $itemLookup,
@@ -93,9 +91,7 @@ final readonly class CheckoutCart
              * @throws \Random\RandomException
              * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
              */
-            function () use ($cartId, $requestingUserId, $paymentCode, $buyerDetails): CustomerOrder {
-                return $this->checkoutTransactionally($cartId, $requestingUserId, $paymentCode, $buyerDetails);
-            };
+            fn() => $this->checkoutTransactionally($cartId, $requestingUserId, $paymentCode, $buyerDetails);
 
         if ($this->em->getConnection()->isTransactionActive()) {
             return $checkout();

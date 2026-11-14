@@ -32,6 +32,7 @@ final readonly class OrphanFileCleanupService
     {
         $cutoff = Clock::get()->now()->modify("-{$this->minAgeHours} hours");
 
+        /** @var mixed $result */
         $result = $this->em
             ->createQueryBuilder()
             ->delete('App\Entity\File', 'f')

@@ -31,7 +31,7 @@ final readonly class AnonymizeExpiredAccountsHandler
     ) {}
 
     /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
-    public function __invoke(AnonymizeExpiredAccounts $command): void
+    public function __invoke(AnonymizeExpiredAccounts $_command): void
     {
         $cutoff = Clock::get()->now()->modify(sprintf('-%d days', self::GRACE_DAYS));
         $expired = $this->userRepository->findPendingDeletionBefore($cutoff);

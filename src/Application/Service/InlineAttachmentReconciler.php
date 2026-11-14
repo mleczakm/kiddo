@@ -58,7 +58,9 @@ final readonly class InlineAttachmentReconciler
                 return;
             }
 
+            /** @var mixed $src */
             $src = $node['attrs']['src'] ?? null;
+            $matches = [];
             if (\is_string($src) && preg_match('~/pliki/([A-Za-z0-9]{26})/~', $src, $matches)) {
                 $fileIds[] = $matches[1];
             }

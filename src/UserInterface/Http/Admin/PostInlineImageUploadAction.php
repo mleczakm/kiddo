@@ -42,6 +42,7 @@ final class PostInlineImageUploadAction extends AbstractController
     )]
     public function __invoke(Post $post, Request $request): Response
     {
+        /** @var mixed $file */
         $file = $request->files->get('file');
         if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
             return new JsonResponse(['error' => 'No file provided'], Response::HTTP_BAD_REQUEST);

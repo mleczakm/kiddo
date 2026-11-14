@@ -7,6 +7,7 @@ namespace App\Infrastructure\ImapEngine;
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
 use DirectoryTree\ImapEngine\MailboxInterface;
 use DirectoryTree\ImapEngine\MessageInterface;
+use DirectoryTree\ImapEngine\MessageQuery;
 use Psr\Log\LoggerInterface;
 
 final readonly class AliorNotificationMailProvider implements IncomingNotificationMailQuery
@@ -34,14 +35,14 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
         try {
             $this->mailbox->reconnect();
 
-            yield from $this->mailbox
-                ->inbox()
-                ->messages()
-                ->from('powiadomienia@alior.pl')
-                ->withHeaders()
-                ->withBody()
-                ->unseen()
-                ->get();
+            $query = $this->mailbox->inbox()->messages();
+            if (!$query instanceof MessageQuery) {
+                throw new \UnexpectedValueException('Expected an IMAP query with server-side filters.');
+            }
+
+            $query->__call('from', ['powiadomienia@alior.pl']);
+            $query->__call('unseen', []);
+            yield from $query->withHeaders()->withBody()->get();
         } catch (\Throwable $exception) {
             // Deliberately doesn't restart the worker (previously called
             // CurrentWorkerRestarterInterface::restart(), i.e. $server->stop($server->worker_id)).

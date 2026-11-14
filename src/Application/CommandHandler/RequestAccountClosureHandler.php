@@ -12,6 +12,7 @@ use App\Application\Notification\NotificationSenderInterface;
 use App\Application\Repository\UserRepositoryInterface;
 use App\Entity\ConsentSource;
 use App\Entity\ConsentType;
+use App\Entity\User;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -43,19 +44,7 @@ final readonly class RequestAccountClosureHandler
 
         $now = Clock::get()->now();
 
-        if ($command->permanent) {
-            $user->getLifecycle()->requestDeletion($now);
-            $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::ACCOUNT_SETTINGS, [
-                new ConsentGrant(
-                    ConsentType::ACCOUNT_DELETION,
-                    ConsentEvidence::statement($this->translator->trans('account.close.delete_statement')),
-                ),
-            ]));
-            $key = 'account.close.email.delete';
-        } else {
-            $user->getLifecycle()->deactivate($now);
-            $key = 'account.close.email.pause';
-        }
+        $key = $command->permanent ? $this->requestDeletion($user, $now) : $this->deactivate($user, $now);
 
         $this->notificationSender->send(
             $user->getEmail(),
@@ -66,5 +55,30 @@ final readonly class RequestAccountClosureHandler
                 'emails',
             ),
         );
+    }
+
+    /**
+     * @return string translation key prefix of the notification email
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
+    private function requestDeletion(User $user, \DateTimeImmutable $now): string
+    {
+        $user->getLifecycle()->requestDeletion($now);
+        $this->commandBus->dispatch(new RecordConsents($user, ConsentSource::ACCOUNT_SETTINGS, [
+            new ConsentGrant(
+                ConsentType::ACCOUNT_DELETION,
+                ConsentEvidence::statement($this->translator->trans('account.close.delete_statement')),
+            ),
+        ]));
+
+        return 'account.close.email.delete';
+    }
+
+    private function deactivate(User $user, \DateTimeImmutable $now): string
+    {
+        $user->getLifecycle()->deactivate($now);
+
+        return 'account.close.email.pause';
     }
 }

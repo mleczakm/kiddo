@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Assembler;
 
-use function method_exists;
-
 /**
  * @template T of object
  * @implements \IteratorAggregate<string, mixed>
@@ -16,6 +14,8 @@ abstract class EntityAssembler implements \IteratorAggregate
      * @var array<string, mixed>
      */
     protected array $properties = [];
+
+    final public function __construct() {}
 
     final public static function new(): static
     {
@@ -30,14 +30,7 @@ abstract class EntityAssembler implements \IteratorAggregate
     final public static function withProperties(array $properties): static
     {
         $assembler = static::new();
-        foreach ($properties as $property => $value) {
-            $method = 'with' . ucfirst($property);
-            if (method_exists($assembler, $method)) {
-                $assembler->{$method}($value);
-            } else {
-                $assembler->properties[$property] = $value;
-            }
-        }
+        $assembler->properties = $properties;
         return $assembler;
     }
 

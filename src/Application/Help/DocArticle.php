@@ -12,21 +12,31 @@ namespace App\Application\Help;
  */
 final readonly class DocArticle
 {
-    /**
-     * @param list<string> $keywords extra search terms not already in the title/summary
-     * @param list<string> $related slugs of related articles, shown as cross-links
-     */
+    public string $role;
+
+    public ?string $primaryRoute;
+
+    /** @var list<string> */
+    public array $keywords;
+
+    /** @var list<string> */
+    public array $related;
+
+    public \DateTimeImmutable $updatedAt;
+
     public function __construct(
         public string $slug,
         public string $title,
         public string $summary,
         public DocSection $section,
-        public string $role,
-        public ?string $primaryRoute,
-        public array $keywords,
-        public array $related,
-        public \DateTimeImmutable $updatedAt,
-    ) {}
+        DocArticleMetadata $metadata,
+    ) {
+        $this->role = $metadata->role;
+        $this->primaryRoute = $metadata->primaryRoute;
+        $this->keywords = $metadata->keywords;
+        $this->related = $metadata->related;
+        $this->updatedAt = $metadata->updatedAt;
+    }
 
     /** Twig template holding the article body. */
     public function template(): string

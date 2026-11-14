@@ -107,6 +107,7 @@ final readonly class PostFormHandler
             return ['type' => 'doc', 'content' => []];
         }
 
+        /** @var mixed $decoded */
         $decoded = json_decode($raw, true);
         if (!\is_array($decoded) || array_is_list($decoded)) {
             return ['type' => 'doc', 'content' => []];
@@ -145,7 +146,7 @@ final readonly class PostFormHandler
             ];
         }
 
-        if (\count($submitted) > 0 || \count($post->files) > 0) {
+        if ($submitted !== [] || !$post->files->isEmpty()) {
             $this->editor->reconcileAttachments($post, $submitted);
         }
     }

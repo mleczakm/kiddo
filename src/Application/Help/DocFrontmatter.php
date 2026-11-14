@@ -42,6 +42,7 @@ final readonly class DocFrontmatter
         }
 
         try {
+            /** @var mixed $parsed */
             $parsed = Yaml::parse($matches['yaml']);
         } catch (ParseException $exception) {
             throw new \RuntimeException(
@@ -64,6 +65,7 @@ final readonly class DocFrontmatter
      */
     public function string(string $key): string
     {
+        /** @var mixed $value */
         $value = $this->data[$key] ?? null;
         if (!is_string($value) || trim($value) === '') {
             throw new \RuntimeException(sprintf('Frontmatter key "%s" is required.', $key));
@@ -74,6 +76,7 @@ final readonly class DocFrontmatter
 
     public function optionalString(string $key): ?string
     {
+        /** @var mixed $value */
         $value = $this->data[$key] ?? null;
 
         return is_string($value) && trim($value) !== '' ? trim($value) : null;
@@ -84,13 +87,16 @@ final readonly class DocFrontmatter
      */
     public function stringList(string $key): array
     {
+        /** @var mixed $value */
         $value = $this->data[$key] ?? null;
         if (!is_array($value)) {
             return [];
         }
 
         $list = [];
-        foreach ($value as $item) {
+        foreach (array_keys($value) as $index) {
+            /** @var mixed $item */
+            $item = $value[$index];
             if (!is_string($item) || trim($item) === '') {
                 continue;
             }

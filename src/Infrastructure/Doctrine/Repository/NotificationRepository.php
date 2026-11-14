@@ -77,6 +77,7 @@ class NotificationRepository extends ServiceEntityRepository implements Notifica
     #[\Override]
     public function hardDeleteOlderThan(\DateTimeImmutable $cutoff): int
     {
+        /** @var mixed $deleted */
         $deleted = $this
             ->createQueryBuilder('n')
             ->delete()

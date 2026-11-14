@@ -597,6 +597,7 @@ class AdminBookingsComponent extends AbstractController
     public function getSelectedLessonIdsArray(): array
     {
         try {
+            /** @var mixed $decoded */
             $decoded = json_decode($this->selectedLessonIds, true);
             if (!is_array($decoded)) {
                 return [];

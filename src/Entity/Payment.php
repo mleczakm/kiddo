@@ -417,17 +417,13 @@ class Payment
              * @throws \Brick\Math\Exception\RoundingNecessaryException
              * @throws \Brick\Money\Exception\UnknownCurrencyException
              */
-            static function (Transfer $transfer): Money {
-                return TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount);
-            },
+            static fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount),
         )->reduce(
             /**
              * @throws \Brick\Math\Exception\MathException
              * @throws \Brick\Money\Exception\MoneyMismatchException
              */
-            static function (Money $carry, Money $transfer): Money {
-                return $carry->plus($transfer);
-            },
+            static fn(Money $carry, Money $transfer): Money => $carry->plus($transfer),
             Money::zero('PLN'),
         );
     }

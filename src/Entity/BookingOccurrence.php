@@ -26,6 +26,14 @@ class BookingOccurrence
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Booking $booking;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $cancelledAt = null;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $cancelledBy = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $cancellationReason = null;
+
     public function __construct(
         Booking $booking,
         #[ORM\ManyToOne(targetEntity: Lesson::class)]
@@ -36,13 +44,6 @@ class BookingOccurrence
         #[ORM\ManyToOne(targetEntity: Lesson::class)]
         #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
         private ?Lesson $rescheduledTo = null,
-        #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-        private ?\DateTimeImmutable $cancelledAt = null,
-        #[ORM\ManyToOne(targetEntity: User::class)]
-        #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-        private ?User $cancelledBy = null,
-        #[ORM\Column(type: 'text', nullable: true)]
-        private ?string $cancellationReason = null,
     ) {
         $this->id = new Ulid();
         $this->booking = $booking;
@@ -51,6 +52,11 @@ class BookingOccurrence
     public function getId(): Ulid
     {
         return $this->id;
+    }
+
+    public function getBooking(): Booking
+    {
+        return $this->booking;
     }
 
     public function getLesson(): Lesson

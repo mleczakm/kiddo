@@ -6,6 +6,7 @@ namespace App\Tests\Application\Help;
 
 use App\Application\Help\DocArticle;
 use App\Application\Help\DocArticleMatcher;
+use App\Application\Help\DocArticleMetadata;
 use App\Application\Help\DocSection;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -55,11 +56,13 @@ final class DocArticleMatcherTest extends TestCase
             title: $title,
             summary: $summary,
             section: DocSection::Finance,
-            role: 'ROLE_MANAGE_PAYMENTS',
-            primaryRoute: null,
-            keywords: $keywords,
-            related: [],
-            updatedAt: new \DateTimeImmutable('2026-01-01'),
+            metadata: new DocArticleMetadata(
+                role: 'ROLE_MANAGE_PAYMENTS',
+                primaryRoute: null,
+                keywords: $keywords,
+                related: [],
+                updatedAt: new \DateTimeImmutable('2026-01-01'),
+            ),
         );
     }
 }

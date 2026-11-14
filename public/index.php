@@ -10,5 +10,8 @@ return static function (array $context): Kernel {
     /** @var string $environment */
     $environment = $context['APP_ENV'];
 
-    return new Kernel($environment, (bool) $context['APP_DEBUG']);
+    /** @var bool $debug */
+    $debug = $context['APP_DEBUG'];
+
+    return new Kernel($environment, $debug);
 };

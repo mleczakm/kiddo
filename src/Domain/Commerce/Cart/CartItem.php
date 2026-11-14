@@ -17,19 +17,35 @@ use Symfony\Component\Uid\Ulid;
  */
 final class CartItem
 {
+    public ?Ulid $participantId;
+
+    public int $basePriceMinor;
+
+    public int $finalPriceMinor;
+
+    public readonly string $currency;
+
+    public ?string $pricingQuoteHash;
+
+    public ?\DateTimeImmutable $quotedAt;
+
+    public readonly \DateTimeImmutable $addedAt;
+
     public function __construct(
         public readonly Ulid $id,
         public readonly Ulid $cartId,
         public readonly Ulid $lessonId,
         public readonly string $ticketType,
-        public ?Ulid $participantId,
-        public int $basePriceMinor,
-        public int $finalPriceMinor,
-        public readonly string $currency,
-        public ?string $pricingQuoteHash,
-        public ?\DateTimeImmutable $quotedAt,
-        public readonly \DateTimeImmutable $addedAt = new \DateTimeImmutable(),
-    ) {}
+        CartItemDetails $details,
+    ) {
+        $this->participantId = $details->participantId;
+        $this->currency = $details->currency;
+        $this->basePriceMinor = $details->price->baseMinor;
+        $this->finalPriceMinor = $details->price->finalMinor;
+        $this->pricingQuoteHash = $details->price->quoteHash;
+        $this->quotedAt = $details->price->quotedAt;
+        $this->addedAt = $details->addedAt;
+    }
 
     /**
      * Whether $other selects the same ticket/participant combination as this

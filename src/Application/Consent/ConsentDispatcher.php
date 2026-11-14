@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 
 /**
  * The one place consent commands are dispatched: recording an acceptance must
@@ -29,7 +30,7 @@ final readonly class ConsentDispatcher
 
     public function record(User $user, ConsentSource $source, ConsentGrant ...$grants): void
     {
-        $this->send(new RecordConsents($user, $source, $grants), $user, $source, false);
+        $this->send(new RecordConsents($user, $source, $grants), $user, $source);
     }
 
     /**
@@ -38,22 +39,18 @@ final readonly class ConsentDispatcher
      */
     public function recordDeferred(User $user, ConsentSource $source, ConsentGrant ...$grants): void
     {
-        $this->send(new RecordConsents($user, $source, $grants), $user, $source, true);
+        $this->send(new RecordConsents($user, $source, $grants), $user, $source, new DispatchAfterCurrentBusStamp());
     }
 
     public function revoke(User $user, ConsentType $type, ConsentSource $source): void
     {
-        $this->send(new RevokeConsent($user, $type, $source), $user, $source, false);
+        $this->send(new RevokeConsent($user, $type, $source), $user, $source);
     }
 
-    private function send(object $message, User $user, ConsentSource $source, bool $deferred): void
+    private function send(object $message, User $user, ConsentSource $source, StampInterface ...$stamps): void
     {
         try {
-            $envelope = new Envelope($message);
-            if ($deferred) {
-                $envelope = $envelope->with(new DispatchAfterCurrentBusStamp());
-            }
-            $this->commandBus->dispatch($envelope);
+            $this->commandBus->dispatch(new Envelope($message, $stamps));
         } catch (\Throwable $exception) {
             $this->logger->error('Unable to dispatch consent command.', [
                 'exception' => $exception,

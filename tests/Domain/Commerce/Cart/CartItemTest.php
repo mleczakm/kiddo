@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Domain\Commerce\Cart;
 
 use App\Domain\Commerce\Cart\CartItem;
+use App\Domain\Commerce\Cart\CartItemDetails;
+use App\Domain\Commerce\Cart\CartItemPrice;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Ulid;
@@ -59,12 +61,11 @@ final class CartItemTest extends TestCase
             cartId: new Ulid(),
             lessonId: $lessonId,
             ticketType: $ticketType,
-            participantId: $participantId,
-            basePriceMinor: 5000,
-            finalPriceMinor: 5000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: null,
+            details: new CartItemDetails(
+                participantId: $participantId,
+                currency: 'PLN',
+                price: new CartItemPrice(baseMinor: 5000, finalMinor: 5000, quoteHash: null, quotedAt: null),
+            ),
         );
     }
 }

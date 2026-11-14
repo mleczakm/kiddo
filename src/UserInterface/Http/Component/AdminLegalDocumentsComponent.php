@@ -110,17 +110,17 @@ final class AdminLegalDocumentsComponent extends AbstractController
             return;
         }
 
+        $notified = $this->notifyUsers;
         try {
-            $version = $this->publisher->publish(
-                new NewLegalDocumentVersion($type, $upload, $effectiveFrom, $user, $this->changeSummary),
-                $this->notifyUsers,
-            );
+            $newVersion = new NewLegalDocumentVersion($type, $upload, $effectiveFrom, $user, $this->changeSummary);
+            $version = $notified
+                ? $this->publisher->publishAndNotify($newVersion)
+                : $this->publisher->publish($newVersion);
         } catch (\InvalidArgumentException $exception) {
             $this->toast($exception->getMessage(), 'error');
             return;
         }
 
-        $notified = $this->notifyUsers;
         $this->changeSummary = null;
         $this->notifyUsers = false;
         $this->toast(\sprintf(

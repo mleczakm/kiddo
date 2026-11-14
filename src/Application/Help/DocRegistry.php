@@ -104,11 +104,13 @@ final class DocRegistry
             title: $meta->string('title'),
             summary: $meta->string('summary'),
             section: $section,
-            role: $role,
-            primaryRoute: $meta->optionalString('primary_route'),
-            keywords: $meta->stringList('keywords'),
-            related: $meta->stringList('related'),
-            updatedAt: new \DateTimeImmutable('@' . ($mtime === false ? '0' : (string) $mtime)),
+            metadata: new DocArticleMetadata(
+                role: $role,
+                primaryRoute: $meta->optionalString('primary_route'),
+                keywords: $meta->stringList('keywords'),
+                related: $meta->stringList('related'),
+                updatedAt: new \DateTimeImmutable('@' . ($mtime === false ? '0' : (string) $mtime)),
+            ),
         );
     }
 }

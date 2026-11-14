@@ -50,16 +50,26 @@ class SettingRepository extends ServiceEntityRepository implements SettingReposi
                 $setting = $this->findOneByKey($key);
                 if ($setting !== null) {
                     $em->refresh($setting);
-                } else {
-                    $setting = new Setting();
-                    $setting->setKey($key);
-                    $em->persist($setting);
                 }
+
+                $setting ??= $this->createSetting($key);
                 $content = $update($setting->getContent() ?? []);
                 $setting->setContent($content);
                 $em->flush();
                 return $content;
             },
         );
+    }
+
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     */
+    private function createSetting(string $key): Setting
+    {
+        $setting = new Setting();
+        $setting->setKey($key);
+        $this->getEntityManager()->persist($setting);
+
+        return $setting;
     }
 }

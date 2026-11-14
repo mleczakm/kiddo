@@ -118,10 +118,13 @@ final readonly class RecommendationManager
                     }
                     if ($action === 'delete') {
                         unset($reviews[$index]);
-                    } else {
-                        $reviews[$index]['status'] = 'published';
-                        $reviews[$index]['enabled'] = true;
+
+                        return ['reviews' => array_values($reviews)];
                     }
+
+                    $reviews[$index]['status'] = 'published';
+                    $reviews[$index]['enabled'] = true;
+
                     return ['reviews' => array_values($reviews)];
                 }
                 throw new \InvalidArgumentException('Nie znaleziono opinii.');

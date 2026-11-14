@@ -114,6 +114,16 @@ class WaitlistEntry
         return $this->queuedAt;
     }
 
+    public function getOfferedAt(): ?\DateTimeImmutable
+    {
+        return $this->offeredAt;
+    }
+
+    public function getClosedAt(): ?\DateTimeImmutable
+    {
+        return $this->closedAt;
+    }
+
     public function getOfferExpiresAt(): ?\DateTimeImmutable
     {
         return $this->offerExpiresAt;
@@ -170,5 +180,10 @@ class WaitlistEntry
         if (!$this->isActive()) {
             $this->closedAt = $now;
         }
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 }

@@ -6,6 +6,8 @@ namespace App\Tests\UserInterface\Http\Component;
 
 use App\Domain\Commerce\Cart\Cart;
 use App\Domain\Commerce\Cart\CartItem;
+use App\Domain\Commerce\Cart\CartItemDetails;
+use App\Domain\Commerce\Cart\CartItemPrice;
 use App\Domain\Commerce\Order\BuyerType;
 use App\Domain\Commerce\Order\CustomerOrder;
 use App\Domain\Commerce\Pricing\AdjustmentType;
@@ -60,12 +62,16 @@ final class CartComponentTest extends WebTestCase
             cartId: $cart->id,
             lessonId: $lesson->getId(),
             ticketType: TicketType::ONE_TIME->value,
-            participantId: null,
-            basePriceMinor: 5000,
-            finalPriceMinor: 5000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: new \DateTimeImmutable(),
+            details: new CartItemDetails(
+                participantId: null,
+                currency: 'PLN',
+                price: new CartItemPrice(
+                    baseMinor: 5000,
+                    finalMinor: 5000,
+                    quoteHash: null,
+                    quotedAt: new \DateTimeImmutable(),
+                ),
+            ),
         ));
         $em->flush();
 
@@ -102,12 +108,16 @@ final class CartComponentTest extends WebTestCase
             cartId: $cart->id,
             lessonId: $lesson->getId(),
             ticketType: TicketType::ONE_TIME->value,
-            participantId: null,
-            basePriceMinor: 5000,
-            finalPriceMinor: 5000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: new \DateTimeImmutable(),
+            details: new CartItemDetails(
+                participantId: null,
+                currency: 'PLN',
+                price: new CartItemPrice(
+                    baseMinor: 5000,
+                    finalMinor: 5000,
+                    quoteHash: null,
+                    quotedAt: new \DateTimeImmutable(),
+                ),
+            ),
         );
         $em->persist($cart);
         $em->persist($item);
@@ -149,12 +159,16 @@ final class CartComponentTest extends WebTestCase
             cartId: $cart->id,
             lessonId: $lesson->getId(),
             ticketType: TicketType::ONE_TIME->value,
-            participantId: null,
-            basePriceMinor: 5000,
-            finalPriceMinor: 5000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: new \DateTimeImmutable(),
+            details: new CartItemDetails(
+                participantId: null,
+                currency: 'PLN',
+                price: new CartItemPrice(
+                    baseMinor: 5000,
+                    finalMinor: 5000,
+                    quoteHash: null,
+                    quotedAt: new \DateTimeImmutable(),
+                ),
+            ),
         );
         $em->persist($cart);
         $em->persist($item);
@@ -226,12 +240,16 @@ final class CartComponentTest extends WebTestCase
             cartId: $cart->id,
             lessonId: $lesson->getId(),
             ticketType: TicketType::ONE_TIME->value,
-            participantId: null,
-            basePriceMinor: 5000,
-            finalPriceMinor: 5000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: new \DateTimeImmutable(),
+            details: new CartItemDetails(
+                participantId: null,
+                currency: 'PLN',
+                price: new CartItemPrice(
+                    baseMinor: 5000,
+                    finalMinor: 5000,
+                    quoteHash: null,
+                    quotedAt: new \DateTimeImmutable(),
+                ),
+            ),
         );
         $em->persist($cart);
         $em->persist($item);
@@ -267,12 +285,16 @@ final class CartComponentTest extends WebTestCase
             cartId: $cart->id,
             lessonId: $lesson->getId(),
             ticketType: TicketType::ONE_TIME->value,
-            participantId: null,
-            basePriceMinor: 5000,
-            finalPriceMinor: 5000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: new \DateTimeImmutable(),
+            details: new CartItemDetails(
+                participantId: null,
+                currency: 'PLN',
+                price: new CartItemPrice(
+                    baseMinor: 5000,
+                    finalMinor: 5000,
+                    quoteHash: null,
+                    quotedAt: new \DateTimeImmutable(),
+                ),
+            ),
         );
         $em->persist($cart);
         $em->persist($item);
@@ -419,12 +441,16 @@ final class CartComponentTest extends WebTestCase
             cartId: $cart->id,
             lessonId: $lessonId,
             ticketType: TicketType::ONE_TIME->value,
-            participantId: null,
-            basePriceMinor: 5000,
-            finalPriceMinor: 5000,
-            currency: 'PLN',
-            pricingQuoteHash: null,
-            quotedAt: new \DateTimeImmutable(),
+            details: new CartItemDetails(
+                participantId: null,
+                currency: 'PLN',
+                price: new CartItemPrice(
+                    baseMinor: 5000,
+                    finalMinor: 5000,
+                    quoteHash: null,
+                    quotedAt: new \DateTimeImmutable(),
+                ),
+            ),
         );
     }
 

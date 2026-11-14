@@ -108,7 +108,8 @@ final class DatabaseFileStorageTest extends KernelTestCase
     private function createUploadedJpeg(string $filename): array
     {
         $bytes = (string) base64_decode(self::MINIMAL_JPEG_BASE64, true);
-        $tempFile = tempnam(sys_get_temp_dir(), 'test_') . '.jpg';
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_');
+        static::assertIsString($tempFile);
         file_put_contents($tempFile, $bytes);
 
         $uploadedFile = new UploadedFile($tempFile, $filename, 'image/jpeg', null, true);

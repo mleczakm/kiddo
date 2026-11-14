@@ -9,6 +9,8 @@ use App\Application\Repository\CartRepositoryInterface;
 use App\Application\Service\Commerce\CartItemLookup;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Domain\Commerce\Cart\CartItem;
+use App\Domain\Commerce\Cart\CartItemDetails;
+use App\Domain\Commerce\Cart\CartItemPrice;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
 
@@ -79,12 +81,16 @@ final readonly class AddCartItem
             cartId: $cartId,
             lessonId: $lessonUlid,
             ticketType: $ticketType,
-            participantId: $participantUlid,
-            basePriceMinor: $quote->basePriceMinor,
-            finalPriceMinor: $quote->finalPriceMinor,
-            currency: $quote->currency,
-            pricingQuoteHash: $quote->quoteHash,
-            quotedAt: $quote->computedAt,
+            details: new CartItemDetails(
+                participantId: $participantUlid,
+                currency: $quote->currency,
+                price: new CartItemPrice(
+                    baseMinor: $quote->basePriceMinor,
+                    finalMinor: $quote->finalPriceMinor,
+                    quoteHash: $quote->quoteHash,
+                    quotedAt: $quote->computedAt,
+                ),
+            ),
         );
 
         $this->em->persist($item);

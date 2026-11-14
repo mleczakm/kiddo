@@ -6,7 +6,7 @@ namespace App\Application\Command;
 
 use App\Application\Repository\BookingRepositoryInterface;
 use App\Application\Repository\ChildRepositoryInterface;
-use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\LessonSearchInterface;
 use App\Application\Repository\PaymentRepositoryInterface;
 use App\Application\Repository\TransferRepositoryInterface;
 use App\Application\Repository\UserRepositoryInterface;
@@ -53,7 +53,7 @@ final class SeedDemoDataCommand extends Command
         private readonly ChildRepositoryInterface $childRepository,
         private readonly BookingRepositoryInterface $bookingRepository,
         private readonly PaymentRepositoryInterface $paymentRepository,
-        private readonly LessonRepositoryInterface $lessonRepository,
+        private readonly LessonSearchInterface $lessonQueries,
         private readonly TransferRepositoryInterface $transferRepository,
         #[Autowire('%kernel.environment%')]
         private readonly string $environment,
@@ -691,7 +691,7 @@ final class SeedDemoDataCommand extends Command
             $this->entityManager->flush();
         }
 
-        $lessons = $this->lessonRepository->findByMetadataTitlePrefix(self::DEMO_TITLE_PREFIX);
+        $lessons = $this->lessonQueries->findByMetadataTitlePrefix(self::DEMO_TITLE_PREFIX);
         /** @var array<string, Series> $series */
         $series = [];
         foreach ($lessons as $lesson) {

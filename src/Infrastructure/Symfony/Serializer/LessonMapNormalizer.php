@@ -18,21 +18,49 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
 {
     use NormalizerAwareTrait;
 
+    public function __construct(
+        private readonly LessonMapDenormalizer $mapDenormalizer = new LessonMapDenormalizer(),
+    ) {}
+
     /**
      * @param array<string, mixed> $context
      * @throws ExceptionInterface
      * @throws \LogicException
      * @throws \UnexpectedValueException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
      */
     #[\Override]
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
+        if (!$this->normalizer instanceof DenormalizerInterface) {
+            throw new \LogicException('Normalizer must implement DenormalizerInterface');
+        }
         $payload = is_array($data) ? $data : [];
         $lessonMap = new LessonMap();
-        $lessonMap->lessons = $this->denormalizeMap($payload['lessons'] ?? [], $format, $context);
-        $lessonMap->active = $this->denormalizeMap($payload['active'] ?? [], $format, $context);
-        $lessonMap->past = $this->denormalizeMap($payload['past'] ?? [], $format, $context);
-        $lessonMap->cancelled = $this->denormalizeMap($payload['cancelled'] ?? [], $format, $context);
+        $lessonMap->lessons = $this->mapDenormalizer->denormalize(
+            $payload['lessons'] ?? [],
+            $format,
+            $context,
+            $this->normalizer,
+        );
+        $lessonMap->active = $this->mapDenormalizer->denormalize(
+            $payload['active'] ?? [],
+            $format,
+            $context,
+            $this->normalizer,
+        );
+        $lessonMap->past = $this->mapDenormalizer->denormalize(
+            $payload['past'] ?? [],
+            $format,
+            $context,
+            $this->normalizer,
+        );
+        $lessonMap->cancelled = $this->mapDenormalizer->denormalize(
+            $payload['cancelled'] ?? [],
+            $format,
+            $context,
+            $this->normalizer,
+        );
         return $lessonMap;
     }
 
@@ -64,69 +92,6 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
             'past' => $this->normalizeMap($data->past, $format, $context),
             'cancelled' => $this->normalizeMap($data->cancelled, $format, $context),
         ];
-    }
-
-    /**
-     * @return Map<Ulid, BookedLesson>
-     * @param array<string, mixed> $context
-     * @throws ExceptionInterface
-     * @throws \LogicException
-     * @throws \UnexpectedValueException
-     */
-    private function denormalizeMap(mixed $mapData, ?string $format, array $context): Map
-    {
-        /** @var Map<Ulid, BookedLesson> $result */
-        $result = new Map();
-        if (!is_iterable($mapData)) {
-            return $result;
-        }
-
-        foreach ($mapData as $lessonId => $lessonData) {
-            // Force string for the key
-            $lessonIdStr = (string) $lessonId;
-
-            // If the key is not a valid ULID (e.g. numeric index like "0"), try to extract from payload
-            if (!Ulid::isValid($lessonIdStr)) {
-                $candidate = null;
-                if (is_array($lessonData)) {
-                    // Common shapes produced by nested normalizers
-                    $candidate =
-                        $lessonData['lessonId']
-                        ?? $lessonData['id']
-                        ?? (is_array($lessonData['lesson'] ?? null) ? $lessonData['lesson']['id'] ?? null : null);
-                } elseif (is_string($lessonData) && Ulid::isValid($lessonData)) {
-                    // Handle legacy form: list of ULID strings with numeric keys
-                    $candidate = $lessonData;
-                    // Also convert payload into a shape the inner normalizer can understand
-                    $lessonData = [
-                        'lessonId' => $candidate,
-                    ];
-                }
-
-                if (is_string($candidate) && Ulid::isValid($candidate)) {
-                    $lessonIdStr = $candidate;
-                } else {
-                    // Skip entries we cannot identify – better than throwing during rendering
-                    continue;
-                }
-            }
-
-            // Detect object type from 'type' field, default to BookedLesson
-            $typeField = is_array($lessonData) ? $lessonData['type'] ?? null : null;
-            $class = is_string($typeField) ? $typeField : BookedLesson::class;
-
-            if (!$this->normalizer instanceof DenormalizerInterface) {
-                throw new \LogicException('Normalizer must implement DenormalizerInterface');
-            }
-            /** @var mixed $lesson */
-            $lesson = $this->normalizer->denormalize($lessonData, $class, $format, $context);
-            if (!$lesson instanceof BookedLesson) {
-                throw new \UnexpectedValueException('Expected a booked lesson.');
-            }
-            $result->put(Ulid::fromString($lessonIdStr), $lesson);
-        }
-
-        return $result;
     }
 
     /**

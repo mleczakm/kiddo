@@ -20,6 +20,7 @@ final readonly class RequestArrayField
      */
     public static function list(Request $request, string $key): array
     {
+        /** @var mixed $value */
         $value = $request->request->all()[$key] ?? [];
         if (!\is_array($value)) {
             return [];
@@ -34,6 +35,7 @@ final readonly class RequestArrayField
      */
     public static function map(Request $request, string $key): array
     {
+        /** @var mixed $value */
         $value = $request->request->all()[$key] ?? [];
         if (!\is_array($value)) {
             return [];

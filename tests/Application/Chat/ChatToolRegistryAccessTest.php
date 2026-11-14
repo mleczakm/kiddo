@@ -8,6 +8,7 @@ use App\Application\Chat\ChatActor;
 use App\Application\Chat\ChatToolProviderInterface;
 use App\Application\Chat\ChatToolRegistry;
 use App\Application\Chat\ToolDefinition;
+use App\Application\Chat\ToolPermissions;
 use App\Application\Chat\ToolResult;
 use App\Tests\Assembler\UserAssembler;
 use PHPUnit\Framework\Attributes\Group;
@@ -40,7 +41,7 @@ final class ChatToolRegistryAccessTest extends TestCase
                         [
                             'type' => 'object',
                         ],
-                        requiresAuth: false,
+                        permissions: new ToolPermissions(requiresAuth: false),
                     ),
                 ];
             }
@@ -125,9 +126,11 @@ final class ChatToolRegistryAccessTest extends TestCase
                 'type' => 'object',
                 'properties' => new \stdClass(),
             ],
-            requiresAdmin: $requiresAdmin,
-            requiresAuth: false,
-            requiresHost: $requiresHost,
+            permissions: new ToolPermissions(
+                requiresAdmin: $requiresAdmin,
+                requiresAuth: false,
+                requiresHost: $requiresHost,
+            ),
         );
     }
 

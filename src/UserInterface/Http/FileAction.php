@@ -40,7 +40,7 @@ final class FileAction extends AbstractController
         ],
         methods: ['GET', 'HEAD'],
     )]
-    public function __invoke(Request $request, Ulid $id, string $safeName): Response
+    public function __invoke(Request $request, Ulid $id): Response
     {
         $file = $this->fileRepository->find($id);
         if ($file === null) {

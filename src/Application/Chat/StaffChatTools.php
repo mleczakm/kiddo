@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Chat;
 
 use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Repository\LessonSearchInterface;
 use App\Entity\Lesson;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -22,6 +23,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
 {
     public function __construct(
         private LessonRepositoryInterface $lessonRepository,
+        private LessonSearchInterface $lessonQueries,
         private LessonPresenter $presenter,
         private StaffLessonPresenter $staffPresenter,
         private StaffLessonSearch $lessonSearch,
@@ -68,7 +70,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresHost: true,
+                permissions: new ToolPermissions(requiresHost: true),
             ),
             new ToolDefinition(
                 'staff.lesson_participants',
@@ -96,7 +98,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresHost: true,
+                permissions: new ToolPermissions(requiresHost: true),
             ),
         ];
     }
@@ -190,11 +192,11 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
         $now = Clock::get()->now();
         if (($args->string('when', 'next') ?? 'next') === 'last') {
             // Repo orders ASC; the most recent past occurrence is the last row.
-            $past = $this->lessonRepository->findForStaff($query, null, $now, $instructor, 100);
+            $past = $this->lessonQueries->findForStaff($query, null, $now, $instructor, 100);
 
             return $past === [] ? null : $past[array_key_last($past)];
         }
 
-        return $this->lessonRepository->findForStaff($query, $now, null, $instructor, 1)[0] ?? null;
+        return $this->lessonQueries->findForStaff($query, $now, null, $instructor, 1)[0] ?? null;
     }
 }

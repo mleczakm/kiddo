@@ -167,4 +167,9 @@ class Subscription
             $this->endsAt = Clock::get()->now();
         }
     }
+
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
 }

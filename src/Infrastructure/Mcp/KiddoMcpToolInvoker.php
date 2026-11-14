@@ -106,7 +106,9 @@ final readonly class KiddoMcpToolInvoker
             $arguments['chat_token'] ?? null,
         ];
 
-        foreach ($candidates as $candidate) {
+        foreach (array_keys($candidates) as $index) {
+            /** @var mixed $candidate */
+            $candidate = $candidates[$index];
             if (!is_string($candidate)) {
                 continue;
             }

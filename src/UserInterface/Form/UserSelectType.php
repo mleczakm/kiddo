@@ -40,6 +40,7 @@ final class UserSelectType extends AbstractType
             'query' => null,
             'choice_label' => static fn(User $user): string => sprintf('%s (%s)', $user->getName(), $user->getEmail()),
             'query_builder' => static function (UserRepository $repository, array $options): QueryBuilder {
+                /** @var mixed $query */
                 $query = $options['query'];
                 if (is_string($query) && trim($query) !== '') {
                     // findForAutocomplete() already returns User[]; wrap the

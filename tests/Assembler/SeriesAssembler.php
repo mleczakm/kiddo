@@ -76,8 +76,8 @@ class SeriesAssembler extends EntityAssembler
             type: $type,
             ticketOptions: $ticketOptionsList,
             visible: $visible,
-            lastOccurrenceDate: $lastOccurrenceDate,
         );
+        $series->lastOccurrenceDate = $lastOccurrenceDate;
 
         if (($this->properties['id'] ?? null) !== null) {
             $reflection = new \ReflectionClass($series);

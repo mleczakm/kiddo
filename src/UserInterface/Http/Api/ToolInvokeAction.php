@@ -47,8 +47,8 @@ final class ToolInvokeAction extends AbstractController
             'name' => $d->name,
             'description' => $d->description,
             'input_schema' => $d->inputSchema,
-            'requires_admin' => $d->requiresAdmin,
-            'requires_confirm' => $d->requiresConfirm,
+            'requires_admin' => $d->permissions->requiresAdmin,
+            'requires_confirm' => $d->permissions->requiresConfirm,
         ], $this->registry->definitions($actor));
 
         return $this->json([
@@ -84,6 +84,7 @@ final class ToolInvokeAction extends AbstractController
         }
 
         $content = $request->getContent();
+        /** @var mixed $decoded */
         $decoded = json_decode($content === '' ? '{}' : $content, true);
         if (!is_array($decoded)) {
             return $this->json([

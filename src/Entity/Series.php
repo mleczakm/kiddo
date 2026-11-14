@@ -21,6 +21,16 @@ class Series
     private Ulid $id;
 
     /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'series_instructor')]
+    public Collection $instructors;
+    /** The inclusive end date used by the editor's immediate schedule synchronization. */
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    public ?\DateTimeImmutable $lastOccurrenceDate = null;
+
+    /**
      * @param Collection<int, Lesson>&Selectable<int, Lesson> $lessons
      * @param list<TicketOption> $ticketOptions
      */
@@ -42,17 +52,9 @@ class Series
             'default' => true,
         ])]
         public bool $visible = true,
-        /**
-         * @var Collection<int, User>
-         */
-        #[ORM\ManyToMany(targetEntity: User::class)]
-        #[ORM\JoinTable(name: 'series_instructor')]
-        public Collection $instructors = new ArrayCollection(),
-        /** The inclusive end date used by the editor's immediate schedule synchronization. */
-        #[ORM\Column(type: 'date_immutable', nullable: true)]
-        public ?\DateTimeImmutable $lastOccurrenceDate = null,
     ) {
         $this->id = new Ulid();
+        $this->instructors = new ArrayCollection();
     }
 
     public function getId(): Ulid

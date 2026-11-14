@@ -110,7 +110,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
             new ToolDefinition(
                 'user.list_children',
@@ -137,7 +137,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'name'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
             new ToolDefinition(
                 'user.delete_child',
@@ -152,7 +152,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'child_id'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
         ];
     }
@@ -199,7 +199,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                         ],
                     ],
                 ],
-                requiresAuth: false,
+                permissions: new ToolPermissions(requiresAuth: false),
             ),
             new ToolDefinition(
                 'user.get_lesson',
@@ -214,7 +214,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['lesson_id'],
                 ],
-                requiresAuth: false,
+                permissions: new ToolPermissions(requiresAuth: false),
             ),
         ];
     }
@@ -251,7 +251,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'lesson_id', 'ticket_type'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
             new ToolDefinition(
                 'user.get_payment_instructions',
@@ -343,7 +343,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'booking_id', 'lesson_id', 'new_lesson_id'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
             new ToolDefinition(
                 'user.cancel_lesson',
@@ -364,7 +364,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'booking_id', 'lesson_id'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
             new ToolDefinition(
                 'user.request_refund',
@@ -385,7 +385,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'booking_id', 'lesson_id'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
         ];
     }
@@ -430,7 +430,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['confirm', 'notification_id'],
                 ],
-                requiresConfirm: true,
+                permissions: new ToolPermissions(requiresConfirm: true),
             ),
         ];
     }
@@ -464,7 +464,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['email', 'name'],
                 ],
-                requiresAuth: false,
+                permissions: new ToolPermissions(requiresAuth: false),
             ),
             new ToolDefinition(
                 'user.request_login_code',
@@ -479,7 +479,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['email'],
                 ],
-                requiresAuth: false,
+                permissions: new ToolPermissions(requiresAuth: false),
             ),
             new ToolDefinition(
                 'user.login_with_code',
@@ -498,7 +498,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['email', 'code'],
                 ],
-                requiresAuth: false,
+                permissions: new ToolPermissions(requiresAuth: false),
             ),
         ];
     }
@@ -526,7 +526,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['payment_code'],
                 ],
-                requiresAuth: false,
+                permissions: new ToolPermissions(requiresAuth: false),
             ),
             new ToolDefinition(
                 'user.confirm_booking_access',
@@ -546,7 +546,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
                     ],
                     'required' => ['payment_code', 'code'],
                 ],
-                requiresAuth: false,
+                permissions: new ToolPermissions(requiresAuth: false),
             ),
         ];
     }
@@ -1314,6 +1314,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
         $cacheKey = $this->verificationCodeCacheKey($email);
         $item = $this->cache->getItem($cacheKey);
+        /** @var mixed $storedCode */
         $storedCode = $item->get();
 
         if (!$item->isHit() || !is_string($storedCode) || !hash_equals($storedCode, $code)) {

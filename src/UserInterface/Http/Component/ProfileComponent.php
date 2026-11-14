@@ -90,7 +90,6 @@ class ProfileComponent extends AbstractController
         $this->validate();
         $this->phoneError = null;
 
-        /** @var User $user */
         $user = $this->getUser();
         $user->setName($this->name);
         $user->setEmail($this->email);

@@ -35,7 +35,7 @@ final class ActivityLoggerTest extends KernelTestCase
             title: 'Ola Nowak zarezerwowała zajęcia',
             subject: $user,
             summary: 'Sensoplastyka',
-            url: '/admin/uzytkownicy/' . $user->getId(),
+            url: '/admin/uzytkownicy/' . (string) $user->getId(),
         );
 
         /** @var ActivityLogRepository $repo */

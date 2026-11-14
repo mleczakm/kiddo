@@ -44,12 +44,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Chat/ToolDefinition.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/ToolDefinition.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
 count = 1
@@ -193,21 +187,9 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Application/File/FileUploadPolicy.php"
-code = "no-duplicate-match-arm"
-message = "This `match` arm has the same result as an earlier arm."
-count = 2
-
-[[issues]]
 file = "src/Application/File/WorkshopImageUploadPolicy.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Application/Help/DocArticle.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -221,12 +203,6 @@ file = "src/Application/Repository/LessonRepositoryInterface.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 4
-
-[[issues]]
-file = "src/Application/Repository/LessonRepositoryInterface.php"
-code = "too-many-methods"
-message = "Interface has too many methods."
-count = 1
 
 [[issues]]
 file = "src/Application/Repository/PostRepositoryInterface.php"
@@ -319,18 +295,6 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Domain/Commerce/Cart/Cart.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Domain/Commerce/Cart/CartItem.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
 file = "src/Domain/Commerce/Order/CustomerOrder.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -367,12 +331,6 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Domain/Commerce/Pricing/PromotionRedemption.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
 file = "src/Entity/ActivityLog.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -400,12 +358,6 @@ count = 1
 file = "src/Entity/Booking.php"
 code = "too-many-properties"
 message = "Class has too many properties."
-count = 1
-
-[[issues]]
-file = "src/Entity/BookingOccurrence.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -493,12 +445,6 @@ message = "Class has too many properties."
 count = 1
 
 [[issues]]
-file = "src/Entity/Series.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
 file = "src/Entity/User.php"
 code = "too-many-properties"
 message = "Class has too many properties."
@@ -541,12 +487,6 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Doctrine/Repository/LessonRepository.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Doctrine/Repository/PostRepository.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
@@ -571,24 +511,6 @@ message = "Class has high complexity."
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
 file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -598,24 +520,6 @@ count = 1
 file = "src/UserInterface/Http/Admin/PostsController.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Api/AuthController.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Api/AuthController.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Api/AuthController.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
 count = 1
 
 [[issues]]
@@ -1027,12 +931,6 @@ message = "Class has high complexity."
 count = 1
 
 [[issues]]
-file = "tests/Assembler/EntityAssembler.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
 file = "tests/Assembler/LessonAssembler.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
@@ -1042,12 +940,6 @@ count = 1
 file = "tests/Assembler/LessonAssembler.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Assembler/LessonMetadataAssembler.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
 count = 1
 
 [[issues]]

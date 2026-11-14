@@ -20,7 +20,7 @@ final readonly class SwooleTaskWorkerContext implements TaskWorkerContextInterfa
         }
 
         try {
-            return (bool) $this->serverProvider->getServer()->taskworker;
+            return $this->serverProvider->getServer()->taskworker === true;
         } catch (\Throwable) {
             return false;
         }

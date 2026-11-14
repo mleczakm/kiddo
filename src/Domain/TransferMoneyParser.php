@@ -46,16 +46,9 @@ class TransferMoneyParser
         // Ensure exactly 2 decimal places
         $parts = explode('.', $number, 2);
 
-        if (strlen($parts[1]) > 2) {
-            // If more than 2 decimal places, we'll let Money handle the rounding
-            $number = $parts[0] . '.' . substr($parts[1], 0, 2);
-        } elseif (strlen($parts[1]) === 1) {
-            // If only 1 decimal place, add a trailing zero
-            $number .= '0';
-        } elseif (strlen($parts[1]) === 0) {
-            // If there's no decimal part, add 00
-            $number .= '00';
-        }
+        // More than 2 decimal places are truncated, we'll let Money handle the rounding.
+        // Missing decimal places are padded with zeros.
+        $number = $parts[0] . '.' . str_pad(substr($parts[1], 0, 2), 2, '0');
 
         return Money::of($number, 'PLN');
     }

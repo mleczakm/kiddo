@@ -50,9 +50,9 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
                     inputSchema: $this->normalizeInputSchema($definition),
                     description: $this->description($definition),
                     annotations: new ToolAnnotations(
-                        readOnlyHint: !$definition->requiresConfirm,
-                        destructiveHint: $definition->requiresConfirm,
-                        idempotentHint: !$definition->requiresConfirm,
+                        readOnlyHint: !$definition->permissions->requiresConfirm,
+                        destructiveHint: $definition->permissions->requiresConfirm,
+                        idempotentHint: !$definition->permissions->requiresConfirm,
                         openWorldHint: false,
                     ),
                 ),
@@ -74,10 +74,10 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         if (in_array($definition->name, ['user.list_upcoming_lessons', 'user.get_lesson'], true)) {
             return 0;
         }
-        if (!$definition->requiresConfirm && !$definition->requiresAdmin) {
+        if (!$definition->permissions->requiresConfirm && !$definition->permissions->requiresAdmin) {
             return 1;
         }
-        if (!$definition->requiresConfirm) {
+        if (!$definition->permissions->requiresConfirm) {
             return 2;
         }
 
@@ -90,6 +90,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
     private function normalizeInputSchema(ToolDefinition $definition): array
     {
         $schema = $definition->inputSchema;
+        /** @var mixed $properties */
         $properties = $schema['properties'] ?? [];
         if ($properties instanceof \stdClass) {
             $properties = [];
@@ -114,13 +115,13 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
     private function description(ToolDefinition $definition): string
     {
         $description = $definition->description;
-        if ($definition->requiresConfirm) {
+        if ($definition->permissions->requiresConfirm) {
             $description .= ' Requires confirm=true before mutation.';
         }
-        if ($definition->requiresAdmin) {
+        if ($definition->permissions->requiresAdmin) {
             $description .= ' Requires ROLE_ADMIN.';
         }
-        if (!$definition->requiresAuth) {
+        if (!$definition->permissions->requiresAuth) {
             $description .= ' Public (no login).';
         }
 

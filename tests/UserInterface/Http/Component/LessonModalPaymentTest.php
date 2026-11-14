@@ -351,7 +351,9 @@ final class LessonModalPaymentTest extends WebTestCase
         );
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/requires the "\$bookingId" argument that could not be resolved/');
+        $this->expectExceptionMessageMatches(
+            '/(Could not resolve argument \$bookingId|requires the "\$bookingId" argument that could not be resolved)/',
+        );
 
         // Mimics Stimulus receiving data-live-bookingId-param (HTML-lowercased to bookingid).
         $component->call('resumePayment', [
