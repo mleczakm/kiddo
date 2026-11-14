@@ -16,7 +16,11 @@ final readonly class BookingOccurrenceBackfill
         private EntityManagerInterface $em,
     ) {}
 
-    /** @return array{bookings: int, created: int, mismatches: int} */
+    /**
+     * @return array{bookings: int, created: int, mismatches: int}
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function run(): array
     {
         $processed = 0;

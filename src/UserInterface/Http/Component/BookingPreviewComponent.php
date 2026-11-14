@@ -27,6 +27,7 @@ class BookingPreviewComponent extends AbstractController
 
     /**
      * @return array<Booking>
+     * @throws \LogicException
      */
     public function getBookings(): array
     {

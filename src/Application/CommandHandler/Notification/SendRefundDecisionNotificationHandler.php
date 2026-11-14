@@ -24,6 +24,13 @@ final readonly class SendRefundDecisionNotificationHandler
         private TranslatorInterface $translator,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(SendRefundDecisionNotificationCommand $command): void
     {
         $refundRequest = $this->refundRequestRepository->find($command->refundRequestId);

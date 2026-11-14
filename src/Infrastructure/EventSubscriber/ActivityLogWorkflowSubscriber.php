@@ -35,6 +35,11 @@ final readonly class ActivityLogWorkflowSubscriber implements EventSubscriberInt
         ];
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     public function onPaymentPaid(Event $event): void
     {
         $payment = $event->getSubject();
@@ -60,7 +65,7 @@ final readonly class ActivityLogWorkflowSubscriber implements EventSubscriberInt
             context: [
                 'paymentId' => (string) $payment->getId(),
             ],
-            dedupeKey: 'payment_received:' . $payment->getId(),
+            dedupeKey: 'payment_received:' . (string) $payment->getId(),
         );
     }
 }

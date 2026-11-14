@@ -50,7 +50,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     #[\Override]
     public function findByRole(string $role): array
     {
-        /** @var User[] $users */
+        /** @var User[] */
         return $this
             ->createQueryBuilder('u')
             ->andWhere('JSONB_CONTAINS(u.roles, :role) = true')
@@ -85,7 +85,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     #[\Override]
     public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
-        /** @var User[] $users */
+        /** @var User[] */
         return $this
             ->createQueryBuilder('u')
             ->where('u.createdAt BETWEEN :start AND :end')
@@ -104,14 +104,14 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     {
         $qb = $this->createQueryBuilder('u');
 
-        if (!empty($query)) {
+        if ($query !== '' && $query !== '0') {
             $qb->andWhere('LOWER(u.name) LIKE :query OR LOWER(u.email) LIKE :query')->setParameter(
                 'query',
                 '%' . strtolower($query) . '%',
             );
         }
 
-        /** @var User[] $result */
+        /** @var User[] */
         return $qb->orderBy('u.id', 'DESC')->getQuery()->getResult();
     }
 
@@ -145,7 +145,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
             $qb->orWhere('u.id = :id')->setParameter('id', (int) $query);
         }
 
-        /** @var User[] $result */
+        /** @var User[] */
         return $qb->getQuery()->getResult();
     }
 
@@ -155,7 +155,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     #[\Override]
     public function findByEmailDomain(string $domain): array
     {
-        /** @var list<User> $result */
+        /** @var list<User> */
         return $this
             ->createQueryBuilder('u')
             ->where('u.email LIKE :domain')

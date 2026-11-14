@@ -47,6 +47,8 @@ class HomepageTest extends WebTestCase
         $client = self::createClient();
         $user = UserAssembler::new()->withRoles('ROLE_USER')->assemble();
         $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
         $em->persist($user);
         $em->flush();
 
@@ -74,6 +76,8 @@ class HomepageTest extends WebTestCase
         $client = static::createClient();
         $user = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
         $em->persist($user);
         $em->flush();
 
@@ -134,6 +138,11 @@ class HomepageTest extends WebTestCase
     {
         $client = static::createClient();
         $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
 
         $user = UserAssembler::new()->withRoles('ROLE_USER')->assemble();
         $em->persist($user);

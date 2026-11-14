@@ -44,7 +44,9 @@ final class ChatToolsApiTest extends WebTestCase
         $client->disableReboot();
 
         /** @var EntityManagerInterface $em */
-        $em = static::getContainer()->get('doctrine')->getManager();
+        $registry = static::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $user = UserAssembler::new()->withEmail('chat-mcp@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $em->persist($user);
         $em->flush();

@@ -33,6 +33,9 @@ class NewsletterSubscriptionManager
      * connectivity — the DB is the source of truth for user intent, Brevo is a
      * downstream mirror. Failures are logged but never rethrown so the parent
      * flow (registration / profile edit) is not broken by a downstream outage.
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function applyTransition(
         User $user,

@@ -30,7 +30,9 @@ class MultiInstructorSupportTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
 
         // Create test instructors
         $this->instructor1 = new User('instructor1@test.com', 'Instructor One');

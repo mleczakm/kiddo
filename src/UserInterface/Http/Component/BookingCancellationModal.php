@@ -58,25 +58,27 @@ class BookingCancellationModal extends AbstractController
      */
     public function getAvailableLessons(): array
     {
-        if (!$this->booking || !$this->lesson) {
+        $booking = $this->booking;
+        $currentLesson = $this->lesson;
+        if ($booking === null || $currentLesson === null) {
             return [];
         }
 
-        $series = $this->lesson->getSeries();
+        $series = $currentLesson->getSeries();
         if (!$series) {
             return [];
         }
 
         $availableLessons = $this->lessonRepository->findAvailableLessonsForReschedule(
             $series,
-            $this->lesson->schedule,
+            $currentLesson->schedule,
         );
 
         return array_values(array_filter(
             $availableLessons,
-            fn(Lesson $lesson): bool => (
-                !$lesson->getId()->equals($this->lesson->getId())
-                && !$this->booking->getLessons()->contains($lesson)
+            static fn(Lesson $lesson): bool => (
+                !$lesson->getId()->equals($currentLesson->getId())
+                && !$booking->getLessons()->contains($lesson)
                 && $lesson->getAvailableSpots() > 0
             ),
         ));
@@ -106,6 +108,7 @@ class BookingCancellationModal extends AbstractController
         );
     }
 
+    /** @throws \LogicException */
     public function canShowRescheduleTab(): bool
     {
         return $this->canBeRescheduled();
@@ -113,26 +116,32 @@ class BookingCancellationModal extends AbstractController
 
     public function canShowRefundTab(): bool
     {
-        if (!$this->booking || !$this->lesson) {
+        $booking = $this->booking;
+        $currentLesson = $this->lesson;
+        if ($booking === null || $currentLesson === null) {
             return false;
         }
 
-        if (!$this->booking->hasPaidPayment()) {
+        if (!$booking->hasPaidPayment()) {
             return false;
         }
 
-        return $this->booking->canRequestRefundForLesson($this->lesson) || $this->isAdmin();
+        return $booking->canRequestRefundForLesson($currentLesson) || $this->isAdmin();
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     public function canShowCancelTab(): bool
     {
-        if (!$this->booking || !$this->lesson) {
+        $booking = $this->booking;
+        $currentLesson = $this->lesson;
+        if ($booking === null || $currentLesson === null) {
             return false;
         }
 
-        return $this->booking->canCancelLesson($this->lesson) || $this->isAdmin();
+        return $booking->canCancelLesson($currentLesson) || $this->isAdmin();
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function openModal(): void
     {
@@ -140,6 +149,7 @@ class BookingCancellationModal extends AbstractController
         $this->ensureValidSelectedOption();
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function openWithOption(#[LiveArg('option')] string $option): void
     {
@@ -156,6 +166,12 @@ class BookingCancellationModal extends AbstractController
         $this->modalOpened = false;
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function processCancellation(#[LiveArg('type')] string $typeParam): void
     {
@@ -246,6 +262,7 @@ class BookingCancellationModal extends AbstractController
         $this->selectedOption = $option;
     }
 
+    /** @throws \LogicException */
     public function canBeRescheduled(): bool
     {
         $booking = $this->booking;
@@ -276,6 +293,7 @@ class BookingCancellationModal extends AbstractController
         return false;
     }
 
+    /** @throws \LogicException */
     private function ensureValidSelectedOption(): void
     {
         if ($this->selectedOption === 'reschedule' && !$this->canShowRescheduleTab()) {
@@ -291,6 +309,7 @@ class BookingCancellationModal extends AbstractController
         }
     }
 
+    /** @throws \LogicException */
     private function isAdmin(): bool
     {
         return $this->isGranted('ROLE_ADMIN');

@@ -23,8 +23,12 @@ final class NotificationRepositoryTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->em = self::getContainer()->get(EntityManagerInterface::class);
-        $this->repo = self::getContainer()->get(NotificationRepository::class);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
+        $repo = self::getContainer()->get(NotificationRepository::class);
+        static::assertInstanceOf(NotificationRepository::class, $repo);
+        $this->repo = $repo;
     }
 
     private function persist(object $entity): void

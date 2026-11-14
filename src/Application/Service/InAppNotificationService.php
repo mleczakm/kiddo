@@ -22,6 +22,7 @@ final readonly class InAppNotificationService
         private MessageBusInterface $bus,
     ) {}
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     public function notify(
         User $user,
         string $title,
@@ -45,6 +46,7 @@ final readonly class InAppNotificationService
 
     /**
      * @return list<Notification>
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function notifyAdmins(
         string $title,
@@ -76,6 +78,7 @@ final readonly class InAppNotificationService
      *
      * @param iterable<User> $users
      * @return list<Notification>
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function notifyUsers(
         iterable $users,

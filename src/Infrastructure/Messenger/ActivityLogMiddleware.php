@@ -46,6 +46,12 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         private BookingRepository $bookingRepository,
     ) {}
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[\Override]
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
@@ -71,6 +77,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         return $envelope;
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logFor(object $message): void
     {
         match (true) {
@@ -85,6 +96,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         };
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logBookingCreated(AddBooking $command): void
     {
         $user = $this->userRepository->find($command->userId);
@@ -118,6 +134,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logBookingCancelled(CancelLessonBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
@@ -144,6 +165,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logBookingRescheduled(RescheduleLessonBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
@@ -173,6 +199,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logBookingReactivated(ReactivateBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
@@ -198,6 +229,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logRefundRequested(RefundLessonBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
@@ -224,6 +260,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logUserRegistered(NewUser $command): void
     {
         // The handler reloads/confirms the user by id; reload here too so we
@@ -250,6 +291,11 @@ final readonly class ActivityLogMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function logTransferUnmatched(TransferNotMatchedCommand $command): void
     {
         $transfer = $command->transfer;

@@ -30,7 +30,9 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $customer = UserAssembler::new()->assemble();
         $em->persist($customer);

@@ -23,7 +23,9 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = static::getContainer()->get(OrphanFileCleanupService::class);
+        $service = static::getContainer()->get(OrphanFileCleanupService::class);
+        static::assertInstanceOf(OrphanFileCleanupService::class, $service);
+        $this->service = $service;
     }
 
     public function testCountOrphansIncludesUnreferencedFiles(): void
@@ -108,7 +110,6 @@ final class OrphanFileCleanupServiceTest extends KernelTestCase
     {
         $reflection = new \ReflectionClass($file);
         $property = $reflection->getProperty('createdAt');
-        $property->setAccessible(true);
         $property->setValue($file, $createdAt);
     }
 }

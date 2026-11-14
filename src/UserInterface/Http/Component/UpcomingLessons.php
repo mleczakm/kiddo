@@ -77,6 +77,7 @@ class UpcomingLessons
     /**
      * Get bookings for the current user across the displayed lessons
      * @return array<string, array<int, array{childName: string|null, paymentStatus: string, bookingId: string}>>
+     * @throws \InvalidArgumentException
      */
     public function getUserBookingsByLesson(): array
     {
@@ -155,7 +156,7 @@ class UpcomingLessons
 
     public function shouldOpenModal(Lesson $lesson): bool
     {
-        if ($this->openSlug === null || $this->openSlug === '') {
+        if (($this->openSlug ?? '') === '') {
             return false;
         }
 

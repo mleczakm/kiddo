@@ -40,17 +40,35 @@ class SeriesDetailsComponent extends AbstractController
         private readonly EntityManagerInterface $entityManager,
     ) {}
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function mount(Ulid $seriesId): void
     {
         $this->seriesId = $seriesId;
         $this->loadSeries();
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     private function loadSeries(): void
     {
         $this->series = $this->entityManager->find(Series::class, $this->seriesId);
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function getSeries(): ?Series
     {
         if ($this->series === null) {
@@ -62,6 +80,10 @@ class SeriesDetailsComponent extends AbstractController
 
     /**
      * @return Lesson[]
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function getLessons(): array
     {
@@ -86,6 +108,10 @@ class SeriesDetailsComponent extends AbstractController
 
     /**
      * @return Lesson[]
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function getPastLessons(): array
     {
@@ -106,6 +132,12 @@ class SeriesDetailsComponent extends AbstractController
         return array_values($lessons);
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function hasPastLessons(): bool
     {
         return count($this->getPastLessons()) > 0;
@@ -179,6 +211,7 @@ class SeriesDetailsComponent extends AbstractController
         $this->showPast = !$this->showPast;
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     #[LiveAction]
     public function expandLesson(#[LiveArg] string $lessonId): void
     {
@@ -186,6 +219,7 @@ class SeriesDetailsComponent extends AbstractController
         $this->expandedLessonId = $this->expandedLessonId?->equals($id) === true ? null : $id;
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function approveBooking(#[LiveArg] string $bookingId): void
     {

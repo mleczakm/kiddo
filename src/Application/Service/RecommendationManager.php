@@ -59,7 +59,11 @@ final readonly class RecommendationManager
         $validated = RecommendationProvider::validate([$review])[0];
         $this->settings->updateContent(
             RecommendationProvider::SETTING_KEY,
-            /** @throws \InvalidArgumentException */ function (array $content) use ($id, $validated): array {
+            /**
+             * @throws \InvalidArgumentException
+             * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+             */
+            function (array $content) use ($id, $validated): array {
                 $current = RecommendationProvider::validate($content['reviews'] ?? []);
                 foreach ($current as $row) {
                     if ($row['id'] === $id) {

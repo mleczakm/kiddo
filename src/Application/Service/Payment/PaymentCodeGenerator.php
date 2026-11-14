@@ -25,6 +25,7 @@ final readonly class PaymentCodeGenerator
         private EntityManagerInterface $em,
     ) {}
 
+    /** @throws \Random\RandomException */
     public function generate(): string
     {
         $max = strlen(PaymentCode::CHARS) - 1;
@@ -42,6 +43,8 @@ final readonly class PaymentCodeGenerator
      * reservation's optimistic UI preview): checks each candidate against
      * existing codes so what's displayed is very unlikely to collide once
      * actually persisted downstream.
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
      */
     public function generateAvailable(): string
     {
@@ -64,6 +67,8 @@ final readonly class PaymentCodeGenerator
      * - a caught flush exception leaves the EntityManager closed, so retrying
      * on the same instance would need savepoint/reopen machinery that isn't
      * worth it at this scale (a residual, check-then-insert race is fine).
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
      */
     public function createFor(Payment $payment): PaymentCode
     {

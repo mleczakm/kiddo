@@ -23,6 +23,7 @@ readonly class NewUserHandler
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
      * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function __invoke(NewUser $command): void
     {

@@ -58,7 +58,7 @@ final class AdminPaymentsListComponent extends AbstractController
             $qb->andWhere('p.status = :status')->setParameter('status', $this->status);
         }
 
-        /** @var list<Payment> $result */
+        /** @var list<Payment> */
         return $qb->getQuery()->getResult();
     }
 

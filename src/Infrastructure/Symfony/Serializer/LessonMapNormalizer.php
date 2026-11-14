@@ -22,6 +22,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
      * @param array<string, mixed> $context
      * @throws ExceptionInterface
      * @throws \LogicException
+     * @throws \UnexpectedValueException
      */
     #[\Override]
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
@@ -49,6 +50,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
      * @return array{lessons: array<mixed>, active: array<mixed>, past: array<mixed>, cancelled: array<mixed>}
      * @param array<string, mixed> $context
      * @throws ExceptionInterface
+     * @throws \InvalidArgumentException
      */
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
@@ -69,6 +71,7 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
      * @param array<string, mixed> $context
      * @throws ExceptionInterface
      * @throws \LogicException
+     * @throws \UnexpectedValueException
      */
     private function denormalizeMap(mixed $mapData, ?string $format, array $context): Map
     {
@@ -115,10 +118,12 @@ class LessonMapNormalizer implements NormalizerInterface, DenormalizerInterface,
             if (!$this->normalizer instanceof DenormalizerInterface) {
                 throw new \LogicException('Normalizer must implement DenormalizerInterface');
             }
-            $result->put(
-                Ulid::fromString($lessonIdStr),
-                $this->normalizer->denormalize($lessonData, $class, $format, $context),
-            );
+            /** @var mixed $lesson */
+            $lesson = $this->normalizer->denormalize($lessonData, $class, $format, $context);
+            if (!$lesson instanceof BookedLesson) {
+                throw new \UnexpectedValueException('Expected a booked lesson.');
+            }
+            $result->put(Ulid::fromString($lessonIdStr), $lesson);
         }
 
         return $result;

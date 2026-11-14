@@ -36,7 +36,7 @@ final class McpAuthSubscriberTest extends TestCase
         $subscriber->onKernelRequest($event);
 
         static::assertNotNull($event->getResponse());
-        static::assertSame(401, $event->getResponse()->getStatusCode());
+        static::assertSame(401, $event->getResponse()?->getStatusCode());
     }
 
     public function testAllowsRequestWithMatchingXKiddoMcpKeyHeader(): void
@@ -73,7 +73,7 @@ final class McpAuthSubscriberTest extends TestCase
         $subscriber->onKernelRequest($event);
 
         static::assertNotNull($event->getResponse());
-        static::assertSame(401, $event->getResponse()->getStatusCode());
+        static::assertSame(401, $event->getResponse()?->getStatusCode());
     }
 
     public function testEnforcesIpRateLimit(): void
@@ -98,7 +98,7 @@ final class McpAuthSubscriberTest extends TestCase
         $event3 = $this->createRequestEvent($subscriber, headers: []);
         $subscriber->onKernelRequest($event3);
         static::assertNotNull($event3->getResponse());
-        static::assertSame(429, $event3->getResponse()->getStatusCode());
+        static::assertSame(429, $event3->getResponse()?->getStatusCode());
     }
 
     private function createSubscriber(string $serviceKey): McpAuthSubscriber

@@ -145,6 +145,7 @@ class Lesson
         return array_values($options);
     }
 
+    /** @throws \InvalidArgumentException */
     public function getMatchingTicketOption(string $selectedTicketType): TicketOption
     {
         foreach ($this->getTicketOptions() as $option) {

@@ -25,6 +25,8 @@ final class NewsletterSubscriptionBrevoTest extends WebTestCase
         $brevo->expects(self::never())->method('sendDoubleOptInConfirmation');
 
         $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
         $user = UserAssembler::new()->withEmail('subscribed@example.com')->withNewsletterSubscribed(true)->assemble();
         $em->persist($user);
         $em->flush();
@@ -55,6 +57,8 @@ final class NewsletterSubscriptionBrevoTest extends WebTestCase
             ->with('unsubscribed@example.com', static::callback('is_array'));
 
         $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
         $user = UserAssembler::new()
             ->withEmail('unsubscribed@example.com')
             ->withNewsletterSubscribed(false)
@@ -129,7 +133,7 @@ final class NewsletterSubscriptionBrevoTest extends WebTestCase
      */
     private function decode(KernelBrowser $client): array
     {
-        /** @var array<string, mixed> $data */
+        /** @var array<string, mixed> */
         return json_decode((string) $client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
     }
 

@@ -40,10 +40,18 @@ final class AuthControllerTest extends WebTestCase
 
         static::bootKernel();
         $container = static::getContainer();
-        $this->controller = $container->get(AuthController::class);
-        $this->validator = $container->get(ValidatorInterface::class);
-        $this->appCache = $container->get('cache.app');
-        $this->rateLimiterCache = $container->get('cache.rate_limiter');
+        $controller = $container->get(AuthController::class);
+        static::assertInstanceOf(AuthController::class, $controller);
+        $this->controller = $controller;
+        $validator = $container->get(ValidatorInterface::class);
+        static::assertInstanceOf(ValidatorInterface::class, $validator);
+        $this->validator = $validator;
+        $appCache = $container->get('cache.app');
+        static::assertInstanceOf(CacheItemPoolInterface::class, $appCache);
+        $this->appCache = $appCache;
+        $rateLimiterCache = $container->get('cache.rate_limiter');
+        static::assertInstanceOf(CacheItemPoolInterface::class, $rateLimiterCache);
+        $this->rateLimiterCache = $rateLimiterCache;
         $this->appCache->clear();
         $this->rateLimiterCache->clear();
     }
@@ -465,7 +473,7 @@ final class AuthControllerTest extends WebTestCase
      */
     private function decode(JsonResponse $response): array
     {
-        /** @var array<string, mixed> $data */
+        /** @var array<string, mixed> */
         return json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR);
     }
 

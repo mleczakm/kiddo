@@ -616,6 +616,13 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return str_starts_with($name, 'user.');
     }
 
+    /**
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \LogicException
+     * @throws \Random\RandomException
+     * @throws \RuntimeException
+     */
     #[\Override]
     public function call(string $name, ChatActor $actor, array $arguments): ToolResult
     {
@@ -657,6 +664,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         }
     }
 
+    /** @throws \LogicException */
     private function me(ChatActor $actor): ToolResult
     {
         $data = $this->presenter->userSummary($actor->requireUser());
@@ -664,6 +672,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success(sprintf('Profil: %s (%s)', $data['name'], $data['email']), $data);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function updateProfile(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $user = $actor->requireUser();
@@ -686,6 +698,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Profil zaktualizowany.', $this->presenter->userSummary($user));
     }
 
+    /** @throws \LogicException */
     private function listChildren(ChatActor $actor): ToolResult
     {
         $children = [];
@@ -703,6 +716,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function addChild(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $name = trim($args->string('name') ?? '');
@@ -732,6 +749,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function deleteChild(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $child = $this->childRepository->find(Ulid::fromString($args->requireString('child_id')));
@@ -820,6 +841,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         }
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function getLesson(ToolArguments $args): ToolResult
     {
         $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
@@ -843,6 +868,14 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     */
     private function createBooking(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $lessonId = $args->requireString('lesson_id');
@@ -897,6 +930,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function getPaymentInstructions(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $payment = null;
@@ -925,6 +962,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success($data['instruction_pl'], $data);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function listBookings(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $status = $args->string('status');
@@ -941,6 +982,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function getBooking(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -952,6 +997,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success(sprintf('Rezerwacja %s, status %s.', $data['id'], $data['status']), $data);
     }
 
+    /** @throws \LogicException */
     private function listCarnets(ChatActor $actor): ToolResult
     {
         $carnets = [];
@@ -967,6 +1013,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function listRescheduleTargets(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $bookingId = $args->requireString('booking_id');
@@ -1020,6 +1070,12 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return !in_array(strtolower($trimmed), $blocked, true);
     }
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function rescheduleLesson(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -1048,6 +1104,12 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Lekcja została przełożona.');
     }
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function cancelLesson(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -1071,6 +1133,12 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Lekcja została odwołana z rezerwacji.');
     }
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function requestRefund(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -1097,6 +1165,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Wysłano prośbę o zwrot.');
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function listNotifications(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $limit = $args->int('limit', 20) ?? 20;
@@ -1125,6 +1197,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function markNotificationRead(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $notification = $this->notificationRepository->find(Ulid::fromString($args->requireString('notification_id')));
@@ -1137,6 +1213,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Powiadomienie oznaczone jako przeczytane.');
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function deleteNotification(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $notification = $this->notificationRepository->find(Ulid::fromString($args->requireString('notification_id')));
@@ -1149,6 +1229,12 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Powiadomienie usunięte.');
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Random\RandomException
+     */
     private function registerUser(ToolArguments $args): ToolResult
     {
         $email = $args->requireString('email');
@@ -1185,6 +1271,12 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Random\RandomException
+     */
     private function requestLoginCode(ToolArguments $args): ToolResult
     {
         $email = $args->requireString('email');
@@ -1210,6 +1302,11 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Verification code sent to the user\'s email.');
     }
 
+    /**
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \Random\RandomException
+     */
     private function loginWithCode(ToolArguments $args): ToolResult
     {
         $email = $args->requireString('email');
@@ -1254,6 +1351,10 @@ final readonly class UserChatTools implements ChatToolProviderInterface
      * Step 1 of guest reservation lookup: resolve the payment code to the
      * owning account and email that address a login code. Reveals nothing about
      * the booking beyond a masked hint of which address was used.
+     * @throws \InvalidArgumentException
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Random\RandomException
      */
     private function requestBookingAccess(ToolArguments $args): ToolResult
     {
@@ -1294,6 +1395,8 @@ final readonly class UserChatTools implements ChatToolProviderInterface
     /**
      * Step 2: verify the emailed code and return the reservation plus a chat
      * token the agent can reuse on follow-up calls.
+     * @throws \InvalidArgumentException
+     * @throws \Random\RandomException
      */
     private function confirmBookingAccess(ToolArguments $args): ToolResult
     {
@@ -1359,6 +1462,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
     /**
      * @throws \InvalidArgumentException on a malformed lesson_id — caught in {@see call()}
+     * @throws \LogicException
      */
     private function joinWaitlist(ChatActor $actor, ToolArguments $args): ToolResult
     {
@@ -1397,6 +1501,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
 
     /**
      * @throws \InvalidArgumentException on a malformed lesson_id — caught in {@see call()}
+     * @throws \LogicException
      */
     private function leaveWaitlist(ChatActor $actor, ToolArguments $args): ToolResult
     {
@@ -1415,6 +1520,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return ToolResult::success('Usunięto z listy rezerwowej.');
     }
 
+    /** @throws \LogicException */
     private function listWaitlist(ChatActor $actor): ToolResult
     {
         $entries = array_map($this->waitlistRow(...), $this->waitlistService->activeEntriesFor($actor->requireUser()));
@@ -1440,6 +1546,11 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         ];
     }
 
+    /**
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Random\RandomException
+     */
     private function issueVerificationCode(string $email): void
     {
         $code = $this->generateVerificationCode();
@@ -1481,6 +1592,7 @@ final readonly class UserChatTools implements ChatToolProviderInterface
         return sprintf('verification_code_%s', hash('xxh3', mb_strtolower($email)));
     }
 
+    /** @throws \Random\RandomException */
     private function generateVerificationCode(): string
     {
         return sprintf('%06d', random_int(0, 999_999));

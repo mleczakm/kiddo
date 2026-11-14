@@ -33,6 +33,9 @@ final class WorkshopsPageResponseSizeTest extends WebTestCase
 
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
 
         $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $em->persist($series);

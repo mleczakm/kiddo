@@ -256,7 +256,11 @@ class UpcomingAttendeesComponentTest extends WebTestCase
     {
         $this->client = static::createClient();
 
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        $this->lessonRepository = self::getContainer()->get(LessonRepository::class);
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
+        $lessonRepository = self::getContainer()->get(LessonRepository::class);
+        static::assertInstanceOf(LessonRepository::class, $lessonRepository);
+        $this->lessonRepository = $lessonRepository;
     }
 }

@@ -48,6 +48,7 @@ class ChildrenManager extends AbstractController
         private readonly ChildConsentManager $childConsentManager,
     ) {}
 
+    /** @throws \LogicException */
     public function mount(): void
     {
         $this->reload();
@@ -65,6 +66,7 @@ class ChildrenManager extends AbstractController
         );
     }
 
+    /** @throws \LogicException */
     private function reload(): void
     {
         /** @var User $user */
@@ -77,6 +79,7 @@ class ChildrenManager extends AbstractController
         ], $this->childRepository->findByOwner($user));
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function addChild(): void
     {
@@ -114,6 +117,7 @@ class ChildrenManager extends AbstractController
         $this->addFlash('success', 'Child added.');
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function deleteChild(#[LiveArg] string $id): void
     {

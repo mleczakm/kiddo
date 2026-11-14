@@ -98,7 +98,7 @@ final class RecommendationModerationTest extends WebTestCase
         $this->manager->submit($parent, 'Nowa opinia w międzyczasie');
         try {
             $this->manager->replace($reviews, $revision);
-            self::fail('An outdated editor must not overwrite a newer submission.');
+            static::fail('An outdated editor must not overwrite a newer submission.');
         } catch (\RuntimeException $exception) {
             static::assertStringContainsString('Opinie zmieniły się', $exception->getMessage());
         }
@@ -116,6 +116,7 @@ final class RecommendationModerationTest extends WebTestCase
         static::assertFalse($this->tools->call('admin_save_recommendation', $actor, $unconfirmed)->ok);
         $saved = $this->tools->call('admin_save_recommendation', $actor, $arguments);
         static::assertTrue($saved->ok);
+        static::assertIsString($saved->data['id']);
         $id = $saved->data['id'];
         $listed = $this->tools->call('admin_list_recommendations', $actor, ['query' => 'MCP', 'status' => 'draft']);
         static::assertSame(1, $listed->data['total']);

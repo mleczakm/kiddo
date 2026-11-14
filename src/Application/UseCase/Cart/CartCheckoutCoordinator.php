@@ -25,7 +25,23 @@ final readonly class CartCheckoutCoordinator
         return $this->consentManager->isRequired();
     }
 
-    /** @param list<WorkshopTermsEvidence> $workshopTerms */
+    /**
+     * @param list<WorkshopTermsEvidence> $workshopTerms
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Random\RandomException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function complete(
         Cart $cart,
         User $user,

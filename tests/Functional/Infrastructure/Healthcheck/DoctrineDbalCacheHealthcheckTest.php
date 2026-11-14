@@ -18,7 +18,9 @@ final class DoctrineDbalCacheHealthcheckTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->healthcheck = self::getContainer()->get(DoctrineDbalCacheHealthcheck::class);
+        $healthcheck = self::getContainer()->get(DoctrineDbalCacheHealthcheck::class);
+        static::assertInstanceOf(DoctrineDbalCacheHealthcheck::class, $healthcheck);
+        $this->healthcheck = $healthcheck;
     }
 
     public function testHealthcheckPassesWhenDatabaseConnectionIsHealthy(): void

@@ -24,7 +24,9 @@ class PaymentRepositoryTest extends KernelTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
-        $this->paymentRepository = $container->get(PaymentRepository::class);
+        $paymentRepository = $container->get(PaymentRepository::class);
+        static::assertInstanceOf(PaymentRepository::class, $paymentRepository);
+        $this->paymentRepository = $paymentRepository;
     }
 
     public function testFindPendingWithSearch(): void
@@ -56,7 +58,9 @@ class PaymentRepositoryTest extends KernelTestCase
     private function preparePendingPayment(): void
     {
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         // Setup test data
         $user = UserAssembler::new()->withName('Test User')->withEmail('test@example.com')->assemble();
         $em->persist($user);

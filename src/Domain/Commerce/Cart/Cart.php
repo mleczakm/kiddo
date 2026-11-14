@@ -46,6 +46,7 @@ final class Cart
      * must go through this first - the single place "a converted cart is
      * immutable" is enforced, rather than repeating the check in every
      * use case.
+     * @throws \LogicException
      */
     public function assertOpen(): void
     {

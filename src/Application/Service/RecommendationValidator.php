@@ -24,6 +24,7 @@ final class RecommendationValidator
         }
         $text = [];
         foreach (['author' => 200, 'text' => 10_000] as $field => $limit) {
+            /** @var mixed $value */
             $value = $review[$field] ?? null;
             if (!is_string($value) || trim($value) === '' || mb_strlen($value) > $limit) {
                 throw new \InvalidArgumentException(sprintf(
@@ -33,6 +34,7 @@ final class RecommendationValidator
             }
             $text[$field] = trim($value);
         }
+        /** @var mixed $status */
         $status = $review['status'] ?? ($review['source'] === 'kiddo' ? 'draft' : 'published');
         if (!in_array($status, ['draft', 'published'], true)) {
             throw new \InvalidArgumentException('Status opinii musi być draft lub published.');

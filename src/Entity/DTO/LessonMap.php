@@ -128,6 +128,7 @@ class LessonMap implements \Countable
     }
 
     // Add missing methods that are called in Booking.php
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     public function setLesson(string $lessonId, BookedLesson $bookedLesson): void
     {
         $ulid = Ulid::fromString($lessonId);
@@ -135,6 +136,7 @@ class LessonMap implements \Countable
         $this->active->put($ulid, $bookedLesson);
     }
 
+    /** @throws \OutOfBoundsException */
     public function removeLesson(Ulid $lessonId): void
     {
         $this->lessons->remove($lessonId);
@@ -158,6 +160,7 @@ class LessonMap implements \Countable
     /**
      * Moves lessons from the cancelled bucket back to active (or past, if
      * their schedule has since elapsed), mirroring cancelAllBookedLessons().
+     * @throws \OutOfBoundsException
      */
     public function reactivateAllBookedLessons(Booking $booking): void
     {
@@ -178,12 +181,20 @@ class LessonMap implements \Countable
         }
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function getLesson(string $lessonId): ?BookedLesson
     {
         $ulid = Ulid::fromString($lessonId);
         return $this->lessons->get($ulid, null);
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function cancelLesson(string $lessonId, ?string $reason = null, ?User $cancelledBy = null): bool
     {
         $ulid = Ulid::fromString($lessonId);
@@ -198,6 +209,10 @@ class LessonMap implements \Countable
         return false;
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function refundLesson(string $lessonId, ?string $_reason = null): bool
     {
         $ulid = Ulid::fromString($lessonId);
@@ -210,6 +225,7 @@ class LessonMap implements \Countable
         return false;
     }
 
+    /** @throws \OutOfBoundsException */
     public function rescheduleLesson(Lesson $from, Lesson $to, User $rescheduledBy): void
     {
         $fromId = $from->getId();
@@ -398,6 +414,7 @@ class LessonMap implements \Countable
         return $this->lessons->count();
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     public function isCancelledLesson(Ulid|string $lessonId): bool
     {
         $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString($lessonId);
@@ -405,6 +422,10 @@ class LessonMap implements \Countable
         return $this->cancelled->hasKey($ulid);
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function isRescheduledLesson(Ulid|string $lessonId): bool
     {
         $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString($lessonId);
@@ -415,6 +436,7 @@ class LessonMap implements \Countable
         return $value instanceof RescheduledLesson;
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     public function isActiveLesson(Ulid|string $lessonId): bool
     {
         $ulid = $lessonId instanceof Ulid ? $lessonId : Ulid::fromString($lessonId);
@@ -426,6 +448,8 @@ class LessonMap implements \Countable
      * Raw entry for a lesson in the cancelled bucket (plain BookedLesson,
      * CancelledLesson, or RescheduledLesson depending on how/when it was
      * cancelled — older records may only have the plain shape).
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
      */
     public function getCancelledEntry(Ulid|string $lessonId): ?BookedLesson
     {
@@ -434,6 +458,10 @@ class LessonMap implements \Countable
         return $this->cancelled->get($ulid, null);
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function getCancelledByUserId(Ulid|string $lessonId): ?int
     {
         $entry = $this->getCancelledEntry($lessonId);
@@ -441,6 +469,10 @@ class LessonMap implements \Countable
         return $entry instanceof CancelledLesson ? $entry->cancelledBy : null;
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function getCancelledAt(Ulid|string $lessonId): ?\DateTimeImmutable
     {
         $entry = $this->getCancelledEntry($lessonId);
@@ -448,6 +480,10 @@ class LessonMap implements \Countable
         return $entry instanceof CancelledLesson ? $entry->cancelledAt : null;
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function getCancellationReason(Ulid|string $lessonId): ?string
     {
         $entry = $this->getCancelledEntry($lessonId);
@@ -455,6 +491,10 @@ class LessonMap implements \Countable
         return $entry instanceof CancelledLesson ? $entry->reason : null;
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function getRescheduledByUserId(Ulid|string $lessonId): ?int
     {
         $entry = $this->getCancelledEntry($lessonId);
@@ -462,6 +502,10 @@ class LessonMap implements \Countable
         return $entry instanceof RescheduledLesson ? $entry->rescheduledBy : null;
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function getRescheduledAt(Ulid|string $lessonId): ?\DateTimeImmutable
     {
         $entry = $this->getCancelledEntry($lessonId);

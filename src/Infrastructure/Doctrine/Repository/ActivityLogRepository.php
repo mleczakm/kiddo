@@ -26,7 +26,7 @@ class ActivityLogRepository extends ServiceEntityRepository implements ActivityL
     #[\Override]
     public function findRecent(int $limit = 12): array
     {
-        /** @var list<ActivityLog> $result */
+        /** @var list<ActivityLog> */
         return $this
             ->createQueryBuilder('a')
             // createdAt has only second precision in the DB; break ties with the
@@ -45,7 +45,7 @@ class ActivityLogRepository extends ServiceEntityRepository implements ActivityL
     #[\Override]
     public function findBySubject(User $subject, int $limit = 20): array
     {
-        /** @var list<ActivityLog> $result */
+        /** @var list<ActivityLog> */
         return $this
             ->createQueryBuilder('a')
             ->andWhere('a.subject = :subject')
@@ -63,7 +63,7 @@ class ActivityLogRepository extends ServiceEntityRepository implements ActivityL
     #[\Override]
     public function findByBookingId(string $bookingId, int $limit = 20): array
     {
-        /** @var list<ActivityLog> $result */
+        /** @var list<ActivityLog> */
         return $this
             ->createQueryBuilder('a')
             ->andWhere("JSON_GET_TEXT(a.context, 'bookingId') = :bookingId")
@@ -81,7 +81,7 @@ class ActivityLogRepository extends ServiceEntityRepository implements ActivityL
     #[\Override]
     public function findByPricingRuleId(string $pricingRuleId, int $limit = 20): array
     {
-        /** @var list<ActivityLog> $result */
+        /** @var list<ActivityLog> */
         return $this
             ->createQueryBuilder('a')
             ->andWhere("JSON_GET_TEXT(a.context, 'pricingRuleId') = :pricingRuleId")
@@ -93,6 +93,10 @@ class ActivityLogRepository extends ServiceEntityRepository implements ActivityL
             ->getResult();
     }
 
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     #[\Override]
     public function existsByDedupeKey(string $dedupeKey): bool
     {

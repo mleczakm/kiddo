@@ -26,7 +26,9 @@ class LessonRepositoryTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $lesson1 = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->assemble())
@@ -84,7 +86,9 @@ class LessonRepositoryTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $lesson1 = LessonAssembler::new()
             ->withMetadata(
@@ -129,7 +133,7 @@ class LessonRepositoryTest extends KernelTestCase
         $inSixWeeks = new DateTimeImmutable('2025-08-20 10:00:00');
 
         $em = self::getContainer()->get(EntityManagerInterface::class);
-        \assert($em instanceof EntityManagerInterface);
+        \assert($em instanceof EntityManagerInterface, 'The entity manager must be available in the test container.');
 
         $near = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->assemble())
@@ -144,7 +148,7 @@ class LessonRepositoryTest extends KernelTestCase
         $em->flush();
 
         $repo = self::getContainer()->get(LessonRepository::class);
-        \assert($repo instanceof LessonRepository);
+        \assert($repo instanceof LessonRepository, 'Doctrine must use the configured lesson repository.');
 
         // 7-day week window sees only the near lesson.
         static::assertCount(1, $repo->findByFilters(null, null, week: $thisWeek->format('Y-m-d')));
@@ -173,7 +177,9 @@ class LessonRepositoryTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $lesson1 = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->assemble())

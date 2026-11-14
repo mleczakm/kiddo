@@ -85,7 +85,7 @@ class AdminBookingModal extends AbstractController
      */
     public function getFilteredLessons(): array
     {
-        if (empty($this->lessonSearch) || strlen($this->lessonSearch) < 2) {
+        if ($this->lessonSearch === null || strlen($this->lessonSearch) < 2) {
             return [];
         }
 
@@ -106,7 +106,7 @@ class AdminBookingModal extends AbstractController
             $searchTerm,
         );
 
-        /** @var Lesson[] $result */
+        /** @var Lesson[] */
         return $qb->getQuery()->getResult();
     }
 
@@ -116,7 +116,7 @@ class AdminBookingModal extends AbstractController
      */
     public function getFilteredUsers(): array
     {
-        if (empty($this->userSearch) || strlen($this->userSearch) < 2) {
+        if ($this->userSearch === null || strlen($this->userSearch) < 2) {
             return [];
         }
 
@@ -127,7 +127,7 @@ class AdminBookingModal extends AbstractController
             ->orderBy('u.name', 'ASC')
             ->setMaxResults(10);
 
-        /** @var User[] $result */
+        /** @var User[] */
         return $qb->getQuery()->getResult();
     }
 
@@ -152,11 +152,12 @@ class AdminBookingModal extends AbstractController
     /**
      * Get selected lessons data
      * @return Lesson[]
+     * @throws \UnexpectedValueException
      */
     public function getSelectedLessons(): array
     {
         $ids = $this->getSelectedLessonIdsArray();
-        if (empty($ids)) {
+        if ($ids === []) {
             return [];
         }
 
@@ -226,7 +227,7 @@ class AdminBookingModal extends AbstractController
     {
         try {
             // Validate required fields
-            if (empty($this->getSelectedLessonIdsArray())) {
+            if ($this->getSelectedLessonIdsArray() === []) {
                 $this->errorMessage = 'Please select at least one lesson';
                 return;
             }
@@ -243,7 +244,7 @@ class AdminBookingModal extends AbstractController
             }
 
             $lessons = $this->getSelectedLessons();
-            if (empty($lessons)) {
+            if ($lessons === []) {
                 $this->errorMessage = 'Selected lessons not found';
                 return;
             }
@@ -305,7 +306,10 @@ class AdminBookingModal extends AbstractController
 
     public function isFormValid(): bool
     {
-        return !empty($this->getSelectedLessonIdsArray()) && !empty($this->selectedUserId);
+        return (
+            $this->getSelectedLessonIdsArray() !== []
+            && ($this->selectedUserId !== null && $this->selectedUserId !== '' && $this->selectedUserId !== '0')
+        );
     }
 
     public function getTotalSelectedLessons(): int

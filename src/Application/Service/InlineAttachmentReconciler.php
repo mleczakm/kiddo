@@ -59,7 +59,7 @@ final readonly class InlineAttachmentReconciler
             }
 
             $src = $node['attrs']['src'] ?? null;
-            if ($src && \is_string($src) && preg_match('~/pliki/([A-Za-z0-9]{26})/~', $src, $matches)) {
+            if (\is_string($src) && preg_match('~/pliki/([A-Za-z0-9]{26})/~', $src, $matches)) {
                 $fileIds[] = $matches[1];
             }
         });
@@ -70,12 +70,19 @@ final readonly class InlineAttachmentReconciler
     /**
      * Recursively walk content nodes to find images.
      *
-     * @param list<array<string, mixed>> $nodes
+     * @param array<array-key, mixed> $nodes
      * @param callable(array<string, mixed>): void $callback
      */
     private function walkContentNodes(array $nodes, callable $callback): void
     {
-        foreach ($nodes as $node) {
+        foreach (array_keys($nodes) as $index) {
+            /** @var mixed $node */
+            $node = $nodes[$index];
+            if (!\is_array($node)) {
+                continue;
+            }
+
+            /** @var array<string, mixed> $node */
             $callback($node);
 
             if (isset($node['content']) && \is_array($node['content'])) {

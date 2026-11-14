@@ -58,7 +58,6 @@ final class LessonVoter extends Voter
             return false;
         }
 
-        /** @var Lesson $lesson */
         $lesson = $subject;
 
         foreach ($lesson->getAllInstructors() as $instructor) {

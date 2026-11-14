@@ -44,6 +44,7 @@ class PlatformBillingComponent extends AbstractController
         private readonly PlatformFeeCalculator $feeCalculator,
     ) {}
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     public function mount(): void
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -53,6 +54,7 @@ class PlatformBillingComponent extends AbstractController
      * @throws \Brick\Math\Exception\MathException
      * @throws \Brick\Money\Exception\MoneyMismatchException
      * @throws \InvalidArgumentException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     public function getSummary(): PlatformBillingSummary
     {
@@ -77,12 +79,14 @@ class PlatformBillingComponent extends AbstractController
      * @throws \Brick\Math\Exception\MathException
      * @throws \Brick\Money\Exception\MoneyMismatchException
      * @throws \InvalidArgumentException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     public function getCurrentDue(): float
     {
         return $this->getSummary()->currentDue;
     }
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     #[LiveAction]
     public function setPastDueAsPaid(): void
     {
@@ -98,6 +102,7 @@ class PlatformBillingComponent extends AbstractController
         }
     }
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     #[LiveAction]
     public function openModal(): void
     {
@@ -116,6 +121,11 @@ class PlatformBillingComponent extends AbstractController
         $this->errorMessage = null;
     }
 
+    /**
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws \Symfony\Component\Form\Exception\RuntimeException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function processPayment(): void
     {

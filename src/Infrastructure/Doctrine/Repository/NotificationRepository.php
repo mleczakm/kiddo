@@ -26,7 +26,7 @@ class NotificationRepository extends ServiceEntityRepository implements Notifica
     #[\Override]
     public function findRecentForUser(User $user, int $limit = 20): array
     {
-        /** @var list<Notification> $notifications */
+        /** @var list<Notification> */
         return $this
             ->createQueryBuilder('n')
             ->andWhere('n.user = :user')
@@ -38,6 +38,10 @@ class NotificationRepository extends ServiceEntityRepository implements Notifica
             ->getResult();
     }
 
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     #[\Override]
     public function countUnreadForUser(User $user): int
     {

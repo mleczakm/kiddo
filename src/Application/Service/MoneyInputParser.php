@@ -14,6 +14,7 @@ final class MoneyInputParser
 {
     /**
      * @return non-empty-string|null the normalized decimal string (e.g. "1234.56"), or null for empty input
+     * @throws \InvalidArgumentException
      */
     public static function parse(?string $input): ?string
     {

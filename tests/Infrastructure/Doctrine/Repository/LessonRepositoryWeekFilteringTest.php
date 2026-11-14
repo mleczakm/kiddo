@@ -23,8 +23,12 @@ class LessonRepositoryWeekFilteringTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        $this->lessonRepository = self::getContainer()->get(LessonRepository::class);
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
+        $lessonRepository = self::getContainer()->get(LessonRepository::class);
+        static::assertInstanceOf(LessonRepository::class, $lessonRepository);
+        $this->lessonRepository = $lessonRepository;
 
         // Clean up before tests
         $this->entityManager->createQuery('DELETE FROM App\Entity\Lesson')->execute();

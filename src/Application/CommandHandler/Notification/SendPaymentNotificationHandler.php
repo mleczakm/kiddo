@@ -38,6 +38,12 @@ readonly class SendPaymentNotificationHandler
     /**
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function __invoke(SendPaymentNotificationCommand $command): void
     {
@@ -77,6 +83,12 @@ readonly class SendPaymentNotificationHandler
     /**
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function sendUserNotification(Payment $payment, User $user): void
     {
@@ -132,6 +144,14 @@ readonly class SendPaymentNotificationHandler
         );
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     private function sendAdminNotifications(Payment $payment): void
     {
         $bookings = $payment->getBookings();

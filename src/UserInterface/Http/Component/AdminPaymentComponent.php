@@ -29,6 +29,7 @@ final class AdminPaymentComponent extends AbstractController
 
     /**
      * @return Transfer[]
+     * @throws \UnexpectedValueException
      */
     public function getTransfers(): array
     {

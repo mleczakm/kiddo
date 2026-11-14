@@ -78,6 +78,7 @@ final class BillingComponent extends AbstractController
     /**
      * @throws \Brick\Money\Exception\MoneyMismatchException
      * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     public function getTotalOutstanding(): Money
     {

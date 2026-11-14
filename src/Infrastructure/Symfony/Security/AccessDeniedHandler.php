@@ -30,6 +30,12 @@ readonly class AccessDeniedHandler implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();

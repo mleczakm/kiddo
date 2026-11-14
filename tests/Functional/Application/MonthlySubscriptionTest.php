@@ -61,7 +61,7 @@ final class MonthlySubscriptionTest extends KernelTestCase
         $subscriptions = $em->getRepository(Subscription::class)->findAll();
         static::assertCount(1, $subscriptions);
         static::assertSame('2026-10', $subscriptions[0]->getLastChargedPeriod());
-        static::assertSame(16000, $subscriptions[0]->getMonthlyRateMinor());
+        static::assertSame(16_000, $subscriptions[0]->getMonthlyRateMinor());
 
         $bookings = $em->getRepository(Booking::class)->findBy(['user' => $user]);
         static::assertCount(1, $bookings);

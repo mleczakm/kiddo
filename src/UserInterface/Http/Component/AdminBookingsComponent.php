@@ -104,6 +104,7 @@ class AdminBookingsComponent extends AbstractController
      *     progress: float,
      *     upcomingLessons: array<int, Lesson>
      * }>
+     * @throws \LogicException
      */
     public function getAllBookings(): array
     {
@@ -254,7 +255,7 @@ class AdminBookingsComponent extends AbstractController
      */
     public function getAvailableLessons(): array
     {
-        /** @var Lesson[] $result */
+        /** @var Lesson[] */
         return $this->lessonRepository
             ->createQueryBuilder('l')
             ->leftJoin('l.series', 's')
@@ -282,7 +283,7 @@ class AdminBookingsComponent extends AbstractController
             $selectedLessonIds = $this->getSelectedLessonIdsArray();
 
             // Validate lesson selection
-            if (empty($selectedLessonIds)) {
+            if ($selectedLessonIds === []) {
                 $this->errorMessage = 'Wybierz przynajmniej jedną lekcję';
                 return;
             }
@@ -311,7 +312,7 @@ class AdminBookingsComponent extends AbstractController
             $lessons = $this->lessonRepository->findBy([
                 'id' => $selectedLessonIds,
             ]);
-            if (empty($lessons)) {
+            if ($lessons === []) {
                 $this->errorMessage = 'Nie znaleziono wybranych lekcji';
                 return;
             }
@@ -377,6 +378,10 @@ class AdminBookingsComponent extends AbstractController
         return in_array($bookingId, $this->expandedBookings, true);
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function cancelLesson(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
@@ -401,6 +406,10 @@ class AdminBookingsComponent extends AbstractController
         }
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function reactivateBooking(#[LiveArg] string $bookingId): void
     {
@@ -420,6 +429,10 @@ class AdminBookingsComponent extends AbstractController
         }
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function refundLesson(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
@@ -460,6 +473,10 @@ class AdminBookingsComponent extends AbstractController
         $this->newLessonId = null;
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function reschedule(): void
     {
@@ -584,8 +601,16 @@ class AdminBookingsComponent extends AbstractController
             if (!is_array($decoded)) {
                 return [];
             }
-            /** @var list<string> $ids */
-            return array_values(array_filter($decoded, static fn($v) => is_string($v) && Ulid::isValid($v)));
+            $ids = [];
+            foreach (array_keys($decoded) as $index) {
+                if (!(is_string($decoded[$index]) && Ulid::isValid($decoded[$index]))) {
+                    continue;
+                }
+
+                $ids[] = $decoded[$index];
+            }
+
+            return $ids;
         } catch (\Exception) {
             return [];
         }
@@ -594,6 +619,7 @@ class AdminBookingsComponent extends AbstractController
     /**
      * Get selected lessons data
      * @return Lesson[]
+     * @throws \UnexpectedValueException
      */
     public function getSelectedLessons(): array
     {
@@ -630,7 +656,7 @@ class AdminBookingsComponent extends AbstractController
         $searchTerm = '%' . ($this->lessonSearch ?? '') . '%';
         $qb->andWhere('m.title LIKE :search OR m.description LIKE :search')->setParameter('search', $searchTerm);
 
-        /** @var Lesson[] $result */
+        /** @var Lesson[] */
         return $qb->getQuery()->getResult();
     }
 
@@ -670,14 +696,15 @@ class AdminBookingsComponent extends AbstractController
      */
     public function getAmountPerLesson(Booking $booking): ?Money
     {
-        if (!$booking->getPayment() || count($booking->getLessons()) === 0) {
+        $payment = $booking->getPayment();
+        if ($payment === null || count($booking->getLessons()) === 0) {
             return null;
         }
 
-        $totalAmount = $booking->getPayment()->getAmount();
+        $totalAmount = $payment->getAmount();
         $lessonCount = count($booking->getLessons());
 
         // Divide the money amount by lesson count
-        return $totalAmount->dividedBy($lessonCount, RoundingMode::HALF_UP);
+        return $totalAmount->dividedBy($lessonCount, RoundingMode::HalfUp);
     }
 }

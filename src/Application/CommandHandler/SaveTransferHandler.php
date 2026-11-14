@@ -22,6 +22,14 @@ final readonly class SaveTransferHandler
         private TransferReviewThresholdProvider $reviewThreshold,
     ) {}
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(SaveTransfer $command): void
     {
         // Every transfer is persisted, regardless of amount - it must never

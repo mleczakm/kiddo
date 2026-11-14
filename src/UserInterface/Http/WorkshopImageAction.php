@@ -14,6 +14,10 @@ final class WorkshopImageAction extends AbstractController
 {
     use RangeResponseTrait;
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
     #[Route('/warsztat/{id}/obraz', name: 'workshop_image', requirements: [
         'id' => '[A-Za-z0-9]+',
     ])]

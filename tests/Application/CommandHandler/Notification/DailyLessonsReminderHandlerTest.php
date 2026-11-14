@@ -31,7 +31,9 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->persist($admin);
         $em->persist(new FinanceContact($admin));
@@ -52,6 +54,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(DailyLessonsReminderHandler::class);
+        static::assertInstanceOf(DailyLessonsReminderHandler::class, $handler);
         $handler(new DailyLessonsReminder($date));
 
         $emails = $this->mailer()->sentEmails();
@@ -88,7 +91,9 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $child = new Child($user, 'Zosia', new DateTimeImmutable('2018-03-15'));
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->persist($admin);
         $em->persist($host);
@@ -113,6 +118,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(DailyLessonsReminderHandler::class);
+        static::assertInstanceOf(DailyLessonsReminderHandler::class, $handler);
         $handler(new DailyLessonsReminder($date));
 
         $emails = $this->mailer()->sentEmails();

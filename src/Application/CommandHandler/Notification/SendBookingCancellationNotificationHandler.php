@@ -27,6 +27,13 @@ final readonly class SendBookingCancellationNotificationHandler
         private BookingNotificationRecipients $recipients,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(SendBookingCancellationNotificationCommand $command): void
     {
         $booking = $this->bookingRepository->find($command->bookingId);
@@ -41,7 +48,6 @@ final readonly class SendBookingCancellationNotificationHandler
             return;
         }
 
-        /** @var \DateTimeImmutable $lessonDate */
         $lessonDate = $firstLesson->schedule;
 
         // Get translated content
@@ -92,6 +98,13 @@ final readonly class SendBookingCancellationNotificationHandler
         $this->sendAdminNotifications($booking, $dayOfWeek, $lessonTitle);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     private function sendAdminNotifications(Booking $booking, string $dayOfWeek, string $lessonTitle): void
     {
         $recipients = $this->recipients->forLessons($booking->getLessons());

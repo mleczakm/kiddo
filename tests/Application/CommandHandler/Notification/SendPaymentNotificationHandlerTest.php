@@ -39,7 +39,9 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->persist($finance);
         $em->persist($host);
@@ -67,6 +69,7 @@ class SendPaymentNotificationHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(SendPaymentNotificationHandler::class);
+        static::assertInstanceOf(SendPaymentNotificationHandler::class, $handler);
         $handler(new SendPaymentNotificationCommand($payment->getId()));
 
         $this->mailer()->assertSentEmailCount(3);

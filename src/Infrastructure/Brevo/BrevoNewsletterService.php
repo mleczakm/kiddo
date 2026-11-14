@@ -37,6 +37,8 @@ readonly class BrevoNewsletterService
      * Add or update a contact in Brevo (for logged-in users, no DOI required).
      *
      * @param array<string, mixed> $attributes Additional contact attributes
+     * @throws \RuntimeException
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function addOrUpdateContact(string $email, ?string $name = null, array $attributes = []): void
     {
@@ -54,7 +56,7 @@ readonly class BrevoNewsletterService
             $data['attributes'] = array_merge($attributes, [
                 'FIRSTNAME' => $name,
             ]);
-        } elseif (!empty($attributes)) {
+        } elseif ($attributes !== []) {
             $data['attributes'] = $attributes;
         }
 
@@ -71,6 +73,8 @@ readonly class BrevoNewsletterService
 
     /**
      * Remove a contact from the newsletter list.
+     * @throws \RuntimeException
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function removeContactFromList(string $email): void
     {
@@ -98,7 +102,11 @@ readonly class BrevoNewsletterService
     /**
      * Send Double Opt-In confirmation email (for homepage guests).
      */
-    /** @param array<string, string> $attributes */
+    /**
+     * @param array<string, string> $attributes
+     * @throws \RuntimeException
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function sendDoubleOptInConfirmation(string $email, array $attributes = []): void
     {
         if (!$this->isConfigured() || $this->doiTemplateId <= 0 || $this->doiRedirectionUrl === '') {

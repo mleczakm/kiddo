@@ -25,6 +25,7 @@ final class ToolInvokeAction extends AbstractController
         private readonly LoggerInterface $logger,
     ) {}
 
+    /** @throws \LogicException */
     #[Route('/api/v1/tools', name: 'api_v1_tools_list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
@@ -55,6 +56,9 @@ final class ToolInvokeAction extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \LogicException
+     */
     #[Route(
         '/api/v1/tools/{name}',
         name: 'api_v1_tools_invoke',
@@ -102,6 +106,10 @@ final class ToolInvokeAction extends AbstractController
         return $this->json($result->toArray(), $result->ok ? Response::HTTP_OK : Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function resolveActor(Request $request): ChatActor
     {
         $bearer = $this->extractBearer($request);

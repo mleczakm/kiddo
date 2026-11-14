@@ -53,6 +53,22 @@ final readonly class CheckoutCart
         private StateMachinesInterface $stateMachines,
     ) {}
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Random\RandomException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(
         Ulid $cartId,
         int $requestingUserId,
@@ -60,12 +76,26 @@ final readonly class CheckoutCart
         ?BuyerDetails $buyerDetails = null,
     ): CustomerOrder {
         $buyerDetails ??= BuyerDetails::privateCustomer();
-        $checkout = fn(): CustomerOrder => $this->checkoutTransactionally(
-            $cartId,
-            $requestingUserId,
-            $paymentCode,
-            $buyerDetails,
-        );
+        $checkout =
+            /**
+             * @throws \Brick\Math\Exception\NumberFormatException
+             * @throws \Brick\Math\Exception\RoundingNecessaryException
+             * @throws \Brick\Money\Exception\UnknownCurrencyException
+             * @throws \Doctrine\DBAL\Exception
+             * @throws \Doctrine\ORM\Exception\ORMException
+             * @throws \Doctrine\ORM\ORMInvalidArgumentException
+             * @throws \Doctrine\ORM\OptimisticLockException
+             * @throws \Doctrine\ORM\TransactionRequiredException
+             * @throws \InvalidArgumentException
+             * @throws \LogicException
+             * @throws \Brick\Math\Exception\MathException
+             * @throws \RuntimeException
+             * @throws \Random\RandomException
+             * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+             */
+            function () use ($cartId, $requestingUserId, $paymentCode, $buyerDetails): CustomerOrder {
+                return $this->checkoutTransactionally($cartId, $requestingUserId, $paymentCode, $buyerDetails);
+            };
 
         if ($this->em->getConnection()->isTransactionActive()) {
             return $checkout();
@@ -74,6 +104,22 @@ final readonly class CheckoutCart
         return $this->em->wrapInTransaction($checkout);
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Doctrine\DBAL\Exception
+     */
     private function checkoutTransactionally(
         Ulid $cartId,
         int $requestingUserId,
@@ -125,8 +171,7 @@ final readonly class CheckoutCart
             $quote = $this->priceQuoter->quote(
                 $cart->customerId,
                 $lesson,
-                $cartItem->ticketType,
-                $baseTicketOption->price,
+                $baseTicketOption,
                 promotionCode: $cart->promotionCode,
             );
 

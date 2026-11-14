@@ -40,6 +40,8 @@ final readonly class KiddoMcpToolInvoker
      * @param array<string, mixed> $arguments
      *
      * @return array<string, mixed>
+     * @throws \RuntimeException
+     * @throws \LogicException
      */
     public function invoke(string $toolName, array $arguments): array
     {

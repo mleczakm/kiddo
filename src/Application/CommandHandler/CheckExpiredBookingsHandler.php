@@ -23,6 +23,11 @@ class CheckExpiredBookingsHandler
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     public function __invoke(CheckExpiredBookings $command): void
     {
         // Backstop for bookings whose payment was never expired (the payment

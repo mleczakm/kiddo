@@ -19,7 +19,9 @@ final class HttpServerSwooleServerProviderTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->provider = self::getContainer()->get(SwooleServerProviderInterface::class);
+        $provider = self::getContainer()->get(SwooleServerProviderInterface::class);
+        static::assertInstanceOf(SwooleServerProviderInterface::class, $provider);
+        $this->provider = $provider;
     }
 
     public function testProviderIsInstanceOfHttpServerSwooleServerProvider(): void

@@ -50,19 +50,21 @@ final class SettingAssembler extends EntityAssembler
     public function assemble(): Setting
     {
         $setting = new Setting();
-        $setting->setKey($this->properties['key'] ?? 'organization_details');
-        $setting->setContent(
-            $this->properties['content'] ?? [
-                'name' => 'Warsztatownia Sensoryczna',
-                'street' => 'Aleja Jana Pawła II 12D',
-                'postal_code' => '05-250',
-                'city' => 'Radzymin',
-                'email' => 'warsztatownia.sensoryczna@gmail.com',
-                'phone' => '+48 571 531 213',
-                'bank_account' => '46 2490 0005 0000 4000 1897 5420',
-                'blik_phone' => '571 531 213',
-            ],
-        );
+        /** @var string $key */
+        $key = $this->properties['key'] ?? 'organization_details';
+        $setting->setKey($key);
+        /** @var array<string, mixed> $content */
+        $content = $this->properties['content'] ?? [
+            'name' => 'Warsztatownia Sensoryczna',
+            'street' => 'Aleja Jana Pawła II 12D',
+            'postal_code' => '05-250',
+            'city' => 'Radzymin',
+            'email' => 'warsztatownia.sensoryczna@gmail.com',
+            'phone' => '+48 571 531 213',
+            'bank_account' => '46 2490 0005 0000 4000 1897 5420',
+            'blik_phone' => '571 531 213',
+        ];
+        $setting->setContent($content);
 
         return $setting;
     }

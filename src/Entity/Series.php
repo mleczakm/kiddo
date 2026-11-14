@@ -103,6 +103,7 @@ class Series
         return $lesson === false ? null : $lesson;
     }
 
+    /** @throws \LogicException */
     public function getFirstLesson(): Lesson
     {
         if ($this->lessons->isEmpty()) {
@@ -126,6 +127,7 @@ class Series
         return $first;
     }
 
+    /** @throws \LogicException */
     public function getLastLesson(): Lesson
     {
         if ($this->lessons->isEmpty()) {

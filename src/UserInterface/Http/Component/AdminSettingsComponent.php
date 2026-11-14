@@ -61,6 +61,10 @@ class AdminSettingsComponent extends AbstractController
         private readonly string $bankMailAddress,
     ) {}
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function mount(): void
     {
         // Only mount()-time state that's actually edited through a writable

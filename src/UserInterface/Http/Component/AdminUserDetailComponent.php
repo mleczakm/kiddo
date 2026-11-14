@@ -95,6 +95,7 @@ final class AdminUserDetailComponent extends AbstractController
 
     /**
      * @return Child[]
+     * @throws \LogicException
      */
     public function getChildren(): array
     {
@@ -103,6 +104,7 @@ final class AdminUserDetailComponent extends AbstractController
 
     /**
      * @return list<array{title: string, summary: ?string, createdAt: \DateTimeImmutable}>
+     * @throws \LogicException
      */
     public function getHistory(): array
     {
@@ -113,6 +115,7 @@ final class AdminUserDetailComponent extends AbstractController
         ], $this->activityLogRepository->findBySubject($this->getUser())));
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function startEditField(#[LiveArg] string $field): void
     {
@@ -126,10 +129,19 @@ final class AdminUserDetailComponent extends AbstractController
         $this->fieldValue = match ($field) {
             'adminNote' => $user->getAdminNote() ?? '',
             'name' => $user->getName(),
-            'phone' => $user->getPhone()?->getNationalNumber() !== null
-                ? '+' . $user->getPhone()->getCountryCode() . $user->getPhone()->getNationalNumber()
-                : '',
+            'phone' => $this->editablePhone($user),
         };
+    }
+
+    private function editablePhone(User $user): string
+    {
+        $phone = $user->getPhone();
+        $nationalNumber = $phone?->getNationalNumber();
+        if ($phone === null || $nationalNumber === null) {
+            return '';
+        }
+
+        return '+' . ($phone->getCountryCode() ?? '') . $nationalNumber;
     }
 
     #[LiveAction]
@@ -140,6 +152,10 @@ final class AdminUserDetailComponent extends AbstractController
         $this->fieldError = null;
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function saveField(): void
     {
@@ -155,9 +171,7 @@ final class AdminUserDetailComponent extends AbstractController
         $before = match ($field) {
             'adminNote' => $user->getAdminNote() ?? '',
             'name' => $user->getName(),
-            'phone' => $user->getPhone()?->getNationalNumber() !== null
-                ? '+' . $user->getPhone()->getCountryCode() . $user->getPhone()->getNationalNumber()
-                : '',
+            'phone' => $this->editablePhone($user),
         };
 
         if ($before === $value) {
@@ -229,6 +243,11 @@ final class AdminUserDetailComponent extends AbstractController
         $this->notifyBody = '';
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function sendNotification(): void
     {
@@ -267,6 +286,10 @@ final class AdminUserDetailComponent extends AbstractController
         $this->newChildBirthday = null;
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function saveNewChild(): void
     {
@@ -292,6 +315,7 @@ final class AdminUserDetailComponent extends AbstractController
         $this->cancelAddChild();
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function startEditChild(#[LiveArg] string $childId): void
     {
@@ -313,6 +337,10 @@ final class AdminUserDetailComponent extends AbstractController
         $this->editChildBirthday = null;
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function saveChild(): void
     {
@@ -339,6 +367,7 @@ final class AdminUserDetailComponent extends AbstractController
         $this->cancelEditChild();
     }
 
+    /** @throws \LogicException */
     private function findChild(string $childId): ?Child
     {
         try {

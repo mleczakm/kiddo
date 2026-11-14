@@ -29,7 +29,9 @@ final class AdminUserDetailComponentTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->em = self::getContainer()->get(EntityManagerInterface::class);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
     }
 
     public function testEditingTheAdminNoteSavesItAndRecordsHistory(): void
@@ -68,8 +70,11 @@ final class AdminUserDetailComponentTest extends WebTestCase
         );
         static::assertSame('Preferuje kontakt telefoniczny po 16:00.', $reloaded->getAdminNote());
 
-        /** @var list<ActivityLog> $logs */
-        $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($reloaded);
+        $logs = $this->em->getRepository(ActivityLog::class)->findBy(
+            ['subject' => $reloaded],
+            ['createdAt' => 'DESC', 'id' => 'DESC'],
+            20,
+        );
         static::assertCount(1, $logs);
         static::assertStringContainsString('Notatkę administracyjną', (string) $logs[0]->getSummary());
     }
@@ -166,13 +171,15 @@ final class AdminUserDetailComponentTest extends WebTestCase
         $component->set('newChildBirthday', '2023-12-10');
         $component->call('saveNewChild');
 
-        /** @var list<Child> $children */
-        $children = $this->em->getRepository(Child::class)->findByOwner($customer);
+        $children = $this->em->getRepository(Child::class)->findBy(['owner' => $customer], ['createdAt' => 'DESC']);
         static::assertCount(1, $children);
         static::assertSame('Maja Nowak', $children[0]->getName());
 
-        /** @var list<ActivityLog> $logs */
-        $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($customer);
+        $logs = $this->em->getRepository(ActivityLog::class)->findBy(
+            ['subject' => $customer],
+            ['createdAt' => 'DESC', 'id' => 'DESC'],
+            20,
+        );
         static::assertCount(1, $logs);
         static::assertStringContainsString('Maja Nowak', $logs[0]->getTitle());
     }

@@ -34,7 +34,9 @@ final class ReservationDetailsModalTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->em = self::getContainer()->get(EntityManagerInterface::class);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
     }
 
     public function testRendersAsARegisteredLiveComponentInsteadOfAnonymousFallback(): void

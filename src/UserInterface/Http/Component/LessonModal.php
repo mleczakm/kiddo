@@ -164,6 +164,10 @@ class LessonModal extends AbstractController
         private readonly LoggerInterface $logger,
     ) {}
 
+    /**
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     public function mount(): void
     {
         $this->selectDefaultTicketType();
@@ -176,6 +180,8 @@ class LessonModal extends AbstractController
      * though everything else on this component is recalculated per-render -
      * $expectedQuoteHash must reflect what was actually shown to the user,
      * not whatever the price happens to be *right now* when confirming.
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
      */
     private function refreshQuote(): void
     {
@@ -190,18 +196,18 @@ class LessonModal extends AbstractController
         /** @var ?User $user */
         $user = $this->getUser();
 
-        $quote = $this->priceQuoter->quote(
-            $user?->getId(),
-            $this->lesson,
-            $this->selectedTicketType,
-            $ticketOption->price,
-        );
+        $quote = $this->priceQuoter->quote($user?->getId(), $this->lesson, $ticketOption);
 
         $this->expectedQuoteHash = $quote->quoteHash;
         $this->quotedPriceMinor = (string) $quote->finalPriceMinor;
         $this->quotedPriceCurrency = $quote->currency;
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function getQuotedPrice(): ?Money
     {
         if ($this->quotedPriceMinor === null || $this->quotedPriceCurrency === null) {
@@ -211,6 +217,10 @@ class LessonModal extends AbstractController
         return Money::ofMinor((int) $this->quotedPriceMinor, $this->quotedPriceCurrency);
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     #[LiveAction]
     public function openModal(): void
     {
@@ -244,6 +254,11 @@ class LessonModal extends AbstractController
         $this->closeTerms();
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     #[LiveAction]
     public function closeModal(): void
     {
@@ -260,6 +275,11 @@ class LessonModal extends AbstractController
         $this->syncBrowserUrl();
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function syncBrowserUrl(): void
     {
         $this->dispatchBrowserEvent('workshop:url-change', [
@@ -298,6 +318,11 @@ class LessonModal extends AbstractController
         return $this->bookingConsentManager->isRequired();
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     private function workshopUrl(): string
     {
         $lesson = $this->lesson;
@@ -327,6 +352,10 @@ class LessonModal extends AbstractController
         $this->paymentModal = false;
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     #[LiveAction]
     public function selectTab(#[LiveArg] int $index, #[LiveArg('tickettype')] string $ticketType): void
     {
@@ -343,6 +372,8 @@ class LessonModal extends AbstractController
      * a seat or requiring payment yet - a separate, lighter-weight path
      * than processPayment() below, which stays the one-line immediate
      * checkout it always was.
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
      */
     #[LiveAction]
     public function addToCart(): void
@@ -535,6 +566,7 @@ class LessonModal extends AbstractController
 
     /**
      * @return array<array{id: non-empty-string, name: string, birthday: non-empty-string|null}>
+     * @throws \LogicException
      */
     public function getChildren(): array
     {
@@ -551,6 +583,18 @@ class LessonModal extends AbstractController
         ], $this->childRepository->findByOwner($user));
     }
 
+    /**
+     * @throws \App\Application\UseCase\PriceQuoteMismatchException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Messenger\Exception\HandlerFailedException
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     */
     #[LiveAction]
     public function processPayment(): void
     {
@@ -672,6 +716,7 @@ class LessonModal extends AbstractController
         $this->selectedTicketType = $selected?->type->value;
     }
 
+    /** @throws \LogicException */
     public function needsPhone(): bool
     {
         /** @var ?User $user */
@@ -716,12 +761,18 @@ class LessonModal extends AbstractController
         return true;
     }
 
+    /** @throws \Brick\Math\Exception\MathException */
     private function setPaymentAmount(Money $amount): void
     {
         $this->paymentAmountMinor = (string) $amount->getMinorAmount()->toInt();
         $this->paymentCurrency = $amount->getCurrency()->getCurrencyCode();
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function getPaymentAmount(): ?Money
     {
         if ($this->paymentAmountMinor === null || $this->paymentCurrency === null) {
@@ -745,6 +796,7 @@ class LessonModal extends AbstractController
 
     /**
      * @return array<Booking>
+     * @throws \LogicException
      */
     public function getExistingBookings(): array
     {
@@ -761,6 +813,12 @@ class LessonModal extends AbstractController
         return $this->bookingRepository->findForUserAndLesson($user, $this->lesson);
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     */
     #[LiveAction]
     #[LiveListener('resumePayment')]
     public function resumePayment(#[LiveArg] string $bookingId): void

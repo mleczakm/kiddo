@@ -17,6 +17,10 @@ final readonly class RemoveCartItem
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     public function __invoke(Ulid $cartItemId, int $requestingUserId): void
     {
         $item = $this->cartItemRepository->find($cartItemId);

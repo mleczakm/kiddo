@@ -33,6 +33,11 @@ readonly class RescheduleLessonBookingHandler
         private TranslatorInterface $translator,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(RescheduleLessonBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());
@@ -88,6 +93,7 @@ readonly class RescheduleLessonBookingHandler
      * The booked lesson the command wants to move, or null (after logging
      * why) when it is unknown, not part of the booking, or no longer active -
      * rescheduling is only allowed for active lessons.
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
      */
     private function findReschedulableLesson(Booking $booking, RescheduleLessonBooking $command): ?Lesson
     {
@@ -162,6 +168,7 @@ readonly class RescheduleLessonBookingHandler
      * recipients).
      *
      * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function notifyCustomer(Booking $booking, Lesson $oldLesson, Lesson $newLesson): void
     {

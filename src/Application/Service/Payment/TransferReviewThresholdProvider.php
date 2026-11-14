@@ -23,6 +23,11 @@ final readonly class TransferReviewThresholdProvider
         private SettingRepositoryInterface $settingRepository,
     ) {}
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function get(): Money
     {
         $setting = $this->settingRepository->findOneByKey(self::SETTING_KEY);

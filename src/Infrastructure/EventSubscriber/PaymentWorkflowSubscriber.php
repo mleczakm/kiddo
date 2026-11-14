@@ -24,6 +24,7 @@ readonly class PaymentWorkflowSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     public function onPaymentPaid(Event $event): void
     {
         $payment = $event->getSubject();

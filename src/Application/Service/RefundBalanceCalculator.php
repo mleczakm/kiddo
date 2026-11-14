@@ -18,6 +18,13 @@ final readonly class RefundBalanceCalculator
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function refundableForBooking(Payment $payment, ?Ulid $orderLineId): int
     {
         $captured = $payment->getAmount()->getMinorAmount()->toInt();
@@ -31,6 +38,7 @@ final readonly class RefundBalanceCalculator
         return max(0, $captured - $this->approved($payment, $orderLineId));
     }
 
+    /** @throws \Brick\Math\Exception\MathException */
     public function approved(Payment $payment, ?Ulid $orderLineId = null): int
     {
         $total = 0;

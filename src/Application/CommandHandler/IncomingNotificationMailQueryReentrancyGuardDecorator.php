@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\CommandHandler;
 
-use DirectoryTree\ImapEngine\MessageQueryInterface;
+use DirectoryTree\ImapEngine\MessageInterface;
 use Symfony\Component\Lock\LockFactory;
 
 final readonly class IncomingNotificationMailQueryReentrancyGuardDecorator implements IncomingNotificationMailQuery
@@ -25,7 +25,9 @@ final readonly class IncomingNotificationMailQueryReentrancyGuardDecorator imple
      * task worker before it touches IMAP, preventing both concurrent access to one Mailbox
      * stream and two workers importing the same still-unseen message.
      *
-     * @return iterable<MessageQueryInterface>
+     * @return iterable<MessageInterface>
+     * @throws \Symfony\Component\Lock\Exception\LockAcquiringException
+     * @throws \Symfony\Component\Lock\Exception\LockConflictedException
      */
     #[\Override]
     public function __invoke(): iterable

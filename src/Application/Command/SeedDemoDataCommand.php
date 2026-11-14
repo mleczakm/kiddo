@@ -46,6 +46,7 @@ final class SeedDemoDataCommand extends Command
 
     private const string DEMO_TITLE_PREFIX = '[DEMO] ';
 
+    /** @throws \Symfony\Component\Console\Exception\LogicException */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepositoryInterface $userRepository,
@@ -60,6 +61,7 @@ final class SeedDemoDataCommand extends Command
         parent::__construct();
     }
 
+    /** @throws \Symfony\Component\Console\Exception\InvalidArgumentException */
     #[\Override]
     protected function configure(): void
     {
@@ -77,6 +79,15 @@ final class SeedDemoDataCommand extends Command
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Console\Exception\InvalidArgumentException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \libphonenumber\NumberParseException
+     * @throws \InvalidArgumentException
+     * @throws \OutOfBoundsException
+     */
     #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -87,7 +98,7 @@ final class SeedDemoDataCommand extends Command
             return Command::FAILURE;
         }
 
-        if ($input->getOption('replace') && $input->getOption('purge')) {
+        if ($input->getOption('replace') === true && $input->getOption('purge') === true) {
             $io->error('Use either --replace or --purge, not both.');
 
             return Command::INVALID;
@@ -140,6 +151,7 @@ final class SeedDemoDataCommand extends Command
 
     /**
      * @return array{User, User, list<User>, list<Child>}
+     * @throws \libphonenumber\NumberParseException
      */
     private function createUsers(\DateTimeImmutable $now): array
     {
@@ -173,6 +185,9 @@ final class SeedDemoDataCommand extends Command
 
     /**
      * @return array{list<Lesson>, list<Lesson>}
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     private function createLessons(\DateTimeImmutable $now, User $host): array
     {
@@ -277,6 +292,11 @@ final class SeedDemoDataCommand extends Command
      * @param list<Lesson> $oneTime
      *
      * @return list<Booking>
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
+     * @throws \OutOfBoundsException
      */
     private function createBookings(
         \DateTimeImmutable $now,
@@ -372,6 +392,11 @@ final class SeedDemoDataCommand extends Command
      * @param list<User> $parents
      *
      * @return list<Booking>
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
+     * @throws \OutOfBoundsException
      */
     private function createManyInactiveReservations(
         \DateTimeImmutable $now,
@@ -437,6 +462,10 @@ final class SeedDemoDataCommand extends Command
      * @param list<Child> $children
      * @param list<Lesson> $oneTime
      * @return array{Booking, Booking}
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
      */
     private function createCancelledBookings(
         \DateTimeImmutable $now,
@@ -477,6 +506,10 @@ final class SeedDemoDataCommand extends Command
      * @param list<Child> $children
      * @param list<Lesson> $weekly
      * @return array{Booking, Booking}
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
      */
     private function createPaidBookings(\DateTimeImmutable $now, array $parents, array $children, array $weekly): array
     {
@@ -519,6 +552,7 @@ final class SeedDemoDataCommand extends Command
 
     /**
      * @param list<string> $roles
+     * @throws \libphonenumber\NumberParseException
      */
     private function newUser(string $mailbox, string $name, array $roles, string $phone): User
     {
@@ -557,6 +591,12 @@ final class SeedDemoDataCommand extends Command
         );
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
+     */
     private function payment(User $user, string $amount, PaymentMethod $method, string $status): Payment
     {
         $payment = new Payment($user, Money::of($amount, 'PLN'), $method);
@@ -566,6 +606,7 @@ final class SeedDemoDataCommand extends Command
         return $payment;
     }
 
+    /** @throws \InvalidArgumentException */
     private function booking(
         User $user,
         ?Child $child,
@@ -654,17 +695,14 @@ final class SeedDemoDataCommand extends Command
         /** @var array<string, Series> $series */
         $series = [];
         foreach ($lessons as $lesson) {
-            if ($lesson->getSeries() instanceof Series) {
-                $series[$lesson->getSeries()->getId()->toString()] = $lesson->getSeries();
+            $lessonSeries = $lesson->getSeries();
+            if ($lessonSeries !== null) {
+                $series[$lessonSeries->getId()->toString()] = $lessonSeries;
             }
             $this->entityManager->remove($lesson);
         }
         $this->entityManager->flush();
         foreach ($series as $demoSeries) {
-            if (!$demoSeries instanceof Series) {
-                continue;
-            }
-
             $this->entityManager->remove($demoSeries);
         }
         // Demo users are kept and reused on the next run (see newUser()). They

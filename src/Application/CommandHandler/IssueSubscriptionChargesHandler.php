@@ -21,6 +21,7 @@ final readonly class IssueSubscriptionChargesHandler
 
     /**
      * @throws \RuntimeException when a subscription's amount is invalid or no payment code can be allocated
+     * @throws \Random\RandomException
      */
     public function __invoke(IssueSubscriptionCharges $command): void
     {

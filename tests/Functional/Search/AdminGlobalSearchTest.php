@@ -41,7 +41,9 @@ final class AdminGlobalSearchTest extends WebTestCase
     {
         self::ensureKernelShutdown();
         $this->browser = self::createClient();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
 
         $this->admin = new User('search-admin@example.test', 'Search Admin');
         $this->admin->setRoles(['ROLE_ADMIN']);
@@ -67,7 +69,9 @@ final class AdminGlobalSearchTest extends WebTestCase
         static::assertTrue(static::contains($references, SearchType::Lesson, $lesson->getId()->toRfc4122()));
 
         /** @var list<SearchResult> $results */
-        $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
+        $searchResultHydrator = self::getContainer()->get(SearchResultHydrator::class);
+        static::assertInstanceOf(SearchResultHydrator::class, $searchResultHydrator);
+        $results = $searchResultHydrator->hydrate($references);
         $resultTypes = array_map(static fn($result): SearchType => $result->reference->type, $results);
         static::assertContains(SearchType::Lesson, $resultTypes);
     }
@@ -87,9 +91,9 @@ final class AdminGlobalSearchTest extends WebTestCase
         static::assertNull($payment->getPaymentCode());
         static::assertSame('X7K2', $payment->getPaymentCodeSnapshot());
 
-        $references = array_values(iterator_to_array(
-            self::getContainer()->get(GlobalSearchQuery::class)->search('X7K2'),
-        ));
+        $globalSearchQuery = self::getContainer()->get(GlobalSearchQuery::class);
+        static::assertInstanceOf(GlobalSearchQuery::class, $globalSearchQuery);
+        $references = array_values(iterator_to_array($globalSearchQuery->search('X7K2')));
 
         static::assertTrue(static::contains($references, SearchType::Payment, $payment->getId()->toRfc4122()));
     }
@@ -126,7 +130,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         $lessonHtml = $component->render()->toString();
 
         static::assertStringContainsString('</mark> Workshops', $lessonHtml);
-        static::assertStringContainsString('/admin/zajecia/' . $lesson->getId(), $lessonHtml);
+        static::assertStringContainsString('/admin/zajecia/' . (string) $lesson->getId(), $lessonHtml);
         static::assertStringContainsString('data-search-result-icon="lesson"', $lessonHtml);
         static::assertStringContainsString('bg-indigo-100 text-indigo-700', $lessonHtml);
     }
@@ -199,9 +203,9 @@ final class AdminGlobalSearchTest extends WebTestCase
             'id' => $payment->getId()->toRfc4122(),
         ]);
 
-        $references = array_values(iterator_to_array(
-            self::getContainer()->get(GlobalSearchQuery::class)->search('15.08', 30),
-        ));
+        $globalSearchQuery = self::getContainer()->get(GlobalSearchQuery::class);
+        static::assertInstanceOf(GlobalSearchQuery::class, $globalSearchQuery);
+        $references = array_values(iterator_to_array($globalSearchQuery->search('15.08', 30)));
         $types = array_map(static fn(SearchReference $reference): SearchType => $reference->type, $references);
 
         static::assertContains(SearchType::Client, $types);
@@ -210,7 +214,9 @@ final class AdminGlobalSearchTest extends WebTestCase
         static::assertContains(SearchType::Payment, $types);
 
         /** @var list<SearchResult> $results */
-        $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
+        $searchResultHydrator = self::getContainer()->get(SearchResultHydrator::class);
+        static::assertInstanceOf(SearchResultHydrator::class, $searchResultHydrator);
+        $results = $searchResultHydrator->hydrate($references);
         // Matched by id, not just type: $this->admin (persisted in setUp() with a real,
         // un-pinned created_at) is also a Client-type result, and on any test run that
         // happens to execute on the 15th of August, its created_at's real day/month

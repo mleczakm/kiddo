@@ -13,6 +13,7 @@ final readonly class DoctrineConnectionEnsurer implements ConnectionEnsurerInter
         private Connection $connection,
     ) {}
 
+    /** @throws \Doctrine\DBAL\Exception */
     #[\Override]
     public function ensureConnection(): void
     {

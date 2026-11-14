@@ -31,7 +31,9 @@ final class SeriesDetailsComponentTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->em = static::getContainer()->get(EntityManagerInterface::class);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
 
         $admin = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $this->em->persist($admin);
@@ -88,8 +90,8 @@ final class SeriesDetailsComponentTest extends WebTestCase
         $html = (string) $component->render();
 
         static::assertStringContainsString('data-live-action-param="expandLesson"', $html);
-        static::assertStringContainsString('data-live-lesson-id-param="' . $lesson->getId() . '"', $html);
-        static::assertStringContainsString('href="/admin/zajecia/' . $lesson->getId() . '"', $html);
+        static::assertStringContainsString('data-live-lesson-id-param="' . (string) $lesson->getId() . '"', $html);
+        static::assertStringContainsString('href="/admin/zajecia/' . (string) $lesson->getId() . '"', $html);
         static::assertStringContainsString('aria-label="Otwórz szczegóły zajęć"', $html);
         static::assertStringNotContainsString('data-live-action-param-lessonId', $html);
     }

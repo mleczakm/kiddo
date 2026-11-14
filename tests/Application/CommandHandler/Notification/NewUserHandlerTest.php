@@ -30,13 +30,16 @@ class NewUserHandlerTest extends KernelTestCase
         $admin2 = UserAssembler::new()->withEmail('admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->persist($admin1);
         $em->persist($admin2);
         $em->flush();
 
         $handler = self::getContainer()->get(NewUserHandler::class);
+        static::assertInstanceOf(NewUserHandler::class, $handler);
 
         // Act
         $handler(new NewUser($user));
@@ -119,7 +122,9 @@ class NewUserHandlerTest extends KernelTestCase
         $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->persist($admin1);
         $em->flush();
@@ -129,6 +134,7 @@ class NewUserHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(NewUserHandler::class);
+        static::assertInstanceOf(NewUserHandler::class, $handler);
 
         // Act
         $handler(new NewUser($user));

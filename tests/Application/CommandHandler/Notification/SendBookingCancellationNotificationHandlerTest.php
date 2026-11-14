@@ -39,7 +39,9 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->persist($finance);
         $em->persist($host);
@@ -61,6 +63,7 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(SendBookingCancellationNotificationHandler::class);
+        static::assertInstanceOf(SendBookingCancellationNotificationHandler::class, $handler);
         $handler(new SendBookingCancellationNotificationCommand($booking->getId()));
 
         static::assertCount(3, $this->mailer()->sentEmails());

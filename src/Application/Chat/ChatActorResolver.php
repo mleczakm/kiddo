@@ -14,6 +14,7 @@ final readonly class ChatActorResolver
         private UserRepositoryInterface $userRepository,
     ) {}
 
+    /** @throws \InvalidArgumentException */
     public function fromTokenString(#[\SensitiveParameter] string $token): ChatActor
     {
         $chatToken = $this->tokenManager->parse($token);

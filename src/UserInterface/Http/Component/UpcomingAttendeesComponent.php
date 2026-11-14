@@ -6,6 +6,7 @@ namespace App\UserInterface\Http\Component;
 
 use App\Application\Service\ActivityLogger;
 use App\Application\Service\Payment\PaymentCodeGenerator;
+use App\Application\Workflow\StateMachinesInterface;
 use App\Entity\ActivityType;
 use App\Entity\Booking;
 use App\Entity\Child;
@@ -112,6 +113,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         private readonly ActivityLogger $activityLogger,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly PaymentCodeGenerator $paymentCodeGenerator,
+        private readonly StateMachinesInterface $stateMachines,
     ) {
         $this->week = Clock::get()->now()->format('Y-m-d');
         $this->adminAction = '';
@@ -176,6 +178,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         return new \DateTimeImmutable($this->week);
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     #[LiveAction]
     public function increaseCapacity(#[LiveArg] string $lessonId): void
     {
@@ -188,6 +191,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         }
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     #[LiveAction]
     public function decreaseCapacity(#[LiveArg] string $lessonId): void
     {
@@ -211,6 +215,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         $this->actionsForBookingId = null;
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     #[LiveAction]
     public function openAdminModal(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
@@ -292,8 +297,9 @@ final class UpcomingAttendeesComponent extends AbstractController
                     break;
 
                 case 'mark_refund':
-                    if ($booking->getPayment()) {
-                        $booking->getPayment()->setStatus('refund_requested');
+                    $payment = $booking->getPayment();
+                    if ($payment !== null) {
+                        $this->stateMachines->apply($payment, Payment::TRANSITION_REQUEST_REFUND);
                         $this->entityManager->flush();
                     } else {
                         throw new \RuntimeException('No payment found for this booking');
@@ -320,6 +326,7 @@ final class UpcomingAttendeesComponent extends AbstractController
         }
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     #[LiveAction]
     public function saveBookingNote(#[LiveArg] string $bookingId): void
     {
@@ -331,6 +338,10 @@ final class UpcomingAttendeesComponent extends AbstractController
         $this->entityManager->flush();
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \OutOfBoundsException
+     */
     #[LiveAction]
     public function markToRefund(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
@@ -379,7 +390,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             ->setParameter('q', '%' . trim($this->userSearch) . '%')
             ->orderBy('u.name', 'ASC')
             ->setMaxResults(10);
-        /** @var list<User> $result */
+        /** @var list<User> */
         return $qb->getQuery()->getResult();
     }
 
@@ -427,6 +438,13 @@ final class UpcomingAttendeesComponent extends AbstractController
         $this->customerName = '';
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     #[LiveAction]
     public function confirmFastBooking(): void
     {
@@ -564,6 +582,13 @@ final class UpcomingAttendeesComponent extends AbstractController
         }
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     */
     #[LiveAction]
     public function payForBooking(#[LiveArg] string $bookingId, #[LiveArg] string $lessonId): void
     {
@@ -607,8 +632,8 @@ final class UpcomingAttendeesComponent extends AbstractController
 
         $this->entityManager->flush();
 
-        $this->paymentCode = $booking->payment->getPaymentCode()?->getCode();
-        $this->paymentAmount = $booking->payment->getAmount();
+        $this->paymentCode = $payment->getPaymentCode()?->getCode();
+        $this->paymentAmount = $payment->getAmount();
         $this->paymentModalOpened = true;
         $this->actionsForBookingId = null;
     }

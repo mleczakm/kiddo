@@ -32,6 +32,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
         private CacheInterface $cache,
     ) {}
 
+    /** @throws \DateInvalidTimeZoneException */
     #[\Override]
     public function getSchedule(): Schedule
     {

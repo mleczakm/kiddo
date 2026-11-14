@@ -21,6 +21,10 @@ final class UsersController extends AbstractController
         return $this->render('admin/users/index.html.twig');
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     */
     #[IsGranted('ROLE_MANAGE_USERS')]
     #[Route('/admin/uzytkownicy/{id}', name: 'app_admin_user_view', requirements: [
         'id' => '\d+',

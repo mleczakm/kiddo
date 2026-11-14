@@ -12,9 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
-/**
- * @extends AbstractType<array{amount: string}>
- */
 class PlatformBillingPaymentType extends AbstractType
 {
     #[\Override]
@@ -42,6 +39,7 @@ class PlatformBillingPaymentType extends AbstractType
         ]);
     }
 
+    /** @throws \Symfony\Component\OptionsResolver\Exception\AccessException */
     #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {

@@ -82,6 +82,7 @@ final class AddUserModal extends AbstractController
         private readonly ActivityLogger $activityLogger,
     ) {}
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     public function mount(): void
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGE_USERS');
@@ -115,6 +116,10 @@ final class AddUserModal extends AbstractController
         $this->emitUp('userModalClosed');
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function save(): void
     {

@@ -28,7 +28,9 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
 
         $user = UserAssembler::new()->assemble();
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->flush();
 
@@ -65,7 +67,7 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
         static::assertStringContainsString(
-            $paymentAmount->getAmount()->toScale(0) . ' zł',
+            (string) $paymentAmount->getAmount()->toScale(0) . ' zł',
             (string) ($firstEmail->getHtmlBody() ?? $firstEmail->getTextBody()),
         );
         static::assertStringContainsString(

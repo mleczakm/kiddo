@@ -20,11 +20,19 @@ final readonly class OrderPaymentExpirySubscriber implements EventSubscriberInte
         private StateMachinesInterface $stateMachines,
     ) {}
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return ['workflow.payment.completed.expire' => 'onExpired'];
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \UnexpectedValueException
+     */
     public function onExpired(Event $event): void
     {
         $payment = $event->getSubject();

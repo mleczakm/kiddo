@@ -10,6 +10,7 @@ readonly class AppVersionExtension
 {
     private \DateTimeImmutable $lastReleaseTime;
 
+    /** @throws \InvalidArgumentException */
     public function __construct(string $appVersion)
     {
         $this->lastReleaseTime = \DateTimeImmutable::createFromFormat('YmdHi', $appVersion)

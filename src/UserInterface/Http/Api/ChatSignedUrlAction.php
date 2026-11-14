@@ -26,6 +26,8 @@ final class ChatSignedUrlAction extends AbstractController
 
     /**
      * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Random\RandomException
      */
     #[Route('/api/chat/signed-url', name: 'api_chat_signed_url', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse

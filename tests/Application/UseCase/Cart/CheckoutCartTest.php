@@ -164,7 +164,9 @@ final class CheckoutCartTest extends KernelTestCase
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $add = self::getContainer()->get(AddCartItem::class);
+        static::assertInstanceOf(AddCartItem::class, $add);
         $checkout = self::getContainer()->get(CheckoutCart::class);
+        static::assertInstanceOf(CheckoutCart::class, $checkout);
         $firstUser = UserAssembler::new()->assemble();
         $secondUser = UserAssembler::new()->assemble();
         $lesson = LessonAssembler::new()->withCapacity(1)->assemble();
@@ -193,7 +195,9 @@ final class CheckoutCartTest extends KernelTestCase
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $add = self::getContainer()->get(AddCartItem::class);
+        static::assertInstanceOf(AddCartItem::class, $add);
         $checkout = self::getContainer()->get(CheckoutCart::class);
+        static::assertInstanceOf(CheckoutCart::class, $checkout);
         $customer = UserAssembler::new()->assemble();
         $occupant = UserAssembler::new()->assemble();
         $available = LessonAssembler::new()->withCapacity(2)->assemble();
@@ -232,8 +236,11 @@ final class CheckoutCartTest extends KernelTestCase
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $add = self::getContainer()->get(AddCartItem::class);
+        static::assertInstanceOf(AddCartItem::class, $add);
         $apply = self::getContainer()->get(ApplyPromotionCode::class);
+        static::assertInstanceOf(ApplyPromotionCode::class, $apply);
         $checkout = self::getContainer()->get(CheckoutCart::class);
+        static::assertInstanceOf(CheckoutCart::class, $checkout);
         $rule = new PricingRule(
             new Ulid(),
             'Once',

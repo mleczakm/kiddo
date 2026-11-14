@@ -26,6 +26,7 @@ class PaymentCode
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
+    /** @throws \Random\RandomException */
     public function __construct(
         #[ORM\OneToOne(targetEntity: Payment::class, inversedBy: 'paymentCode')]
         #[ORM\JoinColumn(nullable: false)]
@@ -69,6 +70,7 @@ class PaymentCode
         return $this->createdAt;
     }
 
+    /** @throws \Random\RandomException */
     private function generateCode(): void
     {
         $max = strlen(self::CHARS) - 1;

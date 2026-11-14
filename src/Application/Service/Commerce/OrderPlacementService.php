@@ -38,6 +38,14 @@ final class OrderPlacementService
 
     /**
      * @param list<OrderItemSelection> $items
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Random\RandomException
      */
     public function place(
         User $user,
@@ -47,13 +55,20 @@ final class OrderPlacementService
         ?OrderPlacementOptions $options = null,
     ): OrderPlacementResult {
         $options ??= OrderPlacementOptions::standard();
-        $place = fn(): OrderPlacementResult => $this->placeTransactionally(
-            $user,
-            $source,
-            $paymentCode,
-            $items,
-            $options,
-        );
+        $place =
+            /**
+             * @throws \Brick\Math\Exception\MathException
+             * @throws \Brick\Math\Exception\NumberFormatException
+             * @throws \Brick\Math\Exception\RoundingNecessaryException
+             * @throws \Brick\Money\Exception\UnknownCurrencyException
+             * @throws \InvalidArgumentException
+             * @throws \LogicException
+             * @throws \Doctrine\DBAL\Exception
+             * @throws \Random\RandomException
+             */
+            function () use ($user, $source, $paymentCode, $items, $options): OrderPlacementResult {
+                return $this->placeTransactionally($user, $source, $paymentCode, $items, $options);
+            };
 
         if ($this->em->getConnection()->isTransactionActive()) {
             return $place();
@@ -62,7 +77,17 @@ final class OrderPlacementService
         return $this->em->wrapInTransaction($place);
     }
 
-    /** @param list<OrderItemSelection> $items */
+    /**
+     * @param list<OrderItemSelection> $items
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \Random\RandomException
+     */
     private function placeTransactionally(
         User $user,
         string $source,
@@ -221,7 +246,13 @@ final class OrderPlacementService
         return $line;
     }
 
-    /** @param list<OrderItemSelection> $items */
+    /**
+     * @param list<OrderItemSelection> $items
+     * @throws \App\Application\Service\Commerce\CapacityExceededException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \InvalidArgumentException
+     * @throws \Doctrine\DBAL\Exception
+     */
     private function lockAndValidateCapacity(array $items): void
     {
         /** @var array<string, array{lesson: Lesson, required: int}> $requirements */
@@ -281,8 +312,10 @@ final class OrderPlacementService
         }
     }
 
-    /** @param list<string> $lessonIds
+    /**
+     * @param list<string> $lessonIds
      * @return array<string, int>
+     * @throws \Doctrine\DBAL\Exception
      */
     private function occupiedSeats(array $lessonIds): array
     {

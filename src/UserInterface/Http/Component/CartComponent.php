@@ -104,6 +104,10 @@ final class CartComponent extends AbstractController
      *     finalPrice: Money,
      *     hasDiscount: bool,
      * }>
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \LogicException
      */
     public function getItems(): array
     {
@@ -136,11 +140,23 @@ final class CartComponent extends AbstractController
         return $items;
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \LogicException
+     */
     public function getItemCount(): int
     {
         return count($this->getItems());
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \LogicException
+     */
     public function getTotal(): Money
     {
         $total = Money::zero(self::CURRENCY);
@@ -151,7 +167,10 @@ final class CartComponent extends AbstractController
         return $total;
     }
 
-    /** @return list<WorkshopTermsEvidence> */
+    /**
+     * @return list<WorkshopTermsEvidence>
+     * @throws \LogicException
+     */
     public function getWorkshopTerms(): array
     {
         $cart = $this->getCart();
@@ -172,6 +191,7 @@ final class CartComponent extends AbstractController
         return $this->isCheckoutConsentRequired() && $this->buyerType === BuyerType::PRIVATE->value;
     }
 
+    /** @throws \LogicException */
     public function getPromotionCode(): ?string
     {
         return $this->getCart()?->promotionCode;
@@ -186,6 +206,11 @@ final class CartComponent extends AbstractController
     #[LiveListener('cart:updated')]
     public function refresh(): void {}
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     #[LiveAction]
     public function remove(#[LiveArg] string $id): void
     {
@@ -197,6 +222,11 @@ final class CartComponent extends AbstractController
         ($this->removeCartItem)(Ulid::fromString($id), $user->getId() ?? 0);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     #[LiveAction]
     public function applyCode(): void
     {
@@ -216,6 +246,11 @@ final class CartComponent extends AbstractController
         }
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     #[LiveAction]
     public function removeCode(): void
     {
@@ -228,6 +263,19 @@ final class CartComponent extends AbstractController
         ($this->removePromotionCode)($cart->id, $user->getId() ?? 0);
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Random\RandomException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Doctrine\DBAL\Exception
+     */
     #[LiveAction]
     public function checkout(): void
     {
@@ -295,6 +343,11 @@ final class CartComponent extends AbstractController
         $this->withdrawalAcknowledged = false;
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function getConfirmedTotal(): ?Money
     {
         if ($this->confirmedTotalMinor === null) {
@@ -304,6 +357,7 @@ final class CartComponent extends AbstractController
         return Money::ofMinor((int) $this->confirmedTotalMinor, self::CURRENCY);
     }
 
+    /** @throws \LogicException */
     private function getCart(): ?Cart
     {
         $user = $this->requireUser();
@@ -314,6 +368,7 @@ final class CartComponent extends AbstractController
         return $this->cartRepository->findOpenForCustomer($user->getId() ?? 0, self::CURRENCY);
     }
 
+    /** @throws \LogicException */
     private function requireUser(): ?User
     {
         $user = $this->getUser();

@@ -22,7 +22,9 @@ final class SeriesFunctionalTest extends WebTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->em = self::getContainer()->get(EntityManagerInterface::class);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
     }
 
     public function testGetFirstAndLastLessonBySchedule(): void

@@ -26,6 +26,7 @@ final readonly class ChatActor
         return $this->user === null;
     }
 
+    /** @throws \LogicException */
     public function requireUser(): User
     {
         if ($this->user === null) {
@@ -50,6 +51,7 @@ final readonly class ChatActor
         return $this->isAdmin() || in_array('ROLE_HOST', $this->roles, true);
     }
 
+    /** @throws \LogicException */
     public function userId(): int
     {
         $id = $this->requireUser()->getId();

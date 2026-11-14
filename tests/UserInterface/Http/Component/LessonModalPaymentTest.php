@@ -302,7 +302,7 @@ final class LessonModalPaymentTest extends WebTestCase
         static::assertStringContainsString('data-live-event-param="resumePayment"', $html);
         // Stimulus maps data-live-booking-id-param → bookingId (HTML attrs are case-insensitive,
         // so data-live-bookingId-param becomes bookingid and fails LiveArg resolution).
-        static::assertStringContainsString('data-live-booking-id-param="' . $booking->getId() . '"', $html);
+        static::assertStringContainsString('data-live-booking-id-param="' . (string) $booking->getId() . '"', $html);
         static::assertStringNotContainsString('data-live-bookingId-param=', $html);
 
         $component->emit('resumePayment', [

@@ -120,6 +120,6 @@ final class UserChatToolsBookingAccessTest extends KernelTestCase
         static::assertIsArray($lessons);
         /** @var list<array{id?: string}> $lessons */
 
-        return array_values(array_map(static fn(array $l): string => (string) ($l['id'] ?? ''), $lessons));
+        return array_values(array_map(static fn(array $l): string => $l['id'] ?? '', $lessons));
     }
 }

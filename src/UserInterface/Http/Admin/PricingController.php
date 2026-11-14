@@ -16,6 +16,7 @@ final class PricingController extends AbstractController
         private readonly FeatureManager $featureManager,
     ) {}
 
+    /** @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException */
     #[IsGranted('ROLE_MANAGE_PRICING')]
     #[Route('/admin/cennik', name: 'app_admin_pricing')]
     public function index(): Response

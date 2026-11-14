@@ -20,6 +20,12 @@ final readonly class ApplyPromotionCode
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \App\Application\UseCase\Cart\InvalidPromotionCodeException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     public function __invoke(Ulid $cartId, string $code, int $requestingUserId): Cart
     {
         $cart = $this->cartRepository->find($cartId);

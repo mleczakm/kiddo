@@ -26,8 +26,12 @@ final class BookingPreviewComponentTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->em = self::getContainer()->get(EntityManagerInterface::class);
-        $this->bookingRepository = self::getContainer()->get(BookingRepository::class);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
+        $bookingRepository = self::getContainer()->get(BookingRepository::class);
+        static::assertInstanceOf(BookingRepository::class, $bookingRepository);
+        $this->bookingRepository = $bookingRepository;
     }
 
     public function testFindForUserAndLessonReturnsBookingsForUserAndLesson(): void

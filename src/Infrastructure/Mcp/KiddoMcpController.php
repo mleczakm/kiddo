@@ -34,6 +34,7 @@ final readonly class KiddoMcpController
         private LoggerInterface $logger,
     ) {}
 
+    /** @throws \InvalidArgumentException */
     public function handle(Request $request): Response
     {
         $content = $this->normalizeBody($request->getContent());
@@ -95,6 +96,7 @@ final readonly class KiddoMcpController
         return $this->httpFoundationFactory->createResponse($psrResponse, $streamed);
     }
 
+    /** @throws \InvalidArgumentException */
     private function emptySseResponse(Request $request): Response
     {
         $this->logger->info('MCP HTTP GET accepted as empty SSE stream');

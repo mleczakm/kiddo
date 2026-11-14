@@ -23,6 +23,9 @@ final readonly class WorkshopFileManager
      * @param array<string, string> $roles Roles keyed by the reusable File id.
      * @param array<string, string> $captions Captions keyed by the reusable File id.
      * @param list<string> $removedFileIds
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     * @throws \ValueError
      */
     public function reconcile(LessonMetadata $metadata, array $roles, array $captions, array $removedFileIds): void
     {
@@ -60,6 +63,8 @@ final readonly class WorkshopFileManager
 
     /**
      * @param list<UploadedFile> $uploads
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
      */
     public function attachUploads(
         LessonMetadata $metadata,

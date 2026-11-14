@@ -10,6 +10,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ScheduleController extends AbstractController
 {
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[Route('/admin/harmonogram', name: 'app_admin_schedule')]
     public function index(): Response
     {

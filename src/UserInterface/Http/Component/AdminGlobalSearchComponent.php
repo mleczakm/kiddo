@@ -34,6 +34,13 @@ final class AdminGlobalSearchComponent extends AbstractController
 
     /**
      * @return list<SearchResult>
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \ValueError
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
      */
     public function getResults(): array
     {
@@ -46,6 +53,14 @@ final class AdminGlobalSearchComponent extends AbstractController
         return $this->hydrator->hydrate($references);
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \RuntimeException
+     */
     public function resultUrl(SearchReference $reference): string
     {
         return match ($reference->type) {
@@ -74,6 +89,10 @@ final class AdminGlobalSearchComponent extends AbstractController
         };
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \RuntimeException
+     */
     private function childOwnerId(string $childId): string
     {
         $ownerId = $this->connection->fetchOne('SELECT owner_id FROM child WHERE id = :id', [

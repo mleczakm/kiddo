@@ -20,6 +20,7 @@ class CartItemRepository extends ServiceEntityRepository implements CartItemRepo
         parent::__construct($registry, CartItem::class);
     }
 
+    /** @throws \UnexpectedValueException */
     #[\Override]
     public function findByCart(Ulid $cartId): array
     {

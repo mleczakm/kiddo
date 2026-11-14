@@ -57,10 +57,10 @@ class ProfileComponent extends AbstractController
         private readonly NewsletterSubscriptionManager $newsletterSubscriptionManager,
     ) {}
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function startEditing(): void
     {
-        /** @var User $user */
         $user = $this->getUser();
         $this->name = $user->getName();
         $this->email = $user->getEmail();
@@ -82,6 +82,7 @@ class ProfileComponent extends AbstractController
 
     /**
      * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     #[LiveAction]
     public function save(): void
@@ -127,6 +128,7 @@ class ProfileComponent extends AbstractController
         $this->user = $user;
     }
 
+    /** @throws \LogicException */
     public function getFormattedPhone(): ?string
     {
         $phone = $this->getUser()->getPhone();

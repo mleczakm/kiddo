@@ -17,6 +17,11 @@ final readonly class RemovePromotionCode
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     public function __invoke(Ulid $cartId, int $requestingUserId): Cart
     {
         $cart = $this->cartRepository->find($cartId);

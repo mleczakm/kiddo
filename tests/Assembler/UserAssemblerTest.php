@@ -25,9 +25,10 @@ class UserAssemblerTest extends TestCase
             ->withName('Test User')
             ->withPhone('+48 123 456 789')
             ->assemble();
-        static::assertNotNull($user->getPhone());
+        $phone = $user->getPhone();
+        static::assertNotNull($phone);
         $phoneUtil = PhoneNumberUtil::getInstance();
-        static::assertSame('+48123456789', $phoneUtil->format($user->getPhone(), PhoneNumberFormat::E164));
+        static::assertSame('+48123456789', $phoneUtil->format($phone, PhoneNumberFormat::E164));
     }
 
     public function testAssembleWithInvalidPhone(): void
@@ -47,8 +48,9 @@ class UserAssemblerTest extends TestCase
             ->withName('Test User')
             ->withPhone('123-456-789')
             ->assemble();
-        static::assertNotNull($user->getPhone());
+        $phone = $user->getPhone();
+        static::assertNotNull($phone);
         $phoneUtil = PhoneNumberUtil::getInstance();
-        static::assertSame('+48123456789', $phoneUtil->format($user->getPhone(), PhoneNumberFormat::E164));
+        static::assertSame('+48123456789', $phoneUtil->format($phone, PhoneNumberFormat::E164));
     }
 }

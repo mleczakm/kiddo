@@ -198,6 +198,7 @@ class Payment
         return $this->status;
     }
 
+    /** @throws \InvalidArgumentException */
     public function setStatus(string $status): self
     {
         if (!in_array($status, self::STATUSES, true)) {
@@ -401,6 +402,11 @@ class Payment
         return $this;
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function isPaid(): bool
     {
         return $this->amount->isLessThanOrEqualTo($this->getAmountPaid());
@@ -409,15 +415,38 @@ class Payment
     /**
      * @throws \Brick\Math\Exception\MathException
      * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     public function getAmountPaid(): Money
     {
-        return $this->transfers->map(static fn(Transfer $transfer): Money => TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount))->reduce(
-            static fn(Money $carry, Money $transfer) => $carry->plus($transfer),
+        return $this->transfers->map(
+            /**
+             * @throws \Brick\Math\Exception\NumberFormatException
+             * @throws \Brick\Math\Exception\RoundingNecessaryException
+             * @throws \Brick\Money\Exception\UnknownCurrencyException
+             */
+            static function (Transfer $transfer): Money {
+                return TransferMoneyParser::transferMoneyStringToMoneyObject($transfer->amount);
+            },
+        )->reduce(
+            /**
+             * @throws \Brick\Math\Exception\MathException
+             * @throws \Brick\Money\Exception\MoneyMismatchException
+             */
+            static function (Money $carry, Money $transfer): Money {
+                return $carry->plus($transfer);
+            },
             Money::zero('PLN'),
         );
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function amountMatch(Transfer $transfer): bool
     {
         return $this->amount->isEqualTo(

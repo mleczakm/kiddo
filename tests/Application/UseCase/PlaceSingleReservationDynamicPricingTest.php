@@ -89,7 +89,7 @@ final class PlaceSingleReservationDynamicPricingTest extends KernelTestCase
         $userId = $user->getId();
         static::assertNotNull($userId);
         $ticketOption = $lesson->getMatchingTicketOption(TicketType::ONE_TIME->value);
-        $quote = $quoter->quote($userId, $lesson, TicketType::ONE_TIME->value, $ticketOption->price);
+        $quote = $quoter->quote($userId, $lesson, $ticketOption);
 
         $this->messageBus->dispatch(new AddBooking(
             userId: $userId,

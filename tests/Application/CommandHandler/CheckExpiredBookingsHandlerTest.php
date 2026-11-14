@@ -27,7 +27,9 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
     {
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         /** @var BookingRepository $bookingRepository */
         $bookingRepository = self::getContainer()->get(BookingRepository::class);
         /** @var ActivityLogRepository $activityLogRepository */

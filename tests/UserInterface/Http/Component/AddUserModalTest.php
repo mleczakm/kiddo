@@ -28,7 +28,9 @@ final class AddUserModalTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->em = static::getContainer()->get(EntityManagerInterface::class);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
     }
 
     public function testMountDeniesAccessWithoutManageUsersRole(): void
@@ -82,7 +84,11 @@ final class AddUserModalTest extends WebTestCase
         static::assertTrue($user->isNewsletterSubscribed());
         static::assertNotNull($user->getNewsletterConsentDate());
 
-        $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($user);
+        $logs = $this->em->getRepository(ActivityLog::class)->findBy(
+            ['subject' => $user],
+            ['createdAt' => 'DESC', 'id' => 'DESC'],
+            20,
+        );
         static::assertCount(1, $logs);
     }
 

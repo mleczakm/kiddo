@@ -38,6 +38,17 @@ final class AdminKpiStatsComponentTest extends WebTestCase
 
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
 
         $customer = UserAssembler::new()->assemble();
         $em->persist($customer);

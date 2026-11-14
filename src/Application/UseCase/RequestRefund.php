@@ -34,6 +34,16 @@ final readonly class RequestRefund
         private RefundBalanceCalculator $refundBalance,
     ) {}
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function __invoke(Ulid $bookingId, Ulid $lessonId, int $refundedByUserId, ?string $reason): void
     {
         $refundedBy = $this->userRepository->find($refundedByUserId);

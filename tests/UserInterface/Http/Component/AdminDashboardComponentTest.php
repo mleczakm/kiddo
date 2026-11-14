@@ -18,6 +18,7 @@ final class AdminDashboardComponentTest extends WebTestCase
     {
         $client = self::createClient();
         $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
+        static::assertInstanceOf(\Doctrine\ORM\EntityManagerInterface::class, $entityManager);
 
         $adminUser = new User();
         $adminUser->setEmail('admin@test.com');
@@ -50,6 +51,7 @@ final class AdminDashboardComponentTest extends WebTestCase
         $client = self::createClient();
 
         $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
+        static::assertInstanceOf(\Doctrine\ORM\EntityManagerInterface::class, $entityManager);
         $adminUser = new User();
         $adminUser->setEmail('admin@test.com');
         $adminUser->setName('Admin User');

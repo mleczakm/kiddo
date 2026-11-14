@@ -34,6 +34,8 @@ final class AdminKpiStatsComponent
      * @throws \Brick\Money\Exception\MoneyMismatchException
      *
      * @return array{bookingsCount: int, revenue: Money, occupancyRate: string, monthLabel: string}
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getKpiStats(): array
     {

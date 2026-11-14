@@ -21,6 +21,7 @@ final readonly class NewBookingNotifier
         private LoggerInterface $logger,
     ) {}
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     public function notify(Booking $booking): void
     {
         $customer = $booking->getUser();

@@ -20,7 +20,9 @@ class UserRepositoryTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        static::assertInstanceOf(UserRepository::class, $userRepository);
+        $this->userRepository = $userRepository;
     }
 
     public function testFindByRole(): void

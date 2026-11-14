@@ -19,7 +19,10 @@ final readonly class SeriesScheduleImpactCalculator
         return new SeriesScheduleImpact(create: count($this->planner->plan($type, $start, $end)));
     }
 
-    /** @throws \InvalidArgumentException */
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     public function forExisting(Series $series, ?\DateTimeImmutable $end): SeriesScheduleImpact
     {
         if ($end === null || $series->type !== WorkshopType::WEEKLY || $series->lessons->isEmpty()) {

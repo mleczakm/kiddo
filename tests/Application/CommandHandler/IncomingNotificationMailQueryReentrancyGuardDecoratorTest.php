@@ -6,7 +6,7 @@ namespace App\Tests\Application\CommandHandler;
 
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
 use App\Application\CommandHandler\IncomingNotificationMailQueryReentrancyGuardDecorator;
-use DirectoryTree\ImapEngine\MessageQueryInterface;
+use DirectoryTree\ImapEngine\MessageInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -18,12 +18,12 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
 {
     public function testInvokeYieldsFromDecorated(): void
     {
-        $one = $this->createMock(MessageQueryInterface::class);
-        $two = $this->createMock(MessageQueryInterface::class);
+        $one = $this->createMock(MessageInterface::class);
+        $two = $this->createMock(MessageInterface::class);
 
         $decorated = new readonly class([$one, $two]) implements IncomingNotificationMailQuery {
             /**
-             * @param list<MessageQueryInterface> $messages
+             * @param list<MessageInterface> $messages
              */
             public function __construct(
                 private array $messages,
@@ -43,11 +43,11 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
 
     public function testOverlappingInvocationYieldsNothingInsteadOfRacing(): void
     {
-        $message = $this->createMock(MessageQueryInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         $decorated = new class($message) implements IncomingNotificationMailQuery {
             public function __construct(
-                private readonly MessageQueryInterface $message,
+                private readonly MessageInterface $message,
             ) {}
 
             /**
@@ -81,13 +81,13 @@ final class IncomingNotificationMailQueryReentrancyGuardDecoratorTest extends Te
 
     public function testRunningFlagResetsAfterExceptionSoLaterCallsAreNotSkipped(): void
     {
-        $message = $this->createMock(MessageQueryInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         $decorated = new class($message) implements IncomingNotificationMailQuery {
             private int $calls = 0;
 
             public function __construct(
-                private readonly MessageQueryInterface $message,
+                private readonly MessageInterface $message,
             ) {}
 
             #[\Override]

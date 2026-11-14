@@ -35,7 +35,7 @@ class RefundRequestRepository extends ServiceEntityRepository implements RefundR
     #[\Override]
     public function findPendingQueue(): array
     {
-        /** @var list<RefundRequest> $result */
+        /** @var list<RefundRequest> */
         return $this
             ->createQueryBuilder('r')
             ->addSelect('p', 'b', 'u')
@@ -49,6 +49,10 @@ class RefundRequestRepository extends ServiceEntityRepository implements RefundR
             ->getResult();
     }
 
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     #[\Override]
     public function countPending(): int
     {

@@ -26,7 +26,9 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestC
     {
         self::bootKernel();
         $container = self::getContainer();
-        $this->entityManager = $container->get(EntityManagerInterface::class);
+        $entityManager = $container->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
     }
 
     public function testHandlerDispatchesMatchPaymentForEligibleTransfers(): void
@@ -59,6 +61,7 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestC
 
         // Act: run handler
         $handler = self::getContainer()->get(TriggerMatchPaymentForTransferForPastTransfersHandler::class);
+        static::assertInstanceOf(TriggerMatchPaymentForTransferForPastTransfersHandler::class, $handler);
         $handler(new TriggerMatchPaymentForTransferForPastTransfers());
 
         // Assert: transfer should be matched to payment (if logic allows)
@@ -97,6 +100,7 @@ class TriggerMatchPaymentForTransferForPastTransfersHandlerTest extends WebTestC
 
         // Act: run handler
         $handler = self::getContainer()->get(TriggerMatchPaymentForTransferForPastTransfersHandler::class);
+        static::assertInstanceOf(TriggerMatchPaymentForTransferForPastTransfersHandler::class, $handler);
         $handler(new TriggerMatchPaymentForTransferForPastTransfers());
 
         // Assert: transfer should NOT be matched to payment (older than threshold)

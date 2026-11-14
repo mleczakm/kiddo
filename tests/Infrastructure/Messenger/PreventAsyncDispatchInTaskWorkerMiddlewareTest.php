@@ -23,7 +23,7 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
         $middleware = $this->createMiddleware(inTaskWorker: false);
         $envelope = new Envelope(new \stdClass());
 
-        $result = $middleware->handle($envelope, $this->getStackMock());
+        $result = $middleware->handle($envelope, $this->nextStack());
 
         static::assertNull($result->last(TransportNamesStamp::class));
     }
@@ -33,7 +33,7 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
         $middleware = $this->createMiddleware(inTaskWorker: true);
         $envelope = new Envelope(new \stdClass());
 
-        $result = $middleware->handle($envelope, $this->getStackMock());
+        $result = $middleware->handle($envelope, $this->nextStack());
 
         static::assertSame(['sync'], $result->last(TransportNamesStamp::class)?->getTransportNames());
     }
@@ -86,8 +86,8 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
 
         $middleware->handle(new Envelope(new \stdClass(), [new ReceivedStamp('async')]), $stack);
 
+        static::assertInstanceOf(Envelope::class, $capture->nestedEnvelope);
         $nestedEnvelope = $capture->nestedEnvelope;
-        static::assertInstanceOf(Envelope::class, $nestedEnvelope);
         static::assertSame(['sync'], $nestedEnvelope->last(TransportNamesStamp::class)?->getTransportNames());
     }
 
@@ -96,9 +96,18 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
         $middleware = $this->createMiddleware(inTaskWorker: true);
         $envelope = new Envelope(new \stdClass(), [new TransportNamesStamp('async')]);
 
-        $result = $middleware->handle($envelope, $this->getStackMock());
+        $result = $middleware->handle($envelope, $this->nextStack());
 
         static::assertSame(['async'], $result->last(TransportNamesStamp::class)?->getTransportNames());
+    }
+
+    private function nextStack(): StackInterface
+    {
+        /** @var mixed $stack */
+        $stack = $this->getStackMock();
+        static::assertInstanceOf(StackInterface::class, $stack);
+
+        return $stack;
     }
 
     private function createMiddleware(bool $inTaskWorker): PreventAsyncDispatchInTaskWorkerMiddleware

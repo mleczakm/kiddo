@@ -36,6 +36,13 @@ class OrderPaymentPropagationSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \UnexpectedValueException
+     */
     public function onPaymentCompleted(Event $event): void
     {
         $payment = $event->getSubject();

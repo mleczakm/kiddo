@@ -718,8 +718,12 @@ class MatchPaymentForTransferHandlerTest extends KernelTestCase
         self::bootKernel();
         $container = self::getContainer();
 
-        $this->entityManager = $container->get(EntityManagerInterface::class);
-        $this->messageBus = $container->get(MessageBusInterface::class);
+        $entityManager = $container->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
+        $messageBus = $container->get(MessageBusInterface::class);
+        static::assertInstanceOf(MessageBusInterface::class, $messageBus);
+        $this->messageBus = $messageBus;
     }
 
     private function setupPendingPayment(): void

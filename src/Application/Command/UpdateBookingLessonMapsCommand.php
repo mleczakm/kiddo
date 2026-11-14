@@ -19,6 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UpdateBookingLessonMapsCommand extends Command
 {
+    /** @throws \Symfony\Component\Console\Exception\LogicException */
     public function __construct(
         private readonly BookingRepositoryInterface $bookingRepository,
         private readonly EntityManagerInterface $entityManager,

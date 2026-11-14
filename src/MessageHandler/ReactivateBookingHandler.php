@@ -19,6 +19,7 @@ class ReactivateBookingHandler
         private readonly LoggerInterface $logger,
     ) {}
 
+    /** @throws \OutOfBoundsException */
     public function __invoke(ReactivateBooking $command): void
     {
         $booking = $this->bookingRepository->find($command->getBookingId());

@@ -49,6 +49,11 @@ class PlatformBillingService
 
     /**
      * Add 2% commission to current due when a payment is marked as paid
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     public function addCommissionToCurrentDue(Money $paymentAmount): void
     {
@@ -123,16 +128,31 @@ class PlatformBillingService
         return is_string($amount) && is_numeric($amount) ? $amount : '0.00';
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function getCurrentDue(): Money
     {
         return Money::of($this->getBillingData()['currentDue'], 'PLN');
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function getPastDue(): Money
     {
         return Money::of($this->getBillingData()['pastDue'], 'PLN');
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function hasPastDue(): bool
     {
         return $this->getPastDue()->isGreaterThan(Money::zero('PLN'));

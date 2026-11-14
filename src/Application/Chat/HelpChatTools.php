@@ -116,6 +116,7 @@ final readonly class HelpChatTools implements ChatToolProviderInterface
 
     /**
      * @throws \RuntimeException on malformed article frontmatter — caught in {@see call()}
+     * @throws \InvalidArgumentException
      */
     private function search(ChatActor $actor, ToolArguments $args): ToolResult
     {
@@ -132,6 +133,7 @@ final readonly class HelpChatTools implements ChatToolProviderInterface
 
     /**
      * @throws \RuntimeException on malformed article frontmatter — caught in {@see call()}
+     * @throws \InvalidArgumentException
      */
     private function getArticle(ChatActor $actor, ToolArguments $args): ToolResult
     {

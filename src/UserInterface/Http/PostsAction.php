@@ -51,9 +51,11 @@ final class PostsAction extends AbstractController
 
         $lastModified = null;
         foreach ($items as $item) {
-            if ($lastModified === null || $item->updatedAt > $lastModified) {
-                $lastModified = $item->updatedAt;
+            if ($lastModified !== null && $item->updatedAt <= $lastModified) {
+                continue;
             }
+
+            $lastModified = $item->updatedAt;
         }
         $lastModified ??= $now;
 

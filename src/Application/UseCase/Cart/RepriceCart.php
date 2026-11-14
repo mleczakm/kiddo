@@ -31,6 +31,11 @@ final readonly class RepriceCart
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\MathException
+     */
     public function __invoke(Ulid $cartId, int $requestingUserId): Cart
     {
         $cart = $this->cartRepository->find($cartId);
@@ -45,6 +50,10 @@ final readonly class RepriceCart
         return $cart;
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \InvalidArgumentException
+     */
     public function reprice(Cart $cart): void
     {
         $items = $this->cartItemRepository->findByCart($cart->id);
@@ -63,8 +72,7 @@ final readonly class RepriceCart
             $quote = $this->priceQuoter->quote(
                 $cart->customerId,
                 $lesson,
-                $item->ticketType,
-                $ticketOption->price,
+                $ticketOption,
                 promotionCode: $cart->promotionCode,
             );
 

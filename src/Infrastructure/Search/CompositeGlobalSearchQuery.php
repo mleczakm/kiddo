@@ -22,6 +22,10 @@ final readonly class CompositeGlobalSearchQuery implements GlobalSearchQuery
         private RecommendationSearchIndex $recommendations,
     ) {}
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \ValueError
+     */
     #[\Override]
     public function search(string $query, int $limit = 15): PriorityQueue
     {

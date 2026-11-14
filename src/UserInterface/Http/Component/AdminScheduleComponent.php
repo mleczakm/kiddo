@@ -65,6 +65,7 @@ final class AdminScheduleComponent extends AbstractController
 
     /**
      * @return list<Lesson>
+     * @throws \LogicException
      */
     private function getLessons(): array
     {
@@ -109,6 +110,7 @@ final class AdminScheduleComponent extends AbstractController
      * Lessons without a Series get their own group with series: null.
      *
      * @return list<array{series: ?Series, lessons: list<Lesson>}>
+     * @throws \LogicException
      */
     public function getGroups(): array
     {
@@ -152,6 +154,7 @@ final class AdminScheduleComponent extends AbstractController
         return $types;
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     #[LiveAction]
     public function startEdit(#[LiveArg] string $seriesId): void
     {
@@ -160,6 +163,7 @@ final class AdminScheduleComponent extends AbstractController
         $this->editSeriesId = Ulid::fromString($seriesId);
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     #[LiveAction]
     public function openPreview(#[LiveArg] string $seriesId): void
     {
@@ -172,6 +176,10 @@ final class AdminScheduleComponent extends AbstractController
         $this->previewSeriesId = null;
     }
 
+    /**
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     #[LiveAction]
     public function endSeries(#[LiveArg] string $seriesId): void
     {
@@ -202,6 +210,14 @@ final class AdminScheduleComponent extends AbstractController
         $this->showCancelled = !$this->showCancelled;
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     #[LiveAction]
     public function toggleLessonStatus(#[LiveArg] string $lessonId): void
     {

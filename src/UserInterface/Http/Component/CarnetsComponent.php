@@ -40,6 +40,7 @@ class CarnetsComponent extends AbstractController
 
     /**
      * @return list<Booking>
+     * @throws \LogicException
      */
     #[LiveAction]
     public function getCarnets(): array

@@ -56,6 +56,7 @@ class BookingsComponent extends AbstractController
      * cancelled/rescheduled/past/future.
      *
      * @return list<Booking>
+     * @throws \LogicException
      */
     public function getCurrentBookings(): array
     {

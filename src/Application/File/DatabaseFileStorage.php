@@ -21,7 +21,8 @@ final readonly class DatabaseFileStorage implements FileStorageInterface
     public function store(UploadedFile $upload, FileUploadPolicy $policy, ?User $uploadedBy = null): File
     {
         $originalName = \basename($upload->getClientOriginalName());
-        $content = file_get_contents($upload->getRealPath());
+        $path = $upload->getRealPath();
+        $content = $path === false ? false : file_get_contents($path);
         if ($content === false) {
             throw new InvalidArgumentException('Unable to read the uploaded file.');
         }
@@ -70,7 +71,6 @@ final readonly class DatabaseFileStorage implements FileStorageInterface
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             if ($finfo !== false) {
                 $detected = finfo_buffer($finfo, $content);
-                finfo_close($finfo);
                 if ($detected !== false && $detected !== '') {
                     return $detected;
                 }

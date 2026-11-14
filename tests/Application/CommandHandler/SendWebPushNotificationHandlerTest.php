@@ -25,6 +25,8 @@ final class SendWebPushNotificationHandlerTest extends KernelTestCase
     {
         self::bootKernel();
         $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
         $user = UserAssembler::new()->withEmail('web-push-handler@example.com')->assemble();
         $em->persist($user);
         $em->flush();

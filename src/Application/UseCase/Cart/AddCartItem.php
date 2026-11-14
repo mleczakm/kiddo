@@ -30,6 +30,13 @@ final readonly class AddCartItem
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \App\Application\UseCase\Cart\DuplicateCartItemException
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \LogicException
+     */
     public function __invoke(
         Ulid $cartId,
         string $lessonId,
@@ -74,8 +81,7 @@ final readonly class AddCartItem
         $quote = $this->priceQuoter->quote(
             $requestingUserId,
             $lesson,
-            $ticketType,
-            $ticketOption->price,
+            $ticketOption,
             promotionCode: $cart->promotionCode,
         );
 

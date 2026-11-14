@@ -44,7 +44,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
     ): array {
         $qb = $this->createQueryBuilder('l');
 
-        /** @var array<int, Lesson> $result */
+        /** @var array<int, Lesson> */
         return $qb
             ->leftJoin('l.series', 'visibilitySeries')
             ->andWhere('l.schedule > :afterDate')
@@ -70,7 +70,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
         $start = $date->setTime(0, 0, 0);
         $end = $date->setTime(23, 59, 59);
 
-        /** @var Lesson[] $result */
+        /** @var Lesson[] */
         return $this
             ->createQueryBuilder('l')
             ->leftJoin('l.series', 'visibilitySeries')
@@ -190,7 +190,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
     #[\Override]
     public function findUpcoming(\DateTimeImmutable $since, int $limit): array
     {
-        /** @var Lesson[] $lessons */
+        /** @var list<Lesson> */
         return $this
             ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
@@ -208,7 +208,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
     #[\Override]
     public function findUpcomingWithBookings(\DateTimeImmutable $since, int $limit): array
     {
-        /** @var Lesson[] $lessons */
+        /** @var list<Lesson> */
         return $this
             ->createQueryBuilder('l')
             ->leftJoin('l.bookings', 'b')
@@ -261,7 +261,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             ]);
         }
 
-        /** @var Lesson[] $lessons */
+        /** @var list<Lesson> */
         return $qb->getQuery()->getResult();
     }
 
@@ -286,7 +286,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             $qb->andWhere('l.status = :status')->setParameter('status', Lesson::STATUS_ACTIVE);
         }
 
-        /** @var Lesson[] $lessons */
+        /** @var list<Lesson> */
         return $qb->getQuery()->getResult();
     }
 
@@ -320,7 +320,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             $qb->andWhere('l.status = :status')->setParameter('status', Lesson::STATUS_ACTIVE);
         }
 
-        /** @var Lesson[] $lessons */
+        /** @var list<Lesson> */
         return $qb->getQuery()->getResult();
     }
 
@@ -330,7 +330,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
     #[\Override]
     public function findCancelledInRange(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
-        /** @var list<Lesson> $result */
+        /** @var list<Lesson> */
         return $this
             ->createQueryBuilder('l')
             ->andWhere('l.status = :status')
@@ -349,7 +349,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
     #[\Override]
     public function findByMetadataTitlePrefix(string $prefix): array
     {
-        /** @var list<Lesson> $result */
+        /** @var list<Lesson> */
         return $this
             ->createQueryBuilder('l')
             ->join('l.metadata', 'm')
@@ -398,7 +398,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
             );
         }
 
-        /** @var list<Lesson> $lessons */
+        /** @var list<Lesson> */
         return $qb->getQuery()->getResult();
     }
 }

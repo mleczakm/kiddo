@@ -28,7 +28,9 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $user = UserAssembler::new()->assemble();
         $em->persist($user);
@@ -123,7 +125,9 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $user = UserAssembler::new()->assemble();
         $em->persist($user);

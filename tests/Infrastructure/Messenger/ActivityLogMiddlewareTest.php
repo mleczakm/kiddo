@@ -34,7 +34,9 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $user = UserAssembler::new()->assemble();
         $lesson = LessonAssembler::new()->assemble();
@@ -68,7 +70,9 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $user = UserAssembler::new()->withName('Ewa Zielińska')->assemble();
         $em->persist($user);

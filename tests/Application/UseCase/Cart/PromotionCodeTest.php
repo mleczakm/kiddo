@@ -9,6 +9,7 @@ use App\Application\UseCase\Cart\ApplyPromotionCode;
 use App\Application\UseCase\Cart\InvalidPromotionCodeException;
 use App\Application\UseCase\Cart\RemovePromotionCode;
 use App\Domain\Commerce\Cart\Cart;
+use App\Domain\Commerce\Cart\CartItem;
 use App\Domain\Commerce\Pricing\AdjustmentType;
 use App\Domain\Commerce\Pricing\PricingRule;
 use App\Entity\TicketType;
@@ -58,6 +59,9 @@ final class PromotionCodeTest extends KernelTestCase
         $updated = $applyPromotionCode($cart->id, ' cartpromo ', $userId);
 
         static::assertSame('CARTPROMO', $updated->promotionCode);
+        $em->clear();
+        $item = $em->find(CartItem::class, $item->id);
+        static::assertInstanceOf(CartItem::class, $item);
         static::assertSame(4000, $item->finalPriceMinor);
     }
 
@@ -120,6 +124,9 @@ final class PromotionCodeTest extends KernelTestCase
         $updated = $removePromotionCode($cart->id, $userId);
 
         static::assertNull($updated->promotionCode);
+        $em->clear();
+        $item = $em->find(CartItem::class, $item->id);
+        static::assertInstanceOf(CartItem::class, $item);
         static::assertSame(5000, $item->finalPriceMinor);
     }
 

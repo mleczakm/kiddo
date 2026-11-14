@@ -19,7 +19,12 @@ final readonly class PromotionRedemptionService
         private StateMachinesInterface $stateMachines,
     ) {}
 
-    /** @param list<OrderLine> $lines */
+    /**
+     * @param list<OrderLine> $lines
+     * @throws \App\Application\Service\Commerce\PromotionLimitExceededException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     public function reserve(Ulid $orderId, int $customerId, array $lines): void
     {
         $rules = $this->batch->lockRules($lines);
@@ -54,6 +59,7 @@ final readonly class PromotionRedemptionService
         $this->em->flush();
     }
 
+    /** @throws \UnexpectedValueException */
     public function consumeForOrder(Ulid $orderId): void
     {
         foreach ($this->findForOrder($orderId) as $redemption) {
@@ -61,6 +67,7 @@ final readonly class PromotionRedemptionService
         }
     }
 
+    /** @throws \UnexpectedValueException */
     public function releaseForOrder(Ulid $orderId): void
     {
         foreach ($this->findForOrder($orderId) as $redemption) {
@@ -68,7 +75,10 @@ final readonly class PromotionRedemptionService
         }
     }
 
-    /** @return list<PromotionRedemption> */
+    /**
+     * @return list<PromotionRedemption>
+     * @throws \UnexpectedValueException
+     */
     private function findForOrder(Ulid $orderId): array
     {
         return $this->em->getRepository(PromotionRedemption::class)->findBy(['orderId' => $orderId]);

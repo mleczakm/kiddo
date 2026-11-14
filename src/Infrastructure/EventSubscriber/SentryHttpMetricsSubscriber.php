@@ -26,6 +26,10 @@ final readonly class SentryHttpMetricsSubscriber
         $this->metrics->count('requests.total', 1);
     }
 
+    /**
+     * @throws \ArithmeticError
+     * @throws \DivisionByZeroError
+     */
     #[AsEventListener(event: ResponseEvent::class)]
     public function onKernelResponse(ResponseEvent $event): void
     {

@@ -49,7 +49,9 @@ final class KiddoMcpServerTest extends KernelTestCase
         static::assertNotNull($kernel);
 
         /** @var EntityManagerInterface $em */
-        $em = $container->get('doctrine')->getManager();
+        $registry = $container->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $user = UserAssembler::new()->withEmail('chat-mcp-http@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $em->persist($user);
         $em->flush();

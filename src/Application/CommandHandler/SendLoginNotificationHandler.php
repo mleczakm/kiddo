@@ -25,6 +25,7 @@ readonly class SendLoginNotificationHandler
         private TranslatorInterface $translator,
     ) {}
 
+    /** @throws \InvalidArgumentException */
     public function __invoke(SendLoginNotification $command): void
     {
         try {

@@ -121,6 +121,7 @@ final readonly class RecommendationChatTools implements ChatToolProviderInterfac
         }
     }
 
+    /** @throws \InvalidArgumentException */
     private function list(ToolArguments $args): ToolResult
     {
         $status = $args->string('status');

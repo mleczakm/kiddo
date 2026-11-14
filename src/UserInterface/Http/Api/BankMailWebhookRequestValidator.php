@@ -45,6 +45,7 @@ final readonly class BankMailWebhookRequestValidator
         }
 
         try {
+            /** @var mixed $payload */
             $payload = json_decode($body, true, 16, JSON_THROW_ON_ERROR);
         } catch (\JsonException) {
             throw new BankMailWebhookRequestException('Invalid payload', 400);

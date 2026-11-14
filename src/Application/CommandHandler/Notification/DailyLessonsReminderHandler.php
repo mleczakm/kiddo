@@ -49,6 +49,9 @@ readonly class DailyLessonsReminderHandler
     /**
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
+     * @throws \InvalidArgumentException
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function __invoke(DailyLessonsReminder $command): void
     {
@@ -92,6 +95,7 @@ readonly class DailyLessonsReminderHandler
      * @param Lesson[] $lessons
      *
      * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function notifyAdminsInApp(array $financeContacts, array $lessons, \DateTimeImmutable $date): void
     {
@@ -162,6 +166,7 @@ readonly class DailyLessonsReminderHandler
      * @throws \InvalidArgumentException
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function sendCustomerReminders(array $lessons, \DateTimeImmutable $date): void
     {
@@ -186,6 +191,7 @@ readonly class DailyLessonsReminderHandler
      * @throws \InvalidArgumentException
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function sendCustomerReminder(User $user, Set $userLessons, \DateTimeImmutable $date): void
     {

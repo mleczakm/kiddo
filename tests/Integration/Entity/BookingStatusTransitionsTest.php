@@ -29,7 +29,9 @@ class BookingStatusTransitionsTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
 
         // Create test user
         $this->user = new User('parent@test.com', 'Parent User');

@@ -27,7 +27,9 @@ class ProfileComponentTest extends WebTestCase
 
     private function createUser(string ...$roles): User
     {
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
 
         $user = UserAssembler::new()->withRoles(...$roles)->assemble();
 
@@ -39,7 +41,9 @@ class ProfileComponentTest extends WebTestCase
 
     private function createSubscribedUser(): User
     {
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
 
         $user = UserAssembler::new()->withRoles('ROLE_USER')->withNewsletterSubscribed(true)->assemble();
 
@@ -191,7 +195,7 @@ class ProfileComponentTest extends WebTestCase
         static::assertNotNull($originalConsent);
         static::assertEqualsWithDelta(
             $originalConsent->getTimestamp(),
-            $updatedUser->getNewsletterConsentDate()->getTimestamp(),
+            $updatedUser->getNewsletterConsentDate()?->getTimestamp(),
             1.0,
         );
     }

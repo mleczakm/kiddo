@@ -121,7 +121,11 @@ final class AuthController extends AbstractController
         ], 201);
     }
 
-    /** @throws \Psr\Cache\InvalidArgumentException */
+    /**
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \Random\RandomException
+     */
     #[Route('/verify', name: 'api_auth_verify', methods: ['POST'])]
     public function verify(Request $request, ValidatorInterface $validator): JsonResponse
     {
@@ -237,7 +241,11 @@ final class AuthController extends AbstractController
         ]);
     }
 
-    /** @throws \Psr\Cache\InvalidArgumentException */
+    /**
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \Random\RandomException
+     */
     #[Route('/login', name: 'api_auth_login', methods: ['POST'])]
     public function login(Request $request, ValidatorInterface $validator): JsonResponse
     {

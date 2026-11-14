@@ -42,9 +42,11 @@ final readonly class MenuHookLinkReconciler
         $existingKeys = array_map(static fn(MenuHookLink $link): string => $link->getSlotKey(), $existingLinks);
 
         foreach ($existingLinks as $link) {
-            if (!\in_array($link->getSlotKey(), $selectedKeys, true)) {
-                $this->entityManager->remove($link);
+            if (\in_array($link->getSlotKey(), $selectedKeys, true)) {
+                continue;
             }
+
+            $this->entityManager->remove($link);
         }
 
         foreach ($selectedSlots as $slot) {

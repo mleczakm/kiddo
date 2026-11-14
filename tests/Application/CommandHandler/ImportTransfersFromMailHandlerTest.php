@@ -87,7 +87,7 @@ class ImportTransfersFromMailHandlerTest extends TestCase
             $transferRepository,
             $this->createMock(LoggerInterface::class),
             mailboxUsername: 'user@example.com',
-            mailboxPassword: 'secret',
+            mailboxPassword: bin2hex(random_bytes(16)),
         );
     }
 
@@ -143,7 +143,7 @@ class FakeQuery implements IncomingNotificationMailQuery
                 'host' => 'imap.example.com',
                 'port' => 993,
                 'username' => 'test@example.com',
-                'password' => 'password',
+                'password' => bin2hex(random_bytes(16)),
                 'encryption' => 'ssl',
             ],
             // Folders

@@ -29,6 +29,7 @@ final readonly class NewUserNotifier
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
      * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function notify(User $user): void
     {
@@ -41,6 +42,7 @@ final readonly class NewUserNotifier
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
      * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function sendUserConfirmation(User $user): void
     {
@@ -63,6 +65,7 @@ final readonly class NewUserNotifier
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
      * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function sendAdminInformation(User $user): void
     {

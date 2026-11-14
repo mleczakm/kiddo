@@ -307,12 +307,6 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Application/Service/BookingFactory.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -344,12 +338,6 @@ count = 2
 
 [[issues]]
 file = "src/Application/Service/MenuHookLinkReconciler.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/MenuHookLinkReconciler.php"
 code = "prefer-first-class-callable"
 message = "Use first-class callable syntax `...` instead of a arrow function."
 count = 1
@@ -376,30 +364,6 @@ count = 1
 file = "src/Application/Service/PostFileManager.php"
 code = "no-isset"
 message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Pricing/PriceQuoter.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Pricing/PricingEngine.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Pricing/PricingEngine.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Pricing/PricingEngine.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
 count = 1
 
 [[issues]]
@@ -661,12 +625,6 @@ message = "Avoid `elseif` clauses."
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Brevo/BrevoNewsletterService.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Doctrine/CacheConnectionEnsurer.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
@@ -712,12 +670,6 @@ count = 2
 file = "src/Infrastructure/Doctrine/Repository/SeriesRepository.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Doctrine/Repository/UserRepository.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
 count = 1
 
 [[issues]]
@@ -824,12 +776,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminBookingModal.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 7
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminBookingModal.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -863,12 +809,6 @@ file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
 count = 5
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 2
 
 [[issues]]
 file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
@@ -1238,12 +1178,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -1258,12 +1192,6 @@ count = 1
 file = "src/UserInterface/Http/FileAction.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/PostsAction.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -1298,12 +1226,6 @@ count = 1
 
 [[issues]]
 file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
-code = "no-literal-password"
-message = "Literal passwords or sensitive data should not be stored in code."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
 code = "single-class-per-file"
 message = "File contains multiple class-like definitions; found class `FakeQuery` but class `ImportTransfersFromMailHandlerTest` is already defined in this file."
 count = 1
@@ -1319,24 +1241,6 @@ file = "tests/Application/File/DatabaseFileStorageTest.php"
 code = "no-shorthand-ternary"
 message = "Use of the shorthand ternary operator."
 count = 2
-
-[[issues]]
-file = "tests/Application/Service/PlatformBillingServiceTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Application/Service/Pricing/PricingEngineTest.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "tests/Application/Service/Pricing/PricingEngineTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
 
 [[issues]]
 file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
@@ -1423,12 +1327,6 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "readable-literal"
-message = "Numeric literal could use underscore separators for readability."
-count = 1
-
-[[issues]]
 file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
@@ -1441,51 +1339,15 @@ message = "Method has a high halstead volume"
 count = 1
 
 [[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "no-literal-password"
-message = "Literal passwords or sensitive data should not be stored in code."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/Repository/BookingRepositoryTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
-code = "no-literal-password"
-message = "Literal passwords or sensitive data should not be stored in code."
-count = 1
-
-[[issues]]
 file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
 code = "single-class-per-file"
 message = "File contains multiple class-like definitions; found class `ThrowingFolder` but class `AliorNotificationMailProviderTest` is already defined in this file."
 count = 1
 
 [[issues]]
-file = "tests/Integration/Component/AdminSettingsComponentTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
 file = "tests/Integration/Component/WorkshopEditorComponentTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/StimulusEmitActionPrefixTest.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
 count = 1
 
 [[issues]]
@@ -1508,18 +1370,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AdminScheduleComponentTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1

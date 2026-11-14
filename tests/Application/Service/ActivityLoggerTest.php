@@ -20,7 +20,9 @@ final class ActivityLoggerTest extends KernelTestCase
     public function testLogPersistsAnActivityLogRow(): void
     {
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $user = UserAssembler::new()->withName('Ola Nowak')->assemble();
         $em->persist($user);
         $em->flush();
@@ -65,7 +67,9 @@ final class ActivityLoggerTest extends KernelTestCase
         /** @var ActivityLogRepository $repo */
         $repo = self::getContainer()->get(ActivityLogRepository::class);
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $matching = $em->getRepository(ActivityLog::class)->findBy([
             'dedupeKey' => 'transfer_unmatched:123',
         ]);
@@ -87,7 +91,9 @@ final class ActivityLoggerTest extends KernelTestCase
     {
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $user = UserAssembler::new()->withName('Ola Nowak')->assemble();
         $em->persist($user);

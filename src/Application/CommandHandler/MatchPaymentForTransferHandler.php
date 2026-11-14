@@ -19,6 +19,12 @@ final readonly class MatchPaymentForTransferHandler
         private MessageBusInterface $messageBus,
     ) {}
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function __invoke(MatchPaymentForTransfer $command): void
     {
         $transfer = $command->transfer;

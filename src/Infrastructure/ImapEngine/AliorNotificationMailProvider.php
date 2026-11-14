@@ -6,7 +6,7 @@ namespace App\Infrastructure\ImapEngine;
 
 use App\Application\CommandHandler\IncomingNotificationMailQuery;
 use DirectoryTree\ImapEngine\MailboxInterface;
-use DirectoryTree\ImapEngine\MessageQueryInterface;
+use DirectoryTree\ImapEngine\MessageInterface;
 use Psr\Log\LoggerInterface;
 
 final readonly class AliorNotificationMailProvider implements IncomingNotificationMailQuery
@@ -20,7 +20,7 @@ final readonly class AliorNotificationMailProvider implements IncomingNotificati
     ) {}
 
     /**
-     * @return iterable<MessageQueryInterface>
+     * @return iterable<MessageInterface>
      */
     #[\Override]
     public function __invoke(): iterable

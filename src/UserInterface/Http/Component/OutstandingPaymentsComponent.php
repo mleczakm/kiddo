@@ -77,6 +77,10 @@ final class OutstandingPaymentsComponent extends AbstractController
         return $payment instanceof Payment ? $payment : null;
     }
 
+    /**
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     */
     #[LiveAction]
     public function pay(#[LiveArg] string $paymentId): void
     {

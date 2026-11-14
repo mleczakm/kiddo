@@ -141,11 +141,11 @@ class AdminPricingRulesComponent extends AbstractController
             return [];
         }
 
-        return array_map(static fn($log): array => [
+        return array_values(array_map(static fn($log): array => [
             'title' => $log->getTitle(),
             'summary' => $log->getSummary(),
             'createdAt' => $log->getCreatedAt(),
-        ], $this->activityLogRepository->findByPricingRuleId($this->editingRuleId));
+        ], $this->activityLogRepository->findByPricingRuleId($this->editingRuleId)));
     }
 
     /**
@@ -182,6 +182,7 @@ class AdminPricingRulesComponent extends AbstractController
         );
     }
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     #[LiveAction]
     public function openCreateModal(): void
     {
@@ -207,6 +208,10 @@ class AdminPricingRulesComponent extends AbstractController
         $this->isModalOpen = true;
     }
 
+    /**
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     #[LiveAction]
     public function edit(#[LiveArg] string $id): void
     {
@@ -243,6 +248,10 @@ class AdminPricingRulesComponent extends AbstractController
         $this->isModalOpen = false;
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function save(): void
     {
@@ -293,6 +302,11 @@ class AdminPricingRulesComponent extends AbstractController
         $this->isModalOpen = false;
     }
 
+    /**
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     #[LiveAction]
     public function disable(#[LiveArg] string $id): void
     {
@@ -300,6 +314,11 @@ class AdminPricingRulesComponent extends AbstractController
         $this->setStatus($id, 'disable', ActivityType::PRICING_RULE_DISABLED, 'Wyłączono regułę cenową „%s”.');
     }
 
+    /**
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     #[LiveAction]
     public function enable(#[LiveArg] string $id): void
     {
@@ -307,6 +326,10 @@ class AdminPricingRulesComponent extends AbstractController
         $this->setStatus($id, 'enable', ActivityType::PRICING_RULE_UPDATED, 'Włączono regułę cenową „%s”.');
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     private function setStatus(string $id, string $transition, ActivityType $activityType, string $titleFormat): void
     {
         $rule = $this->pricingRuleRepository->find(Ulid::fromString($id));
@@ -331,6 +354,7 @@ class AdminPricingRulesComponent extends AbstractController
         $this->addFlash('success', 'Zapisano zmianę statusu reguły.');
     }
 
+    /** @throws \LogicException */
     private function createNew(
         string $name,
         AdjustmentType $adjustmentType,
@@ -401,6 +425,10 @@ class AdminPricingRulesComponent extends AbstractController
         ];
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     private function updateExisting(
         string $name,
         AdjustmentType $adjustmentType,
@@ -525,9 +553,11 @@ class AdminPricingRulesComponent extends AbstractController
         return array_map(static fn($o) => $o->type->value, iterator_to_array($lesson->getTicketOptions()));
     }
 
+    /** @throws \Brick\Math\Exception\MathException */
     public function getPreviewQuote(): ?PriceQuote
     {
-        if ($this->previewLessonId === null || $this->previewTicketType === null || $this->previewTicketType === '') {
+        $ticketType = $this->previewTicketType;
+        if ($this->previewLessonId === null || $ticketType === null || $ticketType === '') {
             return null;
         }
 
@@ -537,7 +567,7 @@ class AdminPricingRulesComponent extends AbstractController
         }
 
         try {
-            $ticketOption = $lesson->getMatchingTicketOption($this->previewTicketType);
+            $ticketOption = $lesson->getMatchingTicketOption($ticketType);
         } catch (\InvalidArgumentException) {
             return null;
         }
@@ -545,7 +575,7 @@ class AdminPricingRulesComponent extends AbstractController
         $at = $this->parseDate($this->previewDate) ?? new \DateTimeImmutable();
         $userId = $this->parseInt($this->previewUserId);
 
-        return $this->priceQuoter->quote($userId, $lesson, $this->previewTicketType, $ticketOption->price, $at);
+        return $this->priceQuoter->quote($userId, $lesson, $ticketOption, $at);
     }
 
     private function parseInt(?string $value): ?int

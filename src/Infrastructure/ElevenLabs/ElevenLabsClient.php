@@ -29,6 +29,12 @@ final readonly class ElevenLabsClient
      * @param array<string, string|int|bool|null> $dynamicVariables
      *
      * @return array{signed_url: string, agent_id: string, dynamic_variables: array<string, string|int|bool|null>}
+     * @throws \RuntimeException
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function getSignedUrl(array $dynamicVariables = [], bool $admin = false): array
     {

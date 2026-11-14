@@ -55,6 +55,10 @@ final class PanelOverviewComponent extends AbstractController
         ));
     }
 
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function getUnreadNotificationCount(): int
     {
         $user = $this->security->getUser();

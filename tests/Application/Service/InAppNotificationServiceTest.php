@@ -18,7 +18,9 @@ final class InAppNotificationServiceTest extends KernelTestCase
     public function testNotifyPersistsHtmlBodyUrlAndSeverity(): void
     {
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $user = UserAssembler::new()->withEmail('inapp-user@example.com')->assemble();
         $em->persist($user);
         $em->flush();
@@ -47,7 +49,9 @@ final class InAppNotificationServiceTest extends KernelTestCase
     public function testNotifyAdminsCreatesOnePerAdmin(): void
     {
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $admin1 = UserAssembler::new()->withEmail('inapp-admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $admin2 = UserAssembler::new()->withEmail('inapp-admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $user = UserAssembler::new()->withEmail('inapp-plain@example.com')->assemble();

@@ -24,6 +24,7 @@ final class PushSubscriptionController extends AbstractController
         private readonly EntityManagerInterface $em,
     ) {}
 
+    /** @throws \LogicException */
     #[Route('/subscribe', name: 'api_push_subscribe', methods: ['POST'])]
     public function subscribe(Request $request, ValidatorInterface $validator): JsonResponse
     {
@@ -56,6 +57,7 @@ final class PushSubscriptionController extends AbstractController
         return $this->json(['ok' => true]);
     }
 
+    /** @throws \LogicException */
     #[Route('/unsubscribe', name: 'api_push_unsubscribe', methods: ['POST'])]
     public function unsubscribe(Request $request, ValidatorInterface $validator): JsonResponse
     {

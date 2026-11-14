@@ -17,6 +17,8 @@ class CancelLessonBookingHandler
 
     /**
      * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \LogicException
+     * @throws \OutOfBoundsException
      */
     public function __invoke(CancelLessonBooking $command): void
     {

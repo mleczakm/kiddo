@@ -77,6 +77,8 @@ final class ImpersonationSuggestTest extends WebTestCase
     {
         self::ensureKernelShutdown();
         $this->client = self::createClient();
-        $this->em = self::getContainer()->get(EntityManagerInterface::class);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
     }
 }

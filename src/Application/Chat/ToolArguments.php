@@ -13,6 +13,7 @@ final readonly class ToolArguments
         private array $arguments,
     ) {}
 
+    /** @throws \InvalidArgumentException */
     public function string(string $key, ?string $default = null): ?string
     {
         if (!array_key_exists($key, $this->arguments)) {
@@ -29,6 +30,7 @@ final readonly class ToolArguments
         throw new \InvalidArgumentException(sprintf('Argument "%s" must be a string', $key));
     }
 
+    /** @throws \InvalidArgumentException */
     public function requireString(string $key): string
     {
         $value = $this->string($key);
@@ -39,6 +41,7 @@ final readonly class ToolArguments
         return $value;
     }
 
+    /** @throws \InvalidArgumentException */
     public function int(string $key, ?int $default = null): ?int
     {
         if (!array_key_exists($key, $this->arguments)) {
@@ -61,6 +64,7 @@ final readonly class ToolArguments
         throw new \InvalidArgumentException(sprintf('Argument "%s" must be an integer', $key));
     }
 
+    /** @throws \InvalidArgumentException */
     public function requireInt(string $key): int
     {
         $value = $this->int($key);
@@ -101,6 +105,7 @@ final readonly class ToolArguments
 
     /**
      * @return array<int|string, mixed>|null
+     * @throws \InvalidArgumentException
      */
     public function array(string $key): ?array
     {
@@ -115,7 +120,6 @@ final readonly class ToolArguments
             throw new \InvalidArgumentException(sprintf('Argument "%s" must be an array', $key));
         }
 
-        /** @var array<int|string, mixed> $value */
         return $value;
     }
 }

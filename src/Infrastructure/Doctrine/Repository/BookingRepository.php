@@ -28,7 +28,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
     #[\Override]
     public function findExpiredPendingBookings(\DateTimeImmutable $expirationTime): array
     {
-        /** @var array<Booking> $bookings */
+        /** @var array<Booking> */
         return $this
             ->createQueryBuilder('b')
             ->leftJoin('b.payment', 'p')
@@ -48,7 +48,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
     #[\Override]
     public function findActiveBookings(): array
     {
-        /** @var array<Booking> $bookings */
+        /** @var array<Booking> */
         return $this
             ->createQueryBuilder('b')
             ->where('b.status = :status')
@@ -75,7 +75,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
     #[\Override]
     public function findVisibleForUser(User $user): array
     {
-        /** @var list<Booking> $result */
+        /** @var list<Booking> */
         return $this
             ->createQueryBuilder('b')
             ->select('b', 'l', 's', 'p')
@@ -102,6 +102,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
      * @param array<Lesson> $lessons
      *
      * @return array<Booking>
+     * @throws \InvalidArgumentException
      */
     #[\Override]
     public function findForUserAndLessons(User $user, array $lessons): array
@@ -131,7 +132,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
         }
         $qb->andWhere($orX);
 
-        /** @var array<Booking> $bookings */
+        /** @var array<Booking> */
         return $qb->getQuery()->getResult();
     }
 
@@ -139,6 +140,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
      * Find non-cancelled bookings for a user and a specific lesson
      *
      * @return array<Booking>
+     * @throws \InvalidArgumentException
      */
     #[\Override]
     public function findForUserAndLesson(User $user, Lesson $lesson): array
@@ -152,7 +154,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
     #[\Override]
     public function findByLesson(Lesson $lesson): array
     {
-        /** @var array<Booking> $bookings */
+        /** @var array<Booking> */
         return $this
             ->createQueryBuilder('b')
             ->innerJoin('b.lessons', 'l')
@@ -162,6 +164,10 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
             ->getResult();
     }
 
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     #[\Override]
     public function countCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): int
     {
@@ -183,7 +189,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
     #[\Override]
     public function findCreatedBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
-        /** @var array<Booking> $bookings */
+        /** @var array<Booking> */
         return $this
             ->createQueryBuilder('b')
             ->leftJoin('b.lessons', 'l')
@@ -224,7 +230,7 @@ class BookingRepository extends ServiceEntityRepository implements BookingReposi
             );
         }
 
-        /** @var list<Booking> $result */
+        /** @var list<Booking> */
         return $qb->getQuery()->getResult();
     }
 }

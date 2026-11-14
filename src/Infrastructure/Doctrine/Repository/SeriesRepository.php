@@ -37,7 +37,7 @@ class SeriesRepository extends ServiceEntityRepository implements SeriesReposito
             $qb->andWhere('s.status = :status')->setParameter('status', 'active');
         }
 
-        /** @var array<int, Series> $result */
+        /** @var array<int, Series> */
         return $qb->getQuery()->getResult();
     }
 
@@ -47,7 +47,7 @@ class SeriesRepository extends ServiceEntityRepository implements SeriesReposito
     #[\Override]
     public function findActive(): array
     {
-        /** @var array<int, Series> $result */
+        /** @var array<int, Series> */
         return $this
             ->createQueryBuilder('s')
             ->andWhere('s.status = :status')

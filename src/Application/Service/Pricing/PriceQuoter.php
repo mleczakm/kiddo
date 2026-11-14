@@ -8,7 +8,7 @@ use App\Application\Repository\PricingRuleRepositoryInterface;
 use App\Domain\Commerce\Pricing\PriceQuote;
 use App\Domain\Commerce\Pricing\PricingContext;
 use App\Entity\Lesson;
-use Brick\Money\Money;
+use App\Entity\TicketOption;
 
 /**
  * Builds a PricingContext from a lesson/ticket-type selection and resolves a
@@ -28,11 +28,11 @@ final readonly class PriceQuoter
         private PricingRuleRepositoryInterface $pricingRuleRepository,
     ) {}
 
+    /** @throws \Brick\Math\Exception\MathException */
     public function quote(
         ?int $userId,
         Lesson $lesson,
-        string $ticketType,
-        Money $basePrice,
+        TicketOption $ticket,
         ?\DateTimeImmutable $at = null,
         ?string $promotionCode = null,
     ): PriceQuote {
@@ -40,10 +40,12 @@ final readonly class PriceQuoter
             userId: $userId,
             lessonId: $lesson->getId(),
             seriesId: $lesson->getSeries()?->getId(),
-            ticketType: $ticketType,
+            ticketType: $ticket->type->value,
             evaluationTime: $at ?? new \DateTimeImmutable(),
             promotionCode: $promotionCode,
         );
+
+        $basePrice = $ticket->price;
 
         return $this->engine->quote(
             $context,

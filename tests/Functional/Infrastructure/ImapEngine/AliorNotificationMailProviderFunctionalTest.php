@@ -23,9 +23,15 @@ final class AliorNotificationMailProviderFunctionalTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->provider = self::getContainer()->get(IncomingNotificationMailQuery::class);
-        $this->mailbox = self::getContainer()->get(MailboxInterface::class);
-        $this->logger = self::getContainer()->get(LoggerInterface::class);
+        $provider = self::getContainer()->get(IncomingNotificationMailQuery::class);
+        static::assertInstanceOf(IncomingNotificationMailQuery::class, $provider);
+        $this->provider = $provider;
+        $mailbox = self::getContainer()->get(MailboxInterface::class);
+        static::assertInstanceOf(MailboxInterface::class, $mailbox);
+        $this->mailbox = $mailbox;
+        $logger = self::getContainer()->get(LoggerInterface::class);
+        static::assertInstanceOf(LoggerInterface::class, $logger);
+        $this->logger = $logger;
     }
 
     public function testProviderCanBeInstantiated(): void
@@ -43,7 +49,6 @@ final class AliorNotificationMailProviderFunctionalTest extends KernelTestCase
     {
         // The provider should be able to be invoked without throwing exceptions
         // even if there are no messages or connection issues
-        $this->expectNotToPerformAssertions();
-        iterator_to_array(($this->provider)());
+        static::assertContainsOnlyInstancesOf(\DirectoryTree\ImapEngine\MessageInterface::class, ($this->provider)());
     }
 }

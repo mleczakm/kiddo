@@ -36,6 +36,7 @@ final readonly class SubscriptionBillingService
 
     /**
      * @throws \RuntimeException when the amount is invalid or no payment code can be allocated
+     * @throws \Random\RandomException
      */
     public function chargeForPeriod(Subscription $subscription, \DateTimeImmutable $period): ?Payment
     {

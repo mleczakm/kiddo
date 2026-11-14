@@ -11,6 +11,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class LlmTxtController extends AbstractController
 {
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     #[Route('/llm.txt', name: 'app_llm_txt', methods: ['GET'])]
     public function index(UrlGeneratorInterface $urlGenerator): Response
     {

@@ -12,10 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBus;
-use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
-use Symfony\Component\Messenger\Middleware\StackInterface;
 
 #[Group('unit')]
 final class OptionalDoctrineTransactionMiddlewareTest extends TestCase
@@ -74,26 +71,5 @@ final class OptionalDoctrineTransactionMiddlewareTest extends TestCase
         new MessageBus([$this->middleware, new RecordingMiddleware(new \RuntimeException('handler failed'))])->dispatch(
             new \stdClass(),
         );
-    }
-}
-
-final class RecordingMiddleware implements MiddlewareInterface
-{
-    public int $calls = 0;
-
-    public function __construct(
-        private readonly ?\Throwable $failure = null,
-    ) {}
-
-    #[\Override]
-    public function handle(Envelope $envelope, StackInterface $stack): Envelope
-    {
-        ++$this->calls;
-
-        if ($this->failure !== null) {
-            throw $this->failure;
-        }
-
-        return $envelope;
     }
 }

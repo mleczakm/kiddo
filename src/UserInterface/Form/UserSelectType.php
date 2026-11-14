@@ -25,10 +25,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *         'query' => $searchTerm, // optional; empty options list without it
  *     ]);
  *
- * @extends AbstractType<User>
  */
 final class UserSelectType extends AbstractType
 {
+    /**
+     * @throws \Symfony\Component\OptionsResolver\Exception\AccessException
+     * @throws \Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
+     */
     #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {

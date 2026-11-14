@@ -93,6 +93,7 @@ final class ReservationDetailsModal extends AbstractController
         private readonly WorkflowInterface $paymentStateMachine,
     ) {}
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     #[LiveAction]
     #[LiveListener('openReservationDetails')]
     public function open(
@@ -133,6 +134,10 @@ final class ReservationDetailsModal extends AbstractController
         $this->resetAction();
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function reactivateBooking(): void
     {
@@ -176,6 +181,7 @@ final class ReservationDetailsModal extends AbstractController
         $this->successMessage = null;
     }
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     #[LiveAction]
     public function saveNote(): void
     {
@@ -192,6 +198,10 @@ final class ReservationDetailsModal extends AbstractController
         $this->errorMessage = null;
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function changePaymentStatus(#[LiveArg] string $transition): void
     {
@@ -276,6 +286,10 @@ final class ReservationDetailsModal extends AbstractController
         return $payment instanceof Payment && $this->paymentStateMachine->can($payment, $transition);
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
     #[LiveAction]
     public function executeAction(): void
     {
@@ -414,6 +428,11 @@ final class ReservationDetailsModal extends AbstractController
         ], $this->activityLogRepository->findByBookingId($this->bookingId)));
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
     private function reschedule(Booking $booking, Lesson $lesson, User $actor): Envelope
     {
         if ($this->targetLessonId === null) {

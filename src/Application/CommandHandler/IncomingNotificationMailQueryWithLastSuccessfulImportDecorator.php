@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\CommandHandler;
 
 use App\Application\Repository\SettingRepositoryInterface;
-use DirectoryTree\ImapEngine\MessageQueryInterface;
+use DirectoryTree\ImapEngine\MessageInterface;
 
 final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecorator implements
     IncomingNotificationMailQuery
@@ -16,7 +16,7 @@ final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecora
     ) {}
 
     /**
-     * @return iterable<MessageQueryInterface>
+     * @return iterable<MessageInterface>
      */
     #[\Override]
     public function __invoke(): iterable

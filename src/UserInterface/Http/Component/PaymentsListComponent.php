@@ -51,7 +51,7 @@ final class PaymentsListComponent extends AbstractController
             ->addOrderBy('p.paidAt', 'DESC')
             ->addOrderBy('p.createdAt', 'DESC');
 
-        /** @var list<Payment> $result */
+        /** @var list<Payment> */
         return $qb->getQuery()->getResult();
     }
 

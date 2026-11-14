@@ -118,6 +118,7 @@ final class RegisterUserTest extends WebTestCase
     private function findUserByEmail(string $email): ?User
     {
         $repository = self::getContainer()->get(UserRepository::class);
+        static::assertInstanceOf(UserRepository::class, $repository);
 
         return $repository->findOneBy([
             'email' => $email,

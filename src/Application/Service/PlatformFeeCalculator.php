@@ -22,7 +22,7 @@ class PlatformFeeCalculator
      */
     public function commissionOn(Money $paymentAmount): Money
     {
-        return $paymentAmount->multipliedBy('0.02', RoundingMode::HALF_UP);
+        return $paymentAmount->multipliedBy('0.02', RoundingMode::HalfUp);
     }
 
     /**

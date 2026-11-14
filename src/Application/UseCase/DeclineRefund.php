@@ -42,6 +42,14 @@ final readonly class DeclineRefund
         private StateMachinesInterface $stateMachines,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
     public function __invoke(Ulid $refundRequestId, int $declinedByUserId, ?string $note): void
     {
         $declinedBy = $this->userRepository->find($declinedByUserId);

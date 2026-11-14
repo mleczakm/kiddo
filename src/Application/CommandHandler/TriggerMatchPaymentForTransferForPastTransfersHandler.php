@@ -18,6 +18,7 @@ readonly class TriggerMatchPaymentForTransferForPastTransfersHandler
         private MessageBusInterface $bus,
     ) {}
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     public function __invoke(TriggerMatchPaymentForTransferForPastTransfers $_command): void
     {
         $transfers = $this->entityManager

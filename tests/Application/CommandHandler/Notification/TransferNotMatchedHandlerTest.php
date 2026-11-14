@@ -35,8 +35,12 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
         self::bootKernel();
 
         $container = self::getContainer();
-        $this->handler = $container->get(TransferNotMatchedHandler::class);
-        $this->cache = $container->get('cache.app');
+        $handler = $container->get(TransferNotMatchedHandler::class);
+        static::assertInstanceOf(TransferNotMatchedHandler::class, $handler);
+        $this->handler = $handler;
+        $cache = $container->get('cache.app');
+        static::assertInstanceOf(CacheItemPoolInterface::class, $cache);
+        $this->cache = $cache;
 
         // Clear any existing cache
         $this->cache->clear();
@@ -69,7 +73,9 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $payment = PaymentAssembler::new()
             ->withUser($admin1)
             ->withAmount(Money::of(100, 'PLN'))
@@ -127,7 +133,9 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($transfer);
         $em->flush();
 

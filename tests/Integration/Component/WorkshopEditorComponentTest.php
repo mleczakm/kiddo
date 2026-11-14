@@ -40,8 +40,12 @@ final class WorkshopEditorComponentTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->em = static::getContainer()->get(EntityManagerInterface::class);
-        $this->notificationRepository = static::getContainer()->get(NotificationRepository::class);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $this->em = $em;
+        $notificationRepository = static::getContainer()->get(NotificationRepository::class);
+        static::assertInstanceOf(NotificationRepository::class, $notificationRepository);
+        $this->notificationRepository = $notificationRepository;
     }
 
     public function testMountPrefillsFieldsFromExistingLesson(): void

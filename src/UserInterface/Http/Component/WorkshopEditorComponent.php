@@ -222,6 +222,13 @@ class WorkshopEditorComponent extends AbstractController
         private readonly HtmlSanitizerInterface $descriptionSanitizer,
     ) {}
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \LogicException
+     */
     public function mount(
         ?Ulid $seriesId = null,
         ?Ulid $lessonId = null,
@@ -248,6 +255,11 @@ class WorkshopEditorComponent extends AbstractController
      * active one, falling back to the first lesson — and edit through the
      * same single-lesson path, defaulting to series-wide scope since the
      * admin clicked "edit" on the series row, not a specific date.
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \LogicException
      */
     private function loadSeriesRepresentativeLesson(): void
     {
@@ -277,6 +289,12 @@ class WorkshopEditorComponent extends AbstractController
         $this->loadLessonData();
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     private function loadLessonData(): void
     {
         if ($this->editingLessonId === null) {
@@ -299,7 +317,10 @@ class WorkshopEditorComponent extends AbstractController
         $this->loadMetadataFields($lesson->getMetadata());
         $this->occurrenceDate = $lesson->schedule->format('Y-m-d');
         $this->occurrenceTime = $lesson->schedule->format('H:i');
-        $this->instructorIds = array_map(static fn(User $u) => (string) $u->getId(), $lesson->getAllInstructors());
+        $this->instructorIds = array_values(array_map(
+            static fn(User $u) => (string) $u->getId(),
+            $lesson->getAllInstructors(),
+        ));
         $this->loadTicketPrices($lesson);
     }
 
@@ -343,6 +364,10 @@ class WorkshopEditorComponent extends AbstractController
      * rehydrates a fresh instance from #[LiveProp] values on each subsequent
      * request, so a plain property set only in mount() would silently reset
      * to null on every interaction after the first render.
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function getEditingLesson(): ?Lesson
     {
@@ -353,11 +378,26 @@ class WorkshopEditorComponent extends AbstractController
         return $this->entityManager->find(Lesson::class, $this->editingLessonId);
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function getEditingSeries(): ?Series
     {
         return $this->getEditingLesson()?->getSeries();
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function getEditingLessonImageUrl(): ?string
     {
         $lesson = $this->getEditingLesson();
@@ -370,6 +410,12 @@ class WorkshopEditorComponent extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function getEditingLessonIsVideo(): bool
     {
         return $this->getEditingLesson()?->getMetadata()->isVideo() ?? false;
@@ -378,6 +424,10 @@ class WorkshopEditorComponent extends AbstractController
     /**
      * How many other lessons in the series would also be touched by
      * "cały cykl" — shown so the scope choice is never a guess.
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function getUpcomingSeriesLessonsCount(): int
     {
@@ -404,6 +454,12 @@ class WorkshopEditorComponent extends AbstractController
         return $count;
     }
 
+    /**
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
     public function getFollowingSeriesLessonsCount(): int
     {
         $lesson = $this->getEditingLesson();
@@ -418,6 +474,10 @@ class WorkshopEditorComponent extends AbstractController
      * Exact operation counts shown next to the save button before the admin commits the change.
      *
      * @return array{create: int, hide: int, delete: int, update: int}
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \LogicException
      */
     public function getSaveImpact(): array
     {
@@ -468,6 +528,10 @@ class WorkshopEditorComponent extends AbstractController
 
     /**
      * @return list<array{fileId: string, name: string, size: int, mimeType: string, role: string, caption: string, isRemoved: bool}>
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function getAttachments(): array
     {
@@ -501,6 +565,10 @@ class WorkshopEditorComponent extends AbstractController
      * Excludes files already attached or already staged for attachment.
      *
      * @return list<array{id: string, name: string, size: int, mimeType: string}>
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function getMediaLibraryResults(): array
     {
@@ -569,10 +637,11 @@ class WorkshopEditorComponent extends AbstractController
 
     /**
      * @return User[]
+     * @throws \UnexpectedValueException
      */
     public function getInstructors(): array
     {
-        if (empty($this->instructorIds)) {
+        if ($this->instructorIds === []) {
             return [];
         }
 
@@ -693,7 +762,15 @@ class WorkshopEditorComponent extends AbstractController
      */
     private const array SUPPORTED_VIDEO_MIME_TYPES = ['video/mp4', 'video/webm'];
 
-    /** @throws \UnexpectedValueException */
+    /**
+     * @throws \UnexpectedValueException
+     * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function save(Request $request): void
     {
@@ -773,6 +850,12 @@ class WorkshopEditorComponent extends AbstractController
      * @throws \DomainException
      * @throws \InvalidArgumentException
      * @throws \UnexpectedValueException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     * @throws \LogicException
+     * @throws \ValueError
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function saveExistingLesson(array $ticketOptions): void
     {
@@ -908,6 +991,8 @@ class WorkshopEditorComponent extends AbstractController
      * @throws \DomainException
      * @throws \InvalidArgumentException
      * @throws \UnexpectedValueException
+     * @throws \LogicException
+     * @throws \ValueError
      */
     private function saveNewSeries(array $ticketOptions): void
     {
@@ -958,6 +1043,10 @@ class WorkshopEditorComponent extends AbstractController
         $this->emitUp('workshopEditorSaved');
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     private function buildMetadataFor(Lesson $lesson): LessonMetadata
     {
         $metadata = $lesson
@@ -986,6 +1075,8 @@ class WorkshopEditorComponent extends AbstractController
     /**
      * @throws \DomainException
      * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \ValueError
      */
     private function reconcileWorkshopFiles(LessonMetadata $metadata): void
     {
@@ -1171,6 +1262,10 @@ class WorkshopEditorComponent extends AbstractController
 
     /**
      * @return list<TicketOption>
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
      */
     private function buildTicketOptions(): array
     {
@@ -1239,6 +1334,12 @@ class WorkshopEditorComponent extends AbstractController
 
     /**
      * @param Lesson[] $affectedLessons
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function notifyAboutEdit(array $affectedLessons, string $scope): void
     {

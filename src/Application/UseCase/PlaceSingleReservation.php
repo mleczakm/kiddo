@@ -48,6 +48,19 @@ final readonly class PlaceSingleReservation
         private StateMachinesInterface $stateMachines,
     ) {}
 
+    /**
+     * @throws \App\Application\UseCase\PriceQuoteMismatchException
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \LogicException
+     * @throws \Random\RandomException
+     */
     public function __invoke(AddBooking $command): void
     {
         $user = $this->userRepository->find($command->userId);
@@ -62,7 +75,7 @@ final readonly class PlaceSingleReservation
 
         $ticketOption = $lesson->getMatchingTicketOption($command->ticketType);
 
-        $quote = $this->priceQuoter->quote($user->getId(), $lesson, $ticketOption->type->value, $ticketOption->price);
+        $quote = $this->priceQuoter->quote($user->getId(), $lesson, $ticketOption);
 
         $appliedQuote = null;
         if ($this->featureManager->isEnabled('dynamic_pricing')) {

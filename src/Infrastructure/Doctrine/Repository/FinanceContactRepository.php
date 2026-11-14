@@ -26,7 +26,7 @@ class FinanceContactRepository extends ServiceEntityRepository implements Financ
     #[\Override]
     public function findAll(): array
     {
-        /** @var list<FinanceContact> $contacts */
+        /** @var list<FinanceContact> */
         return $this->createQueryBuilder('fc')->orderBy('fc.createdAt', 'ASC')->getQuery()->getResult();
     }
 

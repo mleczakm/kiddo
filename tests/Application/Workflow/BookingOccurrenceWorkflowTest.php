@@ -22,7 +22,10 @@ final class BookingOccurrenceWorkflowTest extends KernelTestCase
     {
         self::bootKernel();
         $stateMachines = self::getContainer()->get(StateMachinesInterface::class);
-        \assert($stateMachines instanceof StateMachinesInterface);
+        \assert(
+            $stateMachines instanceof StateMachinesInterface,
+            'State machines must be available in the test container.',
+        );
         $this->stateMachines = $stateMachines;
     }
 

@@ -14,6 +14,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class WorkshopsAction extends AbstractController
 {
+    /**
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     */
     #[Route(path: [
         'pl' => 'warsztaty',
         'en' => 'workshops',
@@ -38,6 +41,10 @@ class WorkshopsAction extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     */
     #[Route(path: [
         'pl' => 'warsztaty/{slug}',
         'en' => 'workshops/{slug}',
@@ -65,6 +72,7 @@ class WorkshopsAction extends AbstractController
      * when they open a workshop's details, instead of snapping to the week of the
      * opened workshop. Falls back to the workshop's own week when there is no
      * browsing context (e.g. a direct/shared link).
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
      */
     private function resolveBrowsedWeek(Request $request, \DateTimeImmutable $scheduleFallback): string
     {
@@ -81,6 +89,10 @@ class WorkshopsAction extends AbstractController
         return $scheduleFallback->format('Y-m-d');
     }
 
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     */
     private function findLessonBySlug(string $slug, Request $request, EntityManagerInterface $entityManager): ?Lesson
     {
         $now = Clock::get()->now();
@@ -160,7 +172,7 @@ class WorkshopsAction extends AbstractController
             ->setParameter('slug', $slug)
             ->setParameter('now', $now);
 
-        /** @var Lesson|null $lesson */
+        /** @var Lesson|null */
         return $query->getOneOrNullResult();
     }
 }

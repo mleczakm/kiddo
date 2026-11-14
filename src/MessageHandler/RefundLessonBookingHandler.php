@@ -17,6 +17,13 @@ class RefundLessonBookingHandler
 
     /**
      * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \LogicException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \RuntimeException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function __invoke(RefundLessonBooking $command): void
     {

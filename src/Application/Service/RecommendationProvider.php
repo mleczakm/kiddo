@@ -45,8 +45,8 @@ final readonly class RecommendationProvider
             throw new \InvalidArgumentException('Opinie muszą być listą.');
         }
         $validated = [];
-        foreach ($reviews as $index => $review) {
-            $validated[] = RecommendationValidator::normalize($review, $index + 1);
+        foreach (array_keys($reviews) as $index) {
+            $validated[] = RecommendationValidator::normalize($reviews[$index], $index + 1);
         }
         if (count(array_unique(array_column($validated, 'id'))) !== count($validated)) {
             throw new \InvalidArgumentException('Każda opinia musi mieć inny identyfikator.');

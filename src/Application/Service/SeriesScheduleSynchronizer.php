@@ -49,13 +49,19 @@ final readonly class SeriesScheduleSynchronizer
         return $lessons;
     }
 
-    /** @throws \InvalidArgumentException */
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     public function previewExisting(Series $series, ?\DateTimeImmutable $end): SeriesScheduleImpact
     {
         return $this->impactCalculator->forExisting($series, $end);
     }
 
-    /** @throws \InvalidArgumentException */
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     public function synchronize(Series $series, ?\DateTimeImmutable $end): SeriesScheduleImpact
     {
         $impact = $this->previewExisting($series, $end);

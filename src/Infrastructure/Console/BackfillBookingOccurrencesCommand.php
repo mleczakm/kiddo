@@ -13,12 +13,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'app:booking-occurrences:backfill')]
 final class BackfillBookingOccurrencesCommand extends Command
 {
+    /** @throws \Symfony\Component\Console\Exception\LogicException */
     public function __construct(
         private readonly BookingOccurrenceBackfill $backfill,
     ) {
         parent::__construct();
     }
 
+    /**
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $report = $this->backfill->run();

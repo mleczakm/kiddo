@@ -161,6 +161,7 @@ class Booking
 
     /**
      * Add lesson to booking
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
      */
     public function addLesson(Lesson $lesson): self
     {
@@ -179,6 +180,7 @@ class Booking
 
     /**
      * Remove lesson from booking
+     * @throws \OutOfBoundsException
      */
     public function removeLesson(Lesson $lesson): self
     {
@@ -196,6 +198,7 @@ class Booking
         return $this->status;
     }
 
+    /** @throws \InvalidArgumentException */
     public function setStatus(string $status): self
     {
         if (!in_array(
@@ -246,6 +249,7 @@ class Booking
         return $this->getLessonsMap()->areAllLessonsInPast($this);
     }
 
+    /** @throws \InvalidArgumentException */
     public function confirm(): self
     {
         foreach ($this->occurrences as $occurrence) {
@@ -254,6 +258,7 @@ class Booking
         return $this->setStatus(self::STATUS_ACTIVE);
     }
 
+    /** @throws \InvalidArgumentException */
     public function cancel(?User $cancelledBy = null, ?string $reason = null): self
     {
         $this->setStatus(self::STATUS_CANCELLED);
@@ -296,6 +301,7 @@ class Booking
      * itself change the booking status — that's driven by the 'reactivate'
      * workflow transition (see workflow.yaml), mirroring how cancelLesson()
      * leaves the status transition to the caller.
+     * @throws \OutOfBoundsException
      */
     public function reactivate(): self
     {
@@ -311,6 +317,7 @@ class Booking
         return $this;
     }
 
+    /** @throws \InvalidArgumentException */
     public function complete(): self
     {
         foreach ($this->occurrences as $occurrence) {
@@ -321,6 +328,8 @@ class Booking
 
     /**
      * Get booked lesson by lesson ID
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
      */
     public function getBookedLesson(string $lessonId): ?BookedLesson
     {
@@ -340,6 +349,8 @@ class Booking
 
     /**
      * Cancel specific lesson
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \OutOfBoundsException
      */
     public function cancelLesson(string $lessonId, ?string $reason = null, ?User $cancelledBy = null): bool
     {
@@ -360,6 +371,8 @@ class Booking
 
     /**
      * Refund specific lesson
+     * @throws \OutOfBoundsException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
      */
     public function refundLesson(string $lessonId, ?string $reason = null): bool
     {
@@ -374,6 +387,7 @@ class Booking
 
     /**
      * Reschedule a specific lesson
+     * @throws \OutOfBoundsException
      */
     public function rescheduleLesson(Lesson $from, Lesson $to, User $rescheduledBy): void
     {
@@ -608,6 +622,7 @@ class Booking
         return $this->canRequestRefund() && $lesson->cancellationAvailable() && $this->hasPaidPayment();
     }
 
+    /** @throws \Symfony\Component\Uid\Exception\InvalidArgumentException */
     public function canCancelLesson(Lesson $lesson): bool
     {
         $occurrence = $this->findOccurrence($lesson->getId());
@@ -643,6 +658,7 @@ class Booking
         return $this->notes;
     }
 
+    /** @throws \Brick\Math\Exception\MathException */
     public function getAmountPaid(): int
     {
         if ($this->payment === null) {
@@ -798,6 +814,7 @@ class Booking
         return $this->status === self::STATUS_WAITING_APPROVAL;
     }
 
+    /** @throws \LogicException */
     public function approve(User $approvedBy): self
     {
         if (!$this->isWaitingApproval()) {

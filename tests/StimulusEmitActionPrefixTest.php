@@ -48,26 +48,18 @@ final class StimulusEmitActionPrefixTest extends TestCase
             $tagsWithDefaultClick = ['a', 'button', 'form'];
 
             $matches = [];
-            $matchCount = preg_match_all('/data-action="([^"]*)"/', $contents, $matches, \PREG_OFFSET_CAPTURE);
+            $matchCount = preg_match_all('/data-action="([^"]*)"/', $contents, $matches);
             if ($matchCount !== false && $matchCount > 0) {
-                foreach ($matches[1] as [$actionValue, $offset]) {
-                    $hasBareLiveAction = false;
-                    $directives = preg_split('/\s+/', trim($actionValue));
-                    if ($directives === false) {
-                        continue;
-                    }
-                    foreach ($directives as $directive) {
-                        if (!($directive !== '' && str_starts_with($directive, 'live#'))) {
-                            continue;
-                        }
-
-                        $hasBareLiveAction = true;
-                    }
-                    if (!$hasBareLiveAction) {
+                $offset = 0;
+                foreach ($matches[1] as $index => $actionValue) {
+                    $attributeOffset = strpos($contents, $matches[0][$index], $offset);
+                    static::assertNotFalse($attributeOffset);
+                    $offset = $attributeOffset + strlen($matches[0][$index]);
+                    if (preg_match('/(?:^|\s)live#/', $actionValue) !== 1) {
                         continue;
                     }
 
-                    $precedingTagOpen = strrpos(substr($contents, 0, $offset), '<');
+                    $precedingTagOpen = strrpos(substr($contents, 0, $attributeOffset), '<');
                     $tagName = null;
                     $tagMatch = [];
                     if (

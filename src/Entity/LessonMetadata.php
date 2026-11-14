@@ -102,6 +102,10 @@ class LessonMetadata
             : self::DEFAULT_VISUAL_THEME;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withTitle(string $title): self
     {
         $new = $this->duplicate();
@@ -111,6 +115,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withLead(string $lead): self
     {
         $new = $this->duplicate();
@@ -118,6 +126,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withVisualTheme(string $visualTheme): self
     {
         $new = $this->duplicate();
@@ -125,6 +137,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withDescription(string $description): self
     {
         $new = $this->duplicate();
@@ -132,6 +148,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withCapacity(int $capacity): self
     {
         $new = $this->duplicate();
@@ -139,6 +159,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withDuration(int $duration): self
     {
         $new = $this->duplicate();
@@ -146,6 +170,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withAgeRange(AgeRange $ageRange): self
     {
         $new = $this->duplicate();
@@ -153,6 +181,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withCategory(string $category): self
     {
         $new = $this->duplicate();
@@ -160,6 +192,10 @@ class LessonMetadata
         return $new;
     }
 
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function withImage(?string $imageData, ?string $imageMimeType): self
     {
         $new = $this->duplicate();
@@ -178,7 +214,10 @@ class LessonMetadata
         return $this->imageMimeType !== null && str_starts_with($this->imageMimeType, 'video/');
     }
 
-    /** @throws \DomainException */
+    /**
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
+     */
     public function addFile(WorkshopFile $file): void
     {
         if ($file->getMetadata() !== $this) {
@@ -214,6 +253,8 @@ class LessonMetadata
      * The metadata value object receives a fresh database identity on every
      * with*() edit. Copy the attachment join rows as part of that operation
      * while continuing to reuse the underlying stored File records.
+     * @throws \DomainException
+     * @throws \InvalidArgumentException
      */
     private function duplicate(): self
     {

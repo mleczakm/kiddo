@@ -44,10 +44,16 @@ final class WaitlistTest extends KernelTestCase
         $registry = self::getContainer()->get(ChatToolRegistry::class);
         $waitlist = self::getContainer()->get(WaitlistEntryRepositoryInterface::class);
         $bus = self::getContainer()->get(MessageBusInterface::class);
-        \assert($em instanceof EntityManagerInterface);
-        \assert($registry instanceof ChatToolRegistry);
-        \assert($waitlist instanceof WaitlistEntryRepositoryInterface);
-        \assert($bus instanceof MessageBusInterface);
+        \assert($em instanceof EntityManagerInterface, 'The entity manager must be available in the test container.');
+        \assert(
+            $registry instanceof ChatToolRegistry,
+            'The chat tool registry must be available in the test container.',
+        );
+        \assert(
+            $waitlist instanceof WaitlistEntryRepositoryInterface,
+            'The waitlist repository must be available in the test container.',
+        );
+        \assert($bus instanceof MessageBusInterface, 'The message bus must be available in the test container.');
         $this->em = $em;
         $this->registry = $registry;
         $this->waitlist = $waitlist;
@@ -57,7 +63,7 @@ final class WaitlistTest extends KernelTestCase
     private function reload(User $user): User
     {
         $fresh = $this->em->find(User::class, $user->getId());
-        \assert($fresh instanceof User);
+        \assert($fresh instanceof User, 'The test user must still exist after reloading.');
 
         return $fresh;
     }

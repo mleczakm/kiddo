@@ -19,6 +19,7 @@ class PricingRuleRepository extends ServiceEntityRepository implements PricingRu
         parent::__construct($registry, PricingRule::class);
     }
 
+    /** @throws \UnexpectedValueException */
     #[\Override]
     public function findActive(): array
     {
@@ -28,6 +29,7 @@ class PricingRuleRepository extends ServiceEntityRepository implements PricingRu
     #[\Override]
     public function findAllForAdmin(): array
     {
+        /** @var list<PricingRule> */
         return $this
             ->createQueryBuilder('r')
             ->orderBy('r.status', 'ASC')

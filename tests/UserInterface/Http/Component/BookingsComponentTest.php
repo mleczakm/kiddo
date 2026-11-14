@@ -281,8 +281,10 @@ final class BookingsComponentTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserAssembler::new()->assemble();
-        static::getContainer()->get(EntityManagerInterface::class)->persist($user);
-        static::getContainer()->get(EntityManagerInterface::class)->flush();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $em->persist($user);
+        $em->flush();
 
         $client->loginUser($user);
 
@@ -312,8 +314,10 @@ final class BookingsComponentTest extends WebTestCase
     {
         $client = static::createClient();
         $user = UserAssembler::new()->assemble();
-        static::getContainer()->get(EntityManagerInterface::class)->persist($user);
-        static::getContainer()->get(EntityManagerInterface::class)->flush();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        $em->persist($user);
+        $em->flush();
 
         $client->loginUser($user);
         $client->request('GET', '/panel/rezerwacje?activeTab=cancelled');

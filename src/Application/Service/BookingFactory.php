@@ -64,9 +64,11 @@ class BookingFactory
         $key = $lesson->schedule->format('Y-m');
         $future = [];
         foreach ($series->lessons as $candidate) {
-            if ($candidate->schedule->format('Y-m') === $key && $candidate->future()) {
-                $future[(string) $candidate->getId()] = $candidate;
+            if ($candidate->schedule->format('Y-m') !== $key || !$candidate->future()) {
+                continue;
             }
+
+            $future[(string) $candidate->getId()] = $candidate;
         }
         $future = array_values($future);
         usort($future, static fn(Lesson $a, Lesson $b): int => $a->schedule <=> $b->schedule);

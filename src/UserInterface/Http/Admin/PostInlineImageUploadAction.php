@@ -43,13 +43,14 @@ final class PostInlineImageUploadAction extends AbstractController
     public function __invoke(Post $post, Request $request): Response
     {
         $file = $request->files->get('file');
-        if (!$file) {
+        if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
             return new JsonResponse(['error' => 'No file provided'], Response::HTTP_BAD_REQUEST);
         }
 
         try {
             $policy = new FileUploadPolicy('article_image');
-            $stored = $this->fileStorage->store($file, $policy, $this->getUser());
+            $user = $this->getUser();
+            $stored = $this->fileStorage->store($file, $policy, $user instanceof \App\Entity\User ? $user : null);
 
             $postFile = new \App\Entity\PostFile($post, $stored, PostFileRole::INLINE, $post->files->count());
             $this->em->persist($postFile);

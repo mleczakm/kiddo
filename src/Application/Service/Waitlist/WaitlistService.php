@@ -111,6 +111,7 @@ final readonly class WaitlistService
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
      * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function offerSeats(Lesson $lesson): int
     {

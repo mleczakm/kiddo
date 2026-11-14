@@ -21,7 +21,9 @@ class DoctrineTodayLessonsQueryTest extends KernelTestCase
         $otherDate = new DateTimeImmutable('2025-07-10 10:00:00');
 
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
 
         $lesson1 = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->assemble())
@@ -42,6 +44,7 @@ class DoctrineTodayLessonsQueryTest extends KernelTestCase
         $em->flush();
 
         $query = self::getContainer()->get(DoctrineTodayLessonsQuery::class);
+        static::assertInstanceOf(DoctrineTodayLessonsQuery::class, $query);
         $results = $query->forDate($date);
 
         static::assertCount(2, $results);

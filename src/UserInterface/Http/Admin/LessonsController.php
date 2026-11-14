@@ -20,6 +20,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class LessonsController extends AbstractController
 {
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
     #[IsGranted('ROLE_MANAGE_LESSONS')]
     #[Route('/admin/zajecia/{id}', name: 'app_admin_lesson_view', requirements: [
         'id' => '[A-Za-z0-9]+',
@@ -49,6 +53,11 @@ final class LessonsController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
     #[IsGranted('ROLE_MANAGE_LESSONS')]
     #[Route(
         '/admin/zajecia/{id}/toggle',
@@ -69,7 +78,7 @@ final class LessonsController extends AbstractController
         }
 
         $token = $request->request->get('_token');
-        if (!$this->isCsrfTokenValid('toggle_lesson_' . $lesson->getId(), (string) $token)) {
+        if (!$this->isCsrfTokenValid('toggle_lesson_' . (string) $lesson->getId(), (string) $token)) {
             $this->addFlash('error', 'Invalid CSRF token.');
             return $this->redirectToRoute('app_admin_lesson_view', [
                 'id' => (string) $lesson->getId(),

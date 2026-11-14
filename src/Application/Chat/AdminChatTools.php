@@ -744,6 +744,16 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return str_starts_with($name, 'admin.');
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \ValueError
+     * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     */
     #[\Override]
     public function call(string $name, ChatActor $actor, array $arguments): ToolResult
     {
@@ -784,6 +794,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         }
     }
 
+    /** @throws \InvalidArgumentException */
     private function todaySchedule(ToolArguments $args): ToolResult
     {
         $date = $args->has('date')
@@ -803,6 +814,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /** @throws \InvalidArgumentException */
     private function listLessons(ToolArguments $args): ToolResult
     {
         $week = $args->string('week') ?? new \DateTimeImmutable('today')->format('Y-m-d');
@@ -827,6 +839,10 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function getLesson(ToolArguments $args): ToolResult
     {
         $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
@@ -855,6 +871,10 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function toggleLesson(ToolArguments $args): ToolResult
     {
         $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
@@ -870,6 +890,11 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     */
     private function updateCapacity(ToolArguments $args): ToolResult
     {
         $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
@@ -913,6 +938,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return ToolResult::success(sprintf('Waitlist dla lekcji: %s.', $mode), $this->presenter->lesson($lesson));
     }
 
+    /** @throws \InvalidArgumentException */
     private function listBookings(ToolArguments $args): ToolResult
     {
         $bookings = $this->bookingRepository->findFiltered(
@@ -927,6 +953,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     */
     private function createBooking(ToolArguments $args): ToolResult
     {
         $lesson = $this->lessonRepository->find(Ulid::fromString($args->requireString('lesson_id')));
@@ -986,6 +1018,9 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
     /**
      * Applies the admin-chosen payment mode to a freshly built (pending) booking
      * and its payment, and returns the Polish summary line for the chat reply.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
      */
     private function applyBookingPaymentMode(
         string $mode,
@@ -1028,6 +1063,13 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function markBookingPaid(ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -1049,6 +1091,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return ToolResult::success('Płatność oznaczona jako opłacona.', $this->presenter->booking($booking));
     }
 
+    /** @throws \InvalidArgumentException */
     private function markPaymentPaid(Payment $payment): void
     {
         if ($this->paymentStateMachine->can($payment, Payment::TRANSITION_PAY)) {
@@ -1060,6 +1103,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         $payment->setStatus(Payment::STATUS_PAID);
     }
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function cancelLesson(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -1079,6 +1128,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return ToolResult::success('Lekcja odwołana (admin).');
     }
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function refundLesson(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -1098,6 +1153,12 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return ToolResult::success('Zwrot zlecony (admin).');
     }
 
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function rescheduleLesson(ChatActor $actor, ToolArguments $args): ToolResult
     {
         $booking = $this->bookingRepository->find(Ulid::fromString($args->requireString('booking_id')));
@@ -1119,6 +1180,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return ToolResult::success('Lekcja przełożona (admin).');
     }
 
+    /** @throws \InvalidArgumentException */
     private function listPayments(ToolArguments $args): ToolResult
     {
         $search = $args->string('search') ?? '';
@@ -1153,6 +1215,10 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     */
     private function assignTransfer(ToolArguments $args): ToolResult
     {
         $transfer = $this->transferRepository->find($args->requireInt('transfer_id'));
@@ -1172,6 +1238,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /** @throws \InvalidArgumentException */
     private function rejectTransfer(ToolArguments $args): ToolResult
     {
         $transfer = $this->transferRepository->find($args->requireInt('transfer_id'));
@@ -1184,6 +1251,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return ToolResult::success('Przelew odrzucony/usunięty.');
     }
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     private function triggerImport(): ToolResult
     {
         $this->bus->dispatch(new ImportTransfersFromMail());
@@ -1191,6 +1259,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         return ToolResult::success('Uruchomiono import przelewów z poczty.');
     }
 
+    /** @throws \InvalidArgumentException */
     private function searchUsers(ToolArguments $args): ToolResult
     {
         $users = $this->userRepository->findAllMatching($args->requireString('query'));
@@ -1201,6 +1270,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /** @throws \InvalidArgumentException */
     private function getUser(ToolArguments $args): ToolResult
     {
         $user = null;
@@ -1234,6 +1304,10 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function listSeries(ToolArguments $args): ToolResult
     {
         $week = $args->string('week') ?? new \DateTimeImmutable('today')->format('Y-m-d');
@@ -1259,6 +1333,14 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \ValueError
+     * @throws \InvalidArgumentException
+     */
     private function updateSeries(ToolArguments $args): ToolResult
     {
         $series = $this->seriesRepository->find(Ulid::fromString($args->requireString('series_id')));
@@ -1309,6 +1391,11 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /**
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     */
     private function cloneTemplateLesson(ToolArguments $args): ToolResult
     {
         $templateId = $args->requireString('template_lesson_id');
@@ -1343,6 +1430,11 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /**
+     * @throws \ValueError
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     private function notifyUser(ToolArguments $args): ToolResult
     {
         $user = $this->resolveUser($args);
@@ -1369,6 +1461,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         ]);
     }
 
+    /** @throws \InvalidArgumentException */
     private function assignSeriesInstructor(ToolArguments $args): ToolResult
     {
         try {
@@ -1403,6 +1496,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /** @throws \InvalidArgumentException */
     private function grantHostRole(ToolArguments $args): ToolResult
     {
         $user = $this->resolveUser($args);
@@ -1428,6 +1522,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /** @throws \InvalidArgumentException */
     private function setOperationalEmails(ToolArguments $args): ToolResult
     {
         $user = $this->resolveUser($args);
@@ -1450,6 +1545,7 @@ final readonly class AdminChatTools implements ChatToolProviderInterface
         );
     }
 
+    /** @throws \InvalidArgumentException */
     private function resolveUser(ToolArguments $args): ?User
     {
         if ($args->has('user_id')) {

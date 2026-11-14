@@ -7,6 +7,7 @@ namespace App\Tests\Application\UseCase\Cart;
 use App\Application\UseCase\Cart\AddCartItem;
 use App\Application\UseCase\Cart\RepriceCart;
 use App\Domain\Commerce\Cart\Cart;
+use App\Domain\Commerce\Cart\CartItem;
 use App\Domain\Commerce\Pricing\AdjustmentType;
 use App\Domain\Commerce\Pricing\PricingRule;
 use App\Entity\TicketType;
@@ -54,6 +55,9 @@ final class RepriceCartTest extends KernelTestCase
         $em->flush();
 
         $repriceCart($cart->id, $userId);
+        $em->clear();
+        $item = $em->find(CartItem::class, $item->id);
+        static::assertInstanceOf(CartItem::class, $item);
 
         static::assertSame(4500, $item->finalPriceMinor);
     }

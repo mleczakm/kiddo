@@ -23,6 +23,13 @@ readonly class PlatformBillingSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\MoneyMismatchException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
     public function onPaymentPaid(Event $event): void
     {
         $payment = $event->getSubject();

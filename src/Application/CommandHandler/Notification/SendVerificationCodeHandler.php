@@ -17,6 +17,7 @@ final readonly class SendVerificationCodeHandler
         private TranslatorInterface $translator,
     ) {}
 
+    /** @throws \InvalidArgumentException */
     public function __invoke(SendVerificationCode $command): void
     {
         $this->notificationSender->send(

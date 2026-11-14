@@ -16,6 +16,9 @@ class StaticEndpointAction extends AbstractController
         private readonly SettingRepository $settingRepository,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     #[Route(
         '/{path}',
         name: 'static_endpoint',

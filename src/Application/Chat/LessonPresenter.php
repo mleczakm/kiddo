@@ -46,6 +46,7 @@ final readonly class LessonPresenter
     public function lesson(Lesson $lesson): array
     {
         $meta = $lesson->getMetadata();
+        $series = $lesson->getSeries();
 
         return [
             'id' => (string) $lesson->getId(),
@@ -61,7 +62,7 @@ final readonly class LessonPresenter
             'slug' => $meta->slug,
             'lead' => $meta->lead,
             'ticket_options' => array_values(array_map($this->ticketOption(...), $lesson->getTicketOptions())),
-            'series_id' => $lesson->getSeries() ? (string) $lesson->getSeries()->getId() : null,
+            'series_id' => $series !== null ? (string) $series->getId() : null,
         ];
     }
 
@@ -102,6 +103,7 @@ final readonly class LessonPresenter
      *         rescheduled: bool
      *     }>
      * }
+     * @throws \InvalidArgumentException
      */
     public function booking(Booking $booking): array
     {
@@ -117,12 +119,14 @@ final readonly class LessonPresenter
             ];
         }
 
+        $child = $booking->getChild();
+
         return [
             'id' => (string) $booking->getId(),
             'status' => $booking->getStatus(),
             'created_at' => $booking->getCreatedAt()->format(\DateTimeInterface::ATOM),
-            'child_id' => $booking->getChild() ? (string) $booking->getChild()->getId() : null,
-            'child_name' => $booking->getChild()?->getName(),
+            'child_id' => $child !== null ? (string) $child->getId() : null,
+            'child_name' => $child?->getName(),
             'notes' => $booking->getNotes(),
             'payment' => $payment !== null ? $this->paymentInstructions($payment) : null,
             'lessons' => $lessons,
@@ -171,6 +175,7 @@ final readonly class LessonPresenter
      *     valid_minutes: int,
      *     instruction_pl: string
      * }
+     * @throws \InvalidArgumentException
      */
     public function paymentInstructions(Payment $payment): array
     {

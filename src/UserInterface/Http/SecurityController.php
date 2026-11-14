@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SecurityController extends AbstractController
 {
+    /** @throws \LogicException */
     #[Route('/login', name: 'app_login')]
     public function form(): Response
     {
@@ -21,12 +22,14 @@ final class SecurityController extends AbstractController
         return $this->render('login.html.twig');
     }
 
+    /** @throws \LogicException */
     #[Route('/login_check', name: 'login_check')]
     public function check(): never
     {
         throw new LogicException('This code should never be reached');
     }
 
+    /** @throws \LogicException */
     #[Route('/logout', name: 'app_logout')]
     public function logout(): never
     {

@@ -23,6 +23,8 @@ class PlatformBillingComponentTest extends WebTestCase
     private function createAdminUser(): User
     {
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
         $user = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
         $entityManager->persist($user);
         $entityManager->flush();
@@ -33,6 +35,8 @@ class PlatformBillingComponentTest extends WebTestCase
     private function createSuperAdminUser(): User
     {
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
         $user = UserAssembler::new()->withRoles('ROLE_SUPER_ADMIN')->assemble();
         $entityManager->persist($user);
         $entityManager->flush();
@@ -47,6 +51,7 @@ class PlatformBillingComponentTest extends WebTestCase
         $client->loginUser($user);
 
         $platformBillingService = self::getContainer()->get(PlatformBillingService::class);
+        static::assertInstanceOf(PlatformBillingService::class, $platformBillingService);
         $platformBillingService->addCommissionToCurrentDue(Money::of('1000.00', 'PLN'));
         $testComponent = $this->createLiveComponent(name: PlatformBillingComponent::class, client: $client);
 
@@ -132,6 +137,8 @@ class PlatformBillingComponentTest extends WebTestCase
     {
         $client = static::createClient();
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
         $customer = UserAssembler::new()->withRoles('ROLE_USER')->assemble();
         $entityManager->persist($customer);
         $entityManager->flush();

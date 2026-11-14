@@ -74,7 +74,7 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
         // pending until an admin settles them in person, so they must never be
         // auto-expired (which would also auto-cancel their booking via
         // BookingConfirmationSubscriber).
-        /** @var array<Payment> $result */
+        /** @var array<Payment> */
         return $this
             ->createQueryBuilder('p')
             ->where('p.status = :status')
@@ -108,10 +108,14 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
                 ->setParameter('search', '%' . $search . '%');
         }
 
-        /** @var Payment[] $result */
+        /** @var Payment[] */
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     #[\Override]
     public function countPendingPayments(): int
     {
@@ -130,7 +134,7 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
     #[\Override]
     public function findPaidBetween(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
-        /** @var Payment[] $result */
+        /** @var Payment[] */
         return $this
             ->createQueryBuilder('p')
             ->andWhere('p.status = :status')

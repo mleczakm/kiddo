@@ -33,6 +33,11 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
             $mcpName = $this->chatToolRegistry->mcpPublicName($definition);
             $invoker = $this->invoker;
             $handler = \Closure::bind(
+                /**
+                 * @param array<string, mixed> $arguments
+                 * @throws \LogicException
+                 * @throws \RuntimeException
+                 */
                 static fn(array $arguments): mixed => $invoker->invoke($canonical, $arguments),
                 null,
                 ReferenceHandler::class,
@@ -95,7 +100,6 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
 
         $required = [];
         if (isset($schema['required']) && is_array($schema['required'])) {
-            /** @var list<string> $required */
             $required = array_values(array_filter($schema['required'], is_string(...)));
         }
 

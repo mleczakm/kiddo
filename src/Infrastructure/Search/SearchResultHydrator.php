@@ -26,6 +26,12 @@ final readonly class SearchResultHydrator
     /**
      * @param list<SearchReference> $references
      * @return list<SearchResult>
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \ValueError
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
      */
     public function hydrate(array $references): array
     {
@@ -129,7 +135,12 @@ final readonly class SearchResultHydrator
      * @param array{
      *     part1: ?string, part2: ?string, status: ?string,
      *     amount_value: ?string, amount_currency: ?string, amount_text: ?string, timestamp_str: ?string,
+     *     ...
      * } $row
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
      */
     private function buildSubtitle(SearchType $type, array $row): string
     {

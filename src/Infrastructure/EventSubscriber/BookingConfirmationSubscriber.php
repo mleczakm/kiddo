@@ -24,6 +24,7 @@ class BookingConfirmationSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** @throws \OutOfBoundsException */
     public function onPaymentCompleted(Event $event): void
     {
         $payment = $event->getSubject();

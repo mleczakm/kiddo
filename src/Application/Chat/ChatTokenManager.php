@@ -17,6 +17,10 @@ final readonly class ChatTokenManager
         private string $secret,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Random\RandomException
+     */
     public function mint(User $user, ?int $ttlSeconds = null): string
     {
         $userId = $user->getId();
@@ -32,6 +36,7 @@ final readonly class ChatTokenManager
         ]);
     }
 
+    /** @throws \Random\RandomException */
     public function mintGuest(?int $ttlSeconds = null): string
     {
         return $this->encode([
@@ -43,6 +48,7 @@ final readonly class ChatTokenManager
         ]);
     }
 
+    /** @throws \InvalidArgumentException */
     public function parse(#[\SensitiveParameter] string $token): ChatToken
     {
         $parts = explode('.', $token);
@@ -69,7 +75,6 @@ final readonly class ChatTokenManager
             throw new \InvalidArgumentException('Invalid chat token payload');
         }
 
-        /** @var list<string> $roles */
         $roles = array_values(array_filter($decoded['roles'], is_string(...)));
 
         $uidRaw = $decoded['uid'] ?? null;

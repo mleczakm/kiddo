@@ -54,8 +54,8 @@ class SeriesAssembler extends EntityAssembler
     #[\Override]
     public function assemble(): Series
     {
-        /** @var list<Lesson> $lessons */
-        $lessons = array_values($this->properties['lessons'] ?? []);
+        /** @var array<Lesson> $lessons */
+        $lessons = $this->properties['lessons'] ?? [];
         /** @var WorkshopType $type */
         $type = $this->properties['type'] ?? WorkshopType::WEEKLY;
         /** @var array<TicketOption> $ticketOptions */
@@ -72,7 +72,7 @@ class SeriesAssembler extends EntityAssembler
         }
 
         $series = new Series(
-            lessons: new ArrayCollection($lessons),
+            lessons: new ArrayCollection(array_values($lessons)),
             type: $type,
             ticketOptions: $ticketOptionsList,
             visible: $visible,

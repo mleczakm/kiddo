@@ -19,6 +19,7 @@ final readonly class UserLoginSubscriber
         private EntityManagerInterface $entityManager,
     ) {}
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     #[AsEventListener(event: InteractiveLoginEvent::class)]
     public function onUserLogin(InteractiveLoginEvent $event): void
     {

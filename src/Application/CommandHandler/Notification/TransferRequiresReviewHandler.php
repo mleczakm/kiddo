@@ -32,6 +32,8 @@ final readonly class TransferRequiresReviewHandler
 
     /**
      * @throws \LogicException When the transfer has not been persisted yet.
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     public function __invoke(TransferRequiresReviewCommand $command): void
     {

@@ -4,96 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Component;
 
-use App\Entity\FinanceContact;
 use App\Entity\Setting;
 use App\Entity\User;
-use App\Infrastructure\Doctrine\Repository\FinanceContactRepository;
-use App\Infrastructure\Doctrine\Repository\SettingRepository;
-use App\Infrastructure\Doctrine\Repository\UserRepository;
 use App\Tests\Assembler\UserAssembler;
 use App\UserInterface\Http\Component\AdminSettingsComponent;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 #[Group('functional')]
-class AdminSettingsComponentTest extends WebTestCase
+final class AdminSettingsComponentTest extends AdminSettingsComponentTestCase
 {
-    use InteractsWithLiveComponents;
-
-    private KernelBrowser $client;
-
-    private EntityManagerInterface $entityManager;
-
-    private UserRepository $userRepository;
-
-    private FinanceContactRepository $financeContactRepository;
-
-    private SettingRepository $settingRepository;
-
-    private User $adminUser;
-
-    private User $regularUser;
-
-    #[\Override]
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-        $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->financeContactRepository = static::getContainer()->get(FinanceContactRepository::class);
-        $this->settingRepository = static::getContainer()->get(SettingRepository::class);
-
-        // Create test users
-        $this->adminUser = new User('admin@test.com', 'Admin User');
-        $this->adminUser->setRoles(['ROLE_ADMIN']);
-        $this->entityManager->persist($this->adminUser);
-
-        $this->regularUser = new User('user@test.com', 'Regular User');
-        $this->entityManager->persist($this->regularUser);
-
-        $this->entityManager->flush();
-    }
-
-    public function testFinanceContactCanBeAdded(): void
-    {
-        // Initially no finance contacts
-        $contacts = $this->financeContactRepository->findAll();
-        static::assertCount(0, $contacts);
-
-        // Add finance contact
-        $financeContact = new FinanceContact($this->regularUser);
-        $this->entityManager->persist($financeContact);
-        $this->entityManager->flush();
-
-        // Verify it was added
-        $contacts = $this->financeContactRepository->findAll();
-        static::assertCount(1, $contacts);
-        static::assertEquals($this->regularUser->getId(), $contacts[0]->getUser()->getId());
-    }
-
-    public function testFinanceContactCanBeRemoved(): void
-    {
-        // Add finance contact
-        $financeContact = new FinanceContact($this->regularUser);
-        $this->entityManager->persist($financeContact);
-        $this->entityManager->flush();
-
-        // Verify it was added
-        $contacts = $this->financeContactRepository->findAll();
-        static::assertCount(1, $contacts);
-
-        // Remove it
-        $this->entityManager->remove($financeContact);
-        $this->entityManager->flush();
-
-        // Verify it was removed
-        $contacts = $this->financeContactRepository->findAll();
-        static::assertCount(0, $contacts);
-    }
-
     public function testAdminRoleCanBeAddedToUser(): void
     {
         // Initially user has no admin role
@@ -165,81 +84,6 @@ class AdminSettingsComponentTest extends WebTestCase
         static::assertIsArray($savedContent);
         static::assertArrayHasKey('content', $savedContent);
         static::assertEquals($content, $savedContent['content']);
-    }
-
-    public function testFinanceContactUniqueness(): void
-    {
-        // Add finance contact
-        $financeContact1 = new FinanceContact($this->regularUser);
-        $this->entityManager->persist($financeContact1);
-        $this->entityManager->flush();
-
-        // Try to add another finance contact for the same user
-        $financeContact2 = new FinanceContact($this->regularUser);
-        $this->entityManager->persist($financeContact2);
-
-        // This should not throw an error but we should check uniqueness in business logic
-        $this->entityManager->flush();
-
-        // In a real application, you'd want to enforce uniqueness at the database level
-        // or check before adding
-        $contacts = $this->financeContactRepository->findBy([
-            'user' => $this->regularUser,
-        ]);
-        static::assertGreaterThanOrEqual(1, count($contacts));
-    }
-
-    public function testFinanceContactCanBeAddedAndRemovedThroughTheComponent(): void
-    {
-        $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
-
-        static::assertCount(0, $this->financeContactRepository->findAll());
-
-        $component->call('addFinanceContact', [
-            'userId' => (string) $this->regularUser->getId(),
-        ]);
-
-        $contacts = $this->financeContactRepository->findAll();
-        static::assertCount(1, $contacts);
-        static::assertSame($this->regularUser->getId(), $contacts[0]->getUser()->getId());
-
-        $component->call('removeFinanceContact', [
-            'userId' => (string) $this->regularUser->getId(),
-        ]);
-
-        static::assertCount(0, $this->financeContactRepository->findAll());
-    }
-
-    public function testFinanceContactSearchFindsUsersByIdNameEmailOrChildName(): void
-    {
-        $withChild = UserAssembler::new()->withName('Anna Kowalska')->withEmail('anna@example.com')->assemble();
-        $this->entityManager->persist($withChild);
-        $this->entityManager->flush();
-
-        $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
-        $component->set('financeContactSearch', (string) $withChild->getId());
-        /** @var AdminSettingsComponent $adminSettingsComponent */
-        $adminSettingsComponent = $component->component();
-        $results = $adminSettingsComponent->getFilteredUsersForFinanceContact();
-
-        $ids = array_map(static fn(User $u) => $u->getId(), $results);
-        static::assertContains($withChild->getId(), $ids);
-    }
-
-    public function testFinanceContactSearchExcludesUsersAlreadyFinanceContacts(): void
-    {
-        $financeContact = new FinanceContact($this->regularUser);
-        $this->entityManager->persist($financeContact);
-        $this->entityManager->flush();
-
-        $component = $this->createLiveComponent(name: 'AdminSettings', client: $this->client);
-        $component->set('financeContactSearch', $this->regularUser->getEmail());
-        /** @var AdminSettingsComponent $adminSettingsComponent */
-        $adminSettingsComponent = $component->component();
-        $results = $adminSettingsComponent->getFilteredUsersForFinanceContact();
-
-        $ids = array_map(static fn(User $u) => $u->getId(), $results);
-        static::assertNotContains($this->regularUser->getId(), $ids);
     }
 
     public function testAdminUsersListShowsExistingAdmins(): void

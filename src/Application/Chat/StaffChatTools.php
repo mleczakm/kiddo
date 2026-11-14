@@ -109,6 +109,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
         return str_starts_with($name, 'staff.');
     }
 
+    /** @throws \LogicException */
     #[\Override]
     public function call(string $name, ChatActor $actor, array $arguments): ToolResult
     {
@@ -127,6 +128,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
 
     /**
      * @throws \InvalidArgumentException on malformed date arguments — caught in {@see call()}.
+     * @throws \LogicException
      */
     private function findLessons(ChatActor $actor, ToolArguments $args): ToolResult
     {
@@ -153,7 +155,10 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
             $lessons = array_slice(array_reverse($lessons), 0, $limit);
         }
 
-        $items = array_map(fn(Lesson $lesson): array => $this->lessonRow($actor, $lesson), $lessons);
+        $items = [];
+        foreach ($lessons as $lesson) {
+            $items[] = $this->lessonRow($actor, $lesson);
+        }
 
         return ToolResult::success(
             sprintf('Znaleziono %d zajęć%s.', count($items), $query !== null ? sprintf(' dla „%s”', $query) : ''),
@@ -168,6 +173,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
 
     /**
      * @throws \InvalidArgumentException on malformed lesson_id / missing selector — caught in {@see call()}.
+     * @throws \LogicException
      */
     private function lessonParticipants(ChatActor $actor, ToolArguments $args): ToolResult
     {
@@ -209,6 +215,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
     /**
      * @throws \InvalidArgumentException on a malformed lesson_id or when
      *         neither lesson_id nor query is given — caught in {@see call()}.
+     * @throws \LogicException
      */
     private function resolveLesson(ChatActor $actor, ToolArguments $args): ?Lesson
     {
@@ -238,6 +245,10 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
         return $this->lessonRepository->findForStaff($query, $now, null, $instructor, 1)[0] ?? null;
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     private function instructorFilter(ChatActor $actor, ToolArguments $args): ?User
     {
         return ($args->string('scope', 'all') ?? 'all') === 'mine' ? $actor->requireUser() : null;
@@ -289,6 +300,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
 
     /**
      * @return array<string, mixed>
+     * @throws \LogicException
      */
     private function lessonRow(ChatActor $actor, Lesson $lesson): array
     {
@@ -312,6 +324,7 @@ final readonly class StaffChatTools implements ChatToolProviderInterface
         ];
     }
 
+    /** @throws \LogicException */
     private function isMine(ChatActor $actor, Lesson $lesson): bool
     {
         if ($actor->isGuest()) {

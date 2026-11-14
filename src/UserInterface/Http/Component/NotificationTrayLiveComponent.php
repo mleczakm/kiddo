@@ -39,6 +39,7 @@ final class NotificationTrayLiveComponent extends AbstractController
 
     /**
      * @return Notification[]
+     * @throws \LogicException
      */
     public function getItems(): array
     {
@@ -50,6 +51,11 @@ final class NotificationTrayLiveComponent extends AbstractController
         return $this->notifications->findRecentForUser($user, 30);
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function getUnreadCount(): int
     {
         $user = $this->currentUser();
@@ -60,6 +66,7 @@ final class NotificationTrayLiveComponent extends AbstractController
         return $this->notifications->countUnreadForUser($user);
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function open(#[LiveArg] string $id): ?RedirectResponse
     {
@@ -79,6 +86,7 @@ final class NotificationTrayLiveComponent extends AbstractController
         return null;
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function delete(#[LiveArg] string $id): void
     {
@@ -105,6 +113,7 @@ final class NotificationTrayLiveComponent extends AbstractController
         $this->notifications->softDeleteAllForUser($user);
     }
 
+    /** @throws \LogicException */
     #[LiveAction]
     public function suggest(): void
     {
@@ -140,6 +149,7 @@ final class NotificationTrayLiveComponent extends AbstractController
         return $user instanceof User ? $user : null;
     }
 
+    /** @throws \LogicException */
     private function findOwnedNotification(string $id): ?Notification
     {
         $user = $this->currentUser();
@@ -147,7 +157,6 @@ final class NotificationTrayLiveComponent extends AbstractController
             return null;
         }
 
-        /** @var Notification|null $notification */
         $notification = $this->em->getRepository(Notification::class)->find($id);
         if ($notification === null || $notification->getUser()->getId() !== $user->getId()) {
             return null;

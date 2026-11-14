@@ -25,6 +25,9 @@ final class RefundLessonBookingHandlerTest extends KernelTestCase
         self::bootKernel();
         $container = self::getContainer();
         $em = $container->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
 
         $customer = UserAssembler::new()->withName('Anna Kowalska')->assemble();
         $lesson = LessonAssembler::new()
@@ -45,6 +48,7 @@ final class RefundLessonBookingHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = $container->get(RefundLessonBookingHandler::class);
+        static::assertInstanceOf(RefundLessonBookingHandler::class, $handler);
         $handler(new RefundLessonBooking($booking->getId(), $lesson->getId(), $customer, 'Proszę o zwrot.'));
         $em->flush();
 

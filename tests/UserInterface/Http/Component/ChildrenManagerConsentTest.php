@@ -55,7 +55,7 @@ final class ChildrenManagerConsentTest extends WebTestCase
         static::assertCount(1, $consents);
         static::assertSame(ConsentType::CHILD_DATA_GUARDIAN, $consents[0]->getType());
         static::assertSame(ConsentSource::CHILD_FORM, $consents[0]->getSource());
-        static::assertSame('child:' . $children[0]->getId(), $consents[0]->getContext());
+        static::assertSame('child:' . (string) $children[0]->getId(), $consents[0]->getContext());
     }
 
     private function createUser(): User

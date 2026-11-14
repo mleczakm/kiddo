@@ -45,6 +45,11 @@ class LoginUser extends AbstractController
             ->getForm();
     }
 
+    /**
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws \Symfony\Component\Form\Exception\RuntimeException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function save(): void
     {

@@ -24,6 +24,7 @@ readonly class BookingWorkflowSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     public function onBookingCancelled(Event $event): void
     {
         $booking = $event->getSubject();

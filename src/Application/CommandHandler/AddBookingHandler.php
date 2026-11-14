@@ -17,6 +17,19 @@ final readonly class AddBookingHandler
         private PlaceSingleReservation $placeSingleReservation,
     ) {}
 
+    /**
+     * @throws \App\Application\UseCase\PriceQuoteMismatchException
+     * @throws \Brick\Math\Exception\MathException
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \LogicException
+     * @throws \Random\RandomException
+     */
     public function __invoke(AddBooking $command): void
     {
         ($this->placeSingleReservation)($command);

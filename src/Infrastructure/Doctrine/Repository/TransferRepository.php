@@ -22,6 +22,7 @@ class TransferRepository extends ServiceEntityRepository implements TransferRepo
     /**
      * Find transfers including soft-deleted ones
      * @return Transfer[]
+     * @throws \InvalidArgumentException
      */
     #[\Override]
     public function findAllWithDeleted(): array
@@ -37,13 +38,14 @@ class TransferRepository extends ServiceEntityRepository implements TransferRepo
     /**
      * Find only soft-deleted transfers
      * @return Transfer[]
+     * @throws \InvalidArgumentException
      */
     #[\Override]
     public function findOnlyDeleted(): array
     {
         $this->getEntityManager()->getFilters()->disable('softdeleteable');
         try {
-            /** @var Transfer[] $result */
+            /** @var Transfer[] */
             return $this->createQueryBuilder('t')->where('t.deletedAt IS NOT NULL')->getQuery()->getResult();
         } finally {
             $this->getEntityManager()->getFilters()->enable('softdeleteable');
@@ -56,7 +58,7 @@ class TransferRepository extends ServiceEntityRepository implements TransferRepo
     #[\Override]
     public function findByTitleStartingWith(string $prefix): array
     {
-        /** @var Transfer[] $result */
+        /** @var Transfer[] */
         return $this
             ->createQueryBuilder('t')
             ->where('t.title LIKE :prefix')
@@ -67,6 +69,7 @@ class TransferRepository extends ServiceEntityRepository implements TransferRepo
 
     /**
      * Restore a soft-deleted transfer
+     * @throws \InvalidArgumentException
      */
     #[\Override]
     public function restore(Transfer $transfer): void

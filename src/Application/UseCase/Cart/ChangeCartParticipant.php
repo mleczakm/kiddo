@@ -20,6 +20,12 @@ final readonly class ChangeCartParticipant
         private EntityManagerInterface $em,
     ) {}
 
+    /**
+     * @throws \App\Application\UseCase\Cart\DuplicateCartItemException
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     * @throws \LogicException
+     */
     public function __invoke(Ulid $cartItemId, ?string $participantId, int $requestingUserId): CartItem
     {
         $item = $this->cartItemRepository->find($cartItemId);

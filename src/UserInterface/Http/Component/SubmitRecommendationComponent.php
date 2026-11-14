@@ -38,8 +38,13 @@ final class SubmitRecommendationComponent extends AbstractController
         if (!$user instanceof User) {
             return null;
         }
+        $userId = $user->getId();
+        if ($userId === null) {
+            return null;
+        }
+
         foreach ($this->provider->getAll() as $row) {
-            if ($row['id'] === 'user-' . $user->getId()) {
+            if ($row['id'] === 'user-' . $userId) {
                 return $row;
             }
         }

@@ -40,6 +40,7 @@ final class PanelScheduleComponent extends AbstractController
 
     /**
      * @return array<string, list<array{lesson: Lesson, booking: Booking, cancelled: bool}>>
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
      */
     public function getDays(): array
     {

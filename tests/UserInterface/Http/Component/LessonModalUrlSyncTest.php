@@ -35,6 +35,9 @@ final class LessonModalUrlSyncTest extends WebTestCase
 
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
         $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Bałaganki')->withTitle('Bałaganki')->assemble())
@@ -70,6 +73,9 @@ final class LessonModalUrlSyncTest extends WebTestCase
 
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
         $series = SeriesAssembler::new()->withType(WorkshopType::WEEKLY)->assemble();
         $lesson = LessonAssembler::new()
             ->withMetadata(LessonMetadataAssembler::new()->withTitle('Bałaganki')->withTitle('Bałaganki')->assemble())

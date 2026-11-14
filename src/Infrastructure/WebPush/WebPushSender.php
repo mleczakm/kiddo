@@ -30,6 +30,10 @@ final readonly class WebPushSender implements WebPushSenderInterface
         private LoggerInterface $logger,
     ) {}
 
+    /**
+     * @throws \ErrorException
+     * @throws \Random\RandomException
+     */
     #[\Override]
     public function sendToUser(User $user, string $title, ?string $body, ?string $url): void
     {

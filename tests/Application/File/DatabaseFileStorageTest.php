@@ -29,7 +29,9 @@ final class DatabaseFileStorageTest extends KernelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->storage = static::getContainer()->get(DatabaseFileStorage::class);
+        $storage = static::getContainer()->get(DatabaseFileStorage::class);
+        static::assertInstanceOf(DatabaseFileStorage::class, $storage);
+        $this->storage = $storage;
     }
 
     public function testStoresUploadedFileWithComputedChecksum(): void
@@ -91,6 +93,7 @@ final class DatabaseFileStorageTest extends KernelTestCase
     public function testRejectsMismatchedContentType(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'test_');
+        static::assertIsString($tempFile);
         file_put_contents($tempFile, 'this is plain text, not an image');
         $uploadedFile = new UploadedFile($tempFile, 'fake.jpg', 'image/jpeg', filesize($tempFile) ?: null, true);
         $policy = new FileUploadPolicy('article_image');

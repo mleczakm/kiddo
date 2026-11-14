@@ -48,7 +48,7 @@ class AliorNotificationMailProviderTest extends TestCase
             $testMailbox,
             $logger,
             mailboxUsername: 'user@example.com',
-            mailboxPassword: 'secret',
+            mailboxPassword: bin2hex(random_bytes(16)),
         );
 
         static::assertSame([], iterator_to_array($provider()));

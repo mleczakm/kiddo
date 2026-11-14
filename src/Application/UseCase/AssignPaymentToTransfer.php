@@ -39,6 +39,7 @@ final readonly class AssignPaymentToTransfer
      * @throws \RuntimeException                             when the transfer is already assigned, or the payment is not pending
      * @throws \Brick\Money\Exception\MoneyMismatchException when the transfer and payment currencies diverge
      * @throws \Brick\Math\Exception\MathException           when a transfer amount cannot be parsed into money
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
      */
     public function __invoke(int $transferId, Ulid $paymentId): void
     {

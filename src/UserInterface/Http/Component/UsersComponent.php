@@ -58,6 +58,7 @@ class UsersComponent extends AbstractController
         return $this->userRepository->find((int) $this->composingForUserId);
     }
 
+    /** @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException */
     #[LiveAction]
     public function openAddModal(): void
     {
@@ -88,6 +89,10 @@ class UsersComponent extends AbstractController
         $this->notifyBody = '';
     }
 
+    /**
+     * @throws \LogicException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     #[LiveAction]
     public function sendNotification(): void
     {

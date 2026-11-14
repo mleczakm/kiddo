@@ -107,7 +107,7 @@ final class NewsletterControllerTest extends WebTestCase
      */
     private function decode(KernelBrowser $client): array
     {
-        /** @var array<string, mixed> $data */
+        /** @var array<string, mixed> */
         return json_decode((string) $client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
     }
 }

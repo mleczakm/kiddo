@@ -72,6 +72,7 @@ class RefundRequest
     #[ORM\Column(type: 'integer')]
     private int $version = 1;
 
+    /** @throws \Brick\Math\Exception\MathException */
     public function __construct(
         #[ORM\ManyToOne(targetEntity: Payment::class)]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -193,11 +194,13 @@ class RefundRequest
         return $this->occurrence;
     }
 
+    /** @throws \Brick\Math\Exception\MathException */
     public function getRequestedAmountMinor(): int
     {
         return $this->requestedAmountMinor ?? $this->requestedAmount->getMinorAmount()->toInt();
     }
 
+    /** @throws \Brick\Math\Exception\MathException */
     public function getApprovedAmountMinor(): int
     {
         return $this->approvedAmountMinor ?? $this->approvedAmount?->getMinorAmount()->toInt() ?? 0;

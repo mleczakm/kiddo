@@ -20,6 +20,7 @@ class AdjustmentTypeType extends StringType
 {
     public const string NAME = 'adjustment_type_enum';
 
+    /** @throws \ValueError */
     #[\Override]
     public function convertToPHPValue($value, AbstractPlatform $platform): ?AdjustmentType
     {

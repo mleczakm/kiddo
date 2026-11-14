@@ -43,6 +43,8 @@ final readonly class CancelBookingOccurrence
 
     /**
      * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \InvalidArgumentException
+     * @throws \OutOfBoundsException
      */
     public function __invoke(Ulid $bookingId, Ulid $lessonId, int $cancelledByUserId, ?string $reason): void
     {
@@ -164,6 +166,7 @@ final readonly class CancelBookingOccurrence
 
     /**
      * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
      */
     private function notifyStaffOfPartialCancellation(Booking $booking, Lesson $lesson, User $cancelledBy): void
     {

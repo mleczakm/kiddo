@@ -32,7 +32,17 @@ final class PricingQuoteAccumulator
         return $this->priceMinor;
     }
 
-    public function isBlockedByExclusivity(PricingRule $rule): bool
+    public function applyUnlessExclusive(PricingRule $rule): void
+    {
+        if ($this->isBlockedByExclusivity($rule)) {
+            $this->reject(sprintf('%s: exclusivity group "%s" already consumed', $rule->name, $rule->exclusivityGroup));
+            return;
+        }
+
+        $this->apply($rule);
+    }
+
+    private function isBlockedByExclusivity(PricingRule $rule): bool
     {
         return (
             $rule->exclusivityGroup !== null

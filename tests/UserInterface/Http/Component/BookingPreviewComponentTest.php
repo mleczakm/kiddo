@@ -41,6 +41,13 @@ final class BookingPreviewComponentTest extends WebTestCase
 
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
 
         $user = UserAssembler::new()->assemble();
         $series = SeriesAssembler::new()->withType(WorkshopType::ONE_TIME)->assemble();
@@ -81,7 +88,7 @@ final class BookingPreviewComponentTest extends WebTestCase
         static::assertStringContainsString('data-action="live#emitUp"', $html);
         static::assertStringContainsString('data-live-event-param="resumePayment"', $html);
         // kebab-case is required: Stimulus maps booking-id → bookingId for #[LiveArg]
-        static::assertStringContainsString('data-live-booking-id-param="' . $booking->getId() . '"', $html);
+        static::assertStringContainsString('data-live-booking-id-param="' . (string) $booking->getId() . '"', $html);
         static::assertStringNotContainsString('data-live-bookingId-param=', $html);
         static::assertStringNotContainsString('data-live-action-param="resumePayment"', $html);
         static::assertStringContainsString('Zapłać', $html);

@@ -26,11 +26,17 @@ class WeekFilteringIntegrationTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $entityManager);
+        $this->entityManager = $entityManager;
 
         // Get the real components from the container
-        $this->attendeesComponent = self::getContainer()->get(UpcomingAttendeesComponent::class);
-        $this->lessonsComponent = self::getContainer()->get(UpcomingLessonsComponent::class);
+        $attendeesComponent = self::getContainer()->get(UpcomingAttendeesComponent::class);
+        static::assertInstanceOf(UpcomingAttendeesComponent::class, $attendeesComponent);
+        $this->attendeesComponent = $attendeesComponent;
+        $lessonsComponent = self::getContainer()->get(UpcomingLessonsComponent::class);
+        static::assertInstanceOf(UpcomingLessonsComponent::class, $lessonsComponent);
+        $this->lessonsComponent = $lessonsComponent;
     }
 
     public function testWeekFilteringWorksEndToEnd(): void

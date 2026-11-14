@@ -26,6 +26,13 @@ readonly class SendReservationNotificationHandler
         private OrganizationDetailsProvider $organizationDetails,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     */
     public function __invoke(SendReservationNotification $command): void
     {
         $organization = $this->organizationDetails->get();

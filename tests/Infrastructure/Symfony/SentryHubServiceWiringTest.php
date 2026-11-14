@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Infrastructure\Symfony;
 
 use BGalati\MonologSentryHandler\SentryHandler;
-use Monolog\Logger;
+use Monolog\Level;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Sentry\State\HubInterface;
@@ -58,7 +58,7 @@ final class SentryHubServiceWiringTest extends TestCase
     {
         $definition = $this->block(null)[SentryHandler::class] ?? null;
         static::assertIsArray($definition);
-        static::assertSame(Logger::ERROR, $definition['arguments']['$level'] ?? null);
+        static::assertSame(Level::Error->value, $definition['arguments']['$level'] ?? null);
     }
 
     /**
@@ -81,8 +81,7 @@ final class SentryHubServiceWiringTest extends TestCase
         }
 
         self::assertArrayHasKey('services', $scope);
-        self::assertIsArray($scope['services']);
-
+        /** @var array<string, mixed> */
         return $scope['services'];
     }
 }

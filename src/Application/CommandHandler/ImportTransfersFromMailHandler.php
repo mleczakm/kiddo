@@ -28,6 +28,7 @@ readonly class ImportTransfersFromMailHandler
         private string $mailboxPassword = '',
     ) {}
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     public function __invoke(ImportTransfersFromMail $_message): void
     {
         if ($this->mailboxUsername === '' || $this->mailboxPassword === '') {
@@ -54,6 +55,7 @@ readonly class ImportTransfersFromMailHandler
         }
     }
 
+    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     private function rematchUnmatchedTransfers(): void
     {
         foreach ($this->transferRepository->findBy(['payment' => null]) as $transfer) {

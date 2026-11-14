@@ -41,7 +41,9 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
 
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
         $em->persist($finance);
         $em->persist($oldHost);
@@ -68,6 +70,7 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(SendRescheduleAdminNotificationHandler::class);
+        static::assertInstanceOf(SendRescheduleAdminNotificationHandler::class, $handler);
         $handler(new SendRescheduleAdminNotificationCommand(
             booking: $booking,
             oldLesson: $oldLesson,
@@ -109,7 +112,9 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
         /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $registry = self::getContainer()->get('doctrine');
+        static::assertInstanceOf(\Doctrine\Persistence\ManagerRegistry::class, $registry);
+        $em = $registry->getManager();
         $em->persist($user);
 
         $oldLesson = LessonAssembler::new()
@@ -129,6 +134,7 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $em->flush();
 
         $handler = self::getContainer()->get(SendRescheduleAdminNotificationHandler::class);
+        static::assertInstanceOf(SendRescheduleAdminNotificationHandler::class, $handler);
         $handler(new SendRescheduleAdminNotificationCommand(
             booking: $booking,
             oldLesson: $oldLesson,
