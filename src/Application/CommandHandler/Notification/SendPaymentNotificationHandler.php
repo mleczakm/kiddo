@@ -93,7 +93,10 @@ readonly class SendPaymentNotificationHandler
     private function sendUserNotification(Payment $payment, User $user): void
     {
         $bookings = $payment->getBookings();
-        $firstBooking = $bookings->first() ?: throw new \LogicException('No booking found for payment');
+        $firstBooking = $bookings->first();
+        if ($firstBooking === false) {
+            throw new \LogicException('No booking found for payment');
+        }
         $lessons = [];
         foreach ($bookings as $booking) {
             foreach ($booking->getLessons() as $lesson) {
@@ -155,7 +158,10 @@ readonly class SendPaymentNotificationHandler
     private function sendAdminNotifications(Payment $payment): void
     {
         $bookings = $payment->getBookings();
-        $firstBooking = $bookings->first() ?: throw new \LogicException('No booking found for payment');
+        $firstBooking = $bookings->first();
+        if ($firstBooking === false) {
+            throw new \LogicException('No booking found for payment');
+        }
         $lessons = [];
         foreach ($bookings as $booking) {
             foreach ($booking->getLessons() as $lesson) {

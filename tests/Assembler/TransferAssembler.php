@@ -80,13 +80,13 @@ class TransferAssembler extends EntityAssembler
             $transfer->setMessageId($messageId);
         }
 
-        if (isset($this->properties['id'])) {
+        if (($this->properties['id'] ?? null) !== null) {
             $reflection = new \ReflectionClass($transfer);
             $property = $reflection->getProperty('id');
             $property->setValue($transfer, $this->properties['id']);
         }
 
-        if (isset($this->properties['payment'])) {
+        if (($this->properties['payment'] ?? null) !== null) {
             $reflection = new \ReflectionClass($transfer);
             $property = $reflection->getProperty('payment');
             $property->setValue($transfer, $this->properties['payment']);

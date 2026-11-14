@@ -32,10 +32,7 @@ final readonly class MenuHookLinkReconciler
      */
     public function reconcile(Post $post, array $selectedSlotKeys): void
     {
-        $selectedSlots = array_values(array_filter(array_map(
-            static fn(string $key): ?MenuHookSlot => MenuHookSlot::tryFrom($key),
-            $selectedSlotKeys,
-        )));
+        $selectedSlots = array_values(array_filter(array_map(MenuHookSlot::tryFrom(...), $selectedSlotKeys)));
         $selectedKeys = array_map(static fn(MenuHookSlot $slot): string => $slot->value, $selectedSlots);
 
         $existingLinks = $this->repository->findForPostSlug($post->slug);

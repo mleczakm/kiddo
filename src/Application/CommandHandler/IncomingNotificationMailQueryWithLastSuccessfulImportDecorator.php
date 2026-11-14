@@ -32,7 +32,7 @@ final readonly class IncomingNotificationMailQueryWithLastSuccessfulImportDecora
         }
 
         $content = $setting->getContent();
-        if (!isset($content['date']) || !is_string($content['date'])) {
+        if (!is_string($content['date'] ?? null)) {
             return null;
         }
 

@@ -14,6 +14,8 @@ final readonly class ChatToolRegistry
     public function __construct(
         #[AutowireIterator('app.chat_tool_provider')]
         private iterable $providers,
+        private ChatToolAccess $access = new ChatToolAccess(),
+        private ChatToolNames $names = new ChatToolNames(),
     ) {}
 
     /**
@@ -24,10 +26,7 @@ final readonly class ChatToolRegistry
         $definitions = [];
         foreach ($this->providers as $provider) {
             foreach ($provider->definitions() as $definition) {
-                if (!$includeAll && $definition->requiresAdmin && ($actor === null || !$actor->isAdmin())) {
-                    continue;
-                }
-                if (!$includeAll && $definition->requiresHost && ($actor === null || !$actor->isHost())) {
+                if (!$includeAll && !$this->access->isVisible($definition, $actor)) {
                     continue;
                 }
                 $definitions[] = $definition;
@@ -37,15 +36,9 @@ final readonly class ChatToolRegistry
         return $definitions;
     }
 
-    /**
-     * Resolve MCP / LLM tool names to the canonical registry name.
-     */
     public function resolveCanonicalName(string $name): ?string
     {
-        $normalized = $this->normalizeIncomingName($name);
-        $map = $this->aliasMap();
-
-        return $map[$normalized] ?? $map[str_replace('.', '_', $normalized)] ?? null;
+        return $this->names->resolve($name, $this->providers);
     }
 
     /**
@@ -86,26 +79,9 @@ final readonly class ChatToolRegistry
                 if ($definition->name !== $canonical) {
                     continue;
                 }
-                if ($definition->requiresAdmin && !$actor->isAdmin()) {
-                    return ToolResult::failure('This tool requires ROLE_ADMIN');
-                }
-                if ($definition->requiresHost && !$actor->isHost()) {
-                    return ToolResult::failure(
-                        'This tool requires ROLE_HOST or ROLE_ADMIN',
-                        'Ta akcja jest dostępna tylko dla prowadzących zajęcia i administratorów.',
-                    );
-                }
-                if ($definition->requiresAuth && $actor->isGuest()) {
-                    return ToolResult::failure(
-                        'Authentication required. Ask the user to log in, then refresh the chat.',
-                        'Aby zobaczyć te dane lub wykonać tę akcję, musisz się zalogować. Otwórz /login, a po zalogowaniu odśwież czat.',
-                    );
-                }
-                if ($definition->requiresConfirm && ($arguments['confirm'] ?? false) !== true) {
-                    return ToolResult::failure(
-                        'Mutation not confirmed. Call again with confirm=true after user approval.',
-                        'Potrzebne potwierdzenie użytkownika (confirm=true).',
-                    );
+                $denial = $this->access->denial($definition, $actor, $arguments);
+                if ($denial !== null) {
+                    return $denial;
                 }
 
                 return $provider->call($canonical, $actor, $arguments);
@@ -113,44 +89,5 @@ final readonly class ChatToolRegistry
         }
 
         return ToolResult::failure(sprintf('Unknown tool: %s', $name));
-    }
-
-    /**
-     * Incoming aliases accepted on call (not all are advertised on MCP).
-     *
-     * @return array<string, string> alias → canonical
-     */
-    private function aliasMap(): array
-    {
-        $map = [];
-        foreach ($this->providers as $provider) {
-            foreach ($provider->definitions() as $definition) {
-                $canonical = $definition->name;
-                $candidates = [$canonical, str_replace('.', '_', $canonical)];
-                foreach ($candidates as $alias) {
-                    if ($alias === '') {
-                        continue;
-                    }
-                    $map[$this->normalizeIncomingName($alias)] = $canonical;
-                }
-            }
-        }
-
-        return $map;
-    }
-
-    private function normalizeIncomingName(string $name): string
-    {
-        $name = trim($name);
-        foreach (['Warsztatownia_', 'Kiddo_', 'kiddo_'] as $prefix) {
-            if (!str_starts_with($name, $prefix)) {
-                continue;
-            }
-
-            $name = substr($name, strlen($prefix));
-            break;
-        }
-
-        return $name;
     }
 }

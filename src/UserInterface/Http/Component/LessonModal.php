@@ -14,6 +14,7 @@ use App\Application\UseCase\Cart\AddCartItem;
 use App\Application\UseCase\Cart\DuplicateCartItemException;
 use App\Application\UseCase\Cart\GetOrCreateCart;
 use App\Application\UseCase\PriceQuoteMismatchException;
+use App\Domain\Commerce\Pricing\PriceQuote;
 use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\Payment;
@@ -186,9 +187,7 @@ class LessonModal extends AbstractController
     private function refreshQuote(): void
     {
         if ($this->lesson === null || $this->selectedTicketType === null) {
-            $this->expectedQuoteHash = null;
-            $this->quotedPriceMinor = null;
-            $this->quotedPriceCurrency = null;
+            $this->setQuote(null);
             return;
         }
 
@@ -198,9 +197,14 @@ class LessonModal extends AbstractController
 
         $quote = $this->priceQuoter->quote($user?->getId(), $this->lesson, $ticketOption);
 
-        $this->expectedQuoteHash = $quote->quoteHash;
-        $this->quotedPriceMinor = (string) $quote->finalPriceMinor;
-        $this->quotedPriceCurrency = $quote->currency;
+        $this->setQuote($quote);
+    }
+
+    private function setQuote(?PriceQuote $quote): void
+    {
+        $this->expectedQuoteHash = $quote?->quoteHash;
+        $this->quotedPriceMinor = $quote === null ? null : (string) $quote->finalPriceMinor;
+        $this->quotedPriceCurrency = $quote?->currency;
     }
 
     /**
@@ -617,61 +621,75 @@ class LessonModal extends AbstractController
         $user = $this->getUser();
         $lesson = $this->lesson;
 
-        if ($lesson && $user) {
-            $userId = $user->getId();
-            if ($userId === null) {
-                $this->paymentStatus = 'error';
-                return;
+        if ($lesson === null || $user === null) {
+            $this->paymentStatus = 'error';
+            return;
+        }
+
+        $this->reserveWithPayment($lesson, $user, $selectedTicketType);
+    }
+
+    /**
+     * @throws \Symfony\Component\Messenger\Exception\ExceptionInterface
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     * @throws \RuntimeException
+     * @throws \Random\RandomException
+     * @throws \InvalidArgumentException
+     */
+    private function reserveWithPayment(Lesson $lesson, User $user, string $selectedTicketType): void
+    {
+        $userId = $user->getId();
+        if ($userId === null) {
+            $this->paymentStatus = 'error';
+            return;
+        }
+
+        if (!$this->ensurePhoneOnAccount($user)) {
+            return;
+        }
+
+        $paymentCode = $this->paymentCodeGenerator->generateAvailable();
+
+        try {
+            $this->bus->dispatch(new AddBooking(
+                userId: $userId,
+                lessonId: (string) $lesson->getId(),
+                ticketType: $selectedTicketType,
+                childId: $this->normalizedChildId(),
+                paymentCode: $paymentCode,
+                expectedQuoteHash: $this->expectedQuoteHash,
+                legalAcceptanceConfirmed: $this->termsAccepted,
+                withdrawalAcknowledged: $this->withdrawalAcknowledged,
+            ));
+        } catch (DelayedMessageHandlingException $exception) {
+            // AddBooking itself has already committed. A delayed consent or
+            // notification failure must not present a successful booking as failed.
+            $this->logger->error('A post-booking operation failed after the booking was committed.', [
+                'exception' => $exception,
+                'user_id' => $userId,
+                'lesson_id' => (string) $lesson->getId(),
+            ]);
+        } catch (HandlerFailedException|PriceQuoteMismatchException $e) {
+            if (!$this->handlePriceQuoteMismatch($e)) {
+                throw $e;
             }
-
-            if (!$this->ensurePhoneOnAccount($user)) {
-                return;
-            }
-
-            $paymentCode = $this->paymentCodeGenerator->generateAvailable();
-
-            try {
-                $this->bus->dispatch(new AddBooking(
-                    userId: $userId,
-                    lessonId: (string) $lesson->getId(),
-                    ticketType: $selectedTicketType,
-                    childId: $this->normalizedChildId(),
-                    paymentCode: $paymentCode,
-                    expectedQuoteHash: $this->expectedQuoteHash,
-                    legalAcceptanceConfirmed: $this->termsAccepted,
-                    withdrawalAcknowledged: $this->withdrawalAcknowledged,
-                ));
-            } catch (DelayedMessageHandlingException $exception) {
-                // AddBooking itself has already committed. A delayed consent or
-                // notification failure must not present a successful booking as failed.
-                $this->logger->error('A post-booking operation failed after the booking was committed.', [
-                    'exception' => $exception,
-                    'user_id' => $userId,
-                    'lesson_id' => (string) $lesson->getId(),
-                ]);
-            } catch (HandlerFailedException|PriceQuoteMismatchException $e) {
-                if (!$this->handlePriceQuoteMismatch($e)) {
-                    throw $e;
-                }
-
-                return;
-            }
-
-            $this->paymentCode = $paymentCode;
-            // The price actually charged is exactly $this->getQuotedPrice() - the
-            // dispatch above only succeeds when the server confirms that quote is
-            // still current (or dynamic_pricing is off, in which case it's unchanged
-            // from the ticket price anyway).
-            $this->setPaymentAmount(
-                $this->getQuotedPrice() ?? $lesson->getMatchingTicketOption($selectedTicketType)->price,
-            );
-            $this->paymentStatus = 'awaiting_payment';
-            $this->paymentModal = false;
-            $this->watchedPaymentId = $this->resolvePaymentIdByCode($paymentCode);
 
             return;
         }
-        $this->paymentStatus = 'error';
+
+        $this->paymentCode = $paymentCode;
+        // The price actually charged is exactly $this->getQuotedPrice() - the
+        // dispatch above only succeeds when the server confirms that quote is
+        // still current (or dynamic_pricing is off, in which case it's unchanged
+        // from the ticket price anyway).
+        $this->setPaymentAmount(
+            $this->getQuotedPrice() ?? $lesson->getMatchingTicketOption($selectedTicketType)->price,
+        );
+        $this->paymentStatus = 'awaiting_payment';
+        $this->paymentModal = false;
+        $this->watchedPaymentId = $this->resolvePaymentIdByCode($paymentCode);
     }
 
     private function hasRequiredAcceptances(): bool
@@ -916,15 +934,9 @@ class LessonModal extends AbstractController
 
     private function resolveWatchedPayment(): ?Payment
     {
-        if ($this->watchedPaymentId !== null && $this->watchedPaymentId !== '') {
-            try {
-                $payment = $this->paymentRepository->find(Ulid::fromString($this->watchedPaymentId));
-            } catch (\Throwable) {
-                $payment = null;
-            }
-            if ($payment instanceof Payment) {
-                return $payment;
-            }
+        $payment = $this->findWatchedPayment();
+        if ($payment !== null) {
+            return $payment;
         }
 
         if ($this->paymentCode === null) {
@@ -939,5 +951,19 @@ class LessonModal extends AbstractController
         $this->watchedPaymentId = (string) $paymentCode->getPayment()->getId();
 
         return $paymentCode->getPayment();
+    }
+
+    private function findWatchedPayment(): ?Payment
+    {
+        $paymentId = $this->watchedPaymentId ?? '';
+        if ($paymentId === '') {
+            return null;
+        }
+
+        try {
+            return $this->paymentRepository->find(Ulid::fromString($paymentId));
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

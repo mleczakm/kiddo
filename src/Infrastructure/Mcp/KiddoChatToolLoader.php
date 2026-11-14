@@ -99,7 +99,7 @@ final readonly class KiddoChatToolLoader implements LoaderInterface
         }
 
         $required = [];
-        if (isset($schema['required']) && is_array($schema['required'])) {
+        if (is_array($schema['required'] ?? null)) {
             $required = array_values(array_filter($schema['required'], is_string(...)));
         }
 

@@ -37,51 +37,9 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
-file = "src/Application/Chat/ChatTokenManager.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/ChatToolRegistry.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/ChatToolRegistry.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
 file = "src/Application/Chat/ChatToolRegistry.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/StaffChatTools.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/StaffChatTools.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/StaffChatTools.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/ToolArguments.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
 count = 1
 
 [[issues]]
@@ -169,28 +127,16 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/DoctrineInsideTaskWorkerCheckHandler.php"
-code = "no-empty-catch-clause"
-message = "Do not use empty `catch` blocks."
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Application/CommandHandler/IncomingNotificationMailQueryWithLastSuccessfulImportDecorator.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
 file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
-count = 2
+count = 1
 
 [[issues]]
 file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
@@ -215,12 +161,6 @@ file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandl
 code = "kan-defect"
 message = "Class has a high kan defect score."
 count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/SendPaymentNotificationHandler.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 2
 
 [[issues]]
 file = "src/Application/CommandHandler/Notification/SendRescheduleAdminNotificationHandler.php"
@@ -307,18 +247,6 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "src/Application/Service/Commerce/OrderPlacementService.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/OrderPlacementService.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
 file = "src/Application/Service/InAppNotificationService.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -328,18 +256,6 @@ count = 1
 file = "src/Application/Service/InAppNotificationService.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Application/Service/InlineAttachmentReconciler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
-
-[[issues]]
-file = "src/Application/Service/MenuHookLinkReconciler.php"
-code = "prefer-first-class-callable"
-message = "Use first-class callable syntax `...` instead of a arrow function."
 count = 1
 
 [[issues]]
@@ -361,12 +277,6 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
-file = "src/Application/Service/PostFileManager.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
 file = "src/Application/UseCase/ApproveRefund.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -374,12 +284,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/UseCase/CancelBookingOccurrence.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/Cart/AddCartItem.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
 count = 1
@@ -448,12 +352,6 @@ count = 1
 file = "src/Domain/Commerce/Pricing/PricingContext.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Domain/Commerce/Pricing/PricingRule.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
 count = 1
 
 [[issues]]
@@ -554,12 +452,6 @@ count = 1
 
 [[issues]]
 file = "src/Entity/Payment.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Entity/Payment.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -604,12 +496,6 @@ count = 1
 file = "src/Entity/Series.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Entity/Transfer.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
 count = 1
 
 [[issues]]
@@ -679,18 +565,6 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/Infrastructure/Mcp/KiddoChatToolLoader.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Mcp/KiddoMcpController.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
 file = "src/Infrastructure/Messenger/ActivityLogMiddleware.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -712,12 +586,6 @@ count = 1
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Twig/AppVersionExtension.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
 count = 1
 
 [[issues]]
@@ -823,12 +691,6 @@ message = "Class has too many properties."
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/Component/AdminPaymentComponent.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
 file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -838,12 +700,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
-count = 3
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminPricingRulesComponent.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
 count = 1
 
 [[issues]]
@@ -874,12 +730,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminScheduleComponent.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
@@ -983,12 +833,6 @@ file = "src/UserInterface/Http/Component/LessonModal.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
 count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/LessonModal.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 3
 
 [[issues]]
 file = "src/UserInterface/Http/Component/LessonModal.php"
@@ -1012,12 +856,6 @@ count = 1
 file = "src/UserInterface/Http/Component/LoginUser.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/PaymentComponent.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
@@ -1070,12 +908,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
-code = "no-empty-catch-clause"
-message = "Do not use empty `catch` blocks."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/SeriesDetailsComponent.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -1094,12 +926,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 2
-
-[[issues]]
-file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
 code = "kan-defect"
 message = "Class has a high kan defect score."
 count = 1
@@ -1108,13 +934,7 @@ count = 1
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 4
-
-[[issues]]
-file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
-code = "no-empty-catch-clause"
-message = "Do not use empty `catch` blocks."
-count = 2
+count = 3
 
 [[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
@@ -1133,12 +953,6 @@ file = "src/UserInterface/Http/Component/UpcomingLessons.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
 count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/UpcomingLessons.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
 
 [[issues]]
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
@@ -1207,52 +1021,10 @@ message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
-file = "src/UserInterface/Http/WorkshopsAction.php"
-code = "no-empty-catch-clause"
-message = "Do not use empty `catch` blocks."
-count = 2
-
-[[issues]]
-file = "src/UserInterface/Twig/ReadingTimeExtension.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 1
-
-[[issues]]
-file = "tests/Application/Chat/StaffChatToolsTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/ImportTransfersFromMailHandlerTest.php"
-code = "single-class-per-file"
-message = "File contains multiple class-like definitions; found class `FakeQuery` but class `ImportTransfersFromMailHandlerTest` is already defined in this file."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/MatchPaymentForTransferHandlerTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Application/File/DatabaseFileStorageTest.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 2
-
-[[issues]]
 file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
 count = 1
-
-[[issues]]
-file = "tests/Assembler/BookingAssembler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 5
 
 [[issues]]
 file = "tests/Assembler/EntityAssembler.php"
@@ -1265,12 +1037,6 @@ file = "tests/Assembler/LessonAssembler.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
 count = 1
-
-[[issues]]
-file = "tests/Assembler/LessonAssembler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 4
 
 [[issues]]
 file = "tests/Assembler/LessonAssembler.php"
@@ -1291,30 +1057,6 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
-file = "tests/Assembler/PaymentAssembler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "tests/Assembler/PaymentCodeAssembler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 3
-
-[[issues]]
-file = "tests/Assembler/SeriesAssembler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "tests/Assembler/TransferAssembler.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
-
-[[issues]]
 file = "tests/Assembler/UserAssembler.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
@@ -1324,54 +1066,6 @@ count = 1
 file = "tests/Assembler/UserAssembler.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "tests/Functional/UserInterface/Http/Api/AuthControllerTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/Functional/WholeProcess/FastReservationJourneyTest.php"
-code = "halstead"
-message = "Method has a high halstead volume"
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/ImapEngine/AliorNotificationMailProviderTest.php"
-code = "single-class-per-file"
-message = "File contains multiple class-like definitions; found class `ThrowingFolder` but class `AliorNotificationMailProviderTest` is already defined in this file."
-count = 1
-
-[[issues]]
-file = "tests/Integration/Component/WorkshopEditorComponentTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/AdminBookingsTabTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Admin/AdminControllersSmokeTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Admin/PostsControllerFileUploadTest.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminScheduleComponentTest.php"
-code = "too-many-methods"
-message = "Class has too many methods."
 count = 1
 
 [[issues]]

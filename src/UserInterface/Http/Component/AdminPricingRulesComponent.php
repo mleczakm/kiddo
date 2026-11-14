@@ -14,6 +14,7 @@ use App\Application\Workflow\StateMachinesInterface;
 use App\Domain\Commerce\Pricing\AdjustmentType;
 use App\Domain\Commerce\Pricing\PriceQuote;
 use App\Domain\Commerce\Pricing\PricingRule;
+use App\Domain\Commerce\Pricing\PricingRuleValidity;
 use App\Domain\Commerce\Pricing\PromotionCode;
 use App\Entity\ActivityType;
 use App\Entity\Lesson;
@@ -222,6 +223,13 @@ class AdminPricingRulesComponent extends AbstractController
             return;
         }
 
+        $this->loadRuleAdjustment($rule);
+        $this->loadRuleConstraints($rule);
+        $this->isModalOpen = true;
+    }
+
+    private function loadRuleAdjustment(PricingRule $rule): void
+    {
         $this->editingRuleId = (string) $rule->id;
         $this->name = $rule->name;
         $this->status = $rule->status;
@@ -230,16 +238,24 @@ class AdminPricingRulesComponent extends AbstractController
         $this->priority = (string) $rule->priority;
         $this->stackable = $rule->stackable;
         $this->exclusivityGroup = $rule->exclusivityGroup;
+    }
+
+    private function loadRuleConstraints(PricingRule $rule): void
+    {
         $this->userId = $rule->userId !== null ? (string) $rule->userId : null;
         $this->seriesId = $rule->seriesId !== null ? (string) $rule->seriesId : null;
         $this->lessonId = $rule->lessonId !== null ? (string) $rule->lessonId : null;
         $this->ticketType = $rule->ticketType;
         $this->promotionCode = $rule->promotionCode;
+        $this->loadRuleLimits($rule);
+    }
+
+    private function loadRuleLimits(PricingRule $rule): void
+    {
         $this->validFrom = $rule->validFrom?->format('Y-m-d\TH:i');
         $this->validUntil = $rule->validUntil?->format('Y-m-d\TH:i');
         $this->usageLimit = $rule->usageLimit !== null ? (string) $rule->usageLimit : null;
         $this->perUserLimit = $rule->perUserLimit !== null ? (string) $rule->perUserLimit : null;
-        $this->isModalOpen = true;
     }
 
     #[LiveAction]
@@ -293,10 +309,11 @@ class AdminPricingRulesComponent extends AbstractController
             return;
         }
 
+        $validity = new PricingRuleValidity($validFrom, $validUntil);
         if ($this->editingRuleId !== null) {
-            $this->updateExisting($name, $adjustmentType, $adjustmentValue, $promotionCode, $validFrom, $validUntil);
+            $this->updateExisting($name, $adjustmentType, $adjustmentValue, $promotionCode, $validity);
         } else {
-            $this->createNew($name, $adjustmentType, $adjustmentValue, $promotionCode, $validFrom, $validUntil);
+            $this->createNew($name, $adjustmentType, $adjustmentValue, $promotionCode, $validity);
         }
 
         $this->isModalOpen = false;
@@ -360,8 +377,7 @@ class AdminPricingRulesComponent extends AbstractController
         AdjustmentType $adjustmentType,
         int $adjustmentValue,
         ?string $promotionCode,
-        ?\DateTimeImmutable $validFrom,
-        ?\DateTimeImmutable $validUntil,
+        PricingRuleValidity $validity,
     ): void {
         $rule = new PricingRule(
             id: new Ulid(),
@@ -376,8 +392,8 @@ class AdminPricingRulesComponent extends AbstractController
             lessonId: $this->parseUlid($this->lessonId),
             ticketType: $this->nullableTrim($this->ticketType),
             promotionCode: $promotionCode,
-            validFrom: $validFrom,
-            validUntil: $validUntil,
+            validFrom: $validity->from,
+            validUntil: $validity->until,
             usageLimit: $this->parseInt($this->usageLimit),
             perUserLimit: $this->parseInt($this->perUserLimit),
             status: $this->status,
@@ -434,8 +450,7 @@ class AdminPricingRulesComponent extends AbstractController
         AdjustmentType $adjustmentType,
         int $adjustmentValue,
         ?string $promotionCode,
-        ?\DateTimeImmutable $validFrom,
-        ?\DateTimeImmutable $validUntil,
+        PricingRuleValidity $validity,
     ): void {
         $rule = $this->pricingRuleRepository->find(Ulid::fromString($this->editingRuleId ?? ''));
         if (!$rule instanceof PricingRule) {
@@ -457,8 +472,8 @@ class AdminPricingRulesComponent extends AbstractController
         $rule->lessonId = $this->parseUlid($this->lessonId);
         $rule->ticketType = $this->nullableTrim($this->ticketType);
         $rule->promotionCode = $promotionCode;
-        $rule->validFrom = $validFrom;
-        $rule->validUntil = $validUntil;
+        $rule->validFrom = $validity->from;
+        $rule->validUntil = $validity->until;
         $rule->usageLimit = $this->parseInt($this->usageLimit);
         $rule->perUserLimit = $this->parseInt($this->perUserLimit);
 

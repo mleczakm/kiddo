@@ -6,7 +6,7 @@ namespace App\Application\UseCase\Cart;
 
 use App\Application\Repository\CartItemRepositoryInterface;
 use App\Application\Repository\CartRepositoryInterface;
-use App\Application\Repository\ChildRepositoryInterface;
+use App\Application\Service\Commerce\CartItemLookup;
 use App\Domain\Commerce\Cart\CartItem;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
@@ -16,7 +16,7 @@ final readonly class ChangeCartParticipant
     public function __construct(
         private CartItemRepositoryInterface $cartItemRepository,
         private CartRepositoryInterface $cartRepository,
-        private ChildRepositoryInterface $childRepository,
+        private CartItemLookup $lookup,
         private EntityManagerInterface $em,
     ) {}
 
@@ -39,16 +39,9 @@ final readonly class ChangeCartParticipant
         }
         $cart->assertOpen();
 
-        $participant = null;
-        if ($participantId !== null) {
-            $participant = $this->childRepository->find(Ulid::fromString($participantId));
-            if ($participant === null || $participant->getOwner()->getId() !== $requestingUserId) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Participant %s not found for this customer.',
-                    $participantId,
-                ));
-            }
-        }
+        $participant = $participantId === null
+            ? null
+            : $this->lookup->requireParticipant($participantId, $requestingUserId);
 
         $participantUlid = $participant?->getId();
         foreach ($this->cartItemRepository->findByCart($item->cartId) as $existing) {

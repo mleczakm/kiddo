@@ -5,13 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Mcp;
 
 use Mcp\Server;
-use Mcp\Server\Transport\StreamableHttpTransport;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\AI\McpBundle\Http\MiddlewareFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
-use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,11 +21,8 @@ final readonly class KiddoMcpController
 {
     public function __construct(
         private Server $server,
-        private HttpMessageFactoryInterface $httpMessageFactory,
         private HttpFoundationFactoryInterface $httpFoundationFactory,
-        private ResponseFactoryInterface $responseFactory,
-        private StreamFactoryInterface $streamFactory,
-        private MiddlewareFactory $middlewareFactory,
+        private McpHttpTransportFactory $transportFactory,
         private LoggerInterface $logger,
     ) {}
 
@@ -78,18 +70,7 @@ final readonly class KiddoMcpController
             return $this->emptySseResponse($request);
         }
 
-        $psrRequest = $this->httpMessageFactory
-            ->createRequest($request)
-            ->withBody($this->streamFactory->createStream($content));
-
-        $transport = new StreamableHttpTransport(
-            $psrRequest,
-            $this->responseFactory,
-            $this->streamFactory,
-            logger: $this->logger,
-            middleware: $this->middlewareFactory->create(),
-        );
-
+        $transport = $this->transportFactory->create($request, $content, $this->logger);
         $psrResponse = $this->server->run($transport);
         $streamed = strtolower($psrResponse->getHeaderLine('Content-Type')) === 'text/event-stream';
 

@@ -119,7 +119,7 @@ final class AdminScheduleComponent extends AbstractController
         foreach ($this->getLessons() as $lesson) {
             $series = $lesson->getSeries();
             $key = $series !== null ? (string) $series->getId() : 'lesson-' . (string) $lesson->getId();
-            if (!isset($groups[$key])) {
+            if (($groups[$key] ?? null) === null) {
                 $groups[$key] = [
                     'series' => $series,
                     'lessons' => [],

@@ -16,7 +16,6 @@ use App\Application\Service\BookingNotificationRecipients;
 use App\Application\Service\InAppNotificationService;
 use App\Application\Service\LessonInstructorResolver;
 use App\Application\Templating\TemplateRendererInterface;
-use App\Entity\Booking;
 use App\Entity\Lesson;
 use App\Entity\NotificationSeverity;
 use App\Entity\Payment;
@@ -75,7 +74,14 @@ readonly class DailyLessonsReminderHandler
             Money::zero('PLN'),
         );
 
-        $content = $this->buildReport($lessons, $date, $yesterday, $newUsers, $newBookings, $revenue);
+        $content = $this->templateRenderer->render('email/notification/daily-schedule.html.twig', [
+            'lessons' => $lessons,
+            'date' => $date,
+            'yesterday' => $yesterday,
+            'newUsers' => $newUsers,
+            'newBookings' => $newBookings,
+            'revenue' => $revenue,
+        ]);
         $subject = $this->templateRenderer->render('email/notification/daily-schedule-subject.html.twig', [
             'lessons' => $lessons,
             'date' => $date,
@@ -229,28 +235,5 @@ readonly class DailyLessonsReminderHandler
             $this->urlGenerator->generate('dashboard'),
             NotificationSeverity::Info,
         );
-    }
-
-    /**
-     * @param Lesson[] $lessons
-     * @param User[] $newUsers
-     * @param Booking[] $newBookings
-     */
-    private function buildReport(
-        array $lessons,
-        \DateTimeImmutable $date,
-        \DateTimeImmutable $yesterday,
-        array $newUsers,
-        array $newBookings,
-        Money $revenue,
-    ): string {
-        return $this->templateRenderer->render('email/notification/daily-schedule.html.twig', [
-            'lessons' => $lessons,
-            'date' => $date,
-            'yesterday' => $yesterday,
-            'newUsers' => $newUsers,
-            'newBookings' => $newBookings,
-            'revenue' => $revenue,
-        ]);
     }
 }

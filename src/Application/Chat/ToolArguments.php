@@ -16,14 +16,12 @@ final readonly class ToolArguments
     /** @throws \InvalidArgumentException */
     public function string(string $key, ?string $default = null): ?string
     {
-        if (!array_key_exists($key, $this->arguments)) {
-            return $default;
-        }
-        $value = $this->arguments[$key];
+        /** @var mixed $value */
+        $value = $this->arguments[$key] ?? null;
         if ($value === null) {
             return $default;
         }
-        if (is_string($value) || is_int($value) || is_float($value)) {
+        if (in_array(gettype($value), ['string', 'integer', 'double'], true)) {
             return (string) $value;
         }
 
@@ -33,8 +31,8 @@ final readonly class ToolArguments
     /** @throws \InvalidArgumentException */
     public function requireString(string $key): string
     {
-        $value = $this->string($key);
-        if ($value === null || $value === '') {
+        $value = $this->string($key) ?? '';
+        if ($value === '') {
             throw new \InvalidArgumentException(sprintf('Argument "%s" is required', $key));
         }
 
@@ -44,20 +42,12 @@ final readonly class ToolArguments
     /** @throws \InvalidArgumentException */
     public function int(string $key, ?int $default = null): ?int
     {
-        if (!array_key_exists($key, $this->arguments)) {
-            return $default;
-        }
-        $value = $this->arguments[$key];
+        /** @var mixed $value */
+        $value = $this->arguments[$key] ?? $default;
         if ($value === null) {
-            return $default;
+            return null;
         }
-        if (is_int($value)) {
-            return $value;
-        }
-        if (is_string($value) && is_numeric($value)) {
-            return (int) $value;
-        }
-        if (is_float($value)) {
+        if (is_numeric($value)) {
             return (int) $value;
         }
 
@@ -77,30 +67,18 @@ final readonly class ToolArguments
 
     public function bool(string $key, bool $default = false): bool
     {
-        if (!array_key_exists($key, $this->arguments)) {
-            return $default;
-        }
-        $value = $this->arguments[$key];
-        if (is_bool($value)) {
-            return $value;
-        }
-        if ($value === 1 || $value === '1' || $value === 'true') {
-            return true;
-        }
-        if ($value === 0 || $value === '0' || $value === 'false') {
-            return false;
-        }
-
-        return $default;
+        /** @var mixed $value */
+        $value = $this->arguments[$key] ?? null;
+        return match ($value) {
+            true, 1, '1', 'true' => true,
+            false, 0, '0', 'false' => false,
+            default => $default,
+        };
     }
 
     public function has(string $key): bool
     {
-        return (
-            array_key_exists($key, $this->arguments)
-            && $this->arguments[$key] !== null
-            && $this->arguments[$key] !== ''
-        );
+        return !in_array($this->arguments[$key] ?? null, [null, ''], true);
     }
 
     /**
@@ -109,10 +87,8 @@ final readonly class ToolArguments
      */
     public function array(string $key): ?array
     {
-        if (!array_key_exists($key, $this->arguments)) {
-            return null;
-        }
-        $value = $this->arguments[$key];
+        /** @var mixed $value */
+        $value = $this->arguments[$key] ?? null;
         if ($value === null) {
             return null;
         }

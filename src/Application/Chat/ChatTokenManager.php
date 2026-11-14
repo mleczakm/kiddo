@@ -66,28 +66,7 @@ final readonly class ChatTokenManager
             throw new \InvalidArgumentException('Invalid chat token encoding');
         }
 
-        $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        if (
-            !is_array($decoded)
-            || !isset($decoded['roles'], $decoded['exp'], $decoded['jti'])
-            || !is_array($decoded['roles'])
-        ) {
-            throw new \InvalidArgumentException('Invalid chat token payload');
-        }
-
-        $roles = array_values(array_filter($decoded['roles'], is_string(...)));
-
-        $uidRaw = $decoded['uid'] ?? null;
-        $isGuest = ($decoded['guest'] ?? false) === true || $uidRaw === null || $uidRaw === 0;
-        $userId = $isGuest ? null : (int) $uidRaw;
-
-        $chatToken = new ChatToken(
-            userId: $userId,
-            roles: $roles,
-            expiresAt: new \DateTimeImmutable()->setTimestamp((int) $decoded['exp']),
-            jti: (string) $decoded['jti'],
-        );
-
+        $chatToken = ChatTokenPayload::decode($json);
         if ($chatToken->isExpired()) {
             throw new \InvalidArgumentException('Chat token expired');
         }

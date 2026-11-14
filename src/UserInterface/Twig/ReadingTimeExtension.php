@@ -32,7 +32,8 @@ final class ReadingTimeExtension extends AbstractExtension
         }
 
         $text = trim(strip_tags($html));
-        $wordCount = $text === '' ? 0 : \count(preg_split('/\s+/u', $text) ?: []);
+        $words = preg_split('/\s+/u', $text, flags: PREG_SPLIT_NO_EMPTY);
+        $wordCount = $words === false ? 0 : \count($words);
 
         return max(1, (int) ceil($wordCount / self::WORDS_PER_MINUTE));
     }

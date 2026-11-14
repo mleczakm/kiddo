@@ -82,7 +82,7 @@ class WorkshopsAction extends AbstractController
             try {
                 return new \DateTimeImmutable($weekParam)->format('Y-m-d');
             } catch (\Exception) {
-                // Fall through to the workshop's own week.
+                return $scheduleFallback->format('Y-m-d');
             }
         }
 
@@ -120,12 +120,12 @@ class WorkshopsAction extends AbstractController
 
                 /** @var Lesson|null $lesson */
                 $lesson = $query->getOneOrNullResult();
-
-                if ($lesson) {
-                    return $lesson;
-                }
             } catch (\Exception) {
-                // Fall through to current-week / next-upcoming lookups.
+                $lesson = null;
+            }
+
+            if ($lesson !== null) {
+                return $lesson;
             }
         }
 

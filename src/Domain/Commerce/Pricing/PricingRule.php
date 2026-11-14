@@ -81,7 +81,7 @@ final class PricingRule
             return false;
         }
 
-        if ($this->seriesId !== null && ($context->seriesId === null || !$this->seriesId->equals($context->seriesId))) {
+        if ($this->seriesId !== null && !$this->seriesId->equals($context->seriesId)) {
             return false;
         }
 
@@ -100,14 +100,6 @@ final class PricingRule
             return false;
         }
 
-        if ($this->validFrom !== null && $context->evaluationTime < $this->validFrom) {
-            return false;
-        }
-
-        if ($this->validUntil !== null && $context->evaluationTime > $this->validUntil) {
-            return false;
-        }
-
         if ($this->usageLimit !== null && $timesUsedGlobally >= $this->usageLimit) {
             return false;
         }
@@ -116,6 +108,6 @@ final class PricingRule
             return false;
         }
 
-        return true;
+        return new PricingRuleValidity($this->validFrom, $this->validUntil)->includes($context->evaluationTime);
     }
 }

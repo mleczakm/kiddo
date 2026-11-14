@@ -478,19 +478,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             return;
         }
 
-        // Find or create user by email
-        $user = $this->userRepository->findOneBy([
-            'email' => $this->customerEmail,
-        ]);
-        if (!$user instanceof User) {
-            $user = new User($this->customerEmail, $this->customerName);
-            $this->entityManager->persist($user);
-        } else {
-            // ensure name present/updated for convenience
-            if ($user->getName() !== $this->customerName) {
-                $user->setName($this->customerName);
-            }
-        }
+        $user = $this->findOrCreateBookingCustomer();
 
         // Create booking without payment and mark active immediately
         $booking = new Booking($user, null);
@@ -564,6 +552,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             );
         } catch (\Throwable) {
             // ignore
+            return;
         }
     }
 
@@ -579,6 +568,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             $this->entityManager->flush();
         } catch (\Throwable) {
             // ignore
+            return;
         }
     }
 
@@ -605,25 +595,7 @@ final class UpcomingAttendeesComponent extends AbstractController
             return;
         }
 
-        // Determine amount from lesson default ticket option
-        $amount = $lesson->defaultTicketOption()->price ?? Money::of(0, 'PLN');
-
-        // Ensure booking has a Payment
-        $payment = $booking->payment;
-        if (!$payment) {
-            $payment = new Payment($booking->getUser(), $amount);
-            $this->entityManager->persist($payment);
-            $booking->payment = $payment;
-        }
-
-        // If amount differs and current payment has zero/default, update it
-        // (keep minimal logic to avoid complex reconciliation)
-        if ((string) $payment->getAmount()->getAmount() !== (string) $amount->getAmount()) {
-            // Replace by creating new payment to not mutate past ones
-            $payment = new Payment($booking->getUser(), $amount);
-            $this->entityManager->persist($payment);
-            $booking->payment = $payment;
-        }
+        $payment = $this->ensureBookingPayment($booking, $lesson);
 
         // Ensure PaymentCode exists
         if (!$payment->getPaymentCode()) {
@@ -636,6 +608,45 @@ final class UpcomingAttendeesComponent extends AbstractController
         $this->paymentAmount = $payment->getAmount();
         $this->paymentModalOpened = true;
         $this->actionsForBookingId = null;
+    }
+
+    /** @throws \InvalidArgumentException */
+    private function findOrCreateBookingCustomer(): User
+    {
+        $user = $this->userRepository->findOneBy(['email' => $this->customerEmail]);
+        if ($user instanceof User) {
+            if ($user->getName() !== $this->customerName) {
+                $user->setName($this->customerName);
+            }
+
+            return $user;
+        }
+
+        $user = new User($this->customerEmail, $this->customerName);
+        $this->entityManager->persist($user);
+
+        return $user;
+    }
+
+    /**
+     * @throws \Brick\Math\Exception\NumberFormatException
+     * @throws \Brick\Math\Exception\RoundingNecessaryException
+     * @throws \Brick\Money\Exception\UnknownCurrencyException
+     */
+    private function ensureBookingPayment(Booking $booking, Lesson $lesson): Payment
+    {
+        $amount = $lesson->defaultTicketOption()->price ?? Money::of(0, 'PLN');
+        $payment = $booking->payment;
+
+        if ($payment !== null && (string) $payment->getAmount()->getAmount() === (string) $amount->getAmount()) {
+            return $payment;
+        }
+
+        $payment = new Payment($booking->getUser(), $amount);
+        $this->entityManager->persist($payment);
+        $booking->payment = $payment;
+
+        return $payment;
     }
 
     #[LiveAction]

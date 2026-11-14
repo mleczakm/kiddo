@@ -13,53 +13,11 @@ use App\Entity\Payment;
 use App\Entity\User;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 #[Group('smoke')]
-class AdminBookingsTabTest extends WebTestCase
+final class AdminBookingsTabTest extends AdminBookingsTabTestCase
 {
-    private function getEntityManager(): EntityManagerInterface
-    {
-        /** @var EntityManagerInterface */
-        return self::getContainer()->get(EntityManagerInterface::class);
-    }
-
-    public function testAdminBookingsPageAccessibleForAuthenticatedAdmin(): void
-    {
-        $client = static::createClient();
-
-        // Create and authenticate an admin user
-        $adminUser = UserAssembler::new()->withRoles('ROLE_ADMIN')->assemble();
-
-        $entityManager = $this->getEntityManager();
-        $entityManager->persist($adminUser);
-        $entityManager->flush();
-
-        $client->loginUser($adminUser);
-
-        // Access the admin bookings page
-        $client->request('GET', '/admin/rezerwacje');
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists(
-            '.rounded-2xl.border.border-slate-200',
-            'Admin bookings component should be present',
-        );
-        $this->assertSelectorTextContains('h3', 'Wszystkie rezerwacje');
-    }
-
-    public function testAdminBookingsPageRedirectsUnauthenticatedUsers(): void
-    {
-        $client = static::createClient();
-
-        // Try to access admin page without authentication
-        $client->request('GET', '/admin/rezerwacje');
-
-        $this->assertResponseRedirects();
-    }
-
     public function testManualBookingFormIsPresent(): void
     {
         $client = static::createClient();

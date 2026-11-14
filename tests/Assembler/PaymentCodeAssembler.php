@@ -40,19 +40,19 @@ class PaymentCodeAssembler extends EntityAssembler
 
         $paymentCode = new PaymentCode($payment);
 
-        if (isset($this->properties['id'])) {
+        if (($this->properties['id'] ?? null) !== null) {
             $reflection = new \ReflectionClass($paymentCode);
             $property = $reflection->getProperty('id');
             $property->setValue($paymentCode, $this->properties['id']);
         }
 
-        if (isset($this->properties['code'])) {
+        if (($this->properties['code'] ?? null) !== null) {
             $reflection = new \ReflectionClass($paymentCode);
             $property = $reflection->getProperty('code');
             $property->setValue($paymentCode, $this->properties['code']);
         }
 
-        if (isset($this->properties['createdAt'])) {
+        if (($this->properties['createdAt'] ?? null) !== null) {
             $reflection = new \ReflectionClass($paymentCode);
             $property = $reflection->getProperty('createdAt');
             $property->setValue($paymentCode, $this->properties['createdAt']);

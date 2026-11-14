@@ -7,6 +7,7 @@ namespace App\Tests\Functional\WholeProcess;
 use App\Application\Command\MatchPaymentForTransfer;
 use App\Application\Repository\RefundRequestRepositoryInterface;
 use App\Entity\Booking;
+use App\Entity\Lesson;
 use App\Entity\Payment;
 use App\Entity\RefundRequest;
 use App\Entity\User;
@@ -24,11 +25,13 @@ use App\UserInterface\Http\Component\ReservationDetailsModal;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Clock\NativeClock;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 /**
@@ -82,6 +85,14 @@ final class FastReservationJourneyTest extends WebTestCase
         $em->persist($lesson);
         $em->flush();
 
+        $booking = $this->reserve($client, $customer, $lesson);
+        [$em, $confirmedBooking, $paidPayment] = $this->pay($em, $messageBus, $booking);
+        $this->requestRefund($em, $confirmedBooking, $paidPayment->getId(), $customer);
+        $this->approveRefund($client, $em, $admin, $booking->getId(), $paidPayment->getId());
+    }
+
+    private function reserve(KernelBrowser $client, User $customer, Lesson $lesson): Booking
+    {
         // Step 1: open the workshop modal and confirm -> booking pending,
         // payment pending, a unique payment code is created.
         $client->loginUser($customer);
@@ -118,8 +129,19 @@ final class FastReservationJourneyTest extends WebTestCase
         // The amount shown to the user must equal the amount actually persisted.
         static::assertEquals($payment->getAmount(), $lessonModal->getPaymentAmount());
 
+        return $booking;
+    }
+
+    /** @return array{EntityManagerInterface, Booking, Payment} */
+    private function pay(EntityManagerInterface $em, MessageBusInterface $messageBus, Booking $booking): array
+    {
         // Step 2: a transfer email arrives with the matching code -> payment
         // is paid and the booking is automatically confirmed.
+        $payment = $booking->getPayment();
+        static::assertInstanceOf(Payment::class, $payment);
+        $paymentCode = $payment->getPaymentCode()?->getCode();
+        static::assertNotNull($paymentCode);
+
         $transfer = TransferAssembler::new()
             ->withTitle(sprintf('Payment for order %s', $paymentCode))
             ->withAmount((string) $payment->getAmount()->getAmount())
@@ -146,6 +168,15 @@ final class FastReservationJourneyTest extends WebTestCase
         static::assertSame(Payment::STATUS_PAID, $paidPayment->getStatus());
         static::assertSame(Booking::STATUS_ACTIVE, $confirmedBooking->getStatus());
 
+        return [$em, $confirmedBooking, $paidPayment];
+    }
+
+    private function requestRefund(
+        EntityManagerInterface $em,
+        Booking $confirmedBooking,
+        Ulid $paymentId,
+        User $customer,
+    ): void {
         // Step 3: the customer cancels and requests a refund. As of Stage 3
         // this really is two operations (CancelBookingOccurrence +
         // RequestRefund) committed atomically via CancelAndRequestRefund:
@@ -174,8 +205,8 @@ final class FastReservationJourneyTest extends WebTestCase
         $em->flush();
 
         $em->clear();
-        $refundRequestedPayment = $em->find(Payment::class, $payment->getId());
-        $bookingAfterRefundRequest = $em->find(Booking::class, $booking->getId());
+        $refundRequestedPayment = $em->find(Payment::class, $paymentId);
+        $bookingAfterRefundRequest = $em->find(Booking::class, $confirmedBooking->getId());
         static::assertInstanceOf(Payment::class, $refundRequestedPayment);
         static::assertInstanceOf(Booking::class, $bookingAfterRefundRequest);
         static::assertSame(Payment::STATUS_REFUND_REQUESTED, $refundRequestedPayment->getStatus());
@@ -202,12 +233,20 @@ final class FastReservationJourneyTest extends WebTestCase
         static::assertInstanceOf(RefundRequest::class, $refundRequest);
         static::assertTrue($refundRequest->isPending());
         static::assertEquals($refundRequestedPayment->getAmount(), $refundRequest->getRequestedAmount());
+    }
 
+    private function approveRefund(
+        KernelBrowser $client,
+        EntityManagerInterface $em,
+        User $admin,
+        Ulid $bookingId,
+        Ulid $paymentId,
+    ): void {
         // Step 4: an admin approves the refund -> payment moves to refunded.
         $client->loginUser($admin);
         $adminComponent = $this->createLiveComponent(name: ReservationDetailsModal::class, client: $client);
         $adminComponent->call('open', [
-            'bookingId' => (string) $booking->getId(),
+            'bookingId' => (string) $bookingId,
         ]);
         $adminComponent->set('paymentNote', 'Zwrot wykonany przelewem.');
         $adminComponent->call('changePaymentStatus', [
@@ -215,7 +254,7 @@ final class FastReservationJourneyTest extends WebTestCase
         ]);
 
         $em->clear();
-        $refundedPayment = $em->find(Payment::class, $payment->getId());
+        $refundedPayment = $em->find(Payment::class, $paymentId);
         static::assertInstanceOf(Payment::class, $refundedPayment);
         static::assertSame(Payment::STATUS_REFUNDED, $refundedPayment->getStatus());
         static::assertSame('Zwrot wykonany przelewem.', $refundedPayment->getStatusNote());

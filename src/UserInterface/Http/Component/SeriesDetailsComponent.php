@@ -238,6 +238,7 @@ class SeriesDetailsComponent extends AbstractController
             $this->entityManager->flush();
         } catch (\LogicException) {
             // Ignore if booking cannot be approved
+            return;
         }
     }
 

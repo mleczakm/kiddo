@@ -49,7 +49,7 @@ final readonly class InlineAttachmentReconciler
     {
         $fileIds = [];
 
-        if (!isset($contentJson['content']) || !\is_array($contentJson['content'])) {
+        if (!\is_array($contentJson['content'] ?? null)) {
             return $fileIds;
         }
 
@@ -85,7 +85,7 @@ final readonly class InlineAttachmentReconciler
             /** @var array<string, mixed> $node */
             $callback($node);
 
-            if (isset($node['content']) && \is_array($node['content'])) {
+            if (\is_array($node['content'] ?? null)) {
                 $this->walkContentNodes($node['content'], $callback);
             }
         }

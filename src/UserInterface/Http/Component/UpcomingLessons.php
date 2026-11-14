@@ -102,7 +102,7 @@ class UpcomingLessons
         foreach ($bookings as $booking) {
             foreach ($booking->getLessons() as $lesson) {
                 $lessonId = (string) $lesson->getId();
-                if (!isset($lessonIdSet[$lessonId])) {
+                if (($lessonIdSet[$lessonId] ?? null) === null) {
                     continue;
                 }
 
@@ -146,7 +146,7 @@ class UpcomingLessons
         // Group workshops by their schedule date
         foreach ($workshops as $workshop) {
             $scheduleDate = $workshop->schedule->format('Y-m-d');
-            if (isset($grouped[$scheduleDate])) {
+            if (($grouped[$scheduleDate] ?? null) !== null) {
                 $grouped[$scheduleDate]['workshops'][] = $workshop;
             }
         }

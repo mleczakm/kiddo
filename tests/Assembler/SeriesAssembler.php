@@ -79,7 +79,7 @@ class SeriesAssembler extends EntityAssembler
             lastOccurrenceDate: $lastOccurrenceDate,
         );
 
-        if (isset($this->properties['id'])) {
+        if (($this->properties['id'] ?? null) !== null) {
             $reflection = new \ReflectionClass($series);
             $property = $reflection->getProperty('id');
             $property->setValue($series, $this->properties['id']);

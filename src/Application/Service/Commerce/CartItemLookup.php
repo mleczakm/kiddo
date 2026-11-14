@@ -18,6 +18,34 @@ final readonly class CartItemLookup
         private ChildRepositoryInterface $childRepository,
     ) {}
 
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
+    public function requireLesson(string $id): Lesson
+    {
+        return (
+            $this->lessonRepository->find(Ulid::fromString($id)) ?? throw new \InvalidArgumentException(sprintf(
+                'Lesson %s not found.',
+                $id,
+            ))
+        );
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Uid\Exception\InvalidArgumentException
+     */
+    public function requireParticipant(string $id, int $customerId): Child
+    {
+        $participant = $this->childRepository->find(Ulid::fromString($id));
+        if ($participant === null || $participant->getOwner()->getId() !== $customerId) {
+            throw new \InvalidArgumentException(sprintf('Participant %s not found for this customer.', $id));
+        }
+
+        return $participant;
+    }
+
     /** @param list<CartItem> $items
      * @return array<string, Lesson>
      */

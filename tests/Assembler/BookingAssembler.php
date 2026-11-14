@@ -72,19 +72,19 @@ class BookingAssembler extends EntityAssembler
 
         $booking = new Booking($user, $payment, ...$lessons);
 
-        if (isset($this->properties['id'])) {
+        if (($this->properties['id'] ?? null) !== null) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('id');
             $property->setValue($booking, $this->properties['id']);
         }
 
-        if (isset($this->properties['status'])) {
+        if (($this->properties['status'] ?? null) !== null) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('status');
             $property->setValue($booking, $this->properties['status']);
         }
 
-        if (isset($this->properties['notes'])) {
+        if (($this->properties['notes'] ?? null) !== null) {
             /** @var string|null $notes */
             $notes = $this->properties['notes'];
             $booking->setNotes($notes);
@@ -96,13 +96,13 @@ class BookingAssembler extends EntityAssembler
             $booking->setChild($child);
         }
 
-        if (isset($this->properties['createdAt'])) {
+        if (($this->properties['createdAt'] ?? null) !== null) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('createdAt');
             $property->setValue($booking, $this->properties['createdAt']);
         }
 
-        if (isset($this->properties['updatedAt'])) {
+        if (($this->properties['updatedAt'] ?? null) !== null) {
             $reflection = new \ReflectionClass($booking);
             $property = $reflection->getProperty('updatedAt');
             $property->setValue($booking, $this->properties['updatedAt']);

@@ -6,8 +6,7 @@ namespace App\Application\UseCase\Cart;
 
 use App\Application\Repository\CartItemRepositoryInterface;
 use App\Application\Repository\CartRepositoryInterface;
-use App\Application\Repository\ChildRepositoryInterface;
-use App\Application\Repository\LessonRepositoryInterface;
+use App\Application\Service\Commerce\CartItemLookup;
 use App\Application\Service\Pricing\PriceQuoter;
 use App\Domain\Commerce\Cart\CartItem;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,8 +23,7 @@ final readonly class AddCartItem
     public function __construct(
         private CartRepositoryInterface $cartRepository,
         private CartItemRepositoryInterface $cartItemRepository,
-        private LessonRepositoryInterface $lessonRepository,
-        private ChildRepositoryInterface $childRepository,
+        private CartItemLookup $lookup,
         private PriceQuoter $priceQuoter,
         private EntityManagerInterface $em,
     ) {}
@@ -50,22 +48,13 @@ final readonly class AddCartItem
         }
         $cart->assertOpen();
 
-        $lesson = $this->lessonRepository->find(Ulid::fromString($lessonId));
-        if ($lesson === null) {
-            throw new \InvalidArgumentException(sprintf('Lesson %s not found.', $lessonId));
-        }
+        $lesson = $this->lookup->requireLesson($lessonId);
         $ticketOption = $lesson->getMatchingTicketOption($ticketType);
 
-        $participant = null;
-        if ($participantId !== null && $participantId !== '') {
-            $participant = $this->childRepository->find(Ulid::fromString($participantId));
-            if ($participant === null || $participant->getOwner()->getId() !== $requestingUserId) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Participant %s not found for this customer.',
-                    $participantId,
-                ));
-            }
-        }
+        $participant =
+            $participantId !== null && $participantId !== ''
+                ? $this->lookup->requireParticipant($participantId, $requestingUserId)
+                : null;
 
         $lessonUlid = $lesson->getId();
         $participantUlid = $participant?->getId();

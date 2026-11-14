@@ -205,18 +205,10 @@ class Payment
             throw new \InvalidArgumentException(sprintf('Invalid payment status: %s', $status));
         }
 
-        switch ($status) {
-            case self::STATUS_PAID:
-                // When marking as paid, prefer aligning paidAt with the original creation time
-                // to keep week-based reporting stable (tests set createdAt within the target week).
-                // Do not override an existing paidAt set elsewhere.
-                if ($this->paidAt === null) {
-                    $this->paidAt = $this->createdAt;
-                }
-                $this->paymentCode = null;
-                break;
-            default:
-                break;
+        if ($status === self::STATUS_PAID) {
+            // Use the creation date unless the payment already has a paid date.
+            $this->paidAt ??= $this->createdAt;
+            $this->paymentCode = null;
         }
 
         if ($this->status !== $status) {

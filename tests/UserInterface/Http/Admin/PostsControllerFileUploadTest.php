@@ -164,7 +164,7 @@ final class PostsControllerFileUploadTest extends WebTestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test_') . '.jpg';
         file_put_contents($tempFile, base64_decode(self::MINIMAL_JPEG_BASE64, true));
 
-        return new UploadedFile($tempFile, $filename, 'image/jpeg', filesize($tempFile) ?: null, true);
+        return new UploadedFile($tempFile, $filename, 'image/jpeg', null, true);
     }
 
     private function getEntityManager(): EntityManagerInterface

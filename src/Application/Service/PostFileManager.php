@@ -47,7 +47,7 @@ final readonly class PostFileManager
             $postFileId = $item['id'];
             $submittedIds[] = $postFileId;
 
-            if (!isset($existingMap[$postFileId])) {
+            if (($existingMap[$postFileId] ?? null) === null) {
                 throw new InvalidArgumentException("PostFile {$postFileId} is not attached to this post.");
             }
 

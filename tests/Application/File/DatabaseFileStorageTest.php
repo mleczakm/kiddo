@@ -95,7 +95,7 @@ final class DatabaseFileStorageTest extends KernelTestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test_');
         static::assertIsString($tempFile);
         file_put_contents($tempFile, 'this is plain text, not an image');
-        $uploadedFile = new UploadedFile($tempFile, 'fake.jpg', 'image/jpeg', filesize($tempFile) ?: null, true);
+        $uploadedFile = new UploadedFile($tempFile, 'fake.jpg', 'image/jpeg', null, true);
         $policy = new FileUploadPolicy('article_image');
 
         $this->expectException(InvalidArgumentException::class);
@@ -111,7 +111,7 @@ final class DatabaseFileStorageTest extends KernelTestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test_') . '.jpg';
         file_put_contents($tempFile, $bytes);
 
-        $uploadedFile = new UploadedFile($tempFile, $filename, 'image/jpeg', filesize($tempFile) ?: null, true);
+        $uploadedFile = new UploadedFile($tempFile, $filename, 'image/jpeg', null, true);
 
         return [$uploadedFile, $bytes];
     }

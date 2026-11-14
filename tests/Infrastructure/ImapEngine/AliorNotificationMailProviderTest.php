@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Infrastructure\ImapEngine;
 
 use App\Infrastructure\ImapEngine\AliorNotificationMailProvider;
-use DirectoryTree\ImapEngine\MessageQueryInterface;
-use DirectoryTree\ImapEngine\Testing\FakeFolder;
 use DirectoryTree\ImapEngine\Testing\FakeMailbox;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -52,14 +50,5 @@ class AliorNotificationMailProviderTest extends TestCase
         );
 
         static::assertSame([], iterator_to_array($provider()));
-    }
-}
-
-class ThrowingFolder extends FakeFolder
-{
-    #[\Override]
-    public function messages(): MessageQueryInterface
-    {
-        throw new \ErrorException('Simulated exception');
     }
 }

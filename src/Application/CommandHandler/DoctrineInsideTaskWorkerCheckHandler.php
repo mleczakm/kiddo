@@ -26,6 +26,7 @@ final readonly class DoctrineInsideTaskWorkerCheckHandler
                 $this->cache->set($command->cacheKey, false, 5);
             } catch (\Throwable) {
                 // If cache is also down (e.g. DB backed cache and aborted transaction), we can't do much.
+                return;
             }
         }
     }

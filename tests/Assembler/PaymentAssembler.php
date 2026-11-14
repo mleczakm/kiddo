@@ -105,7 +105,7 @@ class PaymentAssembler
         // Set properties via reflection since they are private
         $reflection = new \ReflectionClass($payment);
 
-        if (isset($this->id)) {
+        if (($this->id ?? null) !== null) {
             $property = $reflection->getProperty('id');
             $property->setValue($payment, $this->id);
         }

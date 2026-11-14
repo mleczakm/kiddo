@@ -116,13 +116,13 @@ class LessonAssembler extends EntityAssembler
 
         $lesson = new Lesson($metadata, $schedule);
 
-        if (isset($this->properties['id'])) {
+        if (($this->properties['id'] ?? null) !== null) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('id');
             $property->setValue($lesson, $this->properties['id']);
         }
 
-        if (isset($this->properties['status'])) {
+        if (($this->properties['status'] ?? null) !== null) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('status');
             $property->setValue($lesson, $this->properties['status']);
@@ -132,7 +132,7 @@ class LessonAssembler extends EntityAssembler
             $lesson->visible = $this->properties['visible'];
         }
 
-        if (isset($this->properties['ticketOptions'])) {
+        if (($this->properties['ticketOptions'] ?? null) !== null) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('ticketOptions');
             $property->setValue($lesson, $this->properties['ticketOptions']);
@@ -148,7 +148,7 @@ class LessonAssembler extends EntityAssembler
             )]);
         }
 
-        if (isset($this->properties['series'])) {
+        if (($this->properties['series'] ?? null) !== null) {
             $reflection = new \ReflectionClass($lesson);
             $property = $reflection->getProperty('series');
             $property->setValue($lesson, $this->properties['series']);
