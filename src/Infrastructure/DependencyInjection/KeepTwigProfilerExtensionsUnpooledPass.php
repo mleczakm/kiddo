@@ -26,9 +26,11 @@ final class KeepTwigProfilerExtensionsUnpooledPass implements CompilerPassInterf
     public function process(ContainerBuilder $container): void
     {
         foreach (self::EXTENSION_IDS as $id) {
-            if ($container->hasDefinition($id)) {
-                $container->getDefinition($id)->clearTag('kernel.reset');
+            if (!$container->hasDefinition($id)) {
+                continue;
             }
+
+            $container->getDefinition($id)->clearTag('kernel.reset');
         }
     }
 }

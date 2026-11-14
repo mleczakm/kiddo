@@ -6,7 +6,9 @@ namespace App\Tests\Functional\Infrastructure\Mcp;
 
 use App\Application\Chat\ChatTokenManager;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use Mcp\Capability\RegistryInterface;
+use Mcp\Schema\Tool;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +25,9 @@ final class KiddoMcpServerTest extends KernelTestCase
 
         /** @var RegistryInterface $registry */
         $registry = static::getContainer()->get('mcp.registry');
-        $names = array_map(static fn(object $tool): string => $tool->name, [...$registry->getTools()->references]);
+        /** @var list<Tool> $tools */
+        $tools = [...$registry->getTools()->references];
+        $names = array_map(static fn(Tool $tool): string => $tool->name, $tools);
 
         static::assertContains('user_list_upcoming_lessons', $names);
         static::assertContains('user_me', $names);
@@ -44,6 +48,7 @@ final class KiddoMcpServerTest extends KernelTestCase
         $kernel = static::$kernel;
         static::assertNotNull($kernel);
 
+        /** @var EntityManagerInterface $em */
         $em = $container->get('doctrine')->getManager();
         $user = UserAssembler::new()->withEmail('chat-mcp-http@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $em->persist($user);

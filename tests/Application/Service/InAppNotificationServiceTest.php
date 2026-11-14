@@ -8,6 +8,7 @@ use App\Application\Service\InAppNotificationService;
 use App\Entity\NotificationSeverity;
 use App\Infrastructure\Doctrine\Repository\NotificationRepository;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -16,6 +17,7 @@ final class InAppNotificationServiceTest extends KernelTestCase
 {
     public function testNotifyPersistsHtmlBodyUrlAndSeverity(): void
     {
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $user = UserAssembler::new()->withEmail('inapp-user@example.com')->assemble();
         $em->persist($user);
@@ -44,6 +46,7 @@ final class InAppNotificationServiceTest extends KernelTestCase
 
     public function testNotifyAdminsCreatesOnePerAdmin(): void
     {
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $admin1 = UserAssembler::new()->withEmail('inapp-admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $admin2 = UserAssembler::new()->withEmail('inapp-admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();

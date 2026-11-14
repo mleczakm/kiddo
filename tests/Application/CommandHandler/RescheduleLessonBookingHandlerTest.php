@@ -29,6 +29,7 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
     public function testRescheduleNotifiesTheCustomer(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $customer = UserAssembler::new()->assemble();
@@ -74,7 +75,7 @@ class RescheduleLessonBookingHandlerTest extends KernelTestCase
             'user' => $customer,
         ]);
         static::assertCount(1, $notifications);
-        static::assertStringContainsString('termin', mb_strtolower((string) $notifications[0]->getTitle()));
+        static::assertStringContainsString('termin', mb_strtolower($notifications[0]->getTitle()));
 
         // The reschedule must survive a fresh DB round-trip (regression
         // guard: LessonMap is a custom-typed field — see

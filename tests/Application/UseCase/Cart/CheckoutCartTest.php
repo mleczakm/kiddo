@@ -33,6 +33,7 @@ final class CheckoutCartTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         /** @var AddCartItem $addCartItem */
         $addCartItem = self::getContainer()->get(AddCartItem::class);
@@ -82,6 +83,7 @@ final class CheckoutCartTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         /** @var AddCartItem $addCartItem */
         $addCartItem = self::getContainer()->get(AddCartItem::class);
@@ -112,6 +114,7 @@ final class CheckoutCartTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         /** @var CheckoutCart $checkoutCart */
         $checkoutCart = self::getContainer()->get(CheckoutCart::class);
@@ -133,6 +136,7 @@ final class CheckoutCartTest extends KernelTestCase
     public function testCannotCheckOutSomeoneElsesCart(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         /** @var CheckoutCart $checkoutCart */
@@ -157,6 +161,7 @@ final class CheckoutCartTest extends KernelTestCase
     public function testTwoCustomersCannotTakeTheLastSeat(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $add = self::getContainer()->get(AddCartItem::class);
         $checkout = self::getContainer()->get(CheckoutCart::class);
@@ -185,6 +190,7 @@ final class CheckoutCartTest extends KernelTestCase
     public function testMultiLineCapacityFailureCreatesNothing(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $add = self::getContainer()->get(AddCartItem::class);
         $checkout = self::getContainer()->get(CheckoutCart::class);
@@ -223,6 +229,7 @@ final class CheckoutCartTest extends KernelTestCase
     public function testTwoCustomersCannotConsumeTheLastPromotionUse(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $add = self::getContainer()->get(AddCartItem::class);
         $apply = self::getContainer()->get(ApplyPromotionCode::class);

@@ -45,6 +45,7 @@ final class BookingsComponentTest extends WebTestCase
         Clock::set(new MockClock('2026-08-08 12:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
@@ -105,6 +106,7 @@ final class BookingsComponentTest extends WebTestCase
         Clock::set(new MockClock('2026-08-08 12:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->withName('Jan Testowy')->assemble();
@@ -176,6 +178,7 @@ final class BookingsComponentTest extends WebTestCase
         Clock::set(new MockClock('2026-08-08 12:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
@@ -225,6 +228,7 @@ final class BookingsComponentTest extends WebTestCase
         Clock::set(new MockClock('2026-08-08 12:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();

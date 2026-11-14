@@ -26,6 +26,7 @@ class CheckExpiredBookingsHandlerTest extends KernelTestCase
     public function testCancelsExpiredUnpaidBookingsAndRecordsAnAutoCancellationEvent(): void
     {
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         /** @var BookingRepository $bookingRepository */
         $bookingRepository = self::getContainer()->get(BookingRepository::class);

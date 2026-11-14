@@ -27,6 +27,7 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
     public function testCancellingTheOnlyLessonCancelsTheBookingAndNotifies(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $user = UserAssembler::new()->assemble();
@@ -121,6 +122,7 @@ class CancelLessonBookingHandlerTest extends KernelTestCase
     public function testCancellingOneLessonOfAMultiLessonBookingKeepsBookingActive(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $user = UserAssembler::new()->assemble();

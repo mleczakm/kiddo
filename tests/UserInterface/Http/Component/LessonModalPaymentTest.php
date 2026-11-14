@@ -46,6 +46,7 @@ final class LessonModalPaymentTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->withPhone('501111111')->assemble();
@@ -105,6 +106,7 @@ final class LessonModalPaymentTest extends WebTestCase
 
         $client = static::createClient();
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->withPhone('501111111')->assemble();
@@ -158,6 +160,7 @@ final class LessonModalPaymentTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
@@ -214,6 +217,7 @@ final class LessonModalPaymentTest extends WebTestCase
 
         $client = static::createClient();
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->withPhone('501111111')->assemble();
@@ -254,6 +258,7 @@ final class LessonModalPaymentTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
@@ -316,6 +321,7 @@ final class LessonModalPaymentTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
@@ -358,6 +364,7 @@ final class LessonModalPaymentTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();
@@ -425,6 +432,7 @@ final class LessonModalPaymentTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->withPhone('501111111')->assemble();
@@ -464,6 +472,7 @@ final class LessonModalPaymentTest extends WebTestCase
         /** @var \Doctrine\Persistence\ManagerRegistry $registry */
         $registry = static::getContainer()->get('doctrine');
         $registry->resetManager();
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
@@ -508,6 +517,7 @@ final class LessonModalPaymentTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $user = UserAssembler::new()->assemble();

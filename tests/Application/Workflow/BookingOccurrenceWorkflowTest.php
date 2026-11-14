@@ -43,7 +43,7 @@ final class BookingOccurrenceWorkflowTest extends KernelTestCase
             BookingOccurrence::STATUS_RESCHEDULED,
         ] as $state) {
             foreach (['confirm', 'attend', 'cancel', 'reschedule', 'reactivate'] as $transition) {
-                yield "$transition from $state" => [$state, $transition];
+                yield "{$transition} from {$state}" => [$state, $transition];
             }
         }
     }

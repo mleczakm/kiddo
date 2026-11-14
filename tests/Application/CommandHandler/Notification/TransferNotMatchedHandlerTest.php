@@ -68,6 +68,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
             ->assemble();
 
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $payment = PaymentAssembler::new()
             ->withUser($admin1)
@@ -124,6 +125,7 @@ class TransferNotMatchedHandlerTest extends KernelTestCase
             ->withTransferredAt(new \DateTimeImmutable('2025-01-01 12:00:00'))
             ->assemble();
 
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($transfer);

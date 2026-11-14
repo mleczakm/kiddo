@@ -68,6 +68,7 @@ final class AdminUserDetailComponentTest extends WebTestCase
         );
         static::assertSame('Preferuje kontakt telefoniczny po 16:00.', $reloaded->getAdminNote());
 
+        /** @var list<ActivityLog> $logs */
         $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($reloaded);
         static::assertCount(1, $logs);
         static::assertStringContainsString('Notatkę administracyjną', (string) $logs[0]->getSummary());
@@ -165,10 +166,12 @@ final class AdminUserDetailComponentTest extends WebTestCase
         $component->set('newChildBirthday', '2023-12-10');
         $component->call('saveNewChild');
 
+        /** @var list<Child> $children */
         $children = $this->em->getRepository(Child::class)->findByOwner($customer);
         static::assertCount(1, $children);
         static::assertSame('Maja Nowak', $children[0]->getName());
 
+        /** @var list<ActivityLog> $logs */
         $logs = $this->em->getRepository(ActivityLog::class)->findBySubject($customer);
         static::assertCount(1, $logs);
         static::assertStringContainsString('Maja Nowak', $logs[0]->getTitle());

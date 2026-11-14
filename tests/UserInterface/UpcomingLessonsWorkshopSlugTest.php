@@ -31,6 +31,7 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $schedule = new \DateTimeImmutable('2024-02-21 10:30:00');
@@ -49,6 +50,7 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $schedule = new \DateTimeImmutable('2024-02-21 10:30:00');
@@ -79,6 +81,7 @@ final class UpcomingLessonsWorkshopSlugTest extends WebTestCase
         Clock::set(new MockClock('2024-02-20 08:00:00'));
 
         $client = static::createClient();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
         $schedule = new \DateTimeImmutable('2024-02-21 10:30:00');

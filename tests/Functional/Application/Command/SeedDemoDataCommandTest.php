@@ -46,8 +46,11 @@ final class SeedDemoDataCommandTest extends KernelTestCase
         ]));
         static::assertStringContainsString('15 bookings', $this->commandTester->getDisplay());
 
+        /** @var UserRepository $users */
         $users = self::getContainer()->get(UserRepository::class);
+        /** @var LessonRepository $lessons */
         $lessons = self::getContainer()->get(LessonRepository::class);
+        /** @var BookingRepository $bookings */
         $bookings = self::getContainer()->get(BookingRepository::class);
         /** @var list<object> $demoUsers */
         $demoUsers = $users

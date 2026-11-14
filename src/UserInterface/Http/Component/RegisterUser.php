@@ -42,9 +42,6 @@ class RegisterUser extends AbstractController
         private RegistrationConsentManager $registrationConsentManager,
     ) {}
 
-    /**
-     * @return FormInterface<User>
-     */
     #[\Override]
     protected function instantiateForm(): FormInterface
     {
@@ -72,7 +69,6 @@ class RegisterUser extends AbstractController
             ]);
         }
 
-        /** @var FormInterface<User> $form */
         return $builder->add('submit', SubmitType::class, [
             'label' => 'form.register.submit',
         ])->getForm();

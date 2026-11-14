@@ -218,12 +218,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Chat/LessonPresenter.php"
-code = "less-specific-return-statement"
-message = '''Returned type `array{'age_max': int, 'age_min': int, 'available_spots': int, 'capacity': int, 'category': string, 'duration_minutes': int, 'id': non-empty-string, 'lead': string, 'schedule': non-empty-string, 'series_id': null|string, 'slug': null|string, 'status': string, 'ticket_options': array<array-key, array{'currency': string, 'description': string, 'price': string, 'reschedule_policy': string, 'type': string}>|list<array{'currency': string, 'description': string, 'price': string, 'reschedule_policy': string, 'type': string}>, 'title': string}` is less specific than the declared return type `array{'age_max': int, 'age_min': int, 'available_spots': int, 'capacity': int, 'category': string, 'duration_minutes': int, 'id': string, 'lead': string, 'schedule': string, 'series_id': null|string, 'slug': null|string, 'status': string, 'ticket_options': array<int, array{'currency': string, 'description': string, 'price': string, 'reschedule_policy': string, 'type': string}>, 'title': string}` for function `App\Application\Chat\LessonPresenter::lesson`.'''
-count = 1
-
-[[issues]]
-file = "src/Application/Chat/LessonPresenter.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
@@ -398,12 +392,6 @@ count = 1
 
 [[issues]]
 file = "src/Application/Command/SeedDemoDataCommand.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "src/Application/Command/SeedDemoDataCommand.php"
 code = "mixed-operand"
 message = "Left operand in `&&` operation has `mixed` type."
 count = 1
@@ -513,12 +501,6 @@ count = 1
 [[issues]]
 file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\ImportTransfersFromMailHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/ImportTransfersFromMailHandler.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\Application\CommandHandler\ImportTransfersFromMailHandler::rematchUnmatchedTransfers`.'
 count = 1
 
@@ -562,72 +544,6 @@ count = 1
 file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `OutOfBoundsException` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/DailyLessonsReminderHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\Notification\DailyLessonsReminderHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendAdminInformation`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendUserConfirmation`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendAdminInformation`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendUserConfirmation`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendAdminInformation`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendUserConfirmation`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendAdminInformation`.'
-count = 1
-
-[[issues]]
-file = "src/Application/CommandHandler/Notification/NewUserHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\CommandHandler\Notification\NewUserHandler::sendUserConfirmation`.'
 count = 1
 
 [[issues]]
@@ -987,24 +903,6 @@ count = 1
 [[issues]]
 file = "src/Application/Service/Commerce/OrderPlacementService.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/OrderPlacementService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/OrderPlacementService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/OrderPlacementService.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Doctrine\ORM\TransactionRequiredException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
 count = 1
 
@@ -1027,45 +925,9 @@ message = 'Potentially unhandled exception `LogicException` in `App\Application\
 count = 1
 
 [[issues]]
-file = "src/Application/Service/Commerce/OrderPlacementService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\Application\Service\Commerce\OrderPlacementService::lockAndValidateCapacity`.'
-count = 1
-
-[[issues]]
 file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `App\Application\Service\Commerce\PromotionLimitExceededException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\Exception\ORMException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NoResultException` in `App\Application\Service\Commerce\PromotionRedemptionService::countActive`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\NonUniqueResultException` in `App\Application\Service\Commerce\PromotionRedemptionService::countActive`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\ORMInvalidArgumentException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
-count = 1
-
-[[issues]]
-file = "src/Application/Service/Commerce/PromotionRedemptionService.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Doctrine\ORM\OptimisticLockException` in `App\Application\Service\Commerce\PromotionRedemptionService::reserve`.'
 count = 1
 
 [[issues]]
@@ -1384,24 +1246,6 @@ count = 1
 file = "src/Application/UseCase/CancelBookingOccurrence.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/CancelBookingOccurrence.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/CancelBookingOccurrence.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Application/UseCase/CancelBookingOccurrence.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\Application\UseCase\CancelBookingOccurrence::__invoke`.'
 count = 1
 
 [[issues]]
@@ -1893,12 +1737,6 @@ count = 1
 [[issues]]
 file = "src/Entity/RefundRequest.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\RefundRequest::approve`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/RefundRequest.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\RefundRequest::getApprovedAmountMinor`.'
 count = 1
 
@@ -1906,18 +1744,6 @@ count = 1
 file = "src/Entity/RefundRequest.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `App\Entity\RefundRequest::getRequestedAmountMinor`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/RefundRequest.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\Entity\RefundRequest::approve`.'
-count = 1
-
-[[issues]]
-file = "src/Entity/RefundRequest.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `RuntimeException` in `App\Entity\RefundRequest::decline`.'
 count = 1
 
 [[issues]]
@@ -2822,12 +2648,6 @@ count = 1
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "invalid-iterator"
-message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `Ds\Map::put`: expected `App\Entity\DTO\BookedLesson`, but found `mixed`.'
 count = 1
@@ -2836,96 +2656,12 @@ count = 1
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 6
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
+count = 4
 
 [[issues]]
 file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Symfony\Serializer\LessonMapNormalizer::normalize`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = "Potentially unhandled exception `LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\BadMethodCallException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\CircularReferenceException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExceptionInterface` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExceptionInterface` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\ExtraAttributesException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:103:25}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\LogicException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\RuntimeException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Serializer\Exception\UnexpectedValueException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `{closure:src/Infrastructure/Symfony/Serializer/LessonMapNormalizer.php:23:27}`.'
 count = 1
 
 [[issues]]
@@ -2957,24 +2693,6 @@ file = "src/Infrastructure/Twig/AppVersionExtension.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `InvalidArgumentException` in `App\Infrastructure\Twig\AppVersionExtension::__construct`.'
 count = 1
-
-[[issues]]
-file = "src/Infrastructure/WebPush/WebPushSender.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `App\Infrastructure\WebPush\WebPushSender::removeByEndpoint`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/WebPush/WebPushSender.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Infrastructure/WebPush/WebPushSender.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 5
 
 [[issues]]
 file = "src/Infrastructure/WebPush/WebPushSender.php"
@@ -3016,24 +2734,6 @@ count = 1
 file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Messenger\Exception\ExceptionInterface` in `App\MessageHandler\RescheduleLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\MessageHandler\RescheduleLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\MissingMandatoryParametersException` in `App\MessageHandler\RescheduleLessonBookingHandler::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/MessageHandler/RescheduleLessonBookingHandler.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\RouteNotFoundException` in `App\MessageHandler\RescheduleLessonBookingHandler::__invoke`.'
 count = 1
 
 [[issues]]
@@ -3268,18 +2968,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminBookingsComponent.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\AdminBookingsComponent::getAmountPerLesson`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -3400,18 +3088,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminGlobalSearchComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Uid\Exception\InvalidArgumentException` in `App\UserInterface\Http\Component\AdminGlobalSearchComponent::resultUrl`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminKpiStatsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Math\Exception\MathException` in `{closure:src/UserInterface/Http/Component/AdminKpiStatsComponent.php:40:13}`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/AdminKpiStatsComponent.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Brick\Money\Exception\MoneyMismatchException` in `{closure:src/UserInterface/Http/Component/AdminKpiStatsComponent.php:40:13}`.'
 count = 1
 
 [[issues]]
@@ -3670,12 +3346,6 @@ count = 1
 file = "src/UserInterface/Http/Component/AdminUserDetailComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Security\Core\Exception\AccessDeniedException` in `App\UserInterface\Http\Component\AdminUserDetailComponent::sendNotification`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/BookingCancellationModal.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 1
 
 [[issues]]
@@ -4172,24 +3842,6 @@ count = 1
 
 [[issues]]
 file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$paymentAmount` (Brick\Money\Money|null).'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
-code = "mixed-property-type-coercion"
-message = "A value with a less specific type `mixed` is being assigned to property `$paymentCode` (null|string)."
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/UpcomingAttendeesComponent.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `App\UserInterface\Http\Component\UpcomingAttendeesComponent::getFilteredUsers`. Saw type `mixed`.'
 count = 1
@@ -4467,12 +4119,6 @@ count = 1
 [[issues]]
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `Symfony\Component\HttpFoundation\Exception\BadRequestException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::save`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
-code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `Symfony\Component\Routing\Exception\InvalidParameterException` in `App\UserInterface\Http\Component\WorkshopEditorComponent::getEditingLessonImageUrl`.'
 count = 1
 
@@ -4516,24 +4162,6 @@ count = 1
 file = "src/UserInterface/Http/Component/WorkshopEditorComponent.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `ValueError` in `App\UserInterface\Http\Component\WorkshopEditorComponent::reconcileWorkshopFiles`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/FileAction.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `App\UserInterface\Http\FileAction::sanitizeFilename`: expected `string`, but found `array<array-key, string>|null|string`.'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/FileAction.php"
-code = "nullable-return-statement"
-message = 'Function `App\UserInterface\Http\FileAction::sanitizeFilename` is declared to return `string` but possibly returns a nullable value (inferred as `array<array-key, string>|null|string`).'
-count = 1
-
-[[issues]]
-file = "src/UserInterface/Http/FileAction.php"
-code = "possibly-null-argument"
-message = "Argument #3 of function `preg_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
 count = 1
 
 [[issues]]
@@ -4670,24 +4298,6 @@ count = 2
 
 [[issues]]
 file = "tests/Application/CommandHandler/CancelLessonBookingHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/CancelLessonBookingHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/Application/CommandHandler/CancelLessonBookingHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 17
-
-[[issues]]
-file = "tests/Application/CommandHandler/CancelLessonBookingHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
@@ -4697,18 +4307,6 @@ file = "tests/Application/CommandHandler/CheckBookingsToMarkPastHandlerTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
 count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/CheckBookingsToMarkPastHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/CheckBookingsToMarkPastHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 8
 
 [[issues]]
 file = "tests/Application/CommandHandler/CheckBookingsToMarkPastHandlerTest.php"
@@ -4787,36 +4385,6 @@ file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
 code = "invalid-callable"
 message = "Expression of type `object` cannot be called as a function or method."
 count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PHPUnit\Framework\Assert::assertStringContainsString`: expected `string`, but found `mixed`.'
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 6
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 12
-
-[[issues]]
-file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`nonnull`)."
-count = 3
 
 [[issues]]
 file = "tests/Application/CommandHandler/Notification/NewUserHandlerTest.php"
@@ -4928,30 +4496,6 @@ count = 1
 
 [[issues]]
 file = "tests/Application/CommandHandler/RescheduleLessonBookingHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/RescheduleLessonBookingHandlerTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/RescheduleLessonBookingHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/RescheduleLessonBookingHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 12
-
-[[issues]]
-file = "tests/Application/CommandHandler/RescheduleLessonBookingHandlerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -4967,30 +4511,6 @@ file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.
 code = "implicit-to-string-cast"
 message = 'Implicit conversion to `string` for left operand via `Brick\Math\BigDecimal::__toString()`.'
 count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 3
-
-[[issues]]
-file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 7
 
 [[issues]]
 file = "tests/Application/CommandHandler/SendReservationNotificationHandlerTest.php"
@@ -5060,30 +4580,6 @@ count = 3
 
 [[issues]]
 file = "tests/Application/Service/ActivityLoggerTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Application/Service/ActivityLoggerTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 1
-
-[[issues]]
-file = "tests/Application/Service/ActivityLoggerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/Application/Service/ActivityLoggerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 5
-
-[[issues]]
-file = "tests/Application/Service/ActivityLoggerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 3
@@ -5099,18 +4595,6 @@ file = "tests/Application/Service/InAppNotificationServiceTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
 count = 2
-
-[[issues]]
-file = "tests/Application/Service/InAppNotificationServiceTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Application/Service/InAppNotificationServiceTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 6
 
 [[issues]]
 file = "tests/Application/Service/InAppNotificationServiceTest.php"
@@ -5132,12 +4616,6 @@ count = 1
 
 [[issues]]
 file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 25
-
-[[issues]]
-file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
 code = "invalid-callable"
 message = "Expression of type `null` cannot be called as a function or method."
 count = 11
@@ -5147,24 +4625,6 @@ file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
 code = "invalid-callable"
 message = "Expression of type `object` cannot be called as a function or method."
 count = 11
-
-[[issues]]
-file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 3
-
-[[issues]]
-file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 3
-
-[[issues]]
-file = "tests/Application/UseCase/Cart/CheckoutCartTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 25
 
 [[issues]]
 file = "tests/Application/UseCase/Cart/PromotionCodeTest.php"
@@ -5233,24 +4693,6 @@ message = 'A value of a less specific type `null|object` is being assigned to pr
 count = 1
 
 [[issues]]
-file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 4
-
-[[issues]]
-file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 19
-
-[[issues]]
-file = "tests/Functional/Application/Command/SeedDemoDataCommandTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 4
-
-[[issues]]
 file = "tests/Functional/Application/CommandHandler/TriggerMatchPaymentForTransferForPastTransfersHandlerTest.php"
 code = "invalid-callable"
 message = "Expression of type `null` cannot be called as a function or method."
@@ -5273,54 +4715,6 @@ file = "tests/Functional/Application/Help/DocRegistryTest.php"
 code = "possibly-undefined-variable"
 message = "Variable `$matches` might not have been defined on all execution paths leading to this point."
 count = 1
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 7
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "less-specific-argument"
-message = 'Argument type mismatch for argument #1 of `App\Tests\Functional\Application\MonthlySubscriptionTest::persistWeeklySeriesWithMonthly`: expected `Doctrine\ORM\EntityManagerInterface`, but provided type `null|object` is less specific.'
-count = 2
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 6
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 6
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 13
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 7
-
-[[issues]]
-file = "tests/Functional/Application/MonthlySubscriptionTest.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `App\Tests\Functional\Application\MonthlySubscriptionTest::persistWeeklySeriesWithMonthly` is possibly `null`, but parameter type `Doctrine\ORM\EntityManagerInterface` does not accept it.'
-count = 2
 
 [[issues]]
 file = "tests/Functional/BookingPersistenceTest.php"
@@ -5372,30 +4766,6 @@ count = 1
 
 [[issues]]
 file = "tests/Functional/Infrastructure/Mcp/KiddoMcpServerTest.php"
-code = "ambiguous-object-property-access"
-message = "Cannot statically verify property access on a generic `object` type."
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Mcp/KiddoMcpServerTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Mcp/KiddoMcpServerTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 2
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Mcp/KiddoMcpServerTest.php"
-code = "mixed-return-statement"
-message = "Could not infer a precise return type for function `{closure:tests/Functional/Infrastructure/Mcp/KiddoMcpServerTest.php:26:28}`. Saw type `mixed`."
-count = 1
-
-[[issues]]
-file = "tests/Functional/Infrastructure/Mcp/KiddoMcpServerTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -5410,7 +4780,7 @@ count = 1
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
-count = 6
+count = 4
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
@@ -5422,67 +4792,19 @@ count = 1
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `App\Tests\Functional\Search\AdminGlobalSearchTest::contains`: expected `list<App\Application\Search\SearchReference>`, but provided type `list<mixed>` is less specific.'
-count = 2
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `array_find`: expected `array<('K.array_find() extends mixed), ('V.array_find() extends mixed)>`, but found `mixed`."
-count = 2
+count = 1
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `iterator_to_array`: expected `Traversable<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>|array<('K.iterator_to_array() extends mixed), ('V.iterator_to_array() extends mixed)>`, but found `mixed`."
-count = 4
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertStringContainsString`: expected `string`, but found `mixed`.'
 count = 2
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertStringNotContainsString`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #2 of `array_map`: expected `array<('K.array_map() extends array-key), ('V.array_map() extends mixed)>`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 4
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-property-access"
-message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 9
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-property-access"
-message = "Attempting to access a property on a non-object type (`nonnull`)."
-count = 2
-
-[[issues]]
-file = "tests/Functional/Search/AdminGlobalSearchTest.php"
-code = "mixed-return-statement"
-message = "Could not infer a precise return type for function `{closure:tests/Functional/Search/AdminGlobalSearchTest.php:68:34}`. Saw type `mixed`."
-count = 1
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 6
+count = 4
 
 [[issues]]
 file = "tests/Functional/Search/AdminGlobalSearchTest.php"
@@ -5534,18 +4856,6 @@ count = 1
 
 [[issues]]
 file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 2
-
-[[issues]]
-file = "tests/Functional/UserInterface/Http/Api/ChatToolsApiTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -5560,96 +4870,6 @@ count = 1
 file = "tests/Functional/UserInterface/Http/Component/BookingPreviewComponentTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertContains`: expected `iterable<mixed, mixed>`, but found `mixed`.'
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'body' accessed on `array{'body'?: mixed, 'headers'?: nonnull, 'method'?: string, 'url'?: string}`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'body' accessed on `array{'body'?: mixed, 'method'?: string, 'url'?: string}`."
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'body' accessed on `array{'body'?: mixed}`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'headers' accessed on `array{'body'?: mixed, 'headers'?: nonnull, 'method'?: string, 'url'?: string}`."
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'method' accessed on `array{'body'?: mixed, 'headers'?: nonnull, 'method'?: string, 'url'?: string}`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'method' accessed on `array{'body'?: mixed, 'method'?: string, 'url'?: string}`."
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'url' accessed on `array{'body'?: mixed, 'headers'?: nonnull, 'method'?: string, 'url'?: string}`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Brevo/BrevoNewsletterServiceTest.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key 'url' accessed on `array{'body'?: mixed, 'method'?: string, 'url'?: string}`."
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/CacheConnectionEnsurerTest.php"
-code = "never-return"
-message = "Cannot return value with type 'never' from this function."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/CacheConnectionEnsurerTest.php"
-code = "redundant-type-comparison"
-message = "Redundant condition: variable `$calls` (type `int(1)`) is already known to be `=int(1)`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/CacheConnectionEnsurerTest.php"
-code = "unreachable-match-default-arm"
-message = "This default arm is unreachable."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/DoctrineConnectionEnsurerTest.php"
-code = "never-return"
-message = "Cannot return value with type 'never' from this function."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/DoctrineConnectionEnsurerTest.php"
-code = "redundant-type-comparison"
-message = "Redundant condition: variable `$calls` (type `int(1)`) is already known to be `=int(1)`."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/DoctrineConnectionEnsurerTest.php"
-code = "unreachable-match-default-arm"
-message = "This default arm is unreachable."
 count = 1
 
 [[issues]]
@@ -5680,24 +4900,12 @@ count = 1
 file = "tests/Infrastructure/Doctrine/Query/DoctrineTodayLessonsQueryTest.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/Query/DoctrineTodayLessonsQueryTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 4
+count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Doctrine/Query/DoctrineTodayLessonsQueryTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 2
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/Repository/BookingRepositoryTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 2
 
 [[issues]]
@@ -5762,18 +4970,6 @@ count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 4
-
-[[issues]]
-file = "tests/Infrastructure/Doctrine/Repository/PaymentRepositoryTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -5816,42 +5012,6 @@ count = 2
 
 [[issues]]
 file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertStringContainsString`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
-code = "mixed-argument"
-message = '''Invalid argument type for argument #2 of `array_map`: expected `array<('K.array_map() extends array-key), App\Entity\ActivityLog>`, but found `mixed`.'''
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 4
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 4
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 16
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/ActivityLogMiddlewareTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 2
@@ -5861,18 +5021,6 @@ file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewar
 code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `App\Infrastructure\Messenger\PreventAsyncDispatchInTaskWorkerMiddleware::handle`: expected `Symfony\Component\Messenger\Middleware\StackInterface`, but found `mixed`.'
 count = 3
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "tests/Infrastructure/Messenger/PreventAsyncDispatchInTaskWorkerMiddlewareTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`nonnull`)."
-count = 1
 
 [[issues]]
 file = "tests/Infrastructure/Symfony/SentryHubServiceWiringTest.php"
@@ -6038,12 +5186,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AddUserModalTest.php"
-code = "non-documented-method"
-message = 'Ambiguous method call to `findbysubject` on class `Doctrine\ORM\EntityRepository`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AddUserModalTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -6104,48 +5246,6 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 3
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertStringContainsString`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 3
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 3
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "non-documented-method"
-message = 'Ambiguous method call to `findbyowner` on class `Doctrine\ORM\EntityRepository`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
-code = "non-documented-method"
-message = 'Ambiguous method call to `findbysubject` on class `Doctrine\ORM\EntityRepository`.'
-count = 2
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/AdminUserDetailComponentTest.php"
 code = "property-type-coercion"
 message = 'A value of a less specific type `null|object` is being assigned to property `$em` (Doctrine\ORM\EntityManagerInterface).'
 count = 1
@@ -6172,31 +5272,13 @@ count = 7
 file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
 code = "ambiguous-object-method-access"
 message = "Cannot statically verify method call on a generic `object` type."
-count = 29
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `Symfony\Bundle\FrameworkBundle\KernelBrowser::loginUser`: expected `Symfony\Component\Security\Core\User\UserInterface`, but found `nonnull`.'
-count = 2
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 2
+count = 4
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/BookingsComponentTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 29
+count = 4
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/ChildrenManagerConsentTest.php"
@@ -6206,33 +5288,9 @@ count = 1
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 44
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
 code = "implicit-to-string-cast"
 message = 'Implicit conversion to `string` for middle operand via `Symfony\Component\Uid\Ulid::__toString()`.'
 count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`nonnull`)."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/LessonModalPaymentTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 44
 
 [[issues]]
 file = "tests/UserInterface/Http/Component/LessonModalUrlSyncTest.php"
@@ -6319,66 +5377,6 @@ message = 'A value of a less specific type `null|object` is being assigned to pr
 count = 1
 
 [[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsComponentTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 2
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$this->component->openDate` of type `string('2024-02-21')` can never be `null`."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$this->component->openHour` of type `string('10:30')` can never be `null`."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UpcomingLessonsTest.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$this->component->openSlug` of type `string('balaganki')` can never be `null`."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 12
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PHPUnit\Framework\Assert::assertCount`: expected `Countable|iterable<mixed, mixed>`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 2
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 3
-
-[[issues]]
-file = "tests/UserInterface/Http/Component/UsersComponentTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 12
-
-[[issues]]
 file = "tests/UserInterface/Http/NewsletterConsentControllerTest.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
@@ -6407,36 +5405,6 @@ file = "tests/UserInterface/Http/NewsletterSubscriptionBrevoTest.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 4
-
-[[issues]]
-file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
-code = "ambiguous-object-method-access"
-message = "Cannot statically verify method call on a generic `object` type."
-count = 2
-
-[[issues]]
-file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
-code = "less-specific-argument"
-message = 'Argument type mismatch for argument #1 of `App\Tests\UserInterface\UpcomingLessonsWorkshopSlugTest::persistLessonWithSeries`: expected `Doctrine\ORM\EntityManagerInterface`, but provided type `null|object` is less specific.'
-count = 3
-
-[[issues]]
-file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 2
-
-[[issues]]
-file = "tests/UserInterface/UpcomingLessonsWorkshopSlugTest.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `App\Tests\UserInterface\UpcomingLessonsWorkshopSlugTest::persistLessonWithSeries` is possibly `null`, but parameter type `Doctrine\ORM\EntityManagerInterface` does not accept it.'
-count = 3
 
 [[issues]]
 file = "tests/UserInterface/WeekFilteringIntegrationTest.php"

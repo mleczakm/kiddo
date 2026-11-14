@@ -23,9 +23,11 @@ final readonly class CheckExpiredPaymentsHandler
         $cutoff = $command->referenceTime->modify(sprintf('-%d minutes', Payment::VALIDITY_MINUTES));
 
         foreach ($this->paymentRepository->findExpiredPendingPayments($cutoff) as $payment) {
-            if ($this->paymentStateMachine->can($payment, Payment::TRANSITION_EXPIRE)) {
-                $this->paymentStateMachine->apply($payment, Payment::TRANSITION_EXPIRE);
+            if (!$this->paymentStateMachine->can($payment, Payment::TRANSITION_EXPIRE)) {
+                continue;
             }
+
+            $this->paymentStateMachine->apply($payment, Payment::TRANSITION_EXPIRE);
         }
     }
 }

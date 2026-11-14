@@ -40,6 +40,7 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
             ->setOperationalEmails(false);
 
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($finance);
@@ -106,6 +107,7 @@ final class SendRescheduleAdminNotificationHandlerTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-08-24 10:00:00');
 
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);

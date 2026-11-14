@@ -125,8 +125,8 @@ final class AccountingReportControllerTest extends WebTestCase
 
     private function em(KernelBrowser $client): EntityManagerInterface
     {
-        /** @var EntityManagerInterface $em */
         $em = $client->getContainer()->get(EntityManagerInterface::class);
+        static::assertInstanceOf(EntityManagerInterface::class, $em);
 
         return $em;
     }

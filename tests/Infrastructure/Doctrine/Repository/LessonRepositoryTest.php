@@ -25,6 +25,7 @@ class LessonRepositoryTest extends KernelTestCase
         $otherDate = new DateTimeImmutable('2025-07-10 10:00:00');
 
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()
@@ -81,6 +82,7 @@ class LessonRepositoryTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-07-09 10:00:00');
         $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
 
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
@@ -169,6 +171,7 @@ class LessonRepositoryTest extends KernelTestCase
         $date = new DateTimeImmutable('+2 day')->setTime(12, 12);
         $otherDate = new DateTimeImmutable('2025-08-10 10:00:00');
 
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 

@@ -10,6 +10,7 @@ use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\PaymentCodeAssembler;
 use App\Tests\Assembler\UserAssembler;
 use Brick\Money\Money;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -54,6 +55,7 @@ class PaymentRepositoryTest extends KernelTestCase
 
     private function preparePendingPayment(): void
     {
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         // Setup test data
         $user = UserAssembler::new()->withName('Test User')->withEmail('test@example.com')->assemble();

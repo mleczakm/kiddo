@@ -19,6 +19,7 @@ final class ActivityLoggerTest extends KernelTestCase
 {
     public function testLogPersistsAnActivityLogRow(): void
     {
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $user = UserAssembler::new()->withName('Ola Nowak')->assemble();
         $em->persist($user);
@@ -63,6 +64,7 @@ final class ActivityLoggerTest extends KernelTestCase
 
         /** @var ActivityLogRepository $repo */
         $repo = self::getContainer()->get(ActivityLogRepository::class);
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $matching = $em->getRepository(ActivityLog::class)->findBy([
             'dedupeKey' => 'transfer_unmatched:123',
@@ -83,6 +85,7 @@ final class ActivityLoggerTest extends KernelTestCase
      */
     public function testFailedFlushFromAnUnrelatedDanglingEntityDoesNotPropagate(): void
     {
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 

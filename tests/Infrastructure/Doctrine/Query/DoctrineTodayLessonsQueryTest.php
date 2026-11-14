@@ -8,6 +8,7 @@ use App\Infrastructure\Doctrine\Query\DoctrineTodayLessonsQuery;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -19,6 +20,7 @@ class DoctrineTodayLessonsQueryTest extends KernelTestCase
         $date = new DateTimeImmutable('2025-07-09 10:00:00');
         $otherDate = new DateTimeImmutable('2025-07-10 10:00:00');
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $lesson1 = LessonAssembler::new()

@@ -61,10 +61,14 @@ class UpcomingLessonsComponentTest extends TestCase
             ->method('findUpcomingInRange')
             ->with(
                 static::callback(
-                    static fn($startDate) => $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d'),
+                    static fn(\DateTimeInterface $startDate) => (
+                        $startDate->format('Y-m-d') === $expectedStartDate->format('Y-m-d')
+                    ),
                 ),
                 static::callback(
-                    static fn($endDate) => $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d'),
+                    static fn(\DateTimeInterface $endDate) => (
+                        $endDate->format('Y-m-d') === $expectedEndDate->format('Y-m-d')
+                    ),
                 ),
                 true,
             )

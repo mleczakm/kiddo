@@ -57,6 +57,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         $this->entityManager->persist($lesson);
         $this->entityManager->flush();
 
+        /** @var GlobalSearchQuery $search */
         $search = self::getContainer()->get(GlobalSearchQuery::class);
         $references = array_values(iterator_to_array($search->search($needle)));
 
@@ -139,6 +140,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
+        /** @var GlobalSearchQuery $search */
         $search = self::getContainer()->get(GlobalSearchQuery::class);
         /** @var list<SearchReference> $references */
         $references = array_values(iterator_to_array($search->search($needle)));
@@ -208,6 +210,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         static::assertContains(SearchType::Booking, $types);
         static::assertContains(SearchType::Payment, $types);
 
+        /** @var list<SearchResult> $results */
         $results = self::getContainer()->get(SearchResultHydrator::class)->hydrate($references);
         // Matched by id, not just type: $this->admin (persisted in setUp() with a real,
         // un-pinned created_at) is also a Client-type result, and on any test run that
@@ -217,7 +220,7 @@ final class AdminGlobalSearchTest extends WebTestCase
         // $customer, asserting against the wrong row's (real, "today") subtitle date.
         $datedResult = array_find(
             $results,
-            static fn($result): bool => (
+            static fn(SearchResult $result): bool => (
                 $result->reference->type === SearchType::Client
                 && $result->reference->id === (string) $customer->getId()
             ),
@@ -227,7 +230,7 @@ final class AdminGlobalSearchTest extends WebTestCase
 
         $paymentResult = array_find(
             $results,
-            static fn($result): bool => $result->reference->type === SearchType::Payment,
+            static fn(SearchResult $result): bool => $result->reference->type === SearchType::Payment,
         );
         static::assertNotNull($paymentResult);
         static::assertStringContainsString("80\u{00A0}zł", $paymentResult->subtitle);

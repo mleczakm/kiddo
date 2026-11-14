@@ -65,7 +65,7 @@ final readonly class AccountDataExporter
         return [
             'id' => (string) $booking->getId(),
             'status' => $booking->getStatus(),
-            'created_at' => $booking->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+            'created_at' => $booking->getCreatedAt()->format(\DateTimeInterface::ATOM),
             'lessons' => array_map(static fn(Lesson $lesson): array => [
                 'title' => $lesson->getMetadata()->title,
                 'schedule' => $lesson->schedule->format(\DateTimeInterface::ATOM),
@@ -82,7 +82,7 @@ final readonly class AccountDataExporter
             'amount' => (string) $payment->getAmount()->getAmount(),
             'currency' => $payment->getAmount()->getCurrency()->getCurrencyCode(),
             'code' => $payment->getPaymentCodeSnapshot(),
-            'created_at' => $payment->getCreatedAt()?->format(\DateTimeInterface::ATOM),
+            'created_at' => $payment->getCreatedAt()->format(\DateTimeInterface::ATOM),
         ];
     }
 

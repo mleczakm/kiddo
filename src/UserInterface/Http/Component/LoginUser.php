@@ -31,13 +31,9 @@ class LoginUser extends AbstractController
         private MessageBusInterface $messageBus,
     ) {}
 
-    /**
-     * @return FormInterface<array{email: string}>
-     */
     #[\Override]
     protected function instantiateForm(): FormInterface
     {
-        /** @var FormInterface<array{email: string}> $form */
         return $this
             ->createFormBuilder()
             ->add('email', EmailType::class, [

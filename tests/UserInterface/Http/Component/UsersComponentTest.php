@@ -7,6 +7,7 @@ namespace App\Tests\UserInterface\Http\Component;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\UserInterface\Http\Component\UsersComponent;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -23,6 +24,7 @@ final class UsersComponentTest extends WebTestCase
     {
         $client = self::createClient();
         $container = self::getContainer();
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine.orm.entity_manager');
 
         $adminUser = new User();
@@ -61,6 +63,7 @@ final class UsersComponentTest extends WebTestCase
     {
         $client = self::createClient();
         $container = self::getContainer();
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine.orm.entity_manager');
 
         $adminUser = new User();
@@ -111,6 +114,7 @@ final class UsersComponentTest extends WebTestCase
     {
         $client = self::createClient();
         $container = self::getContainer();
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine.orm.entity_manager');
 
         // ROLE_HOST does not inherit ROLE_MANAGE_USERS (see security.yaml role_hierarchy).
@@ -133,6 +137,7 @@ final class UsersComponentTest extends WebTestCase
     {
         $client = self::createClient();
         $container = self::getContainer();
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine.orm.entity_manager');
 
         $adminUser = new User();

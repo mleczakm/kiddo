@@ -10,6 +10,7 @@ use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\PaymentAssembler;
 use App\Tests\Assembler\PaymentCodeAssembler;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Mailer\Test\InteractsWithMailer;
@@ -26,6 +27,7 @@ class SendReservationNotificationHandlerTest extends KernelTestCase
         self::bootKernel();
 
         $user = UserAssembler::new()->assemble();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->flush();

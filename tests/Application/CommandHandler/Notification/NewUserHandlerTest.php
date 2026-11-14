@@ -29,6 +29,7 @@ class NewUserHandlerTest extends KernelTestCase
         $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
         $admin2 = UserAssembler::new()->withEmail('admin2@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($admin1);
@@ -117,6 +118,7 @@ class NewUserHandlerTest extends KernelTestCase
         $user = UserAssembler::new()->withEmail('user@example.com')->withRoles('ROLE_USER')->assemble();
         $admin1 = UserAssembler::new()->withEmail('admin1@example.com')->withRoles('ROLE_ADMIN')->assemble();
 
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($admin1);

@@ -121,7 +121,7 @@ class LessonRepository extends ServiceEntityRepository implements LessonReposito
 
                 return $queue;
             }, new PriorityQueue())
-            ?->toArray();
+            ->toArray();
 
         return $limit !== null ? array_slice($ranked, 0, $limit) : $ranked;
     }

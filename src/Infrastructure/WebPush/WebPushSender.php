@@ -8,6 +8,7 @@ use App\Application\Notification\WebPushSenderInterface;
 use App\Application\Repository\PushSubscriptionRepositoryInterface;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Minishlink\WebPush\MessageSentReport;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
 use Psr\Http\Client\ClientInterface;
@@ -55,7 +56,9 @@ final readonly class WebPushSender implements WebPushSenderInterface
             ]), $payload);
         }
 
-        foreach ($webPush->flush() as $report) {
+        /** @var iterable<MessageSentReport> $reports */
+        $reports = $webPush->flush();
+        foreach ($reports as $report) {
             if ($report->isSuccess()) {
                 continue;
             }

@@ -12,6 +12,7 @@ use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\LessonMetadataAssembler;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -20,6 +21,7 @@ class CheckBookingsToMarkPastHandlerTest extends KernelTestCase
 {
     public function testTransitionsEligibleActiveBookingsToPast(): void
     {
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         /** @var BookingRepository $bookingRepository */
         $bookingRepository = self::getContainer()->get(BookingRepository::class);

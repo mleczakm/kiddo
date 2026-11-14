@@ -41,6 +41,7 @@ final class MonthlySubscriptionTest extends KernelTestCase
     {
         Clock::set(new MockClock('2026-10-05 09:00:00'));
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
         /** @var MessageBusInterface $bus */
         $bus = static::getContainer()->get(MessageBusInterface::class);
@@ -78,6 +79,7 @@ final class MonthlySubscriptionTest extends KernelTestCase
     {
         Clock::set(new MockClock('2026-10-05 09:00:00'));
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get(EntityManagerInterface::class);
         /** @var MessageBusInterface $bus */
         $bus = static::getContainer()->get(MessageBusInterface::class);

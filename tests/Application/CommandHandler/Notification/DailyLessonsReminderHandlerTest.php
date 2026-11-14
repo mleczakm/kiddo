@@ -30,6 +30,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
         $user = UserAssembler::new()->withEmail('user@example.com')->withName('Jan Kowalski')->assemble();
         $admin = UserAssembler::new()->withEmail('admin@example.com')->withRoles('ROLE_ADMIN')->assemble();
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($admin);
@@ -85,6 +86,7 @@ class DailyLessonsReminderHandlerTest extends KernelTestCase
             ->assemble()
             ->setOperationalEmails(false);
         $child = new Child($user, 'Zosia', new DateTimeImmutable('2018-03-15'));
+        /** @var EntityManagerInterface $em */
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);

@@ -86,8 +86,9 @@ final class PreventAsyncDispatchInTaskWorkerMiddlewareTest extends MiddlewareTes
 
         $middleware->handle(new Envelope(new \stdClass(), [new ReceivedStamp('async')]), $stack);
 
-        static::assertNotNull($capture->nestedEnvelope);
-        static::assertSame(['sync'], $capture->nestedEnvelope->last(TransportNamesStamp::class)?->getTransportNames());
+        $nestedEnvelope = $capture->nestedEnvelope;
+        static::assertInstanceOf(Envelope::class, $nestedEnvelope);
+        static::assertSame(['sync'], $nestedEnvelope->last(TransportNamesStamp::class)?->getTransportNames());
     }
 
     public function testDoesNotOverrideExistingTransportNamesStamp(): void

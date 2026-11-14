@@ -13,6 +13,7 @@ use App\Message\CancelLessonBooking;
 use App\Tests\Assembler\BookingAssembler;
 use App\Tests\Assembler\LessonAssembler;
 use App\Tests\Assembler\UserAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\Clock;
@@ -32,6 +33,7 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
     public function testCreatingBookingSavesPaymentCodeInActivityContext(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $user = UserAssembler::new()->assemble();
@@ -65,6 +67,7 @@ final class ActivityLogMiddlewareTest extends KernelTestCase
     public function testCancellingABookingWritesAnActivityLogEntry(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
 
         $user = UserAssembler::new()->withName('Ewa Zielińska')->assemble();

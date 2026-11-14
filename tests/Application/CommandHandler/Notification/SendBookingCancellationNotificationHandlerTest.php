@@ -38,6 +38,7 @@ class SendBookingCancellationNotificationHandlerTest extends KernelTestCase
             ->setOperationalEmails(false);
 
         /** @var EntityManagerInterface $em */
+        /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get('doctrine')->getManager();
         $em->persist($user);
         $em->persist($finance);
