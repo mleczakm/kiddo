@@ -67,7 +67,10 @@ final class LessonModalWaitlistTest extends WebTestCase
         static::assertFalse($modal->isOnWaitlist());
 
         $waitlist = static::getContainer()->get(WaitlistEntryRepositoryInterface::class);
-        \assert($waitlist instanceof WaitlistEntryRepositoryInterface);
+        \assert(
+            $waitlist instanceof WaitlistEntryRepositoryInterface,
+            'Waitlist repository must be available in the test container.',
+        );
 
         $component->call('joinWaitlist');
         static::assertSame('lesson.waitlist.joined', $component->component()->waitlistNotice);

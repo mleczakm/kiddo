@@ -163,7 +163,11 @@ class WaitlistEntry
         if ($status === self::STATUS_OFFERED) {
             $this->offeredAt = $now;
             $this->offerExpiresAt = $now->modify(sprintf('+%d minutes', self::OFFER_TTL_MINUTES));
-        } elseif (!$this->isActive()) {
+
+            return;
+        }
+
+        if (!$this->isActive()) {
             $this->closedAt = $now;
         }
     }

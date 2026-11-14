@@ -142,7 +142,6 @@ final class AdminGlobalSearchTest extends WebTestCase
 
         /** @var GlobalSearchQuery $search */
         $search = self::getContainer()->get(GlobalSearchQuery::class);
-        /** @var list<SearchReference> $references */
         $references = array_values(iterator_to_array($search->search($needle)));
 
         static::assertNotEmpty($references);
