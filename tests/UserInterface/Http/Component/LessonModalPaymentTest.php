@@ -26,7 +26,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Clock\NativeClock;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\Uid\Ulid;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
@@ -345,8 +344,8 @@ final class LessonModalPaymentTest extends WebTestCase
             client: $client,
         );
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageMatches('/Could not resolve argument \$bookingId/');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/requires the "\$bookingId" argument that could not be resolved/');
 
         // Mimics Stimulus receiving data-live-bookingId-param (HTML-lowercased to bookingid).
         $component->call('resumePayment', [
