@@ -32,15 +32,11 @@ parameters:
   # generous headroom over worker_max_request recycle overlap while still tripping on a leak.
   # Set to 0 to disable the failure and only surface the numbers.
   env(HEALTHCHECK_MAX_RSS_MIB): '1536'
-  # Seconds without a completed scheduler tick above which /health's scheduler_heartbeat
-  # check fails (503 -> autoheal restart). The Timer::tick interval is 1s, so 90 is ~90
-  # missed ticks - comfortably past a single slow tick or the SCHEDULER_TICK_TIMEOUT_SECONDS
-  # watchdog below, but far short of the hours it would take memory_usage to notice.
+  # Seconds behind the expected scheduler pass before /health fails (503 -> autoheal).
+  # Adaptive idle sleep does not count as overdue.
   env(HEALTHCHECK_SCHEDULER_MAX_SILENCE_SECONDS): '90'
-  # Deadline for one Scheduler::run() pass. A SysV semaphore is not freed when the coroutine
-  # holding it dies, so a run() that hangs (seen in production) wedges the scheduler forever;
-  # past this the tick is abandoned, the lock released, and the next tick retries. Well under
-  # HEALTHCHECK_SCHEDULER_MAX_SILENCE_SECONDS so a one-off hang self-heals without a restart.
+  # Log a pass exceeding this deadline. It remains exclusive until it returns;
+  # a permanent stall requires the health-check supervisor to restart the server.
   env(SCHEDULER_TICK_TIMEOUT_SECONDS): '15'
 
 services:

@@ -1,5 +1,13 @@
 
 services:
+  php:
+    # Lets .env.local override the image's baked-in APP_ENV=dev (real env vars beat Dotenv files),
+    # e.g. APP_ENV=prod + XDEBUG_MODE=off to profile memory without dev/debug overhead.
+    env_file:
+      - path: .env.local
+        required: false
+        format: raw
+
 ###> symfony/mailer ###
   mailer:
     image: axllent/mailpit
