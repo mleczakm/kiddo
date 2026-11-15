@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Infrastructure\DependencyInjection\KeepTwigProfilerExtensionsUnpooledPass;
+use App\Infrastructure\DependencyInjection\UseCoroutineAwareTwigFormEnginePass;
 use SwooleBundle\SwooleBundle\Bridge\Symfony\Kernel\CoroutinesSupportingKernel;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
@@ -27,5 +28,6 @@ class Kernel extends BaseKernel implements WarmableInterface
 
         // Must run before swoole-bundle's StatefulServicesPass (TYPE_BEFORE_REMOVING, -10000) reads the tags.
         $container->addCompilerPass(new KeepTwigProfilerExtensionsUnpooledPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
+        $container->addCompilerPass(new UseCoroutineAwareTwigFormEnginePass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
     }
 }

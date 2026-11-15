@@ -60,6 +60,8 @@ services:
       - '../src/Entity/'
       - '../src/Domain/'
       - '../src/Kernel.php'
+      # Replaces Symfony's twig.form.engine via UseCoroutineAwareTwigFormEnginePass, must not be autowired itself.
+      - '../src/Infrastructure/Symfony/Form/CoroutineAwareTwigRendererEngine.php'
 
   App\Application\Search\GlobalSearchQuery:
     alias: App\Infrastructure\Search\CompositeGlobalSearchQuery
