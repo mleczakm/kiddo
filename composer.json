@@ -8,11 +8,6 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/mleczakm/swoole-bundle.git",
-      "no-api": true
-    },
-    {
-      "type": "vcs",
       "url": "https://github.com/mleczakm/feature-flag-bundle.git",
       "no-api": true
     },
@@ -71,7 +66,7 @@
     "mleczakm/aeon-school-holidays": "^1.0",
     "mleczakm/monolog-context-bundle": "dev-master",
     "mleczakm/swoole-bundle-observability": "^0.1.4",
-    "mleczakm/swoole-bundle-scheduler": "^0.1.1",
+    "mleczakm/swoole-bundle-scheduler": "^0.2.0",
     "mleczakm/twig-now": "^0.1.0",
     "mleczakm/zip-bomb-honeypot": "^1.0",
     "novaway/feature-flag-bundle": "dev-master as 3.0.2",
@@ -87,7 +82,7 @@
     "sentry/sentry": "^4.37",
     "sentry/sentry-symfony": "^5.16.0",
     "swoole-bundle/resetter-bundle": "^2.1.1",
-    "swoole-bundle/swoole-bundle": "dev-fix/nonshared-service-pool-leak as v0.32.0",
+    "swoole-bundle/swoole-bundle": "^0.35.6",
     "swoole-bundle/z-engine": "^8.5.2",
     "symfony/asset": "8.1.*",
     "symfony/asset-mapper": "8.1.*",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b313fd0b058111f7981f164fe63dbf0",
+    "content-hash": "0844e6f26d2a345806a069609393c339",
     "packages": [
         {
             "name": "aeon-php/calendar",
@@ -3708,16 +3708,16 @@
         },
         {
             "name": "mleczakm/swoole-bundle-scheduler",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mleczakm/swoole-bundle-scheduler.git",
-                "reference": "5c6077c006b028532706e822ae7d33e27886023e"
+                "reference": "24c1bfdd313a33d5d62aeda3a8c1a32957ca8520"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mleczakm/swoole-bundle-scheduler/zipball/5c6077c006b028532706e822ae7d33e27886023e",
-                "reference": "5c6077c006b028532706e822ae7d33e27886023e",
+                "url": "https://api.github.com/repos/mleczakm/swoole-bundle-scheduler/zipball/24c1bfdd313a33d5d62aeda3a8c1a32957ca8520",
+                "reference": "24c1bfdd313a33d5d62aeda3a8c1a32957ca8520",
                 "shasum": ""
             },
             "require": {
@@ -3727,14 +3727,14 @@
                 "psr/clock": "^1.0",
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^3.0",
-                "swoole-bundle/swoole-bundle": "^0.32 || ^0.33 || ^0.34",
-                "symfony/cache": "^7.4 || ^8.0",
-                "symfony/clock": "^7.4 || ^8.0",
-                "symfony/config": "^7.4 || ^8.0",
-                "symfony/dependency-injection": "^7.4 || ^8.0",
-                "symfony/http-kernel": "^7.4 || ^8.0",
-                "symfony/messenger": "^7.4 || ^8.0",
-                "symfony/scheduler": "^7.4 || ^8.0"
+                "swoole-bundle/swoole-bundle": ">0.33 <1.0",
+                "symfony/cache": ">=7.4 <9.0",
+                "symfony/clock": ">=7.4 <9.0",
+                "symfony/config": ">=7.4 <9.0",
+                "symfony/dependency-injection": ">=7.4 <9.0",
+                "symfony/http-kernel": ">=7.4 <9.0",
+                "symfony/messenger": ">=7.4 <9.0",
+                "symfony/scheduler": ">=7.4 <9.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.94",
@@ -3743,8 +3743,8 @@
                 "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpunit/phpunit": "^11.5 || ^12.5",
-                "symfony/framework-bundle": "^7.4 || ^8.0",
-                "symfony/lock": "^7.4 || ^8.0"
+                "symfony/framework-bundle": ">=7.4 <9.0",
+                "symfony/lock": ">=7.4 <9.0"
             },
             "suggest": {
                 "macpaw/symfony-health-check-bundle": "Enables the /health scheduler heartbeat check (swoole_bundle_scheduler.health_check)",
@@ -3778,10 +3778,10 @@
             ],
             "support": {
                 "issues": "https://github.com/mleczakm/swoole-bundle-scheduler/issues",
-                "source": "https://github.com/mleczakm/swoole-bundle-scheduler/tree/v0.1.1"
+                "source": "https://github.com/mleczakm/swoole-bundle-scheduler/tree/v0.2.0"
             },
-            "time": "2026-09-08T17:52:13+00:00",
-            "published-time": "2026-09-08T17:52:19+00:00"
+            "time": "2026-09-24T06:27:48+00:00",
+            "published-time": "2026-09-24T06:30:56+00:00"
         },
         {
             "name": "mleczakm/twig-now",
@@ -6277,16 +6277,16 @@
         },
         {
             "name": "swoole-bundle/swoole-bundle",
-            "version": "dev-fix/nonshared-service-pool-leak",
+            "version": "v0.35.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mleczakm/swoole-bundle.git",
-                "reference": "cdedf1255c0acf5040554ea29f54153aa013d7f1"
+                "url": "https://github.com/symfony-swoole/swoole-bundle.git",
+                "reference": "81f35b1fac4f7df2a173b6ae83a194e2ad6d8047"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mleczakm/swoole-bundle/zipball/cdedf1255c0acf5040554ea29f54153aa013d7f1",
-                "reference": "cdedf1255c0acf5040554ea29f54153aa013d7f1",
+                "url": "https://api.github.com/repos/symfony-swoole/swoole-bundle/zipball/81f35b1fac4f7df2a173b6ae83a194e2ad6d8047",
+                "reference": "81f35b1fac4f7df2a173b6ae83a194e2ad6d8047",
                 "shasum": ""
             },
             "require": {
@@ -6296,16 +6296,16 @@
                 "laminas/laminas-code": "^4.7||^4.8",
                 "monolog/monolog": "^3.10",
                 "php": "^8.3",
-                "symfony/cache": "^7.4|^8.0",
-                "symfony/config": "^7.4|^8.0",
-                "symfony/console": "^7.4|^8.0",
-                "symfony/dependency-injection": "^7.4|^8.0",
-                "symfony/filesystem": "^7.4|^8.0",
-                "symfony/http-foundation": "^7.4|^8.0",
-                "symfony/http-kernel": "^7.4|^8.0",
-                "symfony/process": "^7.4|^8.0",
+                "symfony/cache": "^7.4|^8.1",
+                "symfony/config": "^7.4|^8.1",
+                "symfony/console": "^7.4|^8.1",
+                "symfony/dependency-injection": "^7.4|^8.1",
+                "symfony/filesystem": "^7.4|^8.1",
+                "symfony/http-foundation": "^7.4|^8.1",
+                "symfony/http-kernel": "^7.4|^8.1",
+                "symfony/process": "^7.4|^8.1",
                 "upscale/ext-openswoole": "^26.2.0",
-                "upscale/ext-swoole": "^6.2.2"
+                "upscale/ext-swoole": "^6.2.3"
             },
             "conflict": {
                 "amphp/amp": "<3.1.1",
@@ -6382,26 +6382,27 @@
                 "swoole-bundle/resetter-bundle": "^2.0",
                 "swoole-bundle/z-engine": "8.3.2|8.4.2|8.5.2",
                 "swoole/ide-helper": "^6.0.0",
-                "symfony/debug-bundle": "^7.4|^8.0",
-                "symfony/doctrine-messenger": "^7.4|^8.0",
-                "symfony/error-handler": "^7.4|^8.0",
+                "symfony/debug-bundle": "^7.4|^8.1",
+                "symfony/doctrine-messenger": "^7.4|^8.1",
+                "symfony/error-handler": "^7.4|^8.1",
                 "symfony/flex": "^2.4.7",
-                "symfony/form": "^7.4|^8.0",
-                "symfony/framework-bundle": "^7.4|^8.0",
-                "symfony/http-client": "^7.4|^8.0",
-                "symfony/mailer": "^7.4|^8.0",
-                "symfony/messenger": "^7.4|^8.0",
-                "symfony/monolog-bridge": "^7.4|^8.0",
+                "symfony/form": "^7.4|^8.1",
+                "symfony/framework-bundle": "^7.4|^8.1",
+                "symfony/http-client": "^7.4|^8.1",
+                "symfony/mailer": "^7.4|^8.1",
+                "symfony/mercure": "^0.8",
+                "symfony/messenger": "^7.4|^8.1",
+                "symfony/monolog-bridge": "^7.4|^8.1",
                 "symfony/monolog-bundle": "^3.10 || ^4.0",
-                "symfony/security-bundle": "^7.4|^8.0",
-                "symfony/stopwatch": "^7.4|^8.0",
-                "symfony/twig-bridge": "^7.4|^8.0",
-                "symfony/twig-bundle": "^7.4|^8.0",
-                "symfony/validator": "^7.4|^8.0",
-                "symfony/var-dumper": "^7.4|^8.0",
-                "symfony/var-exporter": "^7.4|^8.0",
-                "symfony/web-profiler-bundle": "^7.4|^8.0",
-                "symfony/yaml": "^7.4|^8.0",
+                "symfony/security-bundle": "^7.4|^8.1",
+                "symfony/stopwatch": "^7.4|^8.1",
+                "symfony/twig-bridge": "^7.4|^8.1",
+                "symfony/twig-bundle": "^7.4|^8.1",
+                "symfony/validator": "^7.4|^8.1",
+                "symfony/var-dumper": "^7.4|^8.1",
+                "symfony/var-exporter": "^7.4|^8.1",
+                "symfony/web-profiler-bundle": "^7.4|^8.1",
+                "symfony/yaml": "^7.4|^8.1",
                 "tideways/ext-tideways-stubs": "^5.5",
                 "twig/twig": "^3.24",
                 "upscale/swoole-blackfire": "^4.3",
@@ -6415,6 +6416,7 @@
                 "swoole-bundle/z-engine": "To be able to use coroutines.",
                 "symfony/error-handler": "To use Symfony Error Handler",
                 "symfony/mailer": "To give every coroutine a mail transport of its own, so two sends cannot interleave on one SMTP connection.",
+                "symfony/mercure": "To give every coroutine a traced Mercure hub of its own when the profiler is on, so two publishes cannot write one trace.",
                 "symfony/messenger": "For using Symfony Messenger Swoole Task Transport.",
                 "upscale/swoole-blackfire": "To enable Blackfire profiling"
             },
@@ -6432,79 +6434,7 @@
                     "SwooleBundle\\SwooleBundle\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "SwooleBundle\\SwooleBundle\\Tests\\": "tests"
-                },
-                "files": [
-                    "tests/Bridge/Tideways/TidewaysMock.php"
-                ]
-            },
-            "scripts": {
-                "console": [
-                    "php tests/Fixtures/Symfony/app/console --ansi"
-                ],
-                "static-analyse-src": [
-                    "phpstan analyze -c phpstan.neon --ansi --memory-limit=512M"
-                ],
-                "static-analyse-tests": [
-                    "phpstan analyze -c phpstan.tests.neon --ansi --memory-limit=512M"
-                ],
-                "cs-analyse": [
-                    "php-cs-fixer fix -v --dry-run --diff --stop-on-violation --ansi"
-                ],
-                "cs-fix": [
-                    "php-cs-fixer fix -v --diff --ansi"
-                ],
-                "analyse": [
-                    "@static-analyse-src",
-                    "@static-analyse-tests",
-                    "@cs-analyse"
-                ],
-                "test": [
-                    "@analyse",
-                    "@unit-tests"
-                ],
-                "feature-tests": [
-                    "paratest -c phpunit.feature.xml --processes=${PARATEST_PROCESSES:-4} --process-isolation --colors=always"
-                ],
-                "feature-tests-serial": [
-                    "phpunit tests/Feature --process-isolation --colors=always"
-                ],
-                "feature-tests-junit": [
-                    "paratest -c phpunit.feature.xml --processes=${PARATEST_PROCESSES:-4} --process-isolation --colors=always --log-junit phpunit/junit.xml"
-                ],
-                "unit-code-coverage": [
-                    "phpunit tests/Unit --coverage-php cov/unit-tests-${SWOOLE:-unknown}.cov --colors=always"
-                ],
-                "feature-code-coverage": [
-                    "COVERAGE=1 paratest -c phpunit.feature.xml --processes=${PARATEST_PROCESSES:-4} --process-isolation --coverage-php cov/feature-tests-${SWOOLE:-unknown}.cov --colors=always"
-                ],
-                "feature-code-coverage-serial": [
-                    "COVERAGE=1 phpunit tests/Feature --coverage-php cov/feature-tests-${SWOOLE:-unknown}.cov --colors=always --process-isolation"
-                ],
-                "merge-code-coverage": [
-                    "php -dmemory_limit=512M ./vendor/bin/phpcov merge cov --clover=clover.xml"
-                ],
-                "unit-tests": [
-                    "phpunit tests/Unit --colors=always"
-                ],
-                "unit-tests-junit": [
-                    "phpunit tests/Unit --colors=always --log-junit phpunit/junit.xml"
-                ],
-                "grumphp_complete": [
-                    "grumphp run --testsuite=complete"
-                ],
-                "grumphp_tests": [
-                    "grumphp run --testsuite=tests"
-                ],
-                "phpcs": [
-                    "phpcs --standard=phpcs.xml --extensions=php --tab-width=4 -sp src tests"
-                ],
-                "phpcbf": [
-                    "phpcbf --standard=phpcs.xml --extensions=php --tab-width=4 -sp src tests"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -6523,15 +6453,30 @@
             "description": "Open/Swoole Symfony Bundle",
             "homepage": "https://github.com/symfony-swoole/swoole-bundle",
             "keywords": [
-                "Async",
-                "Bundle",
-                "HTTP",
-                "OpenSwoole",
-                "PHP",
-                "Server",
-                "Swoole"
+                "async",
+                "bundle",
+                "http",
+                "openswoole",
+                "php",
+                "server",
+                "swoole"
             ],
-            "time": "2026-09-03T08:56:51+00:00"
+            "support": {
+                "issues": "https://github.com/symfony-swoole/swoole-bundle/issues",
+                "source": "https://github.com/symfony-swoole/swoole-bundle/tree/v0.35.6"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Rastusik",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/symfony-swoole",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-10-21T14:28:17+00:00",
+            "published-time": "2026-10-21T14:55:07+00:00"
         },
         {
             "name": "swoole-bundle/z-engine",
@@ -10323,16 +10268,16 @@
         },
         {
             "name": "symfony/polyfill-php85",
-            "version": "v1.43.0",
+            "version": "v1.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php85.git",
-                "reference": "86a42cbcc07adc331481a5ab310a4024bfc227f6"
+                "reference": "94c794cb5ba51784bc259f11e9f128593297d8dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php85/zipball/86a42cbcc07adc331481a5ab310a4024bfc227f6",
-                "reference": "86a42cbcc07adc331481a5ab310a4024bfc227f6",
+                "url": "https://api.github.com/repos/symfony/polyfill-php85/zipball/94c794cb5ba51784bc259f11e9f128593297d8dc",
+                "reference": "94c794cb5ba51784bc259f11e9f128593297d8dc",
                 "shasum": ""
             },
             "require": {
@@ -10379,7 +10324,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php85/tree/v1.43.0"
+                "source": "https://github.com/symfony/polyfill-php85/tree/v1.44.0"
             },
             "funding": [
                 {
@@ -10399,8 +10344,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-25T15:46:47+00:00",
-            "published-time": "2026-09-30T10:23:32+00:00"
+            "time": "2026-10-30T15:20:09+00:00",
+            "published-time": "2026-11-15T14:20:22+00:00"
         },
         {
             "name": "symfony/polyfill-php86",
@@ -14069,16 +14014,16 @@
         },
         {
             "name": "upscale/ext-swoole",
-            "version": "v6.2.3",
+            "version": "v6.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/upscalesoftware/ext-swoole.git",
-                "reference": "e7613e4f79e202d4d0d9f9c804134ab251a8e058"
+                "reference": "ad7f4a9485c9136d0241be64cf88e3946d6fe747"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/upscalesoftware/ext-swoole/zipball/e7613e4f79e202d4d0d9f9c804134ab251a8e058",
-                "reference": "e7613e4f79e202d4d0d9f9c804134ab251a8e058",
+                "url": "https://api.github.com/repos/upscalesoftware/ext-swoole/zipball/ad7f4a9485c9136d0241be64cf88e3946d6fe747",
+                "reference": "ad7f4a9485c9136d0241be64cf88e3946d6fe747",
                 "shasum": ""
             },
             "require": {
@@ -14103,10 +14048,10 @@
             ],
             "support": {
                 "issues": "https://github.com/upscalesoftware/ext-swoole/issues",
-                "source": "https://github.com/upscalesoftware/ext-swoole/tree/v6.2.3"
+                "source": "https://github.com/upscalesoftware/ext-swoole/tree/v6.2.5"
             },
-            "time": "2026-09-01T03:32:00+00:00",
-            "published-time": "2026-09-23T02:05:53+00:00"
+            "time": "2026-11-01T04:21:24+00:00",
+            "published-time": "2026-11-07T03:28:57+00:00"
         },
         {
             "name": "web-token/jwt-library",
@@ -19247,20 +19192,13 @@
             "version": "9999999-dev",
             "alias": "3.0.2",
             "alias_normalized": "3.0.2.0"
-        },
-        {
-            "package": "swoole-bundle/swoole-bundle",
-            "version": "dev-fix/nonshared-service-pool-leak",
-            "alias": "v0.32.0",
-            "alias_normalized": "0.32.0.0"
         }
     ],
     "minimum-stability": "stable",
     "stability-flags": {
         "mleczakm/monolog-context-bundle": 20,
         "novaway/feature-flag-bundle": 20,
-        "roave/security-advisories": 20,
-        "swoole-bundle/swoole-bundle": 20
+        "roave/security-advisories": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
